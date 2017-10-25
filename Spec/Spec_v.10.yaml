@@ -1,0 +1,575 @@
+
+
+####################################################################
+
+Workflow Description Language: A "configuration" for the engine to behave 
+
+
+workflow:
+ zip:
+  inputs:
+   infile:
+     type : file
+     name : foodselfie.dat
+     location: /source
+   compression-ratio:
+     type : int
+     value : 50
+   outputs:
+    outfile:
+     type : file
+     name : foodselfie.zip
+     location: /dest 
+	        
+
+####################################################################
+
+"Convention over Configuration"
+
+
+Things should be as easy as:
+
+
+workflow:
+ zip:
+    
+    
+Note:
+
+1.  The "zip" step assumes certain convetion for input file and output file.
+    Example: A local foodselfie.dat is compressed into foodselfie.zip
+    
+    
+    Perfect for repetitve job execution as long as we conform to the "conventions"
+
+
+####################################################################
+
+Let us look at a configuration system that helps us to embed convetions 
+
+workflow:
+	convert-doc:
+	    inputs:
+	        inparam:
+	            type: file
+	            location: /path/to/report.pages
+	    outputs:
+	        outparam:
+	            type: file
+	            location: /path/to/report.doc
+	zip:
+	    input:
+	        inparam:
+	            type: file
+	            location: /path/to/report.doc
+	    outputs:
+	        outparam:
+	            type: file
+	            location: /path/to/report.zip
+
+
+Verbose?
+
+####################################################################
+
+Lets utilise two things here:
+
+
+1. Knowledge of type information of "inparam" as defined by "convert-doc"
+2. Convention of when we are trying to specifying metadata about a file, if only a string is avialable that is path. 
+
+
+workflow:
+	convert-doc:
+	    inputs:
+	        inparam: /path/to/report.pages
+	    outputs:
+	        outparam: /path/to/report.doc
+	zip:
+	    inputs:
+	        inparam: /path/to/report.doc
+	    outputs:
+	        outparam: /path/to/report.zip
+
+####################################################################
+
+But how do we let know Zip to depend on output produced by convert-doc
+
+workflow:
+	convert-doc:
+	    inputs:
+	        inparam: /path/to/report.pages
+	    outputs:
+	        outparam: /path/to/report.doc
+	zip:
+	    inputs:
+	        inparam: convert-doc/outparam
+	    outputs:
+	        outparam: /path/to/report.zip
+
+Technicality:
+
+1. Decided convention of path string
+2. Provided a mapping/linking
+
+Well, lets modify the convention as:
+
+a. Treat it as mapping. If found substitue and use
+b. If no such mapping found treat it as path string (if file)
+
+
+####################################################################
+
+
+Some examples of how to deal with basic types and file collection etc 
+
+workflow:
+	sort:
+	    inputs:
+	        unsorted:
+	            type : array
+	            elements : integer
+	            value : [ 55, 1, 6, 2 ]
+	    outputs:
+	        sorted-list:
+	            type : array
+	            elements : integer
+	serialise:
+	    inputs:
+	        data : sort/sorted-list;
+	    outputs:
+	        saved-file: /home/list.txt
+	        
+
+Using type information we can minimize it to
+
+workflow:
+	sort:
+	    inputs:
+	        unsorted: [ 55, 1, 6, 2 ]
+	serialise:
+	    inputs:
+	        data : sort/sorted-list;
+	    outputs:
+	        saved-file: /home/list.txt
+
+
+
+Now lets introduce another convention,
+
+1. If a step produces an output named "X" and there are steps that accepts input named "X" then we implicitly link them.
+
+For the example above, lets say the output of sort is named "data" then it reduces to
+
+
+workflow:
+	sort:
+	    inputs:
+	        unsorted: [ 55, 1, 6, 2 ]
+	serialise:
+	    outputs:
+	        saved-file: /home/list.txt
+
+Note, In the case of where the world is simple and there is only one input and output, we can simplify further
+ 
+workflow:
+	sort: 
+	    input: [ 55, 1, 6, 2 ]
+	serialise: 
+	    output: /home/list.txt
+
+   
+Compare this to the verbose definition above.
+
+
+####################################################################
+
+But world is not simple. It's about multiple inputs outputs and collection of files etc.
+
+
+workflow:
+	zip:
+	    inputs:
+	        files-to-zip:
+	            type : array
+	            element : file
+	            value : [ a.txt, b.txt, c.txt, d.txt ]
+	    output: /path/to/mydata.zip
+
+
+Can become,
+
+workflow:
+	zip:
+	    input:[ a.txt, b.txt, c.txt, d.txt ]
+	    output: /path/to/mydata.zip
+    move:
+        output: /destination/path/mydata.zip
+
+Here, assume implicit lining using "name" matching.
+
+
+####################################################################
+
+File(s) by pattern matching / filter
+
+
+workflow:
+	mashup:
+	    inputs:
+	        aset:
+	            type: array
+	            element : file
+	            location : ../files
+	            pattern : 
+	             - a?b.tx
+	             - cc[acd]?c.q
+	        anotherset:
+	            type : array
+	            element : file
+	            pattern : 
+	                - location : path1
+	                  value : a?b.txt
+	                - location" : path1
+	                  value : cc*.q
+	    output: /destination/path/mashup.data
+	
+	archive:
+	    input: mashup/output
+	    output: /new/path/mashup.tar
+	    
+	    
+Using type information and convention of using local directory as default path, we can reduce it to,
+
+workflow:
+	mashup:
+	    inputs:
+	        aset:
+	            pattern : 
+	             - a?b.tx
+	             - cc[acd]?c.q
+	        anotherset:
+	            pattern : 
+	                - location : path1
+	                  value : a?b.txt
+	                - location" : path1
+	                  value : cc*.q
+	    output: /destination/path/mashup.data
+	archive:
+	    input: mashup/output
+	    output: /new/path/mashup.tar	        
+
+####################################################################
+
+Sidecar files
+
+workflow:
+	maleria:
+	    inputs:
+	        read_files_1:
+	            type : array
+	            element : file
+	            location : ../data/S1_R1.fastq.gz
+	            sidecar : 
+	                -   ab.txt
+	                -   cc.q
+	        read_files_2:
+	            type : array
+	            element : file
+	            location : ../data/S1_R1.fastq.gz
+	            sidecar :
+	                -   location : path
+	                    pattern : a?b.txt
+	                    
+	                -   location : path
+	                    pattern : XX?.txt
+
+
+####################################################################
+
+
+Inputs defined int separate YAML
+
+
+workflow:
+	find-variant:
+	    input:
+	        child_read_1 :
+	        child_read_2 :
+	        
+	        
+
+YAML:
+
+
+child_read_1:
+    type : array
+    element : file
+    location : ../data/S1_R1.fastq.gz
+    sidecar : 
+        -   ab.txt
+        -   cc.q
+
+
+
+####################################################################
+
+
+Lets see if we can make some sensible examples,
+
+
+
+workflow:
+
+    child_read_1 : 
+        type : file
+        location: ../data/
+        pattern: "S1_R1.fastq.gz"
+        format: "edam:format_1930"
+
+    child_read_2 : 
+        type : file
+        location: ../data/
+        pattern: "S2_R1.fastq.gz"
+        format: "edam:format_1930"
+    
+    
+    # Quality inspection of raw data:
+    fastqc:
+        inputs:
+            fastq: [ child_read_1, child_read_2 ]
+            outdir: "."
+        #implicit outputs: zippedfile and report
+            
+    # Alignment to ref v29 with bowtie2
+    align:
+        tool : bowtie2
+        inputs:
+            one : child_read_1
+            two : child_read_2
+            sensitive-local: true
+            samout: "alignment.sam"
+            threads: 8
+            
+        #Implicit output aligned-file
+        
+    #convert to bam
+    convert:
+        tool: samtools-view
+        inputs:
+            input: align/aligned-file
+            output-name : "alignment.bam"
+            threads: 8
+    
+         #Implicit output "output"
+    #sort and compressed
+    sort:
+        tool: samtools-sort
+        inputs: convert/output
+        
+        
+################################################################################
+
+But real life is not that simple.
+
+we want set of files to be processed in parallel, join, parallel etc.
+files are associated sets. Their names are in pattern.
+
+
+
+ workflow:
+
+    child_read_1 : 
+        type : file[]
+        location: ../data/
+        pattern: "S?_R1.fastq.gz"
+
+    child_read_2 : 
+        type : file[]
+        location: ../data/
+        pattern: "S?_R2.fastq.gz"
+        
+    parent_read_1 : 
+        type : file[]
+        location: ../data/
+        pattern: "P?_R1.fastq.gz"
+
+    parent_read_2 : 
+        type : file[]
+        location: ../data/
+        pattern: "S?_R2.fastq.gz"
+
+    alignment:
+        type: file
+        location: /path/to/3D7-merge-B3_S1-C5_S2.bam
+
+    gff:
+        type: file
+        location: /path/to/PlasmoDB-29_Pfalciparum3D7.gff        
+
+    blacklist:
+        type: file
+        location: /path/to/CentromereTelomereRegions.bed
+
+    reference:
+        type: file
+        location: /path/to/PlasmoDB-29_Pfalciparum3D7_Genome.fasta
+        sidecar:
+            - PlasmoDB-29_Pfalciparum3D7_Genome.fasta.amb
+            - PlasmoDB-29_Pfalciparum3D7_Genome.fasta.ann
+            - PlasmoDB-29_Pfalciparum3D7_Genome.fasta.bwt
+            - PlasmoDB-29_Pfalciparum3D7_Genome.fasta.fai
+            - PlasmoDB-29_Pfalciparum3D7_Genome.fasta.pac
+            - PlasmoDB-29_Pfalciparum3D7_Genome.fasta.sa
+        
+    # Quality inspection of raw data
+    fastqc:
+        inputs:
+            fastq: child_read_1 + child_read_2 + parent_read_1 + parent_read_2
+            outdir: "."
+        #implicit outputs: zippedfile and report
+
+
+    #child pipeline
+    scatter:
+        use: [ child_read_1, child_read_2 ]
+        method: dotproduct
+        provide: [ one, two ]
+        
+        # Alignment to ref v29 with bowtie2
+        align: 
+            inputs:
+                #implicit input one by scatter
+                #implicit input two by scatter
+                samout:
+                    type: string
+                    value : $(one.basename) + ".sam"
+                threads:
+                    type : int
+                    value : 8
+                 sensitive-local:
+                    type : boolean
+                    value: true
+                 bt2-idx:
+                    type : string
+                    value : $(reference.indexname)
+            #implicit output 
+        
+        convert:
+            
+
+
+            
+            
+            
+            
+            
+            
+        
+              
+
+
+
+
+workflow:
+    outputLocation: "."
+    reference_genome: pf123
+    
+    child_reads : 
+        type : paired_reads
+        location: ../data/
+        pattern: "S1_R?.fastq.gz"
+
+    parent_reads : 
+        type : paired_reads
+        location: ../data/
+        pattern: "S2_R?.fastq.gz"
+        
+    # Quality inspection of raw data:
+    fastqc:            
+            
+    # Alignment to ref v29 with bowtie2
+    align:
+            
+            
+        
+              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+But the world is not ideal, we always have certain changes.
+Domain specific worlflows can hugely benefit from usage of "convention"
+
+
+workflow:
+	find-variant:
+	    inputs:
+	        -   child_reads_1 : read
+	        -   child_reads_2 : read
+	        -   parent_reads_1 : read
+	        -   parent_reads_2 : read
+	        -   3D7-merge-B3_S1-C5_S2 : alignment
+	        -   PlasmoDB-29_Pfalciparum3D7_Genome : reference
+	        -   PlasmoDB-29_Pfalciparum3D7 : gff
+	        -   CentromereTelomereRegions : backlist
+	        
+ 
+#This is where my primitive SE mind just treats them as some kind of binar data
+
+
+
+Now: Lets look at some configuration mechanism that will lead us to use convention 
+
+
+####################################################################
+
+workflow:
+	find-variant:
+	    inputs:
+	        -   "child_reads_1" :
+	            type "read"
+	        -   "child_reads_2" : "read"
+	        -   "parent_reads_1" : "read"
+	        -   "parent_reads_2" : "read"
+	        -   "3D7-merge-B3_S1-C5_S2" : "alignment"
+	        -   "PlasmoDB-29_Pfalciparum3D7_Genome" : "reference"
+	        -   "PlasmoDB-29_Pfalciparum3D7" : "gff"
+	        -   "CentromereTelomereRegions" : "backlist"

@@ -1,0 +1,87 @@
+name: "Drug resitant falciparum"
+description: "Blah blah blah"
+version: 0.0.1
+authors:
+  - author:
+    name: "Joeclyn Penington"
+    email: "etc"
+  - author:
+    name: "Evan Thomas"
+    email: "thomas.e@wehi.edu.au"
+
+inputs:
+  - name: parents
+    type: paired
+    forward-pattern: "/path/to/read/regex"
+    backward-pattern: "/path/to/read/regex"
+  - name: descendents
+    type: paired
+    forward-pattern: "/path/to/read/regex"
+    backward-pattern: "/path/to/read/regex"
+
+  - reference:
+    # Plasmodium falciparum
+    name: "PlasmoDB-29_Pfalciparum3D7_Genome"
+    path: "path"
+
+  - reference:
+    name: gridss-blacklist
+    path: "path"
+
+  outputs:
+    output: "path/to/results"
+    keepall: true
+    compress: true
+    index: true
+
+steps:
+  preprocess:
+    - fastqc
+
+  align:
+    name: align-parents
+    reference: "PlasmoDB-29_Pfalciparum3D7_Genome"
+    input: parents
+
+  align:
+    name: align-descendents
+    reference: "PlasmoDB-29_Pfalciparum3D7_Genome"
+    input: descendents
+
+  dedup:
+    name: dedup-parents
+    input: align-parents
+
+  dedup:
+    name: dedup-descendents
+    input: align-descendents
+
+  insert-metrics:
+    name: metrics-parents
+    input: dedup-parents
+
+  insert-metrics:
+    name: metrics-descendents
+    input: dedup-descendents
+
+  merge:
+    name: parent-merge
+    input: align-parents
+
+  call:
+    caller: gridss
+    input: align-descendents
+    compare-to: parent-merge
+    blacklist: gridss-blacklist
+
+  reports:
+    input: [metrics-descendents, metrics-parents]
+    - coverage-genic
+    - coverage-nongenic
+    - intersect
+
+  igvtools:
+    input: [dedup-parents, dedup-descendents]
+
+
+

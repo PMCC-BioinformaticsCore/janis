@@ -424,10 +424,13 @@ files are associated sets. Their names are in pattern.
         
     # Quality inspection of raw data
     fastqc:
+        cwl-tool: fastqc
         inputs:
             fastq: child_read_1 + child_read_2 + parent_read_1 + parent_read_2
             outdir: "."
-        #implicit outputs: zippedfile and report
+        outputs:
+            zippedFile:  #<------------- Implicit mapping to CWL tool outputs
+            report:
 
 
     #child pipeline
@@ -437,7 +440,8 @@ files are associated sets. Their names are in pattern.
         provide: [ one, two ]
         
         # Alignment to ref v29 with bowtie2
-        align: 
+        align:
+            cwl-tool: bowtie2
             inputs:
                 #implicit input one by scatter
                 #implicit input two by scatter
@@ -453,9 +457,528 @@ files are associated sets. Their names are in pattern.
                  bt2-idx:
                     type : string
                     value : $(reference.indexname)
-            #implicit output 
+            outputs:
+                aligned-file:
         
+        # convert to bam
         convert:
+            cwl-tool: samtools-view
+            inputs:
+                input: aligned/aligned-file
+                output-name:
+                    type: string
+                    value: $(one.basename) + ".bam"
+                threads:
+                    type : int
+                    value : 8
+            outputs:
+                output:
+        
+        # sort and compress
+        sort:
+            cwl-tool: samtools-sort
+            inputs:
+                input: convert/output
+                output-name:
+                    type: string
+                    value: $(one.basename) + ".sorted.bam"
+                threads:
+                    type : int
+                    value : 8
+            outputs:
+                sorted:
+        
+        # index bam    
+        index:
+            cwl-tool: samtools-index
+            inputs:
+                input: sort/sorted
+            #implicit output
+        
+        # Remove duplicate reads
+        dedup:
+            cwl-tool: picar-markduplicates
+            inputs:
+                inputFileName_markDups: sort/sorted
+                outputFileName_markDups:
+                    type: string
+                    value: $(one.basename) + "_nodup.bam"
+                 metricsFile:
+                    type: string
+                    value: $(one.basename) + "_duplic.metrics"
+                removeDuplicates: true
+            outputs:
+                markDups_output:
+                markDups_metrics:
+        
+        # index duplicates
+        index-dedup:
+            cwl-tool: samtools-index
+            inoputs:
+                input: dedup/markDups_output
+            outputs:
+                index:
+        
+        # Collect insert-size, aka fragment-size, statistics
+        insert-metrics:
+            cwl-tool: picard-CollectInsertSizeMetrics
+            inputs:
+                input: dedup/markDups_output
+                output:
+                    type: string
+                    value: $(one.basename) + ".insert-metrics.txt"
+                histogram_file:
+                    type: string
+                    value: $(one.basename) + ".insert-metrics.pdf"
+                removeDuplicates: true
+            outputs:
+                output:
+                histogram:
+        
+        # Inspect coverage and gene bias:-
+        # bedtools genomecov -d -split -ibam 225-${fn}_nodup.bam
+        coverage:
+            cwl-tool: bedtools-genomecov
+            inputs:
+                input:
+                    source: dedup/markDups_output
+                    value: 
+                        ${
+                          self.format = "http://edamontology.org/format_2572";
+                          return self;
+                        }
+                depth:
+                    type : 'enum'
+                    value: '-d' #enum value form input specification of the CWL tool
+                
+                genomecoverageout:
+                    type: string
+                    value: $(one.basename) + ".genomecov.out"
+                
+                split: true
+                
+            outputs:
+                genomecoverage:
+         
+         # Summarize genomecov output
+         summarize-genomecov:
+            cwl-tool: awk
+            inputs:
+                infile: coverage/genomecoverage
+                program:
+                    type: string
+                    value: $( '{total += $3; count +=1; sumsq += $3*$3}; END {print "mean cov is", total / count, ". Var of cov is", (sumsq - total^2/count)/(count-1)}' ) 
+                outputFileName:
+                    type : string
+                    value: $(one.basename) + ".genomecov.summary.txt"
+            outputs:
+                output:
+        
+        # bedtools intersect genic
+        intersect-genic:
+            cwl-tool: bedtools-intersect
+            inputs:
+                inputA:
+                    source: dedup/markDups_output
+                    value:
+                        ${
+                          self.format = "http://edamontology.org/format_2572";
+                          return self;
+                        }
+                inputB: gff
+                split: true
+                intersectout:
+                    type: string
+                    value: $(one.basename) + ".intersect.nongenic.bam"
+            outputs:
+                intersect:
+        
+         # Inspect coverage of genic intersection
+         coverage-genic:
+            cwl-tool: bedtools-genomecov
+            inputs:
+                input:
+                    source: intersect-genic/intersect
+                    value:
+                        ${
+                            self.format = "http://edamontology.org/format_2572";
+                            return self;
+                        }
+                genomecoverageout:
+                    type : string
+                    value: $(one.basename) + ".genic.genomecov.out"
+                
+                    
+                depth:
+                    type : 'enum'
+                    value: '-d' #enum value form input specification of the CWL tool
+                    
+                split: true
+                
+            outputs:
+                genomecoverage:
+                
+        
+        # Summarize coverage output
+        summarize-genic-genomecov:
+            cwl-tool: awk
+            inputs:
+                inFile: coverage-genic/genomecoverage
+                program:
+                    type: string
+                    value: $( '{total += $3; count +=1}; END {print "total of all reads at genic bases", total, ", mean cov is", total / 13979861}' )
+                
+                outputFileName:
+                    type : string
+                    value: $(one.basename) + ".genic.genomecov.summary.txt"
+            outputs:
+                output:
+                
+        # Looking at bams in IGV is memory-hungry, and could be replaced by using tdf-format
+        # coverage files. 3D7-merge-B3_S1-C5_S2.bam done at command line.
+        # Default window size is 25bp
+        
+        igvtools:
+            cwl-tool: igvtools-count
+            
+            inputs:
+                inputFile: dedup/markDups_output
+                outputFileName:
+                    type : string
+                    value: $(one.basename) + ".tdf"
+                gnome: reference
+                
+            outputs:
+                output:
+                
+                    
+    #######       
+    process:
+        repeat:
+            for: 
+                iter1: [ child_read_1, child_read_2]
+                iter2: [ parent_read_1, parent_read_2 ]
+            mapto: [ read1, read2 ]
+            do:
+                scatter:
+                    use: [ read_1, read_2 ]
+                    method: dotproduct
+                    provide: [ one, two ]
+                    
+                    # Alignment to ref v29 with bowtie2
+                    align:
+                        cwl-tool: bowtie2
+                        inputs:
+                            #implicit input one by scatter
+                            #implicit input two by scatter
+                            samout:
+                                type: string
+                                value : $(one.basename) + ".sam"
+                            threads:
+                                type : int
+                                value : 8
+                             sensitive-local:
+                                type : boolean
+                                value: true
+                             bt2-idx:
+                                type : string
+                                value : $(reference.indexname)
+                        outputs:
+                            aligned-file:
+        
+                    # convert to bam
+                    convert:
+                        cwl-tool: samtools-view
+                        inputs:
+                            input: aligned/aligned-file
+                            output-name:
+                                type: string
+                                value: $(one.basename) + ".bam"
+                            threads:
+                                type : int
+                                value : 8
+                        outputs:
+                            output:
+        
+                    # sort and compress
+                    sort:
+                        cwl-tool: samtools-sort
+                        inputs:
+                            input: convert/output
+                            output-name:
+                                type: string
+                                value: $(one.basename) + ".sorted.bam"
+                            threads:
+                                type : int
+                                value : 8
+                        outputs:
+                            sorted:
+        
+                    # index bam    
+                    index:
+                        cwl-tool: samtools-index
+                        inputs:
+                            input: sort/sorted
+                        #implicit output
+        
+                    # Remove duplicate reads
+                    dedup:
+                        cwl-tool: picar-markduplicates
+                        inputs:
+                            inputFileName_markDups: sort/sorted
+                            outputFileName_markDups:
+                                type: string
+                                value: $(one.basename) + "_nodup.bam"
+                             metricsFile:
+                                type: string
+                                value: $(one.basename) + "_duplic.metrics"
+                            removeDuplicates: true
+                        outputs:
+                            markDups_output:
+                            markDups_metrics:
+        
+                    # index duplicates
+                    index-dedup:
+                        cwl-tool: samtools-index
+                        inoputs:
+                            input: dedup/markDups_output
+                        outputs:
+                            index:
+        
+                    # Collect insert-size, aka fragment-size, statistics
+                    insert-metrics:
+                        cwl-tool: picard-CollectInsertSizeMetrics
+                        inputs:
+                            input: dedup/markDups_output
+                            output:
+                                type: string
+                                value: $(one.basename) + ".insert-metrics.txt"
+                            histogram_file:
+                                type: string
+                                value: $(one.basename) + ".insert-metrics.pdf"
+                            removeDuplicates: true
+                        outputs:
+                            output:
+                            histogram:
+        
+                    # Inspect coverage and gene bias:-
+                    # bedtools genomecov -d -split -ibam 225-${fn}_nodup.bam
+                    coverage:
+                        cwl-tool: bedtools-genomecov
+                        inputs:
+                            input:
+                                source: dedup/markDups_output
+                                value: 
+                                    ${
+                                      self.format = "http://edamontology.org/format_2572";
+                                      return self;
+                                    }
+                            depth:
+                                type : 'enum'
+                                value: '-d' #enum value form input specification of the CWL tool
+                
+                            genomecoverageout:
+                                type: string
+                                value: $(one.basename) + ".genomecov.out"
+                
+                            split: true
+                
+                        outputs:
+                            genomecoverage:
+         
+                     # Summarize genomecov output
+                     summarize-genomecov:
+                        cwl-tool: awk
+                        inputs:
+                            infile: coverage/genomecoverage
+                            program:
+                                type: string
+                                value: $( '{total += $3; count +=1; sumsq += $3*$3}; END {print "mean cov is", total / count, ". Var of cov is", (sumsq - total^2/count)/(count-1)}' ) 
+                            outputFileName:
+                                type : string
+                                value: $(one.basename) + ".genomecov.summary.txt"
+                        outputs:
+                            output:
+        
+                    # bedtools intersect genic
+                    intersect-genic:
+                        cwl-tool: bedtools-intersect
+                        inputs:
+                            inputA:
+                                source: dedup/markDups_output
+                                value:
+                                    ${
+                                      self.format = "http://edamontology.org/format_2572";
+                                      return self;
+                                    }
+                            inputB: gff
+                            split: true
+                            intersectout:
+                                type: string
+                                value: $(one.basename) + ".intersect.nongenic.bam"
+                        outputs:
+                            intersect:
+        
+                     # Inspect coverage of genic intersection
+                     coverage-genic:
+                        cwl-tool: bedtools-genomecov
+                        inputs:
+                            input:
+                                source: intersect-genic/intersect
+                                value:
+                                    ${
+                                        self.format = "http://edamontology.org/format_2572";
+                                        return self;
+                                    }
+                            genomecoverageout:
+                                type : string
+                                value: $(one.basename) + ".genic.genomecov.out"
+                
+                    
+                            depth:
+                                type : 'enum'
+                                value: '-d' #enum value form input specification of the CWL tool
+                    
+                            split: true
+                
+                        outputs:
+                            genomecoverage:
+                
+        
+                    # Summarize coverage output
+                    summarize-genic-genomecov:
+                        cwl-tool: awk
+                        inputs:
+                            inFile: coverage-genic/genomecoverage
+                            program:
+                                type: string
+                                value: $( '{total += $3; count +=1}; END {print "total of all reads at genic bases", total, ", mean cov is", total / 13979861}' )
+                
+                            outputFileName:
+                                type : string
+                                value: $(one.basename) + ".genic.genomecov.summary.txt"
+                        outputs:
+                            output:
+                
+                    # Looking at bams in IGV is memory-hungry, and could be replaced by using tdf-format
+                    # coverage files. 3D7-merge-B3_S1-C5_S2.bam done at command line.
+                    # Default window size is 25bp
+        
+                    igvtools:
+                        cwl-tool: igvtools-count
+            
+                        inputs:
+                            inputFile: dedup/markDups_output
+                            outputFileName:
+                                type : string
+                                value: $(one.basename) + ".tdf"
+                            gnome: reference
+                
+                        outputs:
+                            output:
+    
+    
+    # Parent Merge
+    merge-parents:
+        cwl-tool: samtools-merge
+        inputs:
+            input: process[iter2]/dedup/markDups_output
+            outputFile:
+                value: $('3D7-merge-B2_S1-F4_S4.bam')
+        outputs:
+            merge:
+
+    # GRIDSS
+    scatter:
+        use: [ process[iter2]/dedup/markDups_output ]
+        provide: [ main-input ]
+            
+        gridss:
+            cwl-tool: gridss-callvariants
+            inputs:
+                input:
+                    source: main-input
+                    value:
+                        ${
+                            if ( self == null ) {
+                                return null;
+                            } else {
+                                return [self];
+                            }
+                        }
+                input2:
+                    source: merge-parents/merge
+                    value:
+                        ${
+                            if ( self == null ) {
+                                return null;
+                            } else {
+                                return [self];
+                            }
+                        }
+                
+                input-label:
+                    type : array
+                    element : string
+                    source : main-input
+                    value: 
+                        ${
+                            return [self.nameroot];
+                        }
+                input-label2:
+                    type : array
+                    element : string
+                    source : merge-parents/merge
+                    value: 
+                        ${
+                            return [self.nameroot];
+                        }
+                output:
+                    source: main-input
+                    value:
+                        ${
+                            return self.nameroot + '.gridss.assembly.vcf'
+                        }
+                assembly:
+                    source: main-input
+                    value:
+                        ${
+                            return self.nameroot + '.gridss.assembly.bam'
+                        }
+                reference_sequence: reference
+                blacklist: blacklist
+                
+            
+            
+                #Implicit maininput
+                parent-merge: merge-parents/merge
+                #Implicit reference
+                #Implicit blacklist
+                
+            outputs:
+                vcf:
+                bam:
+                vcf_working:
+                bam_working:
+                
+            
+            
+            
+            
+                
+
+                
+                
+                
+            
+                    
+                    
+                
+                
+                 
+                
+                
+                
             
 
 

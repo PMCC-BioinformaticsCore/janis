@@ -1,0 +1,91 @@
+ workflow:
+     name : main
+     location: ../data/
+    
+    inputs:
+        child_reads : 
+            type : SequenceReadArchivePaired
+            forward-pattern: "regex"
+            backward-pattern: "regex"
+
+        parent_reads : 
+            type : SequenceReadArchivePaired
+            forward-pattern: "regex"
+            backward-pattern: "regex"
+
+        reference_29:
+            type: RefGenome
+            name: PlasmoDB-29_Pfalciparum3D7_Genome
+
+        gff:
+            type: GenFeatureFormat
+            name: PlasmoDB-29_Pfalciparum3D7
+
+        blacklist: file:://path/to/CentromereTelomereRegions.bed
+        
+        
+        workflow:
+            name : "common"
+            Inputs:
+                forward: File
+                backward: File
+            outputs:
+                out1:
+                out2:
+                out3:
+            steps:
+        
+                align:
+                    method: align
+                    inputs:
+                        forward: #<-- Implicit forward / backward mapping 
+                        backkward:                
+                        reference: referrence_29
+                    outputs:
+                        aligned-file:
+        
+                convert:
+                    method: samtools-view
+                    inputs:
+                        input: align/aligned-file
+                        output-basename: forward.basename
+                    outputs:
+                        output:
+                        
+                
+            
+    steps:
+        process-child:
+            method: "common"
+            scatter: child_reads
+        
+        process-parents:
+            method: "common"
+            scatter: parent_reads
+                
+        merge-parents:
+            method: samtools-merge
+            inputs:
+                input: process-parents/dedup/markDups_output
+                outputFile: 3D7-merge-B2_S1-F4_S4.bam
+            outputs:
+                merge:
+    
+        gridss:
+            method: gridss-callvariants
+            scatter: process-parents/dedup/markDups_output
+            inputs:
+                input: $1 #<- Implicit mapping
+                input2: merge-parents/merge
+                input-label:  $1.basename
+                input-label2: merge-parents/merge.basename
+                output: $1.basename #<- The method adds "'.gridss.assembly.vcf"
+                assembly: $1.basename #<- The method adds ".gridss.assembly.bam"
+                reference_sequence: reference_29
+                blacklist: blacklist                
+
+        
+        
+        
+        
+        

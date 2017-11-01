@@ -962,34 +962,11 @@ files are associated sets. Their names are in pattern.
                 bam_working:
                 
             
-            
-            
-            
-                
 
-                
-                
-                
-            
-                    
-                    
-                
-                
-                 
-                
-                
-                
-            
+####################################################################
+####################################################################
+####################################################################
 
-
-            
-            
-            
-            
-            
-            
-        
-              
 
 
 
@@ -1014,50 +991,7 @@ workflow:
     # Alignment to ref v29 with bowtie2
     align:
             
-            
-        
-              
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
 But the world is not ideal, we always have certain changes.
 Domain specific worlflows can hugely benefit from usage of "convention"
 

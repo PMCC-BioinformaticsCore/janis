@@ -83,10 +83,10 @@
                             threads:
                                 type : int
                                 value : 8
-                             sensitive-local:
+                            sensitive-local:
                                 type : boolean
                                 value: true
-                             bt2-idx:
+                            bt2-idx:
                                 type : string
                                 value : $(reference.indexname)
                         outputs:
@@ -135,7 +135,7 @@
                             outputFileName_markDups:
                                 type: string
                                 value: $(one.basename) + "_nodup.bam"
-                             metricsFile:
+                            metricsFile:
                                 type: string
                                 value: $(one.basename) + "_duplic.metrics"
                             removeDuplicates: true
@@ -193,7 +193,7 @@
                             genomecoverage:
          
                      # Summarize genomecov output
-                     summarize-genomecov:
+                    summarize-genomecov:
                         cwl-tool: awk
                         inputs:
                             infile: coverage/genomecoverage
@@ -226,7 +226,7 @@
                             intersect:
         
                      # Inspect coverage of genic intersection
-                     coverage-genic:
+                    coverage-genic:
                         cwl-tool: bedtools-genomecov
                         inputs:
                             input:
@@ -298,7 +298,6 @@
     scatter:
         use: [ process[iter2]/dedup/markDups_output ]
         provide: [ main-input ]
-            
         gridss:
             cwl-tool: gridss-callvariants
             inputs:

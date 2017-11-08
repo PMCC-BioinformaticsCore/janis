@@ -1,0 +1,5 @@
+---
+
+- hosts: vm
+  roles:
+    - workflow

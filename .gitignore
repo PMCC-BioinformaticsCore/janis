@@ -40,3 +40,41 @@ tmtagsHistory
 *.sublime-workspace
 .bundle
 
+# Added by Mohammad
+
+## Generic
+**/*~
+**/*.lock
+**/*.swp
+**/*.out
+**/.gradle/
+**/.DS_Store
+
+## Java stuffs
+**/*.class
+
+## Build Tools
+**/Build.Tools/gradle
+**/*.tmp
+
+## Eclipse
+**/*.cache
+
+## Gradle
+**/build/
+
+##Python IDE
+**/.idea/
+
+##Local node modules cache
+**/node_modules
+
+#Ansible retry file
+**/*.retry
+
+
+
+
+
+
+

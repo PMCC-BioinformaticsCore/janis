@@ -1,0 +1,158 @@
+workflow:
+    name : PDX
+    location: ../data/
+    
+    inputs:
+        reads : 
+            type : SequenceReadArchivePaired
+            forward-pattern: "regex"
+            backward-pattern: "regex"
+
+        adapters:
+            type: FastaFile
+            name: TruSeq3-PE
+            
+        workflow:
+            name : "common"
+            Inputs:
+                forward: File
+                backward: File
+            outputs:
+                out1:
+                out2:
+                out3:
+            steps:
+                trim:
+                    method: trimmomatic
+                    inputs:
+                        forward:
+                        backkward:                
+                        adapetrs:
+                    outputs:
+                        output_log:
+                        forward_trimmed:
+                        forward_trimmed_unpaired:
+                        backward_trimmed_paired:
+                        backward_trimmed_unpaired:
+                        aligned-file:
+        
+                rename_forward_trimmed:
+                    method: rename-file
+                    inputs:
+                        infile: trim/forward_trimmed
+                    outputs:
+                        renamed:
+                
+                rename_backward_trimmed_paired:
+                    method: rename-file
+                    inputs:
+                        infile: trim/backward_trimmed_paired
+                    outputs:
+                        renamed:
+                
+                align-to-mouse:
+                    method: bowtie2
+                    inputs:
+                        one: trim/forward_trimmed
+                        two: rename_backward_trimmed_paired/renamed
+                        unpaired: trim/forward_trimmed_unpaired
+                        bt2-idx: file:///stornext/HPCScratch/PapenfussLab/reference_genomes/bowtie2/GRCm38
+                    outputs:
+                        aligned-file:
+
+                align-to-human:
+                    method: bowtie2
+                    inputs:
+                        one: rename_forward_trimmed/renamed
+                        two: rename_backward_trimmed_paired/renamed
+                        unpaired: trim/forward_trimmed_unpaired
+                        bt2-idx: fille:///wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/reference_genomes/human_new/no_alt/hg38_no_alt.fa 
+                    outputs:
+                        aligned-file:
+                        
+                convert-human:
+                    method: samtools-view
+                    inputs:
+                        input: align-to-human/aligned-file
+                    outputs:
+                        output:
+            
+                sort-human:
+                    method: samtools-sort
+                    inputs:
+                        input: convert-human/output
+                    outputs:
+                        sorted
+                        
+                index-human:
+                    method: samtools-index
+                    inputs:
+                        input: sort-human/sorted
+                    outputs:
+                        index:
+                
+                gridss-human:
+                    method: gridss-callvariants
+                    inputs:
+                        input: sort-human/sorted
+                        reference-sequence: file:///wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/reference_genomes/human_new/no_alt/hg38_no_alt.fa
+                    outputs:
+                         vcf:
+                         bam:
+                         vcf_working:
+                         bam_working:
+                
+                gridss-bgzip:
+                    method: bgzip
+                    inputs:
+                        inputFile: gridss-human/vcf
+                    outputs: 
+                        bgzip:
+                gridss-tabix:
+                    mrthod: tabix
+                    inputs:
+                        inputFile: gridss-bgzip/bgzip
+                    putputs:
+                        tabix:
+                xenomapping:
+                    method: xenomapper
+                    inputs:
+                        primary_sam: align-to-human/aligned-file
+                        secondary_sam: align-to-mouse/aligned-file
+                    outputs:
+                        primary_specific:
+                        secondary_specific:
+                        primary_multi:
+                        secondary_multi:
+                        unassigned:
+                        unresolved:
+
+                platypus:
+                    method: platypus
+                    inputs:
+                        bamFiles: index-human/index
+                        refFile: file:///wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/reference_genomes/human_new/no_alt/hg38_no_alt.fa
+                    outputs:
+                        output:
+
+                platypus-bgzip:
+                    method: bgzip
+                    inputs:
+                        inputFile: platypus/output
+                    outputs:
+                        bgzip:
+                
+                platypus-tabix:
+                    method: tabix
+                    inputs:
+                        inputFile: platypus-bgzip/bgzip
+                    outputs:
+                        tabix:
+                        
+    steps:
+        process:
+            method: common
+            scatter: reads
+        
+                
+        

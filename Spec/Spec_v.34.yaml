@@ -61,11 +61,11 @@
     steps:
         process-child:
             method: "common"
-            input: child_reads
+            scatter: child_reads
         
         process-parents:
             method: "common"
-            input: parent_reads
+            scatter: parent_reads
                 
         merge-parents:
             method: samtools-merge

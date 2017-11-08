@@ -7,9 +7,9 @@ baseCommand: [echo]
 
 
 inputs:
-	message:
-		type: string
-		inputBinding:
-			position: 1
+  message:
+    type: string
+    inputBinding:
+      position: 1
 
 outputs: []

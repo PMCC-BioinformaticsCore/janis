@@ -1,5 +1,4 @@
 #!/usr/bin/env cwl-runner
-
 class: Workflow
 cwlVersion: v1.0
 
@@ -10,13 +9,13 @@ requirements:
  - class: SubworkflowFeatureRequirement
 
 inputs:
-  message:
+   message:
     type: string
-
-outputs:
+outputs: []
 
 steps:
   echo:
-    run: echotool.cwl
-    in: message
+   run: echotool.cwl
+   in: message
+   out: []
 

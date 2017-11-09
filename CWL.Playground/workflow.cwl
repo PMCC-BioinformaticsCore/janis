@@ -20,5 +20,3 @@ steps:
     run: echotool.cwl
     in: message
 
-   
-		

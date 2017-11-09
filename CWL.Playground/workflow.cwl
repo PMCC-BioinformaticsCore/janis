@@ -4,21 +4,21 @@ class: Workflow
 cwlVersion: v1.0
 
 requirements:
-- class: InlineJavascriptRequirement
-- class: ScatterFeatureRequirement
-- class: StepInputExpressionRequirement
-- class: SubworkflowFeatureRequirement
+ - class: InlineJavascriptRequirement
+ - class: ScatterFeatureRequirement
+ - class: StepInputExpressionRequirement
+ - class: SubworkflowFeatureRequirement
 
 inputs:
   message:
     type: string
 
 outputs:
-  
-  
+
 steps:
   echo:
-   run: echotool.cwl
-   in: message
+    run: echotool.cwl
+    in: message
+
    
 		

@@ -1,0 +1,56 @@
+workflow:
+    inputs:
+        children : 
+            type : SequenceReadArchivePaired
+            forward-pattern: "regex"
+            backward-pattern: "regex"
+
+        parent : 
+            type : SequenceReadArchivePaired
+            forward-pattern: "regex"
+            backward-pattern: "regex"
+            
+        X:
+        Y:
+        Z:
+
+    steps:
+        qc:
+            inputs:
+                 [children + parent] # Combined set
+            
+            
+            So this makes a explicit assignment of all files form union of children and parent
+            X, Y, Z can be implicitly mapped (if applicable)
+    
+    
+        align:
+            inputs: [children], [parent] # Two thread. Each thread can scatter over reads 
+            
+            
+            
+            
+        sort:
+            inputs: # {}
+        dedup:
+        metrics:
+        index:
+        call: 
+        
+        merge-parents: # implicit gather
+            input: parent
+            output: merged_parents
+            
+        gridss:
+            baseline: merge_parents/merged_parents
+            inputs: children
+
+        report:
+            input: [ metrics ]
+        
+        archive:
+            input: [ process[child_therad], process[parent_thread], report ]
+
+        upload:
+            input: [archive]
+            

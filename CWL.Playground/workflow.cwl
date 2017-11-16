@@ -11,11 +11,13 @@ requirements:
 inputs:
    message:
     type: string
+    
 outputs: []
 
 steps:
   echo:
    run: echotool.cwl
-   in: message
+   in:
+     message: message
    out: []
 

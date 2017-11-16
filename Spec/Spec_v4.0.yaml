@@ -1,0 +1,57 @@
+workflow:
+     
+    
+    inputs:
+        child_reads : 
+            type : SequenceReadArchivePaired
+            forward-pattern: "regex"
+            backward-pattern: "regex"
+            tag: children
+
+        parent_reads : 
+            type : SequenceReadArchivePaired
+            forward-pattern: "regex"
+            backward-pattern: "regex"
+            tag: parents
+
+        reference_29:
+            type: RefGenome
+            name: PlasmoDB-29_Pfalciparum3D7_Genome
+
+        gff:
+            type: GenFeatureFormat
+            name: PlasmoDB-29_Pfalciparum3D7
+
+        blacklist: file:://path/to/CentromereTelomereRegions.bed
+    
+    
+    steps:
+        qa:
+           input: child_reads + parent_reads 
+        
+        process:
+            input: children + parents
+            steps:
+                align:
+                sort:
+                dedup:
+                metrics:
+                index:
+                call:
+        
+        merge-parents:
+            input: parent_reads
+            output: parent_merge
+            
+        gridss:
+            input1: children
+            compare: parent_merge
+
+        report:
+            input: [ process_parent/metrics, process_child/metrics ]
+        
+        archive:
+            input: [ process_child, process_parent, report ]
+        upload:
+            input: archive
+            

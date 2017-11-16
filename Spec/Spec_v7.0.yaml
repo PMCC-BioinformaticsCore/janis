@@ -1,0 +1,180 @@
+workflow:
+    inputs:
+        children : 
+            type : SequenceReadArchivePaired
+            forward-pattern: "regex"
+            backward-pattern: "regex"
+
+        parent : 
+            type : SequenceReadArchivePaired
+            forward-pattern: "regex"
+            backward-pattern: "regex"
+    steps:
+        qc:
+            inputs:
+                samples: parent, children
+                fastq: children , parent # Union of sets
+
+        align:
+            inputs:
+                paired-read: children, parent # Threads of processting over sets. (Then scattering on each set)
+            outputs:
+                aligned-file:
+            
+        #output of align is 1 file named aligned-file
+        #In reality it is generating: children.align.aligned-file[] | parent.align.aligned-file[]
+        
+        #Next step takes only one file. 
+        #since each output of a processing instance can be plugged into convert, convert is now part of the thread
+        
+        convert:
+            inputs:
+                input:
+            outputs:
+                out:
+
+        #one file generated can flow into next
+        
+        sort:
+            inputs:
+                file:
+            outputs:
+                sorted:
+        
+        #one file generated can flow into next
+
+        index:
+
+        
+        dedup:
+            inputs:
+                file:
+            outputs:
+                dups_output:
+                dups_metrics:
+                
+        # !!!!!Mismatch - Next step takes one file, which to plug in?????        
+        #
+        #    - Explicit mapping
+        #    - Implicit name matching
+        #    - Type matching
+            
+        #    Or fail with clear message 
+                
+        index-dedup:
+            inputs:
+                input: dedup/dups_output
+         
+        # We can have a convention that of not path then 
+        # A global match
+        # Or a match form last one on the flow chain
+        
+        #Failing with error if ambiguius
+         
+        metrics:
+            inputs:
+                input: dups_output
+                
+            outputs:
+                output:
+                historgam:
+                
+        coverage:
+            inputs:
+                input: dups_output
+                
+        #output flows into next
+                    
+        summarize-genomecov:
+        
+        
+        merge-parents: 
+            inputs:
+                samples: parents
+                input: deups_output # This indicates a gather on a thread
+                
+                
+                #Note:
+                
+                #parent in itself could mean the global data type
+                #If we set a convention that parent should indicate the last thread usage
+                
+                #The the advantage is:
+                #    - "parent[dups_output]" could be used with the help of convention C2
+                #    - "parent" could be used in conjunction with name mapping
+                
+                #The problem is:
+                #   - How do we refer to global parent? Example "Diff". "global.parent"
+                #   - If there are two instances of threading using parent data set 
+                #     and the gater is not immediate? 
+                # 
+                
+            outputs:
+                merge:
+        
+        diff:
+            inputs:
+                originl: parents
+                transformed:
+                    data: parents
+                    source: dedup
+                    
+            
+        
+            samples: parents
+            first: input
+            second: merge
+            
+            
+            Scatter? of children
+            
+        gridss: <- The step implementation will dictate if it scatters on an input
+            inputs:
+                children: children[dedup/dups_output]
+                parent-merge: merge # Convention is to look in chain up. 
+        
+        
+        report:
+        archive:
+        upload:
+
+
+        mega-merge:
+            inputs:
+                proc1-parents:
+                    data : parents
+                    source: 
+                proc1-children:
+                    data : children
+                    source: 
+                proc2-parents:
+                    data : parents
+                    source: 
+                proc1-children:
+                    data : children
+                    source: step name / alias
+            
+        # Multiple steps with same name needs to be disambiguate with alias    
+    
+
+
+To reduce syntax can we do:
+
+For input, i.XXXXX
+For output o.XXXX
+
+
+
+
+
+
+
+
+
+Conventions:
+
+C1: Steps are assumed in order unless otherwise proven by input dependency
+
+C2: In mapping if not path then plug in global or output form immediate step
+
+            

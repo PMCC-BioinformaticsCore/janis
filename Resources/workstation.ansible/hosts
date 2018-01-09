@@ -1,9 +1,0 @@
-[all:vars]
-ansible_connection=ssh 
-ansible_ssh_user=bhuyan.m 
-
-[vm]
-vc7hpc-085.hpc.wehi.edu.au
-
-
-

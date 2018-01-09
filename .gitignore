@@ -65,6 +65,7 @@ tmtagsHistory
 
 ##Python IDE
 **/.idea/
+venv/
 
 ##Local node modules cache
 **/node_modules

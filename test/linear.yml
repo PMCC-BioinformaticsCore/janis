@@ -1,0 +1,18 @@
+#
+# A basic linear pipeline
+# 1. trim
+# 2. align
+# 3. call
+
+inputs:
+  fastqs:
+    type: SequenceReadArchivePaired
+    forward-pattern: '*_R1.fastq.gz'
+    backward-pattern: '*_R2.fastq.gz'
+
+steps:
+  - trim:
+      caller: cutadapt
+  - align
+  - call
+

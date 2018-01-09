@@ -1,9 +1,0 @@
----
-- name: Create WeHi Virtual Env
-  shell: source /usr/bin/virtualenvwrapper.sh && mkvirtualenv wehi
-  
-- name: Install CWL
-  shell: source /usr/bin/virtualenvwrapper.sh && workon wehi && pip install setuptools --upgrade && pip install cwlref-runner
-  
-  
-  

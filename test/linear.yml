@@ -6,9 +6,9 @@
 
 inputs:
   fastqs:
-    type: SequenceReadArchivePaired
-    forward-pattern: '*_R1.fastq.gz'
-    backward-pattern: '*_R2.fastq.gz'
+    SequenceReadArchivePaired:
+      forward-pattern: '*_R1.fastq.gz'
+      backward-pattern: '*_R2.fastq.gz'
 
 steps:
   - trim:

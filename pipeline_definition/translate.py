@@ -6,7 +6,7 @@ class InvalidInput(Exception):
     pass
 
 
-def translate(fn):
+def main(fn):
 
     with open(fn, 'r') as f:
         data = f.read()
@@ -21,7 +21,7 @@ def build_input(yml):
     except KeyError:
         raise InvalidInput('The workflow must specify inputs')
 
-    if len(inputs) == 0:
+    if inputs is None or len(inputs) == 0:
         raise InvalidInput('The workflow must specify inputs')
 
     print(yml)

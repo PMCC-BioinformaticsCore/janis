@@ -6,14 +6,17 @@ from abc import ABC, abstractmethod
 
 class InputFactory(ABC):
     @classmethod
+    @abstractmethod
     def build(cls, yml):
         pass
 
     @classmethod
+    @abstractmethod
     def describe(cls):
         pass
 
     @classmethod
+    @abstractmethod
     def type(cls):
         pass
 

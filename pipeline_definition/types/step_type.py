@@ -1,10 +1,10 @@
 #
-# Input type base class
+#
 #
 from abc import ABC, abstractmethod
 
 
-class InputFactory(ABC):
+class StepFactory(ABC):
     @classmethod
     @abstractmethod
     def build(cls, yml):
@@ -31,36 +31,14 @@ class InputFactory(ABC):
         pass
 
 
-class InputSet(ABC):
+class Step(ABC):
     @abstractmethod
     def __init__(self, yml):
         self.type = yml['type']
 
-    @abstractmethod
-    def input_set(self):
-        pass
-
     def type(self):
         return self.type
 
-
-class Input(ABC):
     @abstractmethod
-    def file_set(self):
-        pass
-
-    @abstractmethod
-    def type(self):
-        pass
-
-    @abstractmethod
-    def save(self):
-        pass
-
-    @abstractmethod
-    def label(self):
-        pass
-
-    @abstractmethod
-    def description(self):
+    def can_default(self):
         pass

@@ -3,6 +3,7 @@
 # 1. trim
 # 2. align
 # 3. call
+#
 
 inputs:
   fastqs:

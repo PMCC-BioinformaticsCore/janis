@@ -1,0 +1,44 @@
+__init__.py:
+
+from .type_registry import TypeRegistry
+pd_registry = TypeRegistry();
+
+
+type_registry.py:
+
+
+class TypeRegistry:
+    def __init__(self):
+        self.__inputs_registry = Registry()
+        self.__steps_registry = Registry()
+        self.__outputs_regstry = Registry()
+
+    def register_input_factory(self, factory):
+        self.__inputs_registry.register_factory(factory)
+
+    def get_input_factory(self, type_name):
+        return self.__inputs_registry.factory * type_name
+
+    def get_input_factories(self):
+        return self.__inputs_registry.factories()
+
+    def register_step_factory(self, factory):
+        self.__steps_registry.register_factory(factory)
+
+    def get_step_factory(self, type_name):
+        return self.__steps_registry.factory * type_name
+
+    def get_step_factories(self):
+        return self.__steps_registry.factories()
+
+    @staticmethod
+    def say():
+        print("Hello!");
+
+
+
+Play.py:
+
+from pipeline_definition.types import pd_registry
+
+pd_registry.say();

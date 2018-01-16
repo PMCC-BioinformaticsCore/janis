@@ -1,6 +1,7 @@
-#
-# Test loading the registry and dumping the schema
-#
+
+from cerberus import Validator
+import yaml
+
 from pipeline_definition.types.input_type import InputFactory
 from pipeline_definition.types.schema import schema
 from pipeline_definition.types.type_registry import register_input_factory
@@ -58,6 +59,13 @@ class BAMFactory(InputFactory):
 register_input_factory(PairedReadFactory())
 register_input_factory(BAMFactory())
 
-print(schema())
+sch = schema()
 
+stream = open("linear.yml", "r")
+doc = yaml.load(stream)
 
+v = Validator( sch );
+
+v.validate( doc );
+
+print(v.errors)

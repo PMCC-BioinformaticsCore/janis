@@ -1,5 +1,5 @@
 #
-# Build the WF schema from registered types
+# Build the WF document schema from registered types
 #
 
 from pipeline_definition.types import type_registry
@@ -36,6 +36,8 @@ def __step_scheme():
 
 
 def schema():
-    return dict(__input_schema().items() + __step_scheme().items())
+    #return dict(__input_schema().items() + __step_scheme().items())
 
+    #https://stackoverflow.com/questions/38987/how-to-merge-two-dictionaries-in-a-single-expression
+    return {**__input_schema(), **__step_scheme()}
 

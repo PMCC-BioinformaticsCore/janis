@@ -1,24 +1,22 @@
 #
+# Registry of objects
 #
-#
-
 
 class RegistryException(Exception):
     pass
-
 
 class Registry:
     def __init__(self):
         self.registry = {}
 
-    def register_factory(self, factory):
-        if factory.type() in self.registry:
-            raise RegistryException('Type %s is already registered.' % factory.type())
+    def register(self, obj):
+        if obj.type() in self.registry:
+            raise RegistryException('Type %s is already registered.' % obj.type())
 
-        self.registry[factory.type()] = factory
+        self.registry[obj.type()] = obj
 
-    def factories(self):
+    def objects(self):
         return self.registry.values()
 
-    def factory(self, type_name):
-        return self.factory[type_name]
+    def object(self, type_name):
+        return self.registry[type_name]

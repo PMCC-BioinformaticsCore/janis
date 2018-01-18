@@ -1,11 +1,11 @@
+import argparse
 
-from cerberus import Validator
-import yaml
+import atexit
 
 from pipeline_definition.types.input_type import InputFactory
-from pipeline_definition.types.schema import schema
-from pipeline_definition.types.type_registry import register_input_factory
+from pdx import PDX
 
+from pipeline_definition.types.type_registry import register_input_factory
 
 class PairedReadFactory(InputFactory):
     @classmethod
@@ -56,16 +56,26 @@ class BAMFactory(InputFactory):
         return cls.label()
 
 
-register_input_factory(PairedReadFactory())
-register_input_factory(BAMFactory())
 
-sch = schema()
+def main( opts ):
+    def atExit():
+        print("BYE!!")
+    atexit.register( atExit )
 
-stream = open("linear.yml", "r")
-doc = yaml.load(stream)
+    #Get specified file to translate
+    pdfile = opts.pdfile
 
-v = Validator( sch );
+    # Extend translator by registering factories
+    register_input_factory(PairedReadFactory())
+    register_input_factory(BAMFactory())
 
-v.validate( doc );
+    pdx = PDX()
+    pdx.translate( pdfile )
 
-print(v.errors)
+
+if __name__ == "__main__":
+    argprsr = argparse.ArgumentParser()
+    argprsr.add_argument('pdfile', help='Pipeline Definition file.')
+    opts = argprsr.parse_args()
+    main( opts );
+

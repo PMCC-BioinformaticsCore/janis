@@ -119,7 +119,10 @@ doc = load(yml)
 
 v = Validator()
 
-print()
+import json
+print(json.dumps(schema, indent=4))
+
+
 print('input yaml: ' + str(doc))
 if not v.validate(doc, schema):
     print('failure: ' + str(v.errors))

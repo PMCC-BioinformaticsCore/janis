@@ -3,7 +3,7 @@ import argparse
 import atexit
 
 from pipeline_definition.types.input_type import InputFactory
-from pdx import PDX
+from .pdx import PDX
 
 from pipeline_definition.types.type_registry import register_input_factory
 
@@ -11,8 +11,10 @@ class PairedReadFactory(InputFactory):
     @classmethod
     def describe(cls):
         return {
-            'forward-pattern':  {'type': 'string'},
-            'backward-pattern': {'type': 'string'}
+            'schema' : {
+                'forward-pattern': {'type': 'string'},
+                'backward-pattern': {'type': 'string'}
+            }
         }
 
     @classmethod
@@ -36,7 +38,10 @@ class BAMFactory(InputFactory):
     @classmethod
     def describe(cls):
         return {
-            'path':  {'type': 'string'}
+            'schema' : {
+                'path': {'type': 'string'}
+            }
+
         }
 
     @classmethod
@@ -65,12 +70,14 @@ def main( opts ):
     #Get specified file to translate
     pdfile = opts.pdfile
 
+    pdfile = "pd_1.yml"
+
     # Extend translator by registering factories
-    register_input_factory(PairedReadFactory())
-    register_input_factory(BAMFactory())
+    #register_input_factory(PairedReadFactory())
+    #register_input_factory(BAMFactory())
 
     pdx = PDX()
-    pdx.translate( pdfile )
+    pdx.translate( pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx"  )
 
 
 if __name__ == "__main__":

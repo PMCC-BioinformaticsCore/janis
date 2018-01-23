@@ -1,0 +1,7 @@
+from pipeline_definition.bio_informatics.bam import BAMFactory
+from pipeline_definition.bio_informatics.paired_read import PairedReadFactory
+from pipeline_definition.types.type_registry import register_input_factory
+
+register_input_factory(PairedReadFactory())
+register_input_factory(BAMFactory())
+

@@ -42,7 +42,6 @@ class PDX:
 
         v.validate(yamlDoc);
 
-
     def translate(self, pdfile, outfile=None ):
         pdfilePath = os.path.abspath(pdfile)
         print("Using PD file: " + pdfilePath)
@@ -70,5 +69,4 @@ class PDX:
 
         # Do schema validation
         self.validateSchema( doc )
-
 

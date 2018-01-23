@@ -1,65 +1,9 @@
 import argparse
-
 import atexit
 
-from pipeline_definition.types.input_type import InputFactory
-from .pdx import PDX
+import pipeline_definition.bio_informatics
 
-from pipeline_definition.types.type_registry import register_input_factory
-
-class PairedReadFactory(InputFactory):
-    @classmethod
-    def describe(cls):
-        return {
-            'schema' : {
-                'forward-pattern': {'type': 'string'},
-                'backward-pattern': {'type': 'string'}
-            }
-        }
-
-    @classmethod
-    def build(cls, yml):
-        return None
-
-    @classmethod
-    def type(cls):
-        return 'SequenceReadArchivePaired'
-
-    @classmethod
-    def label(cls):
-        return 'paired read files'
-
-    @classmethod
-    def description(cls):
-        return cls.label()
-
-
-class BAMFactory(InputFactory):
-    @classmethod
-    def describe(cls):
-        return {
-            'schema' : {
-                'path': {'type': 'string'}
-            }
-
-        }
-
-    @classmethod
-    def build(cls, yml):
-        return None
-
-    @classmethod
-    def type(cls):
-        return 'BAM'
-
-    @classmethod
-    def label(cls):
-        return 'BAM file'
-
-    @classmethod
-    def description(cls):
-        return cls.label()
-
+from pipeline_definition.pdx import PDX
 
 
 def main( opts ):
@@ -71,10 +15,6 @@ def main( opts ):
     pdfile = opts.pdfile
 
     pdfile = "pd_1.yml"
-
-    # Extend translator by registering factories
-    #register_input_factory(PairedReadFactory())
-    #register_input_factory(BAMFactory())
 
     pdx = PDX()
     pdx.translate( pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx"  )

@@ -17,7 +17,8 @@ def main( opts ):
     pdfile = "pd_1.yml"
 
     pdx = PDX()
-    pdx.translate( pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx"  )
+    #pdx.translate( pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx", overwriteOutfile=True  )
+    pdx.translate(pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx")
 
 
 if __name__ == "__main__":

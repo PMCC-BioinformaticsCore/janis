@@ -65,7 +65,7 @@ class PDX:
         self.translateInputs(inputs)
         self.translateSteps(steps)
 
-        return None
+        return "TX Output"
 
     def translateInputs(self, inputs ):
         for key, value in inputs.items():
@@ -80,10 +80,6 @@ class PDX:
             print(key, "=>", val)
 
         return None
-
-
-
-
 
     def translateSteps(self, steps ):
 
@@ -108,7 +104,7 @@ class PDX:
             print(stepType, "=>", val)
 
 
-    def translate(self, pdfile, outfile=None ):
+    def translate(self, pdfile, outfile=None, overwriteOutfile=False ):
         pdfilePath = os.path.abspath(pdfile)
         print("Using PD file: " + pdfilePath)
 
@@ -120,26 +116,23 @@ class PDX:
         outfilePath = os.path.abspath(outfile)
 
         print("Using Output file: " + outfilePath)
-        if os.path.isfile(outfilePath) :
-            raise ValueError("Outfile already exists.")
+        if overwriteOutfile is False:
+            if os.path.isfile(outfilePath) :
+                raise ValueError("Outfile already exists.")
 
         if os.path.isdir(outfilePath) :
             raise ValueError("Directoiry already exists with the name of outfile.")
 
+        with open(pdfile, 'r') as ifile:
+            # Validate YAML syntax
+            doc = yaml.load(ifile)
 
-        # Open file stream
-        file = open(pdfile, 'r')
+            # Do schema validation
+            self.validateSchema( doc )
 
-        # Validate YAML syntax
-        doc = yaml.load(file)
+            tDoc = self.translateYamlDoc( doc )
+            print("Output: ", tDoc)
 
-        # Do schema validation
-        self.validateSchema( doc )
-
-        tDoc = self.translateYamlDoc( doc )
-
-
-
-
-
+            with open( outfilePath, "w" ) as ofile:
+                ofile.write( tDoc )
 

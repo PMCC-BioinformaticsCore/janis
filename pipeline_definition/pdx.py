@@ -105,6 +105,8 @@ class PDX:
 
             val = stepFactory.emit()
 
+            print(stepType, "=>", val)
+
 
     def translate(self, pdfile, outfile=None ):
         pdfilePath = os.path.abspath(pdfile)

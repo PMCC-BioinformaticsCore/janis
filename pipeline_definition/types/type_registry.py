@@ -22,7 +22,7 @@ def get_input_factories():
 
 
 def register_step_factory(factory):
-    __steps_registry.register_factory(factory)
+    __steps_registry.register(factory)
 
 
 def get_step_factory(type_name):

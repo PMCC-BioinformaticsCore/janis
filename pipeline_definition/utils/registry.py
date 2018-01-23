@@ -19,4 +19,4 @@ class Registry:
         return self.registry.values()
 
     def object(self, type_name):
-        return self.registry[type_name]
+        return self.registry.get(type_name)

@@ -30,6 +30,11 @@ class InputFactory(ABC):
     def label(cls):
         pass
 
+    @classmethod
+    @abstractmethod
+    def emit(cls):
+        pass
+
 
 class InputSet(ABC):
     @abstractmethod

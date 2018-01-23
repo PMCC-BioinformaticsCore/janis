@@ -26,3 +26,7 @@ class PairedReadFactory(InputFactory):
     @classmethod
     def description(cls):
         return cls.label()
+
+    @classmethod
+    def emit(cls):
+        return "Translation by " + cls.__name__

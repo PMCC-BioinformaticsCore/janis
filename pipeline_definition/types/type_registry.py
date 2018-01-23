@@ -13,7 +13,8 @@ def register_input_factory(factory):
 
 
 def get_input_factory(type_name):
-    return __inputs_registry.factory*type_name
+    #return __inputs_registry.factory*type_name
+    return __inputs_registry.object(type_name)
 
 
 def get_input_factories():
@@ -25,7 +26,7 @@ def register_step_factory(factory):
 
 
 def get_step_factory(type_name):
-    return __steps_registry.factory*type_name
+    return __steps_registry.object(type_name)
 
 
 def get_step_factories():

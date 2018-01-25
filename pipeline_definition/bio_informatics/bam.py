@@ -1,4 +1,5 @@
 from pipeline_definition.types.input_type import InputFactory
+from pipeline_definition.types.input_type import Input
 
 class BAMFactory(InputFactory):
     @classmethod
@@ -11,7 +12,8 @@ class BAMFactory(InputFactory):
         }
 
     @classmethod
-    def build(cls, yml):
+    def build(cls, meta):
+        print(">>>>>>>>>>>>>>>> ", meta )
         return None
 
     @classmethod
@@ -28,4 +30,8 @@ class BAMFactory(InputFactory):
 
     @classmethod
     def emit(cls):
-        return "Translation by " + cls.__name__
+        return "Fcatory says: " + cls.__name__
+
+
+class BAMInput(Input):
+    pass

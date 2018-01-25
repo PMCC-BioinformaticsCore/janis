@@ -30,6 +30,11 @@ class StepFactory(ABC):
     def label(cls):
         pass
 
+    @classmethod
+    @abstractmethod
+    def emit(cls):
+        pass
+
 
 class Step(ABC):
     @abstractmethod

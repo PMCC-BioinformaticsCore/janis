@@ -62,8 +62,9 @@ class PDX:
             #raise ValueError("No output?")
             pass
 
-        self.translateInputs(inputs)
-        self.translateSteps(steps)
+        inputSet = self.translateInputs(inputs)
+        outputSet = self.translateOutputs(outputs)
+        self.translateSteps(steps, inputSet, outputSet )
 
         return "TX Output"
 
@@ -76,32 +77,40 @@ class PDX:
                 raise ValueError("No factory registered for input: " + key )
 
             val = inpFactory.emit()
-
             print(key, "=>", val)
 
+            inputObj = inpFactory.build( dict([ (key,value) ]) )
         return None
 
-    def translateSteps(self, steps ):
+    def translateOutputs(self, outputs ):
+        return None
+
+    def translateSteps(self, steps, inputSet, outputSet ):
 
         for step in steps:
             #print("STEP: ", step, type(step))
 
-            stepType = None
+            key = None
+            value = None
             if ( isinstance( step, dict) ):
-                stepType = next( iter(step.keys()) )
+                key = next( iter(step.keys()) )
+                value = next( iter(step.values()) )
             elif ( isinstance( step, str) ):
-                stepType = step
+                key = step
+                value = None
 
-            print("STEP: ", stepType)
+            print("STEP: ", key)
 
-            stepFactory = get_step_factory(stepType)
+            stepFactory = get_step_factory(key)
 
             if ( stepFactory is None ):
-                raise ValueError("No factory registered for step: " + stepType )
+                raise ValueError("No factory registered for step: " + key )
 
             val = stepFactory.emit()
+            print(key, "=>", val)
 
-            print(stepType, "=>", val)
+            stepObj = stepFactory.build( dict([ (key,value) ]) )
+
 
 
     def translate(self, pdfile, outfile=None, overwriteOutfile=False ):
@@ -120,8 +129,8 @@ class PDX:
             if os.path.isfile(outfilePath) :
                 raise ValueError("Outfile already exists.")
 
-        if os.path.isdir(outfilePath) :
-            raise ValueError("Directoiry already exists with the name of outfile.")
+            if os.path.isdir(outfilePath) :
+                raise ValueError("Directoiry already exists with the name of outfile.")
 
         with open(pdfile, 'r') as ifile:
             # Validate YAML syntax

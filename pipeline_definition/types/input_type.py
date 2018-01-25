@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 class InputFactory(ABC):
     @classmethod
     @abstractmethod
-    def build(cls, yml):
+    def build(cls, meta):
         pass
 
     @classmethod
@@ -35,20 +35,6 @@ class InputFactory(ABC):
     def emit(cls):
         pass
 
-
-class InputSet(ABC):
-    @abstractmethod
-    def __init__(self, yml):
-        self.type = yml['type']
-
-    @abstractmethod
-    def input_set(self):
-        pass
-
-    def type(self):
-        return self.type
-
-
 class Input(ABC):
     @abstractmethod
     def file_set(self):
@@ -69,3 +55,15 @@ class Input(ABC):
     @abstractmethod
     def description(self):
         pass
+
+class InputSet(ABC):
+    @abstractmethod
+    def __init__(self, yml):
+        self.type = yml['type']
+
+    @abstractmethod
+    def input_set(self):
+        pass
+
+    def type(self):
+        return self.type

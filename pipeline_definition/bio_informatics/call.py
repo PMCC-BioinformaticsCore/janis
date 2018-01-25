@@ -13,7 +13,8 @@ class CallFactory(StepFactory):
         }
 
     @classmethod
-    def build(cls, yml):
+    def build(cls, meta):
+        print(">>>>>>>>>>>>>>>> ", meta )
         return None
 
     @classmethod
@@ -30,4 +31,5 @@ class CallFactory(StepFactory):
 
     @classmethod
     def emit(cls):
-        return "Translation by " + cls.__name__
+        return "Fcatory says: " + cls.__name__
+

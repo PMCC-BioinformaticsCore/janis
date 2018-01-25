@@ -63,11 +63,11 @@ class PDX:
             #raise ValueError("No output?")
             pass
 
-        inputSet = self.buildInputs(inputs)
-        outputSet = self.buildOutputs(outputs)
+        globalInputSet = self.buildInputs(inputs)
+        globalOutputSet = self.buildOutputs(outputs)
         pipelineSteps = self.buildSteps(steps )
 
-        txDoc = self.translatePipeline( pipelineSteps, inputSet, outputSet )
+        txDoc = self.translatePipeline( pipelineSteps, globalInputSet, globalOutputSet )
 
         return txDoc
 
@@ -124,7 +124,7 @@ class PDX:
 
         return pipelineSteps
 
-    def translatePipeline( self, pipeline, inputSet, outputSet ):
+    def translatePipeline( self, pipelineSteps, globalInputSet, globalOutputSet ):
 
 
         #create a graph of steps in pipeline

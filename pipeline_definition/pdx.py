@@ -62,13 +62,15 @@ class PDX:
             #raise ValueError("No output?")
             pass
 
-        inputSet = self.translateInputs(inputs)
-        outputSet = self.translateOutputs(outputs)
-        self.translateSteps(steps, inputSet, outputSet )
+        inputSet = self.buildInputs(inputs)
+        outputSet = self.buildOutputs(outputs)
+        pipeline = self.buildSteps(steps, inputSet, outputSet )
 
-        return "TX Output"
+        txDoc = self.translatePipeline( pipeline, inputSet, outputSet )
 
-    def translateInputs(self, inputs ):
+        return txDoc
+
+    def buildInputs(self, inputs ):
         for key, value in inputs.items():
             print("INPUT: " + key)
 
@@ -76,16 +78,16 @@ class PDX:
             if ( inpFactory is None ):
                 raise ValueError("No factory registered for input: " + key )
 
-            val = inpFactory.emit()
-            print(key, "=>", val)
+            #val = inpFactory.emit()
+            #print(key, "=>", val)
 
             inputObj = inpFactory.build( dict([ (key,value) ]) )
         return None
 
-    def translateOutputs(self, outputs ):
+    def buildOutputs(self, outputs ):
         return None
 
-    def translateSteps(self, steps, inputSet, outputSet ):
+    def buildSteps(self, steps, inputSet, outputSet ):
 
         for step in steps:
             #print("STEP: ", step, type(step))
@@ -106,11 +108,15 @@ class PDX:
             if ( stepFactory is None ):
                 raise ValueError("No factory registered for step: " + key )
 
-            val = stepFactory.emit()
-            print(key, "=>", val)
+            #val = stepFactory.emit()
+            #print(key, "=>", val)
 
             stepObj = stepFactory.build( dict([ (key,value) ]) )
 
+        return None
+
+    def translatePipeline( self, pipeline, inputSet, outputSet ):
+        return "TX DOC"
 
 
     def translate(self, pdfile, outfile=None, overwriteOutfile=False ):

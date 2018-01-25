@@ -1,6 +1,19 @@
 from pipeline_definition.types.step_type import StepFactory
+from pipeline_definition.types.step_type import Step
 
 class TrimFactory(StepFactory):
+    @classmethod
+    def type(cls):
+        return 'trim'
+
+    @classmethod
+    def label(cls):
+        return 'trim'
+
+    @classmethod
+    def description(cls):
+        return cls.label()
+
     @classmethod
     def describe(cls):
         return {
@@ -16,22 +29,8 @@ class TrimFactory(StepFactory):
 
     @classmethod
     def build(cls, meta):
-        print(">>>>>>>>>>>>>>>> ", meta )
-        return None
+        step = TrimStep( meta )
+        return step
 
-    @classmethod
-    def type(cls):
-        return 'trim'
-
-    @classmethod
-    def label(cls):
-        return 'Trimmer'
-
-    @classmethod
-    def description(cls):
-        return cls.label()
-
-    @classmethod
-    def emit(cls):
-        return "Fcatory says: " + cls.__name__
-
+class TrimStep(Step):
+    pass

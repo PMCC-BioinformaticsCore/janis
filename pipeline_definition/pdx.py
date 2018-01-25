@@ -11,6 +11,7 @@ import time
 import yaml
 from cerberus import Validator
 import json
+from pprint import pprint
 
 from pipeline_definition.types.schema import schema
 
@@ -64,34 +65,40 @@ class PDX:
 
         inputSet = self.buildInputs(inputs)
         outputSet = self.buildOutputs(outputs)
-        pipeline = self.buildSteps(steps, inputSet, outputSet )
+        pipelineSteps = self.buildSteps(steps )
 
-        txDoc = self.translatePipeline( pipeline, inputSet, outputSet )
+        txDoc = self.translatePipeline( pipelineSteps, inputSet, outputSet )
 
         return txDoc
 
     def buildInputs(self, inputs ):
+
+        inputSet = list()
+
         for key, value in inputs.items():
-            print("INPUT: " + key)
+            #print("INPUT: " + key)
 
             inpFactory = get_input_factory( key )
             if ( inpFactory is None ):
                 raise ValueError("No factory registered for input: " + key )
 
-            #val = inpFactory.emit()
+            val = inpFactory.description()
             #print(key, "=>", val)
 
-            inputObj = inpFactory.build( dict([ (key,value) ]) )
-        return None
+            inputObj = inpFactory.buildFrom( dict([ (key,value) ]) )
+
+            inputSet.append(inputObj)
+
+        return inputSet
 
     def buildOutputs(self, outputs ):
         return None
 
-    def buildSteps(self, steps, inputSet, outputSet ):
+    def buildSteps(self, steps):
+
+        pipelineSteps = list()
 
         for step in steps:
-            #print("STEP: ", step, type(step))
-
             key = None
             value = None
             if ( isinstance( step, dict) ):
@@ -101,7 +108,7 @@ class PDX:
                 key = step
                 value = None
 
-            print("STEP: ", key)
+            #print("STEP: ", key)
 
             stepFactory = get_step_factory(key)
 
@@ -111,11 +118,19 @@ class PDX:
             #val = stepFactory.emit()
             #print(key, "=>", val)
 
-            stepObj = stepFactory.build( dict([ (key,value) ]) )
+            stepObj = stepFactory.buildFrom( dict([ (key,value) ]) )
 
-        return None
+            pipelineSteps.append( stepObj )
+
+        return pipelineSteps
 
     def translatePipeline( self, pipeline, inputSet, outputSet ):
+
+
+        #create a graph of steps in pipeline
+        #every step has a context available to it
+
+
         return "TX DOC"
 
 

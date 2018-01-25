@@ -1,6 +1,19 @@
 from pipeline_definition.types.step_type import StepFactory
+from pipeline_definition.types.step_type import Step
 
 class CallFactory(StepFactory):
+    @classmethod
+    def type(cls):
+        return 'call'
+
+    @classmethod
+    def label(cls):
+        return 'call'
+
+    @classmethod
+    def description(cls):
+        return cls.label()
+
     @classmethod
     def describe(cls):
         return {
@@ -14,22 +27,8 @@ class CallFactory(StepFactory):
 
     @classmethod
     def build(cls, meta):
-        print(">>>>>>>>>>>>>>>> ", meta )
-        return None
+        step = CallStep( meta )
+        return step
 
-    @classmethod
-    def type(cls):
-        return 'call'
-
-    @classmethod
-    def label(cls):
-        return 'Caller'
-
-    @classmethod
-    def description(cls):
-        return cls.label()
-
-    @classmethod
-    def emit(cls):
-        return "Fcatory says: " + cls.__name__
-
+class CallStep(Step):
+    pass

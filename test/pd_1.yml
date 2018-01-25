@@ -1,5 +1,6 @@
 inputs:
   SequenceReadArchivePaired:
+    label : 'XXX'
     forward-pattern: '*_R1.fastq.gz'
     backward-pattern: '*_R2.fastq.gz'
 

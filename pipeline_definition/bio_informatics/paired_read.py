@@ -25,11 +25,18 @@ class PairedReadFactory(InputFactory):
         }
 
     @classmethod
-    def build(cls, meta):
-        input = PairedReadInput( meta )
+    def build(cls, dict):
+        input = PairedReadInput( dict )
         return input
 
 
 class PairedReadInput(Input):
-    pass
+    def __init__(self, dict):
+        super().__init__( dict )
+        self.forwardPattern = self.meta["forward-pattern"]
+        self.backwardPattern = self.meta["backward-pattern"]
 
+    def identify(self):
+        super().identify()
+        print("Forward Pattern:", self.forwardPattern)
+        print("Backward Pattern:", self.backwardPattern)

@@ -23,7 +23,7 @@ def main( opts ):
     pdfile = "pd_1.yml"
 
     pdx = PDX()
-    pdx.translate( pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx", overwriteOutfile=True  )
+    pdx.translate( pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx", overwriteOutfile=True )
     #pdx.translate(pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx")
 
 
@@ -31,5 +31,5 @@ if __name__ == "__main__":
     argprsr = argparse.ArgumentParser()
     argprsr.add_argument('pdfile', help='Pipeline Definition file.')
     opts = argprsr.parse_args()
-    main( opts );
+    main( opts )
 

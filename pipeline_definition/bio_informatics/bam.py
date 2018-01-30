@@ -26,13 +26,19 @@ class BAMFactory(InputFactory):
         }
 
     @classmethod
-    def build(cls, meta):
-        input = BAMInput( meta )
+    def build(cls, dict):
+        input = BAMInput( dict )
         return input
 
 
 class BAMInput(Input):
-    pass
+    def __init__(self, dict):
+        super().__init__( dict )
+        self.path = self.meta["path"]
+
+    def identify(self):
+        super().identify()
+        print("Path:", self.path)
 
 
 

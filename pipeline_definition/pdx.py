@@ -59,18 +59,20 @@ class PDX:
 
         inputSet = list()
 
-        for label, meta in inputs.items():
+        for id, meta in inputs.items():
             inputType = next(iter(meta.keys()))
             inputMeta = next(iter(meta.values()))
-            print("Process INPUT: ",label, " - ", inputType)
+            print("Processing INPUT: ",id, " - ", inputType)
 
             inpFactory = get_input_factory( inputType )
             if ( inpFactory is None ):
                 raise ValueError("No factory registered for input: " + inputType )
 
-            inputObj = inpFactory.buildFrom( dict([ (label,meta) ]) )
+            inputObj = inpFactory.buildFrom( dict([ (id,meta) ]) )
 
             inputSet.append(inputObj)
+
+            print("\n")
 
         return inputSet
 
@@ -82,28 +84,32 @@ class PDX:
         pipelineSteps = list()
 
         for step in steps:
-            key = None
-            value = None
+            id = None
+            meta = None
             if ( isinstance( step, dict) ):
-                key = next( iter(step.keys()) )
-                value = next( iter(step.values()) )
+                id = next( iter(step.keys()) )
+                meta = next( iter(step.values()) )
             elif ( isinstance( step, str) ):
-                key = step
-                value = None
+                id = step
+                meta = None
 
-            #print("STEP: ", key)
+            if meta is None:
+                stepType = id
+            else:
+                stepType = next( iter(meta.keys()) )
 
-            stepFactory = get_step_factory(key)
 
+            print("Processing STEP: ",id, " - ", stepType)
+
+            stepFactory = get_step_factory( stepType )
             if ( stepFactory is None ):
-                raise ValueError("No factory registered for step: " + key )
+                raise ValueError("No factory registered for step: " + stepType )
 
-            #val = stepFactory.emit()
-            #print(key, "=>", val)
-
-            stepObj = stepFactory.buildFrom( dict([ (key,value) ]) )
+            stepObj = stepFactory.buildFrom( dict([ (id,meta) ]) )
 
             pipelineSteps.append( stepObj )
+
+            print("\n")
 
         return pipelineSteps
 

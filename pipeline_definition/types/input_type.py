@@ -27,30 +27,33 @@ class InputFactory(ABC):
 
     @classmethod
     @abstractmethod
-    def build(cls, meta):
+    def build(cls, dict):
         pass
 
     @classmethod
     def buildFrom(self, dict):
         type = self.type()
         print(type, "factory: Building from", dict)
-        return self.build( dict )
+        obj = self.build( dict )
+        obj.identify()
+        return obj
 
 
 
 class Input(ABC):
     def __init__(self, dict):
-        self.label = next(iter(dict.keys()))
+        self.id = next(iter(dict.keys()))
 
         meta = next(iter(dict.values()))
         self.type = next(iter(meta.keys()))
         self.meta = next(iter(meta.values()))
 
-        self.identify()
-
     def identify(self):
-        print("Instance: [", self.label, " - ", self.type, " - ", self.meta, " ]" )
+        print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]" )
 
+    #@abstractmethod
+    #def processMeta(self, meta):
+    #    pass
 
     #@classmethod
     #@abstractmethod

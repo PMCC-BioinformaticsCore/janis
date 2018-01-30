@@ -18,7 +18,8 @@ class PairedReadFactory(InputFactory):
     def describe(cls):
         return {
             'schema' : {
-                'forward-pattern': {'type': 'string'},
+                'label' : {'type': 'string'},
+                'forward-pattern': {'type': 'string', 'required': True },
                 'backward-pattern': {'type': 'string'}
             }
         }

@@ -31,9 +31,10 @@ class StepFactory(ABC):
         pass
 
     @classmethod
-    def buildFrom(self, meta):
-        print( self.type(), " building from  ", meta)
-        return self.build( meta )
+    def buildFrom(self, dict):
+        type = self.type()
+        print(type, "factory: Building from", dict)
+        return self.build( dict )
 
 class Step(ABC):
     def __init__(self, meta):

@@ -31,19 +31,20 @@ class InputFactory(ABC):
         pass
 
     @classmethod
-    def buildFrom(self, meta):
-        print( self.type(), " building from  ", meta)
-        return self.build( meta )
+    def buildFrom(self, dict):
+        type = self.type()
+        print(type, "factory: Building from", dict)
+        return self.build( dict )
 
 
 
 class Input(ABC):
-    def __init__(self, meta):
+    def __init__(self, dict):
+        self.label = next(iter(dict.keys()))
+
+        meta = next(iter(dict.values()))
         self.type = next(iter(meta.keys()))
         self.meta = next(iter(meta.values()))
-        self.label = self.meta.get("label")
-        if self.label is None:
-            self.label = self.type
 
         self.identify()
 

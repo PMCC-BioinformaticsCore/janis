@@ -1,9 +1,15 @@
 import argparse
 import atexit
 
+# Import library of already defined inouts, steps and outputs
 import pipeline_definition.bio_informatics
 
 from pipeline_definition.pdx import PDX
+
+#Extend the translation system with user defined
+from test.user_defined import UserDefinedStepFactory
+from pipeline_definition.types.type_registry import register_step_factory
+register_step_factory(UserDefinedStepFactory())
 
 
 def main( opts ):

@@ -18,7 +18,9 @@ class BAMFactory(InputFactory):
     def describe(cls):
         return {
             'schema' : {
-                'path': {'type': 'string'}
+                'path': {'type': 'string'},
+                'label': {'type': 'string'}
+
             }
 
         }

@@ -85,27 +85,33 @@ class PDX:
 
         for step in steps:
             id = None
-            meta = None
-            if ( isinstance( step, dict) ):
-                id = next( iter(step.keys()) )
-                meta = next( iter(step.values()) )
-            elif ( isinstance( step, str) ):
+            stepType = None
+            stepMeta = None
+
+
+            if ( isinstance( step, str) ):
                 id = step
-                meta = None
-
-            if meta is None:
                 stepType = id
-            else:
-                stepType = next( iter(meta.keys()) )
-
+                stepMeta = dict([('type', id)])
+            elif ( isinstance( step, dict) ):
+                tMeta = next( iter(step.values()) )
+                typeMeta = tMeta.get("type")
+                if typeMeta is None:
+                    id = next( iter(step.keys()) )
+                    stepType = id
+                    stepMeta = dict([('type', step)])
+                else:
+                    id = next(iter(step.keys()))
+                    stepType = next( iter(typeMeta.keys()) )
+                    stepMeta = tMeta
 
             print("Processing STEP: ",id, " - ", stepType)
 
             stepFactory = get_step_factory( stepType )
             if ( stepFactory is None ):
-                raise ValueError("No factory registered for step: " + stepType )
+                 raise ValueError("No factory registered for step: " + stepType )
 
-            stepObj = stepFactory.buildFrom( dict([ (id,meta) ]) )
+            stepObj = stepFactory.buildFrom( dict([ (id, stepMeta) ]) )
 
             pipelineSteps.append( stepObj )
 

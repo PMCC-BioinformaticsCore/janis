@@ -34,11 +34,27 @@ class StepFactory(ABC):
     def buildFrom(self, dict):
         type = self.type()
         print(type, "factory: Building from", dict)
-        return self.build( dict )
+        obj = self.build(dict)
+        obj.identify()
+        return obj
+
 
 class Step(ABC):
-    def __init__(self, meta):
-        self.meta = meta
+    def __init__(self, dict):
+        self.id = next(iter(dict.keys()))
+
+        meta = next(iter(dict.values()))
+
+        if meta is not None:
+            self.type = next(iter(meta.keys()))
+            self.meta = next(iter(meta.values()))
+        else:
+            self.type = self.id
+            self.meta = None
+
+
+    def identify(self):
+        print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]" )
 
     #@abstractmethod
     #def type(self):

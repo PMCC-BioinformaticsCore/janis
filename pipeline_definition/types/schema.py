@@ -15,7 +15,9 @@ def __input_schema():
         'inputs': {
             'type': 'dict',
             'keyschema': {'type': 'string'},
-            'valueschema': {'schema': ischema}
+            'valueschema': {
+                'schema': ischema
+            }
         }
     }
 
@@ -29,8 +31,15 @@ def __step_scheme():
     return {
         'steps': {
             'type': 'list',
-            'keyschema': {'type': 'string'},
-            'valueschema': {'schema': ischema}
+            'schema' : {
+                'type' : 'dict',
+                'keyschema': {
+                    'type': 'string'
+                },
+                'valueschema': {
+                    'schema': ischema
+                }
+            }
         }
     }
 

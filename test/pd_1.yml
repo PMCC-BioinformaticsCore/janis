@@ -9,9 +9,15 @@ inputs:
 
 steps:
   - step1:
-      type:
-        trim:
-          trimmer : 'trimmomatic'
-  - align:
-      aligner: 'bwa'
-  - call
+      trim:
+        trimmer : 'trimmomatic'
+  - step2:
+      align:
+        aligner: 'bwa'
+  - step3:
+      call:
+  - step4:
+      userdefined-step:
+  - step5:
+      x
+

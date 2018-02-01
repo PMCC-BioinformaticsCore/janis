@@ -16,3 +16,15 @@ steps:
       aligner: 'bwa'
   - call
   - userdefined-step
+
+
+  - align:
+      aligner: 'bwa'
+
+
+  - step1:
+      trim:
+          trimmer : 'trimmomatic'
+  - step-2:
+      align
+  - userdefined-step:

@@ -20,8 +20,8 @@ class BAMFactory(InputFactory):
             'schema' : {
                 'path': {'type': 'string'},
                 'label': {'type': 'string'}
-
-            }
+            },
+            'nullable': True
 
         }
 
@@ -34,7 +34,10 @@ class BAMFactory(InputFactory):
 class BAMInput(Input):
     def __init__(self, dict):
         super().__init__( dict )
-        self.path = self.meta["path"]
+        self.path = None
+
+        if self.meta is not None:
+            self.path = self.meta.get("path")
 
     def identify(self):
         super().identify()

@@ -60,9 +60,14 @@ class PDX:
         inputSet = list()
 
         for id, meta in inputs.items():
-            inputType = next(iter(meta.keys()))
-            inputMeta = next(iter(meta.values()))
-            print("Processing INPUT: ",id, " - ", inputType)
+
+            if (isinstance(meta, str)):
+                inputType = meta
+                meta = dict([(inputType, None)])
+            elif (isinstance(meta, dict)):
+                inputType = next(iter(meta.keys()))
+
+            print("Processing INPUT: ", id, " - ", inputType)
 
             inpFactory = get_input_factory( inputType )
             if ( inpFactory is None ):
@@ -84,34 +89,23 @@ class PDX:
         pipelineSteps = list()
 
         for step in steps:
-            id = None
-            stepType = None
-            stepMeta = None
 
+            id = next( iter(step.keys()) )
+            meta = next( iter(step.values()) )
 
-            if ( isinstance( step, str) ):
-                id = step
-                stepType = id
-                stepMeta = dict([('type', id)])
-            elif ( isinstance( step, dict) ):
-                tMeta = next( iter(step.values()) )
-                typeMeta = tMeta.get("type")
-                if typeMeta is None:
-                    id = next( iter(step.keys()) )
-                    stepType = id
-                    stepMeta = dict([('type', step)])
-                else:
-                    id = next(iter(step.keys()))
-                    stepType = next( iter(typeMeta.keys()) )
-                    stepMeta = tMeta
+            if (isinstance(meta, str)):
+                stepType = meta
+                meta = dict([(stepType, None)])
+            elif (isinstance(meta, dict)):
+                stepType = next(iter(meta.keys()))
 
             print("Processing STEP: ",id, " - ", stepType)
 
             stepFactory = get_step_factory( stepType )
             if ( stepFactory is None ):
-                 raise ValueError("No factory registered for step: " + stepType )
+                raise ValueError("No factory registered for step: " + stepType )
 
-            stepObj = stepFactory.buildFrom( dict([ (id, stepMeta) ]) )
+            stepObj = stepFactory.buildFrom( dict([ (id, meta) ]) )
 
             pipelineSteps.append( stepObj )
 

@@ -21,7 +21,8 @@ class PairedReadFactory(InputFactory):
                 'label' : {'type': 'string'},
                 'forward-pattern': {'type': 'string', 'required': True },
                 'backward-pattern': {'type': 'string'}
-            }
+            },
+            'nullable': True
         }
 
     @classmethod
@@ -33,8 +34,12 @@ class PairedReadFactory(InputFactory):
 class PairedReadInput(Input):
     def __init__(self, dict):
         super().__init__( dict )
-        self.forwardPattern = self.meta["forward-pattern"]
-        self.backwardPattern = self.meta["backward-pattern"]
+        self.forwardPattern = None
+        self.backwardPattern = None
+
+        if self.meta is not None:
+            self.forwardPattern = self.meta.get("forward-pattern")
+            self.backwardPattern = self.meta.get("backward-pattern")
 
     def identify(self):
         super().identify()

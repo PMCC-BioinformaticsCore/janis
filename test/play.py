@@ -2,15 +2,11 @@ import argparse
 import atexit
 
 # Import library of already defined inouts, steps and outputs
-import pipeline_definition.bio_informatics
 
 from pipeline_definition.pdx import PDX
 
 #Extend the translation system with user defined
-from test.user_defined import UserDefinedStepFactory
-from pipeline_definition.types.type_registry import register_step_factory
-register_step_factory(UserDefinedStepFactory())
-
+import examples.bio_informatics
 
 def main( opts ):
     def atExit():
@@ -20,7 +16,7 @@ def main( opts ):
     #Get specified file to translate
     pdfile = opts.pdfile
 
-    pdfile = "pd_1.yml"
+    # pdfile = "pd_1.yml"
 
     pdx = PDX()
     pdx.translate( pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx", overwriteOutfile=True )

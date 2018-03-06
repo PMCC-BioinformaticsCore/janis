@@ -39,7 +39,6 @@ class InputFactory(ABC):
         return obj
 
 
-
 class Input(ABC):
     def __init__(self, dict):
         self.id = next(iter(dict.keys()))
@@ -50,6 +49,15 @@ class Input(ABC):
 
     def identify(self):
         print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]" )
+
+    @abstractmethod
+    def dataum_type(self):
+        # A datum_type
+        pass
+
+    @abstractmethod
+    def is_subtype_of(self, other):
+        pass
 
     #@abstractmethod
     #def processMeta(self, meta):

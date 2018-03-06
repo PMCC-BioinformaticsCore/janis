@@ -52,6 +52,15 @@ class Step(ABC):
             self.type = self.id
             self.meta = None
 
+    @abstractmethod
+    def provides(self):
+        # A set of optionally tagged input data
+        pass
+
+    @abstractmethod
+    def requires(self):
+        # A set of optionall tagged output data
+        pass
 
     def identify(self):
         print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]" )
@@ -79,3 +88,19 @@ class Step(ABC):
     #@abstractmethod
     #def can_default(self):
     #    pass
+
+class TaggedDatum(ABC):
+    @abstractmethod
+    def tags(self):
+        # A set tags that can select among similar types
+        pass
+
+    @abstractmethod
+    def datum_type(self):
+        # A datum_type
+        pass
+
+    def satisfies(self, datum):
+        # A concrete implementation here
+        pass
+

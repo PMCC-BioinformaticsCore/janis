@@ -4,7 +4,6 @@
 
 from pipeline_definition.types import type_registry
 
-
 def __input_schema():
     ischema = {}
 

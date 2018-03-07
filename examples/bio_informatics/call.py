@@ -31,4 +31,9 @@ class CallFactory(StepFactory):
         return step
 
 class CallStep(Step):
-    pass
+
+    def provides(self):
+        pass
+
+    def requires(self):
+        pass

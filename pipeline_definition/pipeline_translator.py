@@ -19,11 +19,17 @@ from pipeline_definition.types.type_registry import get_input_factory
 from pipeline_definition.types.type_registry import get_step_factory
 
 from pipeline_definition.types.input_type import InputFactory
+from pipeline_definition.utils.StepContext import StepContext
 
-class PdxException(Exception):
+import networkx as nx
+from networkx.readwrite import json_graph
+
+class PipelineTranslatorException(Exception):
     pass
 
-class PDX:
+class PipelineTranslator:
+    def __init__(self):
+        self.__root = "start"
 
     def __dumpYaml(self, doc ):
         # Diagnostic - what have we got?
@@ -113,18 +119,107 @@ class PDX:
 
         return pipelineSteps
 
+    def __createWorkflowGraph(self, pipelineSteps ):
+
+        # create a graph of steps in pipeline
+        # How many parallel threads we have? It is dictated by "tag".
+        # During building the graph we need to keep track of the last step seen in a thread
+
+        tagRootMap = dict()
+        tagMap = dict()
+        for step in pipelineSteps:
+            tag = step.tag()
+            if tag not in tagMap:
+                tagMap[tag] = None
+
+        print("TAG MAP:", str(tagMap))
+
+        workGraph = nx.MultiDiGraph()
+
+        workGraph.add_node( self.__root )
+
+        # Pass one is to stitch the steps
+        for step in pipelineSteps:
+            stag = step.tag()
+
+            # Have we already seen a step in that thread/tag?
+            lastNode = tagMap[stag]
+
+            # current step needs to be recorded as last node seen in the tag/thread
+            tagMap[stag] = step
+
+            #We create a context object for each step that will be decorated and use in later
+            stepCtx = StepContext(step)
+            #workGraph.add_node(step, attr_dict={ 'ctx' : stepCtx })
+            workGraph.add_node(step, ctx=stepCtx )
+
+            if lastNode is None:
+                workGraph.add_edge(self.__root, step)
+            else:
+                workGraph.add_edge(lastNode, step)
+
+        return workGraph
+
+    def __dumpGraph(self, workGraph):
+        tree = json_graph.tree_data(workGraph, self.__root, attrs={'children': 'next', 'id': 'step'})
+        print("Workflow Graph: [\n")
+        print(tree)
+        #jsonDoc = json.dumps(tree, indent=4)
+        #print(jsonDoc)
+
+        print("] End Workflow Graph\n")
+
+
+    def __populateStepContext(self, workGraph, step, prevstep, globalInputSet, globalOutputSet, contextualInputSet ):
+        print("Populating context of step:", step.id() )
+
+        ctxAttrs = nx.get_node_attributes(workGraph, 'ctx')
+        stepCtx = ctxAttrs[step]
+        #print("Step CTX:", stepCtx)
+
+        stepCtx.setPrevStep( prevstep )
+        stepCtx.setGlobalInputSet(globalInputSet)
+        stepCtx.setGlobalOutputSet(globalOutputSet)
+
+        if prevstep is not None:
+            #Output from previous step can be input for current step
+            stepOutputs =  prevstep.provides()
+            if stepOutputs is not None:
+                contextualInputSet[prevstep.id()] = stepOutputs
+                stepCtx.setContextualInputSet(contextualInputSet)
+
+        stepCtx.print()
+
+        edges = nx.edges(workGraph, step)
+        for e in edges:
+            #print("Processing EDGE:",e)
+            nstep = e[1]
+            self.__populateStepContext(workGraph, nstep, step, globalInputSet, globalOutputSet, contextualInputSet)
+
+
+    def __populateContexts(self, workGraph, globalInputSet, globalOutputSet ):
+
+        #steps = nx.all_neighbors(workGraph, self.__root)
+        edges = nx.edges(workGraph, self.__root)
+        contextualInputSet = {}
+
+        for e in edges:
+            #print("Processing EDGE:",e)
+            step = e[1]
+            self.__populateStepContext(workGraph, step, None, globalInputSet, globalOutputSet, contextualInputSet )
+
+
+
     def translatePipeline( self, pipelineSteps, globalInputSet, globalOutputSet ):
 
+        workGraph = self.__createWorkflowGraph( pipelineSteps )
+        self.__dumpGraph( workGraph )
 
-        #create a graph of steps in pipeline
-        #every step has a context available to it
+        self.__populateContexts(workGraph, globalInputSet, globalOutputSet )
 
-
-        return "TX DOC"
-
+        return None
 
     def translateYamlDoc(self, yamlDoc):
-
         #Create a in memory instances for all the inputs, steps and outputs
 
         inputs = yamlDoc.get("inputs")
@@ -153,7 +248,7 @@ class PDX:
 
         #Check if the file to translate exists
         if not os.path.isfile(pdfilePath):
-            raise ValueError("PD file does not exists.")
+            raise ValueError("Specified PD file does not exist.")
 
         #The output file name, if not explicitly specified, a convention is used
         if outfile is None:
@@ -183,6 +278,6 @@ class PDX:
             print("Output: ", tDoc)
 
             # Save it
-            with open( outfilePath, "w" ) as ofile:
-                ofile.write( tDoc )
+            #with open( outfilePath, "w" ) as ofile:
+            #    ofile.write( tDoc )
 

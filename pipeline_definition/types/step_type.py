@@ -41,16 +41,22 @@ class StepFactory(ABC):
 
 class Step(ABC):
     def __init__(self, dict):
-        self.id = next(iter(dict.keys()))
+        self.__id = next(iter(dict.keys()))
 
         meta = next(iter(dict.values()))
 
         if meta is not None:
-            self.type = next(iter(meta.keys()))
-            self.meta = next(iter(meta.values()))
+            self.__type = next(iter(meta.keys()))
+            self.__meta = next(iter(meta.values()))
         else:
-            self.type = self.id
-            self.meta = None
+            self.__type = self.id
+            self.__meta = None
+
+    def tag(self):
+        return "default"
+
+    def id(self):
+        return self.__id
 
     @abstractmethod
     def provides(self):
@@ -59,11 +65,11 @@ class Step(ABC):
 
     @abstractmethod
     def requires(self):
-        # A set of optionall tagged output data
+        # A set of optionally tagged output data
         pass
 
     def identify(self):
-        print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]" )
+        print("Instance: [", self.__id, " - ", self.__type, " - ", self.__meta, " ]" )
 
     #@abstractmethod
     #def type(self):

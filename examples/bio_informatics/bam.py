@@ -43,6 +43,11 @@ class BAMInput(Input):
         super().identify()
         print("Path:", self.path)
 
+    def datum_type(self):
+        return self.type()
+
+    def is_subtype_of(self, other):
+        return False
 
 
 

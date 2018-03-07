@@ -50,8 +50,11 @@ class Input(ABC):
     def identify(self):
         print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]" )
 
+    def type(self):
+        return str(type(self).__name__)
+
     @abstractmethod
-    def dataum_type(self):
+    def datum_type(self):
         # A datum_type
         pass
 

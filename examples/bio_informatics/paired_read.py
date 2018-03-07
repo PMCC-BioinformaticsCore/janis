@@ -45,3 +45,9 @@ class PairedReadInput(Input):
         super().identify()
         print("Forward Pattern:", self.forwardPattern)
         print("Backward Pattern:", self.backwardPattern)
+
+    def datum_type(self):
+        return self.type()
+
+    def is_subtype_of(self, other):
+        return False

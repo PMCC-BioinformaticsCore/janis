@@ -3,7 +3,7 @@ import atexit
 
 # Import library of already defined inouts, steps and outputs
 
-from pipeline_definition.pdx import PDX
+from pipeline_definition.pipeline_translator import PipelineTranslator
 
 #Extend the translation system with user defined
 import examples.bio_informatics
@@ -18,8 +18,8 @@ def main( opts ):
 
     # pdfile = "pd_1.yml"
 
-    pdx = PDX()
-    pdx.translate( pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx", overwriteOutfile=True )
+    pdTranslator = PipelineTranslator()
+    pdTranslator.translate( pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx", overwriteOutfile=True )
     #pdx.translate(pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx")
 
 

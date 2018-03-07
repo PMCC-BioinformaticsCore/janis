@@ -33,4 +33,9 @@ class AlignFactory(StepFactory):
         return step
 
 class AlignStep(Step):
-    pass
+
+    def provides(self):
+        pass
+
+    def requires(self):
+        pass

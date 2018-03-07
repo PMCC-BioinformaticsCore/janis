@@ -33,4 +33,10 @@ class TrimFactory(StepFactory):
         return step
 
 class TrimStep(Step):
-    pass
+
+    def provides(self):
+        pass
+
+    def requires(self):
+        pass
+

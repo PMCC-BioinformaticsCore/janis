@@ -4,6 +4,7 @@
 
 from pipeline_definition.types import type_registry
 
+
 def __input_schema():
     ischema = {}
 
@@ -24,6 +25,16 @@ def __input_schema():
 def __step_scheme():
     ischema = {}
 
+    #Inputs can be tagged to indicate thread
+    ischema['tag'] = {
+        'type': 'string',
+        'required': False
+    }
+
+    ischema['gather'] = {
+        'type': 'list',
+        'required': False
+    }
     for factory in type_registry.get_step_factories():
         ischema[factory.type()] = factory.describe()
 

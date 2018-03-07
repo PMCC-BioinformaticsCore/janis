@@ -3,6 +3,7 @@
 #
 from abc import ABC, abstractmethod
 
+import sys
 
 class StepFactory(ABC):
     @classmethod
@@ -46,14 +47,36 @@ class Step(ABC):
         meta = next(iter(dict.values()))
 
         if meta is not None:
-            self.__type = next(iter(meta.keys()))
-            self.__meta = next(iter(meta.values()))
+            self.__type = Step.selectTypeNameFrom(meta)
+            self.__meta = meta[self.__type]
         else:
             self.__type = self.id
             self.__meta = None
 
+        self.__tag = meta.get('tag')
+        if self.__tag is None:
+            self.__tag = "default"
+
+        self.__gather = meta.get('gather')
+        if self.__gather is not None:
+            if isinstance(self.__gather, list):
+
+                sortedList = sorted(self.__gather)
+                ttag = None
+                for item in sortedList:
+                    if ttag is None:
+                        ttag = item
+                    else:
+                        ttag = ttag + ":" + item
+
+                self.__tag = ttag
+
+
     def tag(self):
-        return "default"
+        return self.__tag
+
+    def gather(self):
+        return self.__gather
 
     def id(self):
         return self.__id
@@ -70,6 +93,19 @@ class Step(ABC):
 
     def identify(self):
         print("Instance: [", self.__id, " - ", self.__type, " - ", self.__meta, " ]" )
+
+    @staticmethod
+    def selectTypeNameFrom( meta ):
+        selection = None
+        for candidate in iter(meta.keys()):
+            if candidate == 'tag':
+                continue
+            if candidate == 'gather':
+                continue
+            selection = candidate
+            break
+        return selection
+
 
     #@abstractmethod
     #def type(self):

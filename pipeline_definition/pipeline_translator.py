@@ -23,6 +23,8 @@ from pipeline_definition.utils.StepContext import StepContext
 
 import networkx as nx
 from networkx.readwrite import json_graph
+from pipeline_definition.types.step_type import Step
+
 
 class PipelineTranslatorException(Exception):
     pass
@@ -103,7 +105,7 @@ class PipelineTranslator:
                 stepType = meta
                 meta = dict([(stepType, None)])
             elif (isinstance(meta, dict)):
-                stepType = next(iter(meta.keys()))
+                stepType = Step.selectTypeNameFrom( meta )
 
             print("Processing STEP: ",id, " - ", stepType)
 
@@ -118,6 +120,7 @@ class PipelineTranslator:
             print("\n")
 
         return pipelineSteps
+
 
     def __createWorkflowGraph(self, pipelineSteps ):
 
@@ -140,6 +143,9 @@ class PipelineTranslator:
 
         # Pass one is to stitch the steps
         for step in pipelineSteps:
+            #print("GRAPHING PIPELINE STEP ------>: ", step.id() )
+            #print("TAG MAP STATE:", str(tagMap))
+
             stag = step.tag()
 
             # Have we already seen a step in that thread/tag?
@@ -154,14 +160,28 @@ class PipelineTranslator:
             workGraph.add_node(step, ctx=stepCtx )
 
             if lastNode is None:
-                workGraph.add_edge(self.__root, step)
+                #if it is a gathering step, we need to add edge from corresponding nodes
+                gatherList = step.gather()
+                if gatherList is not None:
+                    #workGraph.add_edge(self.__root, step)
+                    for gtag in gatherList:
+                        #print("GATHER LIST FOUND FOR STEP ----------------->", step.id(), ":", gtag)
+                        #print("TAG MAP STATE:", str(tagMap))
+                        lastNodeToGather = tagMap.get(gtag)
+                        #print("Last node to gather: ", lastNodeToGather)
+                        if lastNodeToGather is None:
+                            raise RuntimeError("Not implemented!!!!")
+                        workGraph.add_edge(lastNodeToGather, step)
+                else:
+                    workGraph.add_edge(self.__root, step)
             else:
                 workGraph.add_edge(lastNode, step)
 
         return workGraph
 
     def __dumpGraph(self, workGraph):
-        tree = json_graph.tree_data(workGraph, self.__root, attrs={'children': 'next', 'id': 'step'})
+        #tree = json_graph.tree_data(workGraph, self.__root, attrs={'children': 'next', 'id': 'step'})
+        tree = json_graph.node_link_data(workGraph,{'link': 'flow', 'source': 'step', 'target': 'nextStep'})
         print("Workflow Graph: [\n")
         print(tree)
         #jsonDoc = json.dumps(tree, indent=4)

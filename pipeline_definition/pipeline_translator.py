@@ -203,9 +203,21 @@ class PipelineTranslator:
 
     def __populateSetpContext(self, workGraph, step, prevStep, ctxAttrMap, typeAttrMap ):
         print("Populating context for step:", step.id(),"in branch [", step.tag(),"]" )
-        stepCtx = ctxAttrMap[step]
+        stepCtx = ctxAttrMap.get(step)
         if not stepCtx:
             raise RuntimeError("Missing step context in graph. Graph integrity fail.")
+
+        if prevStep:
+            prevCtx = ctxAttrMap.get(prevStep)
+            if not prevCtx:
+                raise RuntimeError("Missing step context in graph. Graph integrity fail.")
+
+            if prevStep.tag() != "root" and step.tag() != prevStep.tag():
+                raise RuntimeError("Branch tag mismatch during context population.")
+
+            stepCtx.inheritContextOf(prevCtx)
+
+            stepCtx.print()
 
         edges = nx.edges(workGraph, step)
         if not edges:

@@ -35,8 +35,9 @@ steps:
       tag: 'normal'
       call:
   - step7:
-      gather: [ 'normal', 'tumour' ]
+      input_scope: [ref]
       joint_call:
-        tumour_tag: 'tumour'
-        normal_tag: 'normal'
+        caller: mutect
+        tumour_tag: '#tumour'
+        normal_tag: '#normal'
 

@@ -12,7 +12,11 @@ steps:
       trim:
         trimmer : 'trimmomatic'
   - step2:
+      input_from: ['ref']
       align:
         aligner: 'bwa'
   - step3:
+      dedup:
+  - step3:
+      input_from: ['step2', 'step3']
       call:

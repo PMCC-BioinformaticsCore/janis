@@ -25,16 +25,17 @@ def __input_schema():
 def __step_scheme():
     ischema = {}
 
-    #Inputs can be tagged to indicate thread
+    #Inputs can be tagged to indicate processing branch
     ischema['tag'] = {
         'type': 'string',
         'required': False
     }
 
-    ischema['gather'] = {
+    ischema['input_scope'] = {
         'type': 'list',
         'required': False
     }
+
     for factory in type_registry.get_step_factories():
         ischema[factory.type()] = factory.describe()
 

@@ -18,6 +18,9 @@ class JointCallFactory(StepFactory):
     def describe(cls):
         return {
             'schema': {
+                'caller': {
+                    'type': 'string'
+                },
                 'normal_tag': {
                     'type': 'string'
                 },
@@ -36,7 +39,22 @@ class JointCallFactory(StepFactory):
 class JointCallStep(Step):
 
     def provides(self):
-        pass
+        return [
+            {
+                'name' : 'out1',
+                'type' : 'type1'
+            }
+        ]
 
     def requires(self):
-        pass
+        return [
+            {
+                'name' : 'normal_tag',
+                'type' : 'itype1'
+            },
+            {
+
+                'name': 'tumour_tag',
+                'type': 'itype1'
+            }
+        ]

@@ -24,14 +24,14 @@ from pipeline_definition.utils.StepContext import StepContext
 import networkx as nx
 from networkx.readwrite import json_graph
 from pipeline_definition.types.step_type import Step
-
+from pipeline_definition.types.InputStep import InputStep
 
 class PipelineTranslatorException(Exception):
     pass
 
 class PipelineTranslator:
     def __init__(self):
-        self.__root = "start"
+        self.__inputStep = None
 
     def __dumpYaml(self, doc ):
         # Diagnostic - what have we got?
@@ -122,13 +122,23 @@ class PipelineTranslator:
         return pipelineSteps
 
 
-    def __createWorkflowGraph(self, pipelineSteps ):
+    def __createWorkflowGraph(self, pipelineSteps, workflowInputSet, workflowOutputSet ):
+        workGraph = nx.MultiDiGraph()
 
-        # create a graph of steps in pipeline
-        # How many parallel threads we have? It is dictated by "tag".
-        # During building the graph we need to keep track of the last step seen in a thread
+        #Lets create the input step - the start step of every workflow that produces the workflow inputs as step output
+        self.__inputStep = InputStep(workflowInputSet)
+        pipelineSteps.insert(0, self.__inputStep)
 
-        tagRootMap = dict()
+        #Now lets put all the steps as node. Then we will establish the edges
+        for step in pipelineSteps:
+            stepCtx = StepContext(step)
+            workGraph.add_node(step, ctx=stepCtx)
+
+        #Now lets put the edges to indicate execution order as indicated by 'tag'
+        #Convention is all steps belonging to a tag are exceuted in the seq they have been specified
+        #so creating the concept of 'threads' / 'branches'
+
+        #Create a dict of tags vocabulary that have been used in the workflow descriptin
         tagMap = dict()
         for step in pipelineSteps:
             tag = step.tag()
@@ -137,51 +147,145 @@ class PipelineTranslator:
 
         print("TAG MAP:", str(tagMap))
 
-        workGraph = nx.MultiDiGraph()
+        #Lets stitch the DAG based on tags assigned to each step
 
-        workGraph.add_node( self.__root )
-
-        # Pass one is to stitch the steps
+        print("Graph Construction: Processing TAGS")
         for step in pipelineSteps:
-            #print("GRAPHING PIPELINE STEP ------>: ", step.id() )
-            #print("TAG MAP STATE:", str(tagMap))
+            print("Graph Construction: STEP [", step.id(), "] TAG [", step.tag(), "]")
 
+            #tag specification in step
             stag = step.tag()
+            print("Step specifies tag:", stag)
 
-            # Have we already seen a step in that thread/tag?
-            lastNode = tagMap[stag]
+            if ( stag == self.__inputStep.tag() ):
+                tagMap[stag] = self.__inputStep
+                continue
 
-            # current step needs to be recorded as last node seen in the tag/thread
+            #Have we already seen a step in that thread/tag?
+            lastNode = tagMap.get(stag)
             tagMap[stag] = step
 
-            #We create a context object for each step that will be decorated and use in later
-            stepCtx = StepContext(step)
-            #workGraph.add_node(step, attr_dict={ 'ctx' : stepCtx })
-            workGraph.add_node(step, ctx=stepCtx )
-
-            if lastNode is None:
-                #if it is a gathering step, we need to add edge from corresponding nodes
-                gatherList = step.gather()
-                if gatherList is not None:
-                    #workGraph.add_edge(self.__root, step)
-                    for gtag in gatherList:
-                        #print("GATHER LIST FOUND FOR STEP ----------------->", step.id(), ":", gtag)
-                        #print("TAG MAP STATE:", str(tagMap))
-                        lastNodeToGather = tagMap.get(gtag)
-                        #print("Last node to gather: ", lastNodeToGather)
-                        if lastNodeToGather is None:
-                            raise RuntimeError("Not implemented!!!!")
-                        workGraph.add_edge(lastNodeToGather, step)
-                else:
-                    workGraph.add_edge(self.__root, step)
+            if lastNode is not None:
+                workGraph.add_edge(lastNode, step, type="branch", tag=stag)
             else:
-                workGraph.add_edge(lastNode, step)
+                workGraph.add_edge(self.__inputStep, step, type="branch", tag=stag)
+
+        #Next pass is about input dependency of a step on outputs form other branches and steps
+        print("Graph Construction: Processing input dependency")
+        for step in pipelineSteps:
+            print("Graph Construction: STEP [", step.id(), "]")
+
+            if step == self.__inputStep:
+                continue
+
+            #Lets get the dependency list of the step
+            depends = self.dependencyListOf( step )
+            if not depends:
+                continue
+
+            for dependency in depends:
+                print("STEP DEPENDENCY:", dependency)
+                self.addDependencyTo(step, dependency, workGraph)
+
+
+        #Now we have a graph that has edges for flow and dependency
+
+        #Now we need to establish the context of each step
+
+
+
+
+
 
         return workGraph
 
+    def addDependencyTo(self, step, dependencySpec, workGraph):
+
+        if not step:
+            return
+
+        if not dependencySpec:
+            return
+
+        if not workGraph:
+            return
+
+        targetTag = dependencySpec.get('tag')
+        targetStep = dependencySpec.get('step')
+
+        #Lets start on the graph by tag
+        sourceStep = self.__inputStep
+        edgeMapforTags = nx.get_edge_attributes(workGraph, 'tag')
+
+        lastStep = self.lastStepInTag(targetTag, sourceStep, workGraph, edgeMapforTags)
+        if lastStep:
+            print(step.id(),"in branch [", step.tag(), "] has input dependency on step", lastStep.id(), "in branch [",targetTag,"]")
+            workGraph.add_edge(step, lastStep, type="dependency")
+
+
+
+        return
+
+    def lastStepInTag(self, tag, root, workGraph, edgeMapforTags ):
+        sourceStep = root
+        edges = nx.edges(workGraph, sourceStep)
+        if not edges:
+            #there are no edges so this is the last step
+            return sourceStep
+
+        for edge in edges:
+            edgeTag = str(edgeMapforTags[(edge[0], edge[1], 0)])
+            if edgeTag == tag:
+                return self.lastStepInTag( tag, edge[1], workGraph, edgeMapforTags)
+        return sourceStep
+
+
+    def dependencyListOf(self, step ):
+        if not step:
+            return None
+
+        stepRequires = step.requires()
+        if not stepRequires:
+            return None
+
+        dependencyList = None
+        for requirement in stepRequires:
+            requirementName = requirement['name']
+            #print("Process STEP REQUIREMENT:", requirementName)
+            requirementValue = step.providedValueForRequirement(requirementName)
+            #print("Input value:", requirementValue)
+
+            dependencySpec = self.dependencySpecFrom( requirementValue )
+
+            if not dependencyList:
+                dependencyList = list()
+            dependencyList.append(dependencySpec)
+
+        return dependencyList
+
+
+    def dependencySpecFrom(self, requirementValue ):
+
+        tag = None
+        step = None
+        output = None
+
+        parts = requirementValue.split(".")
+
+        head = parts[0]
+        if head.startswith("#"):
+            tag = head[1:]
+
+        return {
+            'tag' : tag,
+            'step' : step,
+            'output' : output
+        }
+
+
     def __dumpGraph(self, workGraph):
         #tree = json_graph.tree_data(workGraph, self.__root, attrs={'children': 'next', 'id': 'step'})
-        tree = json_graph.node_link_data(workGraph,{'link': 'flow', 'source': 'step', 'target': 'nextStep'})
+        tree = json_graph.node_link_data(workGraph,{'link': 'flow', 'source': 'step', 'target': 'target'})
         print("Workflow Graph: [\n")
         print(tree)
         #jsonDoc = json.dumps(tree, indent=4)
@@ -232,10 +336,10 @@ class PipelineTranslator:
 
     def translatePipeline( self, pipelineSteps, globalInputSet, globalOutputSet ):
 
-        workGraph = self.__createWorkflowGraph( pipelineSteps )
+        workGraph = self.__createWorkflowGraph( pipelineSteps, globalInputSet, globalOutputSet )
         self.__dumpGraph( workGraph )
 
-        self.__populateContexts(workGraph, globalInputSet, globalOutputSet )
+        #self.__populateContexts(workGraph)
 
         return None
 
@@ -253,12 +357,12 @@ class PipelineTranslator:
             #raise ValueError("No output?")
             pass
 
-        globalInputSet = self.buildInputs(inputs)
-        globalOutputSet = self.buildOutputs(outputs)
+        workflowInputSet = self.buildInputs(inputs)
+        workflowOutputSet = self.buildOutputs(outputs)
         pipelineSteps = self.buildSteps(steps )
 
         #Now translate the workflow steps
-        txDoc = self.translatePipeline( pipelineSteps, globalInputSet, globalOutputSet )
+        txDoc = self.translatePipeline( pipelineSteps, workflowInputSet, workflowOutputSet )
 
         return txDoc
 

@@ -44,42 +44,38 @@ class Step(ABC):
     def __init__(self, dict):
         self.__id = next(iter(dict.keys()))
 
-        meta = next(iter(dict.values()))
+        stepMeta = next(iter(dict.values()))
 
-        if meta is not None:
-            self.__type = Step.selectTypeNameFrom(meta)
-            self.__meta = meta[self.__type]
+        if stepMeta is not None:
+            self.__type = Step.selectTypeNameFrom(stepMeta)
+            self.__meta = stepMeta[self.__type]
         else:
             self.__type = self.id
             self.__meta = None
 
-        self.__tag = meta.get('tag')
+        self.__tag = None
+        if ( stepMeta is not None):
+            self.__tag = stepMeta.get('tag')
+
         if self.__tag is None:
             self.__tag = "default"
-
-        self.__gather = meta.get('gather')
-        if self.__gather is not None:
-            if isinstance(self.__gather, list):
-
-                sortedList = sorted(self.__gather)
-                ttag = None
-                for item in sortedList:
-                    if ttag is None:
-                        ttag = item
-                    else:
-                        ttag = ttag + ":" + item
-
-                self.__tag = ttag
-
 
     def tag(self):
         return self.__tag
 
-    def gather(self):
-        return self.__gather
-
     def id(self):
         return self.__id
+
+    def identify(self):
+        print("Instance: [", self.__id, " - ", self.__type, " - ", self.__meta, " ]")
+
+    def providedValueForRequirement(self, requirmentName):
+
+        if self.__meta is None:
+            return None
+
+        provided = self.__meta.get(requirmentName)
+        return provided
 
     @abstractmethod
     def provides(self):
@@ -91,16 +87,13 @@ class Step(ABC):
         # A set of optionally tagged output data
         pass
 
-    def identify(self):
-        print("Instance: [", self.__id, " - ", self.__type, " - ", self.__meta, " ]" )
-
     @staticmethod
     def selectTypeNameFrom( meta ):
         selection = None
         for candidate in iter(meta.keys()):
             if candidate == 'tag':
                 continue
-            if candidate == 'gather':
+            if candidate == 'input_scope':
                 continue
             selection = candidate
             break

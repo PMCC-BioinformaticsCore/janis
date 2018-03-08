@@ -217,8 +217,6 @@ class PipelineTranslator:
 
             stepCtx.inheritContextOfBranch(prevCtx)
 
-            stepCtx.print()
-
         edges = nx.edges(workGraph, step)
         if not edges:
             return
@@ -232,6 +230,12 @@ class PipelineTranslator:
             edgeType = str(typeAttrMap[(edge[0], edge[1], 0)])
             if edgeType != 'dependency':
                 continue
+            dependentOn = edge[1]
+            dependentOnCtx = ctxAttrMap[dependentOn]
+            print("Step",step.id()+"["+step.tag()+"] has dependency on step",dependentOn.id(),"[",dependentOn.tag(),"]")
+            stepCtx.addDependencyContextFrom(dependentOnCtx)
+
+        stepCtx.print()
 
         #Sencod pass to process the flow
         for edge in edges:

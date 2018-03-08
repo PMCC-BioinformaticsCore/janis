@@ -215,7 +215,7 @@ class PipelineTranslator:
             if prevStep.tag() != InputStep.tagConvention() and step.tag() != prevStep.tag():
                 raise RuntimeError("Branch tag mismatch during context population.")
 
-            stepCtx.inheritContextOf(prevCtx)
+            stepCtx.inheritContextOfBranch(prevCtx)
 
             stepCtx.print()
 

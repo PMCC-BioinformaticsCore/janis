@@ -3,15 +3,15 @@ import json
 class StepContext:
     def __init__(self, step):
         self.__step = step
-        self.__availableOutputsStack = list()
+        self.__branchOutputsStack = list()
 
-    def inheritContextOf(self, prevCtx):
-        outputsStackFromPrevContext = prevCtx.availableOutputStack()
+    def inheritContextOfBranch(self, prevCtx):
+        outputsStackFromPrevContext = prevCtx.outputStackOfBranch()
         if not outputsStackFromPrevContext:
             return
-        self.__availableOutputsStack.extend(outputsStackFromPrevContext)
+        self.__branchOutputsStack.extend(outputsStackFromPrevContext)
 
-    def availableOutputStack(self):
+    def outputStackOfBranch(self):
         outputStack = list()
 
         providesDict = {}
@@ -20,12 +20,9 @@ class StepContext:
         outputDict[self.__step.tag()] = providesDict
         outputStack.append(outputDict)
 
-        outputStack.extend(self.__availableOutputsStack)
+        outputStack.extend(self.__branchOutputsStack)
 
         return outputStack
-
-
-
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)

@@ -130,10 +130,13 @@ class PipelineTranslator:
         pipelineSteps.insert(0, self.__inputStep)
 
         #Now lets put all the steps as node. Then we will establish the edges
+        print("Graph Construction: adding nodes for steps.")
         for step in pipelineSteps:
             stepCtx = StepContext(step)
             workGraph.add_node(step, ctx=stepCtx)
+            print("Added node for step", step.id(),"[",step.tag(),"]")
 
+        print("Graph Construction: Processing tags.")
         #Now lets put the edges to indicate execution order as indicated by 'tag'
         #Convention is all steps belonging to a tag are exceuted in the seq they have been specified
         #so creating the concept of 'threads' / 'branches'
@@ -149,13 +152,12 @@ class PipelineTranslator:
 
         #Lets stitch the DAG based on tags assigned to each step
 
-        print("Graph Construction: Processing TAGS")
         for step in pipelineSteps:
-            print("Graph Construction: STEP [", step.id(), "] TAG [", step.tag(), "]")
+            print("Processing step ", step.id(), "[", step.tag(), "]")
 
             #tag specification in step
             stag = step.tag()
-            print("Step specifies tag:", stag)
+            #print("Step specifies tag:", stag)
 
             if ( stag == self.__inputStep.tag() ):
                 tagMap[stag] = self.__inputStep
@@ -165,39 +167,110 @@ class PipelineTranslator:
             lastNode = tagMap.get(stag)
             tagMap[stag] = step
 
-            if lastNode is not None:
-                workGraph.add_edge(lastNode, step, type="branch", tag=stag)
-            else:
-                workGraph.add_edge(self.__inputStep, step, type="branch", tag=stag)
+            if lastNode is None:
+                lastNode = self.__inputStep
+
+            workGraph.add_edge(lastNode, step, type="branch", tag=stag)
+            print("Added edge [",lastNode.id(),"]->[",step.id(),"] for tag", stag)
 
         #Next pass is about input dependency of a step on outputs form other branches and steps
         print("Graph Construction: Processing input dependency")
         for step in pipelineSteps:
-            print("Graph Construction: STEP [", step.id(), "]")
+            print("Processing step ", step.id(), "[", step.tag(),"]")
 
             if step == self.__inputStep:
+                print("Input step never have dependency.")
                 continue
 
             #Lets get the dependency list of the step
             depends = self.dependencyListOf( step )
             if not depends:
+                print("Step has no dependency.")
                 continue
 
             for dependency in depends:
-                print("STEP DEPENDENCY:", dependency)
+                print("Step has dependecny:", dependency)
                 self.addDependencyTo(step, dependency, workGraph)
 
-
+        print("Graph Construction: Polulating context for steps.")
         #Now we have a graph that has edges for flow and dependency
-
         #Now we need to establish the context of each step
-
-
-
-
-
+        ctxAttrMap = nx.get_node_attributes(workGraph, 'ctx')
+        typeAttrMap = nx.get_edge_attributes(workGraph, 'type')
+        self.__populateSetpContext(workGraph, self.__inputStep, None, ctxAttrMap, typeAttrMap )
 
         return workGraph
+
+    def __populateSetpContext(self, workGraph, step, prevStep, ctxAttrMap, typeAttrMap ):
+        print("Populating context for step:", step.id(),"in branch [", step.tag(),"]" )
+        stepCtx = ctxAttrMap[step]
+        if not stepCtx:
+            raise RuntimeError("Missing step context in graph. Graph integrity fail.")
+
+        edges = nx.edges(workGraph, step)
+        if not edges:
+            return
+
+        print("Step [",step.id(),"] in branch [",step.tag(),"] has", len(edges), "edges")
+
+        #First pass to process the input dependency
+        for edge in edges:
+            if edge[0] != step:
+                raise RuntimeError("Trouble in edge finding")
+            edgeType = str(typeAttrMap[(edge[0], edge[1], 0)])
+            if edgeType != 'dependency':
+                continue
+
+        #Sencod pass to process the flow
+        for edge in edges:
+            if edge[0] != step:
+                raise RuntimeError("Trouble in edge finding")
+            edgeType = str(typeAttrMap[(edge[0], edge[1], 0)])
+            if edgeType != 'branch':
+                continue
+            self.__populateSetpContext( workGraph, edge[1], step, ctxAttrMap, typeAttrMap)
+
+        return
+
+    # def __populateStepContext(self, workGraph, step, prevstep, globalInputSet, globalOutputSet, contextualInputSet ):
+    #     print("Populating context of step:", step.id() )
+    #
+    #     ctxAttrs = nx.get_node_attributes(workGraph, 'ctx')
+    #     stepCtx = ctxAttrs[step]
+    #     #print("Step CTX:", stepCtx)
+    #
+    #     stepCtx.setPrevStep( prevstep )
+    #     stepCtx.setGlobalInputSet(globalInputSet)
+    #     stepCtx.setGlobalOutputSet(globalOutputSet)
+    #
+    #     if prevstep is not None:
+    #         #Output from previous step can be input for current step
+    #         stepOutputs =  prevstep.provides()
+    #         if stepOutputs is not None:
+    #             contextualInputSet[prevstep.id()] = stepOutputs
+    #             stepCtx.setContextualInputSet(contextualInputSet)
+    #
+    #     stepCtx.print()
+    #
+    #     edges = nx.edges(workGraph, step)
+    #     for e in edges:
+    #         #print("Processing EDGE:",e)
+    #         nstep = e[1]
+    #         self.__populateStepContext(workGraph, nstep, step, globalInputSet, globalOutputSet, contextualInputSet)
+    #
+    #
+    # def __populateContexts(self, workGraph, globalInputSet, globalOutputSet ):
+    #
+    #     #steps = nx.all_neighbors(workGraph, self.__root)
+    #     edges = nx.edges(workGraph, self.__root)
+    #     contextualInputSet = {}
+    #
+    #     for e in edges:
+    #         #print("Processing EDGE:",e)
+    #         step = e[1]
+    #         self.__populateStepContext(workGraph, step, None, globalInputSet, globalOutputSet, contextualInputSet )
+
+
 
     def addDependencyTo(self, step, dependencySpec, workGraph):
 
@@ -294,52 +367,11 @@ class PipelineTranslator:
         print("] End Workflow Graph\n")
 
 
-    def __populateStepContext(self, workGraph, step, prevstep, globalInputSet, globalOutputSet, contextualInputSet ):
-        print("Populating context of step:", step.id() )
-
-        ctxAttrs = nx.get_node_attributes(workGraph, 'ctx')
-        stepCtx = ctxAttrs[step]
-        #print("Step CTX:", stepCtx)
-
-        stepCtx.setPrevStep( prevstep )
-        stepCtx.setGlobalInputSet(globalInputSet)
-        stepCtx.setGlobalOutputSet(globalOutputSet)
-
-        if prevstep is not None:
-            #Output from previous step can be input for current step
-            stepOutputs =  prevstep.provides()
-            if stepOutputs is not None:
-                contextualInputSet[prevstep.id()] = stepOutputs
-                stepCtx.setContextualInputSet(contextualInputSet)
-
-        stepCtx.print()
-
-        edges = nx.edges(workGraph, step)
-        for e in edges:
-            #print("Processing EDGE:",e)
-            nstep = e[1]
-            self.__populateStepContext(workGraph, nstep, step, globalInputSet, globalOutputSet, contextualInputSet)
-
-
-    def __populateContexts(self, workGraph, globalInputSet, globalOutputSet ):
-
-        #steps = nx.all_neighbors(workGraph, self.__root)
-        edges = nx.edges(workGraph, self.__root)
-        contextualInputSet = {}
-
-        for e in edges:
-            #print("Processing EDGE:",e)
-            step = e[1]
-            self.__populateStepContext(workGraph, step, None, globalInputSet, globalOutputSet, contextualInputSet )
-
-
-
     def translatePipeline( self, pipelineSteps, globalInputSet, globalOutputSet ):
 
         workGraph = self.__createWorkflowGraph( pipelineSteps, globalInputSet, globalOutputSet )
         self.__dumpGraph( workGraph )
 
-        #self.__populateContexts(workGraph)
 
         return None
 

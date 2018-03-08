@@ -85,7 +85,7 @@ class PipelineTranslator:
 
             inputSet.append(inputObj)
 
-            print("\n")
+
 
         return inputSet
 
@@ -212,7 +212,7 @@ class PipelineTranslator:
             if not prevCtx:
                 raise RuntimeError("Missing step context in graph. Graph integrity fail.")
 
-            if prevStep.tag() != "root" and step.tag() != prevStep.tag():
+            if prevStep.tag() != InputStep.tagConvention() and step.tag() != prevStep.tag():
                 raise RuntimeError("Branch tag mismatch during context population.")
 
             stepCtx.inheritContextOf(prevCtx)

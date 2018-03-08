@@ -5,32 +5,24 @@ class StepContext:
         self.__step = step
         self.__availableOutputsStack = list()
 
-        providesDict = {}
-        providesDict[step.id()] = step.provides()
-        outputDict = {}
-        outputDict[step.tag()] = providesDict
-        self.__availableOutputsStack.append(outputDict)
-
     def inheritContextOf(self, prevCtx):
         outputsStackFromPrevContext = prevCtx.availableOutputStack()
         if not outputsStackFromPrevContext:
             return
-
-
-
-
-
-
-
-
-
-
-
-
-        pass
+        self.__availableOutputsStack.extend(outputsStackFromPrevContext)
 
     def availableOutputStack(self):
-        return self.__availableOutputsStack
+        outputStack = list()
+
+        providesDict = {}
+        providesDict[self.__step.id()] = self.__step.provides()
+        outputDict = {}
+        outputDict[self.__step.tag()] = providesDict
+        outputStack.append(outputDict)
+
+        outputStack.extend(self.__availableOutputsStack)
+
+        return outputStack
 
 
 

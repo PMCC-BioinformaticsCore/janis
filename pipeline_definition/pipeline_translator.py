@@ -35,15 +35,15 @@ class PipelineTranslator:
 
     def __dumpYaml(self, doc ):
         # Diagnostic - what have we got?
-        print("YAML DOC [\n")
+        print("YAML DOC [")
         print(yaml.dump(doc))
-        print("\n] END YAML DOC \n")
+        print("] END YAML DOC")
 
     def __dumpSchema(self, schema ):
-        print("PDX SCHEMA [\n")
+        print("PDX SCHEMA [")
         #print(schema)
         print(json.dumps(schema, indent=4))
-        print("\n] END PDX SCHEMA\n")
+        print("] END PDX SCHEMA")
 
 
     def validateSchema(self, yamlDoc ):
@@ -113,13 +113,10 @@ class PipelineTranslator:
 
             stepObj = stepFactory.buildFrom( dict([ (id, meta) ]) )
 
-
             stepObj.validateInputOuputSpec()
-
 
             pipelineSteps.append( stepObj )
 
-            print("\n")
 
         return pipelineSteps
 
@@ -250,44 +247,6 @@ class PipelineTranslator:
 
         return
 
-    # def __populateStepContext(self, workGraph, step, prevstep, globalInputSet, globalOutputSet, contextualInputSet ):
-    #     print("Populating context of step:", step.id() )
-    #
-    #     ctxAttrs = nx.get_node_attributes(workGraph, 'ctx')
-    #     stepCtx = ctxAttrs[step]
-    #     #print("Step CTX:", stepCtx)
-    #
-    #     stepCtx.setPrevStep( prevstep )
-    #     stepCtx.setGlobalInputSet(globalInputSet)
-    #     stepCtx.setGlobalOutputSet(globalOutputSet)
-    #
-    #     if prevstep is not None:
-    #         #Output from previous step can be input for current step
-    #         stepOutputs =  prevstep.provides()
-    #         if stepOutputs is not None:
-    #             contextualInputSet[prevstep.id()] = stepOutputs
-    #             stepCtx.setContextualInputSet(contextualInputSet)
-    #
-    #     stepCtx.print()
-    #
-    #     edges = nx.edges(workGraph, step)
-    #     for e in edges:
-    #         #print("Processing EDGE:",e)
-    #         nstep = e[1]
-    #         self.__populateStepContext(workGraph, nstep, step, globalInputSet, globalOutputSet, contextualInputSet)
-    #
-    #
-    # def __populateContexts(self, workGraph, globalInputSet, globalOutputSet ):
-    #
-    #     #steps = nx.all_neighbors(workGraph, self.__root)
-    #     edges = nx.edges(workGraph, self.__root)
-    #     contextualInputSet = {}
-    #
-    #     for e in edges:
-    #         #print("Processing EDGE:",e)
-    #         step = e[1]
-    #         self.__populateStepContext(workGraph, step, None, globalInputSet, globalOutputSet, contextualInputSet )
-
 
 
     def addDependencyTo(self, step, dependencySpec, workGraph):
@@ -312,8 +271,6 @@ class PipelineTranslator:
         if lastStep:
             print(step.id(),"in branch [", step.tag(), "] has input dependency on step", lastStep.id(), "in branch [",targetTag,"]")
             workGraph.add_edge(step, lastStep, type="dependency")
-
-
 
         return
 
@@ -380,12 +337,12 @@ class PipelineTranslator:
     def __dumpGraph(self, workGraph):
         #tree = json_graph.tree_data(workGraph, self.__root, attrs={'children': 'next', 'id': 'step'})
         tree = json_graph.node_link_data(workGraph,{'link': 'flow', 'source': 'step', 'target': 'target'})
-        print("Workflow Graph: [\n")
+        print("Workflow Graph: [")
         print(tree)
         #jsonDoc = json.dumps(tree, indent=4)
         #print(jsonDoc)
 
-        print("] End Workflow Graph\n")
+        print("] End Workflow Graph")
 
 
     def translatePipeline( self, pipelineSteps, globalInputSet, globalOutputSet ):
@@ -406,18 +363,17 @@ class PipelineTranslator:
         if inputs is None:
             raise ValueError("No input?")
 
-        if outputs is None:
-            #raise ValueError("No output?")
-            pass
+        #if outputs is None:
+        #    raise ValueError("No output?")
 
         workflowInputSet = self.buildInputs(inputs)
         workflowOutputSet = self.buildOutputs(outputs)
         pipelineSteps = self.buildSteps(steps )
 
         #Now translate the workflow steps
-        txDoc = self.translatePipeline( pipelineSteps, workflowInputSet, workflowOutputSet )
+        doc = self.translatePipeline( pipelineSteps, workflowInputSet, workflowOutputSet )
 
-        return txDoc
+        return doc
 
     def translate(self, pdfile, outfile=None, overwriteOutfile=False ):
         pdfilePath = os.path.abspath(pdfile)
@@ -451,8 +407,10 @@ class PipelineTranslator:
             self.validateSchema( doc )
 
             #Doc is OK, lets translate
-            tDoc = self.translateYamlDoc( doc )
-            print("Output: ", tDoc)
+            outputDoc = self.translateYamlDoc( doc )
+            print("Translation Output: [")
+            print(outputDoc)
+            print("]")
 
             # Save it
             #with open( outfilePath, "w" ) as ofile:

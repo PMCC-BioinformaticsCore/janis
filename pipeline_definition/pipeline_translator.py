@@ -211,7 +211,7 @@ class PipelineTranslator:
             if not prevCtx:
                 raise RuntimeError("Missing step context in graph. Graph integrity fail.")
 
-            if prevStep.tag() != InputStep.tagConvention() and step.tag() != prevStep.tag():
+            if prevStep.tag() != InputStep.inputSteptagName() and step.tag() != prevStep.tag():
                 raise RuntimeError("Branch tag mismatch during context population.")
 
             stepCtx.inheritContextOfBranch(prevCtx)
@@ -350,8 +350,59 @@ class PipelineTranslator:
         workGraph = self.__createWorkflowGraph( pipelineSteps, globalInputSet, globalOutputSet )
         self.__dumpGraph( workGraph )
 
+        jsonDoc = self.translateWorkflowToJson(workGraph)
 
-        return None
+        prettyJsonText = json.dumps(jsonDoc, indent=4)
+
+        return prettyJsonText
+
+    def translateWorkflowToJson(self, workGraph):
+        print("Generating JSON description for workflow")
+        ctxAttrMap = nx.get_node_attributes(workGraph, 'ctx')
+        typeAttrMap = nx.get_edge_attributes(workGraph, 'type')
+        workflow = self.describeWorkflow(workGraph, self.__inputStep, typeAttrMap, ctxAttrMap)
+        jsonDoc = {}
+        jsonDoc["workflow"] = workflow
+        print("Done generating JSON description for workflow")
+        return jsonDoc
+
+    def describeWorkflow(self, workGraph, inputStep, typeAttrMap, ctxAttrMap ):
+
+        doc = {
+        }
+
+        stepCtx = ctxAttrMap[inputStep]
+        provides = stepCtx.provides()
+
+        doc['inputs'] = inputStep.provides()
+
+
+        flow = {}
+        edges = nx.edges(workGraph, inputStep)
+        if not edges:
+            return
+
+        for edge in edges:
+            if edge[0] != inputStep:
+                raise RuntimeError("Trouble in edge finding")
+            edgeType = str(typeAttrMap[(edge[0], edge[1], 0)])
+            if edgeType == 'branch':
+                branchTag = edge[1].tag()
+                branchDesc = self.__branchDescriptionFrom(edge[1])
+                flow[ branchTag ] = branchDesc
+
+
+
+        doc['flow'] = flow
+
+        return doc
+
+    def __branchDescriptionFrom( self, step ):
+
+
+
+        return {}
+
 
     def translateYamlDoc(self, yamlDoc):
         #Create a in memory instances for all the inputs, steps and outputs

@@ -8,7 +8,7 @@ class InputStep(Step):
             'input-step' : {
                 'WorkflowInputStep' : {
                 },
-                'tag' : InputStep.tagConvention()
+                'tag' : InputStep.inputSteptagName()
             }})
         self.__workflowInputSet = workflowInputSet
 
@@ -34,5 +34,5 @@ class InputStep(Step):
         return None
 
     @staticmethod
-    def tagConvention():
-        return 'default-branch'
+    def inputSteptagName():
+        return 'input'

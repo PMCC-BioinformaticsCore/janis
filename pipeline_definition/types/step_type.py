@@ -58,7 +58,7 @@ class Step(ABC):
             self.__tag = stepMeta.get('tag')
 
         if self.__tag is None:
-            self.__tag = "default"
+            self.__tag = Step.defaultSteptagName()
 
     def tag(self):
         return self.__tag
@@ -118,14 +118,9 @@ class Step(ABC):
                 if not type:
                     raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
 
-
-
-
-
-
-
-
-
+    @staticmethod
+    def defaultSteptagName():
+        return 'untagged'
 
 
     #@abstractmethod

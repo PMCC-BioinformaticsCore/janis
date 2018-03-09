@@ -408,6 +408,25 @@ class PipelineTranslator:
         #desc['order'] = stepOrder
         doc[stepOrder] = desc
 
+        stepInputs = step.requires()
+        if stepInputs:
+            inputsDoc = {}
+
+            for input in stepInputs:
+                inputID = input[Step.STR_ID]
+                inputType = input[Step.STR_TYPE]
+                idoc = {
+                    'type' : inputType
+                }
+
+                stepCtx = ctxAttrMap[step]
+                mapping = stepCtx.mapInput(input)
+                idoc['mapping' ] = mapping
+
+                inputsDoc[inputID] = idoc
+
+            desc['step-inputs'] = inputsDoc
+
         stepCtx = ctxAttrMap[step]
         desc['step-outputs'] = self.__outputDocFrom( stepCtx, step )
 
@@ -422,9 +441,6 @@ class PipelineTranslator:
             if edgeType == 'branch':
                 nextStep = edge[1]
                 self.__populateDescriptionFrom( nextStep, doc, workGraph, stepOrder+1, typeAttrMap, ctxAttrMap)
-
-
-
 
     def translateYamlDoc(self, yamlDoc):
         #Create a in memory instances for all the inputs, steps and outputs

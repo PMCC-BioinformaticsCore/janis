@@ -37,7 +37,7 @@ class TrimStep(Step):
     def provides(self):
         return [
             {
-                Step.STR_ID : "read",
+                Step.STR_ID : "trimmed",
                 Step.STR_TYPE: "SequenceReadArchive"
             }
         ]
@@ -47,7 +47,7 @@ class TrimStep(Step):
     def requires(self):
         return [
             {
-                Step.STR_ID: "trimmed",
+                Step.STR_ID: "read",
                 Step.STR_TYPE: "SequenceReadArchive"
             }
         ]

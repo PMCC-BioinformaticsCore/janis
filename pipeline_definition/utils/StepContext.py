@@ -1,4 +1,5 @@
 import json
+from pipeline_definition.types.step_type import Step
 
 class StepContext:
     def __init__(self, step):
@@ -58,3 +59,20 @@ class StepContext:
 
     def print(self):
         print(self.toJSON())
+
+
+    def mapInput(self, input):
+
+        doc = {}
+        #Value provided?
+        providedValue = self.__step.providedValueForRequirement( input[Step.STR_ID] )
+        if providedValue:
+            doc['provided'] = providedValue
+
+
+
+
+
+        return doc
+
+

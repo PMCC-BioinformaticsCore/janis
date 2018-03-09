@@ -92,22 +92,73 @@ class StepContext:
         inputType = input[Step.STR_TYPE]
         stepTag = self.__step.tag()
 
-        oTag = dependencySpec['tag']
-        oStep =  dependencySpec['step']
-        output = dependencySpec['output']
+        dTag = dependencySpec['tag']
+        dStep =  dependencySpec['step']
+        dOutput = dependencySpec['output']
+
+        matches = {}
+        pref = 1
 
         # Find the matching dependency in the stack
-
-        mapped = False
         for dependency in self.__dependecnyContexts:
-            dstepTag, dstep = next(iter(dependency.items()))
-            dstepName, doutputs = next(iter(dstep.items()))
+            matched = False
+            tag, step = next(iter(dependency.items()))
+            stepName, outputs = next(iter(step.items()))
 
-            if dstepTag == oTag:
-                pass
+            if tag == dTag:
+                #Found the matching dependency, now lets map the output
 
-        if mapped:
-            return {}
+                # Pass 1 to see if we have exact name / type match
+                for o in outputs:
+                    oID = o[Step.STR_ID]
+                    oType = o[Step.STR_TYPE]
+
+                    # Name and Type match is heighest priority - conclusive
+                    name = inputID
+                    if name == oID and inputType == oType:
+                        matches[pref] = self.__matchDocFor(o, stepName, stepTag)
+                        pref = pref + 1
+                        matched = True
+                        break
+
+                if matched:
+                    break
+
+                # Pass two is tag, tag_str type convention and type match
+                for o in outputs:
+                    oID = o[Step.STR_ID]
+                    oType = o[Step.STR_TYPE]
+
+                    name = stepTag
+                    if (oID == name or oID.startswith(name + "_")) and inputType == oType:
+                        matches[pref] = self.__matchDocFor(o, stepName, stepTag)
+                        pref = pref + 1
+                        matched = True
+                        break
+
+                if matched:
+                    break
+
+                # Pass three is type match
+                for o in outputs:
+                    oID = o[Step.STR_ID]
+                    oType = o[Step.STR_TYPE]
+
+                    if inputType == oType:
+                        matches[pref] = self.__matchDocFor(o, stepName, stepTag)
+                        pref = pref + 1
+
+                # Pass four is name match
+                for o in outputs:
+                    oID = o[Step.STR_ID]
+                    oType = o[Step.STR_TYPE]
+                    if inputID == oID:
+                        matches[pref] = self.__matchDocFor(o, stepName, stepTag)
+                        pref = pref + 1
+                        continue
+
+        if matches:
+            return matches
 
         return self.findMatchForInput( input )
 

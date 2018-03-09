@@ -36,6 +36,23 @@ class StepContext:
         outputDict[self.__step.tag()] = providesDict
         return outputDict
 
+    def providesFor(self, step):
+        provides = self.provides()
+
+        if not provides:
+            return []
+
+        tagSpecific = provides.get(step.tag())
+
+        if not tagSpecific:
+            return []
+
+        stepSpecific = tagSpecific.get(step.id())
+        if not stepSpecific:
+            return []
+
+        return stepSpecific
+
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True, indent=4)
 

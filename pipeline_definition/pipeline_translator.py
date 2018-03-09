@@ -247,8 +247,6 @@ class PipelineTranslator:
 
         return
 
-
-
     def addDependencyTo(self, step, dependencySpec, workGraph):
 
         if not step:
@@ -367,15 +365,10 @@ class PipelineTranslator:
         return jsonDoc
 
     def describeWorkflow(self, workGraph, inputStep, typeAttrMap, ctxAttrMap ):
-
-        doc = {
-        }
+        doc = {}
 
         stepCtx = ctxAttrMap[inputStep]
-        provides = stepCtx.provides()
-
-        doc['inputs'] = inputStep.provides()
-
+        doc['inputs'] = self.__outputDocFrom( stepCtx, inputStep )
 
         flow = {}
         edges = nx.edges(workGraph, inputStep)
@@ -388,20 +381,55 @@ class PipelineTranslator:
             edgeType = str(typeAttrMap[(edge[0], edge[1], 0)])
             if edgeType == 'branch':
                 branchTag = edge[1].tag()
-                branchDesc = self.__branchDescriptionFrom(edge[1])
-                flow[ branchTag ] = branchDesc
-
-
+                branchDesc = {}
+                self.__populateDescriptionFrom(edge[1],branchDesc,workGraph, 1, typeAttrMap, ctxAttrMap )
+                flow[ branchTag ] = {
+                    'steps': branchDesc
+                }
 
         doc['flow'] = flow
 
         return doc
 
-    def __branchDescriptionFrom( self, step ):
+    def __outputDocFrom( self, stepCtx, step ):
+        doc={}
+        provides = stepCtx.providesFor( step )
+        for output in provides:
+            doc[output[Step.STR_ID]] = {
+                'type' : output[Step.STR_TYPE]
+            }
+
+        return doc
+
+    def __populateDescriptionFrom( self, step, doc, workGraph, stepOrder, typeAttrMap, ctxAttrMap  ):
+
+        desc = {}
+        desc['step'] = step.id()
+        #desc['order'] = stepOrder
+        doc[stepOrder] = desc
+
+        outputs = step.provides()
+        provides = {}
+        for output in outputs:
+            provides[output[Step.STR_ID]] = {
+                'type' : output[Step.STR_TYPE]
+            }
+
+        doc['step-outputs'] = provides
+
+        edges = nx.edges(workGraph, step)
+        if not edges:
+            return
+
+        for edge in edges:
+            if edge[0] != step:
+                raise RuntimeError("Trouble in edge finding")
+            edgeType = str(typeAttrMap[(edge[0], edge[1], 0)])
+            if edgeType == 'branch':
+                nextStep = edge[1]
+                self.__populateDescriptionFrom( nextStep, doc, workGraph, stepOrder+1, typeAttrMap, ctxAttrMap)
 
 
-
-        return {}
 
 
     def translateYamlDoc(self, yamlDoc):

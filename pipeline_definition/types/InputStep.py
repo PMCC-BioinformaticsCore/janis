@@ -27,7 +27,6 @@ class InputStep(Step):
 
             outputs.append(o)
 
-
         return outputs
 
     def requires(self):

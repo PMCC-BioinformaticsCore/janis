@@ -48,7 +48,7 @@ class TrimStep(Step):
         return [
             {
                 Step.STR_ID: "read",
-                Step.STR_TYPE: "SequenceReadArchive"
+                Step.STR_TYPE: "SequenceReadArchivePaired"
             }
         ]
 

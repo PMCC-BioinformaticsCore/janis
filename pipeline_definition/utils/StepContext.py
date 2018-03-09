@@ -64,15 +64,75 @@ class StepContext:
     def mapInput(self, input):
 
         doc = {}
-        #Value provided?
-        providedValue = self.__step.providedValueForRequirement( input[Step.STR_ID] )
-        if providedValue:
-            doc['provided'] = providedValue
+        #mapping provided?
+        providedMapping = self.__step.providedValueForRequirement( input[Step.STR_ID] )
+        if providedMapping:
+            doc['provided'] = providedMapping
+        else:
+            doc['provided'] = ""
 
+        candidates = {}
 
+        if providedMapping:
+            dependencySpec = Step.dependencySpecFrom(providedMapping)
+            candidates = self.findMatchForInputDependency( input, dependencySpec )
+        else:
+            candidates = self.findMatchForInput(input)
 
+        if not candidates:
+            candidates['ERROR'] = "Failed to find any candidate!!!!!"
 
-
+        doc['candidates'] = candidates
         return doc
 
 
+    def findMatchForInputDependency(self, input, dependencySpec ):
+
+        return self.findMatchForInput( input )
+
+    def findMatchForInput(self, input):
+
+        matches = {}
+        pref = 1
+
+        inputID = input[Step.STR_ID]
+        inputType = input[Step.STR_TYPE]
+        stepTag = self.__step.tag()
+
+        for priorityEntry in self.__branchOutputsStack:
+            matched = False
+            tag, step = next(iter(priorityEntry.items()))
+            stepName, outputs = next(iter(step.items()))
+
+            for o in outputs:
+                oID = o[Step.STR_ID]
+                oType = o[Step.STR_TYPE]
+
+                #Name and Type match is heighest priority - conclusive
+                name = inputID
+                if name == oID and inputType == oType:
+                    matches[pref] = o
+                    pref = pref + 1
+                    break
+
+                #If name starts with or equals to tag and type matches then take that
+                name = stepTag
+                if oID.startswith(name) and inputType == oType:
+                    matches[pref] = o
+                    pref = pref + 1
+                    break
+
+                if inputID == oID:
+                    matches[pref] = o
+                    pref = pref + 1
+                    continue
+
+                if inputType == oType:
+                    matches[pref] = o
+                    pref = pref + 1
+
+
+
+
+
+        return matches

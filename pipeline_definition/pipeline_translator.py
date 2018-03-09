@@ -304,7 +304,7 @@ class PipelineTranslator:
             if not requirementValue:
                 continue
 
-            dependencySpec = self.dependencySpecFrom( requirementValue )
+            dependencySpec = Step.dependencySpecFrom( requirementValue )
 
             if not dependencyList:
                 dependencyList = list()
@@ -313,23 +313,6 @@ class PipelineTranslator:
         return dependencyList
 
 
-    def dependencySpecFrom(self, requirementValue ):
-
-        tag = None
-        step = None
-        output = None
-
-        parts = requirementValue.split(".")
-
-        head = parts[0]
-        if head.startswith("#"):
-            tag = head[1:]
-
-        return {
-            'tag' : tag,
-            'step' : step,
-            'output' : output
-        }
 
 
     def __dumpGraph(self, workGraph):

@@ -122,6 +122,24 @@ class Step(ABC):
     def defaultSteptagName():
         return 'untagged'
 
+    @staticmethod
+    def dependencySpecFrom( requirementValue ):
+
+        tag = None
+        step = None
+        output = None
+
+        parts = requirementValue.split(".")
+
+        head = parts[0]
+        if head.startswith("#"):
+            tag = head[1:]
+
+        return {
+            'tag' : tag,
+            'step' : step,
+            'output' : output
+        }
 
     #@abstractmethod
     #def type(self):

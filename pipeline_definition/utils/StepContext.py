@@ -88,16 +88,37 @@ class StepContext:
 
     def findMatchForInputDependency(self, input, dependencySpec ):
 
+        inputID = input[Step.STR_ID]
+        inputType = input[Step.STR_TYPE]
+        stepTag = self.__step.tag()
+
+        oTag = dependencySpec['tag']
+        oStep =  dependencySpec['step']
+        output = dependencySpec['output']
+
+        # Find the matching dependency in the stack
+
+        mapped = False
+        for dependency in self.__dependecnyContexts:
+            dstepTag, dstep = next(iter(dependency.items()))
+            dstepName, doutputs = next(iter(dstep.items()))
+
+            if dstepTag == oTag:
+                pass
+
+        if mapped:
+            return {}
+
         return self.findMatchForInput( input )
 
     def findMatchForInput(self, input):
 
-        matches = {}
-        pref = 1
-
         inputID = input[Step.STR_ID]
         inputType = input[Step.STR_TYPE]
         stepTag = self.__step.tag()
+
+        matches = {}
+        pref = 1
 
         # For each step in the stack, look at its provided outputs
         for priorityEntry in self.__branchOutputsStack:
@@ -121,14 +142,13 @@ class StepContext:
             if matched:
                 break
 
-            #Pass two is tag, tag_name type convention and type match
+            #Pass two is tag, tag_str type convention and type match
             for o in outputs:
                 oID = o[Step.STR_ID]
                 oType = o[Step.STR_TYPE]
 
-                #If name starts with or equals to tag and type matches then take that
                 name = stepTag
-                if oID.startswith(name) and inputType == oType:
+                if (oID == name or oID.startswith(name + "_")) and inputType == oType:
                     matches[pref] = self.__matchDocFor(o,  ostepName, osetpTag)
                     pref = pref + 1
                     matched = True
@@ -154,7 +174,6 @@ class StepContext:
                     matches[pref] = self.__matchDocFor(o,  ostepName, osetpTag)
                     pref = pref + 1
                     continue
-
 
 
         return matches

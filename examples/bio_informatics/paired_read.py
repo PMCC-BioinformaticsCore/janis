@@ -38,8 +38,8 @@ class PairedReadInput(Input):
         self.backwardPattern = None
 
         if self.meta is not None:
-            self.forwardPattern = self.meta.get("forward-pattern")
-            self.backwardPattern = self.meta.get("backward-pattern")
+            self.forwardPattern = self.meta().get("forward-pattern")
+            self.backwardPattern = self.meta().get("backward-pattern")
 
     def identify(self):
         super().identify()

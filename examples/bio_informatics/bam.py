@@ -37,7 +37,7 @@ class BAMInput(Input):
         self.path = None
 
         if self.meta is not None:
-            self.path = self.meta.get("path")
+            self.path = self.meta().get("path")
 
     def identify(self):
         super().identify()

@@ -35,11 +35,17 @@ class AlignFactory(StepFactory):
 class AlignStep(Step):
 
     def provides(self):
-        return {
-            "type": "BAM"
-        }
+        return [
+            {
+                Step.STR_ID: "bamfile",
+                Step.STR_TYPE: "BAM"
+            }
+        ]
 
     def requires(self):
-        return {
-            "type": "SequenceReadArchivePaired"
-        }
+        return [
+            {
+                Step.STR_ID: "read",
+                Step.STR_TYPE: "SequenceReadArchivePaired"
+            }
+        ]

@@ -1,6 +1,3 @@
-#
-#
-#
 from abc import ABC, abstractmethod
 
 import sys
@@ -41,6 +38,9 @@ class StepFactory(ABC):
 
 
 class Step(ABC):
+    STR_ID = "id"
+    STR_TYPE = "type"
+
     def __init__(self, dict):
         self.__id = next(iter(dict.keys()))
 
@@ -79,13 +79,11 @@ class Step(ABC):
 
     @abstractmethod
     def provides(self):
-        # A set of optionally tagged input data
-        pass
+        raise RuntimeError("Please provide implementation")
 
     @abstractmethod
     def requires(self):
-        # A set of optionally tagged output data
-        pass
+        raise RuntimeError("Please provide implementation")
 
     @staticmethod
     def selectTypeNameFrom( meta ):
@@ -98,6 +96,36 @@ class Step(ABC):
             selection = candidate
             break
         return selection
+
+    def validateInputOuputSpec(self):
+
+        outputSpecs = self.provides()
+        if outputSpecs:
+            for ospec in outputSpecs:
+                if not isinstance(ospec, dict ):
+                    raise RuntimeError( "Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation." )
+
+
+                if Step.STR_ID not in ospec:
+                    raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+                name = ospec.get(Step.STR_ID)
+                if not name:
+                    raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+
+                if Step.STR_TYPE not in ospec:
+                    raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+                type = ospec.get(Step.STR_TYPE)
+                if not type:
+                    raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+
+
+
+
+
+
+
+
+
 
 
     #@abstractmethod

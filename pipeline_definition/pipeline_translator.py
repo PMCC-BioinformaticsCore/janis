@@ -85,8 +85,6 @@ class PipelineTranslator:
 
             inputSet.append(inputObj)
 
-
-
         return inputSet
 
     def buildOutputs(self, outputs ):
@@ -114,6 +112,10 @@ class PipelineTranslator:
                 raise ValueError("No factory registered for step: " + stepType )
 
             stepObj = stepFactory.buildFrom( dict([ (id, meta) ]) )
+
+
+            stepObj.validateInputOuputSpec()
+
 
             pipelineSteps.append( stepObj )
 
@@ -339,10 +341,13 @@ class PipelineTranslator:
 
         dependencyList = None
         for requirement in stepRequires:
-            requirementName = requirement['name']
+            requirementName = requirement[Step.STR_ID]
             #print("Process STEP REQUIREMENT:", requirementName)
             requirementValue = step.providedValueForRequirement(requirementName)
             #print("Input value:", requirementValue)
+
+            if not requirementValue:
+                continue
 
             dependencySpec = self.dependencySpecFrom( requirementValue )
 

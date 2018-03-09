@@ -41,17 +41,23 @@ class InputFactory(ABC):
 
 class Input(ABC):
     def __init__(self, dict):
-        self.id = next(iter(dict.keys()))
+        self.__id = next(iter(dict.keys()))
 
         meta = next(iter(dict.values()))
-        self.type = next(iter(meta.keys()))
-        self.meta = next(iter(meta.values()))
+        self.__type = next(iter(meta.keys()))
+        self.__meta = next(iter(meta.values()))
 
     def identify(self):
         print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]" )
 
+    def id(self):
+        return self.__id
+
     def type(self):
-        return str(type(self).__name__)
+        return self.__type
+
+    def meta(self):
+        return self.__meta
 
     @abstractmethod
     def datum_type(self):

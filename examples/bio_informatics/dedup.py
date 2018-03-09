@@ -33,11 +33,17 @@ class DedupFactory(StepFactory):
 class DedupStep(Step):
 
     def provides(self):
-        return {
-            "type": "BAM"
-        }
+        return [
+            {
+                Step.STR_ID: "bamfile",
+                Step.STR_TYPE: "BAM"
+            }
+        ]
 
     def requires(self):
-        return {
-            "type": "BAM"
-        }
+        return [
+            {
+                Step.STR_ID : "bamfile",
+                Step.STR_TYPE: "BAM"
+            }
+        ]

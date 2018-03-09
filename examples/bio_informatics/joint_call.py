@@ -41,20 +41,20 @@ class JointCallStep(Step):
     def provides(self):
         return [
             {
-                'name': 'out1',
-                'type': 'VCF'
+                Step.STR_ID: 'out1',
+                Step.STR_TYPE: 'VCF'
             }
         ]
 
     def requires(self):
         return [
             {
-                'name': 'normal_tag',
-                'type': 'BAM'
+                Step.STR_ID: 'normal_tag',
+                Step.STR_TYPE: 'BAM'
             },
             {
 
-                'name': 'tumour_tag',
-                'type': 'BAM'
+                Step.STR_ID: 'tumour_tag',
+                Step.STR_TYPE: 'BAM'
             }
         ]

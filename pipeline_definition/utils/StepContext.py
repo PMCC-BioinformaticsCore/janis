@@ -60,7 +60,6 @@ class StepContext:
     def print(self):
         print(self.toJSON())
 
-
     def mapInput(self, input):
 
         doc = {}

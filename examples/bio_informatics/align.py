@@ -37,7 +37,7 @@ class AlignStep(Step):
     def provides(self):
         return [
             {
-                Step.STR_ID: "bamfile",
+                Step.STR_ID: "alignedbamfile",
                 Step.STR_TYPE: "BAM"
             }
         ]

@@ -35,15 +35,15 @@ class CallStep(Step):
     def provides(self):
         return [
             {
-                Step.STR_ID: "bamfile",
-                Step.STR_TYPE: "BAM"
+                Step.STR_ID: "read",
+                Step.STR_TYPE: "SequenceReadArchivePaired"
             }
         ]
 
     def requires(self):
         return [
             {
-                Step.STR_ID: "read",
-                Step.STR_TYPE: "SequenceReadArchivePaired"
+                Step.STR_ID: "alignedbamfile",
+                Step.STR_TYPE: "BAM"
             }
         ]

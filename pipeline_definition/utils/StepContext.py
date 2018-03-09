@@ -99,11 +99,13 @@ class StepContext:
         inputType = input[Step.STR_TYPE]
         stepTag = self.__step.tag()
 
+        # For each step in the stack, look at its provided outputs
         for priorityEntry in self.__branchOutputsStack:
             matched = False
-            tag, step = next(iter(priorityEntry.items()))
-            stepName, outputs = next(iter(step.items()))
+            osetpTag, ostep = next(iter(priorityEntry.items()))
+            ostepName, outputs = next(iter(ostep.items()))
 
+            #Pass 1 to see if we have exact name / type match
             for o in outputs:
                 oID = o[Step.STR_ID]
                 oType = o[Step.STR_TYPE]
@@ -111,28 +113,54 @@ class StepContext:
                 #Name and Type match is heighest priority - conclusive
                 name = inputID
                 if name == oID and inputType == oType:
-                    matches[pref] = o
+                    matches[pref] = self.__matchDocFor(o, ostepName, osetpTag)
                     pref = pref + 1
+                    matched = True
                     break
+
+            if matched:
+                break
+
+            #Pass two is tag, tag_name type convention and type match
+            for o in outputs:
+                oID = o[Step.STR_ID]
+                oType = o[Step.STR_TYPE]
 
                 #If name starts with or equals to tag and type matches then take that
                 name = stepTag
                 if oID.startswith(name) and inputType == oType:
-                    matches[pref] = o
+                    matches[pref] = self.__matchDocFor(o,  ostepName, osetpTag)
                     pref = pref + 1
+                    matched = True
                     break
 
-                if inputID == oID:
-                    matches[pref] = o
-                    pref = pref + 1
-                    continue
+            if matched:
+                break
+
+            #Pass three is type match
+            for o in outputs:
+                oID = o[Step.STR_ID]
+                oType = o[Step.STR_TYPE]
 
                 if inputType == oType:
-                    matches[pref] = o
+                    matches[pref] = self.__matchDocFor(o,  ostepName, osetpTag)
                     pref = pref + 1
 
-
+            # Pass four is name match
+            for o in outputs:
+                oID = o[Step.STR_ID]
+                oType = o[Step.STR_TYPE]
+                if inputID == oID:
+                    matches[pref] = self.__matchDocFor(o,  ostepName, osetpTag)
+                    pref = pref + 1
+                    continue
 
 
 
         return matches
+
+    def __matchDocFor(self, o, ostepName, osetpTag):
+        doc = o
+        doc['step'] = ostepName
+        doc['tag'] = osetpTag
+        return doc

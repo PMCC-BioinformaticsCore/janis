@@ -388,6 +388,7 @@ class PipelineTranslator:
 
         desc = {}
         desc['step'] = step.id()
+        desc['type'] = step.type()
         #desc['order'] = stepOrder
         doc[stepOrder] = desc
 

@@ -63,6 +63,9 @@ class Step(ABC):
     def tag(self):
         return self.__tag
 
+    def type(self):
+        return self.__type
+
     def id(self):
         return self.__id
 

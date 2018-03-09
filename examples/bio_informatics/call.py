@@ -33,7 +33,11 @@ class CallFactory(StepFactory):
 class CallStep(Step):
 
     def provides(self):
-        pass
+        return {
+            "type": "BAM"
+        }
 
     def requires(self):
-        pass
+        return {
+            "type": "SequenceReadArchivePaired"
+        }

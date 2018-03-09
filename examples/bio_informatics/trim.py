@@ -35,8 +35,13 @@ class TrimFactory(StepFactory):
 class TrimStep(Step):
 
     def provides(self):
-        pass
+        return {
+            "type": "SequenceReadArchive"
+        }
+
 
     def requires(self):
-        pass
+        return {
+            "type": "SequenceReadArchive"
+        }
 

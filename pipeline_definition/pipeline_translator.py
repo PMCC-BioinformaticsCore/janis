@@ -408,14 +408,8 @@ class PipelineTranslator:
         #desc['order'] = stepOrder
         doc[stepOrder] = desc
 
-        outputs = step.provides()
-        provides = {}
-        for output in outputs:
-            provides[output[Step.STR_ID]] = {
-                'type' : output[Step.STR_TYPE]
-            }
-
-        doc['step-outputs'] = provides
+        stepCtx = ctxAttrMap[step]
+        desc['step-outputs'] = self.__outputDocFrom( stepCtx, step )
 
         edges = nx.edges(workGraph, step)
         if not edges:

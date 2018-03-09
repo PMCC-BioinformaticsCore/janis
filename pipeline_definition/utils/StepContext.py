@@ -90,7 +90,7 @@ class StepContext:
 
         inputID = input[Step.STR_ID]
         inputType = input[Step.STR_TYPE]
-        stepTag = self.__step.tag()
+        inputStepTag = self.__step.tag()
 
         dTag = dependencySpec['tag']
         dStep =  dependencySpec['step']
@@ -129,9 +129,9 @@ class StepContext:
                     oID = o[Step.STR_ID]
                     oType = o[Step.STR_TYPE]
 
-                    name = stepTag
+                    name = inputStepTag
                     if (oID == name or oID.startswith(name + "_")) and inputType == oType:
-                        matches[pref] = self.__matchDocFor(o, stepName, stepTag)
+                        matches[pref] = self.__matchDocFor(o, stepName, tag)
                         pref = pref + 1
                         matched = True
                         break
@@ -145,7 +145,7 @@ class StepContext:
                     oType = o[Step.STR_TYPE]
 
                     if inputType == oType:
-                        matches[pref] = self.__matchDocFor(o, stepName, stepTag)
+                        matches[pref] = self.__matchDocFor(o, stepName, tag)
                         pref = pref + 1
 
                 # Pass four is name match
@@ -153,7 +153,7 @@ class StepContext:
                     oID = o[Step.STR_ID]
                     oType = o[Step.STR_TYPE]
                     if inputID == oID:
-                        matches[pref] = self.__matchDocFor(o, stepName, stepTag)
+                        matches[pref] = self.__matchDocFor(o, stepName, tag)
                         pref = pref + 1
                         continue
 

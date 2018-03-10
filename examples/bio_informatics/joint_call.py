@@ -50,11 +50,14 @@ class JointCallStep(Step):
         return [
             {
                 Step.STR_ID: 'normal_tag',
-                Step.STR_TYPE: 'SequenceReadArchivePaired'
+                Step.STR_TYPE: 'BAM'
             },
             {
-
                 Step.STR_ID: 'tumour_tag',
-                Step.STR_TYPE: 'SequenceReadArchivePaired'
+                Step.STR_TYPE: 'BAM'
+            },
+            {
+                Step.STR_ID: 'references',
+                Step.STR_TYPE: 'REFERENCE'
             }
         ]

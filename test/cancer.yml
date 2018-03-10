@@ -8,7 +8,7 @@ inputs:
       forward-pattern: '*_R1.fastq.gz'
       backward-pattern: '*_R2.fastq.gz'
   ref:
-    BAM:
+    REFERENCE:
       path: 'path/to/reference'
 
 steps:
@@ -35,7 +35,6 @@ steps:
       tag: 'normal'
       call:
   - step7:
-      input_scope: [ref]
       joint_call:
         caller: mutect
         tumour_tag: '#tumour'

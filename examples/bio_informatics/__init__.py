@@ -3,6 +3,7 @@ from pipeline_definition.types.type_registry import register_step_factory
 
 
 from examples.bio_informatics.bam import BAMFactory
+from examples.bio_informatics.reference import ReferenceFactory
 from examples.bio_informatics.paired_read import PairedReadFactory
 
 from examples.bio_informatics.align import AlignFactory
@@ -13,6 +14,7 @@ from examples.bio_informatics.dedup import DedupFactory
 
 register_input_factory(PairedReadFactory())
 register_input_factory(BAMFactory())
+register_input_factory(ReferenceFactory())
 
 register_step_factory(AlignFactory())
 register_step_factory(TrimFactory())

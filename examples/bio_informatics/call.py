@@ -36,7 +36,7 @@ class CallStep(Step):
         return [
             {
                 Step.STR_ID: "read",
-                Step.STR_TYPE: "SequenceReadArchivePaired"
+                Step.STR_TYPE: "VCF"
             }
         ]
 
@@ -45,5 +45,9 @@ class CallStep(Step):
             {
                 Step.STR_ID: "alignedbamfile",
                 Step.STR_TYPE: "BAM"
+            },
+            {
+                Step.STR_ID: "reference",
+                Step.STR_TYPE: "REFERENCE"
             }
         ]

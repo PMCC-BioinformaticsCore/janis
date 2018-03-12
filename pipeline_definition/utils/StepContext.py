@@ -29,6 +29,7 @@ class StepContext:
     def addDependencyContextFrom(self, stepCtx ):
         dependencyContext = stepCtx.provides()
         self.__dependecnyContexts.append(dependencyContext)
+        #Dependency search is not only limited to last step in reffered branch
         self.__dependecnyContexts.extend(stepCtx.outputStackOfBranch())
 
     def provides(self):

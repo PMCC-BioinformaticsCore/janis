@@ -29,6 +29,7 @@ class StepContext:
     def addDependencyContextFrom(self, stepCtx ):
         dependencyContext = stepCtx.provides()
         self.__dependecnyContexts.append(dependencyContext)
+        self.__dependecnyContexts.extend(stepCtx.outputStackOfBranch())
 
     def provides(self):
         providesDict = {}

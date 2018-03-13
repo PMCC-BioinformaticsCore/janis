@@ -1,0 +1,26 @@
+inputs:
+  fastq:
+    SequenceReadArchivePaired:
+      forward-pattern: '*_R1.fastq.gz'
+      backward-pattern: '*_R2.fastq.gz'
+  ref:
+    REFERENCE:
+      path: 'path/to/reference'
+
+steps:
+  - qc:
+      fastqc:
+  - remove-adaptors:
+      trim:
+  - align-to-human:
+      align:
+  - dedup:
+      dedup:
+  - intesect-genic:
+      input_scope: dedup
+      bedtools-intersect:
+        split: true
+  - intesect-nongenic:
+      input_scope: dedup
+      bedtools-intersect:
+        reportNoOverlaps: true

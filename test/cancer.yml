@@ -37,6 +37,6 @@ steps:
   - step7:
       joint_call:
         caller: mutect
-        tumour_tag: '#tumour'
+        tumour_tag: 'tumour'
         normal_tag: '#normal'
 

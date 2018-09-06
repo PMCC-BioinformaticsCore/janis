@@ -19,7 +19,7 @@ def main( opts ):
     # pdfile = "pd_1.yml"
 
     pdTranslator = PipelineTranslator()
-    pdTranslator.translate( pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx", overwriteOutfile=True )
+    pdTranslator.translate(pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx", overwrite_outfile=True)
     #pdx.translate(pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx")
 
 

@@ -1,27 +1,25 @@
-
 import yaml
 
 
 class InvalidInput(Exception):
-    pass
+  pass
 
 
 def main(fn):
+  with open(fn, 'r') as f:
+    data = f.read()
 
-    with open(fn, 'r') as f:
-        data = f.read()
-
-    yml = yaml.load(data)
-    build_input(yml)
+  yml = yaml.load(data)
+  build_input(yml)
 
 
 def build_input(yml):
-    try:
-        inputs = yml['inputs']
-    except KeyError:
-        raise InvalidInput('The workflow must specify inputs')
+  try:
+    inputs = yml['inputs']
+  except KeyError:
+    raise InvalidInput('The workflow must specify inputs')
 
-    if inputs is None or len(inputs) == 0:
-        raise InvalidInput('The workflow must specify inputs')
+  if inputs is None or len(inputs) == 0:
+    raise InvalidInput('The workflow must specify inputs')
 
-    print(yml)
+  print(yml)

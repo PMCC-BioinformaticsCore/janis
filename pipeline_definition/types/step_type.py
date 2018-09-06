@@ -47,7 +47,7 @@ class Step(ABC):
         stepMeta = next(iter(dict.values()))
 
         if stepMeta is not None:
-            self.__type = Step.selectTypeNameFrom(stepMeta)
+            self.__type = Step.select_type_name_from(stepMeta)
             self.__meta = stepMeta[self.__type]
         else:
             self.__type = self.id
@@ -89,7 +89,7 @@ class Step(ABC):
         raise RuntimeError("Please provide implementation")
 
     @staticmethod
-    def selectTypeNameFrom( meta ):
+    def select_type_name_from(meta):
         selection = None
         for candidate in iter(meta.keys()):
             if candidate == 'tag':
@@ -126,7 +126,7 @@ class Step(ABC):
         return 'untagged'
 
     @staticmethod
-    def dependencySpecFrom( requirementValue ):
+    def dependency_spec_from(requirementValue):
 
         tag = None
         step = None

@@ -2,14 +2,14 @@ from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.types.step_type import Step
 
 
-class AlignFactory(StepFactory):
+class IntersectFactory(StepFactory):
   @classmethod
   def type(cls):
-    return 'align'
+    return 'bedtools-intersect'
 
   @classmethod
   def label(cls):
-    return 'align'
+    return 'bedtools-intersect'
 
   @classmethod
   def description(cls):
@@ -19,10 +19,13 @@ class AlignFactory(StepFactory):
   def describe(cls):
     return {
       'schema': {
-        'aligner': {
-          'type': 'string',
-          'allowed': ['bowtie', 'bwa'],
-          'default': 'bowtie'
+        "split": {
+          "type": "boolean",
+          "default": False
+        },
+        "reportNoOverlaps": {
+          "type": "boolean",
+          "default": False
         }
       },
       'nullable': True
@@ -30,16 +33,16 @@ class AlignFactory(StepFactory):
 
   @classmethod
   def build(cls, meta, debug=False):
-    return AlignStep(meta, debug=debug)
+    return IntersectStep(meta, debug=debug)
 
 
-class AlignStep(Step):
+class IntersectStep(Step):
 
   def provides(self):
     return [
       {
-        Step.STR_ID: "alignedbamfile",
-        Step.STR_TYPE: "BAM"
+        Step.STR_ID: "reports",
+        Step.STR_TYPE: "Text"
       }
     ]
 
@@ -48,9 +51,5 @@ class AlignStep(Step):
       {
         Step.STR_ID: "read",
         Step.STR_TYPE: "SequenceReadArchivePaired"
-      },
-      {
-        Step.STR_ID: "reference",
-        Step.STR_TYPE: "REFERENCE"
       }
     ]

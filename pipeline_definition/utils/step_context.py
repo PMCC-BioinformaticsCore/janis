@@ -60,10 +60,10 @@ class StepContext:
   def print(self):
     print(self.to_json())
 
-  def map_input(self, input):
+  def map_input(self, step_input):
 
     # mapping provided?
-    provided_mapping = self.__step.providedValueForRequirement(input[Step.STR_ID])
+    provided_mapping = self.__step.provided_value_for_requirement(step_input[Step.STR_ID])
     if provided_mapping:
       doc = {'provided': provided_mapping}
     else:
@@ -71,9 +71,9 @@ class StepContext:
 
     if provided_mapping:
       dependency_spec = Step.dependency_spec_from(provided_mapping)
-      candidates = self.find_match_for_input_dependency(input, dependency_spec)
+      candidates = self.find_match_for_input_dependency(step_input, dependency_spec)
     else:
-      candidates = self.find_match_for_input(input)
+      candidates = self.find_match_for_input(step_input)
 
     if not candidates:
       candidates['ERROR'] = "Failed to find any candidate!!!!!"
@@ -81,10 +81,10 @@ class StepContext:
     doc['candidates'] = candidates
     return doc
 
-  def find_match_for_input_dependency(self, input, dependency_spec):
+  def find_match_for_input_dependency(self, step_input, dependency_spec):
 
-    input_id = input[Step.STR_ID]
-    input_type = input[Step.STR_TYPE]
+    input_id = step_input[Step.STR_ID]
+    input_type = step_input[Step.STR_TYPE]
     input_step_tag = self.__step.tag()
 
     d_tag = dependency_spec['tag']
@@ -109,7 +109,7 @@ class StepContext:
           # Name and Type match is heighest priority - conclusive
           name = input_id
           if name == o_id and input_type == o_type:
-            matches[pref] = self.__match_doc_for(o, step_name, stepTag)
+            matches[pref] = self.__match_doc_for(o, step_name, input_step_tag)
             pref = pref + 1
             matched = True
             break
@@ -151,7 +151,7 @@ class StepContext:
     if matches:
       return matches
 
-    return self.find_match_for_input(input)
+    return self.find_match_for_input(step_input)
 
   def find_match_for_input(self, input):
 

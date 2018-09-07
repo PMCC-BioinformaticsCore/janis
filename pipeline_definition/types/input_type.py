@@ -27,28 +27,31 @@ class InputFactory(ABC):
 
   @classmethod
   @abstractmethod
-  def build(cls, input_dict):
+  def build(cls, input_dict, debug=False):
     pass
 
   @classmethod
-  def build_from(cls, input_dict):
+  def build_from(cls, input_dict, debug=False):
     input_type = cls.type()
-    print(input_type, "factory: Building from", input_dict)
-    obj = cls.build(input_dict)
+    if debug:
+      print(input_type, "factory: Building from", input_dict)
+    obj = cls.build(input_dict, debug=debug)
     obj.identify()
     return obj
 
 
 class Input(ABC):
-  def __init__(self, input_dict):
+  def __init__(self, input_dict, debug=False):
     self.__id = next(iter(input_dict.keys()))
 
     meta = next(iter(input_dict.values()))
     self.__type = next(iter(meta.keys()))
     self.__meta = next(iter(meta.values()))
+    self.__debug = debug
 
   def identify(self):
-    print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]")
+    if self.__debug:
+      print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]")
 
   def id(self):
     return self.__id

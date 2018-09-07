@@ -13,6 +13,7 @@ from examples.bio_informatics.call import CallFactory
 from examples.bio_informatics.joint_call import JointCallFactory
 from examples.bio_informatics.dedup import DedupFactory
 from examples.bio_informatics.fastqc import FastQCFactory
+from examples.bio_informatics.intersect_genic import IntersectFactory
 
 register_input_factory(PairedReadFactory())
 register_input_factory(BAMFactory())
@@ -25,6 +26,7 @@ register_step_factory(CallFactory())
 register_step_factory(JointCallFactory())
 register_step_factory(DedupFactory())
 register_step_factory(FastQCFactory())
+register_step_factory(IntersectFactory())
 
 
 

@@ -1,185 +1,186 @@
 from abc import ABC, abstractmethod
 
-import sys
 
 class StepFactory(ABC):
-    @classmethod
-    @abstractmethod
-    def type(cls):
-        pass
+  @classmethod
+  @abstractmethod
+  def type(cls):
+    pass
 
-    @classmethod
-    @abstractmethod
-    def label(cls):
-        pass
+  @classmethod
+  @abstractmethod
+  def label(cls):
+    pass
 
-    @classmethod
-    @abstractmethod
-    def description(cls):
-        pass
+  @classmethod
+  @abstractmethod
+  def description(cls):
+    pass
 
-    @classmethod
-    @abstractmethod
-    def describe(cls):
-        pass
+  @classmethod
+  @abstractmethod
+  def describe(cls):
+    pass
 
-    @classmethod
-    @abstractmethod
-    def build(cls, meta):
-        pass
+  @classmethod
+  @abstractmethod
+  def build(cls, meta, debug=False):
+    pass
 
-    @classmethod
-    def buildFrom(self, dict):
-        type = self.type()
-        print(type, "factory: Building from", dict)
-        obj = self.build(dict)
-        obj.identify()
-        return obj
+  @classmethod
+  def build_from(cls, step_dict, debug=False):
+    step_type = cls.type()
+    if debug:
+      print(step_type, "factory: Building from", step_dict)
+    obj = cls.build(step_dict, debug=debug)
+    obj.identify()
+    return obj
 
 
 class Step(ABC):
-    STR_ID = "id"
-    STR_TYPE = "type"
+  STR_ID = "id"
+  STR_TYPE = "type"
 
-    def __init__(self, dict):
-        self.__id = next(iter(dict.keys()))
+  def __init__(self, input_dict, debug=False):
+    self.__id = next(iter(input_dict.keys()))
+    self.__debug = debug
 
-        stepMeta = next(iter(dict.values()))
+    step_meta = next(iter(input_dict.values()))
 
-        if stepMeta is not None:
-            self.__type = Step.select_type_name_from(stepMeta)
-            self.__meta = stepMeta[self.__type]
-        else:
-            self.__type = self.id
-            self.__meta = None
+    if step_meta is not None:
+      self.__type = Step.select_type_name_from(step_meta)
+      self.__meta = step_meta[self.__type]
+    else:
+      self.__type = self.id
+      self.__meta = None
 
-        self.__tag = None
-        if ( stepMeta is not None):
-            self.__tag = stepMeta.get('tag')
+    self.__tag = None
+    if step_meta is not None:
+      self.__tag = step_meta.get('tag')
 
-        if self.__tag is None:
-            self.__tag = Step.defaultSteptagName()
+    if self.__tag is None:
+      self.__tag = Step.default_step_tag_name()
 
-    def tag(self):
-        return self.__tag
+  def tag(self):
+    return self.__tag
 
-    def type(self):
-        return self.__type
+  def type(self):
+    return self.__type
 
-    def id(self):
-        return self.__id
+  def id(self):
+    return self.__id
 
-    def identify(self):
-        print("Instance: [", self.__id, " - ", self.__type, " - ", self.__meta, " ]")
+  def identify(self):
+    if self.__debug:
+      print("Instance: [", self.__id, " - ", self.__type, " - ", self.__meta, " ]")
 
-    def providedValueForRequirement(self, requirmentName):
+  def provided_value_for_requirement(self, requirmentName):
 
-        if self.__meta is None:
-            return None
+    if self.__meta is None:
+      return None
 
-        provided = self.__meta.get(requirmentName)
-        return provided
+    provided = self.__meta.get(requirmentName)
+    return provided
 
-    @abstractmethod
-    def provides(self):
-        raise RuntimeError("Please provide implementation")
+  @abstractmethod
+  def provides(self):
+    raise RuntimeError("Please provide implementation")
 
-    @abstractmethod
-    def requires(self):
-        raise RuntimeError("Please provide implementation")
+  @abstractmethod
+  def requires(self):
+    raise RuntimeError("Please provide implementation")
 
-    @staticmethod
-    def select_type_name_from(meta):
-        selection = None
-        for candidate in iter(meta.keys()):
-            if candidate == 'tag':
-                continue
-            if candidate == 'input_scope':
-                continue
-            selection = candidate
-            break
-        return selection
+  @staticmethod
+  def select_type_name_from(meta):
+    selection = None
+    for candidate in iter(meta.keys()):
+      if candidate == 'tag':
+        continue
+      if candidate == 'input_scope':
+        continue
+      selection = candidate
+      break
+    return selection
 
-    def validateInputOuputSpec(self):
+  def validate_input_ouput_spec(self):
 
-        outputSpecs = self.provides()
-        if outputSpecs:
-            for ospec in outputSpecs:
-                if not isinstance(ospec, dict ):
-                    raise RuntimeError( "Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation." )
+    output_specs = self.provides()
+    if output_specs:
+      for ospec in output_specs:
+        if not isinstance(ospec, dict):
+          raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
 
+        if Step.STR_ID not in ospec:
+          raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+        name = ospec.get(Step.STR_ID)
+        if not name:
+          raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
 
-                if Step.STR_ID not in ospec:
-                    raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
-                name = ospec.get(Step.STR_ID)
-                if not name:
-                    raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+        if Step.STR_TYPE not in ospec:
+          raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+        type = ospec.get(Step.STR_TYPE)
+        if not type:
+          raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
 
-                if Step.STR_TYPE not in ospec:
-                    raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
-                type = ospec.get(Step.STR_TYPE)
-                if not type:
-                    raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+  @staticmethod
+  def default_step_tag_name():
+    return 'untagged'
 
-    @staticmethod
-    def defaultSteptagName():
-        return 'untagged'
+  @staticmethod
+  def dependency_spec_from(requirement_value):
 
-    @staticmethod
-    def dependency_spec_from(requirementValue):
+    tag = None
+    step = None
+    output = None
 
-        tag = None
-        step = None
-        output = None
+    parts = requirement_value.split(".")
 
-        parts = requirementValue.split(".")
+    head = parts[0]
+    if head.startswith("#"):
+      tag = head[1:]
 
-        head = parts[0]
-        if head.startswith("#"):
-            tag = head[1:]
+    return {
+      'tag': tag,
+      'step': step,
+      'output': output
+    }
 
-        return {
-            'tag' : tag,
-            'step' : step,
-            'output' : output
-        }
+  # @abstractmethod
+  # def type(self):
+  #    pass
 
-    #@abstractmethod
-    #def type(self):
-    #    pass
+  # @classmethod
+  # @abstractmethod
+  # def label(self):
+  #    pass
 
-    # @classmethod
-    #@abstractmethod
-    #def label(self):
-    #    pass
+  # @classmethod
+  # @abstractmethod
+  # def description(self):
+  #    pass
 
-    # @classmethod
-    #@abstractmethod
-    #def description(self):
-    #    pass
+  # @classmethod
+  # @abstractmethod
+  # def save(self):
+  #    pass
 
-    # @classmethod
-    #@abstractmethod
-    #def save(self):
-    #    pass
+  # @classmethod
+  # @abstractmethod
+  # def can_default(self):
+  #    pass
 
-    # @classmethod
-    #@abstractmethod
-    #def can_default(self):
-    #    pass
 
 class TaggedDatum(ABC):
-    @abstractmethod
-    def tags(self):
-        # A set tags that can select among similar types
-        pass
+  @abstractmethod
+  def tags(self):
+    # A set tags that can select among similar types
+    pass
 
-    @abstractmethod
-    def datum_type(self):
-        # A datum_type
-        pass
+  @abstractmethod
+  def datum_type(self):
+    # A datum_type
+    pass
 
-    def satisfies(self, datum):
-        # A concrete implementation here
-        pass
-
+  def satisfies(self, datum):
+    # A concrete implementation here
+    pass

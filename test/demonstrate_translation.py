@@ -1,31 +1,32 @@
 import argparse
 import atexit
 
-# Import library of already defined inouts, steps and outputs
+# Import library of already defined inputs, steps and outputs
 
 from pipeline_definition.pipeline_translator import PipelineTranslator
 
-#Extend the translation system with user defined
-import examples.bio_informatics
+# Extend the translation system with user defined
 
-def main( opts ):
-    def atExit():
-        print("BYE!!")
-    atexit.register( atExit )
 
-    #Get specified file to translate
-    pdfile = opts.pdfile
+def main(options):
 
-    # pdfile = "pd_1.yml"
+  def at_exit():
+    print("BYE!!")
 
-    pdTranslator = PipelineTranslator()
-    pdTranslator.translate(pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx", overwrite_outfile=True)
-    #pdx.translate(pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx")
+  atexit.register(at_exit)
+
+  # Get specified file to translate
+  pdfile = options.pdfile
+
+  # pdfile = "pd_1.yml"
+
+  pd_translator = PipelineTranslator()
+  pd_translator.translate(pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx", overwrite_outfile=True)
+  # pdx.translate(pdfile, outfile="/Users/mohammadbhuyan/Temp/out.pdx")
 
 
 if __name__ == "__main__":
-    argprsr = argparse.ArgumentParser()
-    argprsr.add_argument('pdfile', help='Pipeline Definition file.')
-    opts = argprsr.parse_args()
-    main( opts )
-
+  argprsr = argparse.ArgumentParser()
+  argprsr.add_argument('pdfile', help='Pipeline Definition file.')
+  opts = argprsr.parse_args()
+  main(opts)

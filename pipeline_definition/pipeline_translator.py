@@ -1,5 +1,6 @@
 import json
 import os
+import io
 
 import networkx as nx
 import yaml
@@ -19,22 +20,25 @@ class PipelineTranslatorException(Exception):
 
 
 class PipelineTranslator:
-  def __init__(self):
+  def __init__(self, debug=False):
     self.__input_step = None
+    self.__debug = debug 
 
-  @staticmethod
-  def __dump_yaml(doc):
+  def __debug_print(self, *args):
+    if self.__debug:
+      print(args)
+      
+  def __dump_yaml(self, doc):
     # Diagnostic - what have we got?
-    print("YAML DOC [")
-    print(yaml.dump(doc))
-    print("] END YAML DOC")
+    self.__debug_print("YAML DOC [")
+    self.__debug_print(yaml.dump(doc))
+    self.__debug_print("] END YAML DOC")
 
-  @staticmethod
-  def __dump_schema(this_schema):
-    print("PDX SCHEMA [")
-    # print(schema)
-    print(json.dumps(this_schema, indent=4))
-    print("] END PDX SCHEMA")
+  def __dump_schema(self, this_schema):
+    self.__debug_print("PDX SCHEMA [")
+    # self.__debug_print(schema)
+    self.__debug_print(json.dumps(this_schema, indent=4))
+    self.__debug_print("] END PDX SCHEMA")
 
   def validate_schema(self, yaml_doc):
     self.__dump_yaml(yaml_doc)
@@ -48,12 +52,11 @@ class PipelineTranslator:
 
     if not validation_success:
       msg = "ERROR! Pipeline definition document validation failed."
-      print(msg)
+      self.__debug_print(msg)
       if v.errors is not None:
         raise ValueError(msg, v.errors)
 
-  @staticmethod
-  def build_inputs(inputs):
+  def build_inputs(self, inputs):
 
     input_set = list()
 
@@ -67,13 +70,13 @@ class PipelineTranslator:
       else:
         input_type = None
 
-      print("Processing INPUT: ", input_id, " - ", input_type)
+      self.__debug_print("Processing INPUT: ", input_id, " - ", input_type)
 
       inp_factory = get_input_factory(input_type)
       if inp_factory is None:
         raise ValueError("No factory registered for input: " + input_type)
 
-      input_obj = inp_factory.build_from(dict([(input_id, meta)]))
+      input_obj = inp_factory.build_from(dict([(input_id, meta)]), self.__debug)
 
       input_set.append(input_obj)
 
@@ -83,8 +86,7 @@ class PipelineTranslator:
   def build_outputs(outputs):
     return None
 
-  @staticmethod
-  def build_steps(steps):
+  def build_steps(self, steps):
 
     pipeline_steps = list()
 
@@ -101,15 +103,15 @@ class PipelineTranslator:
       else:
         step_type = None
 
-      print("Processing STEP: ", step_id, " - ", step_type)
+      self.__debug_print("Processing STEP: ", step_id, " - ", step_type)
 
       step_factory = get_step_factory(step_type)
       if step_factory is None:
         raise ValueError("No factory registered for step: " + step_type)
 
-      step_obj = step_factory.build_from(dict([(step_id, meta)]))
+      step_obj = step_factory.build_from(dict([(step_id, meta)]), debug=self.__debug)
 
-      step_obj.validateInputOuputSpec()
+      step_obj.validate_input_ouput_spec()
 
       pipeline_steps.append(step_obj)
 
@@ -123,13 +125,13 @@ class PipelineTranslator:
     pipeline_steps.insert(0, self.__input_step)
 
     # Now lets put all the steps as node. Then we will establish the edges
-    print("Graph Construction: adding nodes for steps.")
+    self.__debug_print("Graph Construction: adding nodes for steps.")
     for step in pipeline_steps:
       step_ctx = StepContext(step)
       work_graph.add_node(step, ctx=step_ctx)
-      print("Added node for step", step.id(), "[", step.tag(), "]")
+      self.__debug_print("Added node for step", step.id(), "[", step.tag(), "]")
 
-    print("Graph Construction: Processing tags.")
+    self.__debug_print("Graph Construction: Processing tags.")
     # Now lets put the edges to indicate execution order as indicated by 'tag'
     # Convention is all steps belonging to a tag are exceuted in the seq they have been specified
     # so creating the concept of 'threads' / 'branches'
@@ -141,16 +143,16 @@ class PipelineTranslator:
       if tag not in tag_map:
         tag_map[tag] = None
 
-    print("TAG MAP:", str(tag_map))
+    self.__debug_print("TAG MAP:", str(tag_map))
 
     # Lets stitch the DAG based on tags assigned to each step
 
     for step in pipeline_steps:
-      print("Processing step ", step.id(), "[", step.tag(), "]")
+      self.__debug_print("Processing step ", step.id(), "[", step.tag(), "]")
 
       # tag specification in step
       stag = step.tag()
-      # print("Step specifies tag:", stag)
+      # self.__debug_print("Step specifies tag:", stag)
 
       if stag == self.__input_step.tag():
         tag_map[stag] = self.__input_step
@@ -164,28 +166,28 @@ class PipelineTranslator:
         last_node = self.__input_step
 
       work_graph.add_edge(last_node, step, type="branch", tag=stag)
-      print("Added edge [", last_node.id(), "]->[", step.id(), "] for tag", stag)
+      self.__debug_print("Added edge [", last_node.id(), "]->[", step.id(), "] for tag", stag)
 
     # Next pass is about input dependency of a step on outputs form other branches and steps
-    print("Graph Construction: Processing input dependency")
+    self.__debug_print("Graph Construction: Processing input dependency")
     for step in pipeline_steps:
-      print("Processing step ", step.id(), "[", step.tag(), "]")
+      self.__debug_print("Processing step ", step.id(), "[", step.tag(), "]")
 
       if step == self.__input_step:
-        print("Input step never have dependency.")
+        self.__debug_print("Input step never have dependency.")
         continue
 
       # Lets get the dependency list of the step
       depends = self.dependency_list_of(step)
       if not depends:
-        print("Step has no dependency.")
+        self.__debug_print("Step has no dependency.")
         continue
 
       for dependency in depends:
-        print("Step has dependecny:", dependency)
-        self.addDependencyTo(step, dependency, work_graph)
+        self.__debug_print("Step has dependecny:", dependency)
+        self.add_dependency_to(step, dependency, work_graph)
 
-    print("Graph Construction: Polulating context for steps.")
+    self.__debug_print("Graph Construction: Polulating context for steps.")
     # Now we have a graph that has edges for flow and dependency
     # Now we need to establish the context of each step
     ctx_attr_map = nx.get_node_attributes(work_graph, 'ctx')
@@ -195,7 +197,7 @@ class PipelineTranslator:
     return work_graph
 
   def __populate_step_context(self, work_graph, step, prev_step, ctx_attr_map, type_attr_map):
-    print("Populating context for step:", step.id(), "in branch [", step.tag(), "]")
+    self.__debug_print("Populating context for step:", step.id(), "in branch [", step.tag(), "]")
     step_ctx = ctx_attr_map.get(step)
     if not step_ctx:
       raise RuntimeError("Missing step context in graph. Graph integrity fail.")
@@ -214,7 +216,7 @@ class PipelineTranslator:
     if not edges:
       return
 
-    print("Step [", step.id(), "] in branch [", step.tag(), "] has", len(edges), "edges")
+    self.__debug_print("Step [", step.id(), "] in branch [", step.tag(), "] has", len(edges), "edges")
 
     # First pass to process the input dependency
     for edge in edges:
@@ -225,11 +227,12 @@ class PipelineTranslator:
         continue
       dependent_on = edge[1]
       dependent_on_ctx = ctx_attr_map[dependent_on]
-      print("Step", step.id() + "[" + step.tag() + "] has dependency on step", dependent_on.id(), "[", dependent_on.tag(),
+      self.__debug_print("Step", step.id() + "[" + step.tag() + "] has dependency on step", dependent_on.id(), "[", dependent_on.tag(),
             "]")
       step_ctx.add_dependency_context_from(dependent_on_ctx)
 
-    step_ctx.print()
+    if self.__debug:
+      step_ctx.print()
 
     # Second pass to process the flow
     for edge in edges:
@@ -242,7 +245,7 @@ class PipelineTranslator:
 
     return
 
-  def addDependencyTo(self, step, dependency_spec, work_graph):
+  def add_dependency_to(self, step, dependency_spec, work_graph):
 
     if not step:
       return
@@ -261,23 +264,23 @@ class PipelineTranslator:
 
     last_step = self.last_step_in_tag(target_tag, source_step, work_graph, edge_mapfor_tags)
     if last_step:
-      print(step.id(), "in branch [", step.tag(), "] has input dependency on step", last_step.id(), "in branch [",
+      self.__debug_print(step.id(), "in branch [", step.tag(), "] has input dependency on step", last_step.id(), "in branch [",
             target_tag, "]")
       work_graph.add_edge(step, last_step, type="dependency")
 
     return
 
-  def last_step_in_tag(self, tag, root, workGraph, edgeMapforTags):
+  def last_step_in_tag(self, tag, root, work_graph, edge_mapfor_tags):
     source_step = root
-    edges = nx.edges(workGraph, source_step)
+    edges = nx.edges(work_graph, source_step)
     if not edges:
       # there are no edges so this is the last step
       return source_step
 
     for edge in edges:
-      edge_tag = str(edgeMapforTags[(edge[0], edge[1], 0)])
+      edge_tag = str(edge_mapfor_tags[(edge[0], edge[1], 0)])
       if edge_tag == tag:
-        return self.last_step_in_tag(tag, edge[1], workGraph, edgeMapforTags)
+        return self.last_step_in_tag(tag, edge[1], work_graph, edge_mapfor_tags)
     return source_step
 
   @staticmethod
@@ -292,9 +295,9 @@ class PipelineTranslator:
     dependency_list = None
     for requirement in step_requires:
       requirement_name = requirement[Step.STR_ID]
-      # print("Process STEP REQUIREMENT:", requirement_name)
-      requirement_value = step.providedValueForRequirement(requirement_name)
-      # print("Input value:", requirement_value)
+      # self.__debug_print("Process STEP REQUIREMENT:", requirement_name)
+      requirement_value = step.provided_value_for_requirement(requirement_name)
+      # self.__debug_print("Input value:", requirement_value)
 
       if not requirement_value:
         continue
@@ -307,20 +310,19 @@ class PipelineTranslator:
 
     return dependency_list
 
-  @staticmethod
-  def __dump_graph(workGraph):
+  def __dump_graph(self, work_graph):
     # tree = json_graph.tree_data(workGraph, self.__root, attrs={'children': 'next', 'id': 'step'})
-    tree = json_graph.node_link_data(workGraph, {'link': 'flow', 'source': 'step', 'target': 'target'})
-    print("Workflow Graph: [")
-    print(tree)
+    tree = json_graph.node_link_data(work_graph, {'link': 'flow', 'source': 'step', 'target': 'target'})
+    self.__debug_print("Workflow Graph: [")
+    self.__debug_print(tree)
     # jsonDoc = json.dumps(tree, indent=4)
-    # print(jsonDoc)
+    # self.__debug_print(jsonDoc)
 
-    print("] End Workflow Graph")
+    self.__debug_print("] End Workflow Graph")
 
   def translate_pipeline(self, pipeline_steps, global_input_set, global_output_set):
 
-    work_graph = self.__create_workflow_graph(pipeline_steps, global_input_set, global_output_set)
+    work_graph = self.__create_workflow_graph(pipeline_steps, global_input_set)
     self.__dump_graph(work_graph)
 
     json_doc = self.translate_workflow_to_json(work_graph)
@@ -330,12 +332,12 @@ class PipelineTranslator:
     return pretty_json_text
 
   def translate_workflow_to_json(self, work_graph):
-    print("Generating JSON description for workflow")
+    self.__debug_print("Generating JSON description for workflow")
     ctx_attr_map = nx.get_node_attributes(work_graph, 'ctx')
     type_attr_map = nx.get_edge_attributes(work_graph, 'type')
     workflow = self.describe_workflow(work_graph, self.__input_step, type_attr_map, ctx_attr_map)
     json_doc = {"workflow": workflow}
-    print("Done generating JSON description for workflow")
+    self.__debug_print("Done generating JSON description for workflow")
     return json_doc
 
   def describe_workflow(self, work_graph, input_step, type_attr_map, ctx_attr_map):
@@ -419,12 +421,12 @@ class PipelineTranslator:
         next_step = edge[1]
         self.__populate_description_from(next_step, doc, work_graph, step_order + 1, type_attr_map, ctx_attr_map)
 
-  def translate_yaml_doc(self, yamlDoc):
+  def translate_yaml_doc(self, yaml_doc):
     # Create a in memory instances for all the inputs, steps and outputs
 
-    inputs = yamlDoc.get("inputs")
-    steps = yamlDoc.get("steps")
-    outputs = yamlDoc.get("outputs")
+    inputs = yaml_doc.get("inputs")
+    steps = yaml_doc.get("steps")
+    outputs = yaml_doc.get("outputs")
 
     if inputs is None:
       raise ValueError("No input?")
@@ -441,43 +443,36 @@ class PipelineTranslator:
 
     return doc
 
-  def translate(self, pdfile, outfile=None, overwrite_outfile=False):
+  def translate_file(self, pdfile):
     pdfile_path = os.path.abspath(pdfile)
-    print("Using PD file: " + pdfile_path)
+    self.__debug_print("Using pipeline definition file: " + pdfile_path)
 
     # Check if the file to translate exists
     if not os.path.isfile(pdfile_path):
-      raise ValueError("Specified PD file does not exist.")
-
-    # The output file name, if not explicitly specified, a convention is used
-    if outfile is None:
-      outfile = pdfile + ".pdx"
-    outfile_path = os.path.abspath(outfile)
-    print("Using Output file: " + outfile_path)
-
-    # If the output file path already exists as directory?
-    if os.path.isdir(outfile_path):
-      raise ValueError("Directory already exists with the name of outfile.")
-
-    # Otherwise can we overwrite?
-    if overwrite_outfile is False:
-      if os.path.isfile(outfile_path):
-        raise ValueError("Outfile already exists.")
+      raise ValueError("Specified pipeline definition file does not exist.")
 
     # All good so lets starts the translation
     with open(pdfile, 'r') as ifile:
       # Validate YAML syntax
       doc = yaml.load(ifile)
 
-      # Do schema validation
-      self.validate_schema(doc)
+    return self.__do_translate(doc)
 
-      # Doc is OK, lets translate
-      output_doc = self.translate_yaml_doc(doc)
-      print("Translation Output: [")
-      print(output_doc)
-      print("]")
+  def translate_string(self, in_string):
+    f = io.StringIO(in_string)
+    doc = yaml.load(f)
+    return self.__do_translate(doc)
 
-      # Save it
-      # with open( outfile_path, "w" ) as ofile:
-      #    ofile.write( tDoc )
+  def __do_translate(self, doc):
+    # Do schema validation
+    self.validate_schema(doc)
+
+    # Doc is OK, lets translate
+    output_doc = self.translate_yaml_doc(doc)
+    self.__debug_print("Translation Output: [")
+    self.__debug_print(output_doc)
+    self.__debug_print("]")
+
+    return output_doc
+
+

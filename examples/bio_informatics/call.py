@@ -26,8 +26,8 @@ class CallFactory(StepFactory):
         }
 
     @classmethod
-    def build(cls, meta):
-        step = CallStep( meta )
+    def build(cls, meta, debug=False):
+        step = CallStep(meta, debug=debug)
         return step
 
 class CallStep(Step):

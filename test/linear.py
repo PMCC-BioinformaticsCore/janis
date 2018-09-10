@@ -4,6 +4,7 @@ from pipeline_definition.pipeline_translator import PipelineTranslator
 import json
 import examples.bio_informatics
 
+
 _yml = """
 inputs:
   fastq:
@@ -11,26 +12,22 @@ inputs:
       forward-pattern: '*_R1.fastq.gz'
       backward-pattern: '*_R2.fastq.gz'
   ref:
-    REFERENCE:
+    BAM:
       path: 'path/to/reference'
 
 steps:
-  - qc:
-      fastqc:
-  - remove-adaptors:
+  - step1:
       trim:
-  - align-to-human:
+        trimmer : 'trimmomatic'
+  - step2:
+      input_scope: ['ref']
       align:
-  - dedup:
+        aligner: 'bwa'
+  - step3:
       dedup:
-  - intersect-genic:
-      input_scope: [dedup]
-      bedtools-intersect:
-        split: true
-  - intersect-nongenic:
-      input_scope: [dedup]
-      bedtools-intersect:
-        reportNoOverlaps: true
+  - step4:
+      input_scope: ['step2', 'step3']
+      call:
 """
 
 _expected = json.loads("""
@@ -41,39 +38,14 @@ _expected = json.loads("""
                 "type": "SequenceReadArchivePaired"
             },
             "ref": {
-                "type": "REFERENCE"
+                "type": "BAM"
             }
         },
         "flow": {
             "untagged": {
                 "steps": {
                     "1": {
-                        "step": "qc",
-                        "type": "fastqc",
-                        "step-inputs": {
-                            "read": {
-                                "type": "SequenceReadArchivePaired",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "fastq",
-                                            "type": "SequenceReadArchivePaired",
-                                            "step": "input-step",
-                                            "tag": "input"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "reports": {
-                                "type": "Text"
-                            }
-                        }
-                    },
-                    "2": {
-                        "step": "remove-adaptors",
+                        "step": "step1",
                         "type": "trim",
                         "step-inputs": {
                             "read": {
@@ -97,8 +69,8 @@ _expected = json.loads("""
                             }
                         }
                     },
-                    "3": {
-                        "step": "align-to-human",
+                    "2": {
+                        "step": "step2",
                         "type": "align",
                         "step-inputs": {
                             "read": {
@@ -109,7 +81,7 @@ _expected = json.loads("""
                                         "1": {
                                             "id": "trimmed",
                                             "type": "SequenceReadArchivePaired",
-                                            "step": "remove-adaptors",
+                                            "step": "step1",
                                             "tag": "untagged"
                                         },
                                         "2": {
@@ -126,12 +98,7 @@ _expected = json.loads("""
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
-                                        "1": {
-                                            "id": "ref",
-                                            "type": "REFERENCE",
-                                            "step": "input-step",
-                                            "tag": "input"
-                                        }
+                                        "ERROR": "Failed to find any candidate!!!!!"
                                     }
                                 }
                             }
@@ -142,8 +109,8 @@ _expected = json.loads("""
                             }
                         }
                     },
-                    "4": {
-                        "step": "dedup",
+                    "3": {
+                        "step": "step3",
                         "type": "dedup",
                         "step-inputs": {
                             "bamfile": {
@@ -154,8 +121,14 @@ _expected = json.loads("""
                                         "1": {
                                             "id": "alignedbamfile",
                                             "type": "BAM",
-                                            "step": "align-to-human",
+                                            "step": "step2",
                                             "tag": "untagged"
+                                        },
+                                        "2": {
+                                            "id": "ref",
+                                            "type": "BAM",
+                                            "step": "input-step",
+                                            "tag": "input"
                                         }
                                     }
                                 }
@@ -167,65 +140,43 @@ _expected = json.loads("""
                             }
                         }
                     },
-                    "5": {
-                        "step": "intersect-genic",
-                        "type": "bedtools-intersect",
+                    "4": {
+                        "step": "step4",
+                        "type": "call",
                         "step-inputs": {
-                            "read": {
-                                "type": "SequenceReadArchivePaired",
+                            "alignedbamfile": {
+                                "type": "BAM",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
-                                            "id": "trimmed",
-                                            "type": "SequenceReadArchivePaired",
-                                            "step": "remove-adaptors",
+                                            "id": "bamfile",
+                                            "type": "BAM",
+                                            "step": "step3",
                                             "tag": "untagged"
                                         },
                                         "2": {
-                                            "id": "fastq",
-                                            "type": "SequenceReadArchivePaired",
-                                            "step": "input-step",
-                                            "tag": "input"
+                                            "id": "alignedbamfile",
+                                            "type": "BAM",
+                                            "step": "step2",
+                                            "tag": "untagged"
                                         }
+                                    }
+                                }
+                            },
+                            "reference": {
+                                "type": "REFERENCE",
+                                "mapping": {
+                                    "provided": "",
+                                    "candidates": {
+                                        "ERROR": "Failed to find any candidate!!!!!"
                                     }
                                 }
                             }
                         },
                         "step-outputs": {
-                            "reports": {
-                                "type": "Text"
-                            }
-                        }
-                    },
-                    "6": {
-                        "step": "intersect-nongenic",
-                        "type": "bedtools-intersect",
-                        "step-inputs": {
                             "read": {
-                                "type": "SequenceReadArchivePaired",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "trimmed",
-                                            "type": "SequenceReadArchivePaired",
-                                            "step": "remove-adaptors",
-                                            "tag": "untagged"
-                                        },
-                                        "2": {
-                                            "id": "fastq",
-                                            "type": "SequenceReadArchivePaired",
-                                            "step": "input-step",
-                                            "tag": "input"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "reports": {
-                                "type": "Text"
+                                "type": "VCF"
                             }
                         }
                     }
@@ -236,7 +187,7 @@ _expected = json.loads("""
 }""")
 
 
-class BranchedPipeline(unittest.TestCase):
+class LinearPipeline(unittest.TestCase):
 
   def test_graph(self):
     translator = PipelineTranslator(debug=True)
@@ -247,5 +198,3 @@ class BranchedPipeline(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-

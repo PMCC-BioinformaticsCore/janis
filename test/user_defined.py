@@ -1,6 +1,7 @@
 from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.types.step_type import Step
 
+
 class UserDefinedStepFactory(StepFactory):
     @classmethod
     def type(cls):

@@ -1,0 +1,6 @@
+from pipeline_definition.types.type_registry import register_input_factory
+from pipeline_definition.types.type_registry import register_step_factory
+
+from examples.unix_commands.tar_file import TarFileFactory
+
+register_input_factory(TarFileFactory())

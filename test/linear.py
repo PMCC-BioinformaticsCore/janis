@@ -191,8 +191,8 @@ class LinearPipeline(unittest.TestCase):
 
   def test_graph(self):
     translator = PipelineTranslator(debug=True)
-    translation = translator.translate_string(_yml)
-    tr_json = json.loads(translation)
+    translator.translate_string(_yml)
+    tr_json = json.loads(translator.pipeline())
     self.assertTrue(tr_json == _expected)
 
 

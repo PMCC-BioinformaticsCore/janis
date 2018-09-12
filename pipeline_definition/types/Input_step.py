@@ -31,6 +31,9 @@ class InputStep(Step):
   def requires(self):
     return None
 
+  def inputs(self):
+    return self.__workflowInputSet
+
   @staticmethod
   def input_step_tag_name():
     return 'input'

@@ -28,6 +28,10 @@ class StepFactory(ABC):
     pass
 
   @classmethod
+  def support_translations(cls):
+    return ['cwl']
+
+  @classmethod
   def build_from(cls, step_dict, debug=False):
     step_type = cls.type()
     if debug:
@@ -74,16 +78,17 @@ class Step(ABC):
     if self.__debug:
       print("Instance: [", self.__id, " - ", self.__type, " - ", self.__meta, " ]")
 
-  def provided_value_for_requirement(self, requirmentName):
+  def provided_value_for_requirement(self, requirment_name):
 
     if self.__meta is None:
       return None
 
-    provided = self.__meta.get(requirmentName)
+    provided = self.__meta.get(requirment_name)
     return provided
 
   @abstractmethod
   def provides(self):
+    # Output objects provided by this step.
     raise RuntimeError("Please provide implementation")
 
   @abstractmethod

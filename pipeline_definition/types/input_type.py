@@ -8,26 +8,31 @@ class InputFactory(ABC):
   @classmethod
   @abstractmethod
   def type(cls):
+    # The string that identifies this file type in definition files.
     pass
 
   @classmethod
   @abstractmethod
   def label(cls):
+    # A human friendly short label to present in user interfaces.
     pass
 
   @classmethod
   @abstractmethod
   def description(cls):
+    # A longer description of this type to present in user interfaces.
     pass
 
   @classmethod
   @abstractmethod
   def describe(cls):
+    # Describe the schema for this type.
     pass
 
   @classmethod
   @abstractmethod
   def build(cls, input_dict, debug=False):
+    # Build an Input object given the definition in the input_dict
     pass
 
   @classmethod
@@ -64,53 +69,18 @@ class Input(ABC):
 
   @abstractmethod
   def datum_type(self):
-    # A datum_type
     pass
 
   @abstractmethod
   def is_subtype_of(self, other):
     pass
 
-  # @abstractmethod
-  # def processMeta(self, meta):
-  #    pass
+  def resolve(self):
+    # Resolve actual file names in the appropriate store. For example, if the input is a query (regex)
+    # the query is executed and resolved objects are returned as part of the translation
+    pass
 
-  # @classmethod
-  # @abstractmethod
-  # def type(self):
-  #    pass
-
-  # @classmethod
-  # @abstractmethod
-  # def label(self):
-  #    pass
-
-  # @classmethod
-  # @abstractmethod
-  # def description(self):
-  #    pass
-
-  # @classmethod
-  # @abstractmethod
-  # def save(self):
-  #    pass
-
-  # @classmethod
-  # @abstractmethod
-  # def file_set(self):
-  #    pass
-
-# class InputSet(ABC):
-#     @classmethod
-#     @abstractmethod
-#     def __init__(self, yml):
-#         self.type = yml['type']
-#
-#     @classmethod
-#     @abstractmethod
-#     def input_set(self):
-#         pass
-#
-#     @classmethod
-#     def type(self):
-#         return self.type
+  @abstractmethod
+  def translate(self):
+    # Translate into the appropriate input stanza
+    pass

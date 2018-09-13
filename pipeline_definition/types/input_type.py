@@ -82,5 +82,6 @@ class Input(ABC):
 
   @abstractmethod
   def translate(self):
-    # Translate into the appropriate input stanza
+    # Translate into output language specific dictionary.
+    # Text translation will be done at the next level
     pass

@@ -330,10 +330,17 @@ class PipelineTranslator:
   def input(self, resolve=False):
     self._check_translated()
 
-    for input_object in self.__input_step.inputs():
-      print(input_object)
+    input_items = self.__input_step.inputs()
 
-    return '{}'
+    s = dict()
+    for inp in input_items:
+      if resolve:
+        inp.resolve()
+      s.update(inp.translate())
+
+    inp = {'inputs': s}
+
+    return yaml.dump(inp, default_flow_style=False)
 
   def pipeline(self):
     self._check_translated()

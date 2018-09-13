@@ -5,29 +5,48 @@ import unittest
 import yaml
 from pipeline_definition.pipeline_translator import PipelineTranslator
 
-import examples.unix_commands
+import examples.bio_informatics
 
 
 _yml = """
 inputs:
-  tar_input:
-    tar:
-      path: ../test-data/*.tar
-      label: 'this is the input file'
+  my_reads:
+    SequenceReadArchivePaired:
+      forward-pattern: '../test-data/*_R1.fastq.gz'
+      backward-pattern: '../test-data/*_R2.fastq.gz'
+  my_ref:
+    reference:
+      path: ../test-data/hg38_no_alt.fa
 """
 
 _expected_resolved = yaml.load("""
 inputs:
-  tar_input:
+  my_reads_backward:
   - class: File
-    path: ../test-data/hello.tar
+    path: ../test-data/S1_R2.fastq.gz
+  - class: File
+    path: ../test-data/S2_R2.fastq.gz
+  my_reads_forward:
+  - class: File
+    path: ../test-data/S1_R1.fastq.gz
+  - class: File
+    path: ../test-data/S2_R1.fastq.gz
+  my_ref:
+    class: File
+    path: ../test-data/hg38_no_alt.fa
 """)
 
 _expected_unresolved = yaml.load("""
 inputs:
-  tar_input:
+  my_reads_backward:
     class: File
-    path: ../test-data/*.tar
+    path: ../test-data/*_R2.fastq.gz
+  my_reads_forward:
+    class: File
+    path: ../test-data/*_R1.fastq.gz
+  my_ref:
+    class: File
+    path: ../test-data/hg38_no_alt.fa
 """)
 
 
@@ -38,7 +57,6 @@ class InputFileTest(unittest.TestCase):
     translator.translate_string(_yml)
 
     translation = translator.input(resolve=resolve)
-
     got = yaml.load(translation)
 
     self.assertTrue(got == expected)

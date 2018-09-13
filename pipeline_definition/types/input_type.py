@@ -59,12 +59,15 @@ class Input(ABC):
       print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]")
 
   def id(self):
+    # The id by which this input will be referred.
     return self.__id
 
   def type(self):
+    # A string identifying the file type
     return self.__type
 
   def meta(self):
+    # Internal metadata required by this object
     return self.__meta
 
   @abstractmethod
@@ -77,11 +80,12 @@ class Input(ABC):
 
   def resolve(self):
     # Resolve actual file names in the appropriate store. For example, if the input is a query (regex)
-    # the query is executed and resolved objects are returned as part of the translation
+    # the query is executed and resolved objects are returned as part of the translation. If the file
+    # is a reference, its existence is checked.
     pass
 
   @abstractmethod
   def translate(self):
-    # Translate into output language specific dictionary.
-    # Text translation will be done at the next level
+    # Translate into output language specific dictionary. Multiple dictionaries are combined by
+    # the translator and translation to the target language is done by the translator.
     pass

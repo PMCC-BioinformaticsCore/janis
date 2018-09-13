@@ -21,7 +21,7 @@ class TarFileFactory(InputFactory):
   def describe(cls):
     return {
       'schema': {
-        'glob': {'type': 'string'},
+        'path': {'type': 'string'},
         'label': {'type': 'string'}
       },
       'nullable': True
@@ -35,15 +35,15 @@ class TarFileFactory(InputFactory):
 class TarFile(Input):
   def translate(self):
     if self._resolved:
-       fd = [{'class': 'File', 'path': f} for f in self._files]
+      fd = [{'class': 'File', 'path': f} for f in self._files]
     else:
-      fd = {'class': 'File', 'path': self.meta()['glob']}
+      fd = {'class': 'File', 'path': self.meta()['path']}
 
     return {self.id(): fd}
 
   def resolve(self):
     self._resolved = True
-    self._files = glob.glob(self.meta()['glob'])
+    self._files = glob.glob(self.meta()['path'])
 
   def __init__(self, input_dict, debug=False):
     super().__init__(input_dict)

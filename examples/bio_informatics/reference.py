@@ -1,3 +1,6 @@
+import os
+
+from pipeline_definition.pipeline_translator import PipelineTranslatorException
 from pipeline_definition.types.input_type import InputFactory
 from pipeline_definition.types.input_type import Input
 
@@ -5,7 +8,7 @@ from pipeline_definition.types.input_type import Input
 class ReferenceFactory(InputFactory):
   @classmethod
   def type(cls):
-    return 'REFERENCE'
+    return 'reference'
 
   @classmethod
   def label(cls):
@@ -32,6 +35,13 @@ class ReferenceFactory(InputFactory):
 
 
 class ReferenceInput(Input):
+  def translate(self):
+    return {self.id(): {'class': 'File', 'path': self.meta()['path']}}
+
+  def resolve(self):
+    if not os.path.exists(self.path):
+      raise PipelineTranslatorException('The reference {self.path} does not exist')
+
   def __init__(self, input_dict, debug=False):
     super().__init__(input_dict)
     self.path = None

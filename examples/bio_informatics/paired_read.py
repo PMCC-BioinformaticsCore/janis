@@ -63,7 +63,7 @@ class PairedReadInput(Input):
     self.forward_pattern = None
     self.backward_pattern = None
     self.__debug = debug
-    self.forward_files  = []
+    self.forward_files = []
     self.backward_files = []
 
     if self.meta is not None:

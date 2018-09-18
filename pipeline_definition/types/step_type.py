@@ -78,12 +78,12 @@ class Step(ABC):
     if self.__debug:
       print("Instance: [", self.__id, " - ", self.__type, " - ", self.__meta, " ]")
 
-  def provided_value_for_requirement(self, requirment_name):
+  def provided_value_for_requirement(self, requirement_name):
 
     if self.__meta is None:
       return None
 
-    provided = self.__meta.get(requirment_name)
+    provided = self.__meta.get(requirement_name)
     return provided
 
   @abstractmethod
@@ -93,6 +93,13 @@ class Step(ABC):
 
   @abstractmethod
   def requires(self):
+    # Return the input types required by this step
+    raise RuntimeError("Please provide implementation")
+
+  @abstractmethod
+  def translate(self):
+    # Return a language specific dictionary that will be translated
+    # to the output text.
     raise RuntimeError("Please provide implementation")
 
   @staticmethod

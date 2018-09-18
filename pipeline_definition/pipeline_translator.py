@@ -23,7 +23,7 @@ class PipelineTranslator:
   def __init__(self, debug=False):
     self.__input_step = None
     self.__debug = debug
-    self.__output_doc = None
+    self._work_graph = None
 
   def _debug_print(self, *args):
     if self.__debug:
@@ -313,7 +313,8 @@ class PipelineTranslator:
 
     return dependency_list
 
-  def _dump_graph(self, work_graph):
+  def _dump_graph(self):
+    work_graph = self._work_graph
     # tree = json_graph.tree_data(workGraph, self.__root, attrs={'children': 'next', 'id': 'step'})
     tree = json_graph.node_link_data(work_graph, {'link': 'flow', 'source': 'step', 'target': 'target'})
     self._debug_print("Workflow Graph: [")
@@ -324,7 +325,7 @@ class PipelineTranslator:
     self._debug_print("] End Workflow Graph")
 
   def _check_translated(self):
-    if self.__output_doc is None:
+    if self._work_graph is None:
       raise PipelineTranslatorException('call a translation method before attempting to extract translated components.')
 
   def input(self, resolve=False):
@@ -344,14 +345,11 @@ class PipelineTranslator:
 
   def pipeline(self):
     self._check_translated()
-    return self.__output_doc
+    return self.translate_pipeline_to_json()
 
-  def _translate_pipeline(self, pipeline_steps, global_input_set, global_output_set):
+  def translate_pipeline_to_json(self):
 
-    work_graph = self._create_workflow_graph(pipeline_steps, global_input_set)
-    self._dump_graph(work_graph)
-
-    json_doc = self._translate_workflow_to_json(work_graph)
+    json_doc = self._translate_workflow_to_json(self._work_graph)
 
     pretty_json_text = json.dumps(json_doc, indent=4)
 
@@ -464,8 +462,10 @@ class PipelineTranslator:
     workflow_output_set = self._build_outputs(outputs)
     pipeline_steps = self._build_steps(steps)
 
-    # Now translate the workflow steps
-    self.__output_doc = self._translate_pipeline(pipeline_steps, workflow_input_set, workflow_output_set)
+    self._work_graph = self._create_workflow_graph(pipeline_steps, workflow_input_set)
+    self._dump_graph()
+
+    # # Now translate the workflow steps
 
   def translate_file(self, pdfile):
     pdfile_path = os.path.abspath(pdfile)
@@ -494,7 +494,7 @@ class PipelineTranslator:
     # Doc is OK, lets translate
     self._translate_yaml_doc(doc)
     self._debug_print("Translation Output: [")
-    self._debug_print(self.__output_doc)
+    self._debug_print(self._work_graph)
     self._debug_print("]")
 
 

@@ -35,6 +35,9 @@ class TrimFactory(StepFactory):
 
 class TrimStep(Step):
 
+  def translate(self, step_inputs):
+    return {'hello': 'duck'}
+
   def provides(self):
     return [
       {

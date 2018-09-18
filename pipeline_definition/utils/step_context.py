@@ -29,7 +29,7 @@ class StepContext:
   def add_dependency_context_from(self, step_ctx):
     dependency_context = step_ctx.provides()
     self.__dependency_contexts.append(dependency_context)
-    # Dependency search is not only limited to last step in reffered branch
+    # Dependency search is not only limited to last step in referred branch
     self.__dependency_contexts.extend(step_ctx.output_stack_of_branch())
 
   def provides(self):
@@ -76,7 +76,7 @@ class StepContext:
       candidates = self.find_match_for_input(step_input)
 
     if not candidates:
-      candidates['ERROR'] = "Failed to find any candidate!!!!!"
+      candidates['ERROR'] = "Failed to find an input candidate."
 
     doc['candidates'] = candidates
     return doc
@@ -163,9 +163,9 @@ class StepContext:
     pref = 1
 
     # For each step in the stack, look at its provided outputs
-    for priorityEntry in self.__branch_outputs_stack:
+    for priority_entry in self.__branch_outputs_stack:
       matched = False
-      osetp_tag, ostep = next(iter(priorityEntry.items()))
+      osetp_tag, ostep = next(iter(priority_entry.items()))
       ostep_name, outputs = next(iter(ostep.items()))
 
       # Pass 1 to see if we have exact name / type match
@@ -173,7 +173,7 @@ class StepContext:
         o_id = o[Step.STR_ID]
         o_type = o[Step.STR_TYPE]
 
-        # Name and Type match is heighest priority - conclusive
+        # Name and Type match is highest priority - conclusive
         name = input_id
         if name == o_id and input_type == o_type:
           matches[pref] = self.__match_doc_for(o, ostep_name, osetp_tag)

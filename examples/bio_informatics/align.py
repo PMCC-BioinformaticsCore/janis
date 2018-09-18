@@ -35,11 +35,14 @@ class AlignFactory(StepFactory):
 
 class AlignStep(Step):
 
+  def translate(self):
+    pass
+
   def provides(self):
     return [
       {
         Step.STR_ID: "alignedbamfile",
-        Step.STR_TYPE: "BAM"
+        Step.STR_TYPE: "bam"
       }
     ]
 
@@ -51,6 +54,6 @@ class AlignStep(Step):
       },
       {
         Step.STR_ID: "reference",
-        Step.STR_TYPE: "REFERENCE"
+        Step.STR_TYPE: "reference"
       }
     ]

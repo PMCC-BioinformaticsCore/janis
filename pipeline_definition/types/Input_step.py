@@ -2,6 +2,9 @@ from pipeline_definition.types.step_type import Step
 
 
 class InputStep(Step):
+  def translate(self):
+    pass
+
   def __init__(self, workflow_input_set):
     super().__init__({
       'input-step': {
@@ -12,10 +15,11 @@ class InputStep(Step):
     self.__workflowInputSet = workflow_input_set
 
   def provides(self):
+    # return self.__workflowInputSet
     if not self.__workflowInputSet:
       return None
 
-    outputs = None
+    outputs = list()
     for input in self.__workflowInputSet:
       o = {
         Step.STR_ID: input.id(),
@@ -33,6 +37,9 @@ class InputStep(Step):
 
   def inputs(self):
     return self.__workflowInputSet
+
+  def type(self):
+    return 'input'
 
   @staticmethod
   def input_step_tag_name():

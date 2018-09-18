@@ -17,6 +17,9 @@ inputs:
   my_ref:
     reference:
       path: ../test-data/hg38_no_alt.fa
+  my_bam:
+    bam:
+      path: ../test-data/aligned.bam
 """
 
 _expected_resolved = yaml.load("""
@@ -34,6 +37,9 @@ inputs:
   my_ref:
     class: File
     path: ../test-data/hg38_no_alt.fa
+  my_bam:
+    - class: File
+      path: ../test-data/aligned.bam
 """)
 
 _expected_unresolved = yaml.load("""
@@ -47,6 +53,9 @@ inputs:
   my_ref:
     class: File
     path: ../test-data/hg38_no_alt.fa
+  my_bam:
+    class: File
+    path: ../test-data/aligned.bam
 """)
 
 

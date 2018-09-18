@@ -1,53 +1,58 @@
 from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.types.step_type import Step
 
+
 class CallFactory(StepFactory):
-    @classmethod
-    def type(cls):
-        return 'call'
+  @classmethod
+  def type(cls):
+    return 'call'
 
-    @classmethod
-    def label(cls):
-        return 'call'
+  @classmethod
+  def label(cls):
+    return 'call'
 
-    @classmethod
-    def description(cls):
-        return cls.label()
+  @classmethod
+  def description(cls):
+    return cls.label()
 
-    @classmethod
-    def describe(cls):
-        return {
-            'schema': {
-                'caller': {
-                    'type': 'string'
-                }
-            },
-            'nullable': True
+  @classmethod
+  def describe(cls):
+    return {
+      'schema': {
+        'caller': {
+          'type': 'string'
         }
+      },
+      'nullable': True
+    }
 
-    @classmethod
-    def build(cls, meta, debug=False):
-        step = CallStep(meta, debug=debug)
-        return step
+  @classmethod
+  def build(cls, meta, debug=False):
+    step = CallStep(meta, debug=debug)
+    return step
+
 
 class CallStep(Step):
 
-    def provides(self):
-        return [
-            {
-                Step.STR_ID: "read",
-                Step.STR_TYPE: "VCF"
-            }
-        ]
+  def translate(self):
+    pass
 
-    def requires(self):
-        return [
-            {
-                Step.STR_ID: "alignedbamfile",
-                Step.STR_TYPE: "BAM"
-            },
-            {
-                Step.STR_ID: "reference",
-                Step.STR_TYPE: "REFERENCE"
-            }
-        ]
+  def provides(self):
+    return [
+      {
+        Step.STR_ID: "read",
+        Step.STR_TYPE: "VCF"
+      }
+    ]
+
+  def requires(self):
+    return [
+      {
+        Step.STR_ID: "alignedbamfile",
+        Step.STR_TYPE: "bam"
+      },
+      {
+        Step.STR_ID: "reference",
+        Step.STR_TYPE: "reference"
+      }
+    ]

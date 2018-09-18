@@ -29,6 +29,9 @@ class FastQCFactory(StepFactory):
 
 class FastQCStep(Step):
 
+  def translate(self):
+    pass
+
   def provides(self):
     return [
       {

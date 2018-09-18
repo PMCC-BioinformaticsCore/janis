@@ -1,3 +1,5 @@
+import glob
+
 from pipeline_definition.types.input_type import InputFactory
 from pipeline_definition.types.input_type import Input
 
@@ -5,7 +7,7 @@ from pipeline_definition.types.input_type import Input
 class BAMFactory(InputFactory):
   @classmethod
   def type(cls):
-    return 'BAM'
+    return 'bam'
 
   @classmethod
   def label(cls):
@@ -35,9 +37,23 @@ class BAMInput(Input):
     super().__init__(input_dict)
     self.__debug = debug
     self.path = None
+    self._files = []
+    self._resolved = False
 
     if self.meta is not None:
       self.path = self.meta().get("path")
+
+  def translate(self):
+    if self._resolved:
+      fd = [{'class': 'File', 'path': f} for f in self._files]
+    else:
+      fd = {'class': 'File', 'path': self.meta()['path']}
+
+    return {self.id(): fd}
+
+  def resolve(self):
+    self._resolved = True
+    self._files = glob.glob(self.meta()['path'])
 
   def identify(self):
     super().identify()

@@ -33,11 +33,14 @@ class DedupFactory(StepFactory):
 
 class DedupStep(Step):
 
+  def translate(self):
+    pass
+
   def provides(self):
     return [
       {
         Step.STR_ID: "bamfile",
-        Step.STR_TYPE: "BAM"
+        Step.STR_TYPE: "bam"
       }
     ]
 
@@ -45,6 +48,6 @@ class DedupStep(Step):
     return [
       {
         Step.STR_ID: "bamfile",
-        Step.STR_TYPE: "BAM"
+        Step.STR_TYPE: "bam"
       }
     ]

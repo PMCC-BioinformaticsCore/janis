@@ -23,7 +23,7 @@ class PipelineTranslator:
   def __init__(self, debug=False):
     self.__input_step = None
     self.__debug = debug
-    self._work_graph = None
+    self.__work_graph = None
 
   def _debug_print(self, *args):
     if self.__debug:
@@ -314,7 +314,7 @@ class PipelineTranslator:
     return dependency_list
 
   def _dump_graph(self):
-    work_graph = self._work_graph
+    work_graph = self.__work_graph
     # tree = json_graph.tree_data(workGraph, self.__root, attrs={'children': 'next', 'id': 'step'})
     tree = json_graph.node_link_data(work_graph, {'link': 'flow', 'source': 'step', 'target': 'target'})
     self._debug_print("Workflow Graph: [")
@@ -325,7 +325,7 @@ class PipelineTranslator:
     self._debug_print("] End Workflow Graph")
 
   def _check_translated(self):
-    if self._work_graph is None:
+    if self.__work_graph is None:
       raise PipelineTranslatorException('call a translation method before attempting to extract translated components.')
 
   def input(self, resolve=False):
@@ -345,26 +345,36 @@ class PipelineTranslator:
 
   def pipeline(self):
     self._check_translated()
+
+    ctx_attr_map = nx.get_node_attributes(self.__work_graph, 'ctx')
+    for step, ctx in ctx_attr_map.items():
+      if isinstance(step, InputStep):
+        continue
+      print('-'*80)
+      step_inputs = ctx.provides()
+      print(step.translate(step_inputs))
+
     return self.translate_pipeline_to_json()
 
   def translate_pipeline_to_json(self):
 
-    json_doc = self._translate_workflow_to_json(self._work_graph)
+    json_doc = self._translate_workflow_to_json()
 
     pretty_json_text = json.dumps(json_doc, indent=4)
 
     return pretty_json_text
 
-  def _translate_workflow_to_json(self, work_graph):
+  def _translate_workflow_to_json(self):
+    work_graph = self.__work_graph
     self._debug_print("Generating JSON description for workflow")
     ctx_attr_map = nx.get_node_attributes(work_graph, 'ctx')
     type_attr_map = nx.get_edge_attributes(work_graph, 'type')
-    workflow = self.describe_workflow(work_graph, self.__input_step, type_attr_map, ctx_attr_map)
+    workflow = self._describe_workflow(work_graph, self.__input_step, type_attr_map, ctx_attr_map)
     json_doc = {"workflow": workflow}
     self._debug_print("Done generating JSON description for workflow")
     return json_doc
 
-  def describe_workflow(self, work_graph, input_step, type_attr_map, ctx_attr_map):
+  def _describe_workflow(self, work_graph, input_step, type_attr_map, ctx_attr_map):
 
     step_ctx = ctx_attr_map[input_step]
     doc = {'inputs': self._output_doc_from(step_ctx, input_step)}
@@ -462,7 +472,7 @@ class PipelineTranslator:
     workflow_output_set = self._build_outputs(outputs)
     pipeline_steps = self._build_steps(steps)
 
-    self._work_graph = self._create_workflow_graph(pipeline_steps, workflow_input_set)
+    self.__work_graph = self._create_workflow_graph(pipeline_steps, workflow_input_set)
     self._dump_graph()
 
     # # Now translate the workflow steps
@@ -494,7 +504,7 @@ class PipelineTranslator:
     # Doc is OK, lets translate
     self._translate_yaml_doc(doc)
     self._debug_print("Translation Output: [")
-    self._debug_print(self._work_graph)
+    self._debug_print(self.__work_graph)
     self._debug_print("]")
 
 

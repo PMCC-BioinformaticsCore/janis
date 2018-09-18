@@ -34,8 +34,11 @@ class CallFactory(StepFactory):
 
 class CallStep(Step):
 
-  def translate(self):
-    pass
+  def translate(self, step_inputs):
+    return {
+        'command': 'vcf',
+        'inputs': step_inputs
+      }
 
   def provides(self):
     return [

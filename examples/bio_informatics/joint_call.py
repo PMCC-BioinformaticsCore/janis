@@ -40,6 +40,12 @@ class JointCallFactory(StepFactory):
 
 class JointCallStep(Step):
 
+  def translate(self, step_inputs):
+    return {
+        'command': 'joint-call',
+        'inputs': step_inputs
+      }
+
   def provides(self):
     return [
       {
@@ -52,14 +58,14 @@ class JointCallStep(Step):
     return [
       {
         Step.STR_ID: 'normal_tag',
-        Step.STR_TYPE: 'BAM'
+        Step.STR_TYPE: 'bam'
       },
       {
         Step.STR_ID: 'tumour_tag',
-        Step.STR_TYPE: 'BAM'
+        Step.STR_TYPE: 'bam'
       },
       {
         Step.STR_ID: 'references',
-        Step.STR_TYPE: 'REFERENCE'
+        Step.STR_TYPE: 'reference'
       }
     ]

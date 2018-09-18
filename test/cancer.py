@@ -15,7 +15,7 @@ inputs:
       forward-pattern: '*_R1.fastq.gz'
       backward-pattern: '*_R2.fastq.gz'
   ref:
-    REFERENCE:
+    reference:
       path: 'path/to/reference'
 
 steps:
@@ -60,7 +60,7 @@ _expected = json.loads("""
                 "type": "SequenceReadArchivePaired"
             },
             "ref": {
-                "type": "REFERENCE"
+                "type": "reference"
             }
         },
         "flow": {
@@ -116,13 +116,13 @@ _expected = json.loads("""
                                 }
                             },
                             "reference": {
-                                "type": "REFERENCE",
+                                "type": "reference",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
                                             "id": "ref",
-                                            "type": "REFERENCE",
+                                            "type": "reference",
                                             "step": "input-step",
                                             "tag": "input"
                                         }
@@ -132,7 +132,7 @@ _expected = json.loads("""
                         },
                         "step-outputs": {
                             "alignedbamfile": {
-                                "type": "BAM"
+                                "type": "bam"
                             }
                         }
                     },
@@ -141,13 +141,13 @@ _expected = json.loads("""
                         "type": "call",
                         "step-inputs": {
                             "alignedbamfile": {
-                                "type": "BAM",
+                                "type": "bam",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
                                             "id": "alignedbamfile",
-                                            "type": "BAM",
+                                            "type": "bam",
                                             "step": "step2",
                                             "tag": "tumour"
                                         }
@@ -155,13 +155,13 @@ _expected = json.loads("""
                                 }
                             },
                             "reference": {
-                                "type": "REFERENCE",
+                                "type": "reference",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
                                             "id": "ref",
-                                            "type": "REFERENCE",
+                                            "type": "reference",
                                             "step": "input-step",
                                             "tag": "input"
                                         }
@@ -229,13 +229,13 @@ _expected = json.loads("""
                                 }
                             },
                             "reference": {
-                                "type": "REFERENCE",
+                                "type": "reference",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
                                             "id": "ref",
-                                            "type": "REFERENCE",
+                                            "type": "reference",
                                             "step": "input-step",
                                             "tag": "input"
                                         }
@@ -245,7 +245,7 @@ _expected = json.loads("""
                         },
                         "step-outputs": {
                             "alignedbamfile": {
-                                "type": "BAM"
+                                "type": "bam"
                             }
                         }
                     },
@@ -254,13 +254,13 @@ _expected = json.loads("""
                         "type": "call",
                         "step-inputs": {
                             "alignedbamfile": {
-                                "type": "BAM",
+                                "type": "bam",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
                                             "id": "alignedbamfile",
-                                            "type": "BAM",
+                                            "type": "bam",
                                             "step": "step5",
                                             "tag": "normal"
                                         }
@@ -268,13 +268,13 @@ _expected = json.loads("""
                                 }
                             },
                             "reference": {
-                                "type": "REFERENCE",
+                                "type": "reference",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
                                             "id": "ref",
-                                            "type": "REFERENCE",
+                                            "type": "reference",
                                             "step": "input-step",
                                             "tag": "input"
                                         }
@@ -297,13 +297,13 @@ _expected = json.loads("""
                         "type": "joint_call",
                         "step-inputs": {
                             "normal_tag": {
-                                "type": "BAM",
+                                "type": "bam",
                                 "mapping": {
                                     "provided": "#normal",
                                     "candidates": {
                                         "1": {
                                             "id": "alignedbamfile",
-                                            "type": "BAM",
+                                            "type": "bam",
                                             "step": "step5",
                                             "tag": "normal"
                                         }
@@ -311,22 +311,22 @@ _expected = json.loads("""
                                 }
                             },
                             "tumour_tag": {
-                                "type": "BAM",
+                                "type": "bam",
                                 "mapping": {
                                     "provided": "tumour",
                                     "candidates": {
-                                        "ERROR": "Failed to find any candidate!!!!!"
+                                        "ERROR": "Failed to find an input candidate."
                                     }
                                 }
                             },
                             "references": {
-                                "type": "REFERENCE",
+                                "type": "reference",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
                                             "id": "ref",
-                                            "type": "REFERENCE",
+                                            "type": "reference",
                                             "step": "input-step",
                                             "tag": "input"
                                         }
@@ -350,8 +350,9 @@ _expected = json.loads("""
 class TumourNormalPipeline(unittest.TestCase):
 
   def test_graph(self):
-    translator = PipelineTranslator(debug=True)
-    translation = translator.translate_string(_yml)
+    translator = PipelineTranslator(debug=False)
+    translator.translate_string(_yml)
+    translation = translator.pipeline()
     tr_json = json.loads(translation)
     self.assertTrue(tr_json == _expected)
 

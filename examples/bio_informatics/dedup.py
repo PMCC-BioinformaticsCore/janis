@@ -33,8 +33,11 @@ class DedupFactory(StepFactory):
 
 class DedupStep(Step):
 
-  def translate(self):
-    pass
+  def translate(self, step_inputs):
+    return {
+        'command': 'dedup',
+        'inputs': step_inputs
+      }
 
   def provides(self):
     return [

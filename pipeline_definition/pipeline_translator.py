@@ -337,7 +337,7 @@ class PipelineTranslator:
     for inp in input_items:
       if resolve:
         inp.resolve()
-      s.update(inp.translate())
+      s.update(inp.translate_for_input())
 
     inp = {'inputs': s}
 
@@ -346,22 +346,79 @@ class PipelineTranslator:
   def pipeline(self):
     self._check_translated()
 
-    ctx_attr_map = nx.get_node_attributes(self.__work_graph, 'ctx')
-    for step, ctx in ctx_attr_map.items():
-      if isinstance(step, InputStep):
-        continue
-      print('-'*80)
-      step_inputs = ctx.provides()
-      print(step.translate(step_inputs))
+    work_graph = self.__work_graph
+    input_step = self.__input_step
+
+    ctx_attr_map = nx.get_node_attributes(work_graph, 'ctx')
+    type_attr_map = nx.get_edge_attributes(work_graph, 'type')
+    self._start_workflow_translation(work_graph, input_step, type_attr_map, ctx_attr_map)
 
     return self.translate_pipeline_to_json()
 
+  def _start_workflow_translation(self, work_graph, input_step, type_attr_map, ctx_attr_map):
+
+    self._translate_step_to_target(input_step, None)
+
+    edges = nx.edges(work_graph, input_step)
+    if not edges:
+      return
+
+    for edge in edges:
+      if edge[0] != input_step:
+        raise RuntimeError("Trouble in edge finding")
+      edge_type = str(type_attr_map[(edge[0], edge[1], 0)])
+      if edge_type == 'branch':
+        self._recurse_graph_and_translate(edge[1], work_graph, 1, type_attr_map, ctx_attr_map)
+
+  def _recurse_graph_and_translate(self, step, work_graph, step_order, type_attr_map, ctx_attr_map):
+
+    class MappedInput:
+      def __init__(self, inputs, candidates, step_id, input_type):
+        self.inputs = inputs
+        self.candidates = candidates
+        self.step_id = step_id
+        self.input_type = input_type
+
+      def __repr__(self):
+        return f'inputs={self.inputs} from={self.step_id}: candidates={self.candidates}'
+
+    mapped_inputs = []
+    step_inputs = step.requires()
+
+    for step_input in step_inputs:
+      input_id = step_input[Step.STR_ID]
+      input_type = step_input[Step.STR_TYPE]
+
+      step_ctx = ctx_attr_map[step]
+      mapping = step_ctx.map_input_for_translation(step_input)
+
+      mi = MappedInput(step_inputs, mapping, input_id, input_type)
+      mapped_inputs.append(mi)
+
+    self._translate_step_to_target(step, mapped_inputs)
+
+    edges = nx.edges(work_graph, step)
+    if not edges:
+      return
+
+    for edge in edges:
+      if edge[0] != step:
+        raise RuntimeError("Trouble in edge finding")
+      edge_type = str(type_attr_map[(edge[0], edge[1], 0)])
+      if edge_type == 'branch':
+        next_step = edge[1]
+        self._recurse_graph_and_translate(next_step, work_graph, step_order + 1, type_attr_map, ctx_attr_map)
+
+  @staticmethod
+  def _translate_step_to_target(step, mapped_inputs):
+    tgt_dict = step.translate(mapped_inputs)
+    print('-'*80)
+    print(yaml.dump(tgt_dict, default_flow_style=False))
+    print('-'*80)
+
   def translate_pipeline_to_json(self):
-
     json_doc = self._translate_workflow_to_json()
-
     pretty_json_text = json.dumps(json_doc, indent=4)
-
     return pretty_json_text
 
   def _translate_workflow_to_json(self):
@@ -397,17 +454,6 @@ class PipelineTranslator:
         }
 
     doc['flow'] = flow
-
-    return doc
-
-  @staticmethod
-  def _output_doc_from(step_ctx, step):
-    doc = {}
-    provides = step_ctx.provides_for(step)
-    for output in provides:
-      doc[output[Step.STR_ID]] = {
-        'type': output[Step.STR_TYPE]
-      }
 
     return doc
 
@@ -454,6 +500,17 @@ class PipelineTranslator:
       if edge_type == 'branch':
         next_step = edge[1]
         self._populate_description_from(next_step, doc, work_graph, step_order + 1, type_attr_map, ctx_attr_map)
+
+  @staticmethod
+  def _output_doc_from(step_ctx, step):
+    doc = {}
+    provides = step_ctx.provides_for(step)
+    for output in provides:
+      doc[output[Step.STR_ID]] = {
+        'type': output[Step.STR_TYPE]
+      }
+
+    return doc
 
   def _translate_yaml_doc(self, yaml_doc):
     # Create a in memory instances for all the inputs, steps and outputs

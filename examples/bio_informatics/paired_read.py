@@ -35,7 +35,7 @@ class PairedReadFactory(InputFactory):
 
 
 class PairedReadInput(Input):
-  def translate(self):
+  def translate_for_input(self):
     if self._resolved:
       forward = [{'class': 'File', 'path': f} for f in self.forward_files]
       backward = [{'class': 'File', 'path': f} for f in self.backward_files]
@@ -46,6 +46,12 @@ class PairedReadInput(Input):
     return {
       self.id() + '_forward': forward,
       self.id() + '_backward': backward
+    }
+
+  def translate_for_workflow(self):
+    return {
+      self.id() + '_forward':  'File',
+      self.id() + '_backward': 'File'
     }
 
   def resolve(self):

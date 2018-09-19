@@ -81,6 +81,22 @@ class StepContext:
     doc['candidates'] = candidates
     return doc
 
+  def map_input_for_translation(self, step_input):
+
+    # mapping provided?
+    provided_mapping = self.__step.provided_value_for_requirement(step_input[Step.STR_ID])
+
+    if provided_mapping:
+      dependency_spec = Step.dependency_spec_from(provided_mapping)
+      candidates = self.find_match_for_input_dependency(step_input, dependency_spec)
+    else:
+      candidates = self.find_match_for_input(step_input)
+
+    if not candidates:
+      candidates['ERROR'] = "Failed to find an input candidate."
+
+    return candidates
+
   def find_match_for_input_dependency(self, step_input, dependency_spec):
 
     input_id = step_input[Step.STR_ID]

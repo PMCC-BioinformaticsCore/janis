@@ -2,8 +2,11 @@ from pipeline_definition.types.step_type import Step
 
 
 class InputStep(Step):
-  def translate(self):
-    pass
+  def translate(self, mapped_inputs):
+    ind = dict()
+    for inp in self.__workflowInputSet:
+      ind.update(inp.translate_for_workflow())
+    return {'inputs': ind}
 
   def __init__(self, workflow_input_set):
     super().__init__({
@@ -20,10 +23,10 @@ class InputStep(Step):
       return None
 
     outputs = list()
-    for input in self.__workflowInputSet:
+    for inp in self.__workflowInputSet:
       o = {
-        Step.STR_ID: input.id(),
-        Step.STR_TYPE: input.type()
+        Step.STR_ID: inp.id(),
+        Step.STR_TYPE: inp.type()
       }
       if not outputs:
         outputs = list()

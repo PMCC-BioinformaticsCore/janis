@@ -32,7 +32,7 @@ class TextFactory(InputFactory):
 
 
 class TextInput(Input):
-  def translate(self):
+  def translate_for_input(self):
     pass
 
   def __init__(self, input_dict, debug=False):

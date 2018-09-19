@@ -43,7 +43,7 @@ class BAMInput(Input):
     if self.meta is not None:
       self.path = self.meta().get("path")
 
-  def translate(self):
+  def translate_for_input(self):
     if self._resolved:
       fd = [{'class': 'File', 'path': f} for f in self._files]
     else:

@@ -79,13 +79,21 @@ class Input(ABC):
     pass
 
   def resolve(self):
-    # Resolve actual file names in the appropriate store. For example, if the input is a query (regex)
+    # Resolve actual object names in the appropriate store. For example, if the input is a query (regex)
     # the query is executed and resolved objects are returned as part of the translation. If the file
     # is a reference, its existence is checked.
-    pass
+    raise NotImplementedError("resolve not implemented for this type")
 
-  @abstractmethod
-  def translate(self):
-    # Translate into output language specific dictionary. Multiple dictionaries are combined by
-    # the translator and translation to the target language is done by the translator.
-    pass
+  def translate_for_input(self):
+    # - Generate the input object list. In the case of CWL, this is typically a separate yml file
+    #   specifying a list of actual files.
+    # - The expected return is a target language specific dictionary that the translator will render
+    #   to the actual language text.
+    raise NotImplementedError("A translation has been requested but has not been implemented for this input")
+
+  def translate_for_workflow(self):
+    # - Generate the input stanza required by the target language. In the case of CWL, this is the 'inputs'
+    #   section
+    # - The expected return is a target language specific dictionary that the translator will render
+    #   to the actual language text.
+    raise NotImplementedError("A translation has been requested but has not been implemented for this input")

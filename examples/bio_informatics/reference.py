@@ -35,8 +35,11 @@ class ReferenceFactory(InputFactory):
 
 
 class ReferenceInput(Input):
-  def translate(self):
+  def translate_for_input(self):
     return {self.id(): {'class': 'File', 'path': self.meta()['path']}}
+
+  def translate_for_workflow(self):
+    return {self.id() + '_reference': 'File'}
 
   def resolve(self):
     if not os.path.exists(self.path):

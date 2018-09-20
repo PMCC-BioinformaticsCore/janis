@@ -74,6 +74,9 @@ class Step(ABC):
   def id(self):
     return self.__id
 
+  def meta(self):
+    return self.__meta
+
   def identify(self):
     if self.__debug:
       print("Instance: [", self.__id, " - ", self.__type, " - ", self.__meta, " ]")
@@ -100,6 +103,18 @@ class Step(ABC):
   def translate(self):
     # Return a language specific dictionary that will be translated
     # to the output text.
+    raise RuntimeError("Please provide implementation")
+
+  @staticmethod
+  @abstractmethod
+  def cores():
+    # Number of CPUS
+    raise RuntimeError("Please provide implementation")
+
+  @staticmethod
+  @abstractmethod
+  def ram():
+    # Amount of ram
     raise RuntimeError("Please provide implementation")
 
   @staticmethod

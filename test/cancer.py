@@ -26,7 +26,7 @@ steps:
   - step2:
       tag: 'tumour'
       align:
-        aligner: 'bwa'
+        aligner: 'bowtie2'
   - step3:
       tag: 'tumour'
       call:
@@ -37,7 +37,7 @@ steps:
   - step5:
       tag: 'normal'
       align:
-        aligner: 'bwa'
+        aligner: 'bowtie2'
   - step6:
       tag: 'normal'
       call:

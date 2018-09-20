@@ -35,15 +35,30 @@ class TrimFactory(StepFactory):
 
 class TrimStep(Step):
 
+  def __init__(self, input_dict, debug=False):
+    super().__init__(input_dict, debug=debug)
+    if self.meta()['trimmer'] != 'trimmomatic':
+      raise Exception('Sorry, only trimmomatic is supported at the moment.')
+
+  @staticmethod
+  def cores():
+    return 2
+
+  @staticmethod
+  def ram():
+    return 16000
+
   def translate(self, step_inputs):
     vf = """${
-self.format = "http://edamontology.org/format_1930";
-return self;
-}"""
+  self.format = "http://edamontology.org/format_1930";
+  return self;
+}
+"""
+
     xlate = dict()
 
     xlate['run'] = '../tools/src/tools/trimmomatic.cwl'
-    xlate['requirements'] = {'ResourceRequirement': {'coresMin': 2, 'ramMin': 16000}}
+    xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
 
     mi = step_inputs[0]
     candidate = next(iter(mi.candidates.values()))
@@ -54,22 +69,30 @@ return self;
     }
 
     xlate['end_mode'] = {'default': 'PE'}
-    xlate['nthreads'] = {'valueFrom': '$(2)'}
+    xlate['nthreads'] = {'valueFrom': '$(' + str(self.cores()) + ')'}
     xlate['illuminaClip'] = {
       'source': 'adaptors',
-      'valueForm': """
-          ${
-              return {
-              "adapters": self,
-              "seedMismatches": 1,
-              "palindromeClipThreshold": 20,
-              "simpleClipThreshold": 20,
-              "minAdapterLength": 4,
-              "keepBothReads": true };
-          }"""
+      'valueForm': """${
+  return {
+    "adapters": self,
+    "seedMismatches": 1,
+    "palindromeClipThreshold": 20,
+    "simpleClipThreshold": 20,
+    "minAdapterLength": 4,
+    "keepBothReads": true };
+}
+"""
     }
 
-    return xlate
+    xlate['out'] = ['output_log', 'reads1_trimmed', 'reads1_trimmed_unpaired', 'reads2_trimmed_paired',
+                    'reads2_trimmed_unpaired']
+
+    if self.tag() is None:
+      step_name = 'trim'
+    else:
+      step_name = 'trim_' + self.tag()
+
+    return {step_name: xlate}
 
   def provides(self):
     return [

@@ -21,8 +21,8 @@ class AlignFactory(StepFactory):
       'schema': {
         'aligner': {
           'type': 'string',
-          'allowed': ['bowtie', 'bwa'],
-          'default': 'bowtie'
+          'allowed': ['bowtie2', 'bwa'],
+          'default': 'bowtie2'
         }
       },
       'nullable': True
@@ -35,11 +35,62 @@ class AlignFactory(StepFactory):
 
 class AlignStep(Step):
 
+  def __init__(self, meta, debug=False):
+    super().__init__(meta, debug=debug)
+    if self.meta()['aligner'] != 'bowtie2':
+      raise Exception('Sorry, only bowtie2 is supported at the moment')
+
+  @staticmethod
+  def cores():
+    return 24
+
+  @staticmethod
+  def ram():
+    return 64000
+
   def translate(self, step_inputs):
-    return {
-        'command': 'bwa',
-        'inputs': step_inputs
-      }
+    vf = """${
+  if ( self == null ) {
+    return null;
+  } else {
+    return [self];
+  }
+}
+"""
+    xlate = dict()
+
+    xlate['run'] = '../tools/src/tools/bowtie2.cwl'
+    xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
+
+    for mi in step_inputs:
+      for candidate in mi.candidates.values():
+        if mi.step_output_id == 'read' and candidate['tag'] == self.tag():
+          read_step = candidate['step']
+          read_id = candidate['id']
+        if mi.step_output_id == 'reference':
+          reference_step = candidate['step']
+          reference_id = candidate['id']
+
+    if self.tag() is not None:
+      read_step = read_step + '_' + self.tag()
+
+    inx = dict()
+
+    inx['samout'] = {
+      'source': f'{read_step}/{read_id}',
+      'valueFrom': '${ return self.nameroot + ".mouse.sam"; }'
+    }
+    inx['threads'] = {'valueFrom': '$(' + str(self.cores()) + ')'}
+    inx['one'] = {
+      'source':
+    }
+
+    if self.tag() is None:
+      step_name = 'align'
+    else:
+      step_name = 'align_' + self.tag()
+
+    return {step_name: xlate}
 
   def provides(self):
     return [

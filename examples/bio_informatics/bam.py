@@ -33,6 +33,7 @@ class BAMFactory(InputFactory):
 
 
 class BAMInput(Input):
+
   def __init__(self, input_dict, debug=False):
     super().__init__(input_dict)
     self.__debug = debug

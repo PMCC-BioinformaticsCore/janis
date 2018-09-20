@@ -13,6 +13,10 @@ from pipeline_definition.types.step_type import Step
 from pipeline_definition.types.type_registry import get_input_factory
 from pipeline_definition.types.type_registry import get_step_factory
 from pipeline_definition.utils.step_context import StepContext
+from pipeline_definition.utils.yaml_utils import str_presenter
+
+
+yaml.add_representer(str, str_presenter)
 
 
 class PipelineTranslatorException(Exception):
@@ -373,10 +377,10 @@ class PipelineTranslator:
   def _recurse_graph_and_translate(self, step, work_graph, step_order, type_attr_map, ctx_attr_map):
 
     class MappedInput:
-      def __init__(self, inputs, candidates, step_id, input_type):
+      def __init__(self, inputs, candidates, step_output_id, input_type):
         self.inputs = inputs
         self.candidates = candidates
-        self.step_id = step_id
+        self.step_output_id = step_output_id
         self.input_type = input_type
 
       def __repr__(self):

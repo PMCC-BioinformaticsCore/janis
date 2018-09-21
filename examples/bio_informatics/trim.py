@@ -85,12 +85,7 @@ class TrimStep(Step):
     xlate['out'] = ['output_log', 'reads1_trimmed', 'reads1_trimmed_unpaired', 'reads2_trimmed_paired',
                     'reads2_trimmed_unpaired']
 
-    if self.tag() is None:
-      step_name = 'trim'
-    else:
-      step_name = 'trim_' + self.tag()
-
-    return {step_name: xlate}
+    return {self.id(): xlate}
 
   def provides(self):
     return [

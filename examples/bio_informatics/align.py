@@ -103,12 +103,7 @@ class AlignStep(Step):
     xlate['in'] = inx
     xlate['out'] = ['aligned-file']
 
-    if self.tag() is None:
-      step_name = 'align'
-    else:
-      step_name = 'align_' + self.tag()
-
-    return {step_name: xlate}
+    return {self.id(): xlate}
 
   def provides(self):
     return [

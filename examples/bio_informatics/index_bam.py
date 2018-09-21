@@ -2,54 +2,40 @@ from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.types.step_type import Step
 
 
-class DedupFactory(StepFactory):
+class IndexBamFactory(StepFactory):
+
   @classmethod
   def type(cls):
-    return 'dedup'
+    return 'index'
 
   @classmethod
   def label(cls):
-    return 'dedup'
+    return 'index a bam file'
 
   @classmethod
   def description(cls):
-    return cls.label()
+    return 'index a bam file'
 
   @classmethod
   def describe(cls):
     return {
       'schema': {
-        'dedup': {
-          'type': 'string'
-        }
+        'index': {}
       },
       'nullable': True
     }
 
   @classmethod
   def build(cls, meta, debug=False):
-    return DedupStep(meta, debug=debug)
+    return SortBam(meta, debug=debug)
 
 
-class DedupStep(Step):
-
-  def cores(self):
-    return 2
-
-  def ram(self):
-    return 8000
-
-  def translate(self, step_inputs):
-    return {
-        'command': 'dedup',
-        'inputs': step_inputs
-      }
-
+class SortBam(Step):
   def provides(self):
     return [
       {
-        Step.STR_ID: "bamfile",
-        Step.STR_TYPE: "bam"
+        Step.STR_ID: "indexedfile",
+        Step.STR_TYPE: "bamindex"
       }
     ]
 
@@ -60,3 +46,12 @@ class DedupStep(Step):
         Step.STR_TYPE: "bam"
       }
     ]
+
+  def translate(self, mapped_inputs):
+    pass
+
+  def cores(self):
+    return 2
+
+  def ram(self):
+    return self.cores() * 8000

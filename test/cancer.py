@@ -19,29 +19,41 @@ inputs:
       path: 'path/to/reference'
 
 steps:
-  - step1:
+  - trim_tumour:
       tag: 'tumour'
       trim:
         trimmer : 'trimmomatic'
-  - step2:
+  - align_tumour:
       tag: 'tumour'
       align:
         aligner: 'bowtie2'
-  - step3:
+  - sort_tumour:
+      tag: 'tumour'
+      sort:
+  - index_tumour:
+      tag: 'tumour'
+      index:
+  - call_tumour:
       tag: 'tumour'
       call:
-  - step4:
+  - trim_normal:
       tag: 'normal'
       trim:
         trimmer : 'trimmomatic'
-  - step5:
+  - align_normal:
       tag: 'normal'
       align:
         aligner: 'bowtie2'
-  - step6:
+  - sort_normal:
+      tag: 'normal'
+      sort:
+  - index_normal:
+      tag: 'normal'
+      index:
+  - call_normal:
       tag: 'normal'
       call:
-  - step7:
+  - detect_mutation:
       joint_call:
         caller: mutect
         tumour_tag: 'tumour'
@@ -67,7 +79,7 @@ _expected = json.loads("""
             "tumour": {
                 "steps": {
                     "1": {
-                        "step": "step1",
+                        "step": "trim_tumour",
                         "type": "trim",
                         "step-inputs": {
                             "read": {
@@ -92,7 +104,7 @@ _expected = json.loads("""
                         }
                     },
                     "2": {
-                        "step": "step2",
+                        "step": "align_tumour",
                         "type": "align",
                         "step-inputs": {
                             "read": {
@@ -103,7 +115,7 @@ _expected = json.loads("""
                                         "1": {
                                             "id": "trimmed",
                                             "type": "SequenceReadArchivePaired",
-                                            "step": "step1",
+                                            "step": "trim_tumour",
                                             "tag": "tumour"
                                         },
                                         "2": {
@@ -137,7 +149,57 @@ _expected = json.loads("""
                         }
                     },
                     "3": {
-                        "step": "step3",
+                        "step": "sort_tumour",
+                        "type": "sort",
+                        "step-inputs": {
+                            "bamfile": {
+                                "type": "bam",
+                                "mapping": {
+                                    "provided": "",
+                                    "candidates": {
+                                        "1": {
+                                            "id": "alignedbamfile",
+                                            "type": "bam",
+                                            "step": "align_tumour",
+                                            "tag": "tumour"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "step-outputs": {
+                            "sortedfile": {
+                                "type": "sortedbam"
+                            }
+                        }
+                    },
+                    "4": {
+                        "step": "index_tumour",
+                        "type": "index",
+                        "step-inputs": {
+                            "bamfile": {
+                                "type": "bam",
+                                "mapping": {
+                                    "provided": "",
+                                    "candidates": {
+                                        "1": {
+                                            "id": "alignedbamfile",
+                                            "type": "bam",
+                                            "step": "align_tumour",
+                                            "tag": "tumour"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "step-outputs": {
+                            "indexedfile": {
+                                "type": "bamindex"
+                            }
+                        }
+                    },
+                    "5": {
+                        "step": "call_tumour",
                         "type": "call",
                         "step-inputs": {
                             "alignedbamfile": {
@@ -148,7 +210,7 @@ _expected = json.loads("""
                                         "1": {
                                             "id": "alignedbamfile",
                                             "type": "bam",
-                                            "step": "step2",
+                                            "step": "align_tumour",
                                             "tag": "tumour"
                                         }
                                     }
@@ -180,7 +242,7 @@ _expected = json.loads("""
             "normal": {
                 "steps": {
                     "1": {
-                        "step": "step4",
+                        "step": "trim_normal",
                         "type": "trim",
                         "step-inputs": {
                             "read": {
@@ -205,7 +267,7 @@ _expected = json.loads("""
                         }
                     },
                     "2": {
-                        "step": "step5",
+                        "step": "align_normal",
                         "type": "align",
                         "step-inputs": {
                             "read": {
@@ -216,7 +278,7 @@ _expected = json.loads("""
                                         "1": {
                                             "id": "trimmed",
                                             "type": "SequenceReadArchivePaired",
-                                            "step": "step4",
+                                            "step": "trim_normal",
                                             "tag": "normal"
                                         },
                                         "2": {
@@ -250,7 +312,57 @@ _expected = json.loads("""
                         }
                     },
                     "3": {
-                        "step": "step6",
+                        "step": "sort_normal",
+                        "type": "sort",
+                        "step-inputs": {
+                            "bamfile": {
+                                "type": "bam",
+                                "mapping": {
+                                    "provided": "",
+                                    "candidates": {
+                                        "1": {
+                                            "id": "alignedbamfile",
+                                            "type": "bam",
+                                            "step": "align_normal",
+                                            "tag": "normal"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "step-outputs": {
+                            "sortedfile": {
+                                "type": "sortedbam"
+                            }
+                        }
+                    },
+                    "4": {
+                        "step": "index_normal",
+                        "type": "index",
+                        "step-inputs": {
+                            "bamfile": {
+                                "type": "bam",
+                                "mapping": {
+                                    "provided": "",
+                                    "candidates": {
+                                        "1": {
+                                            "id": "alignedbamfile",
+                                            "type": "bam",
+                                            "step": "align_normal",
+                                            "tag": "normal"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "step-outputs": {
+                            "indexedfile": {
+                                "type": "bamindex"
+                            }
+                        }
+                    },
+                    "5": {
+                        "step": "call_normal",
                         "type": "call",
                         "step-inputs": {
                             "alignedbamfile": {
@@ -261,7 +373,7 @@ _expected = json.loads("""
                                         "1": {
                                             "id": "alignedbamfile",
                                             "type": "bam",
-                                            "step": "step5",
+                                            "step": "align_normal",
                                             "tag": "normal"
                                         }
                                     }
@@ -293,7 +405,7 @@ _expected = json.loads("""
             "untagged": {
                 "steps": {
                     "1": {
-                        "step": "step7",
+                        "step": "detect_mutation",
                         "type": "joint_call",
                         "step-inputs": {
                             "normal_tag": {
@@ -304,7 +416,7 @@ _expected = json.loads("""
                                         "1": {
                                             "id": "alignedbamfile",
                                             "type": "bam",
-                                            "step": "step5",
+                                            "step": "align_normal",
                                             "tag": "normal"
                                         }
                                     }
@@ -353,6 +465,10 @@ class TumourNormalPipeline(unittest.TestCase):
     translator = PipelineTranslator(debug=False)
     translator.translate_string(_yml)
     translation = translator.pipeline()
+    # print('/\\'*40)
+    # print(translation)
+    # print('/\\'*40)
+    # self.assertTrue(True)
     tr_json = json.loads(translation)
     self.assertTrue(tr_json == _expected)
 

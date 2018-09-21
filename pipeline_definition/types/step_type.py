@@ -100,7 +100,7 @@ class Step(ABC):
     raise RuntimeError("Please provide implementation")
 
   @abstractmethod
-  def translate(self):
+  def translate(self, mapped_inputs):
     # Return a language specific dictionary that will be translated
     # to the output text.
     raise RuntimeError("Please provide implementation")

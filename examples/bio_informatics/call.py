@@ -20,7 +20,9 @@ class CallFactory(StepFactory):
     return {
       'schema': {
         'caller': {
-          'type': 'string'
+          'type': 'string',
+          'allowed': ['platypus', 'vep'],
+          'default': 'platypus'
         }
       },
       'nullable': True
@@ -34,17 +36,30 @@ class CallFactory(StepFactory):
 
 class CallStep(Step):
 
+  def __init__(self, meta, debug=False):
+    super().__init__(meta, debug=debug)
+    meta = self.meta()
+    if meta is not None and meta['caller'] != 'platypus':
+      raise Exception('Sorry, only platypus is supported at the moment')
+
   def cores(self):
-    return 1
+    return 2
 
   def ram(self):
-    return 8000
+    return 16000
 
   def translate(self, step_inputs):
-    return {
-        'command': 'vcf',
-        'inputs': step_inputs
-      }
+    xlate = dict()
+
+    xlate['run'] = '../tools/src/tools/platypus.cwl'
+    xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
+
+    # inx = dict()
+    #
+    # inx['bamFiles'] = {
+    #   'source':
+    # }
+    return {self.id(): xlate}
 
   def provides(self):
     return [

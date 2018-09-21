@@ -40,12 +40,10 @@ class TrimStep(Step):
     if self.meta()['trimmer'] != 'trimmomatic':
       raise Exception('Sorry, only trimmomatic is supported at the moment.')
 
-  @staticmethod
-  def cores():
+  def cores(self):
     return 2
 
-  @staticmethod
-  def ram():
+  def ram(self):
     return 16000
 
   def translate(self, step_inputs):

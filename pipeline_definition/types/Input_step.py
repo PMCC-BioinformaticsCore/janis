@@ -44,6 +44,12 @@ class InputStep(Step):
   def type(self):
     return 'input'
 
+  def cores(self):
+    return None
+
+  def ram(self):
+    return None
+
   @staticmethod
   def input_step_tag_name():
     return 'input'

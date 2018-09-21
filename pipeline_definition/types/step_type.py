@@ -105,15 +105,13 @@ class Step(ABC):
     # to the output text.
     raise RuntimeError("Please provide implementation")
 
-  @staticmethod
   @abstractmethod
-  def cores():
+  def cores(self):
     # Number of CPUS
     raise RuntimeError("Please provide implementation")
 
-  @staticmethod
   @abstractmethod
-  def ram():
+  def ram(self):
     # Amount of ram
     raise RuntimeError("Please provide implementation")
 

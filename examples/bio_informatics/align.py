@@ -40,12 +40,10 @@ class AlignStep(Step):
     if self.meta()['aligner'] != 'bowtie2':
       raise Exception('Sorry, only bowtie2 is supported at the moment')
 
-  @staticmethod
-  def cores():
+  def cores(self):
     return 24
 
-  @staticmethod
-  def ram():
+  def ram(self):
     return 64000
 
   def translate(self, step_inputs):
@@ -71,19 +69,39 @@ class AlignStep(Step):
           reference_step = candidate['step']
           reference_id = candidate['id']
 
-    if self.tag() is not None:
-      read_step = read_step + '_' + self.tag()
+    if reference_step == 'input-step':
+      reference_step = 'inputs'
 
     inx = dict()
 
+    if self.tag() is None:
+      new_suffix = '.sam'
+    else:
+      new_suffix = '.' + self.tag() + '.sam'
+
     inx['samout'] = {
       'source': f'{read_step}/{read_id}',
-      'valueFrom': '${ return self.nameroot + ".mouse.sam"; }'
+      'valueFrom': f'${{ return self.nameroot + "{new_suffix}"; }}'
     }
     inx['threads'] = {'valueFrom': '$(' + str(self.cores()) + ')'}
     inx['one'] = {
-      'source':
+      'source': f'{read_step}/reads1_trimmed',
+      'valueFrom': vf
     }
+    inx['two'] = {
+      'source': f'{read_step}/reads2_trimmed_paired',
+      'valueFrom': vf
+    }
+    inx['unpaired'] = {
+      'source': f'{read_step}/reads_trimmed_unpaired',
+      'valueFrom': vf
+    }
+    inx['bt2-idx'] = {'default': f'{reference_step}/{reference_id}'}
+    inx['local'] = {'default': True}
+    inx['reorder'] = {'default': True}
+
+    xlate['in'] = inx
+    xlate['out'] = ['aligned-file']
 
     if self.tag() is None:
       step_name = 'align'

@@ -34,6 +34,12 @@ class CallFactory(StepFactory):
 
 class CallStep(Step):
 
+  def cores(self):
+    return 1
+
+  def ram(self):
+    return 8000
+
   def translate(self, step_inputs):
     return {
         'command': 'vcf',

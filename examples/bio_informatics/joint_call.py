@@ -55,8 +55,8 @@ class JointCallStep(Step):
   def provides(self):
     return [
       {
-        Step.STR_ID: 'out1',
-        Step.STR_TYPE: 'VCF'
+        Step.STR_ID: 'joint calls',
+        Step.STR_TYPE: 'vcf'
       }
     ]
 
@@ -64,11 +64,11 @@ class JointCallStep(Step):
     return [
       {
         Step.STR_ID: 'normal_tag',
-        Step.STR_TYPE: 'bam'
+        Step.STR_TYPE: 'vcf'
       },
       {
         Step.STR_ID: 'tumour_tag',
-        Step.STR_TYPE: 'bam'
+        Step.STR_TYPE: 'vcf'
       },
       {
         Step.STR_ID: 'references',

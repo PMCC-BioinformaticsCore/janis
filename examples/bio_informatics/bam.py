@@ -4,7 +4,7 @@ from pipeline_definition.types.input_type import InputFactory
 from pipeline_definition.types.input_type import Input
 
 
-class BAMFactory(InputFactory):
+class BamFactory(InputFactory):
   @classmethod
   def type(cls):
     return 'bam'
@@ -29,10 +29,10 @@ class BAMFactory(InputFactory):
 
   @classmethod
   def build(cls, input_dict, debug=False):
-    return BAMInput(input_dict)
+    return BamInput(input_dict, debug=debug)
 
 
-class BAMInput(Input):
+class BamInput(Input):
 
   def __init__(self, input_dict, debug=False):
     super().__init__(input_dict)
@@ -43,6 +43,9 @@ class BAMInput(Input):
 
     if self.meta is not None:
       self.path = self.meta().get("path")
+
+  def translate_for_workflow(self):
+    raise Exception('translate_for_input not implemented for BAM files')
 
   def translate_for_input(self):
     if self._resolved:

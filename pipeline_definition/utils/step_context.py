@@ -93,7 +93,7 @@ class StepContext:
       candidates = self.find_match_for_input(step_input)
 
     if not candidates:
-      candidates['ERROR'] = "Failed to find an input candidate."
+      raise Exception(f"Failed to find an input candidate for step: {self.__step.id()}, input: {step_input['id']}")
 
     return candidates
 

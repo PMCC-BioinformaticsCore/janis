@@ -64,15 +64,15 @@ class CallStep(Step):
   def provides(self):
     return [
       {
-        Step.STR_ID: "read",
-        Step.STR_TYPE: "VCF"
+        Step.STR_ID: "calls",
+        Step.STR_TYPE: "vcf"
       }
     ]
 
   def requires(self):
     return [
       {
-        Step.STR_ID: "alignedbamfile",
+        Step.STR_ID: "indexedbam",
         Step.STR_TYPE: "bam"
       },
       {

@@ -56,7 +56,7 @@ steps:
   - detect_mutation:
       joint_call:
         caller: mutect
-        tumour_tag: 'tumour'
+        tumour_tag: '#tumour'
         normal_tag: '#normal'
 
 """
@@ -99,7 +99,7 @@ _expected = json.loads("""
                         },
                         "step-outputs": {
                             "trimmed": {
-                                "type": "SequenceReadArchivePaired"
+                                "type": "TrimmedReads"
                             }
                         }
                     },
@@ -107,22 +107,16 @@ _expected = json.loads("""
                         "step": "align_tumour",
                         "type": "align",
                         "step-inputs": {
-                            "read": {
-                                "type": "SequenceReadArchivePaired",
+                            "trimmed reads": {
+                                "type": "TrimmedReads",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
                                             "id": "trimmed",
-                                            "type": "SequenceReadArchivePaired",
+                                            "type": "TrimmedReads",
                                             "step": "trim_tumour",
                                             "tag": "tumour"
-                                        },
-                                        "2": {
-                                            "id": "tumour",
-                                            "type": "SequenceReadArchivePaired",
-                                            "step": "input-step",
-                                            "tag": "input"
                                         }
                                     }
                                 }
@@ -202,7 +196,7 @@ _expected = json.loads("""
                         "step": "call_tumour",
                         "type": "call",
                         "step-inputs": {
-                            "alignedbamfile": {
+                            "indexedbam": {
                                 "type": "bam",
                                 "mapping": {
                                     "provided": "",
@@ -232,8 +226,8 @@ _expected = json.loads("""
                             }
                         },
                         "step-outputs": {
-                            "read": {
-                                "type": "VCF"
+                            "calls": {
+                                "type": "vcf"
                             }
                         }
                     }
@@ -262,7 +256,7 @@ _expected = json.loads("""
                         },
                         "step-outputs": {
                             "trimmed": {
-                                "type": "SequenceReadArchivePaired"
+                                "type": "TrimmedReads"
                             }
                         }
                     },
@@ -270,22 +264,16 @@ _expected = json.loads("""
                         "step": "align_normal",
                         "type": "align",
                         "step-inputs": {
-                            "read": {
-                                "type": "SequenceReadArchivePaired",
+                            "trimmed reads": {
+                                "type": "TrimmedReads",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
                                             "id": "trimmed",
-                                            "type": "SequenceReadArchivePaired",
+                                            "type": "TrimmedReads",
                                             "step": "trim_normal",
                                             "tag": "normal"
-                                        },
-                                        "2": {
-                                            "id": "normal",
-                                            "type": "SequenceReadArchivePaired",
-                                            "step": "input-step",
-                                            "tag": "input"
                                         }
                                     }
                                 }
@@ -365,7 +353,7 @@ _expected = json.loads("""
                         "step": "call_normal",
                         "type": "call",
                         "step-inputs": {
-                            "alignedbamfile": {
+                            "indexedbam": {
                                 "type": "bam",
                                 "mapping": {
                                     "provided": "",
@@ -395,8 +383,8 @@ _expected = json.loads("""
                             }
                         },
                         "step-outputs": {
-                            "read": {
-                                "type": "VCF"
+                            "calls": {
+                                "type": "vcf"
                             }
                         }
                     }
@@ -409,25 +397,42 @@ _expected = json.loads("""
                         "type": "joint_call",
                         "step-inputs": {
                             "normal_tag": {
-                                "type": "bam",
+                                "type": "vcf",
                                 "mapping": {
                                     "provided": "#normal",
                                     "candidates": {
                                         "1": {
-                                            "id": "alignedbamfile",
-                                            "type": "bam",
-                                            "step": "align_normal",
+                                            "id": "calls",
+                                            "type": "vcf",
+                                            "step": "call_normal",
+                                            "tag": "normal"
+                                        },
+                                        "2": {
+                                            "id": "calls",
+                                            "type": "vcf",
+                                            "step": "call_normal",
                                             "tag": "normal"
                                         }
                                     }
                                 }
                             },
                             "tumour_tag": {
-                                "type": "bam",
+                                "type": "vcf",
                                 "mapping": {
-                                    "provided": "tumour",
+                                    "provided": "#tumour",
                                     "candidates": {
-                                        "ERROR": "Failed to find an input candidate."
+                                        "1": {
+                                            "id": "calls",
+                                            "type": "vcf",
+                                            "step": "call_tumour",
+                                            "tag": "tumour"
+                                        },
+                                        "2": {
+                                            "id": "calls",
+                                            "type": "vcf",
+                                            "step": "call_tumour",
+                                            "tag": "tumour"
+                                        }
                                     }
                                 }
                             },
@@ -447,8 +452,8 @@ _expected = json.loads("""
                             }
                         },
                         "step-outputs": {
-                            "out1": {
-                                "type": "VCF"
+                            "joint calls": {
+                                "type": "vcf"
                             }
                         }
                     }

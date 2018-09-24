@@ -62,7 +62,7 @@ class AlignStep(Step):
 
     for mi in step_inputs:
       for candidate in mi.candidates.values():
-        if mi.step_output_id == 'read' and candidate['tag'] == self.tag():
+        if mi.step_output_id == 'trimmed reads' and candidate['tag'] == self.tag():
           read_step = candidate['step']
           read_id = candidate['id']
         if mi.step_output_id == 'reference':
@@ -116,8 +116,8 @@ class AlignStep(Step):
   def requires(self):
     return [
       {
-        Step.STR_ID: "read",
-        Step.STR_TYPE: "SequenceReadArchivePaired"
+        Step.STR_ID: "trimmed reads",
+        Step.STR_TYPE: "TrimmedReads"
       },
       {
         Step.STR_ID: "reference",

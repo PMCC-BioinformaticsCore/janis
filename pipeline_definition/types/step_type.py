@@ -170,31 +170,6 @@ class Step(ABC):
       'output': output
     }
 
-  # @abstractmethod
-  # def type(self):
-  #    pass
-
-  # @classmethod
-  # @abstractmethod
-  # def label(self):
-  #    pass
-
-  # @classmethod
-  # @abstractmethod
-  # def description(self):
-  #    pass
-
-  # @classmethod
-  # @abstractmethod
-  # def save(self):
-  #    pass
-
-  # @classmethod
-  # @abstractmethod
-  # def can_default(self):
-  #    pass
-
-
 class TaggedDatum(ABC):
   @abstractmethod
   def tags(self):

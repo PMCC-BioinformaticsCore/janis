@@ -52,7 +52,33 @@ class SortBam(Step):
     pass
 
   def cores(self):
-    return 2
+    return 8
 
   def ram(self):
-    return self.cores()*8000
+    return self.cores()*2000
+
+  def translate(self, step_inputs):
+
+    xlate = dict()
+
+    xlate['run'] = '../tools/src/tools/samtools-sort.cwl'
+    xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
+
+    for mi in step_inputs:
+      for candidate in mi.candidates.values():
+        if mi.step_output_id == 'bamfile' and candidate['tag'] == self.tag():
+          align_step = candidate['step']
+
+    inx = dict()
+
+    inx['input'] = {'source': f'{align_step}/aligned-file'}
+    inx['output_name'] = {
+      'source': '{align_step}/aligned-file',
+      'valueFrom': f'${{return self.nameroot + ".sorted.{self.tag()}.bam";}}'
+    }
+    inx['threads'] = {'valueFrom': f'$( {self.cores()} )'}
+
+    xlate['in'] = inx
+    xlate['out'] = '[sorted]'
+
+    return {self.id(): xlate}

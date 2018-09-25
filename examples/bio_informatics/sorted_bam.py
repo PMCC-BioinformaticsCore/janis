@@ -12,5 +12,7 @@ class SortedBamFactory(BamFactory):
 
 
 class SortedBamInput(BamInput):
-  pass
+
+  def is_subtype_of(self, other):
+    return isinstance(self, other)
 

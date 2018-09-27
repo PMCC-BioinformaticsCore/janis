@@ -355,26 +355,79 @@ class PipelineTranslator:
 
     ctx_attr_map = nx.get_node_attributes(work_graph, 'ctx')
     type_attr_map = nx.get_edge_attributes(work_graph, 'type')
-    self._start_workflow_translation(work_graph, input_step, type_attr_map, ctx_attr_map)
-
-    return self.translate_pipeline_to_json()
+    return self._start_workflow_translation(work_graph, input_step, type_attr_map, ctx_attr_map)
 
   def _start_workflow_translation(self, work_graph, input_step, type_attr_map, ctx_attr_map):
 
-    self._translate_step_to_target(input_step, None)
+    preamble = yaml.load("""
+class: Workflow
+cwlVersion: v1.0
+
+requirements:
+- class: InlineJavascriptRequirement
+  expressionLib:
+  - var rename_trim_file = function() {
+      if ( self == null ) {
+        return null;
+      } else {
+        var xx = self.basename.split('.');
+        var id = xx.indexOf('fastq');
+        xx.splice(id, 1);
+        return xx.join('.');
+      }
+    };
+- class: ScatterFeatureRequirement
+- class: StepInputExpressionRequirement
+- class: SchemaDefRequirement
+  types:
+  - $import: ../tools/src/tools/trimmomatic-end_mode.yml
+  - $import: ../tools/src/tools/trimmomatic-sliding_window.yml
+  - $import: ../tools/src/tools/trimmomatic-phred.yml
+  - $import: ../tools/src/tools/trimmomatic-illumina_clipping.yml
+  - $import: ../tools/src/tools/trimmomatic-max_info.yml
+""")
+
+    inputs = self._translate_step_to_target(input_step, None)
 
     edges = nx.edges(work_graph, input_step)
     if not edges:
       return
+
+    steps_xlate = dict()
 
     for edge in edges:
       if edge[0] != input_step:
         raise RuntimeError("Trouble in edge finding")
       edge_type = str(type_attr_map[(edge[0], edge[1], 0)])
       if edge_type == 'branch':
-        self._recurse_graph_and_translate(edge[1], work_graph, 1, type_attr_map, ctx_attr_map)
+        self._recurse_graph_and_translate(edge[1], work_graph, 1, type_attr_map, ctx_attr_map, steps_xlate)
 
-  def _recurse_graph_and_translate(self, step, work_graph, step_order, type_attr_map, ctx_attr_map):
+    outputs = self._find_step_outputs(steps_xlate)
+
+    xlate = dict()
+    xlate.update(preamble)
+    xlate.update(inputs)
+    xlate.update({'steps': steps_xlate})
+    xlate.update(outputs)
+
+    return yaml.dump(xlate, default_flow_style=False)
+
+  @staticmethod
+  def _find_step_outputs(steps):
+    # Find the outputs from a dictionary of CWL step and generate the CWL output entry
+    outputs = dict()
+    for (step_id, step) in steps.items():
+      try:
+        outs = step['out']
+        for out in outs:
+          outputs.update({f'{step_id}_{out}': {'type': 'File', 'outputSource': f'{step_id}/{out}'}})
+      except KeyError:
+        print(f'Step: {step_id} has no outputs.')
+
+    return {'outputs': outputs}
+
+
+  def _recurse_graph_and_translate(self, step, work_graph, step_order, type_attr_map, ctx_attr_map, steps_xlate):
 
     class MappedInput:
       def __init__(self, inputs, candidates, step_output_id, input_type):
@@ -399,7 +452,8 @@ class PipelineTranslator:
       mi = MappedInput(step_inputs, mapping, input_id, input_type)
       mapped_inputs.append(mi)
 
-    self._translate_step_to_target(step, mapped_inputs)
+    s = self._translate_step_to_target(step, mapped_inputs)
+    steps_xlate.update(s)
 
     edges = nx.edges(work_graph, step)
     if not edges:
@@ -411,14 +465,11 @@ class PipelineTranslator:
       edge_type = str(type_attr_map[(edge[0], edge[1], 0)])
       if edge_type == 'branch':
         next_step = edge[1]
-        self._recurse_graph_and_translate(next_step, work_graph, step_order + 1, type_attr_map, ctx_attr_map)
+        self._recurse_graph_and_translate(next_step, work_graph, step_order + 1, type_attr_map, ctx_attr_map, steps_xlate)
 
   @staticmethod
   def _translate_step_to_target(step, mapped_inputs):
-    tgt_dict = step.translate(mapped_inputs)
-    print('-'*80)
-    print(yaml.dump(tgt_dict, default_flow_style=False))
-    print('-'*80)
+    return step.translate(mapped_inputs)
 
   def translate_pipeline_to_json(self):
     json_doc = self._translate_workflow_to_json()

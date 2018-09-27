@@ -1,10 +1,10 @@
 import unittest
 
 from pipeline_definition.pipeline_translator import PipelineTranslator
-import json
+import yaml
 import examples.bio_informatics
 
-_yml = """
+_pipeline = """
 inputs:
   tumour:
     SequenceReadArchivePaired:
@@ -55,432 +55,358 @@ steps:
 
 """
 
-_expected = json.loads("""
-{
-    "workflow": {
-        "inputs": {
-            "tumour": {
-                "type": "SequenceReadArchivePaired"
-            },
-            "normal": {
-                "type": "SequenceReadArchivePaired"
-            },
-            "ref": {
-                "type": "reference"
+_expected = yaml.load("""
+class: Workflow
+cwlVersion: v1.0
+
+requirements:
+- class: InlineJavascriptRequirement
+  expressionLib:
+  - var rename_trim_file = function() {
+      if ( self == null ) {
+        return null;
+      } else {
+        var xx = self.basename.split('.');
+        var id = xx.indexOf('fastq');
+        xx.splice(id, 1);
+        return xx.join('.');
+      }
+    };
+- class: ScatterFeatureRequirement
+- class: StepInputExpressionRequirement
+- class: SchemaDefRequirement
+  types:
+  - $import: ../tools/src/tools/trimmomatic-end_mode.yml
+  - $import: ../tools/src/tools/trimmomatic-sliding_window.yml
+  - $import: ../tools/src/tools/trimmomatic-phred.yml
+  - $import: ../tools/src/tools/trimmomatic-illumina_clipping.yml
+  - $import: ../tools/src/tools/trimmomatic-max_info.yml
+  
+inputs:
+  normal_backward: File
+  normal_forward: File
+  ref_reference: File
+  tumour_backward: File
+  tumour_forward: File
+
+outputs:
+  align_normal_aligned-file:
+    outputSource: align_normal/aligned-file
+    type: File
+  align_tumour_aligned-file:
+    outputSource: align_tumour/aligned-file
+    type: File
+  detect_mutation_call_stats:
+    outputSource: detect_mutation/call_stats
+    type: File
+  detect_mutation_coverage:
+    outputSource: detect_mutation/coverage
+    type: File
+  detect_mutation_mutations:
+    outputSource: detect_mutation/mutations
+    type: File
+  sort_normal_sorted:
+    outputSource: sort_normal/sorted
+    type: File
+  sort_tumour_sorted:
+    outputSource: sort_tumour/sorted
+    type: File
+  trim_normal_output_log:
+    outputSource: trim_normal/output_log
+    type: File
+  trim_normal_reads1_trimmed:
+    outputSource: trim_normal/reads1_trimmed
+    type: File
+  trim_normal_reads1_trimmed_unpaired:
+    outputSource: trim_normal/reads1_trimmed_unpaired
+    type: File
+  trim_normal_reads2_trimmed_paired:
+    outputSource: trim_normal/reads2_trimmed_paired
+    type: File
+  trim_normal_reads2_trimmed_unpaired:
+    outputSource: trim_normal/reads2_trimmed_unpaired
+    type: File
+  trim_tumour_output_log:
+    outputSource: trim_tumour/output_log
+    type: File
+  trim_tumour_reads1_trimmed:
+    outputSource: trim_tumour/reads1_trimmed
+    type: File
+  trim_tumour_reads1_trimmed_unpaired:
+    outputSource: trim_tumour/reads1_trimmed_unpaired
+    type: File
+  trim_tumour_reads2_trimmed_paired:
+    outputSource: trim_tumour/reads2_trimmed_paired
+    type: File
+  trim_tumour_reads2_trimmed_unpaired:
+    outputSource: trim_tumour/reads2_trimmed_unpaired
+    type: File
+    
+steps:
+  align_normal:
+    in:
+      bt2-idx:
+        default: inputs/ref
+      local:
+        default: true
+      one:
+        source: trim_normal/reads1_trimmed
+        valueFrom: |
+          ${
+            if ( self == null ) {
+              return null;
+            } else {
+              return [self];
             }
-        },
-        "flow": {
-            "tumour": {
-                "steps": {
-                    "1": {
-                        "step": "trim_tumour",
-                        "type": "trim",
-                        "step-inputs": {
-                            "read": {
-                                "type": "SequenceReadArchivePaired",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "tumour",
-                                            "type": "SequenceReadArchivePaired",
-                                            "step": "input-step",
-                                            "tag": "input"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "trimmed": {
-                                "type": "TrimmedReads"
-                            }
-                        }
-                    },
-                    "2": {
-                        "step": "align_tumour",
-                        "type": "align",
-                        "step-inputs": {
-                            "trimmed reads": {
-                                "type": "TrimmedReads",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "trimmed",
-                                            "type": "TrimmedReads",
-                                            "step": "trim_tumour",
-                                            "tag": "tumour"
-                                        }
-                                    }
-                                }
-                            },
-                            "reference": {
-                                "type": "reference",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "ref",
-                                            "type": "reference",
-                                            "step": "input-step",
-                                            "tag": "input"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "alignedbamfile": {
-                                "type": "bam"
-                            }
-                        }
-                    },
-                    "3": {
-                        "step": "sort_tumour",
-                        "type": "sort",
-                        "step-inputs": {
-                            "bamfile": {
-                                "type": "bam",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "alignedbamfile",
-                                            "type": "bam",
-                                            "step": "align_tumour",
-                                            "tag": "tumour"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "sortedbamfile": {
-                                "type": "sortedbam"
-                            }
-                        }
-                    },
-                    "4": {
-                        "step": "index_tumour",
-                        "type": "index",
-                        "step-inputs": {
-                            "sortedbamfile": {
-                                "type": "bam",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "sortedbamfile",
-                                            "type": "sortedbam",
-                                            "step": "sort_tumour",
-                                            "tag": "tumour"
-                                        },
-                                        "2": {
-                                            "id": "alignedbamfile",
-                                            "type": "bam",
-                                            "step": "align_tumour",
-                                            "tag": "tumour"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "indexedfile": {
-                                "type": "bamindex"
-                            }
-                        }
-                    },
-                    "5": {
-                        "step": "call_tumour",
-                        "type": "call",
-                        "step-inputs": {
-                            "indexedbam": {
-                                "type": "bam",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "alignedbamfile",
-                                            "type": "bam",
-                                            "step": "align_tumour",
-                                            "tag": "tumour"
-                                        }
-                                    }
-                                }
-                            },
-                            "reference": {
-                                "type": "reference",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "ref",
-                                            "type": "reference",
-                                            "step": "input-step",
-                                            "tag": "input"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "calls": {
-                                "type": "vcf"
-                            }
-                        }
-                    }
-                }
-            },
-            "normal": {
-                "steps": {
-                    "1": {
-                        "step": "trim_normal",
-                        "type": "trim",
-                        "step-inputs": {
-                            "read": {
-                                "type": "SequenceReadArchivePaired",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "normal",
-                                            "type": "SequenceReadArchivePaired",
-                                            "step": "input-step",
-                                            "tag": "input"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "trimmed": {
-                                "type": "TrimmedReads"
-                            }
-                        }
-                    },
-                    "2": {
-                        "step": "align_normal",
-                        "type": "align",
-                        "step-inputs": {
-                            "trimmed reads": {
-                                "type": "TrimmedReads",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "trimmed",
-                                            "type": "TrimmedReads",
-                                            "step": "trim_normal",
-                                            "tag": "normal"
-                                        }
-                                    }
-                                }
-                            },
-                            "reference": {
-                                "type": "reference",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "ref",
-                                            "type": "reference",
-                                            "step": "input-step",
-                                            "tag": "input"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "alignedbamfile": {
-                                "type": "bam"
-                            }
-                        }
-                    },
-                    "3": {
-                        "step": "sort_normal",
-                        "type": "sort",
-                        "step-inputs": {
-                            "bamfile": {
-                                "type": "bam",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "alignedbamfile",
-                                            "type": "bam",
-                                            "step": "align_normal",
-                                            "tag": "normal"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "sortedbamfile": {
-                                "type": "sortedbam"
-                            }
-                        }
-                    },
-                    "4": {
-                        "step": "index_normal",
-                        "type": "index",
-                        "step-inputs": {
-                            "sortedbamfile": {
-                                "type": "bam",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "sortedbamfile",
-                                            "type": "sortedbam",
-                                            "step": "sort_normal",
-                                            "tag": "normal"
-                                        },
-                                        "2": {
-                                            "id": "alignedbamfile",
-                                            "type": "bam",
-                                            "step": "align_normal",
-                                            "tag": "normal"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "indexedfile": {
-                                "type": "bamindex"
-                            }
-                        }
-                    },
-                    "5": {
-                        "step": "call_normal",
-                        "type": "call",
-                        "step-inputs": {
-                            "indexedbam": {
-                                "type": "bam",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "alignedbamfile",
-                                            "type": "bam",
-                                            "step": "align_normal",
-                                            "tag": "normal"
-                                        }
-                                    }
-                                }
-                            },
-                            "reference": {
-                                "type": "reference",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "ref",
-                                            "type": "reference",
-                                            "step": "input-step",
-                                            "tag": "input"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "calls": {
-                                "type": "vcf"
-                            }
-                        }
-                    }
-                }
-            },
-            "untagged": {
-                "steps": {
-                    "1": {
-                        "step": "detect_mutation",
-                        "type": "joint_call",
-                        "step-inputs": {
-                            "normal_tag": {
-                                "type": "vcf",
-                                "mapping": {
-                                    "provided": "#normal",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "calls",
-                                            "type": "vcf",
-                                            "step": "call_normal",
-                                            "tag": "normal"
-                                        },
-                                        "2": {
-                                            "id": "calls",
-                                            "type": "vcf",
-                                            "step": "call_normal",
-                                            "tag": "normal"
-                                        }
-                                    }
-                                }
-                            },
-                            "tumour_tag": {
-                                "type": "vcf",
-                                "mapping": {
-                                    "provided": "#tumour",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "calls",
-                                            "type": "vcf",
-                                            "step": "call_tumour",
-                                            "tag": "tumour"
-                                        },
-                                        "2": {
-                                            "id": "calls",
-                                            "type": "vcf",
-                                            "step": "call_tumour",
-                                            "tag": "tumour"
-                                        }
-                                    }
-                                }
-                            },
-                            "references": {
-                                "type": "reference",
-                                "mapping": {
-                                    "provided": "",
-                                    "candidates": {
-                                        "1": {
-                                            "id": "ref",
-                                            "type": "reference",
-                                            "step": "input-step",
-                                            "tag": "input"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "step-outputs": {
-                            "joint calls": {
-                                "type": "vcf"
-                            }
-                        }
-                    }
-                }
+          }
+      reorder:
+        default: true
+      samout:
+        source: trim_normal/trimmed
+        valueFrom: ${ return self.nameroot + ".normal.sam"; }
+      threads:
+        valueFrom: $(24)
+      two:
+        source: trim_normal/reads2_trimmed_paired
+        valueFrom: |
+          ${
+            if ( self == null ) {
+              return null;
+            } else {
+              return [self];
             }
+          }
+      unpaired:
+        source: trim_normal/reads_trimmed_unpaired
+        valueFrom: |
+          ${
+            if ( self == null ) {
+              return null;
+            } else {
+              return [self];
+            }
+          }
+    out:
+    - aligned-file
+    requirements:
+      ResourceRequirement:
+        coresMin: 24
+        ramMin: 64000
+    run: ../tools/src/tools/bowtie2.cwl
+  align_tumour:
+    in:
+      bt2-idx:
+        default: inputs/ref
+      local:
+        default: true
+      one:
+        source: trim_tumour/reads1_trimmed
+        valueFrom: |
+          ${
+            if ( self == null ) {
+              return null;
+            } else {
+              return [self];
+            }
+          }
+      reorder:
+        default: true
+      samout:
+        source: trim_tumour/trimmed
+        valueFrom: ${ return self.nameroot + ".tumour.sam"; }
+      threads:
+        valueFrom: $(24)
+      two:
+        source: trim_tumour/reads2_trimmed_paired
+        valueFrom: |
+          ${
+            if ( self == null ) {
+              return null;
+            } else {
+              return [self];
+            }
+          }
+      unpaired:
+        source: trim_tumour/reads_trimmed_unpaired
+        valueFrom: |
+          ${
+            if ( self == null ) {
+              return null;
+            } else {
+              return [self];
+            }
+          }
+    out:
+    - aligned-file
+    requirements:
+      ResourceRequirement:
+        coresMin: 24
+        ramMin: 64000
+    run: ../tools/src/tools/bowtie2.cwl
+  call_normal:
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
+        ramMin: 16000
+    run: ../tools/src/tools/platypus.cwl
+  call_tumour:
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
+        ramMin: 16000
+    run: ../tools/src/tools/platypus.cwl
+  detect_mutation:
+    in:
+      normal:
+        source: sort_normal/sorted
+      reference:
+        source: inputs/ref
+      tumour:
+        source: sort_tumour/sorted
+      vcf:
+        source: sort_tumour/sorted
+        valueFrom: ${ return self.nameroot + ".vcf"; }
+    out:
+    - coverage
+    - call_stats
+    - mutations
+    requirements:
+      ResourceRequirement:
+        coresMin: 8
+        ramMin: 16000
+    run: ../tools/src/tools/platypus.cwl
+  sort_normal:
+    in:
+      input:
+        source: align_normal/aligned-file
+      output_name:
+        source: '{align_step}/aligned-file'
+        valueFrom: ${return self.nameroot + ".sorted.normal.bam";}
+      threads:
+        valueFrom: $( 8 )
+    out:
+    - sorted
+    requirements:
+      ResourceRequirement:
+        coresMin: 8
+        ramMin: 16000
+    run: ../tools/src/tools/samtools-sort.cwl
+  sort_tumour:
+    in:
+      input:
+        source: align_tumour/aligned-file
+      output_name:
+        source: '{align_step}/aligned-file'
+        valueFrom: ${return self.nameroot + ".sorted.tumour.bam";}
+      threads:
+        valueFrom: $( 8 )
+    out:
+    - sorted
+    requirements:
+      ResourceRequirement:
+        coresMin: 8
+        ramMin: 16000
+    run: ../tools/src/tools/samtools-sort.cwl
+  trim_normal:
+    end_mode:
+      default: PE
+    illuminaClip:
+      source: adaptors
+      valueForm: |
+        ${
+          return {
+            "adapters": self,
+            "seedMismatches": 1,
+            "palindromeClipThreshold": 20,
+            "simpleClipThreshold": 20,
+            "minAdapterLength": 4,
+            "keepBothReads": true };
         }
-    }
-}""")
+    in:
+      reads1:
+        source: normal_forward
+        valueForm: |
+          ${
+            self.format = "http://edamontology.org/format_1930";
+            return self;
+          }
+      reads2:
+        source: normal_backward
+        valueForm: |
+          ${
+            self.format = "http://edamontology.org/format_1930";
+            return self;
+          }
+    nthreads:
+      valueFrom: $(2)
+    out:
+    - output_log
+    - reads1_trimmed
+    - reads1_trimmed_unpaired
+    - reads2_trimmed_paired
+    - reads2_trimmed_unpaired
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
+        ramMin: 16000
+    run: ../tools/src/tools/trimmomatic.cwl
+  trim_tumour:
+    end_mode:
+      default: PE
+    illuminaClip:
+      source: adaptors
+      valueForm: |
+        ${
+          return {
+            "adapters": self,
+            "seedMismatches": 1,
+            "palindromeClipThreshold": 20,
+            "simpleClipThreshold": 20,
+            "minAdapterLength": 4,
+            "keepBothReads": true };
+        }
+    in:
+      reads1:
+        source: tumour_forward
+        valueForm: |
+          ${
+            self.format = "http://edamontology.org/format_1930";
+            return self;
+          }
+      reads2:
+        source: tumour_backward
+        valueForm: |
+          ${
+            self.format = "http://edamontology.org/format_1930";
+            return self;
+          }
+    nthreads:
+      valueFrom: $(2)
+    out:
+    - output_log
+    - reads1_trimmed
+    - reads1_trimmed_unpaired
+    - reads2_trimmed_paired
+    - reads2_trimmed_unpaired
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
+        ramMin: 16000
+    run: ../tools/src/tools/trimmomatic.cwl
+""")
 
 
 class TumourNormalPipeline(unittest.TestCase):
 
   def test_graph(self):
     translator = PipelineTranslator(debug=False)
-    translator.translate_string(_yml)
+    translator.translate_string(_pipeline)
     translation = translator.pipeline()
-    # print('/\\'*40)
+    # print('-'*80)
     # print(translation)
-    # print('/\\'*40)
+    # print('-'*80)
     # self.assertTrue(True)
-    tr_json = json.loads(translation)
+    tr_json = yaml.load(translation)
     self.assertTrue(tr_json == _expected)
 
 

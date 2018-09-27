@@ -35,7 +35,7 @@ class SortBam(Step):
   def provides(self):
     return [
       {
-        Step.STR_ID: "sortedfile",
+        Step.STR_ID: "sortedbamfile",
         Step.STR_TYPE: "sortedbam"
       }
     ]
@@ -79,6 +79,6 @@ class SortBam(Step):
     inx['threads'] = {'valueFrom': f'$( {self.cores()} )'}
 
     xlate['in'] = inx
-    xlate['out'] = '[sorted]'
+    xlate['out'] = ['sorted']
 
     return {self.id(): xlate}

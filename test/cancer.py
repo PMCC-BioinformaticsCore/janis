@@ -30,9 +30,6 @@ steps:
   - sort_tumour:
       tag: 'tumour'
       sort:
-  - index_tumour:
-      tag: 'tumour'
-      index:
   - call_tumour:
       tag: 'tumour'
       call:
@@ -47,9 +44,6 @@ steps:
   - sort_normal:
       tag: 'normal'
       sort:
-  - index_normal:
-      tag: 'normal'
-      index:
   - call_normal:
       tag: 'normal'
       call:
@@ -162,7 +156,7 @@ _expected = json.loads("""
                             }
                         },
                         "step-outputs": {
-                            "sortedfile": {
+                            "sortedbamfile": {
                                 "type": "sortedbam"
                             }
                         }
@@ -171,12 +165,18 @@ _expected = json.loads("""
                         "step": "index_tumour",
                         "type": "index",
                         "step-inputs": {
-                            "bamfile": {
+                            "sortedbamfile": {
                                 "type": "bam",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
+                                            "id": "sortedbamfile",
+                                            "type": "sortedbam",
+                                            "step": "sort_tumour",
+                                            "tag": "tumour"
+                                        },
+                                        "2": {
                                             "id": "alignedbamfile",
                                             "type": "bam",
                                             "step": "align_tumour",
@@ -319,7 +319,7 @@ _expected = json.loads("""
                             }
                         },
                         "step-outputs": {
-                            "sortedfile": {
+                            "sortedbamfile": {
                                 "type": "sortedbam"
                             }
                         }
@@ -328,12 +328,18 @@ _expected = json.loads("""
                         "step": "index_normal",
                         "type": "index",
                         "step-inputs": {
-                            "bamfile": {
+                            "sortedbamfile": {
                                 "type": "bam",
                                 "mapping": {
                                     "provided": "",
                                     "candidates": {
                                         "1": {
+                                            "id": "sortedbamfile",
+                                            "type": "sortedbam",
+                                            "step": "sort_normal",
+                                            "tag": "normal"
+                                        },
+                                        "2": {
                                             "id": "alignedbamfile",
                                             "type": "bam",
                                             "step": "align_normal",

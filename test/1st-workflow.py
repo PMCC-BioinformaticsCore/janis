@@ -2,7 +2,7 @@
 # This creates CWL for the first workflow example in in the CWL "documentation"
 #
 
-import unittest
+#import unittest
 import yaml
 from pipeline_definition.pipeline_translator import PipelineTranslator
 import examples.unix_commands
@@ -11,12 +11,11 @@ import examples.unix_commands
 _yml = """
 inputs:
   tar_file:
-    glob: 'test-data/hello.tar'
+    path: 'test-data/hello.tar'
 
 steps:
   - untar:
   - compile:
-      compiler: javac
 """
 
 _expected_cwl = yaml.loads("""
@@ -54,18 +53,20 @@ ex: Hello.java
 """)
 
 
-class FirstWorkflow(unittest.TestCase):
-
-  def test_graph(self):
-    translator = PipelineTranslator(debug=True)
-    translation = translator.translate_string(_yml)
-
-    print('-'*80)
-    print(translation)
-    print('-'*80)
-
-    self.assertTrue(True)
-
-
-if __name__ == '__main__':
-    unittest.main()
+# class FirstWorkflow(unittest.TestCase):
+#
+#   def test_graph(self):
+#     translator = PipelineTranslator(debug=True)
+#     translation = translator.translate_string(_yml)
+#
+#     print('-'*80)
+#     print(translation)
+#     print('-'*80)
+#
+#     self.assertTrue(True)
+#
+#
+# if __name__ == '__main__':
+#     unittest.main()
+translator = PipelineTranslator(debug=True)
+translation = translator.translate_string(_yml)

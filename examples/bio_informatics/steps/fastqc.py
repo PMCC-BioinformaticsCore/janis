@@ -16,7 +16,7 @@ class FastQCFactory(StepFactory):
     return cls.label()
 
   @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'schema': {},
       'nullable': True

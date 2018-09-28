@@ -10,7 +10,7 @@ class InputStep(Step):
 
   def __init__(self, workflow_input_set):
     super().__init__({
-      'input-step': {
+      'inputs': {
         'WorkflowInputStep': {
         },
         'tag': InputStep.input_step_tag_name()

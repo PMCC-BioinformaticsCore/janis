@@ -1,25 +1,19 @@
 import glob
 
 from pipeline_definition.pipeline_translator import PipelineTranslatorException
-from pipeline_definition.types.input_type import InputFactory
+from pipeline_definition.types.input_type import InputFactory, InputType
 from pipeline_definition.types.input_type import Input
+
+paired_reads_type = InputType('SequenceReadArchivePaired', label='A pair of forward and backward read sequences')
 
 
 class PairedReadFactory(InputFactory):
   @classmethod
-  def type(cls):
-    return 'SequenceReadArchivePaired'
+  def type(cls) -> InputType:
+    return paired_reads_type
 
   @classmethod
-  def label(cls):
-    return 'paired read files'
-
-  @classmethod
-  def description(cls):
-    return cls.label()
-
-  @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'schema': {
         'label': {'type': 'string'},
@@ -31,7 +25,7 @@ class PairedReadFactory(InputFactory):
 
   @classmethod
   def build(cls, input_dict, debug=False):
-    return PairedReadInput(input_dict, debug)
+    return PairedReadInput(input_dict, debug=debug)
 
 
 class PairedReadInput(Input):

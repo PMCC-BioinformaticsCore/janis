@@ -19,7 +19,7 @@ class ReferenceFactory(InputFactory):
     return cls.label()
 
   @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'schema': {
         'path': {'type': 'string'},

@@ -1,4 +1,4 @@
-from examples.bio_informatics.bam import *
+from examples.bio_informatics.data_types.bam import *
 
 
 class SortedBamFactory(BamFactory):

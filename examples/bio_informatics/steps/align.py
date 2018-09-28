@@ -16,7 +16,7 @@ class AlignFactory(StepFactory):
     return cls.label()
 
   @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'schema': {
         'aligner': {
@@ -68,9 +68,6 @@ class AlignStep(Step):
         if mi.step_output_id == 'reference':
           reference_step = candidate['step']
           reference_id = candidate['id']
-
-    if reference_step == 'input-step':
-      reference_step = 'inputs'
 
     inx = dict()
 

@@ -16,7 +16,7 @@ class CallFactory(StepFactory):
     return cls.label()
 
   @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'schema': {
         'caller': {

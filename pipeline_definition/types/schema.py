@@ -9,7 +9,7 @@ def __input_schema():
   ischema = {}
 
   for factory in type_registry.get_input_factories():
-    ischema[factory.type()] = factory.describe()
+    ischema[factory.type()] = factory.schema()
 
   return {
     'inputs': {
@@ -29,7 +29,7 @@ def __step_scheme():
   }
 
   for factory in type_registry.get_step_factories():
-    ischema[factory.type()] = factory.describe()
+    ischema[factory.type()] = factory.schema()
 
   return {
     'steps': {

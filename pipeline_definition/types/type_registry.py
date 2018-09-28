@@ -1,33 +1,49 @@
 #
 # Registry of all types
 #
+from typing import List
+
+from pipeline_definition.types.input_type import InputType
+from pipeline_definition.types.input_type import InputFactory
+from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.utils.registry import Registry
 
-__inputs_registry = Registry()
-__steps_registry = Registry()
-__outputs_registry = Registry()
+__input_factories_registry = Registry[InputFactory]()
+__input_types = Registry[InputType]()
+__steps_registry = Registry[StepFactory]()
 
 
-def register_input_factory(factory):
-  __inputs_registry.register(factory)
+def register_input_type(input_type: InputType):
+  __input_types.register(input_type.name(), input_type)
 
 
-def get_input_factory(type_name):
-  # return __inputs_registry.factory*type_name
-  return __inputs_registry.object(type_name)
+def get_input_type(type_name: str) -> InputType:
+  return __input_types.get(type_name)
 
 
-def get_input_factories():
-  return __inputs_registry.objects()
+def get_input_types() -> List[InputType]:
+  return __input_types.objects()
 
 
-def register_step_factory(factory):
-  __steps_registry.register(factory)
+def register_input_factory(factory: InputFactory):
+  __input_factories_registry.register(factory)
 
 
-def get_step_factory(type_name):
+def get_input_factory(type_name: str) -> InputFactory:
+  return __input_factories_registry.object(type_name)
+
+
+def get_input_factories() -> List[InputFactory]:
+  return __input_factories_registry.objects()
+
+
+def register_step_factory(factory: StepFactory):
+  __steps_registry.register(factory.name(), factory)
+
+
+def get_step_factory(type_name: str) -> StepFactory:
   return __steps_registry.object(type_name)
 
 
-def get_step_factories():
+def get_step_factories() -> List[StepFactory]:
   return __steps_registry.objects()

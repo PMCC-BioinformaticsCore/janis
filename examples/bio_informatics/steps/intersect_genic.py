@@ -2,25 +2,30 @@ from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.types.step_type import Step
 
 
-class DedupFactory(StepFactory):
+class IntersectFactory(StepFactory):
   @classmethod
   def type(cls):
-    return 'dedup'
+    return 'bedtools-intersect'
 
   @classmethod
   def label(cls):
-    return 'dedup'
+    return 'bedtools-intersect'
 
   @classmethod
   def description(cls):
     return cls.label()
 
   @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'schema': {
-        'dedup': {
-          'type': 'string'
+        "split": {
+          "type": "boolean",
+          "default": False
+        },
+        "reportNoOverlaps": {
+          "type": "boolean",
+          "default": False
         }
       },
       'nullable': True
@@ -28,35 +33,23 @@ class DedupFactory(StepFactory):
 
   @classmethod
   def build(cls, meta, debug=False):
-    return DedupStep(meta, debug=debug)
+    return IntersectStep(meta, debug=debug)
 
 
-class DedupStep(Step):
-
-  def cores(self):
-    return 2
-
-  def ram(self):
-    return 8000
-
-  def translate(self, step_inputs):
-    return {
-        'command': 'dedup',
-        'inputs': step_inputs
-      }
+class IntersectStep(Step):
 
   def provides(self):
     return [
       {
-        Step.STR_ID: "bamfile",
-        Step.STR_TYPE: "bam"
+        Step.STR_ID: "reports",
+        Step.STR_TYPE: "Text"
       }
     ]
 
   def requires(self):
     return [
       {
-        Step.STR_ID: "bamfile",
-        Step.STR_TYPE: "bam"
+        Step.STR_ID: "read",
+        Step.STR_TYPE: "SequenceReadArchivePaired"
       }
     ]

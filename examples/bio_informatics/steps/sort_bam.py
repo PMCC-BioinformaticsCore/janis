@@ -1,26 +1,27 @@
 from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.types.step_type import Step
 
-
-class IndexBamFactory(StepFactory):
+class SortBamFactory(StepFactory):
 
   @classmethod
   def type(cls):
-    return 'index'
+    return 'sort'
 
   @classmethod
   def label(cls):
-    return 'index a bam file'
+    return 'sort a bam file'
 
   @classmethod
   def description(cls):
-    return 'index a bam file'
+    return 'sort a bam file'
 
   @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'schema': {
-        'index': {}
+        'sort': {
+          'type': 'string'
+        }
       },
       'nullable': True
     }
@@ -34,43 +35,50 @@ class SortBam(Step):
   def provides(self):
     return [
       {
-        Step.STR_ID: "indexedfile",
-        Step.STR_TYPE: "bamindex"
+        Step.STR_ID: "sortedbamfile",
+        Step.STR_TYPE: "sortedbam"
       }
     ]
 
   def requires(self):
     return [
       {
-        Step.STR_ID: "sortedbamfile",
+        Step.STR_ID: "bamfile",
         Step.STR_TYPE: "bam"
       }
     ]
+
+  def translate(self, mapped_inputs):
+    pass
 
   def cores(self):
     return 8
 
   def ram(self):
-    return self.cores() * 4000
+    return self.cores()*2000
 
   def translate(self, step_inputs):
 
     xlate = dict()
 
-    xlate['run'] = '../tools/src/tools/samtools-index.cwl'
+    xlate['run'] = '../tools/src/tools/samtools-sort.cwl'
     xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
 
     for mi in step_inputs:
       for candidate in mi.candidates.values():
-        if mi.step_output_id == 'sortedbamfile' and candidate['tag'] == self.tag():
+        if mi.step_output_id == 'bamfile' and candidate['tag'] == self.tag():
           align_step = candidate['step']
 
     inx = dict()
 
     inx['input'] = {'source': f'{align_step}/aligned-file'}
+    inx['output_name'] = {
+      'source': '{align_step}/aligned-file',
+      'valueFrom': f'${{return self.nameroot + ".sorted.{self.tag()}.bam";}}'
+    }
     inx['threads'] = {'valueFrom': f'$( {self.cores()} )'}
 
     xlate['in'] = inx
-    xlate['out'] = ['index']
+    xlate['out'] = ['sorted']
 
     return {self.id(): xlate}

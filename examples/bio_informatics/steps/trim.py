@@ -1,3 +1,8 @@
+from typing import List
+
+from examples.bio_informatics.data_types.paired_read import paired_reads_type
+from examples.bio_informatics.data_types.trimmed_reads import trimmed_reads_type
+from pipeline_definition.types.input_type import InputType
 from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.types.step_type import Step
 
@@ -16,7 +21,7 @@ class TrimFactory(StepFactory):
     return cls.label()
 
   @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'schema': {
         'trimmer': {
@@ -87,18 +92,8 @@ class TrimStep(Step):
 
     return {self.id(): xlate}
 
-  def provides(self):
-    return [
-      {
-        Step.STR_ID: "trimmed",
-        Step.STR_TYPE: "TrimmedReads"
-      }
-    ]
+  def provides(self) -> List[InputType]:
+    return [trimmed_reads_type]
 
-  def requires(self):
-    return [
-      {
-        Step.STR_ID: "read",
-        Step.STR_TYPE: "SequenceReadArchivePaired"
-      }
-    ]
+  def requires(self) -> List[InputType]:
+    return [paired_reads_type]

@@ -2,71 +2,67 @@
 # Input type base class
 #
 from abc import ABC, abstractmethod
+from pipeline_definition.types import type_registry
+
+# The InputType defines a data object that is required as an input to a bit of software
+# or produced by a bit of software. Typically, these will be an object in a store like a POSIX
+# file system or they may be a collection of files or objects that go together. Examples are
+# paired reads archives or indexed references.
+#
+# All data are output types, even if they are the output of an input declaration.
+#
+# This class represents the type. Steps can require and provide types. These work with
+# - InputFactory classes which read input descriptions and provide
+# - Input objects which represent the actual object in the store
 
 
-class InputFactory(ABC):
-  @classmethod
-  @abstractmethod
-  def type(cls):
-    # The string that identifies this file type in definition files.
-    pass
+class InputType:
+  def __init__(self, type_name: str, label: str = None, description: str = None):
+    self._type_name = type_name
+    self._label = label
+    if description is None:
+      self._description = label
+    else:
+      self._description = description
 
-  @classmethod
-  @abstractmethod
-  def label(cls):
-    # A human friendly short label to present in user interfaces.
-    pass
+    type_registry.register_input_type(self)
 
-  @classmethod
-  @abstractmethod
-  def description(cls):
-    # A longer description of this type to present in user interfaces.
-    pass
+  def type_name(self) -> str:
+    return self._type_name
 
-  @classmethod
-  @abstractmethod
-  def describe(cls):
-    # Describe the schema for this type.
-    pass
+  def label(self) -> str:
+    return self._label
 
-  @classmethod
-  @abstractmethod
-  def build(cls, input_dict, debug=False):
-    # Build an Input object given the definition in the input_dict
-    pass
-
-  @classmethod
-  def build_from(cls, input_dict, debug=False):
-    input_type = cls.type()
-    if debug:
-      print(input_type, "factory: Building from", input_dict)
-    obj = cls.build(input_dict, debug=debug)
-    obj.identify()
-    return obj
+  def description(self) -> str:
+    return self._description
 
 
 class Input(ABC):
-  def __init__(self, input_dict, debug=False):
+  def __init__(self, input_dict: dict, debug: bool=False):
     self.__id = next(iter(input_dict.keys()))
 
     meta = next(iter(input_dict.values()))
-    self.__type = next(iter(meta.keys()))
+    self.__type = self._get_type(next(iter(meta.keys())))
     self.__meta = next(iter(meta.values()))
     self.__debug = debug
+
+  @staticmethod
+  def _get_type(type_name: str) -> InputType:
+    return type_registry.get_input_type(type_name)
 
   def identify(self):
     if self.__debug:
       print("Instance: [", self.id, " - ", self.type, " - ", self.meta, " ]")
 
-  def id(self):
+  def id(self) -> str:
     # The id by which this input will be referred.
     return self.__id
 
-  def type(self):
+  def type(self) -> InputType:
     # A string identifying the file type
     return self.__type
 
-  def meta(self):
+  def meta(self) -> dict:
     # Internal metadata required by this object
     return self.__meta
 
@@ -75,7 +71,7 @@ class Input(ABC):
     pass
 
   @abstractmethod
-  def is_subtype_of(self, other):
+  def is_subtype_of(self, other) -> bool:
     pass
 
   def resolve(self):
@@ -84,16 +80,55 @@ class Input(ABC):
     # is a reference, its existence is checked.
     raise NotImplementedError("resolve not implemented for this type")
 
-  def translate_for_input(self):
+  def translate_for_input(self) -> dict:
     # - Generate the input object list. In the case of CWL, this is typically a separate yml file
     #   specifying a list of actual files.
     # - The expected return is a target language specific dictionary that the translator will render
     #   to the actual language text.
     raise NotImplementedError("A translation has been requested but has not been implemented for this input")
 
-  def translate_for_workflow(self):
+  def translate_for_workflow(self) -> dict:
     # - Generate the input stanza required by the target language. In the case of CWL, this is the 'inputs'
     #   section
     # - The expected return is a target language specific dictionary that the translator will render
     #   to the actual language text.
     raise NotImplementedError("A translation has been requested but has not been implemented for this input")
+
+
+class InputFactory(ABC):
+  @classmethod
+  @abstractmethod
+  def type(cls) -> InputType:
+    # Input type that this factory generates.
+    pass
+
+  @classmethod
+  def label(cls) -> str:
+    # A brief description that can be rendered in UIs
+    return cls.type().label()
+
+  @classmethod
+  def description(cls) -> str:
+    # A description that can be rendered in UIs
+    return cls.type().description()
+
+  @classmethod
+  @abstractmethod
+  def schema(cls) -> dict:
+    # The schema for this type.
+    pass
+
+  @classmethod
+  @abstractmethod
+  def build(cls, input_dict: dict, debug: bool = False) -> Input:
+    # Build an Input object given the definition in the input_dict
+    pass
+
+  @classmethod
+  def build_from(cls, input_dict: dict, debug: bool = False) -> Input:
+    input_type = cls.type()
+    if debug:
+      print(input_type, "factory: Building from", input_dict)
+    obj = cls.build(input_dict, debug=debug)
+    obj.identify()
+    return obj

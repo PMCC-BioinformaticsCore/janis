@@ -1,64 +1,51 @@
 from pipeline_definition.types.input_type import InputFactory
 from pipeline_definition.types.input_type import Input
 
-import glob
 
-
-class TarFileFactory(InputFactory):
+class TextFactory(InputFactory):
   @classmethod
   def type(cls):
-    return 'tar'
+    return 'Text'
 
   @classmethod
   def label(cls):
-    return 'TAR file'
+    return 'Text file'
 
   @classmethod
   def description(cls):
-    return 'Compressed or uncompressed tar files.'
+    return cls.label()
 
   @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'schema': {
         'path': {'type': 'string'},
         'label': {'type': 'string'}
       },
       'nullable': True
+
     }
 
   @classmethod
   def build(cls, input_dict, debug=False):
-    return TarFile(input_dict, debug=debug)
+    return TextInput(input_dict, debug=debug)
 
 
-class TarFile(Input):
+class TextInput(Input):
   def translate_for_input(self):
-    if self._resolved:
-      fd = [{'class': 'File', 'path': f} for f in self._files]
-    else:
-      fd = {'class': 'File', 'path': self.meta()['path']}
-
-    return {self.id(): fd}
-
-  def resolve(self):
-    self._resolved = True
-    self._files = glob.glob(self.meta()['path'])
+    pass
 
   def __init__(self, input_dict, debug=False):
     super().__init__(input_dict)
-    self.__debug = debug
     self.path = None
-    self._files = []
-    self._resolved = False
+    self._debug = debug
 
     if self.meta is not None:
       self.path = self.meta().get("path")
 
   def identify(self):
     super().identify()
-    if self.__debug:
-      print("Path:", self.path)
+    print("Path:", self.path)
 
   def datum_type(self):
     return self.type()

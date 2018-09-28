@@ -10,7 +10,7 @@ from pipeline_definition.types.type_registry import register_input_factory
 
 class PairedReadFactory(InputFactory):
   @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'forward-pattern': {'type': 'string'},
       'backward-pattern': {'type': 'string'}
@@ -35,7 +35,7 @@ class PairedReadFactory(InputFactory):
 
 class BAMFactory(InputFactory):
   @classmethod
-  def describe(cls):
+  def schema(cls):
     return {
       'path': {'type': 'string'}
     }

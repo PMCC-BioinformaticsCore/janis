@@ -1,39 +1,10 @@
 import glob
 
 from pipeline_definition.pipeline_translator import PipelineTranslatorException
-from pipeline_definition.types.input_type import InputFactory
+from pipeline_definition.types.input_type import InputFactory, InputType
 from pipeline_definition.types.input_type import Input
 
-
-class TrimmedReadFactory(InputFactory):
-  @classmethod
-  def type(cls):
-    return 'TrimmedReads'
-
-  @classmethod
-  def label(cls):
-    return 'trimmmed paired and unpaired read files'
-
-  @classmethod
-  def description(cls):
-    return cls.label()
-
-  @classmethod
-  def describe(cls):
-    return {
-      'schema': {
-        'label': {'type': 'string'},
-        'paired-forward-pattern': {'type': 'string', 'required': True},
-        'paired-backward-pattern': {'type': 'string'},
-        'unpaired-forward-pattern': {'type': 'string', 'required': True},
-        'unpaired-backward-pattern': {'type': 'string'}
-      },
-      'nullable': True
-    }
-
-  @classmethod
-  def build(cls, input_dict, debug=False):
-    return TrimmedReads(input_dict, debug)
+trimmed_reads_type = InputType('TrimmedReads', label='A pair of sequence files that have been trimmed')
 
 
 class TrimmedReads(Input):
@@ -76,3 +47,26 @@ class TrimmedReads(Input):
 
   def is_subtype_of(self, other):
     return False
+
+
+class TrimmedReadFactory(InputFactory):
+  @classmethod
+  def type(cls) -> InputType:
+    return trimmed_reads_type
+
+  @classmethod
+  def schema(cls) -> dict:
+    return {
+      'schema': {
+        'label': {'type': 'string'},
+        'paired-forward-pattern': {'type': 'string', 'required': True},
+        'paired-backward-pattern': {'type': 'string'},
+        'unpaired-forward-pattern': {'type': 'string', 'required': True},
+        'unpaired-backward-pattern': {'type': 'string'}
+      },
+      'nullable': True
+    }
+
+  @classmethod
+  def build(cls, input_dict, debug=False) -> TrimmedReads:
+    return TrimmedReads(input_dict, debug)

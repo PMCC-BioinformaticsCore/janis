@@ -2,23 +2,22 @@ from pipeline_definition.types.type_registry import register_input_factory
 from pipeline_definition.types.type_registry import register_step_factory
 
 
-from examples.bio_informatics.bam import BamFactory
-from examples.bio_informatics.sorted_bam import SortedBamFactory
-from examples.bio_informatics.reference import ReferenceFactory
-from examples.bio_informatics.paired_read import PairedReadFactory
-from examples.bio_informatics.trimmed_reads import TrimmedReadFactory
-from examples.bio_informatics.text import TextFactory
+from examples.bio_informatics.data_types.bam import BamFactory
+from examples.bio_informatics.data_types.sorted_bam import SortedBamFactory
+from examples.bio_informatics.data_types.reference import ReferenceFactory
+from examples.bio_informatics.data_types.paired_read import PairedReadFactory
+from examples.bio_informatics.data_types.trimmed_reads import TrimmedReadFactory
+from examples.bio_informatics.data_types.text import TextFactory
 
-from examples.bio_informatics.align import AlignFactory
-from examples.bio_informatics.index_bam import IndexBamFactory
-from examples.bio_informatics.sort_bam import SortBamFactory
-from examples.bio_informatics.align import AlignFactory
-from examples.bio_informatics.trim import TrimFactory
-from examples.bio_informatics.call import CallFactory
-from examples.bio_informatics.joint_call import JointCallFactory
-from examples.bio_informatics.dedup import DedupFactory
-from examples.bio_informatics.fastqc import FastQCFactory
-from examples.bio_informatics.intersect_genic import IntersectFactory
+from examples.bio_informatics.steps.index_bam import IndexBamFactory
+from examples.bio_informatics.steps.sort_bam import SortBamFactory
+from examples.bio_informatics.steps.align import AlignFactory
+from examples.bio_informatics.steps.trim import TrimFactory
+from examples.bio_informatics.steps.call import CallFactory
+from examples.bio_informatics.steps.joint_call import JointCallFactory
+from examples.bio_informatics.steps.dedup import DedupFactory
+from examples.bio_informatics.steps.fastqc import FastQCFactory
+from examples.bio_informatics.steps.intersect_genic import IntersectFactory
 
 register_input_factory(PairedReadFactory())
 register_input_factory(TrimmedReadFactory())

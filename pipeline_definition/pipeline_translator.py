@@ -7,7 +7,7 @@ import yaml
 from cerberus import Validator
 from networkx.readwrite import json_graph
 
-from pipeline_definition.types.Input_step import InputStep
+from pipeline_definition.types.input_step import InputStep
 from pipeline_definition.types.schema import schema
 from pipeline_definition.types.step_type import Step
 from pipeline_definition.types.type_registry import get_input_factory
@@ -118,7 +118,7 @@ class PipelineTranslator:
 
       step_obj = step_factory.build_from(dict([(step_id, meta)]), debug=self.__debug)
 
-      step_obj.validate_input_ouput_spec()
+      step_obj.validate_input_output_spec()
 
       pipeline_steps.append(step_obj)
 

@@ -2,7 +2,6 @@
 # Input type base class
 #
 from abc import ABC, abstractmethod
-from pipeline_definition.types import type_registry
 
 # The InputType defines a data object that is required as an input to a bit of software
 # or produced by a bit of software. Typically, these will be an object in a store like a POSIX
@@ -15,6 +14,20 @@ from pipeline_definition.types import type_registry
 # - InputFactory classes which read input descriptions and provide
 # - Input objects which represent the actual object in the store
 
+# Type name quoted here because of Python's inability to handle circular dependencies
+# https://www.python.org/dev/peps/pep-0484/#forward-references
+from pipeline_definition.utils.registry import Registry
+
+__input_types = Registry['InputType']()
+
+
+def register_input_type(input_type: 'InputType'):
+  __input_types.register(input_type.type_name(), input_type)
+
+
+def get_input_type(type_name: str) -> 'InputType':
+  return __input_types.get(type_name)
+
 
 class InputType:
   def __init__(self, type_name: str, label: str = None, description: str = None):
@@ -24,8 +37,7 @@ class InputType:
       self._description = label
     else:
       self._description = description
-
-    type_registry.register_input_type(self)
+    register_input_type(self)
 
   def type_name(self) -> str:
     return self._type_name
@@ -48,7 +60,7 @@ class Input(ABC):
 
   @staticmethod
   def _get_type(type_name: str) -> InputType:
-    return type_registry.get_input_type(type_name)
+    return get_input_type(type_name)
 
   def identify(self):
     if self.__debug:

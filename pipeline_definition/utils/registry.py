@@ -1,19 +1,19 @@
 #
 # Registry of objects
 #
-from typing import Mapping, List, Generic, TypeVar
+from typing import Dict, List, Generic, TypeVar
 
 
 class RegistryException(Exception):
   pass
 
 
-T = TypeVar['T']
+T = TypeVar('T')
 
 
 class Registry(Generic[T]):
   def __init__(self):
-    self.registry = Mapping[T]
+    self.registry: Dict[str, T] = dict()
 
   def register(self, name: str, obj: T):
     if name in self.registry:
@@ -24,5 +24,5 @@ class Registry(Generic[T]):
   def objects(self) -> List[T]:
     return self.registry.values()
 
-  def object(self, type_name) -> T:
+  def get(self, type_name) -> T:
     return self.registry.get(type_name)

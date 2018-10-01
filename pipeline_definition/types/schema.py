@@ -9,7 +9,7 @@ def __input_schema():
   ischema = {}
 
   for factory in type_registry.get_input_factories():
-    ischema[factory.type()] = factory.schema()
+    ischema[factory.type().type_name()] = factory.schema()
 
   return {
     'inputs': {
@@ -48,7 +48,5 @@ def __step_scheme():
 
 
 def schema():
-  # return dict(__input_schema().items() + __step_scheme().items())
-
   # https://stackoverflow.com/questions/38987/how-to-merge-two-dictionaries-in-a-single-expression
   return {**__input_schema(), **__step_scheme()}

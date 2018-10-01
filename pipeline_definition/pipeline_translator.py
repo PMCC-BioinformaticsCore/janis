@@ -42,7 +42,7 @@ class PipelineTranslator:
   def _dump_schema(self, this_schema):
     self._debug_print("PDX SCHEMA [")
     # self.__debug_print(schema)
-    self._debug_print(json.dumps(this_schema, indent=4))
+    self._debug_print(json.dumps(this_schema, indent=2))
     self._debug_print("] END PDX SCHEMA")
 
   def validate_schema(self, yaml_doc):
@@ -59,7 +59,7 @@ class PipelineTranslator:
       msg = "ERROR! Pipeline definition document validation failed."
       self._debug_print(msg)
       if v.errors is not None:
-        raise ValueError(msg, v.errors)
+          raise ValueError(msg, v.errors)
 
   def _build_inputs(self, inputs):
 
@@ -323,7 +323,7 @@ class PipelineTranslator:
     tree = json_graph.node_link_data(work_graph, {'link': 'flow', 'source': 'step', 'target': 'target'})
     self._debug_print("Workflow Graph: [")
     self._debug_print(tree)
-    # jsonDoc = json.dumps(tree, indent=4)
+    # jsonDoc = json.dumps(tree, indent=2)
     # self.__debug_print(jsonDoc)
 
     self._debug_print("] End Workflow Graph")
@@ -473,7 +473,7 @@ requirements:
 
   def translate_pipeline_to_json(self):
     json_doc = self._translate_workflow_to_json()
-    pretty_json_text = json.dumps(json_doc, indent=4)
+    pretty_json_text = json.dumps(json_doc, indent=2)
     return pretty_json_text
 
   def _translate_workflow_to_json(self):

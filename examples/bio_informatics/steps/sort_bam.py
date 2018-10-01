@@ -1,6 +1,7 @@
 from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.types.step_type import Step
 
+
 class SortBamFactory(StepFactory):
 
   @classmethod
@@ -73,7 +74,7 @@ class SortBam(Step):
 
     inx['input'] = {'source': f'{align_step}/aligned-file'}
     inx['output_name'] = {
-      'source': '{align_step}/aligned-file',
+      'source': f'{align_step}/aligned-file',
       'valueFrom': f'${{return self.nameroot + ".sorted.{self.tag()}.bam";}}'
     }
     inx['threads'] = {'valueFrom': f'$( {self.cores()} )'}

@@ -1,30 +1,10 @@
 from pipeline_definition.types.input_type import InputFactory, InputType
 from pipeline_definition.types.input_type import Input
 
-tar_file = InputType('tar_file', label='a unix tar archive', description='A unix compressed or uncompressed tar archive')
+class_file = InputType('class', label='a java .class file', description='A compiled java binary class file')
 
 
-class TarFileFactory(InputFactory):
-  @classmethod
-  def type(cls) -> InputType:
-    return tar_file
-
-  @classmethod
-  def schema(cls):
-    return {
-      'schema': {
-        'path': {'type': 'string'},
-        'label': {'type': 'string'}
-      },
-      'nullable': True
-    }
-
-  @classmethod
-  def build(cls, input_dict, debug=False):
-    return TarFile(input_dict, debug=debug)
-
-
-class TarFile(Input):
+class ClassFile(Input):
   def translate_for_workflow(self) -> dict:
     raise Exception('Not yet implemented')
 
@@ -52,3 +32,23 @@ class TarFile(Input):
 
   def is_subtype_of(self, other):
     return False
+
+
+class ClassFileFactory(InputFactory):
+  @classmethod
+  def type(cls) -> InputType:
+    return class_file
+
+  @classmethod
+  def schema(cls):
+    return {
+      'schema': {
+        'path': {'type': 'string'},
+        'label': {'type': 'string'}
+      },
+      'nullable': True
+    }
+
+  @classmethod
+  def build(cls, input_dict, debug=False) -> ClassFile:
+    return ClassFile(input_dict, debug=debug)

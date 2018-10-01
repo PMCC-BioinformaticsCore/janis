@@ -1,47 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Dict
 
-from pipeline_definition.types.input_type import InputType
-
-
-class StepFactory(ABC):
-  @classmethod
-  @abstractmethod
-  def type(cls) -> InputType:
-    pass
-
-  @classmethod
-  @abstractmethod
-  def label(cls) -> str:
-    pass
-
-  @classmethod
-  @abstractmethod
-  def description(cls) -> str:
-    pass
-
-  @classmethod
-  @abstractmethod
-  def schema(cls) -> dict:
-    pass
-
-  @classmethod
-  @abstractmethod
-  def build(cls, meta, debug=False) -> Input:
-    pass
-
-  @classmethod
-  def support_translations(cls) -> List[str]:
-    return ['cwl']
-
-  @classmethod
-  def build_from(cls, step_dict, debug=False) -> Input:
-    step_type = cls.type()
-    if debug:
-      print(step_type, "factory: Building from", step_dict)
-    obj = cls.build(step_dict, debug=debug)
-    obj.identify()
-    return obj
+from pipeline_definition.types.input_type import InputType, Input
 
 
 class Step(ABC):
@@ -103,7 +63,7 @@ class Step(ABC):
     raise RuntimeError("Please provide implementation")
 
   @abstractmethod
-  def translate(self, mapped_inputs) -> dict:
+  def translate(self, mapped_inputs) -> Dict[str, str]:
     # Return a language specific dictionary that will be translated
     # to the output text.
     raise RuntimeError("Please provide implementation")
@@ -172,6 +132,45 @@ class Step(ABC):
       'step': step,
       'output': output
     }
+
+
+class StepFactory(ABC):
+  @classmethod
+  @abstractmethod
+  def type(cls) -> str:
+    pass
+
+  @classmethod
+  @abstractmethod
+  def label(cls) -> str:
+    pass
+
+  @classmethod
+  def description(cls) -> str:
+    return cls.label()
+
+  @classmethod
+  @abstractmethod
+  def schema(cls) -> dict:
+    pass
+
+  @classmethod
+  @abstractmethod
+  def build(cls, meta, debug=False) -> Step:
+    pass
+
+  @classmethod
+  def support_translations(cls) -> List[str]:
+    return ['cwl']
+
+  @classmethod
+  def build_from(cls, step_dict, debug=False) -> Input:
+    step_type = cls.type()
+    if debug:
+      print(step_type, "factory: Building from", step_dict)
+    obj = cls.build(step_dict, debug=debug)
+    obj.identify()
+    return obj
 
 
 class TaggedDatum(ABC):

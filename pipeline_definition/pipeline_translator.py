@@ -1,6 +1,8 @@
 import json
 import os
 import io
+from typing import List
+
 
 import networkx as nx
 import yaml
@@ -8,6 +10,7 @@ from cerberus import Validator
 from networkx.readwrite import json_graph
 
 from pipeline_definition.types.input_step import InputStep
+from pipeline_definition.types.input_type import InputType
 from pipeline_definition.types.schema import schema
 from pipeline_definition.types.step_type import Step
 from pipeline_definition.types.type_registry import get_input_factory
@@ -17,10 +20,6 @@ from pipeline_definition.utils.yaml_utils import str_presenter
 
 
 yaml.add_representer(str, str_presenter)
-
-
-class PipelineTranslatorException(Exception):
-  pass
 
 
 class PipelineTranslator:
@@ -291,7 +290,7 @@ class PipelineTranslator:
     return source_step
 
   @staticmethod
-  def dependency_list_of(step):
+  def dependency_list_of(step: Step):
     if not step:
       return None
 
@@ -301,10 +300,8 @@ class PipelineTranslator:
 
     dependency_list = None
     for requirement in step_requires:
-      requirement_name = requirement[Step.STR_ID]
-      # self.__debug_print("Process STEP REQUIREMENT:", requirement_name)
+      requirement_name = requirement.type_name()
       requirement_value = step.provided_value_for_requirement(requirement_name)
-      # self.__debug_print("Input value:", requirement_value)
 
       if not requirement_value:
         continue
@@ -430,11 +427,11 @@ requirements:
   def _recurse_graph_and_translate(self, step, work_graph, step_order, type_attr_map, ctx_attr_map, steps_xlate):
 
     class MappedInput:
-      def __init__(self, inputs, candidates, step_output_id, input_type):
+      def __init__(self, inputs: List[InputType], candidates, step_input: InputType):
         self.inputs = inputs
         self.candidates = candidates
-        self.step_output_id = step_output_id
-        self.input_type = input_type
+        # self.step_output_id = step_output_id
+        self.input_type = step_input.type_name()
 
       def __repr__(self):
         return f'inputs={self.inputs} from={self.step_id}: candidates={self.candidates}'
@@ -443,13 +440,11 @@ requirements:
     step_inputs = step.requires()
 
     for step_input in step_inputs:
-      input_id = step_input[Step.STR_ID]
-      input_type = step_input[Step.STR_TYPE]
 
       step_ctx = ctx_attr_map[step]
       mapping = step_ctx.map_input_for_translation(step_input)
 
-      mi = MappedInput(step_inputs, mapping, input_id, input_type)
+      mi = MappedInput(step_inputs, mapping, step_input)
       mapped_inputs.append(mi)
 
     s = self._translate_step_to_target(step, mapped_inputs)

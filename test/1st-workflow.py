@@ -59,14 +59,15 @@ ex: Hello.java
 class FirstWorkflow(unittest.TestCase):
 
   def test_graph(self):
-    translator = PipelineTranslator(debug=True)
-    translation = translator.translate_string(_yml)
-
+    translator = PipelineTranslator(debug=False)
+    translator.translate_string(_yml)
+    translation = translator.pipeline()
     print('-'*80)
     print(translation)
     print('-'*80)
-
     self.assertTrue(True)
+    # tr_json = yaml.load(translation)
+    # self.assertTrue(tr_json == _expected_cwl)
 
 
 if __name__ == '__main__':

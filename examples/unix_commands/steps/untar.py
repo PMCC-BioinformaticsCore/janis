@@ -2,9 +2,9 @@
 # Untar a file
 #
 
-from typing import List
+from typing import List, Dict
 
-from examples.unix_commands.data_types import generic_file
+from examples.unix_commands.data_types.generic_file import generic_file
 from examples.unix_commands.data_types.tar_file import tar_file, TarFile
 from pipeline_definition.types.input_type import InputType
 from pipeline_definition.types.step_type import StepFactory
@@ -41,11 +41,11 @@ class UntarFactory(StepFactory):
 
 
 class Untar(Step):
-  def provides(self) -> List[InputType]:
-    return [tar_file]
+  def provides(self) -> Dict[str, InputType]:
+    return {'untar': generic_file}
 
   def requires(self) -> List[InputType]:
-    return [generic_file]
+    return [tar_file]
 
   def translate(self, mapped_inputs) -> dict:
     xlate = dict()
@@ -55,18 +55,19 @@ class Untar(Step):
 
     for mi in mapped_inputs:
       for candidate in mi.candidates.values():
-        if mi.step_output_id == 'trimmed reads' and candidate['tag'] == self.tag():
+        if mi.input_type == tar_file.type_name():  # and candidate['tag'] == self.tag():
           tar_step = candidate['step']
+          tar_id = candidate['id']
 
     inx = dict()
 
-    inx['tarfile'] = {'source': f'{tar_step}/tar_file'}
+    inx['tarfile'] = {'source': f'{tar_step}/{tar_id}'}
     inx['extractfile'] = 'hello.java'
 
     xlate['in'] = inx
     xlate['out'] = ['untar']
 
-    return {self.id(), xlate}
+    return {self.id(): xlate}
 
   def cores(self) -> int:
     return 1

@@ -1,4 +1,6 @@
 import json
+
+from pipeline_definition.types.input_type import InputType
 from pipeline_definition.types.step_type import Step
 
 
@@ -84,7 +86,7 @@ class StepContext:
   def map_input_for_translation(self, step_input):
 
     # mapping provided?
-    provided_mapping = self.__step.provided_value_for_requirement(step_input[Step.STR_ID])
+    provided_mapping = self.__step.provided_value_for_requirement(step_input)
 
     if provided_mapping:
       dependency_spec = Step.dependency_spec_from(provided_mapping)
@@ -169,10 +171,12 @@ class StepContext:
 
     return self.find_match_for_input(step_input)
 
-  def find_match_for_input(self, input):
+  def find_match_for_input(self, step_input: InputType):
+    # Finding the right input is based on the following criteria:
+    # 1. The output type of the nearest previous step matches
+    # 2. tags match                                        <<== This bit is not implemented yet
+    # 3. Search is limited if an input_scope is specified. <<== This bit is not implemented yet
 
-    input_id = input[Step.STR_ID]
-    input_type = input[Step.STR_TYPE]
     step_tag = self.__step.tag()
 
     matches = {}
@@ -180,62 +184,20 @@ class StepContext:
 
     # For each step in the stack, look at its provided outputs
     for priority_entry in self.__branch_outputs_stack:
-      matched = False
-      osetp_tag, ostep = next(iter(priority_entry.items()))
+      ostep_tag, ostep = next(iter(priority_entry.items()))
       ostep_name, outputs = next(iter(ostep.items()))
 
-      # Pass 1 to see if we have exact name / type match
-      for o in outputs:
-        o_id = o[Step.STR_ID]
-        o_type = o[Step.STR_TYPE]
-
-        # Name and Type match is highest priority - conclusive
-        name = input_id
-        if name == o_id and input_type == o_type:
-          matches[pref] = self.__match_doc_for(o, ostep_name, osetp_tag)
+      for o_id, o_type in outputs.items():
+        if step_input.type_name() == o_type: # and ostep_tag == step_tag:
+          matches[pref] = self.__match_doc_for(ostep_name, ostep_tag)
           pref = pref + 1
-          matched = True
           break
-
-      if matched:
-        break
-
-      # Pass two is tag, tag_str type convention and type match
-      for o in outputs:
-        o_id = o[Step.STR_ID]
-        o_type = o[Step.STR_TYPE]
-
-        name = step_tag
-        if (o_id == name or o_id.startswith(name + "_")) and input_type == o_type:
-          matches[pref] = self.__match_doc_for(o, ostep_name, osetp_tag)
-          pref = pref + 1
-          matched = True
-          break
-
-      if matched:
-        break
-
-      # Pass three is type match
-      for o in outputs:
-        o_type = o[Step.STR_TYPE]
-
-        if input_type == o_type:
-          matches[pref] = self.__match_doc_for(o, ostep_name, osetp_tag)
-          pref = pref + 1
-
-      # Pass four is name match
-      for o in outputs:
-        o_id = o[Step.STR_ID]
-        if input_id == o_id:
-          matches[pref] = self.__match_doc_for(o, ostep_name, osetp_tag)
-          pref = pref + 1
-          continue
 
     return matches
 
   @staticmethod
-  def __match_doc_for(o, ostep_name, ostep_tag):
-    doc = o
+  def __match_doc_for(ostep_name, ostep_tag):
+    doc = dict()
     doc['step'] = ostep_name
     doc['tag'] = ostep_tag
     return doc

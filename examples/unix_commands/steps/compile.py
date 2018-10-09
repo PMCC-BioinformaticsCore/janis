@@ -4,8 +4,8 @@
 
 from typing import List, Dict
 
-from examples.unix_commands.data_types import generic_file
-from examples.unix_commands.data_types import class_file
+from examples.unix_commands.data_types.generic_file import generic_file
+from examples.unix_commands.data_types.class_file import class_file
 from pipeline_definition.types.input_type import InputType
 from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.types.step_type import Step

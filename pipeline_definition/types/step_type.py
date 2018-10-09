@@ -44,17 +44,19 @@ class Step(ABC):
     if self.__debug:
       print("Instance: [", self.__id, " - ", self.__type, " - ", self.__meta, " ]")
 
-  def provided_value_for_requirement(self, requirement_name):
+  def provided_value_for_requirement(self, step_input: InputType):
 
     if self.__meta is None:
       return None
 
-    provided = self.__meta.get(requirement_name)
+    provided = self.__meta.get(step_input.type_name())
     return provided
 
   @abstractmethod
-  def provides(self) -> List[InputType]:
-    # Output objects provided by this step.
+  def provides(self) -> Dict[str, InputType]:
+    # A map of output ids and output types. For example, an aligner might provide
+    # {'aligned_file': bam_file}. Dependent steps can then access this as
+    # align_step_id/aligned_file
     raise RuntimeError("Please provide implementation")
 
   @abstractmethod
@@ -91,24 +93,25 @@ class Step(ABC):
     return selection
 
   def validate_input_output_spec(self):
+    pass
 
-    output_specs = self.provides()
-    if output_specs:
-      for ospec in output_specs:
-        if not isinstance(ospec, dict):
-          raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
-
-        if Step.STR_ID not in ospec:
-          raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
-        name = ospec.get(Step.STR_ID)
-        if not name:
-          raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
-
-        if Step.STR_TYPE not in ospec:
-          raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
-        type = ospec.get(Step.STR_TYPE)
-        if not type:
-          raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+    # output_specs = self.provides()
+    # if output_specs:
+    #   for ospec in output_specs:
+    #     if not isinstance(ospec, InputType):
+    #       raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+    #
+    #     if Step.STR_ID not in ospec:
+    #       raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+    #     name = ospec.get(Step.STR_ID)
+    #     if not name:
+    #       raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+    #
+    #     if Step.STR_TYPE not in ospec:
+    #       raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
+    #     type = ospec.get(Step.STR_TYPE)
+    #     if not type:
+    #       raise RuntimeError("Output spec provided by step " + self.id() + "[" + self.tag() + "] fails validation.")
 
   @staticmethod
   def default_step_tag_name():

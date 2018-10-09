@@ -1,3 +1,5 @@
+from typing import Dict
+
 from pipeline_definition.types.input_type import InputFactory, InputType
 from pipeline_definition.types.input_type import Input
 
@@ -25,8 +27,8 @@ class TarFileFactory(InputFactory):
 
 
 class TarFile(Input):
-  def translate_for_workflow(self) -> dict:
-    raise Exception('Not yet implemented')
+  def translate_for_workflow(self) -> Dict[str, str]:
+    return {self.id: 'File'}
 
   def translate_for_input(self):
     fd = {'class': 'File', 'path': self._path}

@@ -1,6 +1,8 @@
 
 #
-# Test discovery of inputs and generation of the input definition required by CWL.
+# Test discovery of inputs in the file system and generation of the input definition required by CWL.
+#
+
 import unittest
 import yaml
 from pipeline_definition.pipeline_translator import PipelineTranslator

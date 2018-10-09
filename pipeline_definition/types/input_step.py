@@ -1,3 +1,6 @@
+from typing import Dict
+
+from pipeline_definition.types.input_type import InputType, get_input_type
 from pipeline_definition.types.step_type import Step
 
 
@@ -17,21 +20,13 @@ class InputStep(Step):
       }})
     self.__workflowInputSet = workflow_input_set
 
-  def provides(self):
-    # return self.__workflowInputSet
+  def provides(self) -> Dict[str, InputType]:
     if not self.__workflowInputSet:
-      return None
+      return {}
 
-    outputs = list()
+    outputs = dict()
     for inp in self.__workflowInputSet:
-      o = {
-        Step.STR_ID: inp.id(),
-        Step.STR_TYPE: inp.type()
-      }
-      if not outputs:
-        outputs = list()
-
-      outputs.append(o)
+      outputs[inp.id()] = inp.type().type_name()
 
     return outputs
 

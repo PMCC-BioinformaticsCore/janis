@@ -1,11 +1,13 @@
-from pipeline_definition.types.input_type import InputFactory
+from pipeline_definition.types.input_type import InputFactory, InputType
 from pipeline_definition.types.input_type import Input
+
+text_file_type = InputType('text', label='plain text')
 
 
 class TextFactory(InputFactory):
   @classmethod
-  def type(cls):
-    return 'Text'
+  def type(cls) -> InputType:
+    return text_file_type
 
   @classmethod
   def label(cls):

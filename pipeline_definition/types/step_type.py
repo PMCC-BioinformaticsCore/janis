@@ -5,8 +5,6 @@ from pipeline_definition.types.input_type import InputType, Input
 
 
 class Step(ABC):
-  STR_ID = "id"
-  STR_TYPE = "type"
 
   def __init__(self, input_dict, debug=False):
     self.__id = next(iter(input_dict.keys()))

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from examples.bio_informatics.data_types.paired_read import paired_reads_type
 from examples.bio_informatics.data_types.trimmed_reads import trimmed_reads_type
@@ -92,8 +92,8 @@ class TrimStep(Step):
 
     return {self.id(): xlate}
 
-  def provides(self) -> List[InputType]:
+  def provides(self) -> Dict[str, InputType]:
     return [trimmed_reads_type]
 
-  def requires(self) -> List[InputType]:
-    return [paired_reads_type]
+  def requires(self) -> Dict[str, InputType]:
+    return {'reads2_trimmed': paired_reads_type}

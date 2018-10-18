@@ -1,7 +1,6 @@
 from pipeline_definition.types.type_registry import register_input_factory
 from pipeline_definition.types.type_registry import register_step_factory
 
-
 from examples.bio_informatics.data_types.bam import BamFactory
 from examples.bio_informatics.data_types.sorted_bam import SortedBamFactory
 from examples.bio_informatics.data_types.reference import ReferenceFactory

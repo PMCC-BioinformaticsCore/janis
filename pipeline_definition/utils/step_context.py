@@ -1,3 +1,5 @@
+from typing import Dict
+
 import json
 
 from pipeline_definition.types.input_type import InputType
@@ -83,7 +85,7 @@ class StepContext:
     doc['candidates'] = candidates
     return doc
 
-  def map_input_for_translation(self, step_input):
+  def map_input_for_translation(self, step_input: InputType) -> Dict:
 
     # mapping provided?
     provided_mapping = self.__step.provided_value_for_requirement(step_input)
@@ -95,7 +97,8 @@ class StepContext:
       candidates = self.find_match_for_input(step_input)
 
     if not candidates:
-      raise Exception(f"Failed to find an input candidate for step: {self.__step.id()}, input: {step_input['id']}")
+      raise Exception(f"Failed to find an input candidate for step: {self.__step.id()}, input requirement for: " +
+                      f"{step_input.type_name()}")
 
     return candidates
 
@@ -188,16 +191,17 @@ class StepContext:
       ostep_name, outputs = next(iter(ostep.items()))
 
       for o_id, o_type in outputs.items():
-        if step_input.type_name() == o_type: # and ostep_tag == step_tag:
-          matches[pref] = self.__match_doc_for(ostep_name, ostep_tag)
+        if step_input == o_type: # and ostep_tag == step_tag:
+          matches[pref] = self.__match_doc_for(ostep_name, ostep_tag, o_id)
           pref = pref + 1
           break
 
     return matches
 
   @staticmethod
-  def __match_doc_for(ostep_name, ostep_tag):
+  def __match_doc_for(name, tag, id):
     doc = dict()
-    doc['step'] = ostep_name
-    doc['tag'] = ostep_tag
+    doc['step'] = name
+    doc['tag'] = tag
+    doc['id'] = id
     return doc

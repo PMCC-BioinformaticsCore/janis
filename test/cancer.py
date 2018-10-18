@@ -408,6 +408,7 @@ class TumourNormalPipeline(unittest.TestCase):
     # self.assertTrue(True)
     tr_json = yaml.load(translation)
     self.assertTrue(tr_json == _expected)
+    # self.assertTrue(True)
 
 
 if __name__ == '__main__':

@@ -19,7 +19,7 @@ class Compile(Step):
   def requires(self) -> List[InputType]:
     return [generic_file]
 
-  def translate(self, mapped_inputs) -> Dict[str, str]:
+  def translate(self, mapped_inputs) -> Dict[str, Dict]:
     xlate = dict()
 
     xlate['run'] = '../tools/src/tools/compile.cwl'
@@ -27,18 +27,19 @@ class Compile(Step):
 
     for mi in mapped_inputs:
       for candidate in mi.candidates.values():
-        if mi.step_output_id == 'trimmed reads' and candidate['tag'] == self.tag():
+        if mi.input_type == generic_file.type_name() and candidate['tag'] == self.tag():
           compile_step = candidate['step']
+          compile_id = candidate['id']
 
     inx = dict()
 
-    inx['src'] = {'source': f'{compile_step}/tar_file'}
+    inx['src'] = {'source': f'{compile_step}/{compile_id}'}
     inx['extractfile'] = 'hello.java'
 
     xlate['in'] = inx
     xlate['out'] = ['classfile']
 
-    return {self.id(), xlate}
+    return {self.id(): xlate}
 
   def cores(self) -> int:
     return 2

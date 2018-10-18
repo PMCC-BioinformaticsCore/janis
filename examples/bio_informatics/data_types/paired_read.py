@@ -1,8 +1,7 @@
 import glob
 
-from pipeline_definition.pipeline_translator import PipelineTranslatorException
-from pipeline_definition.types.input_type import InputFactory, InputType
-from pipeline_definition.types.input_type import Input
+from pipeline_definition.types.input_type import InputFactory, InputType, Input
+from pipeline_definition.utils.errors import PipelineTranslatorException
 
 paired_reads_type = InputType('SequenceReadArchivePaired', label='A pair of forward and backward read sequences')
 

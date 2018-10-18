@@ -16,9 +16,6 @@ class Registry(Generic[T]):
     self.registry: Dict[str, T] = dict()
 
   def register(self, name: str, obj: T):
-    if name in self.registry:
-      raise RegistryException(f'Type {name} is already registered {obj}.')
-
     self.registry[name] = obj
 
   def objects(self) -> List[T]:

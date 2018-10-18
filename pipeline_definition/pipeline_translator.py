@@ -15,11 +15,22 @@ from pipeline_definition.types.schema import schema
 from pipeline_definition.types.step_type import Step
 from pipeline_definition.types.type_registry import get_input_factory
 from pipeline_definition.types.type_registry import get_step_factory
+from pipeline_definition.utils.errors import PipelineTranslatorException
 from pipeline_definition.utils.step_context import StepContext
 from pipeline_definition.utils.yaml_utils import str_presenter
 
 
 yaml.add_representer(str, str_presenter)
+
+
+class MappedInput:
+  def __init__(self, inputs: List[InputType], candidates, step_input: InputType):
+    self.inputs = inputs
+    self.candidates = candidates
+    self.input_type = step_input.type_name()
+
+  def __repr__(self):
+    return f'inputs={self.inputs}: candidates={self.candidates}'
 
 
 class PipelineTranslator:
@@ -116,8 +127,6 @@ class PipelineTranslator:
         raise ValueError("No factory registered for step: " + step_type)
 
       step_obj = step_factory.build_from(dict([(step_id, meta)]), debug=self.__debug)
-
-      step_obj.validate_input_output_spec()
 
       pipeline_steps.append(step_obj)
 
@@ -423,18 +432,7 @@ requirements:
 
     return {'outputs': outputs}
 
-
   def _recurse_graph_and_translate(self, step, work_graph, step_order, type_attr_map, ctx_attr_map, steps_xlate):
-
-    class MappedInput:
-      def __init__(self, inputs: List[InputType], candidates, step_input: InputType):
-        self.inputs = inputs
-        self.candidates = candidates
-        # self.step_output_id = step_output_id
-        self.input_type = step_input.type_name()
-
-      def __repr__(self):
-        return f'inputs={self.inputs} from={self.step_id}: candidates={self.candidates}'
 
     mapped_inputs = []
     step_inputs = step.requires()

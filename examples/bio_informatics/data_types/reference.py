@@ -1,14 +1,16 @@
 import os
 
 from pipeline_definition.pipeline_translator import PipelineTranslatorException
-from pipeline_definition.types.input_type import InputFactory
+from pipeline_definition.types.input_type import InputFactory, InputType
 from pipeline_definition.types.input_type import Input
+
+reference_file_type = InputType('reference', label='a reference genome')
 
 
 class ReferenceFactory(InputFactory):
   @classmethod
-  def type(cls):
-    return 'reference'
+  def type(cls) -> InputType:
+    return reference_file_type
 
   @classmethod
   def label(cls):

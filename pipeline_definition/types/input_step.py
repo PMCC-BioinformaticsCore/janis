@@ -26,7 +26,7 @@ class InputStep(Step):
 
     outputs = dict()
     for inp in self.__workflowInputSet:
-      outputs[inp.id()] = inp.type().type_name()
+      outputs[inp.id()] = get_input_type(inp.type().type_name())
 
     return outputs
 

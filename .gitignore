@@ -79,3 +79,5 @@ venv/
 
 
 
+
+\.mypy_cache/

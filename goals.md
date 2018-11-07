@@ -87,4 +87,25 @@ whose job it is to support pipelines and by advanced external uses. Other than e
 will not be part the project. The API will be as accessible as possible so, sadly, that means the API will be in Python.
 
 
+## Michael's Cleanup Goals
+- Add type annotations to everything
+- Improve the logging format:
+    - This will probably be a singleton class that can take logs from anywhere
+    - Use levels for console and disk logs:
+        - NONE (No log)
+        - Critical (RED)
+        - Info (White)
+        - Debug (Grey)
+    - Use color to distinguish levels
+    - Write to file
+    - Buffer Warnings and Errors
+- Break the conversion into more discrete steps:
+    - Load from YAML, JSON, XML, etc
+    - Build DAG
+- Ensure the graph nodes have the correct HASH function, and derive from some common (named) type
+
+- Remove the type inference from the workflow construction
+    - Add warnings to user about matching types
+
+
  

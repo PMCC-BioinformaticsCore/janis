@@ -165,7 +165,7 @@ class StepFactory(ABC):
     return ['cwl']
 
   @classmethod
-  def build_from(cls, step_dict, debug=False) -> Input:
+  def build_from(cls, step_dict, debug=False) -> Step:
     step_type = cls.type()
     if debug:
       print(step_type, "factory: Building from", step_dict)

@@ -6,6 +6,13 @@ from pipeline_definition.types import type_registry
 from typing import Dict, Any
 
 
+class KEYS:
+    INPUTS = "inputs"
+    STEPS = "steps"
+    OUTPUTS = "outputs"
+
+
+
 def __input_schema() -> Dict[str, Any]:
     ischema: Dict[str, Any] = {}
 

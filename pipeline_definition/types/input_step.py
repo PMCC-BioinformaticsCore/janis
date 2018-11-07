@@ -1,6 +1,6 @@
-from typing import Dict
+from typing import Dict, List
 
-from pipeline_definition.types.input_type import InputType, get_input_type
+from pipeline_definition.types.input_type import InputType, Input
 from pipeline_definition.types.step_type import Step
 
 
@@ -11,7 +11,7 @@ class InputStep(Step):
       ind.update(inp.translate_for_workflow())
     return {'inputs': ind}
 
-  def __init__(self, workflow_input_set):
+  def __init__(self, workflow_input_set: List[Input]):
     super().__init__({
       'inputs': {
         'WorkflowInputStep': {
@@ -24,11 +24,10 @@ class InputStep(Step):
     if not self.__workflowInputSet:
       return {}
 
-    outputs = dict()
-    for inp in self.__workflowInputSet:
-      outputs[inp.id()] = get_input_type(inp.type().type_name())
-
-    return outputs
+    return { inp.id(): inp.type() for inp in self.__workflowInputSet}
+    # for inp in self.__workflowInputSet:
+    #   outputs[inp.id()] = get_input_type(inp.type().type_name())
+    # return outputs
 
   def requires(self):
     return None

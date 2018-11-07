@@ -4,7 +4,7 @@
 import unittest
 
 from pipeline_definition.types.input_type import InputFactory
-from pipeline_definition.types.schema import schema
+from pipeline_definition.types.schema import workflow_schema
 from pipeline_definition.types.type_registry import register_input_factory
 
 
@@ -71,7 +71,7 @@ class SchemaTest(unittest.TestCase):
   def test_schema(self):
     register_input_factory(PairedReadFactory())
     register_input_factory(BAMFactory())
-    output_schema = schema()
+    output_schema = workflow_schema()
     self.assertTrue(output_schema == _expected)
 
 

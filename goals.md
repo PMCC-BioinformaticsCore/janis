@@ -103,7 +103,7 @@ will not be part the project. The API will be as accessible as possible so, sadl
     - Load from YAML, JSON, XML, etc
     - Build DAG
 - Ensure the graph nodes have the correct HASH function, and derive from some common (named) type
-
+- Should labels across inputs / steps be unique? I feel like they should be unique....
 - Remove the type inference from the workflow construction
     - Add warnings to user about matching types
 

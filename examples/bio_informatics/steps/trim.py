@@ -95,5 +95,6 @@ class TrimStep(Step):
   def provides(self) -> Dict[str, InputType]:
     return [trimmed_reads_type]
 
-  def requires(self) -> Dict[str, InputType]:
-    return {'reads2_trimmed': paired_reads_type}
+  def requires(self) -> List[InputType]:
+    return [paired_reads_type]
+    # return {'reads2_trimmed': paired_reads_type}

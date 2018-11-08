@@ -60,3 +60,6 @@ steps:
     $step2: $tool2
     $step3: $tool3
 ```
+
+Notes:
+- You must NOT have a label called "input"

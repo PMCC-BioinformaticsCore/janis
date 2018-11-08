@@ -14,7 +14,7 @@
 import json
 import os
 import io
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 import networkx as nx
 import yaml
@@ -24,7 +24,7 @@ from networkx.readwrite import json_graph
 from pipeline_definition.types.input_step import InputStep
 from pipeline_definition.types.input_type import InputFactory, Input, InputType
 import pipeline_definition.types.schema as WEHI_Schema
-from pipeline_definition.types.step_type import Step
+from pipeline_definition.types.step_type import Step, DependencySpec
 from pipeline_definition.types.type_registry import get_input_factory
 from pipeline_definition.types.type_registry import get_step_factory
 from pipeline_definition.utils.errors import PipelineTranslatorException
@@ -248,7 +248,7 @@ class PipelineTranslator:
         # Convention is all steps belonging to a tag are exceuted in the seq they have been specified
         # so creating the concept of 'threads' / 'branches.
         # Create a dict of tags vocabulary that have been used in the workflow description
-        tag_map: Dict[str, Any] = { step.tag() for step in pipeline_steps }
+        tag_map: Dict[str, Any] = { step.tag(): None for step in pipeline_steps }
         # for step in pipeline_steps:
         #     tag = step.tag()
         #     if tag not in tag_map:
@@ -262,7 +262,7 @@ class PipelineTranslator:
             self._debug_print("Processing step ", step.id(), "[", step.tag(), "]")
 
             # tag specification in step
-            stag = step.tag()
+            stag: str = step.tag()
             # self.__debug_print("Step specifies tag:", stag)
 
             if stag == self.__input_step.tag():
@@ -284,12 +284,12 @@ class PipelineTranslator:
         for step in pipeline_steps:
             self._debug_print("Processing step ", step.id(), "[", step.tag(), "]")
 
-            if step == self.__input_step:
+            if step.tag() == self.__input_step.tag():
                 self._debug_print("Input step never have dependency.")
                 continue
 
             # Lets get the dependency list of the step
-            depends = self.dependency_list_of(step)
+            depends = self.get_dependecy_spec(step)
             if not depends:
                 self._debug_print("Step has no dependency.")
                 continue
@@ -357,66 +357,91 @@ class PipelineTranslator:
 
         return
 
-    def _add_dependency_to(self, step, dependency_spec, work_graph):
+    def _add_dependency_to(self, step: Step, dependency_spec: DependencySpec, work_graph: nx.MultiDiGraph) -> None:
+        """
+        Work out where step connects to
+        :param step: Step
+        :param dependency_spec: DependencySpec
+        :param work_graph: nx.MultiDiGraph
+        :return: None
+        """
 
         if not step:
-            return
+            raise Exception("No step provided to dependency")
 
         if not dependency_spec:
-            return
+            raise Exception("No dependency spec provided for add_dependency")
 
         if not work_graph:
-            return
+            raise Exception("No work_graph provided for add_dependency")
 
-        target_tag = dependency_spec.get('tag')
+        target_tag: str = dependency_spec.tag
 
         # Lets start on the graph by tag
-        source_step = self.__input_step
-        edge_mapfor_tags = nx.get_edge_attributes(work_graph, 'tag')
+        source_step: InputStep = self.__input_step
+        # dictionary for multidigraph is keyed by (u, v, key)
+        # https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.classes.function.get_edge_attributes.html
+        # TODO: We can create a type that represents the (u, v, key) data structure
+        edge_mapfor_tags: Dict[Tuple, str] = nx.get_edge_attributes(work_graph, 'tag')
 
-        last_step = self._last_step_in_tag(target_tag, source_step, work_graph, edge_mapfor_tags)
+        last_step: Step = self._last_step_in_tag(target_tag, source_step, work_graph, edge_mapfor_tags)
         if last_step:
-            self._debug_print(step.id(), "in branch [", step.tag(), "] has input dependency on step", last_step.id(),
-                              "in branch [",
-                              target_tag, "]")
+            self._debug_print(f"({step.id()}) in branch [{step.tag()}] has input " # automatically joins lines
+                              f"dependency on step ({last_step.id()}) in branch [{target_tag}]")
             work_graph.add_edge(step, last_step, type="dependency")
 
         return
 
-    def _last_step_in_tag(self, tag, root, work_graph, edge_mapfor_tags):
-        source_step = root
-        edges = nx.edges(work_graph, source_step)
+    def _last_step_in_tag(self, tag: str, source_step: InputStep, work_graph: nx.MultiDiGraph, edge_mapfor_tags: Dict[Tuple, str]) -> Step:
+        """
+        Recursive function to determine the latest step in the branch, specified by $tag.
+        :param tag: Branch tag (eg: #cancer)
+        :param source_step: InputStep
+        :param work_graph: nx.MultiDiGraph
+        :param edge_mapfor_tags: Dict[(u, v, key), str]
+        :return: Step
+        """
+        edges: List[Tuple] = nx.edges(work_graph, source_step)
         if not edges:
             # there are no edges so this is the last step
             return source_step
 
         for edge in edges:
+            # dictionary for multidigraph is keyed by (u, v, key)
+            # https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.classes.function.get_edge_attributes.html
             edge_tag = str(edge_mapfor_tags[(edge[0], edge[1], 0)])
             if edge_tag == tag:
                 return self._last_step_in_tag(tag, edge[1], work_graph, edge_mapfor_tags)
         return source_step
 
     @staticmethod
-    def dependency_list_of(step: Step):
+    def get_dependecy_spec(step: Step) -> List[DependencySpec]:
+        """
+        Get a list of dependencies based on the tag from the current step
+        :param step: Step
+        :return: List[DependencySpec]
+        """
         if not step:
-            return None
+            return []
 
-        step_requires = step.requires()
+        step_requires: List[InputType] = step.requires()
         if not step_requires:
-            return None
+            return []
 
-        dependency_list = None
+        if not isinstance(step_requires, list):
+            raise Exception(f"Implementation of .requires() for {type(step)} "
+                            f"is not returning a List[InputType] but a ({type(step_requires)})")
+
+        dependency_list: List[DependencySpec] = []
+
         for requirement in step_requires:
             requirement_name = requirement.type_name()
-            requirement_value = step.provided_value_for_requirement(requirement_name)
+            requirement_value = step.provided_value_for_requirement(requirement)
 
             if not requirement_value:
                 continue
 
             dependency_spec = Step.dependency_spec_from(requirement_value)
-
-            if not dependency_list:
-                dependency_list = list()
             dependency_list.append(dependency_spec)
 
         return dependency_list

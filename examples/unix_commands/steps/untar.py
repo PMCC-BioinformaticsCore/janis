@@ -11,35 +11,6 @@ from pipeline_definition.types.step_type import StepFactory
 from pipeline_definition.types.step_type import Step
 
 
-class UntarFactory(StepFactory):
-  @classmethod
-  def type(cls) -> str:
-    return 'untar'
-
-  @classmethod
-  def label(cls) -> str:
-    return 'untar a file'
-
-  @classmethod
-  def description(cls) -> str:
-    return 'untar an archive and extract one or more files. Directories probably won\'t work.'
-
-  @classmethod
-  def schema(cls) -> dict:
-    return {
-      'schema': {
-        'untar': {
-          'type': 'string'
-        }
-      },
-      'nullable': True
-    }
-
-  @classmethod
-  def build(cls, meta, debug=False) -> TarFile:
-    return Untar(meta, debug=debug)
-
-
 class Untar(Step):
   def provides(self) -> Dict[str, InputType]:
     return {'untar': generic_file}
@@ -74,3 +45,32 @@ class Untar(Step):
 
   def ram(self) -> int:
     return 1000
+
+
+class UntarFactory(StepFactory):
+  @classmethod
+  def type(cls) -> str:
+    return 'untar'
+
+  @classmethod
+  def label(cls) -> str:
+    return 'untar a file'
+
+  @classmethod
+  def description(cls) -> str:
+    return 'untar an archive and extract one or more files. Directories probably won\'t work.'
+
+  @classmethod
+  def schema(cls) -> dict:
+    return {
+      'schema': {
+        'untar': {
+          'type': 'string'
+        }
+      },
+      'nullable': True
+    }
+
+  @classmethod
+  def build(cls, label: str, meta: dict, debug=False) -> Untar:
+    return Untar(label, meta)

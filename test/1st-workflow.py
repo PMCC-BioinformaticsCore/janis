@@ -11,14 +11,17 @@ import examples.unix_commands
 _yml = """
 inputs:
   mytar:
-    tar_file:
-      path: 'test-data/hello.tar'
+    type: tar_file
+    path: 'test-data/hello.tar'
 
 steps:
-  - untar_step:
-      untar:
-  - compile_step:
-      compile
+  untar_step:
+    tool: untar
+    input: mytar
+    
+  compile_step:
+    tool: compile
+    input: 'untar_step/output'
 """
 
 _expected_cwl = yaml.load("""
@@ -56,7 +59,7 @@ ex: Hello.java
 """)
 
 
-class FirstWorkflow(unittest.TestCase):
+class FirstWorkflow():
 
   def test_graph(self):
     translator = PipelineTranslator(debug=False)
@@ -65,11 +68,11 @@ class FirstWorkflow(unittest.TestCase):
     print('-'*80)
     print(translation)
     print('-'*80)
-    self.assertTrue(True)
+    # self.assertTrue(True)
     # tr_json = yaml.load(translation)
     # self.assertTrue(tr_json == _expected_cwl)
 
 
 if __name__ == '__main__':
-    unittest.main()
+    FirstWorkflow().test_graph()
 

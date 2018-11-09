@@ -18,16 +18,19 @@ To update the requirements.txt to reflect the latest dependency requirements,
 Uses NetworkX library: https://networkx.github.io/
 
 
-
 ## WEHI Pipeline Definition Language
 Following discussions with Evan, I've put together a little _guide_ on how I've interpreted the pipeline language (_name?_).
 
 Theoretically we should be able to consume any input format that will serialize as a dictionary (YAML, JSON), but we'll stick to YAML for the descriptions.
 
-This will be revised, and I'm writing it while there is type inferencing, with the goal to remove type-inferencing and make steps hard-coded.
+**NB:** There is no more type inferencing if you're seeing this message.
+
+### Linking inputs
+You must specify and exactly link inputs to the pipelines, and will likely reference a step's output in another input, you should know what files your tool exports.
+
 
 ```yaml
-inputs:     # Dictionary of input types, input_labels must be unique
+inputs:                                 # Dictionary of input types, input_labels must be unique
     $input_label:
         $input_type:
             property1: value
@@ -41,15 +44,16 @@ inputs:     # Dictionary of input types, input_labels must be unique
 outputs:
     # TBA
 
-steps:    # array of steps
+steps:    # dictionary of steps
     $step_label:
-        tool: $tool/version     # Should be able to just say 'tool' or 'toolCategory' as well
-        $input1: $input_label
-        $input2: $input_label2
+        tool: $tool/version             # Should be able to just say 'tool' or 'toolCategory' as well
+        inputs:
+            $input1: $input_label
+            $input2: $input_label2
 
     $step_label2:
         tool: $tool_category
-        $input1: $step_label
+        $input1: $step_label/output1    # You must refer to a tool's documentation to find out the types it exports
         $input2: $input_label2
 ```
 

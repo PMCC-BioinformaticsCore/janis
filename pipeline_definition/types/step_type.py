@@ -13,25 +13,10 @@ class DependencySpec:
 
 class Step(ABC):
 
-    def __init__(self, input_dict, debug=False):
-        self.__id = next(iter(input_dict.keys()))
+    def __init__(self, label: str, step_meta, debug=False):
+        self.__id = label
         self.__debug = debug
-
-        step_meta = next(iter(input_dict.values()))
-
-        if step_meta is not None:
-            self.__type = Step.select_type_name_from(step_meta)
-            self.__meta = step_meta[self.__type]
-        else:
-            self.__type = self.id
-            self.__meta = None
-
-        self.__tag = None
-        if step_meta is not None:
-            self.__tag = step_meta.get('tag')
-
-        if self.__tag is None:
-            self.__tag = Step.default_step_tag_name()
+        self.__meta = step_meta
 
     def tag(self) -> str:
         return self.__tag
@@ -87,15 +72,17 @@ class Step(ABC):
 
     @staticmethod
     def select_type_name_from(meta) -> str:
-        selection = None
-        for candidate in iter(meta.keys()):
-            if candidate == 'tag':
-                continue
-            if candidate == 'input_scope':
-                continue
-            selection = candidate
-            break
-        return selection
+        return meta["tool"]
+
+        # selection = None
+        # for candidate in iter(meta.keys()):
+        #     if candidate == 'tag':
+        #         continue
+        #     if candidate == 'input_scope':
+        #         continue
+        #     selection = candidate
+        #     break
+        # return selection
 
     def validate_input_output_spec(self):
         pass
@@ -165,7 +152,7 @@ class StepFactory(ABC):
 
     @classmethod
     @abstractmethod
-    def build(cls, meta, debug=False) -> Step:
+    def build(cls, label: str, meta: dict, debug=False) -> Step:
         pass
 
     @classmethod
@@ -173,11 +160,11 @@ class StepFactory(ABC):
         return ['cwl']
 
     @classmethod
-    def build_from(cls, step_dict, debug=False) -> Step:
+    def build_from(cls, label: str, step_meta: dict, debug=False) -> Step:
         step_type = cls.type()
         if debug:
-            print(step_type, "factory: Building from", step_dict)
-        obj = cls.build(step_dict, debug=debug)
+            print(step_type, "factory: Building from", step_meta)
+        obj = cls.build(label, step_meta)
         obj.identify()
         return obj
 

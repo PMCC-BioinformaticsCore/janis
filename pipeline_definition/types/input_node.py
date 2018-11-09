@@ -2,29 +2,30 @@ from typing import Dict, List
 
 from pipeline_definition.types.input_type import InputType, Input
 from pipeline_definition.types.step_type import Step
+from pipeline_definition.graph.node import Node, NodeType
 
 
-class InputStep(Step):
+class InputNode(Node):
   def translate(self, mapped_inputs):
     ind = dict()
     for inp in self.__workflowInputSet:
       ind.update(inp.translate_for_workflow())
     return {'inputs': ind}
 
-  def __init__(self, workflow_input_set: List[Input]):
-    super().__init__({
-      'inputs': {
-        'WorkflowInputStep': {
-        },
-        'tag': InputStep.input_step_tag_name()
-      }})
-    self.__workflowInputSet = workflow_input_set
+  def __init__(self, inp: Input):
+    super().__init__(NodeType.INPUT, inp.id())
+    self.input: Input = inp
 
-  def provides(self) -> Dict[str, InputType]:
-    if not self.__workflowInputSet:
-      return {}
+    # super().__init__({
+    #   'inputs': {
+    #     'WorkflowInputStep': {
+    #     },
+    #     'tag': InputNode.input_step_tag_name()
+    #   }})
 
-    return { inp.id(): inp.type() for inp in self.__workflowInputSet}
+  def provides(self) -> InputType:
+    return self.input.type()
+    # return { inp.id(): inp.type() for inp in self.__workflowInputSet}
     # for inp in self.__workflowInputSet:
     #   outputs[inp.id()] = get_input_type(inp.type().type_name())
     # return outputs

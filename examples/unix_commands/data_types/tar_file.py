@@ -22,8 +22,8 @@ class TarFileFactory(InputFactory):
     }
 
   @classmethod
-  def build(cls, input_dict, debug=False):
-    return TarFile(input_dict, debug=debug)
+  def build(cls, label: str, input_dict: dict, debug=False):
+    return TarFile(label, input_dict, debug=debug)
 
 
 class TarFile(Input):
@@ -37,8 +37,8 @@ class TarFile(Input):
   def resolve(self):
     pass
 
-  def __init__(self, input_dict, debug=False):
-    super().__init__(input_dict)
+  def __init__(self, label: str, input_dict: dict, debug=False):
+    super().__init__(label, input_dict)
     self._resolved = True
     self._debug = debug
     self._path = [self.meta()['path']]

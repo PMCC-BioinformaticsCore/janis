@@ -1,8 +1,15 @@
 
 
 class PipelineTranslatorException(Exception):
-  pass
+    pass
 
 
 class NotFoundException(Exception):
-  pass
+    pass
+
+
+class InvalidInputsException(Exception):
+    pass
+
+class InvalidStepsException(Exception):
+    pass

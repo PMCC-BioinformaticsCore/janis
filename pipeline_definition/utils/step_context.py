@@ -5,6 +5,14 @@ import json
 from pipeline_definition.types.input_type import InputType
 from pipeline_definition.types.step_type import Step
 
+from pipeline_definition.graph.node import Node, NodeType
+
+
+class StepNode(Node):
+  def __init__(self, step: Step):
+    super().__init__(NodeType.TASK, step.id())
+    self.step = step
+
 
 class StepContext:
   def __init__(self, step):

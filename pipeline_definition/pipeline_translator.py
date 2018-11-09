@@ -21,15 +21,18 @@ import yaml
 from cerberus import Validator
 from networkx.readwrite import json_graph
 
-from pipeline_definition.types.input_step import InputStep
-from pipeline_definition.types.input_type import InputFactory, Input, InputType
 import pipeline_definition.types.schema as WEHI_Schema
+
+from pipeline_definition.types.input_node import InputNode
+from pipeline_definition.types.input_type import InputFactory, Input, InputType
+from pipeline_definition.utils.step_context import StepContext, StepNode
+
 from pipeline_definition.types.step_type import Step, DependencySpec
 from pipeline_definition.types.type_registry import get_input_factory
 from pipeline_definition.types.type_registry import get_step_factory
-from pipeline_definition.utils.errors import PipelineTranslatorException
-from pipeline_definition.utils.step_context import StepContext
+import pipeline_definition.utils.errors as E
 from pipeline_definition.utils.yaml_utils import str_presenter
+from pipeline_definition.graph.node import Node, NodeType
 
 yaml.add_representer(str, str_presenter)
 
@@ -46,9 +49,10 @@ class MappedInput:
 
 class PipelineTranslator:
     def __init__(self, debug: bool = False):
-        self.__input_step: InputStep = None
+        self.__input_step: InputNode = None
         self.__debug: bool = debug
         self.__work_graph: nx.Graph = None
+        self.__labels_map: Dict[str, Node] = {}
 
     def _debug_print(self, *args) -> None:
         """
@@ -82,7 +86,7 @@ class PipelineTranslator:
         :return: N/A
         """
         # Do schema validation
-        self.validate_schema(doc)
+        # self.validate_schema(doc)
 
         # Now convert the YAML doc?
         self._translate_yaml_doc(doc)
@@ -123,16 +127,16 @@ class PipelineTranslator:
         # Create a in memory instances for all the inputs, steps and outputs
 
         inputs: Dict[str, Any] = doc.get(WEHI_Schema.KEYS.INPUTS)
-        steps: List[Dict[str, Any]] = doc.get(WEHI_Schema.KEYS.STEPS)
+        steps: Dict[str, Any] = doc.get(WEHI_Schema.KEYS.STEPS)
         outputs: Dict[str, Any] = doc.get(WEHI_Schema.KEYS.OUTPUTS)
 
         if inputs is None:
             # This is probably okay, depends on whether the the steps reference anything
             # Probably better to be a warning which we can log at the end
-            raise ValueError("No input?")
+            raise E.InvalidInputsException("There were no inputs provided to the converter")
 
         if steps is None or not steps:
-            raise ValueError("There are no steps in the diagram")
+            raise E.InvalidStepsException("There are no steps in the diagram")
 
         # if outputs is None:
         #    raise ValueError("No output?")
@@ -160,12 +164,12 @@ class PipelineTranslator:
             if isinstance(meta, str):
                 # Our step is just a string, ie, it's the tool
                 input_type = meta
-                meta = dict([(input_type, None)])
+                meta = { "type": input_type }
 
             elif isinstance(meta, dict):
                 # mfranklin: I don't think this is extremely clear, I'd probably propose a "type" field, ie:
                 # | input_type = meta["type"]
-                input_type = next(iter(meta.keys()))
+                input_type = meta["type"]
             else:
                 raise ValueError(f"Rerecognised type ({type(meta)}) for input")
 
@@ -176,7 +180,7 @@ class PipelineTranslator:
                 raise ValueError("No factory registered for input: " + input_type)
 
             # Build an Input from this data
-            input_obj = inp_factory.build_from({input_id: meta}, self.__debug)
+            input_obj = inp_factory.build_from(input_id, meta, self.__debug)
             input_set.append(input_obj)
 
         return input_set
@@ -197,10 +201,10 @@ class PipelineTranslator:
 
         pipeline_steps: List[Step] = []
 
-        for step in steps:
+        for step_id, meta in steps.items():
 
-            step_id: str = next(iter(step.keys()))
-            meta = next(iter(step.values()))            # First key in the dictionary
+            # step_id: str = next(iter(step.keys()))
+            # meta = next(iter(step.values()))            # First key in the dictionary
 
             if isinstance(meta, str):
                 # With type inferencing, we'll remove this step
@@ -217,23 +221,32 @@ class PipelineTranslator:
             if step_factory is None:
                 raise ValueError("No factory registered for step: " + step_type)
 
-            step_obj = step_factory.build_from({step_id: meta}, debug=self.__debug)
+            step_obj = step_factory.build_from(step_id, meta)
             pipeline_steps.append(step_obj)
 
         return pipeline_steps
 
-    def _create_workflow_graph(self, pipeline_steps: List[Step], workflow_input_set: List[Input]) -> nx.Graph:
+    def _create_workflow_graph(self, pipeline_steps: List[Step], workflow_inputs: List[Input]) -> nx.Graph:
         """
         Take the inputs, {outputs} and steps and stitch it all together
         :param pipeline_steps: List[Step]
-        :param workflow_input_set: List[Input]
+        :param workflow_inputs: List[Input]
         :return: a networx graph
         """
         work_graph = nx.MultiDiGraph()                  # Use the DAG from networx
 
         # Lets create the input step - the start step of every workflow that produces the workflow inputs as step output
-        self.__input_step = InputStep(workflow_input_set)
+        self.__input_step = InputNode(workflow_inputs)
         pipeline_steps.insert(0, self.__input_step)
+
+        input_nodes = [InputNode(inp) for inp in workflow_inputs]
+        work_graph.add_nodes_from(input_nodes)
+
+        step_nodes = [StepNode(step) for step in pipeline_steps]
+        work_graph.add_nodes_from(step_nodes)
+
+        labels = { n.label: n for n in work_graph.nodes }
+        print(labels)
 
         # Now lets put all the steps as node. Then we will establish the edges
         self._debug_print("Graph Construction: adding nodes for steps.")
@@ -318,7 +331,7 @@ class PipelineTranslator:
             if not prev_ctx:
                 raise RuntimeError("Missing step context in graph. Graph integrity fail.")
 
-            if prev_step.tag() != InputStep.input_step_tag_name() and step.tag() != prev_step.tag():
+            if prev_step.tag() != InputNode.input_step_tag_name() and step.tag() != prev_step.tag():
                 raise RuntimeError("Branch tag mismatch during context population.")
 
             step_ctx.inherit_context_of_branch(prev_ctx)
@@ -378,7 +391,7 @@ class PipelineTranslator:
         target_tag: str = dependency_spec.tag
 
         # Lets start on the graph by tag
-        source_step: InputStep = self.__input_step
+        source_step: InputNode = self.__input_step
         # dictionary for multidigraph is keyed by (u, v, key)
         # https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.classes.function.get_edge_attributes.html
         # TODO: We can create a type that represents the (u, v, key) data structure
@@ -392,7 +405,7 @@ class PipelineTranslator:
 
         return
 
-    def _last_step_in_tag(self, tag: str, source_step: InputStep, work_graph: nx.MultiDiGraph, edge_mapfor_tags: Dict[Tuple, str]) -> Step:
+    def _last_step_in_tag(self, tag: str, source_step: InputNode, work_graph: nx.MultiDiGraph, edge_mapfor_tags: Dict[Tuple, str]) -> Step:
         """
         Recursive function to determine the latest step in the branch, specified by $tag.
         :param tag: Branch tag (eg: #cancer)

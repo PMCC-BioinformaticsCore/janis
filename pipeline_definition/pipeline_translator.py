@@ -25,9 +25,9 @@ import pipeline_definition.types.schema as WEHI_Schema
 
 from pipeline_definition.types.input_node import InputNode
 from pipeline_definition.types.input_type import InputFactory, Input, InputType
-from pipeline_definition.utils.step_context import StepContext, StepNode
+from pipeline_definition.utils.step_context import StepContext
 
-from pipeline_definition.types.step_type import Step, DependencySpec
+from pipeline_definition.types.step_type import Step, StepInput, StepOutput, StepNode, DependencySpec
 from pipeline_definition.types.type_registry import get_input_factory
 from pipeline_definition.types.type_registry import get_step_factory
 import pipeline_definition.utils.errors as E
@@ -163,13 +163,15 @@ class PipelineTranslator:
             input_type: str = None                      # Declare this here to improve clarity inside loop
             if isinstance(meta, str):
                 # Our step is just a string, ie, it's the tool
-                input_type = meta
+                input_type = meta.lower()
                 meta = { "type": input_type }
 
             elif isinstance(meta, dict):
                 # mfranklin: I don't think this is extremely clear, I'd probably propose a "type" field, ie:
                 # | input_type = meta["type"]
-                input_type = meta["type"]
+                if "type" not in meta:
+                    raise Exception("Input did not contain a 'type' field'")
+                input_type = meta["type"].lower()
             else:
                 raise ValueError(f"Rerecognised type ({type(meta)}) for input")
 
@@ -236,8 +238,8 @@ class PipelineTranslator:
         work_graph = nx.MultiDiGraph()                  # Use the DAG from networx
 
         # Lets create the input step - the start step of every workflow that produces the workflow inputs as step output
-        self.__input_step = InputNode(workflow_inputs)
-        pipeline_steps.insert(0, self.__input_step)
+        # self.__input_step = InputNode(workflow_inputs)
+        # pipeline_steps.insert(0, self.__input_step)
 
         input_nodes = [InputNode(inp) for inp in workflow_inputs]
         work_graph.add_nodes_from(input_nodes)
@@ -247,6 +249,69 @@ class PipelineTranslator:
 
         labels = { n.label: n for n in work_graph.nodes }
         print(labels)
+
+
+        for step_node in step_nodes:
+            # Create edges
+            required_inputs = step_node.step.requires()
+            for inp_tag in required_inputs:
+                inp = step_node.step.input_value(inp_tag)
+                # Get the correct label, to build the acylic graph, we really only need to first section when split by /
+                inp_tag_parts = inp.split("/")
+                required_step_label = inp_tag_parts[0]
+
+                input_node: Node = labels[required_step_label]
+
+                # Todo: generate unique identifier of edge (startLabel/tag > endLabel/input) + check if types match
+                key = f"{inp}>{step_node.label}/{inp_tag}"
+
+                # Check types
+                s: StepOutput = None    # the specified step output
+                if input_node.node_type == NodeType.OUTPUT:
+                    raise Exception(f"Can't connect output {input_node.label} to input {step_node.label} with tag {inp}")
+                elif input_node.node_type == NodeType.INPUT:
+                    output_dict = input_node.outputs()
+                    # Get the only value in the key
+                    if len(output_dict) == 0:
+                        raise Exception(f"Failed when connecting {input_node.label} to {step_node.label}"
+                                        f"\n\tImplementation of {input_node.label} incorrectly returns no type for input {inp}")
+                    s = next(iter(output_dict.values()))
+
+                else:
+                    # Now we know we have a STEP node
+                    output_dict = input_node.outputs()
+
+                    if len(inp_tag_parts) == 1:
+                        if len(output_dict) == 1:
+                            s = next(iter(output_dict.values()))
+                        else:
+                            raise Exception(f"The input tag {inp} requires more information to identify output from {input_node.label}")
+                    elif inp_tag_parts[1] in output_dict:
+                        s = output_dict[inp_tag_parts[1]]
+                    else:
+                        raise Exception(f"Couldn't uniquely identify output of {input_node.label} for {step_node.label}, "
+                                        f"searching for key: {inp_tag_parts[1]}")
+
+                if s is None:
+                    raise Exception("An internal error occurred when determining the connection between "
+                                    f"{input_node.label} to {step_node.label} with tag {inp}")
+
+                correct_type = s.output_type.lower() != required_inputs[inp_tag].input_type.lower()
+                if not correct_type:
+                    print(f"Mismatch of types between {input_node.label} ({s.output_type}) to"
+                          f"{step_node.label} with tag {inp} ({required_inputs[inp_tag].input_type}) ,")
+                col = 'b' if correct_type else 'r'
+                work_graph.add_edge(step_node, input_node, type_match=correct_type, color=col)
+
+
+        import matplotlib.pyplot as plt
+        edges_attributes = [work_graph.edges[e] for e in work_graph.edges]
+        colors = [x["color"] for x in edges_attributes]
+        nx.draw(work_graph, edge_color=colors)
+        plt.show()
+
+
+
 
         # Now lets put all the steps as node. Then we will establish the edges
         self._debug_print("Graph Construction: adding nodes for steps.")

@@ -74,7 +74,7 @@ class Input(ABC):
         # The id by which this input will be referred.
         return self.__id
 
-    def type(self) -> InputType:
+    def type(self) -> str:
         # A string identifying the file type
         return self.__type
 

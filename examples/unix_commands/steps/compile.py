@@ -2,72 +2,77 @@
 # Compile a java file
 #
 
-from typing import List, Dict
+from typing import Dict
 
 from examples.unix_commands.data_types.generic_file import generic_file
-from examples.unix_commands.data_types.class_file import class_file
-from pipeline_definition.types.input_type import InputType
+from pipeline_definition.types.step_type import Step, StepInput, StepOutput
 from pipeline_definition.types.step_type import StepFactory
-from pipeline_definition.types.step_type import Step
 
 
 class Compile(Step):
 
-  def provides(self) -> List[InputType]:
-    return [class_file]
+    input1 = "input"
 
-  def requires(self) -> List[InputType]:
-    return [generic_file]
+    def requires(self) -> Dict[str, StepInput]:
+        inp1 = self.get_input1()
+        return { inp1.tag: inp1 }
 
-  def translate(self, mapped_inputs) -> Dict[str, Dict]:
-    xlate = dict()
+    def provides(self) -> Dict[str, StepOutput]:
+        return { "output": StepOutput("output", "File") }
 
-    xlate['run'] = '../tools/src/tools/compile.cwl'
-    xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
+    def translate(self, mapped_inputs) -> Dict[str, Dict]:
+        xlate = dict()
 
-    for mi in mapped_inputs:
-      for candidate in mi.candidates.values():
-        if mi.input_type == generic_file.type_name() and candidate['tag'] == self.tag():
-          compile_step = candidate['step']
-          compile_id = candidate['id']
+        xlate['run'] = '../tools/src/tools/compile.cwl'
+        xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
 
-    inx = dict()
+        for mi in mapped_inputs:
+            for candidate in mi.candidates.values():
+                if mi.input_type == generic_file.type_name() and candidate['tag'] == self.tag():
+                    compile_step = candidate['step']
+                    compile_id = candidate['id']
 
-    inx['src'] = {'source': f'{compile_step}/{compile_id}'}
-    inx['extractfile'] = 'hello.java'
+        inx = dict()
 
-    xlate['in'] = inx
-    xlate['out'] = ['classfile']
+        inx['src'] = {'source': f'{compile_step}/{compile_id}'}
+        inx['extractfile'] = 'hello.java'
 
-    return {self.id(): xlate}
+        xlate['in'] = inx
+        xlate['out'] = ['classfile']
 
-  def cores(self) -> int:
-    return 2
+        return {self.id(): xlate}
 
-  def ram(self) -> int:
-    return 2*4000
+    def cores(self) -> int:
+        return 2
+
+    def ram(self) -> int:
+        return 2 * 4000
+
+    def get_input1(self) -> StepInput:
+        return StepInput(Compile.input1, "SequenceReadArchivePaired")
+
 
 
 class CompileFactory(StepFactory):
-  @classmethod
-  def type(cls) -> str:
-    return 'compile'
+    @classmethod
+    def type(cls) -> str:
+        return 'compile'
 
-  @classmethod
-  def label(cls) -> str:
-    return 'compile a java file'
+    @classmethod
+    def label(cls) -> str:
+        return 'compile a java file'
 
-  @classmethod
-  def schema(cls) -> dict:
-    return {
-      'schema': {
-        'compile': {
-          'type': 'string'
+    @classmethod
+    def schema(cls) -> dict:
+        return {
+            'schema': {
+                'compile': {
+                    'type': 'string'
+                }
+            },
+            'nullable': True
         }
-      },
-      'nullable': True
-    }
 
-  @classmethod
-  def build(cls, meta, debug=False) -> Compile:
-    return Compile(meta, debug=debug)
+    @classmethod
+    def build(cls, label: str, meta: dict) -> Compile:
+        return Compile(label, meta)

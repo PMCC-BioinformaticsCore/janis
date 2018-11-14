@@ -7,70 +7,143 @@ from typing import List, Dict
 from examples.unix_commands.data_types.generic_file import generic_file
 from examples.unix_commands.data_types.tar_file import tar_file, TarFile
 from pipeline_definition.types.input_type import InputType
-from pipeline_definition.types.step_type import StepFactory
+from pipeline_definition.types.step_type import StepFactory, Step, StepInput, StepOutput
 from pipeline_definition.types.step_type import Step
 
 
 class Untar(Step):
-  def provides(self) -> Dict[str, InputType]:
-    return {'untar': generic_file}
+    def requires(self) -> Dict[str, StepInput]:
+        inp = self.get_input1()
+        return { inp.tag: inp }
 
-  def requires(self) -> List[InputType]:
-    return [tar_file]
+    def provides(self) -> Dict[str, StepOutput]:
+        outp = self.get_output()
+        return { outp.tag: outp }
 
-  def translate(self, mapped_inputs) -> dict:
-    xlate = dict()
+    def translate(self, mapped_inputs) -> dict:
+        xlate = dict()
 
-    xlate['run'] = '../tools/src/tools/tar-param.cwl'
-    xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
+        xlate['run'] = '../tools/src/tools/tar-param.cwl'
+        xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
 
-    for mi in mapped_inputs:
-      for candidate in mi.candidates.values():
-        if mi.input_type == tar_file.type_name():  # and candidate['tag'] == self.tag():
-          tar_step = candidate['step']
-          tar_id = candidate['id']
+        for mi in mapped_inputs:
+            for candidate in mi.candidates.values():
+                if mi.input_type == tar_file.type_name():  # and candidate['tag'] == self.tag():
+                    tar_step = candidate['step']
+                    tar_id = candidate['id']
 
-    inx = dict()
+        inx = dict()
 
-    inx['tarfile'] = {'source': f'{tar_step}/{tar_id}'}
-    inx['extractfile'] = 'hello.java'
+        inx['tarfile'] = {'source': f'{tar_step}/{tar_id}'}
+        inx['extractfile'] = 'hello.java'
 
-    xlate['in'] = inx
-    xlate['out'] = ['untar']
+        xlate['in'] = inx
+        xlate['out'] = ['untar']
 
-    return {self.id(): xlate}
+        return { self.id(): xlate }
 
-  def cores(self) -> int:
-    return 1
+    def cores(self) -> int:
+        return 1
 
-  def ram(self) -> int:
-    return 1000
+    def ram(self) -> int:
+        return 1000
+
+    def get_input1(self):
+        return StepInput("input", "File")
+
+    def get_output(self):
+        return StepOutput("output", "File")
 
 
 class UntarFactory(StepFactory):
-  @classmethod
-  def type(cls) -> str:
-    return 'untar'
+    @classmethod
+    def type(cls) -> str:
+        return 'untar'
 
-  @classmethod
-  def label(cls) -> str:
-    return 'untar a file'
+    @classmethod
+    def label(cls) -> str:
+        return 'untar a file'
 
-  @classmethod
-  def description(cls) -> str:
-    return 'untar an archive and extract one or more files. Directories probably won\'t work.'
+    @classmethod
+    def description(cls) -> str:
+        return 'untar an archive and extract one or more files. Directories probably won\'t work.'
 
-  @classmethod
-  def schema(cls) -> dict:
-    return {
-      'schema': {
-        'untar': {
-          'type': 'string'
+    @classmethod
+    def schema(cls) -> dict:
+        return {
+          'schema': {
+            'untar': {
+              'type': 'string'
+            }
+          },
+          'nullable': True
         }
-      },
-      'nullable': True
-    }
 
-  @classmethod
-  def build(cls, label: str, meta: dict, debug=False) -> Untar:
-    return Untar(label, meta)
+    @classmethod
+    def build(cls, label: str, meta: dict) -> Untar:
+        return Untar(label, meta)
+
+
+"""
+
+EXAMPLE XML
+
+<Step>
+    <title>Untar</title>
+    <author>Michael Franklin</author>
+    <cores>1</cores>
+    <ram>1024</ram>
+    <label>{{label}}</label>
+    <supportedTypes>
+        <type>cwl</type>
+        <type>wdl</type>
+    </supportedTypes>
+    
+    <inputs>
+        <input>
+            <tag>input</tag>
+            <type>File</type>
+        </input>
+    </inputs>
+    <outputs>
+        <output>
+            <tag>output</tag>
+            <type>File</type>
+        </output>
+    </outputs>
+</Step>
+
++ provide CWL template
+
+#!/usr/bin/env cwl-runner
+
+cwlVersion: v1.0
+class: CommandLineTool
+baseCommand: [tar, xf]
+inputs:
+  input:
+    type: File
+    inputBinding:
+      position: 1
+  output:
+    type: string
+    inputBinding:
+      position: 2
+
+outputs:
+  example_out:
+    type: File
+    outputBinding:
+      glob: $(inputs.outputfile)
+
++ wdl template
+
+task {
+    File input
+    File output
+    command {
+        tar -xf ${input}
+    }
+}
+
+"""

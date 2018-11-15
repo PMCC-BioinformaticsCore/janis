@@ -18,7 +18,8 @@ class Compile(Step):
         return { inp1.tag: inp1 }
 
     def provides(self) -> Dict[str, StepOutput]:
-        return { "output": StepOutput("output", "File") }
+        out = self.get_output()
+        return { inp.tag: inp for inp in [out] }
 
     def translate(self, mapped_inputs) -> Dict[str, Dict]:
         xlate = dict()
@@ -49,14 +50,18 @@ class Compile(Step):
         return 2 * 4000
 
     def get_input1(self) -> StepInput:
-        return StepInput(Compile.input1, "SequenceReadArchivePaired")
+        return StepInput(Compile.input1, "File")
+
+    def get_output(self) -> StepOutput:
+        return StepOutput("out", "File")
+
 
 
 
 class CompileFactory(StepFactory):
     @classmethod
     def type(cls) -> str:
-        return 'compile'
+        return 'java-compiler'
 
     @classmethod
     def label(cls) -> str:

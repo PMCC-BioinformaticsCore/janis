@@ -163,8 +163,8 @@ class PipelineTranslator:
             input_type: str = None                      # Declare this here to improve clarity inside loop
             if isinstance(meta, str):
                 # Our step is just a string, ie, it's the tool
-                input_type = meta.lower()
-                meta = { "type": input_type }
+                input_type = "string"
+                meta = { "type": input_type, "value": meta }
 
             elif isinstance(meta, dict):
                 # mfranklin: I don't think this is extremely clear, I'd probably propose a "type" field, ie:
@@ -296,18 +296,20 @@ class PipelineTranslator:
                     raise Exception("An internal error occurred when determining the connection between "
                                     f"{input_node.label} to {step_node.label} with tag {inp}")
 
-                correct_type = s.output_type.lower() != required_inputs[inp_tag].input_type.lower()
+                correct_type = s.output_type.lower() == required_inputs[inp_tag].input_type.lower()
                 if not correct_type:
-                    print(f"Mismatch of types between {input_node.label} ({s.output_type}) to"
+                    print(f"Mismatch of types between {input_node.label} ({s.output_type}) to "
                           f"{step_node.label} with tag {inp} ({required_inputs[inp_tag].input_type}) ,")
-                col = 'b' if correct_type else 'r'
-                work_graph.add_edge(step_node, input_node, type_match=correct_type, color=col)
+                col = 'black' if correct_type else 'r'
+                work_graph.add_edge(input_node, step_node, type_match=correct_type, color=col)
 
 
         import matplotlib.pyplot as plt
         edges_attributes = [work_graph.edges[e] for e in work_graph.edges]
-        colors = [x["color"] for x in edges_attributes]
-        nx.draw(work_graph, edge_color=colors)
+        edge_colors = [x["color"] for x in edges_attributes]
+        node_colors = ['blue' if x.node_type == NodeType.INPUT else 'black' for x in work_graph.nodes]
+
+        nx.draw(work_graph, edge_color=edge_colors, colors=node_colors)
         plt.show()
 
 

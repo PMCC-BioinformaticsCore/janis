@@ -20,8 +20,8 @@ steps:
     input: mytar
     
   compile_step:
-    tool: compile
-    input: 'untar_step/output'
+    tool: java-compile
+    input: 'untar_step/out'
 """
 
 _expected_cwl = yaml.load("""

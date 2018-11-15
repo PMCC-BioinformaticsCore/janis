@@ -52,7 +52,7 @@ class Untar(Step):
         return StepInput("input", "File")
 
     def get_output(self):
-        return StepOutput("output", "File")
+        return StepOutput("out", "File")
 
 
 class UntarFactory(StepFactory):

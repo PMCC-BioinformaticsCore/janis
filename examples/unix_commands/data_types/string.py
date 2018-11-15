@@ -2,31 +2,26 @@ from pipeline_definition.types.input_type import InputFactory, InputType
 from pipeline_definition.types.input_type import Input
 from typing import Dict
 
-generic_file = InputType('file', label='an untyped file')
+generic_string = InputType('string', label='a generic string')
 
 
-class GenericFile(Input):
+class String(Input):
   def translate_for_workflow(self) -> dict:
     raise Exception('Not yet implemented')
 
   def translate_for_input(self):
-    fd = {'class': 'File', 'path': self._path}
-    return {self.id(): fd}
+    return {self.id(): self._value}
 
   def resolve(self):
     pass
 
-  def __init__(self, label: str, meta: Dict, debug=False):
+  def __init__(self, label: str, meta: Dict):
+    # meta will actually be a string
     super().__init__(label, meta)
-    self._resolved = True
-    self._debug = debug
-    self._path = [self.meta()['path']]
-    self._resolved = False
+    self._value = str(meta)
 
   def identify(self):
     super().identify()
-    if self._debug:
-      print("Path:", self._path)
 
   def datum_type(self):
     return self.type()
@@ -35,10 +30,10 @@ class GenericFile(Input):
     return False
 
 
-class GenericFileFactory(InputFactory):
+class StringFactory(InputFactory):
   @classmethod
   def type(cls) -> InputType:
-    return generic_file
+    return generic_string
 
   @classmethod
   def schema(cls):
@@ -51,5 +46,5 @@ class GenericFileFactory(InputFactory):
     }
 
   @classmethod
-  def build(cls, label: str, meta: Dict, debug=False) -> GenericFile:
-    return GenericFile(label, meta)
+  def build(cls, label: str, meta: Dict, debug=False) -> String:
+    return String(label, meta)

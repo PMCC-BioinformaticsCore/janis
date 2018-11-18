@@ -1,5 +1,5 @@
 import examples.unix_commands
-
+from pipeline_definition.utils.logger import Logger, LogLevel
 
 _yml = """
 inputs:
@@ -36,7 +36,8 @@ class SimplePipeline():
     @staticmethod
     def test_simple():
         from pipeline_definition.pipeline_translator import PipelineTranslator
-        translator = PipelineTranslator(debug=True)
+        Logger.CONSOLE_LEVEL = LogLevel.DEBUG
+        translator = PipelineTranslator()
         translation = translator.translate_string(_yml)
         print(translation)
 

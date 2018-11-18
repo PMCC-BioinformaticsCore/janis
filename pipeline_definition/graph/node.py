@@ -44,7 +44,7 @@ class Node:
         return self._nodeId
 
     def __str__(self):
-        return f"NODE {NodeType.to_str(self.node_type)}: {self.label}"
+        return f"{NodeType.to_str(self.node_type)}: {self.label}"
 
     def inputs(self) -> List:
         raise Exception(f"Subclass {type(self)} must implement inputs, return dict: key: StepInput")

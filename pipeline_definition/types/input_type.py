@@ -17,6 +17,7 @@ from abc import ABC, abstractmethod
 # Type name quoted here because of Python's inability to handle circular dependencies
 # https://www.python.org/dev/peps/pep-0484/#forward-references
 from pipeline_definition.utils.errors import NotFoundException
+from pipeline_definition.utils.logger import Logger, LogLevel
 from pipeline_definition.utils.registry import Registry
 
 __input_types = Registry['InputType']()
@@ -60,15 +61,13 @@ class Input(ABC):
         self.__id: str = label
         self.__type: str = meta["type"]
         self.__meta: dict = meta
-        self.__debug = False
 
     @staticmethod
     def _get_type(type_name: str) -> InputType:
         return get_input_type(type_name)
 
     def identify(self):
-        if self.__debug:
-            print(f"Instance: [{self.id} - {self.type} - {self.meta}]")
+        Logger.log(f"Instance: [{self.id} - {self.type} - Meta: {self.meta}]")
 
     def id(self) -> str:
         # The id by which this input will be referred.
@@ -141,10 +140,9 @@ class InputFactory(ABC):
         pass
 
     @classmethod
-    def build_from(cls, label: str, input_dict: dict, debug: bool = False) -> Input:
+    def build_from(cls, label: str, input_dict: dict) -> Input:
         input_type = cls.type()
-        if debug:
-            print(input_type, "factory: Building from", input_dict)
+        Logger.log(f"{input_type} factory: Building from {input_dict}")
         obj = cls.build(label, input_dict)
         obj.identify()
         return obj

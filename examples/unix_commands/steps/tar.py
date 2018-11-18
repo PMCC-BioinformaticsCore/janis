@@ -1,14 +1,10 @@
 #
 # Untar a file
-#
+from typing import Dict
 
-from typing import List, Dict
-
-from examples.unix_commands.data_types.generic_file import generic_file
-from examples.unix_commands.data_types.tar_file import tar_file, TarFile
-from pipeline_definition.types.input_type import InputType
-from pipeline_definition.types.step_type import StepFactory, Step, StepInput, StepOutput
+from examples.unix_commands.data_types.tar_file import tar_file
 from pipeline_definition.types.step_type import Step
+from pipeline_definition.types.step_type import StepFactory, StepInput, StepOutput
 
 
 class Tar(Step):
@@ -49,16 +45,20 @@ class Tar(Step):
     def ram(self) -> int:
         return 1000
 
-    def get_input1(self):
+    @staticmethod
+    def get_input1():
         return StepInput("input1", "File")
 
-    def get_input2(self):
+    @staticmethod
+    def get_input2():
         return StepInput("input2", "File")
 
-    def get_input3(self):
+    @staticmethod
+    def get_input3():
         return StepInput("tarName", "String")
 
-    def get_output(self):
+    @staticmethod
+    def get_output():
         return StepOutput("out", "File")
 
 
@@ -128,8 +128,6 @@ EXAMPLE XML
 
         class: CommandLineTool
         cwlVersion: v1.0
-        $namespaces:
-          sbg: 'https://www.sevenbridges.com/'
         id: tar
         baseCommand:
           - tar

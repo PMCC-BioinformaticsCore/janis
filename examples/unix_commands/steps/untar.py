@@ -2,13 +2,11 @@
 # Untar a file
 #
 
-from typing import List, Dict
+from typing import Dict, Any
 
-from examples.unix_commands.data_types.generic_file import generic_file
-from examples.unix_commands.data_types.tar_file import tar_file, TarFile
-from pipeline_definition.types.input_type import InputType
-from pipeline_definition.types.step_type import StepFactory, Step, StepInput, StepOutput
+from examples.unix_commands.data_types.tar_file import tar_file
 from pipeline_definition.types.step_type import Step
+from pipeline_definition.types.step_type import StepFactory, StepInput, StepOutput
 
 
 class Untar(Step):
@@ -20,11 +18,16 @@ class Untar(Step):
         outp = self.get_output()
         return { outp.tag: outp }
 
-    def translate(self, mapped_inputs) -> dict:
-        xlate = dict()
-
-        xlate['run'] = '../tools/src/tools/tar-param.cwl'
-        xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
+    def translate(self, mapped_inputs) -> Dict[str, Any]:
+        xlate: Dict[str, Any] = {
+            'run': '../tools/src/tools/tar-param.cwl',
+            'requirements': {
+                'ResourceRequirement': {
+                    'coresMin': self.cores(),
+                    'ramMin': self.ram()
+                }
+            }
+        }
 
         for mi in mapped_inputs:
             for candidate in mi.candidates.values():

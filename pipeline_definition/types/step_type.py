@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 
 from pipeline_definition.graph.node import Node, NodeType
-from pipeline_definition.types.input_type import InputType, Input
+from pipeline_definition.types.input_type import InputType
+from pipeline_definition.utils.logger import Logger
 
 
 class DependencySpec:
@@ -31,10 +32,10 @@ class StepOutput:
 
 class Step(ABC):
 
-    def __init__(self, label: str, step_meta):
+    def __init__(self, label: str, step_meta: Dict[str, Any]):
         self.__id = label
         self.__meta = step_meta
-        self.__inputs = {}
+        self.__inputs: Dict[str, Any] = {}
 
     # def type(self) -> InputType:
     #     return self.__type
@@ -49,8 +50,7 @@ class Step(ABC):
         return self.meta()["tool"]
 
     def identify(self):
-        if True:
-            print("Instance: [", self.__id, " - ", self.tool(), " - ", self.__meta, " ]")
+        Logger.log(f"Instance: [{self.__id} - {self.tool()} - {self.__meta}]")
 
     def input_labels(self, tag):
         return self.requires()[tag]

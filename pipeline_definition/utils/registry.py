@@ -1,7 +1,7 @@
 #
 # Registry of objects
 #
-from typing import Dict, List, Generic, TypeVar
+from typing import Dict, List, Generic, TypeVar, Optional
 
 
 class RegistryException(Exception):
@@ -19,7 +19,7 @@ class Registry(Generic[T]):
     self.registry[name] = obj
 
   def objects(self) -> List[T]:
-    return self.registry.values()
+    return list(self.registry.values())
 
-  def get(self, type_name) -> T:
+  def get(self, type_name) -> Optional[T]:
     return self.registry.get(type_name)

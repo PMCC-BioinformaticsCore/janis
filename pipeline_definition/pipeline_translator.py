@@ -36,6 +36,8 @@ from pipeline_definition.graph.node import Node, NodeType
 
 yaml.add_representer(str, str_presenter)
 
+from pipeline_definition.utils.logger import Logger, LogLevel
+
 
 class MappedInput:
     def __init__(self, inputs: List[InputType], candidates, step_input: InputType):
@@ -48,9 +50,11 @@ class MappedInput:
 
 
 class PipelineTranslator:
-    def __init__(self, debug: bool = False):
+    def __init__(self):
+        Logger.log("Creating PipelineTranslator", LogLevel.CRITICAL)
+        Logger.log("Test", LogLevel.NONE)
+
         self.__input_step: InputNode = None
-        self.__debug: bool = debug
         self.__work_graph: nx.Graph = None
         self.__labels_map: Dict[str, Node] = {}
 
@@ -66,8 +70,7 @@ class PipelineTranslator:
         :param args:
         :return: None
         """
-        if self.__debug:
-            print(args)
+        Logger.log("".join(args))
 
     def _dump_as_yaml(self, doc: Dict[str, Any], indent: int = 2, prefix="YAML DOC") -> None:
         """
@@ -126,6 +129,8 @@ class PipelineTranslator:
         """
         # Create a in memory instances for all the inputs, steps and outputs
 
+        Logger.log("Starting translation from converted dictionary", LogLevel.INFO)
+
         inputs: Dict[str, Any] = doc.get(WEHI_Schema.KEYS.INPUTS)
         steps: Dict[str, Any] = doc.get(WEHI_Schema.KEYS.STEPS)
         outputs: Dict[str, Any] = doc.get(WEHI_Schema.KEYS.OUTPUTS)
@@ -157,6 +162,7 @@ class PipelineTranslator:
         :return: List[Input] >> All the inputs in the workflow
         """
         input_set: List[Input] = []
+        Logger.log("Building inputs", LogLevel.INFO)
 
         for input_id, meta in inputs.items():           # StepLabel, StepProperties/Data
 
@@ -176,20 +182,24 @@ class PipelineTranslator:
                 raise ValueError(f"Rerecognised type ({type(meta)}) for input")
 
             self._debug_print(f"Processing INPUT: {input_id} - {input_type}")
+            Logger.log(f"Processing input from {input_id} with type: {input_type}")
 
             inp_factory: InputFactory = get_input_factory(input_type)
             if inp_factory is None:
                 raise ValueError("No factory registered for input: " + input_type)
 
             # Build an Input from this data
-            input_obj = inp_factory.build_from(input_id, meta, self.__debug)
+            input_obj = inp_factory.build_from(input_id, meta)
             input_set.append(input_obj)
+
+        Logger.log(f"Built {len(input_set)} inputs", LogLevel.INFO)
 
         return input_set
 
     @staticmethod
     def _build_outputs(outputs):
-        return None
+        # output_set: List[Output] = []
+        pass
 
     def _build_steps(self, steps: List[Dict]) -> List[Step]:
         """
@@ -205,9 +215,6 @@ class PipelineTranslator:
 
         for step_id, meta in steps.items():
 
-            # step_id: str = next(iter(step.keys()))
-            # meta = next(iter(step.values()))            # First key in the dictionary
-
             if isinstance(meta, str):
                 # With type inferencing, we'll remove this step
                 step_type = meta
@@ -217,11 +224,11 @@ class PipelineTranslator:
             else:
                 step_type = None
 
-            self._debug_print(f"Processing STEP: {step_id} - {step_type}")
+            Logger.log(f"Processing STEP: {step_id} with tool {step_type}")
 
             step_factory = get_step_factory(step_type)
             if step_factory is None:
-                raise ValueError("No factory registered for step: " + step_type)
+                raise ValueError("No factory registered for tool: " + step_type)
 
             step_obj = step_factory.build_from(step_id, meta)
             pipeline_steps.append(step_obj)
@@ -248,7 +255,7 @@ class PipelineTranslator:
         work_graph.add_nodes_from(step_nodes)
 
         labels = { n.label: n for n in work_graph.nodes }
-        print(labels)
+        Logger.log(f"Node labels: {labels}")
 
 
         for step_node in step_nodes:
@@ -298,8 +305,8 @@ class PipelineTranslator:
 
                 correct_type = s.output_type.lower() == required_inputs[inp_tag].input_type.lower()
                 if not correct_type:
-                    print(f"Mismatch of types between {input_node.label} ({s.output_type}) to "
-                          f"{step_node.label} with tag {inp} ({required_inputs[inp_tag].input_type}) ,")
+                    Logger.log(f"Mismatch of types between {input_node.label} ({s.output_type}) to "
+                          f"{step_node.label} with tag {inp} ({required_inputs[inp_tag].input_type})", LogLevel.CRITICAL)
                 col = 'black' if correct_type else 'r'
                 work_graph.add_edge(input_node, step_node, type_match=correct_type, color=col)
 
@@ -309,86 +316,88 @@ class PipelineTranslator:
         edge_colors = [x["color"] for x in edges_attributes]
         node_colors = ['blue' if x.node_type == NodeType.INPUT else 'black' for x in work_graph.nodes]
 
-        nx.draw(work_graph, edge_color=edge_colors, colors=node_colors)
+        nx.draw(work_graph, edge_color=edge_colors, colors=node_colors, with_labels=True)
         plt.show()
 
 
 
 
-        # Now lets put all the steps as node. Then we will establish the edges
-        self._debug_print("Graph Construction: adding nodes for steps.")
-        for step in pipeline_steps:
-            step_ctx = StepContext(step)
-            work_graph.add_node(step, ctx=step_ctx)
-            self._debug_print("Added node for step", step.id(), "[", step.tag(), "]")
-
-        self._debug_print("Graph Construction: Processing tags.")
-
-        # Now let's put the edges to indicate execution order as indicated by 'tag'
-        # Convention is all steps belonging to a tag are exceuted in the seq they have been specified
-        # so creating the concept of 'threads' / 'branches.
-        # Create a dict of tags vocabulary that have been used in the workflow description
-        tag_map: Dict[str, Any] = { step.tag(): None for step in pipeline_steps }
+        # # Now lets put all the steps as node. Then we will establish the edges
+        # self._debug_print("Graph Construction: adding nodes for steps.")
         # for step in pipeline_steps:
-        #     tag = step.tag()
-        #     if tag not in tag_map:
-        #         tag_map[tag] = None
-
-        self._debug_print("TAG MAP:", str(tag_map))
-
-        # Lets stitch the DAG based on tags assigned to each step
-
-        for step in pipeline_steps:
-            self._debug_print("Processing step ", step.id(), "[", step.tag(), "]")
-
-            # tag specification in step
-            stag: str = step.tag()
-            # self.__debug_print("Step specifies tag:", stag)
-
-            if stag == self.__input_step.tag():
-                tag_map[stag] = self.__input_step
-                continue
-
-            # Have we already seen a step in that thread/tag?
-            last_node = tag_map.get(stag)
-            tag_map[stag] = step
-
-            if last_node is None:
-                last_node = self.__input_step
-
-            work_graph.add_edge(last_node, step, type="branch", tag=stag)
-            self._debug_print("Added edge [", last_node.id(), "]->[", step.id(), "] for tag", stag)
-
-        # Next pass is about input dependency of a step on outputs form other branches and steps
-        self._debug_print("Graph Construction: Processing input dependency")
-        for step in pipeline_steps:
-            self._debug_print("Processing step ", step.id(), "[", step.tag(), "]")
-
-            if step.tag() == self.__input_step.tag():
-                self._debug_print("Input step never have dependency.")
-                continue
-
-            # Lets get the dependency list of the step
-            depends = self.get_dependecy_spec(step)
-            if not depends:
-                self._debug_print("Step has no dependency.")
-                continue
-
-            for dependency in depends:
-                self._debug_print("Step has dependecny:", dependency)
-                self._add_dependency_to(step, dependency, work_graph)
-
-        self._debug_print("Graph Construction: Polulating context for steps.")
-        # Now we have a graph that has edges for flow and dependency
-        # Now we need to establish the context of each step
-        ctx_attr_map = nx.get_node_attributes(work_graph, 'ctx')
-        type_attr_map = nx.get_edge_attributes(work_graph, 'type')
-        self._populate_step_context(work_graph, self.__input_step, None, ctx_attr_map, type_attr_map)
+        #     step_ctx = StepContext(step)
+        #     work_graph.add_node(step, ctx=step_ctx)
+        #     self._debug_print("Added node for step", step.id(), "[", step.tag(), "]")
+        #
+        # self._debug_print("Graph Construction: Processing tags.")
+        #
+        # # Now let's put the edges to indicate execution order as indicated by 'tag'
+        # # Convention is all steps belonging to a tag are exceuted in the seq they have been specified
+        # # so creating the concept of 'threads' / 'branches.
+        # # Create a dict of tags vocabulary that have been used in the workflow description
+        # tag_map: Dict[str, Any] = { step.tag(): None for step in pipeline_steps }
+        # # for step in pipeline_steps:
+        # #     tag = step.tag()
+        # #     if tag not in tag_map:
+        # #         tag_map[tag] = None
+        #
+        # self._debug_print("TAG MAP:", str(tag_map))
+        #
+        # # Lets stitch the DAG based on tags assigned to each step
+        #
+        # for step in pipeline_steps:
+        #     self._debug_print("Processing step ", step.id(), "[", step.tag(), "]")
+        #
+        #     # tag specification in step
+        #     stag: str = step.tag()
+        #     # self.__debug_print("Step specifies tag:", stag)
+        #
+        #     if stag == self.__input_step.tag():
+        #         tag_map[stag] = self.__input_step
+        #         continue
+        #
+        #     # Have we already seen a step in that thread/tag?
+        #     last_node = tag_map.get(stag)
+        #     tag_map[stag] = step
+        #
+        #     if last_node is None:
+        #         last_node = self.__input_step
+        #
+        #     work_graph.add_edge(last_node, step, type="branch", tag=stag)
+        #     self._debug_print("Added edge [", last_node.id(), "]->[", step.id(), "] for tag", stag)
+        #
+        # # Next pass is about input dependency of a step on outputs form other branches and steps
+        # self._debug_print("Graph Construction: Processing input dependency")
+        # for step in pipeline_steps:
+        #     self._debug_print("Processing step ", step.id(), "[", step.tag(), "]")
+        #
+        #     if step.tag() == self.__input_step.tag():
+        #         self._debug_print("Input step never have dependency.")
+        #         continue
+        #
+        #     # Lets get the dependency list of the step
+        #     depends = self.get_dependecy_spec(step)
+        #     if not depends:
+        #         self._debug_print("Step has no dependency.")
+        #         continue
+        #
+        #     for dependency in depends:
+        #         self._debug_print("Step has dependecny:", dependency)
+        #         self._add_dependency_to(step, dependency, work_graph)
+        #
+        # self._debug_print("Graph Construction: Polulating context for steps.")
+        # # Now we have a graph that has edges for flow and dependency
+        # # Now we need to establish the context of each step
+        # ctx_attr_map = nx.get_node_attributes(work_graph, 'ctx')
+        # type_attr_map = nx.get_edge_attributes(work_graph, 'type')
+        # self._populate_step_context(work_graph, self.__input_step, None, ctx_attr_map, type_attr_map)
 
         return work_graph
 
     def _populate_step_context(self, work_graph, step, prev_step, ctx_attr_map, type_attr_map):
-        self._debug_print("Populating context for step:", step.id(), "in branch [", step.tag(), "]")
+
+        Logger.log(f"Populating context for step: {step.id()} in branch [{step.tag()}]", LogLevel.INFO)
+
         step_ctx = ctx_attr_map.get(step)
         if not step_ctx:
             raise RuntimeError("Missing step context in graph. Graph integrity fail.")
@@ -407,7 +416,7 @@ class PipelineTranslator:
         if not edges:
             return
 
-        self._debug_print("Step [", step.id(), "] in branch [", step.tag(), "] has", len(edges), "edges")
+        Logger.log(f"Step [{step.id()}] in branch [{step.tag()}] has {len(edges)} edges")
 
         # First pass to process the input dependency
         for edge in edges:
@@ -530,17 +539,13 @@ class PipelineTranslator:
         work_graph = self.__work_graph
         # tree = json_graph.tree_data(workGraph, self.__root, attrs={'children': 'next', 'id': 'step'})
         tree = json_graph.node_link_data(work_graph, {'link': 'flow', 'source': 'step', 'target': 'target'})
-        self._debug_print("Workflow Graph: [")
-        self._debug_print(tree)
-        # jsonDoc = json.dumps(tree, indent=2)
-        # self.__debug_print(jsonDoc)
-
-        self._debug_print("] End Workflow Graph")
+        Logger.log("Workflow Graph: [")
+        Logger.log(str(tree))
+        Logger.log("] End Workflow Graph")
 
     def _check_translated(self):
         if self.__work_graph is None:
-            raise PipelineTranslatorException(
-                'call a translation method before attempting to extract translated components.')
+            raise E.PipelineTranslatorException('called a translation method before attempting to extract translated components.')
 
     def input(self, resolve=False):
         self._check_translated()

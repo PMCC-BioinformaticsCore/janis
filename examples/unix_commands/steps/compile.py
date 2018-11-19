@@ -2,14 +2,32 @@
 # Compile a java file
 #
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 
-from examples.unix_commands.data_types.generic_file import generic_file
-from pipeline_definition.types.step import Step, ToolInput, ToolOutput
+# from examples.unix_commands.data_types.generic_file import generic_file
+from pipeline_definition.types.step import Step, ToolInput, ToolOutput, Tool
 from pipeline_definition.types.step import StepFactory
+from pipeline_definition.types.common_data_types import File
 
 
-class Compile(Step):
+class Compile(Tool):
+
+    @staticmethod
+    def tool():
+        return "java-compiler"
+
+    @staticmethod
+    def supported_translations() -> List[str]:
+        return ["cwl"]
+
+    def inputs(self) -> List[ToolInput]:
+        return [ToolInput("input", File())]
+
+    def outputs(self) -> List[ToolOutput]:
+        return [ToolOutput("out", File())]
+
+
+class Compilee(Step):
 
     input1 = "input"
 
@@ -61,8 +79,6 @@ class Compile(Step):
 
     def get_output(self) -> ToolOutput:
         return ToolOutput("out", "File")
-
-
 
 
 class CompileFactory(StepFactory):

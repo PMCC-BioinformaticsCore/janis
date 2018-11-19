@@ -15,7 +15,7 @@ import os
 import io
 import json
 import yaml
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Type
 from timeit import default_timer as timer
 
 
@@ -25,28 +25,29 @@ from networkx.readwrite import json_graph
 
 import pipeline_definition.types.schema as wehi_schema
 import pipeline_definition.utils.errors as errors
+from pipeline_definition.types.data_types import DataType
 
 from pipeline_definition.utils.logger import Logger, LogLevel
 
 from pipeline_definition.graph.node import Node, NodeType
 from pipeline_definition.types.input_node import InputNode
 from pipeline_definition.utils.yaml_utils import str_presenter
-from pipeline_definition.types.type_registry import get_step_factory
-from pipeline_definition.types.type_registry import get_input_factory
+from pipeline_definition.types.type_registry import get_tool, get_type
+# from pipeline_definition.types.type_registry import get_input_factory
 from pipeline_definition.types.step import Step, ToolOutput, StepNode
-from pipeline_definition.types.input_type import InputFactory, Input, InputType
+from pipeline_definition.types.input_type import Input  #, InputFactory, InputType
 
 yaml.add_representer(str, str_presenter)
 
 
-class MappedInput:
-    def __init__(self, inputs: List[InputType], candidates, step_input: InputType):
-        self.inputs = inputs
-        self.candidates = candidates
-        self.input_type = step_input.type_name()
-
-    def __repr__(self):
-        return f'inputs={self.inputs}: candidates={self.candidates}'
+# class MappedInput:
+#     def __init__(self, inputs: List[InputType], candidates, step_input: InputType):
+#         self.inputs = inputs
+#         self.candidates = candidates
+#         self.input_type = step_input.type_name()
+#
+#     def __repr__(self):
+#         return f'inputs={self.inputs}: candidates={self.candidates}'
 
 
 class PipelineTranslator:
@@ -132,8 +133,8 @@ class PipelineTranslator:
         #    raise ValueError("No output?")
 
         workflow_input_set: List[Input] = self._build_inputs(inputs)
-        # workflow_output_set: List[Output] = self._build_outputs(outputs)
         pipeline_steps: List[Step] = self._build_steps(steps)
+        workflow_output_set: List[Output] = self._build_outputs(outputs, )
 
         self.__work_graph = self._create_workflow_graph(pipeline_steps, workflow_input_set)
         self.draw_graph()
@@ -180,12 +181,13 @@ class PipelineTranslator:
 
             Logger.log(f"Processing input from {input_id} with type: {input_type}")
 
-            inp_factory: InputFactory = get_input_factory(input_type)
-            if inp_factory is None:
-                raise ValueError("No factory registered for input: " + input_type)
+            inp_type: Type[DataType] = get_type(input_type)
+            if inp_type is None:
+                raise ValueError("No input type registered for name: " + input_type)
 
             # Build an Input from this data
-            input_obj = inp_factory.build_from(input_id, meta)
+            # input_obj = inp_factory.build_from(input_id, meta)
+            input_obj = Input(input_id, inp_type())
             input_set.append(input_obj)
 
         Logger.log(f"Successfully constructed {len(input_set)} inputs", LogLevel.INFO)
@@ -213,22 +215,25 @@ class PipelineTranslator:
 
             step_type: Optional[str]
 
-            if isinstance(meta, str):
-                # With type inferencing, we'll remove this step
-                step_type = meta
-                meta = dict([(step_type, None)])
+            if isinstance(meta, str):       # I don't think we'll allow this to happen, because it still
+                step_type = str(meta)       # implies type inferencing to some point, or maybe all outputs go to this
+                meta = {step_type: None}
             elif isinstance(meta, dict):
                 step_type = Step.select_type_name_from(meta)
             else:
                 step_type = None
 
+            if step_type is None:
+                raise ValueError(f"There was no tool specified for step: {step_id}")
+
             Logger.log(f"Processing STEP: {step_id} with tool {step_type}")
 
-            step_factory = get_step_factory(step_type)
-            if step_factory is None:
+            tool_type = get_tool(step_type)
+            if tool_type is None:
                 raise ValueError("No factory registered for tool: " + step_type)
 
-            step_obj = step_factory.build_from(step_id, meta)
+            # step_obj = step_factory.build_from(step_id, meta)
+            step_obj = Step(step_id, tool_type(), meta)
             pipeline_steps.append(step_obj)
 
         return pipeline_steps
@@ -296,18 +301,18 @@ class PipelineTranslator:
                         if len(output_dict) == 1:
                             s = next(iter(output_dict.values()))
                         else:
-                            raise Exception(f"The input tag {inp} requires more information to identify output from {input_node.label}")
+                            raise Exception(f"The input tag '{inp}' requires more information to identify output from '{input_node.label}'")
                     elif inp_tag_parts[1] in output_dict:
                         s = output_dict[inp_tag_parts[1]]
                     else:
-                        raise Exception(f"Couldn't uniquely identify output {input_node.label} for {step_node.label}"
-                                        f", searching for key: {inp_tag_parts[1]}")
+                        raise Exception(f"Couldn't uniquely identify output from '{input_node.label}' for '{step_node.label}'"
+                                        f", searching for key: '{inp_tag_parts[1]}'")
 
                 if s is None:
                     raise Exception("An internal error occurred when determining the connection between "
                                     f"{input_node.label} to {step_node.label} with tag {inp}")
 
-                correct_type = s.output_type.lower() == required_inputs[inp_tag].input_type.lower()
+                correct_type = s.output_type.can_receive_from(required_inputs[inp_tag].input_type)
                 if not correct_type:
                     Logger.log(f"Mismatch of types between {input_node.label} ({s.output_type}) to "
                                f"{step_node.label} with tag {inp} ({required_inputs[inp_tag].input_type})",

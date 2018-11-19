@@ -2,15 +2,32 @@
 # Untar a file
 #
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 
-from examples.unix_commands.data_types.tar_file import tar_file
-from pipeline_definition.types.step import Step
+from pipeline_definition.types.step import Step, Tool
 from pipeline_definition.types.step import StepFactory, ToolInput, ToolOutput
-from pipeline_definition.types.types import TarFile, File
+from examples.unix_commands.data_types.tar_file import TarFile
+from pipeline_definition.types.common_data_types import File
 
 
-class Untar(Step):
+class Untar(Tool):
+
+    @staticmethod
+    def tool():
+        return "Untar"
+
+    @staticmethod
+    def supported_translations() -> List[str]:
+        return ["cwl"]
+
+    def inputs(self) -> List[ToolInput]:
+        return [ToolInput("input", TarFile())]
+
+    def outputs(self) -> List[ToolOutput]:
+        return [ToolOutput("out", File())]
+
+
+class Untare(Step):
     def requires(self) -> Dict[str, ToolInput]:
         inp = self.get_input1()
         return {inp.tag: inp}

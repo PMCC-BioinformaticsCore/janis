@@ -1,10 +1,10 @@
 from typing import Any, Dict
 
-from pipeline_definition.types.input_type import InputFactory, InputType
+# from pipeline_definition.types.input_type import InputFactory, InputType
 from pipeline_definition.types.input_type import Input
 from pipeline_definition.utils.logger import Logger
 
-class_file = InputType('class', label='a java .class file', description='A compiled java binary class file')
+# class_file = InputType('class', label='a java .class file', description='A compiled java binary class file')
 
 
 class ClassFile(Input):
@@ -34,10 +34,10 @@ class ClassFile(Input):
         return False
 
 
-class ClassFileFactory(InputFactory):
-    @classmethod
-    def type(cls) -> InputType:
-        return class_file
+class ClassFileFactory(): #InputFactory
+    # @classmethod
+    # def type(cls) -> InputType:
+    #     return class_file
 
     @classmethod
     def schema(cls):

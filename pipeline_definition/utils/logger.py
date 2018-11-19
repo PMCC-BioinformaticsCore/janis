@@ -18,13 +18,17 @@ class _bcolors:
 
 class LogLevel:
     CRITICAL = 2    # RED
-    INFO = 3        # WHITE
-    DEBUG = 4       # GREY
+    WARNING = 3     # YELLO
+    INFO = 4        # WHITE
+    DEBUG = 5       # GREY
 
     @staticmethod
     def get_color(level: int):
         if level == LogLevel.CRITICAL:
             return _bcolors.FAIL
+
+        if level == LogLevel.WARNING:
+            return _bcolors.WARNING
 
         if level == LogLevel.INFO:
             return _bcolors.OKBLUE
@@ -38,6 +42,9 @@ class LogLevel:
     def get_str(level: int):
         if level == LogLevel.CRITICAL:
             return 'CRITICAL'
+
+        if level == LogLevel.WARNING:
+            return "WARN"
 
         if level == LogLevel.INFO:
             return 'INFO'

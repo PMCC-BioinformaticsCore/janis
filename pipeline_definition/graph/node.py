@@ -3,8 +3,11 @@
 
     Provides base class that different nodes must override, this translates closest to a Step
 """
+from abc import ABC, abstractmethod
+from typing import Dict
 
-from typing import Optional, List
+from pipeline_definition.types.tool import ToolInput, ToolOutput
+
 
 class NodeType:
     INPUT = 1
@@ -17,8 +20,14 @@ class NodeType:
         if node_type == NodeType.OUTPUT: return "Output"
         if node_type == NodeType.TASK: return "Task"
 
+    @staticmethod
+    def to_col(node_type: int):
+        if node_type == NodeType.INPUT: return "red"
+        if node_type == NodeType.OUTPUT: return "lightblue"
+        if node_type == NodeType.TASK: return "blue"
 
-class Node:
+
+class Node(ABC):
 
     _N_counter = 1
     _N_nodeId_map = {}
@@ -46,8 +55,10 @@ class Node:
     def __str__(self):
         return f"{NodeType.to_str(self.node_type)}: {self.label}"
 
-    def inputs(self) -> List:
+    @abstractmethod
+    def inputs(self) -> Dict[str, ToolInput]:
         raise Exception(f"Subclass {type(self)} must implement inputs, return dict: key: StepInput")
 
-    def outputs(self) -> dict:
+    @abstractmethod
+    def outputs(self) -> Dict[str, ToolOutput]:
         raise Exception(f"Subclass {type(self)} must implement outputs, return dict: key: StepOutput")

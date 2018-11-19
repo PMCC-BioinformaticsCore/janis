@@ -26,16 +26,17 @@ from networkx.readwrite import json_graph
 import pipeline_definition.types.schema as wehi_schema
 import pipeline_definition.utils.errors as errors
 from pipeline_definition.types.data_types import DataType
+from pipeline_definition.types.output import Output, OutputNode
 
 from pipeline_definition.utils.logger import Logger, LogLevel
 
 from pipeline_definition.graph.node import Node, NodeType
-from pipeline_definition.types.input_node import InputNode
+from pipeline_definition.types.input import InputNode
 from pipeline_definition.utils.yaml_utils import str_presenter
 from pipeline_definition.types.type_registry import get_tool, get_type
 # from pipeline_definition.types.type_registry import get_input_factory
 from pipeline_definition.types.step import Step, ToolOutput, StepNode
-from pipeline_definition.types.input_type import Input  #, InputFactory, InputType
+from pipeline_definition.types.input import Input  #, InputFactory, InputType
 
 yaml.add_representer(str, str_presenter)
 
@@ -57,6 +58,10 @@ class PipelineTranslator:
         self.__input_step: InputNode = None
         self.__work_graph: nx.Graph = None
         self.__labels_map: Dict[str, Node] = {}
+
+        self.__inputs: List[Input] = []
+        self.__steps: List[Step] = []
+        self.__outputs: List[Output] = []
 
     def _dump_as_yaml(self, doc: Dict[str, Any], indent: int = 2, prefix="YAML DOC") -> None:
         """
@@ -134,9 +139,9 @@ class PipelineTranslator:
 
         workflow_input_set: List[Input] = self._build_inputs(inputs)
         pipeline_steps: List[Step] = self._build_steps(steps)
-        workflow_output_set: List[Output] = self._build_outputs(outputs, )
+        workflow_output_set: List[Output] = self._build_outputs(outputs, workflow_input_set, pipeline_steps)
 
-        self.__work_graph = self._create_workflow_graph(pipeline_steps, workflow_input_set)
+        self.__work_graph = self._create_workflow_graph_and_outputs(pipeline_steps, workflow_input_set, workflow_output_set)
         self.draw_graph()
         self._dump_graph()
 
@@ -145,12 +150,14 @@ class PipelineTranslator:
     def draw_graph(self):
         import matplotlib.pyplot as plt
 
+        default_color = 'blacl'
+
         G = self.__work_graph
         edges_attributes = [G.edges[e] for e in G.edges]
-        edge_colors = [x["color"] for x in edges_attributes]
-        node_colors = ['blue' if x.node_type == NodeType.INPUT else 'black' for x in G.nodes]
+        edge_colors = [x["color"] if 'color' in x else default_color for x in edges_attributes]
+        node_colors = [NodeType.to_col(x.node_type) for x in G.nodes]
 
-        nx.draw(G, edge_color=edge_colors, colors=node_colors, with_labels=True)
+        nx.draw(G, edge_color=edge_colors, node_color=node_colors, with_labels=True)
         plt.show()
 
     def _build_inputs(self, inputs: Dict[str, Any]) -> List[Input]:
@@ -175,9 +182,9 @@ class PipelineTranslator:
                 # | input_type = meta["type"]
                 if "type" not in meta:
                     raise Exception("Input did not contain a 'type' field'")
-                input_type = meta["type"].lower()
+                input_type = meta["type"]
             else:
-                raise ValueError(f"Unrecognised type ({type(meta)}) for input {input_id}")
+                raise ValueError(f"Unrecognised type '{type(meta)}' for input {input_id}")
 
             Logger.log(f"Processing input from {input_id} with type: {input_type}")
 
@@ -195,9 +202,58 @@ class PipelineTranslator:
         return input_set
 
     @staticmethod
-    def _build_outputs(outputs):
-        # output_set: List[Output] = []
-        pass
+    def _build_outputs(outputs: Dict[str, Any], inputs: List[Input], steps: List[Step]) -> List[Output]:
+        """
+        We require the inputs / outputs because we need the types
+        :param outputs:
+        :param inputs:
+        :param steps:
+        :return:
+        """
+        outputs_ar: List[Output] = []
+        input_map: Dict[str, Input] = {s.id(): s for s in inputs}
+        step_map: Dict[str, Step] = {s.id(): s for s in steps}
+
+        for output_id in outputs:
+
+            output_source = outputs[output_id]
+            inp_tag_parts = output_source.split("/")
+            req_node = inp_tag_parts[0]
+
+            if req_node in input_map:
+                raise Exception(f"Not allowed to attach the input '{req_node}' to the output '{output_id}'")
+            if req_node not in step_map:
+                raise Exception(f"Could not find step '{req_node}' to attach to output '{output_id}")
+
+            # Beauty
+            step = step_map[req_node]
+            provides: Dict[str, ToolOutput] = step.provides()
+
+            if len(provides) == 0:
+                raise Exception(f"The step '{req_node}' does not contain any outputs to connect to the output: '{output_id}'")
+
+            if len(provides) == 1:
+                so = provides[next(iter(provides))]
+                if (len(inp_tag_parts)) == 1:
+                    Logger.log(f"Output '{output_id}' ({output_source}) should fully specify step/outputname",
+                               LogLevel.WARNING)
+                    output_source = f"{output_source}/{so.tag}"
+                elif inp_tag_parts[1] not in provides:
+                    Logger.log(f"Output '{output_id}' ({output_source}) did not correctly specify an output of '{req_node}', "
+                               f"this has been corrected as the step '{req_node}' only contained one ouput", LogLevel.WARNING)
+
+                output = Output(output_id, output_source, so.output_type)
+                outputs_ar.append(output)
+
+            else:
+                if len(inp_tag_parts) == 1:
+                    raise Exception(f"Output '{output_id}' ({output_source}) did not fully specify step/outputname")
+                if inp_tag_parts[1] not in provides:
+                    raise Exception(f"The output '{output_id}' could not find an output called '{inp_tag_parts[1]}' in '{req_node}'")
+                so = provides[inp_tag_parts[1]]
+                output = Output(output_id, output_source, so.output_type)
+                outputs_ar.append(output)
+        return outputs_ar
 
     def _build_steps(self, steps: Dict[str, Any]) -> List[Step]:
         """
@@ -238,7 +294,7 @@ class PipelineTranslator:
 
         return pipeline_steps
 
-    def _create_workflow_graph(self, pipeline_steps: List[Step], workflow_inputs: List[Input]) -> nx.Graph:
+    def _create_workflow_graph_and_outputs(self, pipeline_steps: List[Step], workflow_inputs: List[Input], workflow_outputs: List[Output]) -> nx.Graph:
         """
         Take the inputs, {outputs} and steps and stitch it all together
         :param pipeline_steps: List[Step]
@@ -259,8 +315,13 @@ class PipelineTranslator:
         step_nodes = [StepNode(step) for step in pipeline_steps]
         work_graph.add_nodes_from(step_nodes)
 
+        output_nodes = [OutputNode(output) for output in workflow_outputs]
+        work_graph.add_nodes_from(output_nodes)
+
         labels = { n.label: n for n in work_graph.nodes }
         Logger.log(f"Node labels: {labels}")
+
+        # Todo: Move the matching and type checking logic to the Input creation
 
         for step_node in step_nodes:
             # Create edges
@@ -319,6 +380,14 @@ class PipelineTranslator:
                                LogLevel.CRITICAL)
                 col = 'black' if correct_type else 'r'
                 work_graph.add_edge(input_node, step_node, type_match=correct_type, color=col)
+
+        for output_node in output_nodes:
+            # We did matching when creating outputs, so we can literally just add edges
+            req_node = output_node.output.source.split("/")[0]
+            if req_node not in labels:
+                raise Exception(f"Could not find step {req_node} when stitching output for '{output_node.label}'")
+            step_node = labels[req_node]
+            work_graph.add_edge(step_node, output_node, color='black')
 
         end = timer()
         Logger.log("Built DAG ({:2f} s)".format(end - start), LogLevel.INFO)

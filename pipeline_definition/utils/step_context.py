@@ -2,7 +2,7 @@ from typing import Dict
 
 import json
 
-from pipeline_definition.types.input_type import InputType
+# from pipeline_definition.types.input_type import InputType
 from pipeline_definition.types.step import Step
 
 

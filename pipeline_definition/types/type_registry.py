@@ -4,12 +4,12 @@
 from typing import List, Type
 
 # from pipeline_definition.types.input_type import InputFactory
-from pipeline_definition.types.step import StepFactory, Tool
+from pipeline_definition.types.step import Tool
 from pipeline_definition.types.data_types import DataType
 from pipeline_definition.utils.registry import Registry
 
 # __input_factories_registry = Registry[InputFactory]()
-__steps_registry = Registry[StepFactory]()
+# __steps_registry = Registry[StepFactory]()
 __tools_registry = Registry[Tool]()
 __types_registry = Registry[DataType]()
 
@@ -30,16 +30,16 @@ __types_registry = Registry[DataType]()
 
 # STEP FACTORIES
 
-def register_step_factory(factory: StepFactory):
-    __steps_registry.register(factory.type(), factory)
-
-
-def get_step_factory(type_name: str) -> StepFactory:
-    return __steps_registry.get(type_name)
-
-
-def get_step_factories() -> List[StepFactory]:
-    return __steps_registry.objects()
+# def register_step_factory(factory: StepFactory):
+#     __steps_registry.register(factory.type(), factory)
+#
+#
+# def get_step_factory(type_name: str) -> StepFactory:
+#     return __steps_registry.get(type_name)
+#
+#
+# def get_step_factories() -> List[StepFactory]:
+#     return __steps_registry.objects()
 
 
 # TOOLS

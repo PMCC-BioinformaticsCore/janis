@@ -12,7 +12,7 @@ inputs:
 
 outputs:
     untarred: untar/out
-    compiled: compile/out
+    compiled: compile
     tarred: tar/out
 
 steps:

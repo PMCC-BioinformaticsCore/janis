@@ -12,11 +12,11 @@ from pipeline_definition.types.step_type import StepFactory, StepInput, StepOutp
 class Untar(Step):
     def requires(self) -> Dict[str, StepInput]:
         inp = self.get_input1()
-        return { inp.tag: inp }
+        return {inp.tag: inp}
 
     def provides(self) -> Dict[str, StepOutput]:
         outp = self.get_output()
-        return { outp.tag: outp }
+        return {outp.tag: outp}
 
     def translate(self, mapped_inputs) -> Dict[str, Any]:
         xlate: Dict[str, Any] = {
@@ -35,15 +35,17 @@ class Untar(Step):
                     tar_step = candidate['step']
                     tar_id = candidate['id']
 
-        inx = dict()
-
-        inx['tarfile'] = {'source': f'{tar_step}/{tar_id}'}
-        inx['extractfile'] = 'hello.java'
+        inx: Dict[str, Any] = {
+            'tarfile': {
+                'source': f'{tar_step}/{tar_id}'
+            },
+            'extractfile': 'hello.java'
+        }
 
         xlate['in'] = inx
         xlate['out'] = ['untar']
 
-        return { self.id(): xlate }
+        return {self.id(): xlate}
 
     def cores(self) -> int:
         return 1
@@ -51,10 +53,12 @@ class Untar(Step):
     def ram(self) -> int:
         return 1000
 
-    def get_input1(self):
+    @staticmethod
+    def get_input1():
         return StepInput("input", "File")
 
-    def get_output(self):
+    @staticmethod
+    def get_output():
         return StepOutput("out", "File")
 
 

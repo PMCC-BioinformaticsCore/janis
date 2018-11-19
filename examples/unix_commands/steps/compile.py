@@ -2,7 +2,7 @@
 # Compile a java file
 #
 
-from typing import Dict
+from typing import Dict, Any
 
 from examples.unix_commands.data_types.generic_file import generic_file
 from pipeline_definition.types.step_type import Step, StepInput, StepOutput
@@ -21,11 +21,16 @@ class Compile(Step):
         out = self.get_output()
         return { inp.tag: inp for inp in [out] }
 
-    def translate(self, mapped_inputs) -> Dict[str, Dict]:
-        xlate = dict()
-
-        xlate['run'] = '../tools/src/tools/compile.cwl'
-        xlate['requirements'] = {'ResourceRequirement': {'coresMin': self.cores(), 'ramMin': self.ram()}}
+    def translate(self, mapped_inputs) -> Dict[str, Any]:
+        xlate: Dict[str, Any] = {
+            'run': '../tools/src/tools/compile.cwl',
+            'requirements': {
+                'ResourceRequirement': {
+                    'coresMin': self.cores(),
+                    'ramMin': self.ram()
+                }
+            }
+        }
 
         for mi in mapped_inputs:
             for candidate in mi.candidates.values():
@@ -33,10 +38,12 @@ class Compile(Step):
                     compile_step = candidate['step']
                     compile_id = candidate['id']
 
-        inx = dict()
-
-        inx['src'] = {'source': f'{compile_step}/{compile_id}'}
-        inx['extractfile'] = 'hello.java'
+        inx: Dict[str, Any] = {
+            'src': {
+                'source': f'{compile_step}/{compile_id}'
+            },
+            'extractfile': 'hello.java'
+        }
 
         xlate['in'] = inx
         xlate['out'] = ['classfile']

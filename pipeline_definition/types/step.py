@@ -1,33 +1,34 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Type, Any
 
 from pipeline_definition.graph.node import Node, NodeType
 from pipeline_definition.types.input_type import InputType
+from pipeline_definition.types.types import DataType
 from pipeline_definition.utils.logger import Logger
 
 
-class DependencySpec:
-    def __init__(self, tag: Optional[str], step: Optional[str], output: Optional[str]):
-        self.tag: Optional[str] = tag
-        self.step: Optional[str] = step
-        self.output: Optional[str] = output
-
-
-class StepInput:
-    def __init__(self, tag: str, input_type: str):
+class ToolInput:
+    def __init__(self, tag: str, input_type: Type[DataType]):
         """
-
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
         """
         self.tag = tag
-        self.input_type = input_type
+        self.input_type: Type[DataType] = input_type
 
 
-class StepOutput:
-    def __init__(self, tag: str, output_type: str):
+class ToolOutput:
+    def __init__(self, tag: str, output_type: Type[DataType]):
         self.tag = tag
-        self.output_type = output_type
+        self.output_type: Type[DataType] = output_type
+
+class Tool(ABC):
+
+    @staticmethod
+    def tool():
+        raise Exception("Tool MUST implement this method")
+
+
 
 
 class Step(ABC):
@@ -36,9 +37,6 @@ class Step(ABC):
         self.__id: str = label
         self.__meta = step_meta
         self.__inputs: Dict[str, Any] = {}
-
-    # def type(self) -> InputType:
-    #     return self.__type
 
     def id(self) -> str:
         return self.__id
@@ -59,14 +57,14 @@ class Step(ABC):
         return self.meta()[tag]
 
     @abstractmethod
-    def provides(self) -> Dict[str, StepOutput]:
+    def provides(self) -> Dict[str, ToolOutput]:
         # A map of output ids and output types. For example, an aligner might provide
         # {'aligned_file': bam_file}. Dependent steps can then access this as
         # align_step_id/aligned_file
         raise RuntimeError("Please provide implementation")
 
     @abstractmethod
-    def requires(self) -> Dict[str, StepInput]:
+    def requires(self) -> Dict[str, ToolInput]:
         # Return the input types required by this step
         raise RuntimeError("Please provide implementation")
 
@@ -125,26 +123,6 @@ class Step(ABC):
     def default_step_tag_name():
         return 'untagged'
 
-    @staticmethod
-    def dependency_spec_from(requirement_value: str) -> DependencySpec:
-
-        tag: Optional[str] = None
-        step: Optional[str] = None
-        output: Optional[str] = None
-
-        parts: List[str] = requirement_value.split(".")
-
-        head: str = parts[0]
-        if head.startswith("#"):
-            tag = head[1:]
-
-        return DependencySpec(tag, step, output)
-        # return {
-        #     'tag': tag,
-        #     'step': step,
-        #     'output': output
-        # }
-
     def provided_value_for_requirement(self, step_input: InputType):
 
         if self.__meta is None:
@@ -197,10 +175,10 @@ class StepNode(Node):
         super().__init__(NodeType.TASK, step.id())
         self.step = step
 
-    def inputs(self) -> Dict[str, StepInput]:
+    def inputs(self) -> Dict[str, ToolInput]:
         return self.step.requires()
 
-    def outputs(self) -> Dict[str, StepOutput]:
+    def outputs(self) -> Dict[str, ToolOutput]:
         return self.step.provides()
 
 

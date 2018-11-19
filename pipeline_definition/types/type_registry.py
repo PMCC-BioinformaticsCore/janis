@@ -4,7 +4,7 @@
 from typing import List
 
 from pipeline_definition.types.input_type import InputFactory
-from pipeline_definition.types.step_type import StepFactory
+from pipeline_definition.types.step import StepFactory
 from pipeline_definition.utils.registry import Registry
 
 __input_factories_registry = Registry[InputFactory]()

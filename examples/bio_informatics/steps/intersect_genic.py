@@ -1,5 +1,5 @@
-from pipeline_definition.types.step_type import StepFactory
-from pipeline_definition.types.step_type import Step, StepInput, StepOutput
+from pipeline_definition.types.step import StepFactory
+from pipeline_definition.types.step import Step, ToolInput, ToolOutput
 
 from typing import List, Dict
 
@@ -48,19 +48,19 @@ class IntersectStep(Step):
     def ram(self) -> int:
         return 512
 
-    def requires(self) -> Dict[str, StepInput]:
+    def requires(self) -> Dict[str, ToolInput]:
         inp = self.get_input1()
         return { inp.tag: inp }
 
-    def provides(self) -> Dict[str, StepOutput]:
+    def provides(self) -> Dict[str, ToolOutput]:
         outp = self.get_output()
         return { outp.tag: outp }
 
-    def get_input1(self) -> StepInput:
-        return StepInput("read", "SequenceReadArchivePaired")
+    def get_input1(self) -> ToolInput:
+        return ToolInput("read", "SequenceReadArchivePaired")
 
-    def get_output(self) -> StepOutput:
-        return StepOutput("reports", "Text")
+    def get_output(self) -> ToolOutput:
+        return ToolOutput("reports", "Text")
 
     # def provides(self):
     #   return [

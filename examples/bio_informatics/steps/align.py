@@ -1,5 +1,5 @@
-from pipeline_definition.types.step_type import StepFactory
-from pipeline_definition.types.step_type import Step, StepInput, StepOutput
+from pipeline_definition.types.step import StepFactory
+from pipeline_definition.types.step import Step, ToolInput, ToolOutput
 
 from typing import List, Dict
 
@@ -130,23 +130,23 @@ class AlignStep(Step):
     #         }
     #     ]
 
-    def provides(self) -> Dict[str, StepOutput]:
+    def provides(self) -> Dict[str, ToolOutput]:
         # return [trimmed_reads_type]
         outp = self.get_output()
         return {outp.tag: outp}
 
-    def requires(self) -> Dict[str, StepInput]:
+    def requires(self) -> Dict[str, ToolInput]:
         # return [paired_reads_type]
         inp1 = self.get_input1()
         inp2 = self.get_input2()
         inps = [inp1, inp2]
         return {inp.tag: inp for inp in inps}
 
-    def get_input1(self) -> StepInput:
-        return StepInput("trimmed-reads", "TrimmedReads")
+    def get_input1(self) -> ToolInput:
+        return ToolInput("trimmed-reads", "TrimmedReads")
 
-    def get_input2(self) -> StepInput:
-        return StepInput("reference", "reference")
+    def get_input2(self) -> ToolInput:
+        return ToolInput("reference", "reference")
 
-    def get_output(self) -> StepOutput:
-        return StepOutput("output", "bam")
+    def get_output(self) -> ToolOutput:
+        return ToolOutput("output", "bam")

@@ -5,16 +5,17 @@
 from typing import Dict, Any
 
 from examples.unix_commands.data_types.tar_file import tar_file
-from pipeline_definition.types.step_type import Step
-from pipeline_definition.types.step_type import StepFactory, StepInput, StepOutput
+from pipeline_definition.types.step import Step
+from pipeline_definition.types.step import StepFactory, ToolInput, ToolOutput
+from pipeline_definition.types.types import TarFile, File
 
 
 class Untar(Step):
-    def requires(self) -> Dict[str, StepInput]:
+    def requires(self) -> Dict[str, ToolInput]:
         inp = self.get_input1()
         return {inp.tag: inp}
 
-    def provides(self) -> Dict[str, StepOutput]:
+    def provides(self) -> Dict[str, ToolOutput]:
         outp = self.get_output()
         return {outp.tag: outp}
 
@@ -55,11 +56,11 @@ class Untar(Step):
 
     @staticmethod
     def get_input1():
-        return StepInput("input", "File")
+        return ToolInput("input", TarFile)
 
     @staticmethod
     def get_output():
-        return StepOutput("out", "File")
+        return ToolOutput("out", File)
 
 
 class UntarFactory(StepFactory):

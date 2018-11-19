@@ -1,8 +1,8 @@
 from typing import List
 
 from pipeline_definition.types.input_type import InputType
-from pipeline_definition.types.step_type import StepFactory
-from pipeline_definition.types.step_type import Step, StepInput, StepOutput
+from pipeline_definition.types.step import StepFactory
+from pipeline_definition.types.step import Step, ToolInput, ToolOutput
 
 from typing import List, Dict
 
@@ -67,18 +67,18 @@ class DedupStep(Step):
   #   #   }
   #   # ]
 
-  def provides(self) -> Dict[str, StepOutput]:
+  def provides(self) -> Dict[str, ToolOutput]:
     # return [trimmed_reads_type]
     outp = self.get_output()
     return {outp.tag: outp}
 
-  def requires(self) -> Dict[str, StepInput]:
+  def requires(self) -> Dict[str, ToolInput]:
     # return [paired_reads_type]
     inp = self.get_input()
     return {inp.tag: inp}
 
-  def get_input(self) -> StepInput:
-    return StepInput("bamfile", "bam")
+  def get_input(self) -> ToolInput:
+    return ToolInput("bamfile", "bam")
 
-  def get_output(self) -> StepOutput:
-    return StepOutput("bamfile", "bam")
+  def get_output(self) -> ToolOutput:
+    return ToolOutput("bamfile", "bam")

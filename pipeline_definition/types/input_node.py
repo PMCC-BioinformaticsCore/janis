@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from pipeline_definition.types.input_type import InputType, Input
-from pipeline_definition.types.step_type import Step, StepOutput
+from pipeline_definition.types.step import Step, ToolOutput
 from pipeline_definition.graph.node import Node, NodeType
 
 
@@ -16,9 +16,9 @@ class InputNode(Node):
         super().__init__(NodeType.INPUT, inp.id())
         self.input: Input = inp
 
-    def outputs(self) -> Dict[str, StepOutput]:
+    def outputs(self) -> Dict[str, ToolOutput]:
         # Program will just grab first value anyway
-        return {"output": StepOutput(self.input.id(), self.input.type())}
+        return {"output": ToolOutput(self.input.id(), self.input.type())}
 
     def inputs(self):
         return None

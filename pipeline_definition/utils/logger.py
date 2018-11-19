@@ -49,7 +49,7 @@ class LogLevel:
 
 
 class Logger:
-    CONSOLE_LEVEL: Optional[int] = LogLevel.CRITICAL
+    CONSOLE_LEVEL: Optional[int] = LogLevel.INFO
     WRITE_LEVEL: Optional[int] = LogLevel.DEBUG
 
     WRITE_LOCATION: Optional[str] = None

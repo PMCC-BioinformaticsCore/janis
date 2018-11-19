@@ -80,3 +80,4 @@ Notes:
 
 - Inheritance with type checking
 - How are secondary files dealt with, are they all passed?
+- Should inputs include actual values to generate the yaml?

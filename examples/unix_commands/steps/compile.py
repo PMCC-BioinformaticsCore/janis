@@ -5,19 +5,19 @@
 from typing import Dict, Any
 
 from examples.unix_commands.data_types.generic_file import generic_file
-from pipeline_definition.types.step_type import Step, StepInput, StepOutput
-from pipeline_definition.types.step_type import StepFactory
+from pipeline_definition.types.step import Step, ToolInput, ToolOutput
+from pipeline_definition.types.step import StepFactory
 
 
 class Compile(Step):
 
     input1 = "input"
 
-    def requires(self) -> Dict[str, StepInput]:
+    def requires(self) -> Dict[str, ToolInput]:
         inp1 = self.get_input1()
         return { inp1.tag: inp1 }
 
-    def provides(self) -> Dict[str, StepOutput]:
+    def provides(self) -> Dict[str, ToolOutput]:
         out = self.get_output()
         return { inp.tag: inp for inp in [out] }
 
@@ -56,11 +56,11 @@ class Compile(Step):
     def ram(self) -> int:
         return 2 * 4000
 
-    def get_input1(self) -> StepInput:
-        return StepInput(Compile.input1, "File")
+    def get_input1(self) -> ToolInput:
+        return ToolInput(Compile.input1, "File")
 
-    def get_output(self) -> StepOutput:
-        return StepOutput("out", "File")
+    def get_output(self) -> ToolOutput:
+        return ToolOutput("out", "File")
 
 
 

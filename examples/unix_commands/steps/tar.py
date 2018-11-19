@@ -3,18 +3,19 @@
 from typing import Dict
 
 from examples.unix_commands.data_types.tar_file import tar_file
-from pipeline_definition.types.step_type import Step
-from pipeline_definition.types.step_type import StepFactory, StepInput, StepOutput
+from pipeline_definition.types.step import Step
+from pipeline_definition.types.step import StepFactory, ToolInput, ToolOutput
+from pipeline_definition.types.types import File, TarFile, String
 
 
 class Tar(Step):
-    def requires(self) -> Dict[str, StepInput]:
+    def requires(self) -> Dict[str, ToolInput]:
         inp1 = self.get_input1()
         inp2 = self.get_input2()
         inp3 = self.get_input3()
         return {inp.tag: inp for inp in [inp1, inp2, inp3]}
 
-    def provides(self) -> Dict[str, StepOutput]:
+    def provides(self) -> Dict[str, ToolOutput]:
         outp = self.get_output()
         return {outp.tag: outp}
 
@@ -47,19 +48,19 @@ class Tar(Step):
 
     @staticmethod
     def get_input1():
-        return StepInput("input1", "File")
+        return ToolInput("input1", File)
 
     @staticmethod
     def get_input2():
-        return StepInput("input2", "File")
+        return ToolInput("input2", File)
 
     @staticmethod
     def get_input3():
-        return StepInput("tarName", "String")
+        return ToolInput("tarName", String)
 
     @staticmethod
     def get_output():
-        return StepOutput("out", "File")
+        return ToolOutput("out", TarFile)
 
 
 class TarFactory(StepFactory):

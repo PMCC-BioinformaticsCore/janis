@@ -1,5 +1,5 @@
-from pipeline_definition.types.step_type import StepFactory, Step, StepInput, StepOutput
-from pipeline_definition.types.step_type import Step
+from pipeline_definition.types.step import StepFactory, Step, ToolInput, ToolOutput
+from pipeline_definition.types.step import Step
 from pipeline_definition.types.input_type import InputType
 
 from typing import List, Dict
@@ -39,11 +39,11 @@ class FastQCStep(Step):
     def input_labels(self) -> [str]:
         return [FastQCStep.input1]
 
-    def requires(self) -> Dict[str, StepInput]:
+    def requires(self) -> Dict[str, ToolInput]:
         inp = self.get_input1()
         return { inp.tag: inp }
 
-    def provides(self) -> Dict[str, StepOutput]:
+    def provides(self) -> Dict[str, ToolOutput]:
         outp = self.get_output()
         return { outp.tag: outp }
 
@@ -62,8 +62,8 @@ class FastQCStep(Step):
     #     """
     #     return [self.get_input1()]
 
-    def get_input1(self) -> StepInput:
-        return StepInput("input", "SequenceReadArchivePaired")
+    def get_input1(self) -> ToolInput:
+        return ToolInput("input", "SequenceReadArchivePaired")
 
-    def get_output(self) -> StepOutput:
-        return StepOutput("reports", "Text")
+    def get_output(self) -> ToolOutput:
+        return ToolOutput("reports", "Text")

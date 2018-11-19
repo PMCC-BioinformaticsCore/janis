@@ -16,6 +16,8 @@ import io
 import json
 import yaml
 from typing import List, Dict, Any, Optional
+from timeit import default_timer as timer
+
 
 import networkx as nx
 from cerberus import Validator
@@ -31,7 +33,7 @@ from pipeline_definition.types.input_node import InputNode
 from pipeline_definition.utils.yaml_utils import str_presenter
 from pipeline_definition.types.type_registry import get_step_factory
 from pipeline_definition.types.type_registry import get_input_factory
-from pipeline_definition.types.step_type import Step, StepOutput, StepNode
+from pipeline_definition.types.step import Step, ToolOutput, StepNode
 from pipeline_definition.types.input_type import InputFactory, Input, InputType
 
 yaml.add_representer(str, str_presenter)
@@ -55,29 +57,15 @@ class PipelineTranslator:
         self.__work_graph: nx.Graph = None
         self.__labels_map: Dict[str, Node] = {}
 
-    def _debug_print(self, *args) -> None:
-        """
-        It would be great to potentially move this to a singleton and
-        having levels of errors that this class could auto filter out.
-        Potentially something like:
-            - None
-            - Critical (RED)
-            - Information (WHITE)
-            - Debug (GRAY)
-        :param args:
-        :return: None
-        """
-        Logger.log("".join(args))
-
     def _dump_as_yaml(self, doc: Dict[str, Any], indent: int = 2, prefix="YAML DOC") -> None:
         """
         Dump the provided dictionary as a YAML document
         :param doc: Dict[str, Any]
         """
         # Diagnostic - what have we got?
-        self._debug_print(f"{prefix} [")
-        self._debug_print(yaml.dump(doc, indent=indent))
-        self._debug_print(f"] END {prefix}")
+        Logger.log(f"{prefix} [")
+        Logger.log(yaml.dump(doc, indent=indent))
+        Logger.log(f"] END {prefix}")
 
     def __do_translate(self, doc: Dict[str, Any]) -> None:
         """
@@ -90,9 +78,9 @@ class PipelineTranslator:
 
         # Now convert the YAML doc?
         self._translate_yaml_doc(doc)
-        self._debug_print("Translation Output: [")
-        self._debug_print(self.__work_graph)
-        self._debug_print("]")
+        Logger.log("Translation Output: [")
+        Logger.log(self.__work_graph)
+        Logger.log("]")
 
     def validate_schema(self, yaml_doc: Dict[str, Any]) -> bool:
         """
@@ -111,10 +99,10 @@ class PipelineTranslator:
         validation_success: bool = v.validate(yaml_doc)
 
         if validation_success:
-            self._debug_print("Schema is Valid")
+            Logger.log("Schema is Valid")
         else:
             msg = "ERROR! Pipeline definition document validation failed."
-            self._debug_print(msg)
+            Logger.log(msg)
             if v.errors is not None:
                 raise ValueError(msg, v.errors)
         return validation_success
@@ -171,7 +159,7 @@ class PipelineTranslator:
         :return: List[Input] >> All the inputs in the workflow
         """
         input_set: List[Input] = []
-        Logger.log("Building inputs", LogLevel.INFO)
+        Logger.log("Building inputs", LogLevel.DEBUG)
 
         for input_id, meta in inputs.items():           # StepLabel, StepProperties/Data
 
@@ -179,7 +167,7 @@ class PipelineTranslator:
             if isinstance(meta, str):
                 # Our step is just a string, ie, it's the tool
                 input_type = "string"
-                meta = { "type": input_type, "value": meta }
+                meta = {"type": input_type, "value": meta}
 
             elif isinstance(meta, dict):
                 # mfranklin: I don't think this is extremely clear, I'd probably propose a "type" field, ie:
@@ -188,9 +176,8 @@ class PipelineTranslator:
                     raise Exception("Input did not contain a 'type' field'")
                 input_type = meta["type"].lower()
             else:
-                raise ValueError(f"Rerecognised type ({type(meta)}) for input")
+                raise ValueError(f"Unrecognised type ({type(meta)}) for input {input_id}")
 
-            self._debug_print(f"Processing INPUT: {input_id} - {input_type}")
             Logger.log(f"Processing input from {input_id} with type: {input_type}")
 
             inp_factory: InputFactory = get_input_factory(input_type)
@@ -201,7 +188,7 @@ class PipelineTranslator:
             input_obj = inp_factory.build_from(input_id, meta)
             input_set.append(input_obj)
 
-        Logger.log(f"Built {len(input_set)} inputs", LogLevel.INFO)
+        Logger.log(f"Successfully constructed {len(input_set)} inputs", LogLevel.INFO)
 
         return input_set
 
@@ -253,6 +240,8 @@ class PipelineTranslator:
         :param workflow_inputs: List[Input]
         :return: a networx graph
         """
+        start = timer()
+        Logger.log("Building DAG...", LogLevel.INFO)
         work_graph = nx.MultiDiGraph()                  # Use the DAG from networx
 
         # Lets create the input step - the start step of every workflow that produces the workflow inputs as step output
@@ -267,7 +256,6 @@ class PipelineTranslator:
 
         labels = { n.label: n for n in work_graph.nodes }
         Logger.log(f"Node labels: {labels}")
-
 
         for step_node in step_nodes:
             # Create edges
@@ -284,7 +272,7 @@ class PipelineTranslator:
                 key = f"{inp}>{step_node.label}/{inp_tag}"
 
                 # Check types
-                s: Optional[StepOutput] = None    # the specified step output
+                s: Optional[ToolOutput] = None    # the specified step output
                 if input_node.node_type == NodeType.OUTPUT:
                     raise Exception(f"Can't connect output {input_node.label} to "
                                     f"input {step_node.label} with tag {inp}")
@@ -327,8 +315,10 @@ class PipelineTranslator:
                 col = 'black' if correct_type else 'r'
                 work_graph.add_edge(input_node, step_node, type_match=correct_type, color=col)
 
-        return work_graph
+        end = timer()
+        Logger.log("Built DAG ({:2f} s)".format(end - start), LogLevel.INFO)
 
+        return work_graph
 
     def _dump_graph(self):
         work_graph = self.__work_graph
@@ -475,12 +465,12 @@ requirements:
 
     def _translate_workflow_to_json(self):
         work_graph = self.__work_graph
-        self._debug_print("Generating JSON description for workflow")
+        Logger.log("Generating JSON description for workflow")
         ctx_attr_map = nx.get_node_attributes(work_graph, 'ctx')
         type_attr_map = nx.get_edge_attributes(work_graph, 'type')
         workflow = self._describe_workflow(work_graph, self.__input_step, type_attr_map, ctx_attr_map)
         json_doc = {"workflow": workflow}
-        self._debug_print("Done generating JSON description for workflow")
+        Logger.log("Done generating JSON description for workflow")
         return json_doc
 
     def _describe_workflow(self, work_graph, input_step, type_attr_map, ctx_attr_map):
@@ -566,7 +556,7 @@ requirements:
 
     def translate_file(self, pdfile):
         pdfile_path = os.path.abspath(pdfile)
-        self._debug_print("Using pipeline definition file: " + pdfile_path)
+        Logger.log("Using pipeline definition file: " + pdfile_path)
 
         # Check if the file to translate exists
         if not os.path.isfile(pdfile_path):

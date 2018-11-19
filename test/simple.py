@@ -31,6 +31,7 @@ steps:
         input2: compile/out
 """
 
+
 class SimplePipeline():
 
     @staticmethod

@@ -3,8 +3,8 @@ from typing import List, Dict
 from examples.bio_informatics.data_types.paired_read import paired_reads_type
 from examples.bio_informatics.data_types.trimmed_reads import trimmed_reads_type
 from pipeline_definition.types.input_type import InputType
-from pipeline_definition.types.step_type import StepFactory
-from pipeline_definition.types.step_type import Step, StepInput, StepOutput
+from pipeline_definition.types.step import StepFactory
+from pipeline_definition.types.step import Step, ToolInput, ToolOutput
 
 
 class TrimFactory(StepFactory):
@@ -93,18 +93,18 @@ class TrimStep(Step):
         return {self.id(): xlate}
 
     # InputType('TrimmedReads', label='A pair of sequence files that have been trimmed')
-    def provides(self) -> Dict[str, StepOutput]:
+    def provides(self) -> Dict[str, ToolOutput]:
         # return [trimmed_reads_type]
         outp = self.get_output()
         return { outp.tag: outp }
 
-    def requires(self) -> Dict[str, StepInput]:
+    def requires(self) -> Dict[str, ToolInput]:
         # return [paired_reads_type]
         inp = self.get_input()
         return { inp.tag: inp }
 
-    def get_input(self) -> StepInput:
-        return StepInput("reads2", "SequenceReadArchivePaired")
+    def get_input(self) -> ToolInput:
+        return ToolInput("reads2", "SequenceReadArchivePaired")
 
-    def get_output(self) -> StepOutput:
-        return StepOutput("output", "TrimmedReads")
+    def get_output(self) -> ToolOutput:
+        return ToolOutput("output", "TrimmedReads")

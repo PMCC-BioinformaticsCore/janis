@@ -17,6 +17,14 @@ To update the requirements.txt to reflect the latest dependency requirements,
 
 Uses NetworkX library: https://networkx.github.io/
 
+## Requirements
+
+This document should consume the WEHI Pipeline Definition Language and emit a translation into CWL (later: WDL). It should contain:
+    - A fully specified workflow.
+    - A zip of the references (the tools).
+    - An input yaml file.
+
+It should have the option to produce a visual graph (as it build the DAG) and perform basic typechecking between connections.
 
 ## WEHI Pipeline Definition Language
 Following discussions with Evan, I've put together a little _guide_ on how I've interpreted the pipeline language (_name?_).
@@ -67,3 +75,8 @@ steps:
 
 Notes:
 - You must NOT have a label called "input"
+
+### Questions
+
+- Inheritance with type checking
+- How are secondary files dealt with, are they all passed?

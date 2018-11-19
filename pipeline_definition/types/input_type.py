@@ -3,6 +3,10 @@
 #
 from abc import ABC, abstractmethod
 
+from pipeline_definition.utils.errors import NotFoundException
+from pipeline_definition.utils.logger import Logger
+from pipeline_definition.utils.registry import Registry
+
 # The InputType defines a data object that is required as an input to a bit of software
 # or produced by a bit of software. Typically, these will be an object in a store like a POSIX
 # file system or they may be a collection of files or objects that go together. Examples are
@@ -16,10 +20,6 @@ from abc import ABC, abstractmethod
 
 # Type name quoted here because of Python's inability to handle circular dependencies
 # https://www.python.org/dev/peps/pep-0484/#forward-references
-from pipeline_definition.utils.errors import NotFoundException
-from pipeline_definition.utils.logger import Logger, LogLevel
-from pipeline_definition.utils.registry import Registry
-
 __input_types = Registry['InputType']()
 
 
@@ -29,7 +29,11 @@ def register_input_type(input_type: 'InputType'):
 
 def get_input_type(type_name: str) -> 'InputType':
     try:
-        return __input_types.get(type_name)
+        n = __input_types.get(type_name)
+        if n is not None:
+            return n
+        raise NotFoundException(f'Input type {type_name} is not recognized. ' +
+                                'This might mean a typo in the pipeline for a missing import.')
     except KeyError:
         raise NotFoundException(f'Input type {type_name} is not recognized. ' +
                                 'This might mean a typo in the pipeline for a missing import.')

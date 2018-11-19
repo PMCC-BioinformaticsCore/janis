@@ -33,7 +33,7 @@ class StepOutput:
 class Step(ABC):
 
     def __init__(self, label: str, step_meta: Dict[str, Any]):
-        self.__id = label
+        self.__id: str = label
         self.__meta = step_meta
         self.__inputs: Dict[str, Any] = {}
 
@@ -184,10 +184,9 @@ class StepFactory(ABC):
         return ['cwl']
 
     @classmethod
-    def build_from(cls, label: str, step_meta: dict, debug=False) -> Step:
+    def build_from(cls, label: str, step_meta: dict) -> Step:
         step_type = cls.type()
-        if debug:
-            print(step_type, "factory: Building from", step_meta)
+        Logger.log(f"{step_type} factory: Building from {step_meta}")
         obj = cls.build(label, step_meta)
         obj.identify()
         return obj

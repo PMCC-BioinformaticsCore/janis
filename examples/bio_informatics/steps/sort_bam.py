@@ -49,8 +49,6 @@ class SortBam(Step):
       }
     ]
 
-  def translate(self, mapped_inputs):
-    pass
 
   def cores(self):
     return 8

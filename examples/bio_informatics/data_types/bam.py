@@ -9,9 +9,8 @@ bam_file_type = InputType('bam', label='a BAM file', description='A binary align
 
 class BamInput(Input):
 
-  def __init__(self, input_dict, debug=False):
-    super().__init__(input_dict)
-    self.__debug = debug
+  def __init__(self, label: str, meta: dict):
+    super().__init__(label, meta)
     self.path = None
     self._files = []
     self._resolved = False
@@ -36,8 +35,6 @@ class BamInput(Input):
 
   def identify(self):
     super().identify()
-    if self.__debug:
-      print("Path:", self.path)
 
   def datum_type(self) -> InputType:
     return self.type()
@@ -70,5 +67,5 @@ class BamFactory(InputFactory):
     }
 
   @classmethod
-  def build(cls, input_dict, debug=False) -> BamInput:
-    return BamInput(input_dict, debug=debug)
+  def build(cls, label: str, meta: dict) -> BamInput:
+    return BamInput(label, meta)

@@ -2,6 +2,8 @@
     Logger - Controls logging of the application
 """
 from datetime import datetime
+from typing import Optional, TextIO
+
 
 class _bcolors:
     HEADER = '\033[95m'
@@ -15,7 +17,6 @@ class _bcolors:
 
 
 class LogLevel:
-    NONE = 1
     CRITICAL = 2    # RED
     INFO = 3        # WHITE
     DEBUG = 4       # GREY
@@ -48,17 +49,50 @@ class LogLevel:
 
 
 class Logger:
-    CONSOLE_LEVEL = LogLevel.CRITICAL
-    DISK_LEVEL = LogLevel.DEBUG
+    CONSOLE_LEVEL: Optional[int] = LogLevel.CRITICAL
+    WRITE_LEVEL: Optional[int] = LogLevel.DEBUG
+
+    WRITE_LOCATION: Optional[str] = None
+    __WRITE_POINTER: Optional[TextIO] = None
+
+    @staticmethod
+    def set_console_level(level: Optional[int]):
+        Logger.CONSOLE_LEVEL = level
+
+    @staticmethod
+    def set_write_level(level: Optional[int]):
+        Logger.WRITE_LEVEL = level
+
+    @staticmethod
+    def set_write_location(location: str):
+        if Logger.__WRITE_POINTER is not None:
+            Logger.__WRITE_POINTER.close()
+
+        if location is None:
+            Logger.WRITE_LOCATION = None
+            Logger.__WRITE_POINTER = None
+            return
+
+        Logger.WRITE_LOCATION = location
+        Logger.__WRITE_POINTER = open(location, "w+")
+
+    @staticmethod
+    def close_file():
+        if Logger.__WRITE_POINTER is not None:
+            Logger.__WRITE_POINTER.close()
 
     @staticmethod
     def log(message: str, level: int = LogLevel.DEBUG):
-        if level == LogLevel.NONE:
+        if level is None:
+            # This is a developer error, we should never try to log with no level, it's purely for
             return
 
-        if level <= Logger.CONSOLE_LEVEL:
-            print(f"{LogLevel.get_color(level)} {Logger.get_prefix(level)}: {message}")
+        m = f"{Logger.get_prefix(level)}: {message}"
+        if Logger.CONSOLE_LEVEL is not None and level <= Logger.CONSOLE_LEVEL:
+            print(LogLevel.get_color(level) + m)
 
+        if Logger.WRITE_LEVEL is not None and level <= Logger.WRITE_LEVEL and Logger.__WRITE_POINTER is not None:
+            Logger.__WRITE_POINTER.write(m + "\n")
 
     @staticmethod
     def get_prefix(level: int):

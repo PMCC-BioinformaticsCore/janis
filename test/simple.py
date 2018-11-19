@@ -36,9 +36,10 @@ class SimplePipeline():
     @staticmethod
     def test_simple():
         from pipeline_definition.pipeline_translator import PipelineTranslator
-        Logger.CONSOLE_LEVEL = LogLevel.DEBUG
+        Logger.set_write_location("/Users/franklinmichael/source/wehi-pipeline-definition/simple.log")
         translator = PipelineTranslator()
         translation = translator.translate_string(_yml)
+        Logger.close_file()
         print(translation)
 
 

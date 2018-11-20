@@ -61,35 +61,6 @@ class Boolean(DataType):
         return next(iter(meta.values()))
 
 
-class Array(DataType):
-    def __init__(self, t: DataType, optional=False):
-        if not isinstance(t, DataType):
-            raise Exception(f"Type t ({type(t)}) must be an instance of 'Type'")
-
-        self.__t = t
-        super().__init__(optional)
-
-    @staticmethod
-    def name():
-        return f"Array"
-
-    @staticmethod
-    def doc():
-        return "An array"
-
-    @classmethod
-    def schema(cls) -> Dict:
-        return {"type": "array"}
-
-    def can_receive_from(self, other):
-        if not self.__t.can_receive_from(other):
-            return False
-        return super().can_receive_from(other)
-
-    def input_field_from_input(self, meta):
-        return next(iter(meta.values()))
-
-
 class File(DataType):
 
     @staticmethod
@@ -112,6 +83,45 @@ class File(DataType):
             "class": "File",
             "path": meta["path"]
         }
+
+
+class Array(DataType):
+    def __init__(self, t: DataType=File(), optional=False):
+        if not isinstance(t, DataType):
+            raise Exception(f"Type t ({type(t)}) must be an instance of 'Type'")
+
+        self.__t = t
+        super().__init__(optional)
+
+    @staticmethod
+    def name():
+        return f"Array"
+
+    def id(self):
+        if self.__t is None:
+            return super().id()
+        t = self.__t
+        typed = f"Array<{t.id()}>"
+        if self.optional:
+            return f"Optional<{typed}>"
+        return typed
+
+    @staticmethod
+    def doc():
+        return "An array"
+
+    @classmethod
+    def schema(cls) -> Dict:
+        return {"type": "array"}
+
+    def can_receive_from(self, other):
+        if not self.__t.can_receive_from(other):
+            return False
+        return super().can_receive_from(other)
+
+    def input_field_from_input(self, meta):
+        return next(iter(meta.values()))
+
 
 
 register_type(String)

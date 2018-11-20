@@ -8,11 +8,6 @@ inputs:
         path: /Users/franklinmichael/source/simple-workflow/hello.tar
     tarName: hello.tar
 
-outputs:
-    untarred: untar/out
-    compiled: compile
-    tarred: tar/out
-
 steps:
     untar:
         tool: untar
@@ -27,10 +22,15 @@ steps:
         tarName: tarName
         input1: untar/out
         input2: compile/out
+        
+outputs:
+    untarred: untar/out
+    compiled: compile
+    tarred: tar/out
 """
 
 
-class SimplePipeline():
+class SimplePipeline:
 
     @staticmethod
     def test_simple():

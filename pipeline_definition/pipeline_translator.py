@@ -25,6 +25,7 @@ from networkx.readwrite import json_graph
 
 import pipeline_definition.types.schema as wehi_schema
 import pipeline_definition.utils.errors as errors
+from pipeline_definition.types.common_data_types import String, Number, Boolean, Array
 from pipeline_definition.types.data_types import DataType
 from pipeline_definition.types.output import Output, OutputNode
 
@@ -171,35 +172,59 @@ class PipelineTranslator:
 
         for input_id, meta in inputs.items():           # StepLabel, StepProperties/Data
 
-            input_type: str                             # Declare this here to improve clarity inside loop
-            if isinstance(meta, str):
-                # Our step is just a string, ie, it's the tool
-                input_type = "string"
-                meta = {"type": input_type, "value": meta}
-
-            elif isinstance(meta, dict):
-                # mfranklin: I don't think this is extremely clear, I'd probably propose a "type" field, ie:
-                # | input_type = meta["type"]
-                if "type" not in meta:
-                    raise Exception("Input did not contain a 'type' field'")
-                input_type = meta["type"]
-            else:
-                raise ValueError(f"Unrecognised type '{type(meta)}' for input {input_id}")
-
-            Logger.log(f"Processing input from {input_id} with type: {input_type}")
-
-            inp_type: Type[DataType] = get_type(input_type)
-            if inp_type is None:
-                raise ValueError("No input type registered for name: " + input_type)
+            Logger.log(f"Processing input: '{input_id}'")
+            input_type: DataType = self._parse_known_type(meta, input_id)
+            Logger.log(f"Detected '{input_id}' as type: '{input_type.id()}'")
 
             # Build an Input from this data
             # input_obj = inp_factory.build_from(input_id, meta)
-            input_obj = Input(input_id, inp_type())
+            input_obj = Input(input_id, input_type, meta)
             input_set.append(input_obj)
 
         Logger.log(f"Successfully constructed {len(input_set)} inputs", LogLevel.INFO)
 
         return input_set
+
+    def _parse_known_type(self, meta, input_id) -> DataType:
+        if isinstance(meta, str):
+            return String()
+        elif isinstance(meta, int) or isinstance(meta, float):
+            return Number()
+        elif isinstance(meta, bool):
+            return Boolean()
+        elif isinstance(meta, list):
+            # Todo: Be recursive here
+            t = self._parse_array_type(meta, input_id)
+            return Array(t)
+        elif isinstance(meta, dict):
+            if "type" not in meta:
+                raise Exception(f"Must include 'type' field for input: '{input_id}'")
+            detected_type = meta["type"]
+            matched_type = get_type(detected_type)
+            if matched_type is None:
+                raise Exception(f"No input type '{detected_type}' registered for input '{input_id}'")
+            return matched_type()
+        else:
+            raise ValueError(f"Unrecognised type '{type(meta)}' for input {input_id}")
+
+    def _parse_array_type(self, meta: List, input_id) -> Optional[DataType]:
+        types = {}
+        for x in meta:
+            if "type" in x:
+                t = get_type(x["type"])()
+            else:
+                t = self._parse_known_type(x)
+            types[t.name()] = t
+
+        if len(types) == 0:
+            Logger.log(f"Could not determine type of array for input: '{input_id}'", LogLevel.WARNING)
+            return None
+        elif len(types) == 1:
+            return next(iter(types.values()))
+
+        raise Exception(f"This version does not support multi-typed arrays for input '{input_id}', detected types: "
+                        f"{','.join(iter(types.keys()))}. It also does not support determining the "
+                        f"lowest common denominator type. Please submit a bug if you think this is in error.")
 
     @staticmethod
     def _build_outputs(outputs: Dict[str, Any], inputs: List[Input], steps: List[Step]) -> List[Output]:

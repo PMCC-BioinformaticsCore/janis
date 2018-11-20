@@ -22,6 +22,14 @@ Tools to implement:
 
 _yml = """
 inputs:
+    bwa_threads: 8
+    bwa_tumor_reads:
+        - type: File
+          path: /Users/franklinmichael/source/seqliner-cwl/data/Vespa10-2029T-REDUCED_ACTTGA_L007_R1_001.fastq.gz 
+        - type: File
+          path: /Users/franklinmichael/source/seqliner-cwl/data/Vespa10-2029T-REDUCED_ACTTGA_L007_R2_001.fastq.gz 
+    
+
     bwa_ref:
         type: bwa
         base: path/to/bwa/ref.fasta
@@ -35,7 +43,7 @@ steps:
 
     bwa-mem-tumor:
         tool: bwa-mem
-        output_filename: bwa_tumor_output_filename
+        vcfIdx: bwa_tumor_output_filename
         readGroup: bwa_readGroup
         reads: bwa_tumor_reads 
         reference: bwa_reference
@@ -43,10 +51,10 @@ steps:
         
     sam-view-tumor:
         tool: samtools-view
-        input: bwa-mem-tumor/output
+        input: bwa-mem-tumor/out
         output_name: sam_tumor_output_name
         
-    picard-sortsam-tumor
+    picard-sortsam-tumor:
         tool: picard-sortsam
         inputFileName_sortSam: sam-view-tumor/output
         outputFileName_sortSam: sortsam_tumor_outputFileName_sortSam
@@ -182,9 +190,9 @@ steps:
         bedFile: haplotype_bedFile
         bamOutput: haplotype_normal_bamOutput
     
-    =========================    
+    #=========================    
 
-  gatk-mutect:
+    gatk-mutect:
         tool: gatk-mutect2
         inputBam_tumor: gather-pr-tumor-index/output
         inputBam_normal: gather-pr-normal-index/output
@@ -194,7 +202,7 @@ steps:
         dbsnp: mutect_dbsnp
         cosmic: mutect_cosmic
     
-    ==================    
+    #==================    
         
         
         

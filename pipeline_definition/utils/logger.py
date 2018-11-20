@@ -56,7 +56,7 @@ class LogLevel:
 
 
 class Logger:
-    CONSOLE_LEVEL: Optional[int] = LogLevel.INFO
+    CONSOLE_LEVEL: Optional[int] = LogLevel.DEBUG
     WRITE_LEVEL: Optional[int] = LogLevel.DEBUG
 
     WRITE_LOCATION: Optional[str] = None
@@ -96,7 +96,7 @@ class Logger:
 
         m = f"{Logger.get_prefix(level)}: {message}"
         if Logger.CONSOLE_LEVEL is not None and level <= Logger.CONSOLE_LEVEL:
-            print(LogLevel.get_color(level) + m)
+            print(LogLevel.get_color(level) + m + _bcolors.ENDC)
 
         if Logger.WRITE_LEVEL is not None and level <= Logger.WRITE_LEVEL and Logger.__WRITE_POINTER is not None:
             Logger.__WRITE_POINTER.write(m + "\n")

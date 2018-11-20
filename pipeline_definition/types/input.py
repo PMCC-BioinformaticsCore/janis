@@ -6,9 +6,11 @@ from pipeline_definition.graph.node import Node, NodeType
 
 
 class Input:
-    def __init__(self, label: str, data_type: DataType):
+    def __init__(self, label: str, data_type: DataType, value):
         self.label: str = label
         self.data_type: DataType = data_type
+        # Will have type represented by data_type
+        self.value = value
 
     def id(self):
         return self.label

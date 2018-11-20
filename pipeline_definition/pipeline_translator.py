@@ -18,7 +18,6 @@ import yaml
 from typing import List, Dict, Any, Optional, Type
 from timeit import default_timer as timer
 
-
 import networkx as nx
 from cerberus import Validator
 from networkx.readwrite import json_graph
@@ -34,10 +33,10 @@ from pipeline_definition.utils.logger import Logger, LogLevel
 from pipeline_definition.graph.node import Node, NodeType
 from pipeline_definition.types.input import InputNode
 from pipeline_definition.utils.yaml_utils import str_presenter
-from pipeline_definition.types.type_registry import get_tool, get_type
+from pipeline_definition.types.type_registry import get_tool, get_type, get_tools
 # from pipeline_definition.types.type_registry import get_input_factory
 from pipeline_definition.types.step import Step, ToolOutput, StepNode
-from pipeline_definition.types.input import Input  #, InputFactory, InputType
+from pipeline_definition.types.input import Input  # , InputFactory, InputType
 
 yaml.add_representer(str, str_presenter)
 
@@ -142,7 +141,8 @@ class PipelineTranslator:
         pipeline_steps: List[Step] = self._build_steps(steps)
         workflow_output_set: List[Output] = self._build_outputs(outputs, workflow_input_set, pipeline_steps)
 
-        self.__work_graph = self._create_workflow_graph_and_outputs(pipeline_steps, workflow_input_set, workflow_output_set)
+        self.__work_graph = self._create_workflow_graph_and_outputs(pipeline_steps, workflow_input_set,
+                                                                    workflow_output_set)
         self.draw_graph()
         self._dump_graph()
 
@@ -170,7 +170,7 @@ class PipelineTranslator:
         input_set: List[Input] = []
         Logger.log("Building inputs", LogLevel.DEBUG)
 
-        for input_id, meta in inputs.items():           # StepLabel, StepProperties/Data
+        for input_id, meta in inputs.items():  # StepLabel, StepProperties/Data
 
             Logger.log(f"Processing input: '{input_id}'")
             input_type: DataType = self._parse_known_type(meta, input_id)
@@ -255,7 +255,8 @@ class PipelineTranslator:
             provides: Dict[str, ToolOutput] = step.provides()
 
             if len(provides) == 0:
-                raise Exception(f"The step '{req_node}' does not contain any outputs to connect to the output: '{output_id}'")
+                raise Exception(
+                    f"The step '{req_node}' does not contain any outputs to connect to the output: '{output_id}'")
 
             if len(provides) == 1:
                 so = provides[next(iter(provides))]
@@ -265,10 +266,11 @@ class PipelineTranslator:
                                f"{output_source} → {new_output_source}", LogLevel.WARNING)
                     output_source = new_output_source
                 elif inp_tag_parts[1] not in provides:
-                    new_output_source = f"{output_source}/{so.tag}"
+                    new_output_source = f"{inp_tag_parts[0]}/{so.tag}"
                     Logger.log(f"Output '{output_id}' did not correctly specify an output of '{req_node}', "
                                f"this has been corrected as the step '{req_node}' only contained one ouput: "
                                f"{output_source} → {new_output_source}", LogLevel.WARNING)
+                    output_source = new_output_source
 
                 output = Output(output_id, output_source, so.output_type)
                 outputs_ar.append(output)
@@ -277,7 +279,8 @@ class PipelineTranslator:
                 if len(inp_tag_parts) == 1:
                     raise Exception(f"Output '{output_id}' ({output_source}) did not fully specify step/outputname")
                 if inp_tag_parts[1] not in provides:
-                    raise Exception(f"The output '{output_id}' could not find an output called '{inp_tag_parts[1]}' in '{req_node}'")
+                    raise Exception(
+                        f"The output '{output_id}' could not find an output called '{inp_tag_parts[1]}' in '{req_node}'")
                 so = provides[inp_tag_parts[1]]
                 output = Output(output_id, output_source, so.output_type)
                 outputs_ar.append(output)
@@ -299,8 +302,8 @@ class PipelineTranslator:
 
             step_type: Optional[str]
 
-            if isinstance(meta, str):       # I don't think we'll allow this to happen, because it still
-                step_type = str(meta)       # implies type inferencing to some point, or maybe all outputs go to this
+            if isinstance(meta, str):  # I don't think we'll allow this to happen, because it still
+                step_type = str(meta)  # implies type inferencing to some point, or maybe all outputs go to this
                 meta = {step_type: None}
             elif isinstance(meta, dict):
                 step_type = Step.select_type_name_from(meta)
@@ -314,7 +317,7 @@ class PipelineTranslator:
 
             tool_type = get_tool(step_type)
             if tool_type is None:
-                raise ValueError("No factory registered for tool: " + step_type)
+                raise ValueError(f"Could not find the tool '{step_type}' for step: {step_id}")
 
             # step_obj = step_factory.build_from(step_id, meta)
             step_obj = Step(step_id, tool_type(), meta)
@@ -322,7 +325,8 @@ class PipelineTranslator:
 
         return pipeline_steps
 
-    def _create_workflow_graph_and_outputs(self, pipeline_steps: List[Step], workflow_inputs: List[Input], workflow_outputs: List[Output]) -> nx.Graph:
+    def _create_workflow_graph_and_outputs(self, pipeline_steps: List[Step], workflow_inputs: List[Input],
+                                           workflow_outputs: List[Output]) -> nx.Graph:
         """
         Take the inputs, {outputs} and steps and stitch it all together
         :param pipeline_steps: List[Step]
@@ -331,7 +335,7 @@ class PipelineTranslator:
         """
         start = timer()
         Logger.log("Building DAG...", LogLevel.INFO)
-        work_graph = nx.MultiDiGraph()                  # Use the DAG from networx
+        work_graph = nx.MultiDiGraph()  # Use the DAG from networx
 
         # Lets create the input step - the start step of every workflow that produces the workflow inputs as step output
         # self.__input_step = InputNode(workflow_inputs)
@@ -346,7 +350,7 @@ class PipelineTranslator:
         output_nodes = [OutputNode(output) for output in workflow_outputs]
         work_graph.add_nodes_from(output_nodes)
 
-        labels = { n.label: n for n in work_graph.nodes }
+        labels = {n.label: n for n in work_graph.nodes}
         Logger.log(f"Node labels: {labels}")
 
         # Todo: Move the matching and type checking logic to the Input creation
@@ -362,11 +366,11 @@ class PipelineTranslator:
 
                 input_node: Node = labels[required_step_label]
 
-                # Todo: generate unique identifier of edge (startLabel/tag > endLabel/input) + check if types match
+                # Todo: generate unique identifier of edge (startLabel/tag > endLabel/input)
                 key = f"{inp}>{step_node.label}/{inp_tag}"
 
                 # Check types
-                s: Optional[ToolOutput] = None    # the specified step output
+                s: Optional[ToolOutput] = None  # the specified step output
                 if input_node.node_type == NodeType.OUTPUT:
                     raise Exception(f"Can't connect output {input_node.label} to "
                                     f"input {step_node.label} with tag {inp}")
@@ -375,7 +379,7 @@ class PipelineTranslator:
                     # Get the only value in the key
                     if len(output_dict) == 0:
                         raise Exception(f"Failed when connecting {input_node.label} to {step_node.label}"
-                            f"\n\tImplementation of {input_node.label} incorrectly returns no type for input {inp}")
+                                        f"\n\tImplementation of {input_node.label} incorrectly returns no type for input {inp}")
                     if len(output_dict) > 1:
                         raise Exception(f"Implementation of input with {input_node.label} contains "
                                         f"{len(output_dict)} outputs, and we assert exactly 1 output")
@@ -390,22 +394,26 @@ class PipelineTranslator:
                         if len(output_dict) == 1:
                             s = next(iter(output_dict.values()))
                         else:
-                            raise Exception(f"The input tag '{inp}' requires more information to identify output from '{input_node.label}'")
+                            raise Exception(
+                                f"The input tag '{inp}' requires more information to identify output from '{input_node.label}'")
                     elif inp_tag_parts[1] in output_dict:
                         s = output_dict[inp_tag_parts[1]]
                     else:
-                        raise Exception(f"Couldn't uniquely identify output from '{input_node.label}' for '{step_node.label}'"
-                                        f", searching for key: '{inp_tag_parts[1]}'")
+                        raise Exception(
+                            f"Couldn't uniquely identify output from '{input_node.label}' for '{step_node.label}'"
+                            f", searching for key: '{inp_tag_parts[1]}'")
 
                 if s is None:
                     raise Exception("An internal error occurred when determining the connection between "
                                     f"{input_node.label} to {step_node.label} with tag {inp}")
-
-                correct_type = s.output_type.can_receive_from(required_inputs[inp_tag].input_type)
+                input_type = required_inputs[inp_tag].input_type
+                correct_type = input_type.can_receive_from(s.output_type)
+                # Todo: Throw specific message if types match but type is Optional
                 if not correct_type:
-                    Logger.log(f"Mismatch of types between {input_node.label} ({s.output_type}) to "
-                               f"{step_node.label} with tag {inp} ({required_inputs[inp_tag].input_type})",
+                    Logger.log(f"Mismatch of types when joining '{input_node.label}' to {step_node.label}/{inp}' "
+                               f"({s.output_type.id()} -/→ {required_inputs[inp_tag].input_type.id()})",
                                LogLevel.CRITICAL)
+
                 col = 'black' if correct_type else 'r'
                 work_graph.add_edge(input_node, step_node, type_match=correct_type, color=col)
 
@@ -432,7 +440,8 @@ class PipelineTranslator:
 
     def _check_translated(self):
         if self.__work_graph is None:
-            raise errors.PipelineTranslatorException('called a translation method before attempting to extract translated components.')
+            raise errors.PipelineTranslatorException(
+                'called a translation method before attempting to extract translated components.')
 
     def input(self, resolve=False):
         self._check_translated()

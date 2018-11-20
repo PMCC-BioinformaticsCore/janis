@@ -1,10 +1,7 @@
-from typing import List, Dict
+from typing import Dict
 
-from examples.bio_informatics.data_types.paired_read import paired_reads_type
-from examples.bio_informatics.data_types.trimmed_reads import trimmed_reads_type
-from pipeline_definition.types.input_type import InputType
-from pipeline_definition.types.step import StepFactory
 from pipeline_definition.types.step import Step, ToolInput, ToolOutput
+from pipeline_definition.types.step import StepFactory
 
 
 class TrimFactory(StepFactory):
@@ -41,7 +38,7 @@ class TrimFactory(StepFactory):
 class TrimStep(Step):
 
     def __init__(self, input_dict, debug=False):
-        super().__init__(input_dict, debug=debug)
+        super().__init__(input_dict)
         if self.meta()['trimmer'] != 'trimmomatic':
             raise Exception('Sorry, only trimmomatic is supported at the moment.')
 

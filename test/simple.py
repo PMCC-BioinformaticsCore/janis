@@ -6,7 +6,7 @@ inputs:
     tarfile:
         type: TarFile
         path: /Users/franklinmichael/source/simple-workflow/hello.tar
-    tarName: hello.tar
+    tarName: 12 #hello.tar
 
 steps:
     untar:

@@ -1,4 +1,5 @@
 import examples.unix_commands
+import examples.bio_informatics
 from pipeline_definition.utils.logger import Logger, LogLevel
 
 
@@ -31,7 +32,7 @@ inputs:
     
 
     bwa_ref:
-        type: bwa
+        type: RefFasta
         base: path/to/bwa/ref.fasta
         
     sam_tumor_output_name: string

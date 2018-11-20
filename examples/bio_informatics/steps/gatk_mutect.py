@@ -12,7 +12,7 @@ from pipeline_definition.types.tool import Tool, ToolOutput, ToolInput
 class GatkMutect(Tool):
     @staticmethod
     def tool():
-        return "gatk-mutect"
+        return "gatk-mutect2"
 
     @staticmethod
     def supported_translations() -> List[str]:

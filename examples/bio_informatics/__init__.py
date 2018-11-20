@@ -1,39 +1,33 @@
-# from pipeline_definition.types.type_registry import register_input_factory
-# from pipeline_definition.types.type_registry import register_step_factory
-#
-# from examples.bio_informatics.data_types.bam import BamFactory
-# from examples.bio_informatics.data_types.sorted_bam import SortedBamFactory
-# from examples.bio_informatics.data_types.reference import ReferenceFactory
-# from examples.bio_informatics.data_types.paired_read import PairedReadFactory
-# from examples.bio_informatics.data_types.trimmed_reads import TrimmedReadFactory
-# from examples.bio_informatics.data_types.text import TextFactory
-#
-# from examples.bio_informatics.steps.index_bam import IndexBamFactory
-# from examples.bio_informatics.steps.sort_bam import SortBamFactory
-# from examples.bio_informatics.steps.align import AlignFactory
-# from examples.bio_informatics.steps.trim import TrimFactory
-# from examples.bio_informatics.steps.call import CallFactory
-# from examples.bio_informatics.steps.joint_call import JointCallFactory
-# from examples.bio_informatics.steps.dedup import DedupFactory
-# from examples.bio_informatics.steps.fastqc import FastQCFactory
-# from examples.bio_informatics.steps.intersect_genic import IntersectFactory
-#
-# register_input_factory(PairedReadFactory())
-# register_input_factory(TrimmedReadFactory())
-# register_input_factory(BamFactory())
-# register_input_factory(SortedBamFactory())
-# register_input_factory(ReferenceFactory())
-# register_input_factory(TextFactory())
-#
-# register_step_factory(AlignFactory())
-# register_step_factory(IndexBamFactory())
-# register_step_factory(SortBamFactory())
-# register_step_factory(TrimFactory())
-# register_step_factory(CallFactory())
-# register_step_factory(JointCallFactory())
-# register_step_factory(DedupFactory())
-# register_step_factory(FastQCFactory())
-# register_step_factory(IntersectFactory())
-#
-#
-#
+import os
+import glob
+import importlib
+
+from pipeline_definition.types.data_types import DataType
+from pipeline_definition.types.tool import Tool
+from pipeline_definition.types.type_registry import register_tool, register_type
+from constants import PROJECT_ROOT_DIR
+from pipeline_definition.utils.logger import Logger
+
+d = os.path.dirname(os.path.abspath(__file__))
+for file in glob.glob(os.path.join(d, "**/*.py"), recursive=True):
+    # name = os.path.splitext(os.path.basename(file))[0]
+    if os.path.basename(file).startswith("__"):
+        continue
+
+    name = os.path.splitext(file.replace(PROJECT_ROOT_DIR + "/", ""))[0].replace("/", ".")
+    try:
+        module = importlib.import_module(name)
+        q = {n: cls for n, cls in list(module.__dict__.items()) if not n.startswith("__")}
+        for cc in q:
+
+            cls = q[cc]
+            if issubclass(cls, Tool) and cls != Tool:
+                if register_tool(cls):
+                    Logger.log("Registered tool: " + cls.tool())
+
+            elif issubclass(cls, DataType) and cls != DataType:
+                if register_type(cls):
+                    Logger.log("Registered type: " + cls.name())
+
+    except:
+        continue

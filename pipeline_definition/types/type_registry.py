@@ -44,8 +44,9 @@ __types_registry = Registry[DataType]()
 
 # TOOLS
 
-def register_tool(tool: Type[Tool]):
-    __tools_registry.register(tool.tool().lower(), tool)
+def register_tool(tool: Type[Tool]) -> bool:
+    tool_id: str = tool.tool().lower()
+    return __tools_registry.register(tool_id, tool)
 
 
 def get_tool(tool_name: str) -> Type[Tool]:
@@ -55,11 +56,13 @@ def get_tool(tool_name: str) -> Type[Tool]:
 def get_tools() -> List[Type[Tool]]:
     return __tools_registry.objects()
 
+
 # Types
 
 
-def register_type(data_type: Type[DataType]):
-    __types_registry.register(data_type.name().lower(), data_type)
+def register_type(data_type: Type[DataType]) -> bool:
+    type_id = data_type.name().lower()
+    return __types_registry.register(type_id, data_type)
 
 
 def get_type(type_name: str) -> Type[DataType]:

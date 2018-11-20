@@ -18,10 +18,10 @@ class Untar(Tool):
         return ["cwl"]
 
     def inputs(self) -> List[ToolInput]:
-        return [ToolInput("input", TarFile())]
+        return [ToolInput("input", TarFile(optional=True))]
 
     def outputs(self) -> List[ToolOutput]:
-        return [ToolOutput("out", File())]
+        return [ToolOutput("out", File(optional=True))]
 
 
 # class Untare(Step):

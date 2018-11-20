@@ -1,6 +1,5 @@
 from typing import List
 
-from pipeline_definition.types.input_type import InputType
 from pipeline_definition.types.step import StepFactory
 from pipeline_definition.types.step import Step, ToolInput, ToolOutput
 

@@ -62,8 +62,10 @@ class DataType(ABC):
         if not isinstance(other, type(self)):
             return False
         if self.optional:
+            # If I'm optional I can receive from optional / non optional
             return True
-        return self.optional == other.optional
+        # If I'm not optional, I must receive from not optional
+        return not other.optional
 
     def input_field_from_input(self, meta):
         """

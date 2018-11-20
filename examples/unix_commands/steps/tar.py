@@ -2,7 +2,7 @@
 # Untar a file
 from typing import List
 
-from pipeline_definition.types.common_data_types import File, Number
+from pipeline_definition.types.common_data_types import File, String
 from pipeline_definition.types.step import Tool, ToolInput, ToolOutput
 
 
@@ -17,7 +17,7 @@ class Tar(Tool):
         return ["cwl"]
 
     def inputs(self) -> List[ToolInput]:
-        return [ToolInput("input1", File()), ToolInput("input2", File()), ToolInput("tarName", Number())]
+        return [ToolInput("input1", File()), ToolInput("input2", File()), ToolInput("tarName", String())]
 
     def outputs(self) -> List[ToolOutput]:
         return [ToolOutput("out", File())]

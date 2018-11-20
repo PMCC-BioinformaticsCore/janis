@@ -11,7 +11,8 @@
     We are allowed to require that a type must register itself when loaded.
 
 """
-from abc import ABC
+from abc import ABC, abstractmethod
+from typing import Any, List, Dict
 
 
 class DataType(ABC):
@@ -20,16 +21,27 @@ class DataType(ABC):
         self.optional = optional
 
     @staticmethod
+    @abstractmethod
     def name():
         raise Exception("Subclass MUST override name field")
 
     @staticmethod
+    @abstractmethod
     def doc():
         return """
         Subclasses should override this class to provide additional information on how to
         correctly provide data to the class, what inputs it may have and what other types
         are compatible
         """
+
+    @staticmethod
+    def validate(meta: Any) -> bool:
+        return True
+
+    @classmethod
+    @abstractmethod
+    def schema(cls) -> Dict:
+        raise Exception("Subclass MUST override the 'schema' method")
 
     # The following methods don't need to be overriden, but can be
 
@@ -54,4 +66,9 @@ class DataType(ABC):
         return self.optional == other.optional
 
     def input_field_from_input(self, meta):
+        """
+        Method to convert the field definition into a generic CWL-esque response
+        :param meta:
+        :return:
+        """
         return None

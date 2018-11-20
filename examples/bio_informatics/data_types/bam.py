@@ -1,3 +1,20 @@
+from typing import Any, List, Dict
+
+from pipeline_definition.types.common_data_types import File
+from pipeline_definition.types.data_types import DataType
+
+
+class Bam(File):
+
+    @staticmethod
+    def name():
+        return "BAM"
+
+    @staticmethod
+    def doc():
+        return "A binary version of a SAM file, http://software.broadinstitute.org/software/igv/bam"
+
+
 # import glob
 #
 # from pipeline_definition.types.input_type import InputFactory, InputType
@@ -30,7 +47,7 @@
 #     return {self.id(): fd}
 #
 #   def resolve(self):
-#     self._resolved = True
+#     self._resolved = Truex
 #     self._files = glob.glob(self.meta()['path'])
 #
 #   def identify(self):

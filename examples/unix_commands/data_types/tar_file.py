@@ -1,8 +1,11 @@
-from typing import Dict
-
-# from pipeline_definition.types.input_type import InputFactory, InputType
-# from pipeline_definition.types.input_type import Input
 from pipeline_definition.types.common_data_types import File
+
+
+class TarFile(File):
+    @staticmethod
+    def name():
+        return "TarFile"
+
 
 # tar_file = InputType('tar_file', label='a unix tar archive', description='A unix compressed or uncompressed tar archive')
 #
@@ -56,8 +59,3 @@ from pipeline_definition.types.common_data_types import File
 #   def is_subtype_of(self, other):
 #     return False
 
-
-class TarFile(File):
-    @staticmethod
-    def name():
-        return "TarFile"

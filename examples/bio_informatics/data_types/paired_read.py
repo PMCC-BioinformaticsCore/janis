@@ -1,3 +1,28 @@
+from typing import Any, Dict
+
+from pipeline_definition.types.data_types import DataType
+
+
+class SequenceReadArchivePaired(DataType):
+
+    associated_files = []
+
+    @staticmethod
+    def name():
+        return "SequenceReadArchivePaired"
+
+    @staticmethod
+    def doc():
+        pass
+
+    @classmethod
+    def schema(cls) -> Dict:
+        return {
+            "forward-pattern": {"type": "string", "required": True},
+            "backward-pattern": {"type": "string", "required": True}
+        }
+
+
 # import glob
 #
 # from pipeline_definition.types.input_type import InputFactory, InputType, Input

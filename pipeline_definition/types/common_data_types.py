@@ -1,6 +1,8 @@
 ###################
 # Implementations #
 ###################
+from typing import Dict
+
 from pipeline_definition.types.data_types import DataType
 from pipeline_definition.types.type_registry import register_type
 
@@ -10,6 +12,14 @@ class String(DataType):
     @staticmethod
     def name():
         return "String"
+
+    @staticmethod
+    def doc():
+        return "A string"
+
+    @classmethod
+    def schema(cls) -> Dict:
+        return {"type": "string", "required": True}
 
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
@@ -21,6 +31,14 @@ class Number(DataType):
     def name():
         return "Number"
 
+    @staticmethod
+    def doc():
+        return "A number"
+
+    @classmethod
+    def schema(cls) -> Dict:
+        return {"type": "number", "required": True}
+
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
 
@@ -30,6 +48,14 @@ class Boolean(DataType):
     @staticmethod
     def name():
         return "Boolean"
+
+    @staticmethod
+    def doc():
+        return "A number"
+
+    @classmethod
+    def schema(cls) -> Dict:
+        return {"type": "boolean", "required": True}
 
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
@@ -47,6 +73,14 @@ class Array(DataType):
     def name():
         return f"Array"
 
+    @staticmethod
+    def doc():
+        return "An array"
+
+    @classmethod
+    def schema(cls) -> Dict:
+        return {"type": "array"}
+
     def can_receive_from(self, other):
         if not self.__t.can_receive_from(other):
             return False
@@ -61,6 +95,16 @@ class File(DataType):
     @staticmethod
     def name():
         return "File"
+
+    @staticmethod
+    def doc():
+        return "A file, whether local, referenced or online (s3 / gs), this program doesn't concern as of 2018-11-20"
+
+    @classmethod
+    def schema(cls) -> Dict:
+        return {
+            "path": {"type": "string", "required": True}
+        }
 
     def input_field_from_input(self, meta):
         # WDL: "{workflowName}.label" = meta["path"}

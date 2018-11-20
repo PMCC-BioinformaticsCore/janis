@@ -235,12 +235,15 @@ class PipelineTranslator:
             if len(provides) == 1:
                 so = provides[next(iter(provides))]
                 if (len(inp_tag_parts)) == 1:
-                    Logger.log(f"Output '{output_id}' ({output_source}) should fully specify step/outputname",
-                               LogLevel.WARNING)
-                    output_source = f"{output_source}/{so.tag}"
+                    new_output_source = f"{output_source}/{so.tag}"
+                    Logger.log(f"Output '{output_id}' should fully specify step/outputname: "
+                               f"{output_source} → {new_output_source}", LogLevel.WARNING)
+                    output_source = new_output_source
                 elif inp_tag_parts[1] not in provides:
-                    Logger.log(f"Output '{output_id}' ({output_source}) did not correctly specify an output of '{req_node}', "
-                               f"this has been corrected as the step '{req_node}' only contained one ouput", LogLevel.WARNING)
+                    new_output_source = f"{output_source}/{so.tag}"
+                    Logger.log(f"Output '{output_id}' did not correctly specify an output of '{req_node}', "
+                               f"this has been corrected as the step '{req_node}' only contained one ouput: "
+                               f"{output_source} → {new_output_source}", LogLevel.WARNING)
 
                 output = Output(output_id, output_source, so.output_type)
                 outputs_ar.append(output)

@@ -1,13 +1,10 @@
-#
-# Untar a file
-#
+from typing import List
 
-from typing import Dict, Any, List
-
-from pipeline_definition.types.step import Step, Tool
-from pipeline_definition.types.step import StepFactory, ToolInput, ToolOutput
 from examples.unix_commands.data_types.tar_file import TarFile
+
 from pipeline_definition.types.common_data_types import File
+from pipeline_definition.types.step import Tool
+from pipeline_definition.types.step import ToolInput, ToolOutput
 
 
 class Untar(Tool):
@@ -27,86 +24,86 @@ class Untar(Tool):
         return [ToolOutput("out", File())]
 
 
-class Untare(Step):
-    def requires(self) -> Dict[str, ToolInput]:
-        inp = self.get_input1()
-        return {inp.tag: inp}
-
-    def provides(self) -> Dict[str, ToolOutput]:
-        outp = self.get_output()
-        return {outp.tag: outp}
-
-    def translate(self, mapped_inputs) -> Dict[str, Any]:
-        xlate: Dict[str, Any] = {
-            'run': '../tools/src/tools/tar-param.cwl',
-            'requirements': {
-                'ResourceRequirement': {
-                    'coresMin': self.cores(),
-                    'ramMin': self.ram()
-                }
-            }
-        }
-
-        for mi in mapped_inputs:
-            for candidate in mi.candidates.values():
-                if mi.input_type == tar_file.type_name():  # and candidate['tag'] == self.tag():
-                    tar_step = candidate['step']
-                    tar_id = candidate['id']
-
-        inx: Dict[str, Any] = {
-            'tarfile': {
-                'source': f'{tar_step}/{tar_id}'
-            },
-            'extractfile': 'hello.java'
-        }
-
-        xlate['in'] = inx
-        xlate['out'] = ['untar']
-
-        return {self.id(): xlate}
-
-    def cores(self) -> int:
-        return 1
-
-    def ram(self) -> int:
-        return 1000
-
-    @staticmethod
-    def get_input1():
-        return ToolInput("input", TarFile)
-
-    @staticmethod
-    def get_output():
-        return ToolOutput("out", File)
-
-
-class UntarFactory(StepFactory):
-    @classmethod
-    def type(cls) -> str:
-        return 'untar'
-
-    @classmethod
-    def label(cls) -> str:
-        return 'untar a file'
-
-    @classmethod
-    def description(cls) -> str:
-        return 'untar an archive and extract one or more files. Directories probably won\'t work.'
-
-    @classmethod
-    def schema(cls) -> dict:
-        return {
-          'schema': {
-            'untar': {
-              'type': 'string'
-            }
-          },
-          'nullable': True
-        }
-
-    @classmethod
-    def build(cls, label: str, meta: dict) -> Untar:
-        return Untar(label, meta)
+# class Untare(Step):
+#     def requires(self) -> Dict[str, ToolInput]:
+#         inp = self.get_input1()
+#         return {inp.tag: inp}
+#
+#     def provides(self) -> Dict[str, ToolOutput]:
+#         outp = self.get_output()
+#         return {outp.tag: outp}
+#
+#     def translate(self, mapped_inputs) -> Dict[str, Any]:
+#         xlate: Dict[str, Any] = {
+#             'run': '../tools/src/tools/tar-param.cwl',
+#             'requirements': {
+#                 'ResourceRequirement': {
+#                     'coresMin': self.cores(),
+#                     'ramMin': self.ram()
+#                 }
+#             }
+#         }
+#
+#         for mi in mapped_inputs:
+#             for candidate in mi.candidates.values():
+#                 if mi.input_type == tar_file.type_name():  # and candidate['tag'] == self.tag():
+#                     tar_step = candidate['step']
+#                     tar_id = candidate['id']
+#
+#         inx: Dict[str, Any] = {
+#             'tarfile': {
+#                 'source': f'{tar_step}/{tar_id}'
+#             },
+#             'extractfile': 'hello.java'
+#         }
+#
+#         xlate['in'] = inx
+#         xlate['out'] = ['untar']
+#
+#         return {self.id(): xlate}
+#
+#     def cores(self) -> int:
+#         return 1
+#
+#     def ram(self) -> int:
+#         return 1000
+#
+#     @staticmethod
+#     def get_input1():
+#         return ToolInput("input", TarFile)
+#
+#     @staticmethod
+#     def get_output():
+#         return ToolOutput("out", File)
+#
+#
+# class UntarFactory(StepFactory):
+#     @classmethod
+#     def type(cls) -> str:
+#         return 'untar'
+#
+#     @classmethod
+#     def label(cls) -> str:
+#         return 'untar a file'
+#
+#     @classmethod
+#     def description(cls) -> str:
+#         return 'untar an archive and extract one or more files. Directories probably won\'t work.'
+#
+#     @classmethod
+#     def schema(cls) -> dict:
+#         return {
+#           'schema': {
+#             'untar': {
+#               'type': 'string'
+#             }
+#           },
+#           'nullable': True
+#         }
+#
+#     @classmethod
+#     def build(cls, label: str, meta: dict) -> Untar:
+#         return Untar(label, meta)
 
 
 """

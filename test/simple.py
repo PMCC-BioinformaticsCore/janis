@@ -4,11 +4,9 @@ from pipeline_definition.utils.logger import Logger, LogLevel
 _yml = """
 inputs:
     tarfile:
-        type: File
+        type: TarFile
         path: /Users/franklinmichael/source/simple-workflow/hello.tar
-    tarName: 
-        type: File
-        path: hello.tar
+    tarName: hello.tar
 
 outputs:
     untarred: untar/out

@@ -28,5 +28,5 @@ class GatkPrintReads(Tool):
     def outputs(self) -> List[ToolOutput]:
         return [
             ToolOutput("out", File()),
-            ToolOutput("out-idx", File())
+            ToolOutput("out_idx", File())
         ]

@@ -19,18 +19,20 @@ from typing import List, Dict, Any, Optional, Type
 from timeit import default_timer as timer
 
 import networkx as nx
-from cerberus import Validator
+# from networkx.drawing.nx_agraph import  import graphviz
 from networkx.readwrite import json_graph
+from cerberus import Validator
 
 import pipeline_definition.types.schema as wehi_schema
 import pipeline_definition.utils.errors as errors
 from pipeline_definition.types.common_data_types import String, Number, Boolean, Array
 from pipeline_definition.types.data_types import DataType
 from pipeline_definition.types.output import Output, OutputNode
+from pipeline_definition.types.tool import ToolInput
 
 from pipeline_definition.utils.logger import Logger, LogLevel
 
-from pipeline_definition.graph.node import Node, NodeType
+from pipeline_definition.graph.node import Node, NodeType, layout_nodes
 from pipeline_definition.types.input import InputNode
 from pipeline_definition.utils.yaml_utils import str_presenter
 from pipeline_definition.types.type_registry import get_tool, get_type, get_tools
@@ -53,7 +55,7 @@ yaml.add_representer(str, str_presenter)
 
 class PipelineTranslator:
     def __init__(self):
-        Logger.log("Creating PipelineTranslator", LogLevel.CRITICAL)
+        Logger.log("Creating PipelineTranslator", LogLevel.INFO)
 
         self.__input_step: InputNode = None
         self.__work_graph: nx.Graph = None
@@ -141,7 +143,7 @@ class PipelineTranslator:
         pipeline_steps: List[Step] = self._build_steps(steps)
         workflow_output_set: List[Output] = self._build_outputs(outputs, workflow_input_set, pipeline_steps)
 
-        self.__work_graph = self._create_workflow_graph_and_outputs(pipeline_steps, workflow_input_set,
+        self.__work_graph = self._create_workflow_graph(pipeline_steps, workflow_input_set,
                                                                     workflow_output_set)
         self.draw_graph()
         self._dump_graph()
@@ -158,7 +160,12 @@ class PipelineTranslator:
         edge_colors = [x["color"] if 'color' in x else default_color for x in edges_attributes]
         node_colors = [NodeType.to_col(x.node_type) for x in G.nodes]
 
-        nx.draw(G, edge_color=edge_colors, node_color=node_colors, with_labels=True)
+        pos = layout_nodes(list(G.nodes))
+
+        for n in pos:
+            G.node[n]['pos'] = pos[n]
+
+        nx.draw(G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=False)
         plt.show()
 
     def _build_inputs(self, inputs: Dict[str, Any]) -> List[Input]:
@@ -325,7 +332,7 @@ class PipelineTranslator:
 
         return pipeline_steps
 
-    def _create_workflow_graph_and_outputs(self, pipeline_steps: List[Step], workflow_inputs: List[Input],
+    def _create_workflow_graph(self, pipeline_steps: List[Step], workflow_inputs: List[Input],
                                            workflow_outputs: List[Output]) -> nx.Graph:
         """
         Take the inputs, {outputs} and steps and stitch it all together
@@ -351,32 +358,68 @@ class PipelineTranslator:
         work_graph.add_nodes_from(output_nodes)
 
         labels = {n.label: n for n in work_graph.nodes}
-        Logger.log(f"Node labels: {labels}")
 
         # Todo: Move the matching and type checking logic to the Input creation
 
         for step_node in step_nodes:
-            # Create edges
-            required_inputs = step_node.step.requires()
+            step = step_node.step
+            step_tool = step.get_tool()                   # Tool that the step references
+            required_inputs = step.requires()             # All inputs required for the tool
+
             for inp_tag in required_inputs:
-                inp = step_node.step.input_value(inp_tag)
+
+                # ORDER:
+                #   1. Get the input type to link
+                #   2. Try and find this type in the step body
+                #       (a) - If it's optional, skip
+                #       (b) - else: throw error
+                #   3. Determine where the input is coming from (input / other step)
+                #   4. Try to exactly connect the input to the output/tag
+                #       (a) If there's only one output, log warning if it doesn't exactly match
+                #       (b) If there are multiple outputs, raise Exception if it doesn't exactly match
+                #   5. Check that the types match
+                #   6. Add edge
+                #
+
+                #   1.
+                tool_input: ToolInput = required_inputs[inp_tag]    # The current input we're testing
+                input_type: DataType = tool_input.input_type        # The DataType we need
+
+                #   2.
+                inp = step.input_value(inp_tag)
+
+                if inp is None:
+                    #   2. (a)
+                    if input_type.optional:
+                        continue
+                    #   2. (b)
+                    raise Exception(f"Step '{step_node.label}' (tool: '{step_tool.tool()}') did not contain"
+                                    f" the required input '{inp_tag}' with type: '{input_type.id()}'")
+
+                #   3.
                 # Get the correct label, to build the acylic graph, we really only need to first section when split by /
+                if type(inp) != str:
+                    raise Exception(f"Unexpected type {type(inp)} for step: '{step.id()}/{inp_tag}'")
                 inp_tag_parts = inp.split("/")
                 required_step_label = inp_tag_parts[0]
 
+                if required_step_label not in labels:
+                    raise Exception(f"Could not find node '{required_step_label} when building step '{step_node}'")
+
                 input_node: Node = labels[required_step_label]
+                input_node.set_depth(step_node.depth - 1)
+                step_node.set_depth(input_node.depth + 1)
 
-                # Todo: generate unique identifier of edge (startLabel/tag > endLabel/input)
-                key = f"{inp}>{step_node.label}/{inp_tag}"
-
-                # Check types
+                #   4.
                 s: Optional[ToolOutput] = None  # the specified step output
+                output_dict = input_node.outputs()
+
                 if input_node.node_type == NodeType.OUTPUT:
                     raise Exception(f"Can't connect output {input_node.label} to "
                                     f"input {step_node.label} with tag {inp}")
+
                 elif input_node.node_type == NodeType.INPUT:
-                    output_dict = input_node.outputs()
-                    # Get the only value in the key
+
                     if len(output_dict) == 0:
                         raise Exception(f"Failed when connecting {input_node.label} to {step_node.label}"
                                         f"\n\tImplementation of {input_node.label} incorrectly returns no type for input {inp}")
@@ -384,11 +427,14 @@ class PipelineTranslator:
                         raise Exception(f"Implementation of input with {input_node.label} contains "
                                         f"{len(output_dict)} outputs, and we assert exactly 1 output")
 
+                    if len(inp_tag_parts) > 1:
+                        Logger.log(f"Step '{input_node.label}' provided too many tags when referencing input: '{required_step_label}'")
+
+                    # Get the only value in the key
                     s = next(iter(output_dict.values()))
 
                 else:
                     # Now we know we have a STEP node
-                    output_dict = input_node.outputs()
 
                     if len(inp_tag_parts) == 1:
                         if len(output_dict) == 1:
@@ -398,10 +444,15 @@ class PipelineTranslator:
                                 f"The input tag '{inp}' requires more information to identify output from '{input_node.label}'")
                     elif inp_tag_parts[1] in output_dict:
                         s = output_dict[inp_tag_parts[1]]
+                    elif len(output_dict) == 1:
+                        s = next(iter(output_dict.values()))
+                        Logger.log(f"Output '{step_node.label}' did not correctly specify an output of '{input_node.label}', "
+                                   f"this has been corrected as there was only one output: "
+                                   f"{inp_tag_parts[1]} → {next(iter(output_dict.keys()))}", LogLevel.WARNING)
                     else:
                         raise Exception(
-                            f"Couldn't uniquely identify output from '{input_node.label}' for '{step_node.label}'"
-                            f", searching for key: '{inp_tag_parts[1]}'")
+                            f"Couldn't uniquely identify input for '{step_node.label}' with output from '{input_node.label}'"
+                            f", searching for key: '{inp_tag_parts[1]}' with {', '.join(output_dict.keys())}")
 
                 if s is None:
                     raise Exception("An internal error occurred when determining the connection between "
@@ -414,6 +465,8 @@ class PipelineTranslator:
                                f"({s.output_type.id()} -/→ {required_inputs[inp_tag].input_type.id()})",
                                LogLevel.CRITICAL)
 
+                # # Todo: generate unique identifier of edge (startLabel/tag > endLabel/input)
+                # key = f"{inp}>{step_node.label}/{inp_tag}"
                 col = 'black' if correct_type else 'r'
                 work_graph.add_edge(input_node, step_node, type_match=correct_type, color=col)
 
@@ -423,6 +476,7 @@ class PipelineTranslator:
             if req_node not in labels:
                 raise Exception(f"Could not find step {req_node} when stitching output for '{output_node.label}'")
             step_node = labels[req_node]
+            output_node.set_depth(step_node.depth + 1)
             work_graph.add_edge(step_node, output_node, color='black')
 
         end = timer()

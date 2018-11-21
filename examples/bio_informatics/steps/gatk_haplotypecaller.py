@@ -22,7 +22,7 @@ class GatkHaplotypecaller(Tool):
             ToolInput("outputfile_HaplotypeCaller", String()),
             ToolInput("dbsnp", Dbsnp()),
             ToolInput("threads", Number(optional=True)),
-            ToolInput("emitRefConfidence", ),
+            ToolInput("emitRefConfidence", String()),
             ToolInput("bedFile", String()),
             ToolInput("bamOutput", String(optional=True))
         ]

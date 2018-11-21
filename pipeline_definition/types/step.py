@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from pipeline_definition.graph.node import Node, NodeType
 from pipeline_definition.types.tool import Tool, ToolInput, ToolOutput
@@ -20,14 +20,17 @@ class Step:
     def id(self):
         return self.__label
 
-    def input_value(self, tag) -> str:
-        return self.__meta[tag]
+    def input_value(self, tag: str) -> Optional[Any]:
+        return self.__meta[tag] if tag in self.__meta else None
 
     def requires(self) -> Dict[str, ToolInput]:
         return self.__tool.inputs_map()
 
     def provides(self) -> Dict[str, ToolOutput]:
         return self.__tool.outputs_map()
+
+    def get_tool(self) -> Tool:
+        return self.__tool
 
     @staticmethod
     def select_type_name_from(meta) -> str:

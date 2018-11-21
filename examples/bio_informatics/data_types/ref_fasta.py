@@ -5,4 +5,4 @@ class RefFasta(File):
 
     @staticmethod
     def name():
-        return "RefFasta"
+        return "FastaRef"

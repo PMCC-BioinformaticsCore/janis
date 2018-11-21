@@ -4,7 +4,7 @@
     Provides base class that different nodes must override, this translates closest to a Step
 """
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from pipeline_definition.types.tool import ToolInput, ToolOutput
 
@@ -68,8 +68,12 @@ class Node(ABC):
         raise Exception(f"Subclass {type(self)} must implement outputs, return dict: key: StepOutput")
 
 
-def layout_nodes(nodes: List[Node]):
-    # depths start at 1
+def layout_nodes(nodes: List[Node]) -> Dict[Node, Tuple[int, int]]:
+    """
+    Stack on depth away from root, and scale smaller columns
+    :param nodes: list of nodes in Graph to position
+    :return: Dict[Node, (x,y)]
+    """
     pos = {}
     cur_depth = []
     depth_node: Dict[int, List[Node]] = {}
@@ -98,10 +102,35 @@ def layout_nodes(nodes: List[Node]):
     max_in_col = float(max(cur_depth))
 
     for (idx, d) in enumerate(cur_depth):
+        if idx not in depth_node:
+            continue
         nodes = depth_node[idx]
         scale = max_in_col / len(nodes)
+
+        # If max and this col differ in even / odd, add half a unit
+        half_bias = 0 if (len(nodes) % 2) == (max_in_col % 2) else 0.5
+
         for node in nodes:
             (x, y) = pos[node]
-            pos[node] = (x, y*scale)
+            pos[node] = (x, (y + half_bias)*scale)
 
     return pos
+
+
+def layout_nodes2(nodes: List[Node]) -> Dict[Node, Tuple[int, int]]:
+    # Aim for something like Rabix
+    inputs = [n for n in nodes if n.node_type == NodeType.INPUT]
+    others = [n for n in nodes if n.node_type != NodeType.INPUT]
+
+    pos = layout_nodes(others)
+    s = 0
+    for n in inputs:
+        pos[n] = (0, s)
+        s += 1
+    return pos
+
+
+def layout_nodes3(nodes: List[Node]) -> Dict[Node, Tuple[int, int]]:
+    # Other ideas to scale might be, start with steps and
+    # stack in a similar way to depth around center, then do the same
+    return None

@@ -32,7 +32,7 @@ from pipeline_definition.types.tool import ToolInput
 
 from pipeline_definition.utils.logger import Logger, LogLevel
 
-from pipeline_definition.graph.node import Node, NodeType, layout_nodes
+from pipeline_definition.graph.node import Node, NodeType, layout_nodes, layout_nodes2
 from pipeline_definition.types.input import InputNode
 from pipeline_definition.utils.yaml_utils import str_presenter
 from pipeline_definition.types.type_registry import get_tool, get_type, get_tools
@@ -160,7 +160,7 @@ class PipelineTranslator:
         edge_colors = [x["color"] if 'color' in x else default_color for x in edges_attributes]
         node_colors = [NodeType.to_col(x.node_type) for x in G.nodes]
 
-        pos = layout_nodes(list(G.nodes))
+        pos = layout_nodes2(list(G.nodes))
 
         for n in pos:
             G.node[n]['pos'] = pos[n]

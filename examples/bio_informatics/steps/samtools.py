@@ -12,8 +12,8 @@ class SamTools(Tool):
         return "samtools-view"
 
     @staticmethod
-    def supported_translations() -> List[str]:
-        return ["cwl"]
+    def base_command():
+        return "javac"
 
     def inputs(self) -> List[ToolInput]:
         return [

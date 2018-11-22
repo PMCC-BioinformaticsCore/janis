@@ -317,7 +317,7 @@ class ParallelPipeline():
     def test_simple():
         from pipeline_definition.pipeline_translator import PipelineTranslator
         Logger.set_write_location("/Users/franklinmichael/source/wehi-pipeline-definition/parallel.log")
-        translator = PipelineTranslator()
+        translator = PipelineTranslator("parallel")
         translation = translator.translate_string(_yml)
         Logger.close_file()
         print(translation)

@@ -166,7 +166,7 @@ class PipelineTranslator:
         for n in pos:
             G.node[n]['pos'] = pos[n]
 
-        nx.draw(G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=False)
+        nx.draw(G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=True)
         plt.show()
 
     def _build_inputs(self, inputs: Dict[str, Any]) -> List[Input]:
@@ -458,10 +458,7 @@ class PipelineTranslator:
                             f"Output '{step_node.label}' did not correctly specify an output of '{input_node.label}', "
                             f"this has been corrected as there was only one output: "
                             f"{inp_tag_parts[1]} → {nout}", LogLevel.WARNING)
-                        try:
-                            cur_step.set_input_value(inp_tag, input_tag)
-                        except Exception as e:
-                            print(e)
+                        cur_step.set_input_value(inp_tag, input_tag)
 
                     else:
                         raise Exception(
@@ -474,7 +471,7 @@ class PipelineTranslator:
                 input_type = required_inputs[inp_tag].input_type
                 correct_type = input_type.can_receive_from(s.output_type)
                 if not correct_type:
-                    Logger.log(f"Mismatch of types when joining '{input_node.label}' to {step_node.label}/{input_tag}' "
+                    Logger.log(f"Mismatch of types when joining '{input_tag}' to {step_node.label}.{inp_tag}' "
                                f"({s.output_type.id()} -/→ {required_inputs[inp_tag].input_type.id()})",
                                LogLevel.CRITICAL)
                     Logger.log(f"No action taken to correct type-mismatch of '{input_node.label}' "

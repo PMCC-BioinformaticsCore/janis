@@ -68,7 +68,7 @@ class Node(ABC):
         raise Exception(f"Subclass {type(self)} must implement outputs, return dict: key: StepOutput")
 
 
-def layout_nodes(nodes: List[Node]) -> Dict[Node, Tuple[int, int]]:
+def layout_nodes(nodes: List[Node], n_inputs: int=0) -> Dict[Node, Tuple[int, int]]:
     """
     Stack on depth away from root, and scale smaller columns
     :param nodes: list of nodes in Graph to position
@@ -99,7 +99,7 @@ def layout_nodes(nodes: List[Node]) -> Dict[Node, Tuple[int, int]]:
         pos[node] = (depth, d)
 
     # Now normalise each depth
-    max_in_col = float(max(cur_depth))
+    max_in_col = float(max(cur_depth + [n_inputs]))
 
     for (idx, d) in enumerate(cur_depth):
         if idx not in depth_node:
@@ -122,7 +122,7 @@ def layout_nodes2(nodes: List[Node]) -> Dict[Node, Tuple[int, int]]:
     inputs = [n for n in nodes if n.node_type == NodeType.INPUT]
     others = [n for n in nodes if n.node_type != NodeType.INPUT]
 
-    pos = layout_nodes(others)
+    pos = layout_nodes(others, len(inputs))
     s = 0
     for n in inputs:
         pos[n] = (0, s)

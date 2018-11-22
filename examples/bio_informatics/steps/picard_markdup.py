@@ -10,8 +10,8 @@ class PicardMarkDup(Tool):
         return "picard-markdups"
 
     @staticmethod
-    def supported_translations() -> List[str]:
-        return ["cwl"]
+    def base_command():
+        return "javac"
 
     def inputs(self) -> List[ToolInput]:
         return [

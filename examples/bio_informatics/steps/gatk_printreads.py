@@ -13,8 +13,8 @@ class GatkPrintReads(Tool):
         return "gatk-printreads"
 
     @staticmethod
-    def supported_translations() -> List[str]:
-        pass
+    def base_command():
+        return "javac"
 
     def inputs(self) -> List[ToolInput]:
         return [

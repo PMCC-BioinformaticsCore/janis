@@ -15,8 +15,8 @@ class GatkMutect(Tool):
         return "gatk-mutect2"
 
     @staticmethod
-    def supported_translations() -> List[str]:
-        pass
+    def base_command():
+        return "javac"
 
     def inputs(self) -> List[ToolInput]:
         return [

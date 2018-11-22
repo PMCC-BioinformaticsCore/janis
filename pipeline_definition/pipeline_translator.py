@@ -57,7 +57,7 @@ class PipelineTranslator:
     def __init__(self, label: str):
         Logger.log("Creating PipelineTranslator", LogLevel.INFO)
 
-        self.__label: str = label
+        self.label: str = label
         self.__input_step: InputNode = None
         self.__work_graph: nx.Graph = None
         self.__labels_map: Dict[str, Node] = {}
@@ -335,7 +335,7 @@ class PipelineTranslator:
         return pipeline_steps
 
     def _create_workflow_graph(self, pipeline_steps: List[Step], workflow_inputs: List[Input],
-                                           workflow_outputs: List[Output]) -> nx.Graph:
+                               workflow_outputs: List[Output]) -> nx.Graph:
         """
         Take the inputs, {outputs} and steps and stitch it all together
         :param pipeline_steps: List[Step]
@@ -346,7 +346,8 @@ class PipelineTranslator:
         Logger.log("Building DAG...", LogLevel.INFO)
         work_graph = nx.MultiDiGraph()  # Use the DAG from networx
 
-        # Lets create the input cur_step - the start cur_step of every workflow that produces the workflow inputs as cur_step output
+        # Lets create the input cur_step:
+        #   the start cur_step of every workflow that produces the workflow inputs as cur_step output
         # self.__input_step = InputNode(workflow_inputs)
         # pipeline_steps.insert(0, self.__input_step)
 
@@ -365,8 +366,8 @@ class PipelineTranslator:
 
         for step_node in step_nodes:
             cur_step = step_node.step
-            step_tool = cur_step.get_tool()                   # Tool that the cur_step references
-            required_inputs = cur_step.requires()             # All inputs required for the tool
+            step_tool = cur_step.get_tool()  # Tool that the cur_step references
+            required_inputs = cur_step.requires()  # All inputs required for the tool
 
             for inp_tag in required_inputs:
 
@@ -384,11 +385,11 @@ class PipelineTranslator:
                 #
 
                 #   1.
-                input_tool: ToolInput = required_inputs[inp_tag]    # The current input we're testing
-                input_type: DataType = input_tool.input_type        # The DataType we need
+                input_tool: ToolInput = required_inputs[inp_tag]  # The current input we're testing
+                input_type: DataType = input_tool.input_type  # The DataType we need
 
                 #   2.
-                input_tag: str = cur_step.input_value(inp_tag)      # The tag
+                input_tag: str = cur_step.input_value(inp_tag)  # The tag
 
                 if input_tag is None:
                     #   2. (a)
@@ -430,7 +431,8 @@ class PipelineTranslator:
 
                     if len(inp_tag_parts) > 1:
                         Logger.log(f"Step '{step_node.label}' provided too many tags when referencing input: "
-                                   f"'{required_step_label}' (superfluous: {', '.join(inp_tag_parts[1:])})", LogLevel.WARNING)
+                                   f"'{required_step_label}' (superfluous: {', '.join(inp_tag_parts[1:])})",
+                                   LogLevel.WARNING)
                         input_tag = required_step_label
                         cur_step.set_input_value(inp_tag, input_tag)
 
@@ -452,9 +454,10 @@ class PipelineTranslator:
                         s = next(iter(output_dict.values()))
                         nout = next(iter(output_dict.keys()))
                         input_tag = f"{input_node.label}/{next(iter(output_dict.keys()))}"
-                        Logger.log(f"Output '{step_node.label}' did not correctly specify an output of '{input_node.label}', "
-                                   f"this has been corrected as there was only one output: "
-                                   f"{inp_tag_parts[1]} → {nout}", LogLevel.WARNING)
+                        Logger.log(
+                            f"Output '{step_node.label}' did not correctly specify an output of '{input_node.label}', "
+                            f"this has been corrected as there was only one output: "
+                            f"{inp_tag_parts[1]} → {nout}", LogLevel.WARNING)
                         try:
                             cur_step.set_input_value(inp_tag, input_tag)
                         except Exception as e:
@@ -501,8 +504,8 @@ class PipelineTranslator:
         d = {
             "class": "Workflow",
             "cwlVersion": "v1.0",
-            "id": self.__label,
-            "label": self.__label,
+            "id": self.label,
+            "label": self.label,
             "requirements": [
                 {"class": "InlineJavascriptRequirement"}
             ]
@@ -526,6 +529,51 @@ class PipelineTranslator:
 
         return d, inp, tools
 
+    def wdl(self):
+
+        get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
+
+        tools = [s.get_tool() for s in self.steps]
+        tool_name_to_tool: Dict[str, Tool] = {t.tool().lower(): t for t in tools}
+        tool_name_to_alias = {}
+        steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self.steps}
+
+        aliases = set()
+
+        for tool in tool_name_to_tool:
+            a = get_alias(tool).upper()
+            s = a
+            idx = 2
+            while s in aliases:
+                s = a + idx
+                idx += 1
+            aliases.add(s)
+            tool_name_to_alias[tool] = s
+
+        imports = '\n'.join([f"import tools/{t}.wdl as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
+        inputs = '\n'.join([f"\t{i.data_type.primitive()} {i.label}" for i in self.inputs])
+        steps = '\n'.join([f"\tcall {tool_name_to_alias[s.get_tool().tool().lower()].upper()}"
+                   f".{s.get_tool().tool()} {{ {s.wdl_map()} }}" for s in self.steps])
+        outputs = '\n'.join([f"\t{o.data_type.primitive()} {o.label} = {steps_to_alias[o.source.split('/')[0].lower()].lower()}" \
+                   f".{o.label}" for o in self.outputs])
+        workflow = f"""
+{imports}
+
+workflow {self.label} {{
+{inputs}
+{steps}
+
+    output {{
+{outputs}
+    }}
+}}"""
+
+        tools = [t.wdl() for t in tools]
+        inp = {f"{self.label}.{i.id()}": i.data_type.get_value_from_meta(i.meta) for i in self.inputs}
+
+        return workflow, inp, tools
+
+
     def _dump_graph(self):
         work_graph = self.__work_graph
         # tree = json_graph.tree_data(workGraph, self.__root, attrs={'children': 'next', 'id': 'step'})
@@ -538,128 +586,6 @@ class PipelineTranslator:
         if self.__work_graph is None:
             raise errors.PipelineTranslatorException(
                 'called a translation method before attempting to extract translated components.')
-
-    def input(self, resolve=False):
-        self._check_translated()
-
-        input_items = self.__input_step.inputs()
-
-        s = dict()
-        for inp in input_items:
-            if resolve:
-                inp.resolve()
-            s.update(inp.translate_for_input())
-
-        inp = {'inputs': s}
-
-        return yaml.dump(inp, default_flow_style=False)
-
-    def pipeline(self):
-        self._check_translated()
-
-        work_graph = self.__work_graph
-        input_step = self.__input_step
-
-        ctx_attr_map = nx.get_node_attributes(work_graph, 'ctx')
-        type_attr_map = nx.get_edge_attributes(work_graph, 'type')
-        return self._start_workflow_translation(work_graph, input_step, type_attr_map, ctx_attr_map)
-
-    def _start_workflow_translation(self, work_graph, input_step, type_attr_map, ctx_attr_map):
-
-        preamble = yaml.load("""
-class: Workflow
-cwlVersion: v1.0
-
-requirements:
-- class: InlineJavascriptRequirement
-  expressionLib:
-  - var rename_trim_file = function() {
-      if ( self == null ) {
-        return null;
-      } else {
-        var xx = self.basename.split('.');
-        var id = xx.indexOf('fastq');
-        xx.splice(id, 1);
-        return xx.join('.');
-      }
-    };
-- class: ScatterFeatureRequirement
-- class: StepInputExpressionRequirement
-- class: SchemaDefRequirement
-  types:
-  - $import: ../tools/src/tools/trimmomatic-end_mode.yml
-  - $import: ../tools/src/tools/trimmomatic-sliding_window.yml
-  - $import: ../tools/src/tools/trimmomatic-phred.yml
-  - $import: ../tools/src/tools/trimmomatic-illumina_clipping.yml
-  - $import: ../tools/src/tools/trimmomatic-max_info.yml
-""")
-
-        inputs = self._translate_step_to_target(input_step, None)
-
-        edges = nx.edges(work_graph, input_step)
-        if not edges:
-            return
-
-        steps_xlate = dict()
-
-        for edge in edges:
-            if edge[0] != input_step:
-                raise RuntimeError("Trouble in edge finding")
-            edge_type = str(type_attr_map[(edge[0], edge[1], 0)])
-            if edge_type == 'branch':
-                self._recurse_graph_and_translate(edge[1], work_graph, 1, type_attr_map, ctx_attr_map, steps_xlate)
-
-        outputs = self._find_step_outputs(steps_xlate)
-
-        xlate = dict()
-        xlate.update(preamble)
-        xlate.update(inputs)
-        xlate.update({'steps': steps_xlate})
-        xlate.update(outputs)
-
-        return yaml.dump(xlate, default_flow_style=False)
-
-    @staticmethod
-    def _find_step_outputs(steps):
-        # Find the outputs from a dictionary of CWL step and generate the CWL output entry
-        outputs = dict()
-        for (step_id, step) in steps.items():
-            try:
-                outs = step['out']
-                for out in outs:
-                    outputs.update({f'{step_id}_{out}': {'type': 'File', 'outputSource': f'{step_id}/{out}'}})
-            except KeyError:
-                print(f'Step: {step_id} has no outputs.')
-
-        return {'outputs': outputs}
-
-    def _recurse_graph_and_translate(self, step, work_graph, step_order, type_attr_map, ctx_attr_map, steps_xlate):
-
-        mapped_inputs = []
-        step_inputs = step.requires()
-
-        for step_input in step_inputs:
-            step_ctx = ctx_attr_map[step]
-            mapping = step_ctx.map_input_for_translation(step_input)
-
-            mi = MappedInput(step_inputs, mapping, step_input)
-            mapped_inputs.append(mi)
-
-        s = self._translate_step_to_target(step, mapped_inputs)
-        steps_xlate.update(s)
-
-        edges = nx.edges(work_graph, step)
-        if not edges:
-            return
-
-        for edge in edges:
-            if edge[0] != step:
-                raise RuntimeError("Trouble in edge finding")
-            edge_type = str(type_attr_map[(edge[0], edge[1], 0)])
-            if edge_type == 'branch':
-                next_step = edge[1]
-                self._recurse_graph_and_translate(next_step, work_graph, step_order + 1, type_attr_map, ctx_attr_map,
-                                                  steps_xlate)
 
     @staticmethod
     def _translate_step_to_target(step, mapped_inputs):
@@ -679,76 +605,6 @@ requirements:
         json_doc = {"workflow": workflow}
         Logger.log("Done generating JSON description for workflow")
         return json_doc
-
-    def _describe_workflow(self, work_graph, input_step, type_attr_map, ctx_attr_map):
-
-        step_ctx = ctx_attr_map[input_step]
-        doc = {'inputs': self._output_doc_from(step_ctx, input_step)}
-
-        flow = {}
-        edges = nx.edges(work_graph, input_step)
-        if not edges:
-            return
-
-        for edge in edges:
-            if edge[0] != input_step:
-                raise RuntimeError("Trouble in edge finding")
-            edge_type = str(type_attr_map[(edge[0], edge[1], 0)])
-            if edge_type == 'branch':
-                branch_tag = edge[1].tag()
-                branch_desc = {}
-                self._populate_description_from(edge[1], branch_desc, work_graph, 1, type_attr_map, ctx_attr_map)
-                flow[branch_tag] = {
-                    'steps': branch_desc
-                }
-
-        doc['flow'] = flow
-
-        return doc
-
-    def _populate_description_from(self, step, doc, work_graph, step_order, type_attr_map, ctx_attr_map):
-
-        desc = {
-            'step': step.id(),
-            'type': step.type()
-        }
-
-        # desc['order'] = stepOrder
-        doc[step_order] = desc
-
-        step_inputs = step.requires()
-        if step_inputs:
-            inputs_doc = {}
-
-            for step_input in step_inputs:
-                input_id = step_input[Step.STR_ID]
-                input_type = step_input[Step.STR_TYPE]
-                idoc = {
-                    'type': input_type
-                }
-
-                step_ctx = ctx_attr_map[step]
-                mapping = step_ctx.map_input(step_input)
-                idoc['mapping'] = mapping
-
-                inputs_doc[input_id] = idoc
-
-            desc['step-inputs'] = inputs_doc
-
-        step_ctx = ctx_attr_map[step]
-        desc['step-outputs'] = self._output_doc_from(step_ctx, step)
-
-        edges = nx.edges(work_graph, step)
-        if not edges:
-            return
-
-        for edge in edges:
-            if edge[0] != step:
-                raise RuntimeError("Trouble in edge finding")
-            edge_type = str(type_attr_map[(edge[0], edge[1], 0)])
-            if edge_type == 'branch':
-                next_step = edge[1]
-                self._populate_description_from(next_step, doc, work_graph, step_order + 1, type_attr_map, ctx_attr_map)
 
     @staticmethod
     def _output_doc_from(step_ctx, step):

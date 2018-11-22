@@ -29,7 +29,8 @@ class DataType(ABC):
     def name():
         raise Exception("Subclass MUST override name field")
 
-    def secondary_files(self) -> Optional[List[str]]:
+    @staticmethod
+    def secondary_files() -> Optional[List[str]]:
         return None
 
     @staticmethod

@@ -45,6 +45,9 @@ class Step:
             "out": [o.tag for o in self.__tool.outputs()]
         }
 
+    def wdl_map(self):
+        return "<wdl-mapping here>"
+
     @staticmethod
     def select_type_name_from(meta) -> str:
         return meta["tool"]

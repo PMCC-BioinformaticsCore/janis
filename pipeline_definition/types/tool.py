@@ -3,19 +3,49 @@ import re
 from typing import List, Dict, Optional, Any
 
 from pipeline_definition.types.data_types import DataType
+from pipeline_definition.utils.logger import Logger
 
 
-class ToolInput:
-    def __init__(self, tag: str, input_type: DataType, position: int=0, prefix: Optional[str]=None, separate_prefix: bool=True):
+class ToolArgument:
+
+    expr_pattern = "\$\(.*\)"
+
+    def __init__(self, value: str, prefix: Optional[str]=None, position: int=0, separate_value_from_prefix=True):
+        self.prefix = prefix
+        self.value = value
+        self.position = position
+        self.is_expression = re.match(self.expr_pattern, self.value) is not None
+        self.separate_value_from_prefix = separate_value_from_prefix
+
+        if not self.separate_value_from_prefix and not self.prefix.endswith("="):
+            # I don't really know what this means.
+            Logger.log(f"Argument ({self.prefix} {self.value}) is not seperating and did not end with ='")
+
+    def cwl(self):
+        d = {
+            "position": self.position,
+            "valueFrom": self.value
+        }
+        if not self.separate_value_from_prefix:
+            d["separate"] = self.separate_value_from_prefix
+
+        if self.prefix:
+            d["prefix"] = self.prefix
+
+        return d
+
+
+class ToolInput(ToolArgument):
+    def __init__(self, tag: str, input_type: DataType, position: int=0, prefix: Optional[str]=None,
+                 separate_value_from_prefix: bool=True):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
         """
+        super().__init__("", prefix, position, separate_value_from_prefix)
         self.tag: str = tag
         self.input_type: DataType = input_type
-        self.position: int = position
-        self.prefix: Optional[str] = prefix
-        self.separate_prefix = separate_prefix
+        self.optional = self.input_type.optional
 
     def cwl(self):
         return {
@@ -38,31 +68,6 @@ class ToolOutput:
             d["outputBinding"] = {
                 "glob": self.glob
             }
-        return d
-
-
-class ToolArgument:
-
-    expr_pattern = "\$\(.*\)"
-
-    def __init__(self, value: str, prefix: str, position: int=0, separate_value_from_prefix=True):
-        self.prefix = prefix
-        self.value = value
-        self.position = position
-        self.is_expression = re.match(self.expr_pattern, self.value) is not None
-        self.separate_value_from_prefix = separate_value_from_prefix
-
-    def cwl(self):
-        d = {
-            "position": self.position,
-            "valueFrom": self.value
-        }
-        if not self.separate_value_from_prefix:
-            d["separate"] = self.separate_value_from_prefix
-
-        if self.prefix:
-            d["prefix"] = self.prefix
-
         return d
 
 
@@ -152,3 +157,27 @@ class Tool(ABC):
             d["arguments"] = [a.cwl() for a in self.arguments()]
 
         return d
+
+    def wdl(self):
+
+        args = sorted(self.inputs(), key=lambda a: a.position)
+
+        base = self.base_command() if type(self.base_command()) == str else " ".join(self.base_command())
+
+        command = f"{base} {str(args)}"
+        inputs = "\n\t".join([f"{t.input_type.primitive()} {t.tag}" for t in self.inputs()])
+        outputs = "\n\t\t".join([f"{t.output_type.primitive()} {t.tag} = {t.glob}" for t in self.outputs()])
+
+        return f"""
+task {self.tool()} {{
+    {inputs}
+    
+    runtime {{ docker: {self.docker()} }}
+    command {{
+        {command}
+    }}
+    
+    output {{
+        {outputs}
+    }}
+}}"""

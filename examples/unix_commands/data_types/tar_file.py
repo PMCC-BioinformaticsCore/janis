@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 from pipeline_definition.types.common_data_types import File
 
 
@@ -5,6 +7,10 @@ class TarFile(File):
     @staticmethod
     def name():
         return "TarFile"
+
+    @staticmethod
+    def doc():
+        return "A tarfile, ending with .tar"
 
 
 # tar_file = InputType('tar_file', label='a unix tar archive', description='A unix compressed or uncompressed tar archive')

@@ -13,14 +13,14 @@ class Tar(Tool):
         return "Tar"
 
     @staticmethod
-    def supported_translations() -> List[str]:
-        return ["cwl"]
+    def base_command():
+        return ["tar", "cvf"]
 
     def inputs(self) -> List[ToolInput]:
-        return [ToolInput("input1", File()), ToolInput("input2", File()), ToolInput("tarName", String())]
+        return [ToolInput("tarName", String()), ToolInput("input1", File(), position=1), ToolInput("input2", File(), position=2)]
 
     def outputs(self) -> List[ToolOutput]:
-        return [ToolOutput("out", File())]
+        return [ToolOutput("outp", File(), glob="*.tar")]
 
 
 

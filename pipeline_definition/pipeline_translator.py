@@ -28,7 +28,7 @@ import pipeline_definition.utils.errors as errors
 from pipeline_definition.types.common_data_types import String, Number, Boolean, Array
 from pipeline_definition.types.data_types import DataType
 from pipeline_definition.types.output import Output, OutputNode
-from pipeline_definition.types.tool import ToolInput
+from pipeline_definition.types.tool import ToolInput, Tool
 
 from pipeline_definition.utils.logger import Logger, LogLevel
 
@@ -54,16 +54,17 @@ yaml.add_representer(str, str_presenter)
 
 
 class PipelineTranslator:
-    def __init__(self):
+    def __init__(self, label: str):
         Logger.log("Creating PipelineTranslator", LogLevel.INFO)
 
+        self.__label: str = label
         self.__input_step: InputNode = None
         self.__work_graph: nx.Graph = None
         self.__labels_map: Dict[str, Node] = {}
 
-        self.__inputs: List[Input] = []
-        self.__steps: List[Step] = []
-        self.__outputs: List[Output] = []
+        self.inputs: List[Input] = []
+        self.steps: List[Step] = []
+        self.outputs: List[Output] = []
 
     def _dump_as_yaml(self, doc: Dict[str, Any], indent: int = 2, prefix="YAML DOC") -> None:
         """
@@ -139,13 +140,13 @@ class PipelineTranslator:
         # if outputs is None:
         #    raise ValueError("No output?")
 
-        workflow_input_set: List[Input] = self._build_inputs(inputs)
-        pipeline_steps: List[Step] = self._build_steps(steps)
-        workflow_output_set: List[Output] = self._build_outputs(outputs, workflow_input_set, pipeline_steps)
+        self.inputs: List[Input] = self._build_inputs(inputs)
+        self.steps: List[Step] = self._build_steps(steps)
+        self.outputs: List[Output] = self._build_outputs(outputs, self.inputs, self.steps)
 
-        self.__work_graph = self._create_workflow_graph(pipeline_steps, workflow_input_set,
-                                                                    workflow_output_set)
-        self.draw_graph()
+        self.__work_graph = self._create_workflow_graph(self.steps, self.inputs,
+                                                        self.outputs)
+        # self.draw_graph()
         self._dump_graph()
 
         # # Now translate the workflow steps
@@ -272,11 +273,13 @@ class PipelineTranslator:
                     Logger.log(f"Output '{output_id}' should fully specify step/outputname: "
                                f"{output_source} → {new_output_source}", LogLevel.WARNING)
                     output_source = new_output_source
+                    Logger.log(f"Updated output '{output_id}' -> {new_output_source}")
                 elif inp_tag_parts[1] not in provides:
                     new_output_source = f"{inp_tag_parts[0]}/{so.tag}"
                     Logger.log(f"Output '{output_id}' did not correctly specify an output of '{req_node}', "
                                f"this has been corrected as the step '{req_node}' only contained one ouput: "
                                f"{output_source} → {new_output_source}", LogLevel.WARNING)
+                    Logger.log(f"Updated output '{output_id}' -> {new_output_source}")
                     output_source = new_output_source
 
                 output = Output(output_id, output_source, so.output_type)
@@ -299,7 +302,6 @@ class PipelineTranslator:
         :param steps:
         :return:
         """
-        # TODO: Remove type inferencing, and devise strong referencing for step inputs.
         #       For this, we'll need to define a specific format (probably close to CWL)
         #       like: - { tool: type/version, ...inputs }
 
@@ -344,7 +346,7 @@ class PipelineTranslator:
         Logger.log("Building DAG...", LogLevel.INFO)
         work_graph = nx.MultiDiGraph()  # Use the DAG from networx
 
-        # Lets create the input step - the start step of every workflow that produces the workflow inputs as step output
+        # Lets create the input cur_step - the start cur_step of every workflow that produces the workflow inputs as cur_step output
         # self.__input_step = InputNode(workflow_inputs)
         # pipeline_steps.insert(0, self.__input_step)
 
@@ -362,18 +364,18 @@ class PipelineTranslator:
         # Todo: Move the matching and type checking logic to the Input creation
 
         for step_node in step_nodes:
-            step = step_node.step
-            step_tool = step.get_tool()                   # Tool that the step references
-            required_inputs = step.requires()             # All inputs required for the tool
+            cur_step = step_node.step
+            step_tool = cur_step.get_tool()                   # Tool that the cur_step references
+            required_inputs = cur_step.requires()             # All inputs required for the tool
 
             for inp_tag in required_inputs:
 
                 # ORDER:
                 #   1. Get the input type to link
-                #   2. Try and find this type in the step body
+                #   2. Try and find this type in the cur_step body
                 #       (a) - If it's optional, skip
                 #       (b) - else: throw error
-                #   3. Determine where the input is coming from (input / other step)
+                #   3. Determine where the input is coming from (input / other cur_step)
                 #   4. Try to exactly connect the input to the output/tag
                 #       (a) If there's only one output, log warning if it doesn't exactly match
                 #       (b) If there are multiple outputs, raise Exception if it doesn't exactly match
@@ -382,53 +384,55 @@ class PipelineTranslator:
                 #
 
                 #   1.
-                tool_input: ToolInput = required_inputs[inp_tag]    # The current input we're testing
-                input_type: DataType = tool_input.input_type        # The DataType we need
+                input_tool: ToolInput = required_inputs[inp_tag]    # The current input we're testing
+                input_type: DataType = input_tool.input_type        # The DataType we need
 
                 #   2.
-                inp = step.input_value(inp_tag)
+                input_tag: str = cur_step.input_value(inp_tag)      # The tag
 
-                if inp is None:
+                if input_tag is None:
                     #   2. (a)
-                    if input_type.optional:
-                        continue
+                    if input_type.optional: continue
                     #   2. (b)
                     raise Exception(f"Step '{step_node.label}' (tool: '{step_tool.tool()}') did not contain"
                                     f" the required input '{inp_tag}' with type: '{input_type.id()}'")
 
                 #   3.
                 # Get the correct label, to build the acylic graph, we really only need to first section when split by /
-                if type(inp) != str:
-                    raise Exception(f"Unexpected type {type(inp)} for step: '{step.id()}/{inp_tag}'")
-                inp_tag_parts = inp.split("/")
+                if type(input_tag) != str:
+                    raise Exception(f"Unexpected type {type(input_tag)} for cur_step: '{cur_step.id()}/{inp_tag}'")
+                inp_tag_parts = input_tag.split("/")
                 required_step_label = inp_tag_parts[0]
 
                 if required_step_label not in labels:
-                    raise Exception(f"Could not find node '{required_step_label} when building step '{step_node}'")
+                    raise Exception(f"Could not find node '{required_step_label} when building cur_step '{step_node}'")
 
                 input_node: Node = labels[required_step_label]
                 input_node.set_depth(step_node.depth - 1)
                 step_node.set_depth(input_node.depth + 1)
 
                 #   4.
-                s: Optional[ToolOutput] = None  # the specified step output
+                s: Optional[ToolOutput] = None  # the specified cur_step output
                 output_dict = input_node.outputs()
 
                 if input_node.node_type == NodeType.OUTPUT:
                     raise Exception(f"Can't connect output {input_node.label} to "
-                                    f"input {step_node.label} with tag {inp}")
+                                    f"input {step_node.label} with tag {input_tag}")
 
                 elif input_node.node_type == NodeType.INPUT:
 
                     if len(output_dict) == 0:
                         raise Exception(f"Failed when connecting {input_node.label} to {step_node.label}"
-                                        f"\n\tImplementation of {input_node.label} incorrectly returns no type for input {inp}")
+                                        f"\n\tImplementation of {input_node.label} incorrectly returns no type for input {input_tag}")
                     if len(output_dict) > 1:
                         raise Exception(f"Implementation of input with {input_node.label} contains "
                                         f"{len(output_dict)} outputs, and we assert exactly 1 output")
 
                     if len(inp_tag_parts) > 1:
-                        Logger.log(f"Step '{input_node.label}' provided too many tags when referencing input: '{required_step_label}'")
+                        Logger.log(f"Step '{step_node.label}' provided too many tags when referencing input: "
+                                   f"'{required_step_label}' (superfluous: {', '.join(inp_tag_parts[1:])})", LogLevel.WARNING)
+                        input_tag = required_step_label
+                        cur_step.set_input_value(inp_tag, input_tag)
 
                     # Get the only value in the key
                     s = next(iter(output_dict.values()))
@@ -441,14 +445,21 @@ class PipelineTranslator:
                             s = next(iter(output_dict.values()))
                         else:
                             raise Exception(
-                                f"The input tag '{inp}' requires more information to identify output from '{input_node.label}'")
+                                f"The input tag '{input_tag}' requires more information to identify output from '{input_node.label}'")
                     elif inp_tag_parts[1] in output_dict:
                         s = output_dict[inp_tag_parts[1]]
                     elif len(output_dict) == 1:
                         s = next(iter(output_dict.values()))
+                        nout = next(iter(output_dict.keys()))
+                        input_tag = f"{input_node.label}/{next(iter(output_dict.keys()))}"
                         Logger.log(f"Output '{step_node.label}' did not correctly specify an output of '{input_node.label}', "
                                    f"this has been corrected as there was only one output: "
-                                   f"{inp_tag_parts[1]} → {next(iter(output_dict.keys()))}", LogLevel.WARNING)
+                                   f"{inp_tag_parts[1]} → {nout}", LogLevel.WARNING)
+                        try:
+                            cur_step.set_input_value(inp_tag, input_tag)
+                        except Exception as e:
+                            print(e)
+
                     else:
                         raise Exception(
                             f"Couldn't uniquely identify input for '{step_node.label}' with output from '{input_node.label}'"
@@ -456,17 +467,18 @@ class PipelineTranslator:
 
                 if s is None:
                     raise Exception("An internal error occurred when determining the connection between "
-                                    f"{input_node.label} to {step_node.label} with tag {inp}")
+                                    f"{input_node.label} to {step_node.label} with tag {input_tag}")
                 input_type = required_inputs[inp_tag].input_type
                 correct_type = input_type.can_receive_from(s.output_type)
-                # Todo: Throw specific message if types match but type is Optional
                 if not correct_type:
-                    Logger.log(f"Mismatch of types when joining '{input_node.label}' to {step_node.label}/{inp}' "
+                    Logger.log(f"Mismatch of types when joining '{input_node.label}' to {step_node.label}/{input_tag}' "
                                f"({s.output_type.id()} -/→ {required_inputs[inp_tag].input_type.id()})",
                                LogLevel.CRITICAL)
+                    Logger.log(f"No action taken to correct type-mismatch of '{input_node.label}' "
+                               f"to {step_node.label}/{input_tag}'")
 
                 # # Todo: generate unique identifier of edge (startLabel/tag > endLabel/input)
-                # key = f"{inp}>{step_node.label}/{inp_tag}"
+                # key = f"{input_tag}>{step_node.label}/{inp_tag}"
                 col = 'black' if correct_type else 'r'
                 work_graph.add_edge(input_node, step_node, type_match=correct_type, color=col)
 
@@ -474,7 +486,7 @@ class PipelineTranslator:
             # We did matching when creating outputs, so we can literally just add edges
             req_node = output_node.output.source.split("/")[0]
             if req_node not in labels:
-                raise Exception(f"Could not find step {req_node} when stitching output for '{output_node.label}'")
+                raise Exception(f"Could not find cur_step {req_node} when stitching output for '{output_node.label}'")
             step_node = labels[req_node]
             output_node.set_depth(step_node.depth + 1)
             work_graph.add_edge(step_node, output_node, color='black')
@@ -483,6 +495,36 @@ class PipelineTranslator:
         Logger.log("Built DAG ({:2f} s)".format(end - start), LogLevel.INFO)
 
         return work_graph
+
+    def cwl(self):
+        # Let's try to emit CWL
+        d = {
+            "class": "Workflow",
+            "cwlVersion": "v1.0",
+            "id": self.__label,
+            "label": self.__label,
+            "requirements": [
+                {"class": "InlineJavascriptRequirement"}
+            ]
+        }
+
+        if self.inputs:
+            d["inputs"] = {i.label: i.cwl() for i in self.inputs}
+
+        if self.outputs:
+            d["outputs"] = {o.label: o.cwl() for o in self.outputs}
+
+        if self.steps:
+            d["steps"] = {s.id(): s.cwl() for s in self.steps}
+
+        tools = []
+        tools_to_build: Dict[str, Tool] = {s.get_tool().tool(): s.get_tool() for s in self.steps}
+        for t in tools_to_build:
+            tools.append(tools_to_build[t].cwl())
+
+        inp = {i.id(): i.input_cwl_yml() for i in self.inputs}
+
+        return d, inp, tools
 
     def _dump_graph(self):
         work_graph = self.__work_graph

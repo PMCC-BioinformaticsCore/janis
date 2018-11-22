@@ -10,6 +10,10 @@ from pipeline_definition.types.step import ToolInput, ToolOutput
 class Untar(Tool):
 
     @staticmethod
+    def base_command():
+        return ["tar", "xf"]
+
+    @staticmethod
     def tool():
         return "Untar"
 
@@ -18,10 +22,10 @@ class Untar(Tool):
         return ["cwl"]
 
     def inputs(self) -> List[ToolInput]:
-        return [ToolInput("input", TarFile(optional=True))]
+        return [ToolInput("input", TarFile())]
 
     def outputs(self) -> List[ToolOutput]:
-        return [ToolOutput("out", File(optional=True))]
+        return [ToolOutput("outp", File(optional=True), glob="*.java")]
 
 
 # class Untare(Step):

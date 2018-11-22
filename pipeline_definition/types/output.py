@@ -17,6 +17,12 @@ class Output:
     def id(self):
         return self.label
 
+    def cwl(self):
+        return {
+            **self.data_type.cwl(),
+            "outputSource": self.source
+        }
+
 
 class OutputNode(Node):
 

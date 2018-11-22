@@ -23,6 +23,11 @@ class Step:
     def input_value(self, tag: str) -> Optional[Any]:
         return self.__meta[tag] if tag in self.__meta else None
 
+    def set_input_value(self, tag: str, value: str):
+        l = self.__label
+        Logger.log(f"Updating '{l}': setting '{tag}' -> '{value}'")
+        self.__meta[tag] = value
+
     def requires(self) -> Dict[str, ToolInput]:
         return self.__tool.inputs_map()
 
@@ -31,6 +36,14 @@ class Step:
 
     def get_tool(self) -> Tool:
         return self.__tool
+
+    def cwl(self):
+        return {
+            "label": self.__label,
+            "run": f"tools/{self.__tool.tool().lower()}.cwl",
+            "in": {i.tag: self.__meta[i.tag] for i in self.__tool.inputs()},
+            "out": [o.tag for o in self.__tool.outputs()]
+        }
 
     @staticmethod
     def select_type_name_from(meta) -> str:

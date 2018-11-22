@@ -1,7 +1,7 @@
 ###################
 # Implementations #
 ###################
-from typing import Dict
+from typing import Dict, Any
 
 from pipeline_definition.types.data_types import DataType
 from pipeline_definition.types.type_registry import register_type
@@ -12,6 +12,10 @@ class String(DataType):
     @staticmethod
     def name():
         return "String"
+
+    @staticmethod
+    def primitive():
+        return "string"
 
     @staticmethod
     def doc():
@@ -32,6 +36,10 @@ class Number(DataType):
         return "Number"
 
     @staticmethod
+    def primitive():
+        return "int"
+
+    @staticmethod
     def doc():
         return "A number"
 
@@ -50,6 +58,10 @@ class Boolean(DataType):
         return "Boolean"
 
     @staticmethod
+    def primitive():
+        return "boolean"
+
+    @staticmethod
     def doc():
         return "A number"
 
@@ -60,6 +72,12 @@ class Boolean(DataType):
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
 
+    def cwl(self) -> Dict[str, Any]:
+        return {
+            **super().cwl(),
+            "type": "Boolean",
+        }
+
 
 class File(DataType):
 
@@ -68,8 +86,15 @@ class File(DataType):
         return "File"
 
     @staticmethod
+    def primitive():
+        return "File"
+
+    @staticmethod
     def doc():
-        return "A file, whether local, referenced or online (s3 / gs), this program doesn't concern as of 2018-11-20"
+        return "A local file"
+
+    def get_value_from_meta(self, meta):
+        return meta["path"]
 
     @classmethod
     def schema(cls) -> Dict:
@@ -86,6 +111,7 @@ class File(DataType):
 
 
 class Array(DataType):
+
     def __init__(self, t: DataType=File(), optional=False):
         if not isinstance(t, DataType):
             raise Exception(f"Type t ({type(t)}) must be an instance of 'Type'")
@@ -96,6 +122,11 @@ class Array(DataType):
     @staticmethod
     def name():
         return f"Array"
+
+
+    @staticmethod
+    def primitive():
+        return "array"
 
     def id(self):
         if self.__t is None:
@@ -114,6 +145,11 @@ class Array(DataType):
     def schema(cls) -> Dict:
         return {"type": "array"}
 
+    def cwl(self) -> Dict[str, Any]:
+        return {
+            "type": "Array",
+        }
+
     def can_receive_from(self, other):
         if not self.__t.can_receive_from(other):
             return False
@@ -121,7 +157,6 @@ class Array(DataType):
 
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
-
 
 
 register_type(String)

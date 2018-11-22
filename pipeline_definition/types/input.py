@@ -6,14 +6,26 @@ from pipeline_definition.graph.node import Node, NodeType
 
 
 class Input:
-    def __init__(self, label: str, data_type: DataType, value):
+    def __init__(self, label: str, data_type: DataType, meta):
         self.label: str = label
         self.data_type: DataType = data_type
         # Will have type represented by data_type
-        self.value = value
+        self.meta = meta
 
     def id(self):
         return self.label
+
+    def cwl(self):
+        return self.data_type.cwl()
+
+    def input_cwl_yml(self):
+        if self.data_type.is_prim:
+            return self.meta
+        else:
+            return {
+                "class": self.data_type.primitive(),
+                "path": self.data_type.get_value_from_meta(self.meta)
+            }
 
 
 class InputNode(Node):

@@ -12,27 +12,40 @@
 
 """
 from abc import ABC, abstractmethod
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Optional
+
+allowed_primitives = ["null", "boolean", "int", "long", "float", "double", "string"]
+allowed_types = allowed_primitives +  ["File", "Directory"]
 
 
 class DataType(ABC):
 
     def __init__(self, optional=False):
         self.optional = optional
+        self.is_prim = self.primitive() in allowed_primitives
 
     @staticmethod
     @abstractmethod
     def name():
         raise Exception("Subclass MUST override name field")
 
+    def secondary_files(self) -> Optional[List[str]]:
+        return None
+
+    @staticmethod
+    @abstractmethod
+    def primitive():
+        raise Exception("Subclass MUST override the 'schema' method")
+
     @staticmethod
     @abstractmethod
     def doc():
-        return """
+        """
         Subclasses should override this class to provide additional information on how to
         correctly provide data to the class, what inputs it may have and what other types
         are compatible
         """
+        return None
 
     @staticmethod
     def validate(meta: Any) -> bool:
@@ -42,6 +55,9 @@ class DataType(ABC):
     @abstractmethod
     def schema(cls) -> Dict:
         raise Exception("Subclass MUST override the 'schema' method")
+
+    def get_value_from_meta(self, meta):
+        return meta
 
     # The following methods don't need to be overriden, but can be
 
@@ -74,3 +90,20 @@ class DataType(ABC):
         :return:
         """
         return None
+
+    def _question_mark_if_optional(self):
+        return "?" if self.optional else ""
+
+    def cwl(self) -> Dict[str, Any]:
+        if self.primitive() not in allowed_types:
+            raise Exception(f"{self.id()} must declare its primitive as one of {', '.join(allowed_types)}")
+        d = {
+            "type": self.primitive() + self._question_mark_if_optional()
+        }
+
+        if self.doc():
+            d["doc"] = self.doc()
+        if self.secondary_files():
+            d["secondaryFiles"] = self.secondary_files()
+
+        return d

@@ -5,7 +5,7 @@
 from typing import List
 
 from pipeline_definition.types.common_data_types import File
-from pipeline_definition.types.step import ToolInput, ToolOutput, Tool
+from pipeline_definition.types.tool import Tool, ToolInput, ToolOutput, ToolArgument
 
 
 class Compile(Tool):
@@ -15,6 +15,14 @@ class Compile(Tool):
         return "java-compiler"
 
     @staticmethod
+    def base_command():
+        return "javac"
+
+    @staticmethod
+    def docker():
+        return "openjdk:8"
+
+    @staticmethod
     def supported_translations() -> List[str]:
         return ["cwl"]
 
@@ -22,7 +30,10 @@ class Compile(Tool):
         return [ToolInput("input", File())]
 
     def outputs(self) -> List[ToolOutput]:
-        return [ToolOutput("out", File())]
+        return [ToolOutput("outp", File(), glob="*.class")]
+
+    def arguments(self) -> List[ToolArgument]:
+        return [ToolArgument("$(runtime.outdir)", "-d")]
 
 
 # class Compilee(Step):

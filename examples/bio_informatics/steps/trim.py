@@ -1,7 +1,7 @@
 from typing import Dict
 
-from pipeline_definition.types.step import Step, ToolInput, ToolOutput
-from pipeline_definition.types.step import StepFactory
+from Workflow.step import Step, ToolInput, ToolOutput
+from Workflow.step import StepFactory
 
 
 class TrimFactory(StepFactory):

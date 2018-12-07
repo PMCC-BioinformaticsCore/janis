@@ -1,7 +1,7 @@
 from typing import Dict
 
-from pipeline_definition.types.step import Step
-from pipeline_definition.types.step import StepFactory, ToolInput, ToolOutput
+from Workflow.step import Step
+from Workflow.step import StepFactory, ToolInput, ToolOutput
 
 
 class FastQCFactory(StepFactory):

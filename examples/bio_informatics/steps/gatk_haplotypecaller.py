@@ -3,8 +3,8 @@ from typing import List
 from examples.bio_informatics.data_types.bam import Bam
 from examples.bio_informatics.data_types.dbsnp import Dbsnp
 from examples.bio_informatics.data_types.ref_fasta import RefFasta
-from pipeline_definition.types.common_data_types import String, Number, File
-from pipeline_definition.types.tool import Tool, ToolOutput, ToolInput
+from types.common_data_types import String, Number, File
+from Tool.tool import Tool, ToolOutput, ToolInput
 
 
 class GatkHaplotypecaller(Tool):

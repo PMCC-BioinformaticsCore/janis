@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 
-from pipeline_definition.graph.node import Node, NodeType
-from pipeline_definition.types.tool import Tool, ToolInput, ToolOutput
-from pipeline_definition.utils.logger import Logger
+from Pipeline.graph.node import Node, NodeTypes
+from Pipeline.tool.tool import Tool, ToolInput, ToolOutput
+from Pipeline.utils.logger import Logger
 
 
 class Step:
-    def __init__(self, label: str, tool: Tool, meta: Dict[str, Any]):
+    def __init__(self, label: str, tool: Tool, meta: Dict[str, Any]=None):
         self.__label: str = label
         self.__tool: Tool = tool
         self.__meta: Dict[str, Any] = meta
@@ -45,17 +45,32 @@ class Step:
             "out": [o.tag for o in self.__tool.outputs()]
         }
 
-    def wdl_map(self):
-        return "<wdl-mapping here>"
+    def wdl_map(self) -> List[str]:
+        q = []
+        meta = self.__meta
+        for inp in self.__tool.inputs():
+            if inp.tag in meta:
+                q.append(f"{inp.tag} = {meta[inp.tag].replace('/', '.')}")
+            elif not inp.optional:
+                raise Exception(f"Required option '{inp.tag}' for step '{self.id()}' "
+                                f"was not found during conversion to WDL")
+        return q
 
-    @staticmethod
-    def select_type_name_from(meta) -> str:
-        return meta["tool"]
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        if item in self.get_tool().inputs_map():
+            return f"{self.id()}/{self.get_tool().inputs_map()[item].tag}"
+        if item in self.get_tool().outputs_map():
+            return f"{self.id()}/{self.get_tool().outputs_map()[item].tag}"
+
+        raise AttributeError(f" tool '{self.get_tool().id()}' has no identifier '{item}'")
 
 
 class StepNode(Node):
     def __init__(self, step: Step):
-        super().__init__(NodeType.TASK, step.id())
+        super().__init__(NodeTypes.TASK, step.id())
         self.step = step
 
     def inputs(self) -> Dict[str, ToolInput]:

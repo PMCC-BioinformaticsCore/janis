@@ -1,7 +1,7 @@
 from typing import List
 
-from pipeline_definition.types.common_data_types import Array, String, Number, File
-from pipeline_definition.types.tool import Tool, ToolOutput, ToolInput
+from types.common_data_types import Array, String, Number, File
+from Tool.tool import Tool, ToolOutput, ToolInput
 
 
 class PicardMarkDup(Tool):

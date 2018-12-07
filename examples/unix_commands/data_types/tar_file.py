@@ -1,6 +1,4 @@
-from typing import Dict, Any
-
-from pipeline_definition.types.common_data_types import File
+from Pipeline.types.common_data_types import File
 
 
 class TarFile(File):

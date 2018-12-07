@@ -3,8 +3,8 @@
 ###################
 from typing import Dict, Any
 
-from pipeline_definition.types.data_types import DataType
-from pipeline_definition.types.type_registry import register_type
+from Pipeline.types.data_types import DataType, NativeTypes
+from Pipeline.types.registry import register_type
 
 
 class String(DataType):
@@ -15,7 +15,7 @@ class String(DataType):
 
     @staticmethod
     def primitive():
-        return "string"
+        return NativeTypes.kStr
 
     @staticmethod
     def doc():
@@ -29,19 +29,61 @@ class String(DataType):
         return next(iter(meta.values()))
 
 
-class Number(DataType):
+class Int(DataType):
 
     @staticmethod
     def name():
-        return "Number"
+        return "Integer"
 
     @staticmethod
     def primitive():
-        return "int"
+        return NativeTypes.kInt
 
     @staticmethod
     def doc():
-        return "A number"
+        return "An integer"
+
+    @classmethod
+    def schema(cls) -> Dict:
+        return {"type": "number", "required": True}
+
+    def input_field_from_input(self, meta):
+        return next(iter(meta.values()))
+
+class Float(DataType):
+
+    @staticmethod
+    def name():
+        return "Float"
+
+    @staticmethod
+    def primitive():
+        return NativeTypes.kFloat
+
+    @staticmethod
+    def doc():
+        return "A float"
+
+    @classmethod
+    def schema(cls) -> Dict:
+        return {"type": "number", "required": True}
+
+    def input_field_from_input(self, meta):
+        return next(iter(meta.values()))
+
+class Double(DataType):
+
+    @staticmethod
+    def name():
+        return "Double"
+
+    @staticmethod
+    def primitive():
+        return NativeTypes.kDouble
+
+    @staticmethod
+    def doc():
+        return "An integer"
 
     @classmethod
     def schema(cls) -> Dict:
@@ -59,11 +101,11 @@ class Boolean(DataType):
 
     @staticmethod
     def primitive():
-        return "boolean"
+        return NativeTypes.kBool
 
     @staticmethod
     def doc():
-        return "A number"
+        return "A boolean"
 
     @classmethod
     def schema(cls) -> Dict:
@@ -87,11 +129,38 @@ class File(DataType):
 
     @staticmethod
     def primitive():
-        return "File"
+        return NativeTypes.kFile
 
     @staticmethod
     def doc():
         return "A local file"
+
+    @classmethod
+    def schema(cls) -> Dict:
+        return {
+            "path": {"type": "string", "required": True}
+        }
+
+    def input_field_from_input(self, meta):
+        # WDL: "{workflowName}.label" = meta["path"}
+        return {
+            "class": "File",
+            "path": meta["path"]
+        }
+
+
+class Directory(DataType):
+    @staticmethod
+    def name():
+        return "Directory"
+
+    @staticmethod
+    def primitive():
+        return NativeTypes.kDirectory
+
+    @staticmethod
+    def doc():
+        return "A directory of files"
 
     def get_value_from_meta(self, meta):
         return meta["path"]
@@ -126,7 +195,7 @@ class Array(DataType):
 
     @staticmethod
     def primitive():
-        return "array"
+        return NativeTypes.kArray
 
     def id(self):
         if self.__t is None:
@@ -148,6 +217,7 @@ class Array(DataType):
     def cwl(self) -> Dict[str, Any]:
         return {
             "type": "Array",
+            "items": self.__t.primitive()
         }
 
     def can_receive_from(self, other):
@@ -160,7 +230,10 @@ class Array(DataType):
 
 
 register_type(String)
-register_type(Number)
+register_type(Int)
+register_type(Float)
+register_type(Double)
 register_type(Boolean)
 register_type(Array)
 register_type(File)
+register_type(Directory)

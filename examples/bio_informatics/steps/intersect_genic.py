@@ -1,7 +1,7 @@
-from pipeline_definition.types.step import StepFactory
-from pipeline_definition.types.step import Step, ToolInput, ToolOutput
+from Workflow.step import StepFactory
+from Workflow.step import Step, ToolInput, ToolOutput
 
-from typing import List, Dict
+from typing import Dict
 
 class IntersectFactory(StepFactory):
   @classmethod

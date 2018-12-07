@@ -1,7 +1,4 @@
-import examples.unix_commands
-import examples.bio_informatics
-from pipeline_definition.utils.logger import Logger, LogLevel
-
+from utils.logger import Logger
 
 bwa_ref = ".bai, amb, ann, bwt, pac, sa, fai"
 ref = ".fasta, .amb ann bwt pac sa fai ^dict"
@@ -310,6 +307,7 @@ outputs:
 
 
 """
+
 
 class ParallelPipeline():
 

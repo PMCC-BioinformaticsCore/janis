@@ -2,8 +2,8 @@ from typing import List
 
 from examples.bio_informatics.data_types.bed import Bed
 from examples.bio_informatics.data_types.ref_fasta import RefFasta
-from pipeline_definition.types.common_data_types import File, String, Array
-from pipeline_definition.types.tool import Tool, ToolOutput, ToolInput
+from types.common_data_types import File, String, Array
+from Tool.tool import Tool, ToolOutput, ToolInput
 
 
 class GatkBaseRecalibrator(Tool):

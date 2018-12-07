@@ -15,7 +15,7 @@ import os
 import io
 import json
 import yaml
-from typing import List, Dict, Any, Optional, Type
+from typing import List, Dict, Any, Optional
 from timeit import default_timer as timer
 
 import networkx as nx
@@ -24,21 +24,21 @@ from networkx.readwrite import json_graph
 from cerberus import Validator
 
 import pipeline_definition.types.schema as wehi_schema
-import pipeline_definition.utils.errors as errors
-from pipeline_definition.types.common_data_types import String, Number, Boolean, Array
-from pipeline_definition.types.data_types import DataType
-from pipeline_definition.types.output import Output, OutputNode
-from pipeline_definition.types.tool import ToolInput, Tool
+import utils.errors as errors
+from types.common_data_types import String, Number, Boolean, Array
+from types.data_types import DataType
+from workflow.output import Output, OutputNode
+from Tool.tool import ToolInput, Tool
 
-from pipeline_definition.utils.logger import Logger, LogLevel
+from utils.logger import Logger, LogLevel
 
-from pipeline_definition.graph.node import Node, NodeType, layout_nodes, layout_nodes2
-from pipeline_definition.types.input import InputNode
-from pipeline_definition.utils.yaml_utils import str_presenter
-from pipeline_definition.types.type_registry import get_tool, get_type, get_tools
+from graph.node import Node, NodeType, layout_nodes2
+from workflow.input import InputNode
+from utils import str_presenter
+from pipeline_definition.types.type_registry import get_tool, get_type
 # from pipeline_definition.types.type_registry import get_input_factory
-from pipeline_definition.types.step import Step, ToolOutput, StepNode
-from pipeline_definition.types.input import Input  # , InputFactory, InputType
+from Workflow.step import Step, ToolOutput, StepNode
+from workflow.input import Input  # , InputFactory, InputType
 
 yaml.add_representer(str, str_presenter)
 
@@ -154,7 +154,7 @@ class PipelineTranslator:
     def draw_graph(self):
         import matplotlib.pyplot as plt
 
-        default_color = 'blacl'
+        default_color = 'black'
 
         G = self.__work_graph
         edges_attributes = [G.edges[e] for e in G.edges]
@@ -547,12 +547,16 @@ class PipelineTranslator:
             aliases.add(s)
             tool_name_to_alias[tool] = s
 
+        tab_char = '\t'
+        nline_char = '\n'
+
         imports = '\n'.join([f"import tools/{t}.wdl as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
-        inputs = '\n'.join([f"\t{i.data_type.primitive()} {i.label}" for i in self.inputs])
-        steps = '\n'.join([f"\tcall {tool_name_to_alias[s.get_tool().tool().lower()].upper()}"
-                   f".{s.get_tool().tool()} {{ {s.wdl_map()} }}" for s in self.steps])
-        outputs = '\n'.join([f"\t{o.data_type.primitive()} {o.label} = {steps_to_alias[o.source.split('/')[0].lower()].lower()}" \
+        inputs = '\n'.join([f"{tab_char}{i.data_type.primitive()} {i.label}" for i in self.inputs])
+        steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.get_tool().tool().lower()].upper()}"
+                   f".{s.get_tool().tool()} as {s.id()} {{\n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n}}" for s in self.steps])
+        outputs = '\n'.join([f"\t\t{o.data_type.primitive()} {o.label} = {steps_to_alias[o.source.split('/')[0].lower()].lower()}" \
                    f".{o.label}" for o in self.outputs])
+
         workflow = f"""
 {imports}
 

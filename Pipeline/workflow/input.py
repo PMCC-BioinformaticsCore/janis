@@ -1,12 +1,12 @@
 from typing import Dict
 
-from pipeline_definition.types.data_types import DataType
-from pipeline_definition.types.step import ToolOutput
-from pipeline_definition.graph.node import Node, NodeType
+from Pipeline.types.data_types import DataType
+from Pipeline.workflow.step import ToolOutput
+from Pipeline.graph.node import Node, NodeTypes
 
 
 class Input:
-    def __init__(self, label: str, data_type: DataType, meta):
+    def __init__(self, label: str, data_type: DataType, meta=None):
         self.label: str = label
         self.data_type: DataType = data_type
         # Will have type represented by data_type
@@ -31,7 +31,7 @@ class Input:
 class InputNode(Node):
 
     def __init__(self, inp: Input):
-        super().__init__(NodeType.INPUT, inp.id())
+        super().__init__(NodeTypes.INPUT, inp.id())
         self.input: Input = inp
 
     def outputs(self) -> Dict[str, ToolOutput]:
@@ -40,12 +40,6 @@ class InputNode(Node):
 
     def inputs(self):
         return None
-
-    def translate(self, mapped_inputs):
-        ind = dict()
-        for inp in self.__workflowInputSet:
-            ind.update(inp.translate_for_workflow())
-        return {'inputs': ind}
 
     @staticmethod
     def input_step_tag_name():

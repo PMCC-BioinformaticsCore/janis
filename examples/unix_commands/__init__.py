@@ -1,4 +1,5 @@
-from pipeline_definition.types.type_registry import register_tool, register_type
+from Pipeline.types.registry import register_type
+from Pipeline.tool.registry import register_tool
 
 from examples.unix_commands.data_types.tar_file import TarFile
 

@@ -1,6 +1,6 @@
-from typing import Any, Dict
+from typing import Dict
 
-from pipeline_definition.types.data_types import DataType
+from types.data_types import DataType
 
 
 class SequenceReadArchivePaired(DataType):

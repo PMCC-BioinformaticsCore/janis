@@ -1,7 +1,4 @@
-from typing import Dict
-
-from pipeline_definition.types.common_data_types import File
-from pipeline_definition.types.data_types import DataType
+from types.common_data_types import File
 
 
 class Dbsnp(File):

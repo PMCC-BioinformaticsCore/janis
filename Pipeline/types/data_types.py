@@ -14,19 +14,49 @@
 from abc import ABC, abstractmethod
 from typing import Any, List, Dict, Optional
 
-allowed_primitives = ["null", "boolean", "int", "long", "float", "double", "string"]
-allowed_types = allowed_primitives +  ["File", "Directory"]
+NativeType = str
+
+
+class NativeTypes:
+    kStr: NativeType = "str"
+    kInt: NativeType = "int"
+    kLong: NativeType = "long"
+    kFloat: NativeType = "float"
+    kBool: NativeType = "bool"
+    kDouble: NativeType = "double"
+    kFile: NativeType = "file"
+    kDirectory: NativeType = "dir"
+    kArray: NativeType = "array"
+
+    _primitives: List[NativeType] = [kStr, kInt, kLong, kFile, kBool, kDouble]
+    all: List[NativeType] = _primitives + [kFile, kDirectory, kArray]
+
+    @staticmethod
+    def is_primitive(t: NativeType) -> bool:
+        return t in NativeTypes._primitives
+
+    @staticmethod
+    def is_valid(t: str):
+        return t in NativeTypes.all
+
+    @staticmethod
+    def map_to_cwl(t: NativeType):
+        return t
+
+    @staticmethod
+    def map_to_wdl(t: NativeType):
+        return t
 
 
 class DataType(ABC):
 
     def __init__(self, optional=False):
         self.optional = optional
-        self.is_prim = self.primitive() in allowed_primitives
+        self.is_prim = NativeTypes.is_primitive(self.primitive())
 
     @staticmethod
     @abstractmethod
-    def name():
+    def name() -> str:
         raise Exception("Subclass MUST override name field")
 
     @staticmethod
@@ -35,12 +65,12 @@ class DataType(ABC):
 
     @staticmethod
     @abstractmethod
-    def primitive():
+    def primitive() -> NativeType:
         raise Exception("Subclass MUST override the 'schema' method")
 
     @staticmethod
     @abstractmethod
-    def doc():
+    def doc() -> str:
         """
         Subclasses should override this class to provide additional information on how to
         correctly provide data to the class, what inputs it may have and what other types
@@ -96,8 +126,9 @@ class DataType(ABC):
         return "?" if self.optional else ""
 
     def cwl(self) -> Dict[str, Any]:
-        if self.primitive() not in allowed_types:
-            raise Exception(f"{self.id()} must declare its primitive as one of {', '.join(allowed_types)}")
+        if not NativeTypes.is_valid(self.primitive()):
+            raise Exception(f"{self.id()} must declare its primitive as one of the NativeTypes "
+                            f"({', '.join(NativeTypes.all)})")
         d = {
             "type": self.primitive() + self._question_mark_if_optional()
         }

@@ -5,8 +5,8 @@ from examples.bio_informatics.data_types.bed import Bed
 from examples.bio_informatics.data_types.dbsnp import Dbsnp
 from examples.bio_informatics.data_types.ref_fasta import RefFasta
 from examples.bio_informatics.data_types.vcfidx import VcfIdx
-from pipeline_definition.types.common_data_types import String, Array, File
-from pipeline_definition.types.tool import Tool, ToolOutput, ToolInput
+from types.common_data_types import String, Array, File
+from Tool.tool import Tool, ToolOutput, ToolInput
 
 
 class GatkMutect(Tool):

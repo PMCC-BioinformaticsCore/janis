@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 import re
 from typing import List, Dict, Optional, Any
 
-from pipeline_definition.types.data_types import DataType
-from pipeline_definition.utils.logger import Logger
+from Pipeline.types.data_types import DataType
+from Pipeline.utils.logger import Logger, LogLevel
 
 
 class ToolArgument:
@@ -19,7 +19,8 @@ class ToolArgument:
 
         if not self.separate_value_from_prefix and not self.prefix.endswith("="):
             # I don't really know what this means.
-            Logger.log(f"Argument ({self.prefix} {self.value}) is not seperating and did not end with ='")
+            Logger.log(f"Argument ({self.prefix} {self.value}) is not separating and did not end with ='",
+                       LogLevel.WARNING)
 
     def cwl(self):
         d = {
@@ -33,6 +34,11 @@ class ToolArgument:
             d["prefix"] = self.prefix
 
         return d
+
+    def wdl(self):
+        return (self.prefix if self.prefix is not None else "") \
+               + (" " if self.separate_value_from_prefix else "") \
+               + (self.value if self.value is not None else "")
 
 
 class ToolInput(ToolArgument):
@@ -80,6 +86,9 @@ class Tool(ABC):
         - Take note which options you can provide to the ToolInput and ToolOutput.
     """
 
+    def id(self):
+        return self.tool()
+
     @staticmethod
     @abstractmethod
     def tool():
@@ -113,19 +122,25 @@ class Tool(ABC):
     def arguments(self) -> Optional[List[ToolArgument]]:
         return None
 
-    @abstractmethod
-    def inputs(self) -> List[ToolInput]:
-        raise Exception(f"{type(self)} MUST implement the 'inputs' method")
+    @classmethod
+    def inputs(cls) -> List[ToolInput]:
+        attrs = [x for x in vars(cls) if not x.startswith("_")]
+        d = cls.__dict__
+        return [d[x] for x in attrs if issubclass(type(d[x]), ToolInput)]
 
-    @abstractmethod
-    def outputs(self) -> List[ToolOutput]:
-        raise Exception(f"{type(self)} MUST implement the 'outputs' method")
+    @classmethod
+    def outputs(cls) -> List[ToolOutput]:
+        attrs = [x for x in vars(cls) if not x.startswith("_")]
+        d = cls.__dict__
+        return [d[x] for x in attrs if issubclass(type(d[x]), ToolOutput)]
 
-    def inputs_map(self) -> Dict[str, ToolInput]:
-        return {inp.tag: inp for inp in self.inputs()}
+    @classmethod
+    def inputs_map(cls) -> Dict[str, ToolInput]:
+        return {inp.tag: inp for inp in cls.inputs()}
 
-    def outputs_map(self) -> Dict[str, ToolOutput]:
-        return {outp.tag: outp for outp in self.outputs()}
+    @classmethod
+    def outputs_map(cls) -> Dict[str, ToolOutput]:
+        return {outp.tag: outp for outp in cls.outputs()}
 
     def cwl(self) -> Dict[str, Any]:
         d = {
@@ -158,15 +173,28 @@ class Tool(ABC):
 
         return d
 
-    def wdl(self):
-
-        args = sorted(self.inputs(), key=lambda a: a.position)
+    def _command(self):
 
         base = self.base_command() if type(self.base_command()) == str else " ".join(self.base_command())
+        command = base
 
-        command = f"{base} {str(args)}"
+        if self.arguments():
+            args: List[ToolArgument] = sorted(self.arguments(), key=lambda a: a.position)
+            args_joined = " ".join(a.wdl() for a in args)
+            base += " " + args_joined
+
+        if self.inputs():
+            inps = " ".join(f"${{{s.tag}}}" for s in self.inputs())
+            command += " " + inps
+
+        return command
+
+    def wdl(self):
+
+        command = self._command()
+
         inputs = "\n\t".join([f"{t.input_type.primitive()} {t.tag}" for t in self.inputs()])
-        outputs = "\n\t\t".join([f"{t.output_type.primitive()} {t.tag} = {t.glob}" for t in self.outputs()])
+        outputs = "\n\t\t".join(f"{o.output_type.primitive()} {o.tag} = glob(\"{o.glob}\")" for o in self.outputs())
 
         return f"""
 task {self.tool()} {{

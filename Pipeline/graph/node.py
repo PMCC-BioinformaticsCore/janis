@@ -6,25 +6,28 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple
 
-from pipeline_definition.types.tool import ToolInput, ToolOutput
+from Pipeline.tool.tool import ToolInput, ToolOutput
+
+NodeLabel = str
+NodeType = int
 
 
-class NodeType:
-    INPUT = 1
-    OUTPUT = 2
-    TASK = 3
-
-    @staticmethod
-    def to_str(node_type: int):
-        if node_type == NodeType.INPUT: return "Input"
-        if node_type == NodeType.OUTPUT: return "Output"
-        if node_type == NodeType.TASK: return "Task"
+class NodeTypes:
+    INPUT: NodeType = 1
+    OUTPUT: NodeType = 2
+    TASK: NodeType = 3
 
     @staticmethod
-    def to_col(node_type: int):
-        if node_type == NodeType.INPUT: return "red"
-        if node_type == NodeType.OUTPUT: return "lightblue"
-        if node_type == NodeType.TASK: return "blue"
+    def to_str(node_type: NodeType) -> str:
+        if node_type == NodeTypes.INPUT: return "Input"
+        if node_type == NodeTypes.OUTPUT: return "Output"
+        if node_type == NodeTypes.TASK: return "Task"
+
+    @staticmethod
+    def to_col(node_type: NodeType) -> str:
+        if node_type == NodeTypes.INPUT: return "red"
+        if node_type == NodeTypes.OUTPUT: return "lightblue"
+        if node_type == NodeTypes.TASK: return "blue"
 
 
 class Node(ABC):
@@ -33,14 +36,16 @@ class Node(ABC):
     _N_nodeId_map = {}
     _N_node_map = {}
 
-    def __init__(self, node_type: int, label: str, depth=0):
+    def __init__(self, node_type: NodeType, label: NodeLabel, depth=0):
 
         if label in self._N_node_map:
             raise Exception(f"Label {label} has already been used by node: {self._N_node_map[label]}")
 
-        self.node_type: int = node_type
-        self.label: str = label
+        self.node_type: NodeType = node_type
+        self._label: NodeLabel = label
         self.depth = depth
+
+        self.connection_map: Dict[str, NodeTag] = {}
 
         # Update unique counter for hash
         self._nodeId = Node._N_counter
@@ -48,29 +53,53 @@ class Node(ABC):
 
         # Map the node, so we can look it up later
         self._N_nodeId_map[self._nodeId] = self
-        self._N_node_map[self.label] = self
+        self._N_node_map[self._label] = self
+
+    def id(self) -> str:
+        return self._label
 
     def __hash__(self):
         return self._nodeId
 
+    def __repr__(self):
+        return self._label
+
     def __str__(self):
-        return f"{NodeType.to_str(self.node_type)}: {self.label}"
+        return f"{NodeTypes.to_str(self.node_type)}: {self._label}"
 
     def set_depth(self, depth: int):
         self.depth = max(self.depth, depth)
 
     @abstractmethod
     def inputs(self) -> Dict[str, ToolInput]:
-        raise Exception(f"Subclass {type(self)} must implement inputs, return dict: key: StepInput")
+        raise Exception(f"Subclass {type(self)} must implement inputs, return dict: key: ToolInput")
 
     @abstractmethod
     def outputs(self) -> Dict[str, ToolOutput]:
-        raise Exception(f"Subclass {type(self)} must implement outputs, return dict: key: StepOutput")
+        raise Exception(f"Subclass {type(self)} must implement outputs, return dict: key: ToolOutput")
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        if self.node_type == NodeTypes.INPUT:
+            return self.id()
+        if self.node_type == NodeTypes.TASK:
+            return f"{self.id()}/{item}"
+
+        raise AttributeError(f"type object '{type(self)}' has no attribute '{item}'")
+
+    def __setitem__(self, key, value):
+        self.connection_map[key] = value
+
+
+NodeTag = Tuple[str, Node]
 
 
 def layout_nodes(nodes: List[Node], n_inputs: int=0) -> Dict[Node, Tuple[int, int]]:
     """
     Stack on depth away from root, and scale smaller columns
+    :param n_inputs:
     :param nodes: list of nodes in Graph to position
     :return: Dict[Node, (x,y)]
     """
@@ -78,12 +107,12 @@ def layout_nodes(nodes: List[Node], n_inputs: int=0) -> Dict[Node, Tuple[int, in
     cur_depth = []
     depth_node: Dict[int, List[Node]] = {}
 
-    def get_idx_for_depth(depth: int):
-        d_idx = depth
+    def get_idx_for_depth(d: int):
+        d_idx = d
         m = len(cur_depth)
         if d_idx >= m:
-            cur_depth.extend([0] * (depth - m + 1))
-        return cur_depth[depth]
+            cur_depth.extend([0] * (d - m + 1))
+        return cur_depth[d]
 
     def push_to_dict(key, val):
         if key in depth_node:
@@ -119,8 +148,8 @@ def layout_nodes(nodes: List[Node], n_inputs: int=0) -> Dict[Node, Tuple[int, in
 
 def layout_nodes2(nodes: List[Node]) -> Dict[Node, Tuple[int, int]]:
     # Aim for something like Rabix
-    inputs = [n for n in nodes if n.node_type == NodeType.INPUT]
-    others = [n for n in nodes if n.node_type != NodeType.INPUT]
+    inputs = [n for n in nodes if n.node_type == NodeTypes.INPUT]
+    others = [n for n in nodes if n.node_type != NodeTypes.INPUT]
 
     pos = layout_nodes(others, len(inputs))
     s = 0

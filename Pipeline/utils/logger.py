@@ -18,7 +18,7 @@ class _bcolors:
 
 class LogLevel:
     CRITICAL = 2    # RED
-    WARNING = 3     # YELLO
+    WARNING = 3     # YELLOW
     INFO = 4        # WHITE
     DEBUG = 5       # GREY
 

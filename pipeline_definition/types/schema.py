@@ -2,7 +2,6 @@
 # Build the WF document schema from registered types
 #
 
-from pipeline_definition.types import type_registry
 from typing import Dict, Any
 
 

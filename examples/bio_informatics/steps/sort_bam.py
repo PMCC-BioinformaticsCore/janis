@@ -1,5 +1,5 @@
-from pipeline_definition.types.step import StepFactory
-from pipeline_definition.types.step import Step
+from Workflow.step import StepFactory
+from Workflow.step import Step
 
 
 class SortBamFactory(StepFactory):

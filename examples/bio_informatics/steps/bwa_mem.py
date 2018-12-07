@@ -2,8 +2,8 @@ from typing import List
 
 from examples.bio_informatics.data_types.fastq import FastQ
 from examples.bio_informatics.data_types.sam import Sam
-from pipeline_definition.types.common_data_types import String, Number, Array
-from pipeline_definition.types.tool import Tool, ToolOutput, ToolInput
+from types.common_data_types import String, Number, Array
+from Tool.tool import Tool, ToolOutput, ToolInput
 
 
 class BwaMem(Tool):

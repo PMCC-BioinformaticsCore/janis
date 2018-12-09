@@ -45,7 +45,7 @@ class Node(ABC):
         self._label: NodeLabel = label
         self.depth = depth
 
-        self.connection_map: Dict[str, NodeTag] = {}
+        self.connection_map: Dict[str, NodeAndTag] = {}
 
         # Update unique counter for hash
         self._nodeId = Node._N_counter
@@ -93,7 +93,7 @@ class Node(ABC):
         self.connection_map[key] = value
 
 
-NodeTag = Tuple[str, Node]
+NodeAndTag = Tuple[str, Node]
 
 
 def layout_nodes(nodes: List[Node], n_inputs: int=0) -> Dict[Node, Tuple[int, int]]:

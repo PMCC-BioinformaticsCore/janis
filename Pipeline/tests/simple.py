@@ -37,7 +37,6 @@ class TestSimple(unittest.TestCase):
         w.add_step(step3)
         w.add_output(outp)
 
-
         w.add_edge(inp1, step1)
         w.add_edge(step1, step2)
         # w.add_pipe([inp1, step1, step2, step3])

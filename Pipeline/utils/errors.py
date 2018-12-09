@@ -8,6 +8,7 @@ class DuplicateLabelIdentifier(Exception): pass
 
 class InvalidNodeIdentifier(Exception): pass
 
+
 class NodeNotFound(Exception): pass
 
 

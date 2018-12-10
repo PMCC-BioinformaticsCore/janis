@@ -2,16 +2,18 @@
 # Untar a file
 from typing import List
 
+from Pipeline.types.filename import Filename
 from Pipeline.types.common_data_types import File, String
 from Pipeline.workflow.step import Tool, ToolInput, ToolOutput
 
 
 class Tar(Tool):
-
-    tarName: ToolInput = ToolInput("tarName", String())
     input1: ToolInput = ToolInput("input1", File(), position=1)
     input2: ToolInput = ToolInput("input2", File(), position=2)
     outp: ToolOutput = ToolOutput("outp", File(), glob="*.tar")
+
+    # this param may be marked as optional, but the Workflow system will always give it a value
+    tarName: ToolInput = ToolInput("tarName", Filename(extension="tar"))
 
     @staticmethod
     def tool():

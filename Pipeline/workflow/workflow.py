@@ -370,23 +370,57 @@ class Workflow:
         tab_char = '  '
         nline_char = '\n'
 
-        imports = '\n'.join(
-            [f"import \"tools/{t}.wdl\" as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
-        inputs = '\n'.join([f"{tab_char}{i.input.data_type.wdl()} {i.id()}" for i in self._inputs])
-        steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.step.get_tool().tool().lower()].upper()}"
-                           f".{s.step.get_tool().wdl_name()} as {s.id()} {{input: \n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n{tab_char}}}" for s in self._steps])
-        outputs = '\n'.join([f"{2*tab_char}{o.output.data_type.wdl()} {o.id()} = {steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower()}.{o.id()}" for o in self._outputs])
+        import_str ="import \"tools/{tool_file}.wdl as {alias}"
+        input_str = "{tb}{data_type} {identifier}{default_with_equals_if_required}"
+        step_str =  "{tb}call {tool_file}.{tool} as {alias} {{ input: {tool_mapping} }}"
+        output_str ="{tb2}{data_type} {identifier} = {alias}.{outp}"
+
+        imports = [import_str.format(
+            tb=tab_char,
+            tool_file=t,
+            alias=tool_name_to_alias[t.lower()].upper()
+        ) for t in tool_name_to_tool]
+
+        inputs = [input_str.format(
+            tb=tab_char,
+            data_type=i.input.data_type.wdl(),
+            identifier=i.id(),
+            default_with_equals_if_required=""
+        ) for i in self._inputs]
+
+        steps = [step_str.format(
+            tb=tab_char,
+            tool_file=tool_name_to_alias[s.step.get_tool().tool().lower()].upper(),
+            tool=s.step.get_tool().wdl_name(),
+            alias=s.id(),
+            tool_mapping=', '.join(s.wdl_map()) #[2 * tab_char + w for w in s.wdl_map()])
+        ) for s in self._steps]
+
+        outputs = [output_str.format(
+            tb2=2 * tab_char,
+            data_type=o.output.data_type.wdl(),
+            identifier=o.id(),
+            alias=steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower(),
+            outp=o.id()
+        ) for o in self._outputs]
+
+        # imports = '\n'.join([f"import \"tools/{t}.wdl\" as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
+        # inputs = '\n'.join([f"{tab_char}{i.input.data_type.wdl()} {i.id()}" for i in self._inputs])
+        # steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.step.get_tool().tool().lower()].upper()}"
+        #                    f".{s.step.get_tool().wdl_name()} as {s.id()} {{input: \n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n{tab_char}}}" for s in self._steps])
+        # outputs = '\n'.join([f"{2*tab_char}{o.output.data_type.wdl()} {o.id()} = {steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower()}.{o.id()}" for o in self._outputs])
 
         workflow = f"""
 {imports}
 
 workflow {self.name} {{
-{inputs}
-{steps}
+{nline_char.join(inputs)}
 
-    output {{
-{outputs}
-    }}
+{nline_char.join(steps)}
+
+{tab_char}output {{
+{nline_char.join(outputs)}
+{tab_char}}}
 }}"""
         tools = {t.id(): t.wdl() for t in tools}
         inp = {f"{self.name}.{i.id()}": i.input.data_type.wdl() for i in self._inputs}

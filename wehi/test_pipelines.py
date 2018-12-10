@@ -8,19 +8,19 @@ import examples.bio_informatics
 
 class TestWehi(TestCase):
 
-    # def test_simple(self):
-    #     w = Wehi("Simple")
-    #     w.parse_string(_simple)
-    #     self.dump_cwl(w.workflow, to_disk=True)
-    #     self.dump_wdl(w.workflow, to_disk=True)
-    #     self.assertTrue(True)
-
-    def test_parallel(self):
-        w = Wehi("Parallel")
-        w.parse_string(_parallel)
-
-
+    def test_simple(self):
+        w = Wehi("Simple")
+        w.parse_string(_simple)
+        self.dump_cwl(w.workflow, to_disk=True)
+        self.dump_wdl(w.workflow, to_disk=False)
         self.assertTrue(True)
+
+    # def test_parallel(self):
+    #     w = Wehi("Parallel")
+    #     w.parse_string(_parallel)
+    #
+    #
+    #     self.assertTrue(True)
 
     @staticmethod
     def dump_cwl(translator: Workflow, to_disk: False):
@@ -97,7 +97,7 @@ inputs:
     tarfile:
         type: TarFile
         path: /Users/franklinmichael/source/simple-workflow/hello.tar
-    tarName: hello.tar
+#    tarName: hello.tar
 
 steps:
     untar:
@@ -110,7 +110,7 @@ steps:
 
     tar:
         tool: tar
-        tarName: tarName/something-else
+#        tarName: tarName/something-else
         input1: untar/outp
         input2: compile/outp
 

@@ -1,6 +1,6 @@
 from typing import Dict
 
-from Pipeline.types.data_types import DataType
+from Pipeline.types.data_types import DataType, NativeTypes
 from Pipeline.workflow.step import ToolOutput
 from Pipeline.graph.node import Node, NodeTypes
 
@@ -36,7 +36,8 @@ class InputNode(Node):
         if self.input.data_type.is_prim:
             return self.input.meta
         else:
-            return {
-                "class": self.input.data_type.primitive(),
-                "path": self.input.data_type.get_value_from_meta(self.input.meta)
-            }
+            return self.input.data_type.input_field_from_input(self.input.meta)
+            # return {
+            #     "class": NativeTypes.map_to_cwl(self.input.data_type.primitive()),
+            #     "path": self.input.data_type.get_value_from_meta(self.input.meta)
+            # }

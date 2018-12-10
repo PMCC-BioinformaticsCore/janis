@@ -14,8 +14,10 @@
 from abc import ABC, abstractmethod
 from typing import Any, List, Dict, Optional
 
-NativeType = str
+from Pipeline.translations.cwl.cwl import Cwl
+from Pipeline.translations.wdl.Wdl import Wdl
 
+NativeType = str
 
 class NativeTypes:
     kStr: NativeType = "str"
@@ -41,12 +43,63 @@ class NativeTypes:
 
     @staticmethod
     def map_to_cwl(t: NativeType):
-        return t
+        if t == NativeTypes.kBool:
+            return Cwl.PRIMITIVES.kBOOLEAN
+        elif t == NativeTypes.kInt:
+            return Cwl.PRIMITIVES.kINT
+        elif t == NativeTypes.kLong:
+            return Cwl.PRIMITIVES.kLONG
+        elif t == NativeTypes.kFloat:
+            return Cwl.PRIMITIVES.kFLOAT
+        elif t == NativeTypes.kDouble:
+            return Cwl.PRIMITIVES.kDOUBLE
+        elif t == NativeTypes.kStr:
+            return Cwl.PRIMITIVES.kSTRING
+        elif t == NativeTypes.kFile:
+            return Cwl.PRIMITIVES.kFILE
+        elif t == NativeTypes.kDirectory:
+            return Cwl.PRIMITIVES.kDIRECTORY
+        elif t == NativeTypes.kArray:
+            return Cwl.PRIMITIVES.kARRAY
+        raise Exception(f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}")
 
     @staticmethod
     def map_to_wdl(t: NativeType):
-        return t
+        if t == NativeTypes.kBool:
+            return Wdl.PRIMITIVES.kBOOLEAN
+        elif t == NativeTypes.kInt:
+            return Wdl.PRIMITIVES.kINT
 
+        elif t == NativeTypes.kLong or t == NativeTypes.kFloat or t == NativeTypes.kDouble:
+            return Wdl.PRIMITIVES.kFLOAT
+        elif t == NativeTypes.kStr:
+            return Wdl.PRIMITIVES.kSTRING
+        elif t == NativeTypes.kFile:
+            return Wdl.PRIMITIVES.kFILE
+        elif t == NativeTypes.kDirectory:
+            return Wdl.PRIMITIVES.kINT
+        elif t == NativeTypes.kArray:
+            return Wdl.PRIMITIVES.kARRAY
+        raise Exception(f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}")
+
+    @staticmethod
+    def default_value(t: NativeType):
+        if t == NativeTypes.kBool:
+            return True
+        elif t == NativeTypes.kInt:
+            return 0
+        elif t == NativeTypes.kLong:
+            return 0.0
+        elif t == NativeTypes.kFloat:
+            return 0.0
+        elif t == NativeTypes.kDouble:
+            return 0.0
+        elif t == NativeTypes.kStr:
+            return "nothing"
+        elif t == NativeTypes.kFile:
+            return {"type": "File", "path": "path/to/file"}
+        elif t == NativeTypes.kDirectory:
+            return { "type": "Directory", "path": "path/to/file"}
 
 class DataType(ABC):
 
@@ -130,7 +183,7 @@ class DataType(ABC):
             raise Exception(f"{self.id()} must declare its primitive as one of the NativeTypes "
                             f"({', '.join(NativeTypes.all)})")
         d = {
-            "type": self.primitive() + self._question_mark_if_optional()
+            "type": NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
         }
 
         if self.doc():
@@ -139,3 +192,7 @@ class DataType(ABC):
             d["secondaryFiles"] = self.secondary_files()
 
         return d
+
+    def wdl(self):
+        return NativeTypes.map_to_wdl(self.primitive())
+

@@ -9,19 +9,13 @@ class Output:
     """
         Only catch with output is we infer the type, we don't explicitly define it
     """
-    def __init__(self, label: str, data_type: Optional[DataType], source: Any = None):
+    def __init__(self, label: str, data_type: Optional[DataType], meta: Any = None):
         self.label: str = label
         self.data_type: DataType = data_type
-        self.source = source
+        self.meta = meta
 
     def id(self) -> str:
         return self.label
-
-    def cwl(self):
-        return {
-            **self.data_type.cwl(),
-            "outputSource": self.source
-        }
 
 
 class OutputNode(Node):
@@ -31,7 +25,13 @@ class OutputNode(Node):
         super().__init__(NodeTypes.OUTPUT, output.label)
 
     def inputs(self) -> Dict[str, ToolInput]:
-        return {self.output.label: ToolInput(self.output.source, self.output.data_type)}
+        return {self.output.label: ToolInput(self.output.meta, self.output.data_type)}
 
     def outputs(self) -> Dict[str, ToolOutput]:
         return {}
+
+    def cwl(self):
+        return {
+            **self.output.data_type.cwl(),
+            "outputSource": next(iter(self.connection_map.values()))[0]
+        }

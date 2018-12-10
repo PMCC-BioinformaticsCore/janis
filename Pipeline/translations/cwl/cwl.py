@@ -31,9 +31,14 @@ class Cwl:
         kJAVASCRIPT = "InlineJavascriptRequirement"
 
     class PRIMITIVES:
-        kDIRECTORY = "Directory"
-        kFILE = "File"
-        kSTRING = "string"
+        kNULL = "null"
+        kBOOLEAN = "boolean"
         kINT = "int"
+        kLONG = "long"
         kFLOAT = "float"
+        kDOUBLE = "double"
+        kSTRING = "string"
+        kFILE = "File"
+        kDIRECTORY = "Directory"
+        kARRAY = "array"
 

@@ -551,7 +551,7 @@ class PipelineTranslator:
         nline_char = '\n'
 
         imports = '\n'.join([f"import tools/{t}.wdl as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
-        inputs = '\n'.join([f"{tab_char}{i.data_type.primitive()} {i.label}" for i in self.inputs])
+        inputs = '\n'.join([f"{tab_char}{i.data_type.wdl()} {i.label}" for i in self.inputs])
         steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.get_tool().tool().lower()].upper()}"
                    f".{s.get_tool().tool()} as {s.id()} {{\n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n}}" for s in self.steps])
         outputs = '\n'.join([f"\t\t{o.data_type.primitive()} {o.label} = {steps_to_alias[o.source.split('/')[0].lower()].lower()}" \

@@ -189,18 +189,22 @@ class Tool(ABC):
 
         return command
 
+    def wdl_name(self):
+        return self.tool().replace("-", "_")
+
     def wdl(self):
 
         command = self._command()
 
-        inputs = "\n\t".join([f"{t.input_type.primitive()} {t.tag}" for t in self.inputs()])
-        outputs = "\n\t\t".join(f"{o.output_type.primitive()} {o.tag} = glob(\"{o.glob}\")" for o in self.outputs())
+        inputs = "\n\t".join([f"{t.input_type.wdl()} {t.tag}" for t in self.inputs()])
+
+        outputs = "\n\t\t".join(f"{o.output_type.wdl()} {o.tag} = glob(\"{o.glob}\")[0]" for o in self.outputs())
 
         return f"""
-task {self.tool()} {{
+task {self.wdl_name()} {{
     {inputs}
     
-    runtime {{ docker: {self.docker()} }}
+    runtime {{ docker: "{self.docker()}" }}
     command {{
         {command}
     }}

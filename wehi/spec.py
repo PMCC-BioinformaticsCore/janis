@@ -28,6 +28,8 @@ class Wehi:
         self.steps = self.parse_steps(steps)
         self.outputs = self.parse_outputs(outputs)
         self.build_graph()
+        Logger.log("Built graph")
+        # self.workflow.draw_graph()
 
     def build_graph(self):
         for inp in self.inputs:
@@ -50,7 +52,7 @@ class Wehi:
                 self.workflow.add_edge(inp_tag, f"{step.id()}/{tool_tag.tag}")
 
         for out in self.outputs:
-            self.workflow.add_edge(out.source, out)
+            self.workflow.add_edge(out.meta, out)
 
         print(self.workflow)
 

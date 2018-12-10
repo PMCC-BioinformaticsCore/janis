@@ -37,25 +37,6 @@ class Step:
     def get_tool(self) -> Tool:
         return self.__tool
 
-    def cwl(self):
-        return {
-            "label": self.__label,
-            "run": f"tools/{self.__tool.tool().lower()}.cwl",
-            "in": {i.tag: self.__meta[i.tag] for i in self.__tool.inputs()},
-            "out": [o.tag for o in self.__tool.outputs()]
-        }
-
-    def wdl_map(self) -> List[str]:
-        q = []
-        meta = self.__meta
-        for inp in self.__tool.inputs():
-            if inp.tag in meta:
-                q.append(f"{inp.tag} = {meta[inp.tag].replace('/', '.')}")
-            elif not inp.optional:
-                raise Exception(f"Required option '{inp.tag}' for step '{self.id()}' "
-                                f"was not found during conversion to WDL")
-        return q
-
     def __getattr__(self, item):
         if item in self.__dict__:
             return self.__dict__[item]
@@ -78,6 +59,33 @@ class StepNode(Node):
 
     def outputs(self) -> Dict[str, ToolOutput]:
         return self.step.provides()
+
+    def __getattr__(self, item):
+        if item in self.__dict__:
+            return self.__dict__[item]
+
+        if item in self.inputs() or item in self.outputs():
+            return f"{self.id()}/{item}"
+
+        raise AttributeError(f"type object '{type(self)}' has no attribute '{item}'")
+
+    def cwl(self):
+        return {
+            "label": self.step.id(),
+            "run": f"tools/{self.step.get_tool().tool().lower()}.cwl",
+            "in": {i: self.connection_map[i][0] for i in self.connection_map},
+            "out": [o.tag for o in self.step.get_tool().outputs()]
+        }
+
+    def wdl_map(self) -> List[str]:
+        q = []
+        for inp in self.step.get_tool().inputs():
+            if inp.tag in self.connection_map:
+                q.append(f"{inp.tag} = {self.connection_map[inp.tag][0].replace('/', '.')}")
+            elif not inp.optional:
+                raise Exception(f"Required option '{inp.tag}' for step '{self.id()}' "
+                                f"was not found during conversion to WDL")
+        return q
 
 
 # Should be able to remove the below

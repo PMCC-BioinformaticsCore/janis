@@ -44,4 +44,5 @@ class TestSimple(unittest.TestCase):
         w.add_edge(step2.outp, step3.input2)
         w.add_edge(step3.outp, outp)
 
+        # w.draw_graph()
         return w

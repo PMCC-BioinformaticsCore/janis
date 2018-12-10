@@ -1,12 +1,12 @@
-from typing import Dict, List, Tuple, Set, Optional
+from typing import Dict, List, Tuple, Set, Optional, Any
 
-from Pipeline.types.data_types import DataType
+from Pipeline.types.data_types import DataType, NativeTypes
 from Pipeline.utils.logger import Logger, LogLevel
 from Pipeline.utils.descriptor import BaseDescriptor, GetOnlyDescriptor
 
 import networkx as nx
 
-from Pipeline.graph.node import Node, NodeTypes, NodeAndTag
+from Pipeline.graph.node import Node, NodeTypes, NodeAndTag, layout_nodes2
 from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
     InvalidInputsException
 from Pipeline.workflow.input import Input, InputNode
@@ -31,6 +31,24 @@ class Workflow:
 
         self.graph: nx.MultiDiGraph = nx.MultiDiGraph()
         self.connections: Dict[str, Set[NodeAndTag]] = {}
+
+    def draw_graph(self):
+        import matplotlib.pyplot as plt
+
+        default_color = 'black'
+
+        G = self.graph
+        edges_attributes = [G.edges[e] for e in G.edges]
+        edge_colors = [x["color"] if 'color' in x else default_color for x in edges_attributes]
+        node_colors = [NodeTypes.to_col(x.node_type) for x in G.nodes]
+
+        pos = layout_nodes2(list(G.nodes))
+
+        for n in pos:
+            G.node[n]['pos'] = pos[n]
+
+        nx.draw(G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=True)
+        plt.show()
 
     def add_input(self, inp: Input):
         Logger.log(f"Adding input '{inp.id()}' to '{self.name}'")
@@ -135,7 +153,9 @@ class Workflow:
         s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts, f)
 
         if f_node.node_type == NodeTypes.OUTPUT:
+            f_node: OutputNode = f_node
             f_type = f_parts[0], s_type[1]
+            f_node.output.data_type = s_type[1]
             Logger.log("Connecting to output")
         else:
             f_type = self.get_tag_and_type_from_final_edge_node(f_node, f_parts)
@@ -150,7 +170,7 @@ class Workflow:
                 raise Exception(f"Could not identify connection for edge {s} → {f}")
 
         # NOW: Let's build the connection
-        s_node.connection_map[s_type[0]] = f_type[0], f_node
+        f_node.connection_map[f_parts[-1]] = s_type[0], s_node
 
         correct_type = f_type[1].can_receive_from(s_type[1])
 
@@ -191,10 +211,10 @@ class Workflow:
             if len(input_parts) != 2:
                 under_over = "under" if len(input_parts) < 2 else "over"
                 Logger.log(f"The node '{node.id()}' {under_over}-referenced an output of the tool "
-                           f"'{node.get_tool().id()}', this was automatically corrected "
+                           f"'{node.step.get_tool().id()}', this was automatically corrected "
                            f"({s} → {lbl}/{types[0][0]})", LogLevel.WARNING)
-                # s = f"{lbl}/{types[0][0]}"
-            return types[0]
+                s = f"{lbl}/{types[0][0]}"
+            return s, types[0][1]
 
         else:
             # if the edge tag doesn't match, we can give up
@@ -203,7 +223,7 @@ class Workflow:
             if t:
                 if len(input_parts) != 2:
                     Logger.log(f"The node '{node.id()}' did not correctly reference an output of the tool "
-                               f"'{node.get_tool().id()}', this was automatically corrected "
+                               f"'{node.step.get_tool().id()}', this was automatically corrected "
                                f"({s} → {lbl}/{tag})", LogLevel.WARNING)
                     s = f"{lbl}/{tag}"
                 return s, t.output_type
@@ -233,7 +253,7 @@ class Workflow:
 
             if len(input_parts) != 2:
                 Logger.log(f"The node '{node.id()}' did not correctly reference an input of the tool "
-                           f"'{node.get_tool().id()}', this was automatically corrected "
+                           f"'{node.step.get_tool().id()}', this was automatically corrected "
                            f"({s} → {lbl}/{types[0][0]})", LogLevel.WARNING)
                 # s = f"{lbl}/{types[0][0]}"
             return types[0]
@@ -247,7 +267,7 @@ class Workflow:
             if t:
                 if len(input_parts) != 2:
                     Logger.log(f"The node '{node.id()}' did not correctly reference an input of the tool "
-                               f"'{node.get_tool().id()}', this was automatically corrected "
+                               f"'{node.step.get_tool().id()}', this was automatically corrected "
                                f"({s} → {lbl}/{tag})", LogLevel.WARNING)
                     s = f"{lbl}/{tag}"
                 return s, t.input_type
@@ -295,3 +315,80 @@ class Workflow:
 
         if node.node_type == NodeTypes.TASK:
             pass
+
+    def cwl(self) -> Tuple[Dict[str, Any], Dict[str, Any], List[Dict[str, Any]]]:
+        # Let's try to emit CWL
+        d = {
+            "class": "Workflow",
+            "cwlVersion": "v1.0",
+            "id": self.name,
+            "label": self.name,
+            "requirements": [
+                {"class": "InlineJavascriptRequirement"}
+            ]
+        }
+
+        if self._inputs:
+            d["inputs"] = {i.id(): i.cwl() for i in self._inputs}
+
+        if self._outputs:
+            d["outputs"] = {o.id(): o.cwl() for o in self._outputs}
+
+        if self._steps:
+            d["steps"] = {s.id(): s.cwl() for s in self._steps}
+
+        tools = []
+        tools_to_build: Dict[str, Tool] = {s.step.get_tool().tool(): s.step.get_tool() for s in self._steps}
+        for t in tools_to_build:
+            tools.append(tools_to_build[t].cwl())
+
+        inp = {i.id(): i.input_cwl_yml() for i in self._inputs}
+
+        return d, inp, tools
+
+    def wdl(self):
+
+        get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
+
+        tools = [s.step.get_tool() for s in self._steps]
+        tool_name_to_tool: Dict[str, Tool] = {t.tool().lower(): t for t in tools}
+        tool_name_to_alias = {}
+        steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
+
+        aliases = set()
+
+        for tool in tool_name_to_tool:
+            a = get_alias(tool).upper()
+            s = a
+            idx = 2
+            while s in aliases:
+                s = a + idx
+                idx += 1
+            aliases.add(s)
+            tool_name_to_alias[tool] = s
+
+        tab_char = '  '
+        nline_char = '\n'
+
+        imports = '\n'.join(
+            [f"import \"tools/{t}.wdl\" as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
+        inputs = '\n'.join([f"{tab_char}{i.input.data_type.wdl()} {i.id()}" for i in self._inputs])
+        steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.step.get_tool().tool().lower()].upper()}"
+                           f".{s.step.get_tool().wdl_name()} as {s.id()} {{input: \n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n{tab_char}}}" for s in self._steps])
+        outputs = '\n'.join([f"{2*tab_char}{o.output.data_type.wdl()} {o.id()} = {steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower()}.{o.id()}" for o in self._outputs])
+
+        workflow = f"""
+{imports}
+
+workflow {self.name} {{
+{inputs}
+{steps}
+
+    output {{
+{outputs}
+    }}
+}}"""
+        tools = {t.id(): t.wdl() for t in tools}
+        inp = {f"{self.name}.{i.id()}": i.input.data_type.wdl() for i in self._inputs}
+
+        return workflow, inp, tools

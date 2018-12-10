@@ -15,18 +15,6 @@ class Input:
     def id(self):
         return self.label
 
-    def cwl(self):
-        return self.data_type.cwl()
-
-    def input_cwl_yml(self):
-        if self.data_type.is_prim:
-            return self.meta
-        else:
-            return {
-                "class": self.data_type.primitive(),
-                "path": self.data_type.get_value_from_meta(self.meta)
-            }
-
 
 class InputNode(Node):
 
@@ -41,7 +29,14 @@ class InputNode(Node):
     def inputs(self):
         return None
 
-    @staticmethod
-    def input_step_tag_name():
-        return 'input'
+    def cwl(self):
+        return self.input.data_type.cwl()
 
+    def input_cwl_yml(self):
+        if self.input.data_type.is_prim:
+            return self.input.meta
+        else:
+            return {
+                "class": self.input.data_type.primitive(),
+                "path": self.input.data_type.get_value_from_meta(self.input.meta)
+            }

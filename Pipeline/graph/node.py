@@ -78,17 +78,6 @@ class Node(ABC):
     def outputs(self) -> Dict[str, ToolOutput]:
         raise Exception(f"Subclass {type(self)} must implement outputs, return dict: key: ToolOutput")
 
-    def __getattr__(self, item):
-        if item in self.__dict__:
-            return self.__dict__[item]
-
-        if self.node_type == NodeTypes.INPUT:
-            return self.id()
-        if self.node_type == NodeTypes.TASK:
-            return f"{self.id()}/{item}"
-
-        raise AttributeError(f"type object '{type(self)}' has no attribute '{item}'")
-
     def __setitem__(self, key, value):
         self.connection_map[key] = value
 

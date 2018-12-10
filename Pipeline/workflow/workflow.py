@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Set
+from typing import Dict, List, Tuple, Set, Optional
 
 from Pipeline.types.data_types import DataType
 from Pipeline.utils.logger import Logger, LogLevel
@@ -16,7 +16,6 @@ from Pipeline.tool.tool import Tool, ToolInput, ToolOutput
 
 
 class Workflow:
-
     name = BaseDescriptor()
 
     def __init__(self, name: str):
@@ -133,16 +132,16 @@ class Workflow:
         s_node.set_depth(f_node.depth - 1)
         f_node.set_depth(s_node.depth + 1)
 
-        s_type = self.get_tag_and_type_from_node(s_node, s_parts, True)
+        s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts, f)
 
         if f_node.node_type == NodeTypes.OUTPUT:
             f_type = f_parts[0], s_type[1]
             Logger.log("Connecting to output")
         else:
-            f_type = self.get_tag_and_type_from_node(f_node, f_parts, False, s_type[1] if s_type is not None else None)
+            f_type = self.get_tag_and_type_from_final_edge_node(f_node, f_parts)
 
             if s_type is None and f_type is not None:
-                s_type = self.get_tag_and_type_from_node(s_node, s_parts, True, f_type[1])
+                s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts, f, f_type[1])
 
             if s_type is None and f_type is None:
                 s_type, f_type = self.guess_connection_between_nodes(s_node, f_node)
@@ -165,62 +164,99 @@ class Workflow:
         col = 'black' if correct_type else 'r'
         self.graph.add_edge(s_node, f_node, type_match=correct_type, color=col)
 
-    @staticmethod
-    def get_tag_and_type_from_node(node: Node, input_parts: List[str], is_start: bool, guess_type: DataType=None) -> Tuple[str, DataType]:
+    def get_tag_and_type_from_start_edge_node(self, node: Node, input_parts: List[str], referenced_by: str,
+                                              guess_type: Optional[DataType] = None) -> Tuple[str, DataType]:
+
+        if node.node_type == NodeTypes.OUTPUT:
+            raise Exception(f"Can't join '{referenced_by}' to output node '{node.id()}'")
+
         lbl = input_parts[0]
         s = "/".join(input_parts)
         if node.node_type == NodeTypes.INPUT:
             if len(input_parts) != 1:
-                message = f"The input tag '{s}' over-represents the INPUT node, this was corrected ({s} → {lbl}"
+                message = f"The input tag '{s}' over-represents the INPUT node, this was corrected ({s} → {lbl})"
                 Logger.log(message, LogLevel.WARNING)
             return lbl, next(iter(node.outputs().values())).output_type
 
-        elif node.node_type == NodeTypes.OUTPUT:
-            if len(input_parts) != 1:
-                message = f"The input tag '{s}' over-represents the OUTPUT node, this was corrected ({s} → {lbl}"
-                Logger.log(message, LogLevel.WARNING)
-            return lbl, None
+        # We are a step node now
+        node: StepNode = node
+        outs: Dict[str, ToolOutput] = node.outputs()
 
-        elif node.node_type == NodeTypes.TASK:
-            step_node: StepNode = node
-            ins, outs = node.inputs(), node.outputs()
-            put_name = 'output' if is_start else 'input'
+        types = [(x, outs[x].output_type) for x in outs]
 
-            types = [(x, outs[x].output_type) for x in outs] \
-                     if is_start else [(x, ins[x].input_type) for x in ins]
-            if len(types) == 0:
-                raise InvalidStepsException(f"The step '{input_parts}' referenced the tool "
-                                            f"'{step_node.step.get_tool().id()}' with "
-                                            f"no {put_name}s")
+        if len(types) == 0:
+            raise InvalidStepsException(f"The step '{referenced_by}' referenced the step '{node.id()}' with tool "
+                                        f"'{node.step.get_tool().id()}' that has no inputs")
+        elif len(types) == 1:
+            if len(input_parts) != 2:
+                under_over = "under" if len(input_parts) < 2 else "over"
+                Logger.log(f"The node '{node.id()}' {under_over}-referenced an output of the tool "
+                           f"'{node.get_tool().id()}', this was automatically corrected "
+                           f"({s} → {lbl}/{types[0][0]})", LogLevel.WARNING)
+                # s = f"{lbl}/{types[0][0]}"
+            return types[0]
 
-            if len(input_parts) == 1:
-                # No tag, better hope there's only one input
-                if len(types) > 1:
-                    if guess_type is None:
-                        Logger.log("Could not correctly determine the type for '{}', "
-                                   "however it may be able to guess it later", LogLevel.WARNING)
-                    else:
-                        # try to get it here
-                        raise NotImplementedError("The 'auto-align step by datatype' has not yet been implemented")
+        else:
+            # if the edge tag doesn't match, we can give up
+            tag = input_parts[1]
+            t = node.step.get_tool().outputs_map().get(tag)
+            if t:
+                if len(input_parts) != 2:
+                    Logger.log(f"The node '{node.id()}' did not correctly reference an output of the tool "
+                               f"'{node.get_tool().id()}', this was automatically corrected "
+                               f"({s} → {lbl}/{tag})", LogLevel.WARNING)
+                    s = f"{lbl}/{tag}"
+                return s, t.output_type
 
-                else:
-                    Logger.log(f"The tag '{s}' under-represents the STEP node, this was corrected "
-                               f"({s} → {s}/{types[0][0]})", LogLevel.WARNING)
+            possible_tags = ", ".join(f"'{x}'" for x in outs)
+            raise Exception(f"Could not identify an output called '{tag}' on the node '{node.id()}' "
+                            f", possible tags: {possible_tags}")
 
-                    return types[0]
-            else:
-                # We have at least two parts, let's correct this
-                tag = input_parts[1]
-                t = [x for x in types if x[0] == tag]
-                if len(t) == 0:
-                    raise Exception(f"Could not identify an {put_name} called '{tag}' on the node '{node.id()}'")
-                elif len(t) > 1:
-                    raise Exception(f"Could not uniquely identify {put_name} with tag '{tag}'")
-                else:
-                    return t[0]
+    @staticmethod
+    def get_tag_and_type_from_final_edge_node(node: Node, input_parts: List[str]) -> Tuple[str, DataType]:
+        if node.node_type == NodeTypes.INPUT:
+            raise Exception(f"Can't connect TO input node '{node.id()}'")
+        if node.node_type == NodeTypes.OUTPUT:
+            raise Exception("An internal error has occurred: output nodes should be filtered from the "
+                            "function 'get_tag_and_type_from_final_edge_node'")
+
+        node: StepNode = node
+        ins = node.inputs()
+        types = [(x, ins[x].input_type) for x in ins]
+        lbl = input_parts[0]
+        s = "/".join(input_parts)
+
+        if len(types) == 0:
+            raise InvalidStepsException(f"The step '{node.id()}' has no inputs, and cannot be added to this workflow")
+
+        if len(types) == 1:
+
+            if len(input_parts) != 2:
+                Logger.log(f"The node '{node.id()}' did not correctly reference an input of the tool "
+                           f"'{node.get_tool().id()}', this was automatically corrected "
+                           f"({s} → {lbl}/{types[0][0]})", LogLevel.WARNING)
+                # s = f"{lbl}/{types[0][0]}"
+            return types[0]
+        elif len(input_parts) < 2:
+            possible_tags = ", ".join(f"'{x}'" for x in ins)
+            raise Exception(f"The tag '{s}' could not uniquely identify an input of '{node.id()}', requires the one of"
+                            f"the following tags: {possible_tags}")
+        else:
+            tag = input_parts[1]
+            t = node.step.get_tool().inputs_map().get(tag)
+            if t:
+                if len(input_parts) != 2:
+                    Logger.log(f"The node '{node.id()}' did not correctly reference an input of the tool "
+                               f"'{node.get_tool().id()}', this was automatically corrected "
+                               f"({s} → {lbl}/{tag})", LogLevel.WARNING)
+                    s = f"{lbl}/{tag}"
+                return s, t.input_type
+
+            possible_tags = ", ".join(f"'{x}'" for x in ins)
+            raise Exception(f"Could not identify an input called '{tag}' on the node '{node.id()}' "
+                            f", possible tags: {possible_tags}")
 
         raise Exception("Unhandled pathway in 'get_tag_and_type_from_node'")
-
 
     @staticmethod
     def guess_connection_between_nodes(s_node: Node, f_node: Node) -> Tuple[Tuple[str, DataType], Tuple[str, DataType]]:
@@ -243,7 +279,6 @@ class Workflow:
 
         return matching_types[0]
 
-
     def attempt_connect_node(self, node: Node):
         """
         Get the inputs and outputs of the node, and try to make the connections
@@ -260,13 +295,3 @@ class Workflow:
 
         if node.node_type == NodeTypes.TASK:
             pass
-
-
-
-
-
-
-
-
-
-

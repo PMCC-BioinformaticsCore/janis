@@ -104,19 +104,6 @@ class SimplePipeline:
     @staticmethod
     def test_simple():
 
-        inputTar = Input("tarFile", File())
-
-        untarStep = Step("untar", Untar, inputTar)
-        compileStep = Step("compile", untarStep.out)
-
-
-
-
-
-
-
-
-
         label = "simple"
         Logger.set_write_location("/Users/franklinmichael/source/wehi-pipeline-definition/simple.log")
         translator = PipelineTranslator(label)

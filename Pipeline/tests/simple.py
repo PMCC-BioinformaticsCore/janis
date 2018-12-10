@@ -1,12 +1,8 @@
 import unittest
 
-from Pipeline.types.common_data_types import String, File
-from Pipeline.workflow.input import Input
-from Pipeline.workflow.output import Output
-from Pipeline.workflow.step import Step
-from Pipeline.workflow.workflow import Workflow
-from examples.unix_commands import Tar, Compile, Untar
+from Pipeline import Workflow, Input, Output, Step, String, File
 
+from examples.unix_commands import Tar, Compile, Untar
 from examples.unix_commands.data_types.tar_file import TarFile
 
 # Write simple workflow here

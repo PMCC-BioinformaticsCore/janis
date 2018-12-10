@@ -25,7 +25,7 @@ from cerberus import Validator
 
 import pipeline_definition.types.schema as wehi_schema
 import utils.errors as errors
-from types.common_data_types import String, Number, Boolean, Array
+from Pipeline import String, Number, Boolean, Array
 from types.data_types import DataType
 from workflow.output import Output, OutputNode
 from Tool.tool import ToolInput, Tool

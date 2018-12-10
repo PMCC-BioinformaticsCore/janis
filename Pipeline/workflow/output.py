@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional, Any
 
 from Pipeline.graph.node import Node, NodeTypes
 from Pipeline.types.data_types import DataType
@@ -9,11 +9,12 @@ class Output:
     """
         Only catch with output is we infer the type, we don't explicitly define it
     """
-    def __init__(self, label: str, data_type: DataType):
+    def __init__(self, label: str, data_type: Optional[DataType], source: Any = None):
         self.label: str = label
         self.data_type: DataType = data_type
+        self.source = source
 
-    def id(self):
+    def id(self) -> str:
         return self.label
 
     def cwl(self):

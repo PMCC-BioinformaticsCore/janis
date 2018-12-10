@@ -2,11 +2,8 @@ import os
 import glob
 import importlib
 
-from types.data_types import DataType
-from Tool.tool import Tool
-from pipeline_definition.types.type_registry import register_tool, register_type
+from Pipeline import DataType, Tool, register_tool, register_type, Logger
 from constants import PROJECT_ROOT_DIR
-from utils.logger import Logger
 
 d = os.path.dirname(os.path.abspath(__file__))
 for file in glob.glob(os.path.join(d, "**/*.py"), recursive=True):

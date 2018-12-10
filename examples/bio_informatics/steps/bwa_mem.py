@@ -2,11 +2,18 @@ from typing import List
 
 from examples.bio_informatics.data_types.fastq import FastQ
 from examples.bio_informatics.data_types.sam import Sam
-from types.common_data_types import String, Number, Array
-from Tool.tool import Tool, ToolOutput, ToolInput
+from Pipeline import String, Int, Array, Tool, ToolOutput, ToolInput
 
 
 class BwaMem(Tool):
+    reads = ToolInput("reads", Array())
+    reference = ToolInput("reference", FastQ())
+    outputFilename = ToolInput("outputFilename", String())
+    readGroup = ToolInput("readGroup", String()),
+    threads = ToolInput("threads", Int(optional=True)),
+    min_std_max_min = ToolInput("min_std_max_min", Array(optional=True))
+
+    out = ToolOutput("out", Sam())
 
     @staticmethod
     def tool():
@@ -16,17 +23,3 @@ class BwaMem(Tool):
     def base_command():
         return "javac"
 
-    def inputs(self) -> List[ToolInput]:
-        return [
-            ToolInput("reads", Array()),
-            ToolInput("reference", FastQ()),
-            ToolInput("outputFilename", String()),
-            ToolInput("readGroup", String()),
-            ToolInput("threads", Number(optional=True)),
-            ToolInput("min_std_max_min", Array(optional=True))
-        ]
-
-    def outputs(self) -> List[ToolOutput]:
-        return [
-            ToolOutput("out", Sam())
-        ]

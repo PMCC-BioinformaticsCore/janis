@@ -9,11 +9,11 @@ class BaseDescriptor(object):
         self.data = WeakKeyDictionary()
 
     def __get__(self, instance, owner):
-        Logger.log(f"Getting value from {instance} and {owner}")
+        # Logger.log(f"Getting value from {instance} and {owner}")
         return self.data.get(instance, self.default)
 
     def __set__(self, instance, value):
-        Logger.log(f"Setting value {value} to {instance}")
+        # Logger.log(f"Setting value {value} to {instance}")
         self.data[instance] = value
 
 

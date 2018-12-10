@@ -5,11 +5,20 @@ from examples.bio_informatics.data_types.bed import Bed
 from examples.bio_informatics.data_types.dbsnp import Dbsnp
 from examples.bio_informatics.data_types.ref_fasta import RefFasta
 from examples.bio_informatics.data_types.vcfidx import VcfIdx
-from types.common_data_types import String, Array, File
-from Tool.tool import Tool, ToolOutput, ToolInput
+from Pipeline import String, Array, File, Tool, ToolOutput, ToolInput
 
 
 class GatkMutect(Tool):
+    tumor = ToolInput("tumor", Bam())
+    normal = ToolInput("normal", Bam())
+    reference = ToolInput("reference", RefFasta())
+    bedFile = ToolInput("bedFile", Bed())
+    outputFilename = ToolInput("outputFilename", String())
+    dbsnp = ToolInput("dbsnp", Dbsnp())
+    cosmic = ToolInput("cosmic", Array(File()))
+
+    vcf = ToolOutput("vcf", VcfIdx())
+
     @staticmethod
     def tool():
         return "gatk-mutect2"
@@ -17,19 +26,3 @@ class GatkMutect(Tool):
     @staticmethod
     def base_command():
         return "javac"
-
-    def inputs(self) -> List[ToolInput]:
-        return [
-            ToolInput("tumor", Bam()),
-            ToolInput("normal", Bam()),
-            ToolInput("reference", RefFasta()),
-            ToolInput("bedFile", Bed()),
-            ToolInput("outputFilename", String()),
-            ToolInput("dbsnp", Dbsnp()),
-            ToolInput("cosmic", Array(File()))
-        ]
-
-    def outputs(self) -> List[ToolOutput]:
-        return [
-            ToolOutput("vcf", VcfIdx())
-        ]

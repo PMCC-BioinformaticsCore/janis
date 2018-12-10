@@ -1,13 +1,20 @@
-from typing import List
 
 from examples.bio_informatics.data_types.bam import Bam
 from examples.bio_informatics.data_types.bed import Bed
 from examples.bio_informatics.data_types.ref_fasta import RefFasta
-from types.common_data_types import File, String
-from Tool.tool import Tool, ToolOutput, ToolInput
+from Pipeline import File, String, Tool, ToolOutput, ToolInput
 
 
 class GatkPrintReads(Tool):
+    inputBam_printReads = ToolInput("inputBam_printReads", Bam())
+    input_baseRecalibrator = ToolInput("input_baseRecalibrator", File())
+    reference = ToolInput("reference", RefFasta())
+    outputfile_printReads = ToolInput("outputfile_printReads", String())
+    bedFile = ToolInput("bedFile", Bed())
+
+    out = ToolOutput("out", File())
+    out_idx = ToolOutput("out_idx", File())
+
     @staticmethod
     def tool():
         return "gatk-printreads"
@@ -15,18 +22,3 @@ class GatkPrintReads(Tool):
     @staticmethod
     def base_command():
         return "javac"
-
-    def inputs(self) -> List[ToolInput]:
-        return [
-            ToolInput("inputBam_printReads", Bam()),
-            ToolInput("input_baseRecalibrator", File()),
-            ToolInput("reference", RefFasta()),
-            ToolInput("outputfile_printReads", String()),
-            ToolInput("bedFile", Bed())
-        ]
-
-    def outputs(self) -> List[ToolOutput]:
-        return [
-            ToolOutput("out", File()),
-            ToolOutput("out_idx", File())
-        ]

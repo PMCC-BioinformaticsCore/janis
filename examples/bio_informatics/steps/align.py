@@ -1,44 +1,11 @@
-from Workflow.step import StepFactory
-from Workflow.step import Step, ToolInput, ToolOutput
+from Pipeline import Step, ToolInput, ToolOutput
 
 from typing import Dict
-
-
-class AlignFactory(StepFactory):
-    @classmethod
-    def type(cls):
-        return 'align'
-
-    @classmethod
-    def label(cls):
-        return 'align'
-
-    @classmethod
-    def description(cls):
-        return cls.label()
-
-    @classmethod
-    def schema(cls):
-        return {
-            'schema': {
-                'aligner': {
-                    'type': 'string',
-                    'allowed': ['bowtie2', 'bwa'],
-                    'default': 'bowtie2'
-                }
-            },
-            'nullable': True
-        }
-
-    @classmethod
-    def build(cls, meta, debug=False):
-        return AlignStep(meta, debug=debug)
-
 
 class AlignStep(Step):
 
     def __init__(self, meta, debug=False):
-        super().__init__(meta, debug=debug)
+        super().__init__(meta)
         if self.meta()['aligner'] != 'bowtie2':
             raise Exception('Sorry, only bowtie2 is supported at the moment')
 

@@ -1,4 +1,4 @@
-from types.common_data_types import File
+from Pipeline import File
 
 
 class Bed(File):

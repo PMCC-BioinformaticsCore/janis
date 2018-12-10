@@ -3,11 +3,21 @@ from typing import List
 from examples.bio_informatics.data_types.bam import Bam
 from examples.bio_informatics.data_types.dbsnp import Dbsnp
 from examples.bio_informatics.data_types.ref_fasta import RefFasta
-from types.common_data_types import String, Number, File
-from Tool.tool import Tool, ToolOutput, ToolInput
+from Pipeline import String, Int, File, Tool, ToolOutput, ToolInput
 
 
 class GatkHaplotypecaller(Tool):
+    reference = ToolInput("reference", RefFasta())
+    outputfile_HaplotypeCaller = ToolInput("outputfile_HaplotypeCaller", String())
+    dbsnp = ToolInput("dbsnp", Dbsnp())
+    threads = ToolInput("threads", Int(optional=True))
+    emitRefConfidence = ToolInput("emitRefConfidence", String())
+    bedFile = ToolInput("bedFile", String())
+    bamOutput = ToolInput("bamOutput", String(optional=True))
+
+    out = ToolOutput("out", File())
+    bamOut = ToolOutput("bamOut", Bam())
+
     @staticmethod
     def tool():
         return "gatk-haplotype"
@@ -15,20 +25,3 @@ class GatkHaplotypecaller(Tool):
     @staticmethod
     def base_command():
         return "javac"
-
-    def inputs(self) -> List[ToolInput]:
-        return [
-            ToolInput("reference", RefFasta()),
-            ToolInput("outputfile_HaplotypeCaller", String()),
-            ToolInput("dbsnp", Dbsnp()),
-            ToolInput("threads", Number(optional=True)),
-            ToolInput("emitRefConfidence", String()),
-            ToolInput("bedFile", String()),
-            ToolInput("bamOutput", String(optional=True))
-        ]
-
-    def outputs(self) -> List[ToolOutput]:
-        return [
-            ToolOutput("out", File()),
-            ToolOutput("bamOut", Bam())
-        ]

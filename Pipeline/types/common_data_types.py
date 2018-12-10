@@ -221,6 +221,8 @@ class Array(DataType):
         }
 
     def can_receive_from(self, other):
+        if isinstance(other, Array):
+            return self.__t.can_receive_from(other.__t)
         if not self.__t.can_receive_from(other):
             return False
         return super().can_receive_from(other)

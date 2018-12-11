@@ -97,7 +97,6 @@ inputs:
     tarfile:
         type: TarFile
         path: /Users/franklinmichael/source/simple-workflow/hello.tar
-#    tarName: hello.tar
 
 steps:
     untar:
@@ -110,14 +109,13 @@ steps:
 
     tar:
         tool: tar
-#        tarName: tarName/something-else
-        input1: untar/outp
-        input2: compile/outp
+        input1: untar
+        input2: compile
 
 outputs:
-    untarred: untar/outp
+    untarred: untar
     compiled: compile
-    tarred: tar/outp
+    tarred: tar
 """
 
 _parallel = """

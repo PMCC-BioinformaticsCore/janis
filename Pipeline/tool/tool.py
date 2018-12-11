@@ -184,7 +184,7 @@ class Tool(ABC):
             base += " " + args_joined
 
         if self.inputs():
-            inps = " ".join(f"${{{s.tag}}}" for s in self.inputs())
+            inps = " ".join(f"${{{s.tag}}}" for s in sorted(self.inputs(), key=lambda a: a.position))
             command += " " + inps
 
         return command
@@ -195,14 +195,32 @@ class Tool(ABC):
     def wdl(self):
 
         command = self._command()
+        tb = "    "
+        nl = "\n"
 
-        inputs = "\n\t".join([f"{t.input_type.wdl()} {t.tag}" for t in self.inputs()])
+        inputs_str = "{tb}{data_type} {identifier}{default_with_equals_if_required}"
+        outputs_str = "{tb2}{data_type} {identifier} = glob(\"{glob}\")[0]"
 
-        outputs = "\n\t\t".join(f"{o.output_type.wdl()} {o.tag} = glob(\"{o.glob}\")[0]" for o in self.outputs())
+        inputs = nl.join([inputs_str.format(
+            tb=tb,
+            data_type=i.input_type.wdl(),
+            identifier=i.tag,
+            default_with_equals_if_required="")
+            for i in self.inputs()])
+        outputs = nl.join([outputs_str.format(
+            tb2=2*tb,
+            data_type=o.output_type.wdl(),
+            identifier=o.tag,
+            glob=o.glob
+        ) for o in self.outputs()])
+
+        # inputs = "\n\t".join([f"{t.input_type.wdl()} {t.tag}" for t in self.inputs()])
+
+        # outputs = "\n\t\t".join(f"{o.output_type.wdl()} {o.tag} = glob(\"{o.glob}\")[0]" for o in self.outputs())
 
         return f"""
 task {self.wdl_name()} {{
-    {inputs}
+{inputs}
     
     runtime {{ docker: "{self.docker()}" }}
     command {{
@@ -210,6 +228,6 @@ task {self.wdl_name()} {{
     }}
     
     output {{
-        {outputs}
+{outputs}
     }}
 }}"""

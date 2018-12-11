@@ -216,9 +216,12 @@ class Array(DataType):
 
     def cwl(self) -> Dict[str, Any]:
         return {
-            "type": "Array",
-            "items": NativeTypes.map_to_cwl(NativeTypes.map_to_cwl(self.__t.primitive()))
+            "type": NativeTypes.map_to_cwl(NativeTypes.kArray),
+            "items": NativeTypes.map_to_cwl(self.__t.primitive())
         }
+
+    def wdl(self):
+        return f"{NativeTypes.map_to_wdl(self.primitive())}[{NativeTypes.map_to_wdl(self.__t.primitive())}]"
 
     def can_receive_from(self, other):
         if isinstance(other, Array):

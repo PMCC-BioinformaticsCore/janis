@@ -3,17 +3,17 @@
 from typing import List
 
 from Pipeline.types.filename import Filename
-from Pipeline.types.common_data_types import File, String
+from Pipeline.types.common_data_types import File
 from Pipeline.workflow.step import Tool, ToolInput, ToolOutput
 
 
 class Tar(Tool):
-    input1: ToolInput = ToolInput("input1", File(), position=1)
-    input2: ToolInput = ToolInput("input2", File(), position=2)
-    outp: ToolOutput = ToolOutput("outp", File(), glob="*.tar")
+    input1: ToolInput = ToolInput("input1", File(), position=2)
+    input2: ToolInput = ToolInput("input2", File(), position=3)
+    output: ToolOutput = ToolOutput("output", File(), glob="*.tar")
 
     # this param may be marked as optional, but the Workflow system will always give it a value
-    tarName: ToolInput = ToolInput("tarName", Filename(extension="tar"))
+    tarName: ToolInput = ToolInput("tarName", Filename(extension="tar"), position=1)
 
     @staticmethod
     def tool():

@@ -332,7 +332,7 @@ class Workflow:
             d["inputs"] = {i.id(): i.cwl() for i in self._inputs}
 
         if self._outputs:
-            d["outputs"] = {o.id(): o.cwl() for o in self._outputs}
+            d["outputs"] = {o.id(): o.cwl() for o in [self._outputs[2]]}
 
         if self._steps:
             d["steps"] = {s.id(): s.cwl() for s in self._steps}
@@ -371,7 +371,7 @@ class Workflow:
         nline_char = '\n'
 
         import_str ="import \"tools/{tool_file}.wdl as {alias}"
-        input_str = "{tb}{data_type} {identifier}{default_with_equals_if_required}"
+        input_str = "{tb}{data_type} {identifier}"
         step_str =  "{tb}call {tool_file}.{tool} as {alias} {{ input: {tool_mapping} }}"
         output_str ="{tb2}{data_type} {identifier} = {alias}.{outp}"
 
@@ -384,8 +384,7 @@ class Workflow:
         inputs = [input_str.format(
             tb=tab_char,
             data_type=i.input.data_type.wdl(),
-            identifier=i.id(),
-            default_with_equals_if_required=""
+            identifier=i.id()
         ) for i in self._inputs]
 
         steps = [step_str.format(
@@ -401,7 +400,7 @@ class Workflow:
             data_type=o.output.data_type.wdl(),
             identifier=o.id(),
             alias=steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower(),
-            outp=o.id()
+            outp=next(iter(o.connection_map.values()))[0].split('/')[1]
         ) for o in self._outputs]
 
         # imports = '\n'.join([f"import \"tools/{t}.wdl\" as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
@@ -411,7 +410,7 @@ class Workflow:
         # outputs = '\n'.join([f"{2*tab_char}{o.output.data_type.wdl()} {o.id()} = {steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower()}.{o.id()}" for o in self._outputs])
 
         workflow = f"""
-{imports}
+{nline_char.join(imports)}
 
 workflow {self.name} {{
 {nline_char.join(inputs)}

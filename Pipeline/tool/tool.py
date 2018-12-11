@@ -7,10 +7,9 @@ from Pipeline.utils.logger import Logger, LogLevel
 
 
 class ToolArgument:
-
     expr_pattern = "\$\(.*\)"
 
-    def __init__(self, value: str, prefix: Optional[str]=None, position: int=0, separate_value_from_prefix=True):
+    def __init__(self, value: str, prefix: Optional[str] = None, position: int = 0, separate_value_from_prefix=True):
         self.prefix = prefix
         self.value = value
         self.position = position
@@ -42,8 +41,8 @@ class ToolArgument:
 
 
 class ToolInput(ToolArgument):
-    def __init__(self, tag: str, input_type: DataType, position: int=0, prefix: Optional[str]=None,
-                 separate_value_from_prefix: bool=True):
+    def __init__(self, tag: str, input_type: DataType, position: int = 0, prefix: Optional[str] = None,
+                 separate_value_from_prefix: bool = True, default: Any = None):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
@@ -52,18 +51,24 @@ class ToolInput(ToolArgument):
         self.tag: str = tag
         self.input_type: DataType = input_type
         self.optional = self.input_type.optional
+        self.default = default
 
     def cwl(self):
-        return {
+        d = {
             "inputBinding": {
                 "position": self.position
             },
             **self.input_type.cwl()
         }
 
+        if self.default is not None:
+            d["default"] = self.default
+
+        return d
+
 
 class ToolOutput:
-    def __init__(self, tag: str, output_type: DataType, glob: Optional[str]=None):
+    def __init__(self, tag: str, output_type: DataType, glob: Optional[str] = None):
         self.tag = tag
         self.output_type: DataType = output_type
         self.glob = glob
@@ -201,14 +206,15 @@ class Tool(ABC):
         inputs_str = "{tb}{data_type} {identifier}{default_with_equals_if_required}"
         outputs_str = "{tb2}{data_type} {identifier} = glob(\"{glob}\")[0]"
 
+        default_with_equals = lambda d: f' = "{str(d)}"' if d is not None else ""
         inputs = nl.join([inputs_str.format(
             tb=tb,
             data_type=i.input_type.wdl(),
             identifier=i.tag,
-            default_with_equals_if_required="")
-            for i in self.inputs()])
+            default_with_equals_if_required=default_with_equals(i.input_type.default())
+        ) for i in self.inputs()])
         outputs = nl.join([outputs_str.format(
-            tb2=2*tb,
+            tb2=2 * tb,
             data_type=o.output_type.wdl(),
             identifier=o.tag,
             glob=o.glob

@@ -119,7 +119,7 @@ class DataType(ABC):
     @staticmethod
     @abstractmethod
     def primitive() -> NativeType:
-        raise Exception("Subclass MUST override the 'schema' method")
+        raise Exception("Subclass MUST override the 'primitive' method")
 
     @staticmethod
     @abstractmethod
@@ -194,5 +194,8 @@ class DataType(ABC):
         return d
 
     def wdl(self):
-        return NativeTypes.map_to_wdl(self.primitive())
+        return NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional()
+
+    def default(self):
+        return None
 

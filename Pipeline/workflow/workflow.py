@@ -370,7 +370,7 @@ class Workflow:
         tab_char = '  '
         nline_char = '\n'
 
-        import_str ="import \"tools/{tool_file}.wdl as {alias}"
+        import_str ="import \"tools/{tool_file}.wdl\" as {alias}"
         input_str = "{tb}{data_type} {identifier}"
         step_str =  "{tb}call {tool_file}.{tool} as {alias} {{ input: {tool_mapping} }}"
         output_str ="{tb2}{data_type} {identifier} = {alias}.{outp}"
@@ -399,7 +399,7 @@ class Workflow:
             tb2=2 * tab_char,
             data_type=o.output.data_type.wdl(),
             identifier=o.id(),
-            alias=steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower(),
+            alias=next(iter(o.connection_map.values()))[0].split('/')[0],
             outp=next(iter(o.connection_map.values()))[0].split('/')[1]
         ) for o in self._outputs]
 
@@ -422,6 +422,7 @@ workflow {self.name} {{
 {tab_char}}}
 }}"""
         tools = {t.id(): t.wdl() for t in tools}
-        inp = {f"{self.name}.{i.id()}": i.input.data_type.wdl() for i in self._inputs}
+
+        inp = {f"{self.name}.{i.id()}": i.input.input_value() for i in self._inputs}
 
         return workflow, inp, tools

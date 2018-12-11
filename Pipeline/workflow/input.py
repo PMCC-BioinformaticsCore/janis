@@ -16,6 +16,8 @@ class Input:
         return self.label
 
 
+
+
 class InputNode(Node):
 
     def __init__(self, inp: Input):
@@ -41,3 +43,6 @@ class InputNode(Node):
             #     "class": NativeTypes.map_to_cwl(self.input.data_type.primitive()),
             #     "path": self.input.data_type.get_value_from_meta(self.input.meta)
             # }
+
+    def wdl_input(self):
+        return self.input.meta

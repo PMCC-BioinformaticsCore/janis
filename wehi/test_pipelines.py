@@ -12,7 +12,7 @@ class TestWehi(TestCase):
         w = Wehi("Simple")
         w.parse_string(_simple)
         self.dump_cwl(w.workflow, to_disk=True)
-        self.dump_wdl(w.workflow, to_disk=False)
+        self.dump_wdl(w.workflow, to_disk=True)
         self.assertTrue(True)
 
     # def test_parallel(self):

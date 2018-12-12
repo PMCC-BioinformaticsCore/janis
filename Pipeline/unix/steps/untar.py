@@ -1,3 +1,4 @@
+from Pipeline import Array, String
 from Pipeline.unix.data_types.tar_file import TarFile
 
 from Pipeline.types.common_data_types import File
@@ -8,7 +9,7 @@ from Pipeline.workflow.step import ToolInput, ToolOutput
 class Untar(Tool):
 
     tarFile = ToolInput("tarFile", TarFile())
-    out = ToolOutput("outp", File(optional=True), glob="*.java")
+    out = ToolOutput("outp", Array(File()), glob="*.java")
 
     @staticmethod
     def base_command():

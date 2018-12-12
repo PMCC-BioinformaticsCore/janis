@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import re
 from typing import List, Dict, Optional, Any
 
+from Pipeline.translations.cwl.cwl import Cwl
 from Pipeline.types.data_types import DataType
 from Pipeline.utils.logger import Logger, LogLevel
 
@@ -74,9 +75,9 @@ class ToolOutput:
         self.glob = glob
 
     def cwl(self):
-        d = {**self.output_type.cwl()}
+        d = { **self.output_type.cwl() }
         if self.glob is not None:
-            d["outputBinding"] = {
+            d[Cwl.WORKFLOW.OUTPUT.kOUTPUT_BINDING] = {
                 "glob": self.glob
             }
         return d

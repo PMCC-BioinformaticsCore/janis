@@ -41,7 +41,7 @@ class TestSimple(unittest.TestCase):
         w.add_edge(inp1, step1.tarFile)
         w.add_edge(inp2, step3.tarName)
         w.add_edge(step1.outp, step2.file)
-        w.add_edge(step1.outp, step3.input1)
+        w.add_edge(step1.outp, step3.inputs1)
         w.add_edge(step2.outp, step3.input2)
         w.add_edge(step3.outp, outp)
 
@@ -60,8 +60,8 @@ class TestSimple(unittest.TestCase):
 
         w.add_nodes([inp1, step1, step2, step3, outp])
         w.add_edge(step1, step3.input2)
-        w.add_pipe(inp1, step1, step2, step3.input1, outp)
+        w.add_pipe(inp1, step1, step2, step3.inputs1, outp)
 
-        print(w.cwl()[0])
+        w.dump_cwl(to_disk=True)
 
         return w

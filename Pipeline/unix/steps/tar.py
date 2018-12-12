@@ -2,13 +2,14 @@
 # Untar a file
 from typing import List
 
+from Pipeline import Array
 from Pipeline.types.filename import Filename
 from Pipeline.types.common_data_types import File
 from Pipeline.workflow.step import Tool, ToolInput, ToolOutput
 
 
 class Tar(Tool):
-    input1: ToolInput = ToolInput("input1", File(), position=2)
+    inputs1: ToolInput = ToolInput("inputs1", Array(File()), position=2)
     input2: ToolInput = ToolInput("input2", File(), position=3)
     outp: ToolOutput = ToolOutput("outp", File(), glob="*.tar")
 

@@ -466,3 +466,71 @@ workflow {self.identifier} {{
         inp = {f"{self.identifier}.{i.id()}": i.input.wdl_input() for i in self._inputs}
 
         return workflow, inp, tools
+
+    def dump_cwl(self, to_disk: False):
+        import os, yaml
+        cwl_data, inp_data, tools_ar = self.cwl()
+
+        d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/cwl/"
+        d_tools = d + "tools/"
+
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        if not os.path.isdir(d_tools):
+            os.makedirs(d_tools)
+
+        print(yaml.dump(cwl_data, default_flow_style=False))
+        print(yaml.dump(inp_data, default_flow_style=False))
+        print(yaml.dump(tools_ar, default_flow_style=False))
+
+        if to_disk:
+            with open(d + self.identifier + ".cwl", "w+") as cwl:
+                Logger.log(f"Writing {self.identifier}.cwl to disk")
+                yaml.dump(cwl_data, cwl, default_flow_style=False)
+                Logger.log(f"Written {self.identifier}.cwl to disk")
+
+            with open(d + self.identifier + "-job.yml", "w+") as cwl:
+                Logger.log(f"Writing {self.identifier}-job.yml to disk")
+                yaml.dump(inp_data, cwl, default_flow_style=False)
+                Logger.log(f"Written {self.identifier}-job.yml to disk")
+
+            for tool in tools_ar:
+                tool_name = tool["id"].lower()
+                with open(d_tools + tool_name + ".cwl", "w+") as cwl:
+                    Logger.log(f"Writing {tool_name}.cwl to disk")
+                    yaml.dump(tool, cwl, default_flow_style=False)
+                    Logger.log(f"Written {tool_name}.cwl to disk")
+
+    def dump_wdl(self, to_disk: False):
+        import os, json
+        wdl_data, inp_data, tools_dict = self.wdl()
+        print(wdl_data)
+        print("================")
+        print(inp_data)
+        print("================")
+        print("\n*******\n".join(tools_dict.values()))
+
+        d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/wdl/"
+        d_tools = d + "tools/"
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        if not os.path.isdir(d_tools):
+            os.makedirs(d_tools)
+
+        if to_disk:
+            with open(d + self.identifier + ".wdl", "w+") as wdl:
+                Logger.log(f"Writing {self.identifier}.wdl to disk")
+                wdl.write(wdl_data)
+                Logger.log(f"Written {self.identifier}.wdl to disk")
+
+            with open(d + self.identifier + "-job.json", "w+") as inp:
+                Logger.log(f"Writing {self.identifier}-job.json to disk")
+                json.dump(inp_data, inp)
+                Logger.log(f"Written {self.identifier}-job.json to disk")
+
+            for tool_name in tools_dict:
+                tool = tools_dict[tool_name]
+                with open(d_tools + tool_name + ".wdl", "w+") as wdl:
+                    Logger.log(f"Writing {tool_name}.cwl to disk")
+                    wdl.write(tool)
+                    Logger.log(f"Written {tool_name}.cwl to disk")

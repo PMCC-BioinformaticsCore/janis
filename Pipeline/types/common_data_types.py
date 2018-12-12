@@ -3,6 +3,7 @@
 ###################
 from typing import Dict, Any
 
+from Pipeline.translations.cwl.cwl import Cwl
 from Pipeline.types.data_types import DataType, NativeTypes
 from Pipeline.types.registry import register_type
 
@@ -221,9 +222,12 @@ class Array(DataType):
 
     def cwl(self) -> Dict[str, Any]:
         return {
-            "type": NativeTypes.map_to_cwl(NativeTypes.kArray),
-            "items": NativeTypes.map_to_cwl(self.__t.primitive())
+            Cwl.WORKFLOW.INPUT.kTYPE: {
+                "type": NativeTypes.map_to_cwl(NativeTypes.kArray),
+                "items": NativeTypes.map_to_cwl(self.__t.primitive())
+            }
         }
+
 
     def wdl(self):
         return f"{NativeTypes.map_to_wdl(self.primitive())}[{NativeTypes.map_to_wdl(self.__t.primitive())}]"

@@ -2,11 +2,8 @@
 # This creates CWL for the first workflow example in in the CWL "documentation"
 #
 
-import unittest
 import yaml
 from pipeline_definition.pipeline_translator import PipelineTranslator
-import examples.unix_commands
-
 
 _yml = """
 inputs:

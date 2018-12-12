@@ -5,8 +5,8 @@ from Pipeline.utils.logger import Logger
 
 class BaseDescriptor(object):
     def __init__(self, default: Any = None):
-        self.default = default
-        self.data = WeakKeyDictionary()
+        self.default: Any = default
+        self.data: WeakKeyDictionary = WeakKeyDictionary()
 
     def __get__(self, instance, owner):
         # Logger.log(f"Getting value from {instance} and {owner}")
@@ -19,8 +19,8 @@ class BaseDescriptor(object):
 
 class GetOnlyDescriptor(object):
     def __init__(self, default: Any = None):
-        self.default = default
-        self.data = WeakKeyDictionary()
+        self.default: Any = default
+        self.data: WeakKeyDictionary = WeakKeyDictionary()
 
     def __get__(self, instance, owner):
         Logger.log(f"Getting readonly value from {instance} and {owner}")

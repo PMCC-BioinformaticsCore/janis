@@ -1,7 +1,5 @@
-from typing import List
-
-from examples.bio_informatics.data_types.bam import Bam
-from examples.bio_informatics.data_types.sam import Sam
+from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline import String, Tool, ToolOutput, ToolInput
 
 

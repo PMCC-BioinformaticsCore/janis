@@ -16,18 +16,20 @@ class Output:
         self.label = label
         self.doc = doc
 
-        self.data_type: DataType = data_type
+        self.data_type: Optional[DataType] = data_type
         self.meta = meta
 
     def id(self) -> str:
         return self._identifier
 
     def cwl(self, output_source: str):
-        d = {
-            **self.data_type.cwl(),
-            Cwl.WORKFLOW.OUTPUT.kID: self._identifier,
-            Cwl.WORKFLOW.OUTPUT.kOUTPUT_SOURCE: output_source
-        }
+        d: Dict[str, Any] = {}
+
+        if self.data_type is not None:
+            d.update(self.data_type.cwl())
+
+        d[Cwl.WORKFLOW.OUTPUT.kID] = self._identifier
+        d[Cwl.WORKFLOW.OUTPUT.kOUTPUT_SOURCE] = output_source
 
         if self.label:
             d[Cwl.WORKFLOW.kLABEL] = self.label
@@ -44,7 +46,7 @@ class OutputNode(Node):
         super().__init__(NodeTypes.OUTPUT, output.id())
 
     def inputs(self) -> Dict[str, ToolInput]:
-        return {self.output._identifier: ToolInput(self.output.meta, self.output.data_type)}
+        return {self.output._identifier: ToolInput("outp", self.output.data_type)}
 
     def outputs(self) -> Dict[str, ToolOutput]:
         return {}

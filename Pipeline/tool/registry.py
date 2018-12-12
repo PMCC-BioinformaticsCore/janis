@@ -1,9 +1,9 @@
 from Pipeline.utils.registry import Registry
 from Pipeline.tool.tool import Tool
 
-from typing import Type, List
+from typing import Type, List, Optional
 
-__tools_registry = Registry[Tool]()
+__tools_registry = Registry[Type[Tool]]()
 
 
 def register_tool(tool: Type[Tool]) -> bool:
@@ -11,7 +11,7 @@ def register_tool(tool: Type[Tool]) -> bool:
     return __tools_registry.register(tool_id, tool)
 
 
-def get_tool(tool_name: str) -> Type[Tool]:
+def get_tool(tool_name: str) -> Optional[Type[Tool]]:
     return __tools_registry.get(tool_name.lower())
 
 

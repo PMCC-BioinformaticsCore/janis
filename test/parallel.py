@@ -1,4 +1,4 @@
-from utils.logger import Logger
+from Pipeline import Logger
 
 bwa_ref = ".bai, amb, ann, bwt, pac, sa, fai"
 ref = ".fasta, .amb ann bwt pac sa fai ^dict"
@@ -313,13 +313,12 @@ class ParallelPipeline():
 
     @staticmethod
     def test_simple():
-        from pipeline_definition.pipeline_translator import PipelineTranslator
+        from wehi.spec import Wehi
         Logger.set_write_location("/Users/franklinmichael/source/wehi-pipeline-definition/parallel.log")
-        translator = PipelineTranslator("parallel")
-        translation = translator.translate_string(_yml)
+        translator = Wehi("parallel")
+        translation = translator.parse_string(_yml)
         Logger.close_file()
         print(translation)
-
 
 if __name__ == '__main__':
     ParallelPipeline.test_simple()

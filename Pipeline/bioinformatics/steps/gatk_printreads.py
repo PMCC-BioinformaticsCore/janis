@@ -1,7 +1,7 @@
 
-from examples.bio_informatics.data_types.bam import Bam
-from examples.bio_informatics.data_types.bed import Bed
-from examples.bio_informatics.data_types.ref_fasta import RefFasta
+from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.bed import Bed
+from Pipeline.bioinformatics.data_types.ref_fasta import RefFasta
 from Pipeline import File, String, Tool, ToolOutput, ToolInput
 
 

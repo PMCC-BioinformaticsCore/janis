@@ -1,10 +1,8 @@
-from typing import List
-
-from examples.bio_informatics.data_types.bam import Bam
-from examples.bio_informatics.data_types.bed import Bed
-from examples.bio_informatics.data_types.dbsnp import Dbsnp
-from examples.bio_informatics.data_types.ref_fasta import RefFasta
-from examples.bio_informatics.data_types.vcfidx import VcfIdx
+from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.bed import Bed
+from Pipeline.bioinformatics.data_types.dbsnp import Dbsnp
+from Pipeline.bioinformatics.data_types.ref_fasta import RefFasta
+from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
 from Pipeline import String, Array, File, Tool, ToolOutput, ToolInput
 
 

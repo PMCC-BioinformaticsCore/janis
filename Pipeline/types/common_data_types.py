@@ -142,7 +142,7 @@ class File(DataType):
         }
 
     def get_value_from_meta(self, meta):
-        return meta["path"]
+        return meta.get("path")
 
     def cwl_input(self, value: Any):
         return {

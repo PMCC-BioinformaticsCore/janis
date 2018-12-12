@@ -1,7 +1,5 @@
-from typing import List
-
-from examples.bio_informatics.data_types.fastq import FastQ
-from examples.bio_informatics.data_types.sam import Sam
+from Pipeline.bioinformatics.data_types.fastq import FastQ
+from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline import String, Int, Array, Tool, ToolOutput, ToolInput
 
 

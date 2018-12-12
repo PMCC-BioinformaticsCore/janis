@@ -12,7 +12,7 @@ class Wehi:
 
     def __init__(self, name: str):
         self.workflow = pp.Workflow(name)
-        self.doc = {}
+        self.doc: Dict[str, Any] = {}
         self.inputs: List[pp.Input] = []
         self.steps: List[pp.Step] = []
         self.outputs: List[pp.Output] = []
@@ -74,7 +74,11 @@ class Wehi:
         input_type: pp.DataType = Wehi._parse_known_type(inp_id, meta)
         Logger.log(f"Detected '{inp_id}' as type: '{input_type.id()}'")
 
-        return pp.Input(inp_id, input_type, input_type.get_value_from_meta(meta))
+        inp = input_type.get_value_from_meta(meta)
+        if inp is None:
+            raise Exception(f"Could not find input value for '{inp_id}'")
+
+        return pp.Input(inp_id, input_type, inp)
 
     @staticmethod
     def parse_step(step_id: str, meta: Dict[str, Any]) -> pp.Step:
@@ -109,9 +113,9 @@ class Wehi:
     @staticmethod
     def _parse_known_type(input_id, meta) -> pp.DataType:
         if isinstance(meta, str):
-            tool = pp.get_tool(meta)
-            if tool:
-                return tool
+            # tool = pp.get_tool(meta)
+            # if tool:
+            #     return tool
             return pp.String()
         elif isinstance(meta, int):
             return pp.Int()
@@ -145,7 +149,7 @@ class Wehi:
 
         if len(types) == 0:
             Logger.log(f"Could not determine type of array for input: '{input_id}'", pp.LogLevel.WARNING)
-            return None
+            raise Exception(f"Could not determine type for input: '{input_id}'")
         elif len(types) == 1:
             return next(iter(types.values()))
 

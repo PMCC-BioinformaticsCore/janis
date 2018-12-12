@@ -1,11 +1,10 @@
-from typing import Dict
-
-from types.data_types import DataType
+from typing import Dict, List
+from Pipeline import DataType
 
 
 class SequenceReadArchivePaired(DataType):
 
-    associated_files = []
+    associated_files: List[str] = []
 
     @staticmethod
     def name():

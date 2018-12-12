@@ -16,7 +16,7 @@ class ToolArgument:
         self.is_expression = re.match(self.expr_pattern, self.value) is not None
         self.separate_value_from_prefix = separate_value_from_prefix
 
-        if not self.separate_value_from_prefix and not self.prefix.endswith("="):
+        if self.prefix and not self.separate_value_from_prefix and not self.prefix.endswith("="):
             # I don't really know what this means.
             Logger.log(f"Argument ({self.prefix} {self.value}) is not separating and did not end with ='",
                        LogLevel.WARNING)
@@ -173,8 +173,9 @@ class Tool(ABC):
         if self.outputs():
             d["outputs"] = {t.tag: t.cwl() for t in self.outputs()}
 
-        if self.arguments():
-            d["arguments"] = [a.cwl() for a in self.arguments()]
+        args = self.arguments()
+        if args and args is not None:
+            d["arguments"] = [a.cwl() for a in args]
 
         return d
 

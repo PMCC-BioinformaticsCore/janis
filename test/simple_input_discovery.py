@@ -5,10 +5,8 @@
 
 import unittest
 import yaml
-from pipeline_definition.pipeline_translator import PipelineTranslator
 
-import examples.unix_commands
-
+from wehi.spec import Wehi
 
 _yml = """
 inputs:
@@ -35,22 +33,18 @@ inputs:
 
 class InputFileTest(unittest.TestCase):
 
-  def translate(self, resolve, expected):
-    translator = PipelineTranslator(debug=False)
-    translator.translate_string(_yml)
+    def translate(self, resolve, expected):
+        translator = Wehi("simple_input_discovery")
+        translator.parse_string(_yml)
 
-    translation = translator.input(resolve=resolve)
+        self.assertTrue(True)
 
-    got = yaml.load(translation)
+    def test_resolved(self):
+        self.translate(True, _expected_resolved)
 
-    self.assertTrue(got == expected)
-
-  def test_resolved(self):
-    self.translate(True, _expected_resolved)
-
-  def test_unresolved(self):
-    self.translate(False, _expected_unresolved)
+    def test_unresolved(self):
+        self.translate(False, _expected_unresolved)
 
 
 if __name__ == '__main__':
-  unittest.main()
+    unittest.main()

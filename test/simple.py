@@ -1,6 +1,6 @@
-from utils.logger import Logger
-from pipeline_definition.pipeline_translator import PipelineTranslator
 import yaml, os
+from wehi.spec import Wehi
+from Pipeline import Logger, Workflow
 
 _yml = """
 inputs:
@@ -106,16 +106,16 @@ class SimplePipeline:
 
         label = "simple"
         Logger.set_write_location("/Users/franklinmichael/source/wehi-pipeline-definition/simple.log")
-        translator = PipelineTranslator(label)
-        translator.translate_string(_yml)
+        translator = Wehi(label)
+        translator.parse_string(_yml)
 
-        # SimplePipeline.dump_cwl(translator, to_disk=False)
-        SimplePipeline.dump_wdl(translator, to_disk=False)
+        # SimplePipeline.dump_cwl(translator.workflow, to_disk=False)
+        SimplePipeline.dump_wdl(translator.workflow, to_disk=False)
 
         Logger.close_file()
 
     @staticmethod
-    def dump_cwl(translator: PipelineTranslator, to_disk: False):
+    def dump_cwl(translator: Workflow, to_disk: False):
         cwl_data, inp_data, tools_ar = translator.cwl()
 
         d = os.path.expanduser("~") + "/Desktop/cwl-test/"
@@ -149,13 +149,39 @@ class SimplePipeline:
                     Logger.log(f"Written {tool_name}.cwl to disk")
 
     @staticmethod
-    def dump_wdl(translator: PipelineTranslator, to_disk: False):
-        wdl_data, inp_data, tools_ar = translator.wdl()
+    def dump_wdl(translator: Workflow, to_disk: False):
+        import json
+        wdl_data, inp_data, tools_dict = translator.wdl()
         print(wdl_data)
         print("================")
         print(inp_data)
         print("================")
-        print("*******\n".join(tools_ar))
+        print("\n*******\n".join(tools_dict.values()))
+
+        d = os.path.expanduser("~") + f"/Desktop/{translator.identifier}/wdl/"
+        d_tools = d + "tools/"
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        if not os.path.isdir(d_tools):
+            os.makedirs(d_tools)
+
+        if to_disk:
+            with open(d + translator.identifier + ".wdl", "w+") as wdl:
+                Logger.log(f"Writing {translator.identifier}.wdl to disk")
+                wdl.write(wdl_data)
+                Logger.log(f"Written {translator.identifier}.wdl to disk")
+
+            with open(d + translator.identifier + "-job.json", "w+") as inp:
+                Logger.log(f"Writing {translator.identifier}-job.json to disk")
+                json.dump(inp_data, inp)
+                Logger.log(f"Written {translator.identifier}-job.json to disk")
+
+            for tool_name in tools_dict:
+                tool = tools_dict[tool_name]
+                with open(d_tools + tool_name + ".wdl", "w+") as wdl:
+                    Logger.log(f"Writing {tool_name}.cwl to disk")
+                    wdl.write(tool)
+                    Logger.log(f"Written {tool_name}.cwl to disk")
 
 
 if __name__ == '__main__':

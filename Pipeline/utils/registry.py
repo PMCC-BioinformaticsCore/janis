@@ -10,7 +10,6 @@ class RegistryException(Exception):
 
 T = TypeVar('T')
 
-
 class Registry(Generic[T]):
     def __init__(self):
         self.registry: Dict[str, T] = {}

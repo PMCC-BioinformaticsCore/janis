@@ -98,7 +98,8 @@ class Workflow:
             else:
                 return s.id()
         except Exception as e:
-            Logger.log(e, LogLevel.CRITICAL)
+            Logger.log_ex(e)
+            return str(s)
 
     def add_edge(self, start, finish):
 
@@ -204,19 +205,19 @@ class Workflow:
             return lbl, next(iter(node.outputs().values())).output_type
 
         # We are a step node now
-        node: StepNode = node
+        snode: StepNode = node
         outs: Dict[str, ToolOutput] = node.outputs()
 
         types = [(x, outs[x].output_type) for x in outs]
 
         if len(types) == 0:
-            raise InvalidStepsException(f"The step '{referenced_by}' referenced the step '{node.id()}' with tool "
-                                        f"'{node.step.tool().id()}' that has no inputs")
+            raise InvalidStepsException(f"The step '{referenced_by}' referenced the step '{snode.id()}' with tool "
+                                        f"'{snode.step.tool().id()}' that has no inputs")
         elif len(types) == 1:
             if len(input_parts) != 2:
                 under_over = "under" if len(input_parts) < 2 else "over"
                 Logger.log(f"The node '{node.id()}' {under_over}-referenced an output of the tool "
-                           f"'{node.step.tool().id()}', this was automatically corrected "
+                           f"'{snode.step.tool().id()}', this was automatically corrected "
                            f"({s} → {lbl}/{types[0][0]})", LogLevel.WARNING)
                 s = f"{lbl}/{types[0][0]}"
             return s, types[0][1]
@@ -224,11 +225,11 @@ class Workflow:
         else:
             # if the edge tag doesn't match, we can give up
             tag = input_parts[1]
-            t = node.step.tool().outputs_map().get(tag)
+            t = snode.step.tool().outputs_map().get(tag)
             if t:
                 if len(input_parts) != 2:
                     Logger.log(f"The node '{node.id()}' did not correctly reference an output of the tool "
-                               f"'{node.step.tool().id()}', this was automatically corrected "
+                               f"'{snode.step.tool().id()}', this was automatically corrected "
                                f"({s} → {lbl}/{tag})", LogLevel.WARNING)
                     s = f"{lbl}/{tag}"
                 return s, t.output_type
@@ -245,40 +246,40 @@ class Workflow:
             raise Exception("An internal error has occurred: output nodes should be filtered from the "
                             "function 'get_tag_and_type_from_final_edge_node'")
 
-        node: StepNode = node
-        ins = node.inputs()
+        snode: StepNode = node
+        ins = snode.inputs()
         types = [(x, ins[x].input_type) for x in ins]
         lbl = input_parts[0]
         s = "/".join(input_parts)
 
         if len(types) == 0:
-            raise InvalidStepsException(f"The step '{node.id()}' has no inputs, and cannot be added to this workflow")
+            raise InvalidStepsException(f"The step '{snode.id()}' has no inputs, and cannot be added to this workflow")
 
         if len(types) == 1:
 
             if len(input_parts) != 2:
-                Logger.log(f"The node '{node.id()}' did not correctly reference an input of the tool "
-                           f"'{node.step.tool().id()}', this was automatically corrected "
+                Logger.log(f"The node '{snode.id()}' did not correctly reference an input of the tool "
+                           f"'{snode.step.tool().id()}', this was automatically corrected "
                            f"({s} → {lbl}/{types[0][0]})", LogLevel.WARNING)
                 # s = f"{lbl}/{types[0][0]}"
             return types[0]
         elif len(input_parts) < 2:
             possible_tags = ", ".join(f"'{x}'" for x in ins)
-            raise Exception(f"The tag '{s}' could not uniquely identify an input of '{node.id()}', requires the one of"
+            raise Exception(f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the one of"
                             f"the following tags: {possible_tags}")
         else:
             tag = input_parts[1]
-            t = node.step.tool().inputs_map().get(tag)
+            t = snode.step.tool().inputs_map().get(tag)
             if t:
                 if len(input_parts) != 2:
-                    Logger.log(f"The node '{node.id()}' did not correctly reference an input of the tool "
-                               f"'{node.step.tool().id()}', this was automatically corrected "
+                    Logger.log(f"The node '{snode.id()}' did not correctly reference an input of the tool "
+                               f"'{snode.step.tool().id()}', this was automatically corrected "
                                f"({s} → {lbl}/{tag})", LogLevel.WARNING)
                     s = f"{lbl}/{tag}"
                 return s, t.input_type
 
             possible_tags = ", ".join(f"'{x}'" for x in ins)
-            raise Exception(f"Could not identify an input called '{tag}' on the node '{node.id()}' "
+            raise Exception(f"Could not identify an input called '{tag}' on the node '{snode.id()}' "
                             f", possible tags: {possible_tags}")
 
         raise Exception("Unhandled pathway in 'get_tag_and_type_from_node'")

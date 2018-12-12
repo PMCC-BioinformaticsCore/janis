@@ -11,14 +11,14 @@ CS = Cwl.WORKFLOW.STEP
 
 
 class Step:
-    def __init__(self, identifier: str, tool: Tool, meta: Dict[str, Any]=None,
+    def __init__(self, identifier: str, tool: Tool, meta: Optional[Any]=None,
                  label: str = None, doc: str = None):
         self._identifier: str = identifier
         self.label = label
         self.doc = doc
 
         self.__tool: Tool = tool
-        self.__meta: Dict[str, Any] = meta
+        self.__meta: Optional[Any] = meta
 
     def id(self):
         return self._identifier
@@ -27,19 +27,16 @@ class Step:
         t = self.__tool.id()
         return f"{self.id()}: {t}"
 
-    def input_value(self, tag: str) -> Optional[Any]:
-        return self.__meta[tag] if tag in self.__meta else None
-
     def set_input_value(self, tag: str, value: str):
         l = self._identifier
         Logger.log(f"Updating '{l}': setting '{tag}' -> '{value}'")
         self.__meta[tag] = value
 
     def requires(self) -> Dict[str, ToolInput]:
-        return self.__tool.inputs_map()
+        return self.tool().inputs_map()
 
     def provides(self) -> Dict[str, ToolOutput]:
-        return self.__tool.outputs_map()
+        return self.tool().outputs_map()
 
     def tool(self) -> Tool:
         return self.__tool

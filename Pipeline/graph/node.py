@@ -22,19 +22,21 @@ class NodeTypes:
         if node_type == NodeTypes.INPUT: return "Input"
         if node_type == NodeTypes.OUTPUT: return "Output"
         if node_type == NodeTypes.TASK: return "Task"
+        raise Exception(f"Unhandled task type: '{node_type}'")
 
     @staticmethod
     def to_col(node_type: NodeType) -> str:
         if node_type == NodeTypes.INPUT: return "red"
         if node_type == NodeTypes.OUTPUT: return "lightblue"
         if node_type == NodeTypes.TASK: return "blue"
+        raise Exception(f"Unhandled task type: '{node_type}'")
 
 
 class Node(ABC):
 
-    _N_counter = 1
-    _N_nodeId_map = {}
-    _N_node_map = {}
+    _N_counter: int = 1
+    _N_nodeId_map: Dict[int, Any] = {}
+    _N_node_map: Dict[str, Any] = {}
 
     def __init__(self, node_type: NodeType, label: NodeLabel, depth=0):
 
@@ -97,7 +99,8 @@ def layout_nodes(nodes: List[Node], n_inputs: int=0) -> Dict[Node, Tuple[int, in
     :return: Dict[Node, (x,y)]
     """
     pos = {}
-    cur_depth = []
+    # int is the depth at the specified index
+    cur_depth: List[int] = []
     depth_node: Dict[int, List[Node]] = {}
 
     def get_idx_for_depth(d: int):
@@ -155,4 +158,4 @@ def layout_nodes2(nodes: List[Node]) -> Dict[Node, Tuple[int, int]]:
 def layout_nodes3(nodes: List[Node]) -> Dict[Node, Tuple[int, int]]:
     # Other ideas to scale might be, start with steps and
     # stack in a similar way to depth around center, then do the same
-    return None
+    return {}

@@ -3,7 +3,7 @@ import unittest
 from Pipeline import Workflow, Input, Output, Step, String, File
 
 from examples.unix_commands import Tar, Compile, Untar
-from examples.unix_commands.data_types.tar_file import TarFile
+from examples.unix_commands import TarFile
 
 # Write simple workflow here
 
@@ -43,6 +43,8 @@ class TestSimple(unittest.TestCase):
         w.add_edge(step1.outp, step3.input1)
         w.add_edge(step2.outp, step3.input2)
         w.add_edge(step3.outp, outp)
+
+        print(w.cwl())
 
         # w.draw_graph()
         return w

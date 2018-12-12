@@ -88,24 +88,9 @@ will not be part the project. The API will be as accessible as possible so, sadl
 
 
 ## Michael's Cleanup Goals
-- Add type annotations to everything
-- Improve the logging format:
-    - This will probably be a singleton class that can take logs from anywhere
-    - Use levels for console and disk logs:
-        - NONE (No log)
-        - Critical (RED)
-        - Info (White)
-        - Debug (Grey)
-    - Use color to distinguish levels
-    - Write to file
-    - Buffer Warnings and Errors
-- Break the conversion into more discrete steps:
-    - Load from YAML, JSON, XML, etc
-    - Build DAG
-- Ensure the graph nodes have the correct HASH function, and derive from some common (named) type
-- Should labels across inputs / steps be unique? I feel like they should be unique....
-- Remove the type inference from the workflow construction
-    - Add warnings to user about matching types
+My cleanup goals can be found on the 
+[corresponding merge request](https://github.com/WEHI-ResearchComputing/wehi-pipeline-definition/pull/1),
+along with how my progress is tracking.
 
 
  

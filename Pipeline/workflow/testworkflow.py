@@ -5,7 +5,7 @@ from Pipeline.workflow.input import Input
 from Pipeline.workflow.output import Output
 from Pipeline.workflow.step import Step
 from Pipeline.workflow.workflow import Workflow
-from examples.unix_commands.steps.cat import Cat
+from Pipeline.unix.steps.cat import Cat
 
 
 class TestWorkflow(TestCase):

@@ -15,7 +15,7 @@ from abc import ABC, abstractmethod
 from typing import Any, List, Dict, Optional
 
 from Pipeline.translations.cwl.cwl import Cwl
-from Pipeline.translations.wdl.Wdl import Wdl
+from Pipeline.translations.wdl.wdl import Wdl
 
 NativeType = str
 
@@ -102,6 +102,7 @@ class NativeTypes:
         elif t == NativeTypes.kDirectory:
             return { "type": "Directory", "path": "path/to/file"}
 
+
 class DataType(ABC):
 
     def __init__(self, optional=False):
@@ -130,7 +131,7 @@ class DataType(ABC):
         correctly provide data to the class, what inputs it may have and what other types
         are compatible
         """
-        return None
+        raise Exception("Subclass MUST override the 'doc' field")
 
     @staticmethod
     def validate(meta: Any) -> bool:

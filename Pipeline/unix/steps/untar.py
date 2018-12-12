@@ -1,6 +1,4 @@
-from typing import List
-
-from examples.unix_commands.data_types.tar_file import TarFile
+from Pipeline.unix.data_types.tar_file import TarFile
 
 from Pipeline.types.common_data_types import File
 from Pipeline.workflow.step import Tool

@@ -137,7 +137,7 @@ class DataType(ABC):
         return True
 
     @classmethod
-    @abstractmethod
+    # @abstractmethod
     def schema(cls) -> Dict:
         raise Exception("Subclass MUST override the 'schema' method")
 

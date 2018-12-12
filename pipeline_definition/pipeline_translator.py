@@ -366,7 +366,7 @@ class PipelineTranslator:
 
         for step_node in step_nodes:
             cur_step = step_node.step
-            step_tool = cur_step.get_tool()  # Tool that the cur_step references
+            step_tool = cur_step.tool()  # Tool that the cur_step references
             required_inputs = cur_step.requires()  # All inputs required for the tool
 
             for inp_tag in required_inputs:
@@ -518,11 +518,11 @@ class PipelineTranslator:
             d["steps"] = {s.id(): s.cwl() for s in self.steps}
 
         tools = []
-        tools_to_build: Dict[str, Tool] = {s.get_tool().tool(): s.get_tool() for s in self.steps}
+        tools_to_build: Dict[str, Tool] = {s.tool().tool(): s.tool() for s in self.steps}
         for t in tools_to_build:
             tools.append(tools_to_build[t].cwl())
 
-        inp = {i.id(): i.input_cwl_yml() for i in self.inputs}
+        inp = {i.id(): i.input_cwl_type_with_value() for i in self.inputs}
 
         return d, inp, tools
 
@@ -530,7 +530,7 @@ class PipelineTranslator:
 
         get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
 
-        tools = [s.get_tool() for s in self.steps]
+        tools = [s.tool() for s in self.steps]
         tool_name_to_tool: Dict[str, Tool] = {t.tool().lower(): t for t in tools}
         tool_name_to_alias = {}
         steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self.steps}
@@ -552,8 +552,8 @@ class PipelineTranslator:
 
         imports = '\n'.join([f"import tools/{t}.wdl as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
         inputs = '\n'.join([f"{tab_char}{i.data_type.wdl()} {i.label}" for i in self.inputs])
-        steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.get_tool().tool().lower()].upper()}"
-                   f".{s.get_tool().tool()} as {s.id()} {{\n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n}}" for s in self.steps])
+        steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.tool().tool().lower()].upper()}"
+                   f".{s.tool().tool()} as {s.id()} {{\n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n}}" for s in self.steps])
         outputs = '\n'.join([f"\t\t{o.data_type.primitive()} {o.label} = {steps_to_alias[o.source.split('/')[0].lower()].lower()}" \
                    f".{o.label}" for o in self.outputs])
 

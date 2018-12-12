@@ -41,12 +41,12 @@ class Wehi:
 
         # Now we'll connect edges
         for step in self.steps:
-            for tool_tag in step.get_tool().inputs():
+            for tool_tag in step.tool().inputs():
                 inp_tag = step.input_value(tool_tag.tag)
                 if not inp_tag:
                     if tool_tag.optional: continue
                     #   2. (b)
-                    raise Exception(f"Step '{step.id()}' (tool: '{step.get_tool().id()}') did not contain"
+                    raise Exception(f"Step '{step.id()}' (tool: '{step.tool().id()}') did not contain"
                                     f" the required input '{tool_tag.tag}' with type: '{tool_tag.input_type.id()}'")
 
                 self.workflow.add_edge(inp_tag, f"{step.id()}/{tool_tag.tag}")
@@ -73,7 +73,8 @@ class Wehi:
         Logger.log(f"Parsing input: '{inp_id}'")
         input_type: pp.DataType = Wehi._parse_known_type(inp_id, meta)
         Logger.log(f"Detected '{inp_id}' as type: '{input_type.id()}'")
-        return pp.Input(inp_id, input_type, meta)
+
+        return pp.Input(inp_id, input_type, input_type.get_value_from_meta(meta))
 
     @staticmethod
     def parse_step(step_id: str, meta: Dict[str, Any]) -> pp.Step:
@@ -98,7 +99,7 @@ class Wehi:
         # step_obj = step_factory.build_from(step_id, meta)
         step = pp.Step(step_id, tool_type(), meta)
 
-        Logger.log(f"Detected '{step.id()}' with tool '{step.get_tool().id()}'")
+        Logger.log(f"Detected '{step.id()}' with tool '{step.tool().id()}'")
         return step
 
     @staticmethod

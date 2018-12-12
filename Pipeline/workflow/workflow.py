@@ -1,5 +1,6 @@
 from typing import Dict, List, Tuple, Set, Optional, Any
 
+from Pipeline.translations.cwl.cwl import Cwl
 from Pipeline.types.data_types import DataType, NativeTypes
 from Pipeline.utils.logger import Logger, LogLevel
 from Pipeline.utils.descriptor import BaseDescriptor, GetOnlyDescriptor
@@ -16,12 +17,16 @@ from Pipeline.tool.tool import Tool, ToolInput, ToolOutput
 
 
 class Workflow:
-    name = BaseDescriptor()
+    identifier = BaseDescriptor()
+    label = BaseDescriptor()
+    doc = BaseDescriptor()
 
-    def __init__(self, name: str):
-        Logger.log(f"Creating workflow with name: '{name}'")
+    def __init__(self, identifier: str, label: str=None, doc: str=None):
+        Logger.log(f"Creating workflow with name: '{identifier}'")
 
-        self.name = name
+        self.identifier = identifier
+        self.label = label
+        self.doc = doc
 
         self._labels: Dict[str, Node] = {}
 
@@ -51,19 +56,19 @@ class Workflow:
         plt.show()
 
     def add_input(self, inp: Input):
-        Logger.log(f"Adding input '{inp.id()}' to '{self.name}'")
+        Logger.log(f"Adding input '{inp.id()}' to '{self.identifier}'")
         node: InputNode = InputNode(inp)
         self._add_node(node)
         self._inputs.append(node)
 
     def add_output(self, outp: Output):
-        Logger.log(f"Adding output '{outp.id()}' to '{self.name}'")
+        Logger.log(f"Adding output '{outp.id()}' to '{self.identifier}'")
         node: OutputNode = OutputNode(outp)
         self._add_node(node)
         self._outputs.append(node)
 
     def add_step(self, step: Step):
-        Logger.log(f"Adding step '{step.id()}' to '{self.name}'")
+        Logger.log(f"Adding step '{step.id()}' to '{self.identifier}'")
         node: StepNode = StepNode(step)
         self._add_node(node)
         self._steps.append(node)
@@ -206,12 +211,12 @@ class Workflow:
 
         if len(types) == 0:
             raise InvalidStepsException(f"The step '{referenced_by}' referenced the step '{node.id()}' with tool "
-                                        f"'{node.step.get_tool().id()}' that has no inputs")
+                                        f"'{node.step.tool().id()}' that has no inputs")
         elif len(types) == 1:
             if len(input_parts) != 2:
                 under_over = "under" if len(input_parts) < 2 else "over"
                 Logger.log(f"The node '{node.id()}' {under_over}-referenced an output of the tool "
-                           f"'{node.step.get_tool().id()}', this was automatically corrected "
+                           f"'{node.step.tool().id()}', this was automatically corrected "
                            f"({s} → {lbl}/{types[0][0]})", LogLevel.WARNING)
                 s = f"{lbl}/{types[0][0]}"
             return s, types[0][1]
@@ -219,11 +224,11 @@ class Workflow:
         else:
             # if the edge tag doesn't match, we can give up
             tag = input_parts[1]
-            t = node.step.get_tool().outputs_map().get(tag)
+            t = node.step.tool().outputs_map().get(tag)
             if t:
                 if len(input_parts) != 2:
                     Logger.log(f"The node '{node.id()}' did not correctly reference an output of the tool "
-                               f"'{node.step.get_tool().id()}', this was automatically corrected "
+                               f"'{node.step.tool().id()}', this was automatically corrected "
                                f"({s} → {lbl}/{tag})", LogLevel.WARNING)
                     s = f"{lbl}/{tag}"
                 return s, t.output_type
@@ -253,7 +258,7 @@ class Workflow:
 
             if len(input_parts) != 2:
                 Logger.log(f"The node '{node.id()}' did not correctly reference an input of the tool "
-                           f"'{node.step.get_tool().id()}', this was automatically corrected "
+                           f"'{node.step.tool().id()}', this was automatically corrected "
                            f"({s} → {lbl}/{types[0][0]})", LogLevel.WARNING)
                 # s = f"{lbl}/{types[0][0]}"
             return types[0]
@@ -263,11 +268,11 @@ class Workflow:
                             f"the following tags: {possible_tags}")
         else:
             tag = input_parts[1]
-            t = node.step.get_tool().inputs_map().get(tag)
+            t = node.step.tool().inputs_map().get(tag)
             if t:
                 if len(input_parts) != 2:
                     Logger.log(f"The node '{node.id()}' did not correctly reference an input of the tool "
-                               f"'{node.step.get_tool().id()}', this was automatically corrected "
+                               f"'{node.step.tool().id()}', this was automatically corrected "
                                f"({s} → {lbl}/{tag})", LogLevel.WARNING)
                     s = f"{lbl}/{tag}"
                 return s, t.input_type
@@ -319,30 +324,34 @@ class Workflow:
     def cwl(self) -> Tuple[Dict[str, Any], Dict[str, Any], List[Dict[str, Any]]]:
         # Let's try to emit CWL
         d = {
-            "class": "Workflow",
-            "cwlVersion": "v1.0",
-            "id": self.name,
-            "label": self.name,
-            "requirements": [
-                {"class": "InlineJavascriptRequirement"}
+            Cwl.kCLASS: Cwl.CLASS.kWORKFLOW,
+            Cwl.kCWL_VERSION: Cwl.kCUR_VERSION,
+            Cwl.WORKFLOW.kID: self.identifier,
+            Cwl.WORKFLOW.kREQUIREMENTS: [
+                {Cwl.REQUIREMENTS.kCLASS: Cwl.REQUIREMENTS.kJAVASCRIPT}
             ]
         }
 
+        if self.label:
+            d[Cwl.WORKFLOW.kLABEL] = self.label
+        if self.doc:
+            d[Cwl.WORKFLOW.kDOC] = self.doc
+
         if self._inputs:
-            d["inputs"] = {i.id(): i.cwl() for i in self._inputs}
+            d[Cwl.WORKFLOW.kINPUTS] = [i.cwl() for i in self._inputs]
 
         if self._outputs:
-            d["outputs"] = {o.id(): o.cwl() for o in [self._outputs[2]]}
+            d[Cwl.WORKFLOW.kOUTPUTS] = [o.cwl() for o in self._outputs]
 
         if self._steps:
-            d["steps"] = {s.id(): s.cwl() for s in self._steps}
+            d[Cwl.WORKFLOW.kSTEPS] = [s.cwl() for s in self._steps]
 
         tools = []
-        tools_to_build: Dict[str, Tool] = {s.step.get_tool().tool(): s.step.get_tool() for s in self._steps}
+        tools_to_build: Dict[str, Tool] = {s.step.tool().tool(): s.step.tool() for s in self._steps}
         for t in tools_to_build:
             tools.append(tools_to_build[t].cwl())
 
-        inp = {i.id(): i.input_cwl_yml() for i in self._inputs}
+        inp = {i.id(): i.input.cwl_input() for i in self._inputs}
 
         return d, inp, tools
 
@@ -350,7 +359,7 @@ class Workflow:
 
         get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
 
-        tools = [s.step.get_tool() for s in self._steps]
+        tools = [s.step.tool() for s in self._steps]
         tool_name_to_tool: Dict[str, Tool] = {t.tool().lower(): t for t in tools}
         tool_name_to_alias = {}
         steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
@@ -389,8 +398,8 @@ class Workflow:
 
         steps = [step_str.format(
             tb=tab_char,
-            tool_file=tool_name_to_alias[s.step.get_tool().tool().lower()].upper(),
-            tool=s.step.get_tool().wdl_name(),
+            tool_file=tool_name_to_alias[s.step.tool().tool().lower()].upper(),
+            tool=s.step.tool().wdl_name(),
             alias=s.id(),
             tool_mapping=', '.join(s.wdl_map()) #[2 * tab_char + w for w in s.wdl_map()])
         ) for s in self._steps]
@@ -412,7 +421,7 @@ class Workflow:
         workflow = f"""
 {nline_char.join(imports)}
 
-workflow {self.name} {{
+workflow {self.identifier} {{
 {nline_char.join(inputs)}
 
 {nline_char.join(steps)}
@@ -423,6 +432,6 @@ workflow {self.name} {{
 }}"""
         tools = {t.id(): t.wdl() for t in tools}
 
-        inp = {f"{self.name}.{i.id()}": i.input.input_value() for i in self._inputs}
+        inp = {f"{self.identifier}.{i.id()}": i.input.wdl_input() for i in self._inputs}
 
         return workflow, inp, tools

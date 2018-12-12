@@ -26,7 +26,7 @@ class TestWehi(TestCase):
     def dump_cwl(translator: Workflow, to_disk: False):
         cwl_data, inp_data, tools_ar = translator.cwl()
 
-        d = os.path.expanduser("~") + f"/Desktop/{translator.name}/cwl/"
+        d = os.path.expanduser("~") + f"/Desktop/{translator.identifier}/cwl/"
         d_tools = d + "tools/"
 
         if not os.path.isdir(d):
@@ -39,15 +39,15 @@ class TestWehi(TestCase):
         print(yaml.dump(tools_ar, default_flow_style=False))
 
         if to_disk:
-            with open(d + translator.name + ".cwl", "w+") as cwl:
-                Logger.log(f"Writing {translator.name}.cwl to disk")
+            with open(d + translator.identifier + ".cwl", "w+") as cwl:
+                Logger.log(f"Writing {translator.identifier}.cwl to disk")
                 yaml.dump(cwl_data, cwl, default_flow_style=False)
-                Logger.log(f"Written {translator.name}.cwl to disk")
+                Logger.log(f"Written {translator.identifier}.cwl to disk")
 
-            with open(d + translator.name + "-job.yml", "w+") as cwl:
-                Logger.log(f"Writing {translator.name}-job.yml to disk")
+            with open(d + translator.identifier + "-job.yml", "w+") as cwl:
+                Logger.log(f"Writing {translator.identifier}-job.yml to disk")
                 yaml.dump(inp_data, cwl, default_flow_style=False)
-                Logger.log(f"Written {translator.name}-job.yml to disk")
+                Logger.log(f"Written {translator.identifier}-job.yml to disk")
 
             for tool in tools_ar:
                 tool_name = tool["id"].lower()
@@ -66,7 +66,7 @@ class TestWehi(TestCase):
         print("================")
         print("\n*******\n".join(tools_dict.values()))
 
-        d = os.path.expanduser("~") + f"/Desktop/{translator.name}/wdl/"
+        d = os.path.expanduser("~") + f"/Desktop/{translator.identifier}/wdl/"
         d_tools = d + "tools/"
         if not os.path.isdir(d):
             os.makedirs(d)
@@ -74,15 +74,15 @@ class TestWehi(TestCase):
             os.makedirs(d_tools)
 
         if to_disk:
-            with open(d + translator.name + ".wdl", "w+") as wdl:
-                Logger.log(f"Writing {translator.name}.wdl to disk")
+            with open(d + translator.identifier + ".wdl", "w+") as wdl:
+                Logger.log(f"Writing {translator.identifier}.wdl to disk")
                 wdl.write(wdl_data)
-                Logger.log(f"Written {translator.name}.wdl to disk")
+                Logger.log(f"Written {translator.identifier}.wdl to disk")
 
-            with open(d + translator.name + "-job.json", "w+") as inp:
-                Logger.log(f"Writing {translator.name}-job.json to disk")
+            with open(d + translator.identifier + "-job.json", "w+") as inp:
+                Logger.log(f"Writing {translator.identifier}-job.json to disk")
                 json.dump(inp_data, inp)
-                Logger.log(f"Written {translator.name}-job.json to disk")
+                Logger.log(f"Written {translator.identifier}-job.json to disk")
 
             for tool_name in tools_dict:
                 tool = tools_dict[tool_name]

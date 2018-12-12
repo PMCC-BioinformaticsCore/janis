@@ -4,7 +4,7 @@
     Provides base class that different nodes must override, this translates closest to a Step
 """
 from abc import ABC, abstractmethod
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any
 
 from Pipeline.tool.tool import ToolInput, ToolOutput
 
@@ -77,6 +77,10 @@ class Node(ABC):
     @abstractmethod
     def outputs(self) -> Dict[str, ToolOutput]:
         raise Exception(f"Subclass {type(self)} must implement outputs, return dict: key: ToolOutput")
+
+    @abstractmethod
+    def cwl(self) -> Dict[str, Any]:
+        raise Exception("Subclass must implement the cwl() method")
 
     def __setitem__(self, key, value):
         self.connection_map[key] = value

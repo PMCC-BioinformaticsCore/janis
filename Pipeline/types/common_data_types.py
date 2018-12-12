@@ -141,11 +141,13 @@ class File(DataType):
             "path": {"type": "string", "required": True}
         }
 
-    def input_field_from_input(self, meta):
-        # WDL: "{workflowName}.label" = meta["path"}
+    def get_value_from_meta(self, meta):
+        return meta["path"]
+
+    def cwl_input(self, value: Any):
         return {
             "class": "File",
-            "path": meta["path"]
+            "path": value
         }
 
 
@@ -172,10 +174,13 @@ class Directory(DataType):
         }
 
     def input_field_from_input(self, meta):
+        return meta["path"]
+
+    def cwl_input(self, value: Any):
         # WDL: "{workflowName}.label" = meta["path"}
         return {
-            "class": "File",
-            "path": meta["path"]
+            "class": "Directory",
+            "path": value
         }
 
 

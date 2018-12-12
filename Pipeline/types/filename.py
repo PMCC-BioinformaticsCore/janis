@@ -41,9 +41,10 @@ The Filename DataType should NOT be used as an output.
             "default": self.generated_filename()
         }
 
-    def generated_filename(self) -> str:
+    def generated_filename(self, prefix: str=None) -> str:
         import uuid
-        return "filename-generated-" + str(uuid.uuid1()) + self.extension_if_required_with_dot()
+        pre = (prefix + "-") if prefix is not None else ""
+        return pre + "generated-" + str(uuid.uuid1()) + self.extension_if_required_with_dot()
 
     def default(self) -> str:
         return self.generated_filename()

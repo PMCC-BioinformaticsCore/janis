@@ -26,9 +26,3 @@ class Compile(Tool):
 
     def arguments(self) -> List[ToolArgument]:
         return [ToolArgument("$(runtime.outdir)", "-d")]
-
-
-print(Compile.file)
-print(Compile.outp)
-print(Compile.inputs())
-print(Compile.outputs())

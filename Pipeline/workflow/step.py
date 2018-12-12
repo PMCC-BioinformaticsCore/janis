@@ -3,29 +3,35 @@ from typing import List, Dict, Any, Optional
 
 from Pipeline.graph.node import Node, NodeTypes
 from Pipeline.tool.tool import Tool, ToolInput, ToolOutput
+from Pipeline.translations.cwl.cwl import Cwl
 from Pipeline.types.filename import Filename
 from Pipeline.utils.logger import Logger
 
+CS = Cwl.WORKFLOW.STEP
+
 
 class Step:
-    def __init__(self, label: str, tool: Tool, meta: Dict[str, Any]=None):
-        self.__label: str = label
+    def __init__(self, identifier: str, tool: Tool, meta: Dict[str, Any]=None,
+                 label: str = None, doc: str = None):
+        self._identifier: str = identifier
+        self.label = label
+        self.doc = doc
+
         self.__tool: Tool = tool
         self.__meta: Dict[str, Any] = meta
 
-    def __str__(self):
-        l = self.__label
-        t = self.__tool
-        return f"{l}: {t}"
-
     def id(self):
-        return self.__label
+        return self._identifier
+
+    def __str__(self):
+        t = self.__tool.id()
+        return f"{self.id()}: {t}"
 
     def input_value(self, tag: str) -> Optional[Any]:
         return self.__meta[tag] if tag in self.__meta else None
 
     def set_input_value(self, tag: str, value: str):
-        l = self.__label
+        l = self._identifier
         Logger.log(f"Updating '{l}': setting '{tag}' -> '{value}'")
         self.__meta[tag] = value
 
@@ -35,19 +41,37 @@ class Step:
     def provides(self) -> Dict[str, ToolOutput]:
         return self.__tool.outputs_map()
 
-    def get_tool(self) -> Tool:
+    def tool(self) -> Tool:
         return self.__tool
+
+    def cwl(self):
+        d = {
+            Cwl.WORKFLOW.STEP.kID: self.id(),
+            CS.kRUN: f"tools/{self.tool().id()}.cwl",
+            CS.kOUT: [o.tag for o in self.tool().outputs()]
+        }
+
+        if self.label:
+            d[CS.kLABEL] = self.label
+
+        if self.doc:
+            d[CS.kDOC] = self.doc
+
+        return d
 
     def __getattr__(self, item):
         if item in self.__dict__:
             return self.__dict__[item]
 
-        if item in self.get_tool().inputs_map():
-            return f"{self.id()}/{self.get_tool().inputs_map()[item].tag}"
-        if item in self.get_tool().outputs_map():
-            return f"{self.id()}/{self.get_tool().outputs_map()[item].tag}"
+        if item in self.tool().inputs_map():
+            return f"{self.id()}/{self.tool().inputs_map()[item].tag}"
+        if item in self.tool().outputs_map():
+            return f"{self.id()}/{self.tool().outputs_map()[item].tag}"
 
-        raise AttributeError(f" tool '{self.get_tool().id()}' has no identifier '{item}'")
+        tags = ", ".join([f"in.{i.tag}" for i in self.tool().inputs()]
+                         + [f"out.{o.tag}" for o in self.tool().outputs()])
+
+        raise AttributeError(f"Tool '{self.tool().id()}' has no identifier '{item}' ({tags})")
 
 
 class StepNode(Node):
@@ -72,75 +96,38 @@ class StepNode(Node):
 
     def cwl(self):
         return {
-            "label": self.step.id(),
-            "run": f"tools/{self.step.get_tool().tool().lower()}.cwl",
-            "in": {i: self.connection_map[i][0] for i in self.connection_map},
-            "out": [o.tag for o in self.step.get_tool().outputs()]
+            CS.kIN: self._prepare_cwl_inputs(),
+            ** self.step.cwl()
         }
+
+    def _prepare_cwl_inputs(self):
+        ds = []
+        ins = self.inputs()
+        for k in ins:
+            inp = ins[k]
+            d = {
+                CS.STEP_INPUT.kID: k
+            }
+
+            if k in self.connection_map:
+                d[CS.STEP_INPUT.kSOURCE] = self.connection_map[k][0]
+
+            elif not inp.input_type.optional:
+                    raise Exception(f"Error when building connections for step '{self.id()}', "
+                                    f"could not find required connection {k}")
+
+            inp_t = self.inputs()[k].input_type
+            if isinstance(inp_t, Filename):
+                d[CS.STEP_INPUT.kDEFAULT] = inp_t.generated_filename(self.step.id())
+            ds.append(d)
+        return ds
 
     def wdl_map(self) -> List[str]:
         q = []
-        for inp in self.step.get_tool().inputs():
+        for inp in self.step.tool().inputs():
             if inp.tag in self.connection_map:
                 q.append(f"{inp.tag} = {self.connection_map[inp.tag][0].replace('/', '.')}")
             elif not inp.optional:
                 raise Exception(f"Required option '{inp.tag}' for step '{self.id()}' "
                                 f"was not found during conversion to WDL")
         return q
-
-
-# Should be able to remove the below
-
-
-class StepFactory(ABC):
-    @classmethod
-    @abstractmethod
-    def type(cls) -> str:
-        pass
-
-    @classmethod
-    @abstractmethod
-    def label(cls) -> str:
-        pass
-
-    @classmethod
-    def description(cls) -> str:
-        return cls.label()
-
-    @classmethod
-    @abstractmethod
-    def schema(cls) -> dict:
-        pass
-
-    @classmethod
-    @abstractmethod
-    def build(cls, label: str, meta: dict) -> Step:
-        pass
-
-    @classmethod
-    def support_translations(cls) -> List[str]:
-        return ['cwl']
-
-    @classmethod
-    def build_from(cls, label: str, step_meta: dict) -> Step:
-        step_type = cls.type()
-        Logger.log(f"{step_type} factory: Building from {step_meta}")
-        obj = cls.build(label, step_meta)
-        # obj.identify()
-        return obj
-
-
-class TaggedDatum(ABC):
-    @abstractmethod
-    def tags(self):
-        # A set tags that can select among similar types
-        pass
-
-    @abstractmethod
-    def datum_type(self):
-        # A datum_type
-        pass
-
-    def satisfies(self, datum):
-        # A concrete implementation here
-        pass

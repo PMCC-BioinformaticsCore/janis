@@ -19,6 +19,7 @@ from Pipeline.translations.wdl.Wdl import Wdl
 
 NativeType = str
 
+
 class NativeTypes:
     kStr: NativeType = "str"
     kInt: NativeType = "int"
@@ -183,15 +184,16 @@ class DataType(ABC):
             raise Exception(f"{self.id()} must declare its primitive as one of the NativeTypes "
                             f"({', '.join(NativeTypes.all)})")
         d = {
-            "type": NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
+            Cwl.WORKFLOW.INPUT.kTYPE: NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
         }
 
-        if self.doc():
-            d["doc"] = self.doc()
         if self.secondary_files():
-            d["secondaryFiles"] = self.secondary_files()
+            d[Cwl.WORKFLOW.INPUT.kSECONDARY_FILES] = self.secondary_files()
 
         return d
+
+    def cwl_input(self, value: Any):
+        return value
 
     def wdl(self):
         return NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional()

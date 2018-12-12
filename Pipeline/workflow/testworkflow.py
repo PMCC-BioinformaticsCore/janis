@@ -13,14 +13,14 @@ class TestWorkflow(TestCase):
     def test_name(self):
         wn = "test_name"
         w = Workflow(wn)
-        self.assertEqual(w.name, wn)
+        self.assertEqual(w.identifier, wn)
 
     def test_rename(self):
         wn1 = "test_rename"
         wn2 = "test_rename2"
         w = Workflow(wn1)
-        w.name = wn2
-        self.assertEqual(w.name, wn2)
+        w.identifier = wn2
+        self.assertEqual(w.identifier, wn2)
 
     def test_add_input(self):
         w = Workflow("test_add_input")

@@ -55,23 +55,46 @@ class Workflow:
         nx.draw(G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=True)
         plt.show()
 
+    def add_nodes(self, mixed: List[Any]):
+        for node in mixed:
+            if isinstance(node, Input):
+                self.add_input(node)
+            elif isinstance(node, Step):
+                self.add_step(node)
+            elif isinstance(node, Output):
+                self.add_output(node)
+            else:
+                raise Exception(f"Unexpected type '{type(node)}' passed to 'add_nodes'")
+
     def add_input(self, inp: Input):
-        Logger.log(f"Adding input '{inp.id()}' to '{self.identifier}'")
-        node: InputNode = InputNode(inp)
-        self._add_node(node)
-        self._inputs.append(node)
+        return self.add_inputs([inp])
+
+    def add_inputs(self, inputs: List[Input]):
+        for inp in inputs:
+            Logger.log(f"Adding input '{inp.id()}' to '{self.identifier}'")
+            node: InputNode = InputNode(inp)
+            self._add_node(node)
+            self._inputs.append(node)
 
     def add_output(self, outp: Output):
-        Logger.log(f"Adding output '{outp.id()}' to '{self.identifier}'")
-        node: OutputNode = OutputNode(outp)
-        self._add_node(node)
-        self._outputs.append(node)
+        return self.add_outputs([outp])
+
+    def add_outputs(self, outputs: List[Output]):
+        for outp in outputs:
+            Logger.log(f"Adding output '{outp.id()}' to '{self.identifier}'")
+            node: OutputNode = OutputNode(outp)
+            self._add_node(node)
+            self._outputs.append(node)
 
     def add_step(self, step: Step):
-        Logger.log(f"Adding step '{step.id()}' to '{self.identifier}'")
-        node: StepNode = StepNode(step)
-        self._add_node(node)
-        self._steps.append(node)
+        return self.add_steps([step])
+
+    def add_steps(self, steps: List[Step]):
+        for step in steps:
+            Logger.log(f"Adding step '{step.id()}' to '{self.identifier}'")
+            node: StepNode = StepNode(step)
+            self._add_node(node)
+            self._steps.append(node)
 
     def _add_node(self, node: Node):
 
@@ -100,6 +123,13 @@ class Workflow:
         except Exception as e:
             Logger.log_ex(e)
             return str(s)
+
+    def add_pipe(self, *args):
+        if len(args) < 2:
+            raise Exception("Must pass at least two properties to 'add_pipe'")
+
+        for i in range(len(args) - 1):
+            self.add_edge(args[i], args[i+1])
 
     def add_edge(self, start, finish):
 
@@ -176,7 +206,7 @@ class Workflow:
                 raise Exception(f"Could not identify connection for edge {s} → {f}")
 
         # NOW: Let's build the connection
-        f_node.connection_map[f_parts[-1]] = s_type[0], s_node
+        f_node.connection_map[f_type[0].split("/")[-1]] = s_type[0], s_node
 
         correct_type = f_type[1].can_receive_from(s_type[1])
 

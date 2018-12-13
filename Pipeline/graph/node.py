@@ -6,7 +6,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple, Any
 
-from Pipeline.tool.tool import ToolInput, ToolOutput
+from Pipeline.tool.commandtool import ToolInput, ToolOutput
 
 NodeLabel = str
 NodeType = int

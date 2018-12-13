@@ -55,8 +55,6 @@ class Wehi:
         for out in self.outputs:
             self.workflow.add_edge(out.meta, out)
 
-        print(self.workflow)
-
     @staticmethod
     def parse_inputs(inputs: Dict[str, Any]) -> List[pp.Input]:
         return [Wehi.parse_input(inp_id, meta) for inp_id, meta in inputs.items()]

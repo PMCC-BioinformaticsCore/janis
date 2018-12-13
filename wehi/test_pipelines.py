@@ -1,25 +1,34 @@
 from unittest import TestCase
 from wehi.spec import Wehi
-from Pipeline import Workflow, Logger
+from Pipeline import Workflow, Logger, LogLevel
 import yaml, os
 
 
 class TestWehi(TestCase):
 
-    def test_simple(self):
+    def test_simple(self, mute=True):
+        if mute:
+            Logger.mute()
+
         import Pipeline.unix
         w = Wehi("Simple")
         w.parse_string(_simple)
         # w.workflow.dump_cwl(w.workflow)
         # w.workflow.dump_wdl(w.workflow, to_disk=True)
+        Logger.unmute()
         self.assertTrue(True)
 
-    # def test_parallel(self):
-    #     import Pipeline.bioinformatics
-    #     w = Wehi("Parallel")
-    #     w.parse_string(_parallel)
-    #
-    #     self.assertTrue(True)
+    def test_parallel(self, mute=True):
+        if mute:
+            Logger.mute()
+
+        import Pipeline.bioinformatics
+
+        w = Wehi("Parallel")
+        w.parse_string(_parallel)
+        Logger.unmute()
+
+        self.assertTrue(True)
 
 _simple = """
 inputs:

@@ -1,8 +1,8 @@
-from Pipeline.tool.tool import Tool, ToolInput
+from Pipeline.tool.commandtool import CommandTool, ToolInput
 from Pipeline.types.common_data_types import Array, File
 
 
-class Cat(Tool):
+class Cat(CommandTool):
 
     files = ToolInput("files", Array(File()))
 

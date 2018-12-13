@@ -1,8 +1,8 @@
 from Pipeline.bioinformatics.data_types.bam import Bam
-from Pipeline import File, String, Int, Tool, ToolOutput, ToolInput
+from Pipeline import File, String, Int, CommandTool, ToolOutput, ToolInput
 
 
-class PicardSortSam(Tool):
+class PicardSortSam(CommandTool):
     inputFileName_sortSam = ToolInput("inputFileName_sortSam", File())
     outputFileName_sortSam = ToolInput("outputFileName_sortSam", String())
     tmpdir = ToolInput("tmpdir", String())

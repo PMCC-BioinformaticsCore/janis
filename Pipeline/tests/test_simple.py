@@ -5,7 +5,8 @@ from Pipeline.unix.steps.untar import Untar
 from Pipeline.unix.steps.compile import Compile
 from Pipeline.unix.data_types.tar_file import TarFile
 
-from Pipeline import Workflow, Input, Output, Step, String, File
+from Pipeline import Workflow, Input, Output, Step, String, File, Logger
+
 
 # file.tar -> untar -> compile -> tar -> out.tar
 #                  \_____________↗
@@ -14,6 +15,7 @@ from Pipeline import Workflow, Input, Output, Step, String, File
 class TestSimple(unittest.TestCase):
 
     def test_workflow(self):
+        Logger.mute()
         w = Workflow("simple")
 
         inp1 = Input("tarFile", TarFile())
@@ -41,10 +43,12 @@ class TestSimple(unittest.TestCase):
         w.add_edge(step1.files, step3.input1)
         w.add_edge(step2.compiled, step3.input2)
         w.add_edge(step3.tarred, outp)
+        Logger.unmute()
 
         return w
 
     def test_pipe(self):
+        Logger.mute()
         w = Workflow("simple")
 
         inp1 = Input("tarFile", TarFile())
@@ -57,7 +61,8 @@ class TestSimple(unittest.TestCase):
         w.add_edge(step1, step3.input2)
         w.add_pipe(inp1, step1, step2, step3.input1, outp)
 
-        w.dump_cwl(to_disk=True)
+        Logger.unmute()
+        # w.dump_cwl(to_disk=True)
 
         return w
 

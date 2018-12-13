@@ -1,9 +1,9 @@
 from typing import List
 
-from Pipeline import Array, String, Int, File, Tool, ToolOutput, ToolInput
+from Pipeline import Array, String, Int, File, CommandTool, ToolOutput, ToolInput
 
 
-class PicardMarkDup(Tool):
+class PicardMarkDup(CommandTool):
     inputFileName_markDups = ToolInput("inputFileName_markDups", Array(String()))
     outputFileName_markDups = ToolInput("outputFileName_markDups", String())
     metricsFile = ToolInput("metricsFile", String(optional=True))

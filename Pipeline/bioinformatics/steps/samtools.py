@@ -1,10 +1,10 @@
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.sam import Sam
-from Pipeline import String, Tool, ToolOutput, ToolInput
+from Pipeline import String, CommandTool, ToolOutput, ToolInput
 
 
-class SamTools(Tool):
-    inp = ToolInput("input", Sam()),
+class SamTools(CommandTool):
+    inp = ToolInput("input", Sam())
     outputName = ToolInput("outputName", String())
 
     out = ToolOutput("out", Bam())

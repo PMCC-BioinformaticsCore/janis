@@ -1,7 +1,7 @@
-from Pipeline import Tool, Input, String, ToolInput
+from Pipeline import CommandTool, Input, String, ToolInput
 
 
-class Echo(Tool):
+class Echo(CommandTool):
 
     inp = ToolInput("inp", String())
 

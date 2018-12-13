@@ -2,11 +2,10 @@ from Pipeline import Array
 from Pipeline.unix.data_types.tar_file import TarFile
 
 from Pipeline.types.common_data_types import File
-from Pipeline.workflow.step import Tool
-from Pipeline.workflow.step import ToolInput, ToolOutput
+from Pipeline.tool.commandtool import CommandTool, ToolInput, ToolOutput
 
 
-class Untar(Tool):
+class Untar(CommandTool):
 
     tarFile = ToolInput("tarFile", TarFile())
     files = ToolOutput("files", Array(File()), glob="*.java")

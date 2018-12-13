@@ -1,10 +1,10 @@
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.dbsnp import Dbsnp
 from Pipeline.bioinformatics.data_types.ref_fasta import RefFasta
-from Pipeline import String, Int, File, Tool, ToolOutput, ToolInput
+from Pipeline import String, Int, File, CommandTool, ToolOutput, ToolInput
 
 
-class GatkHaplotypecaller(Tool):
+class GatkHaplotypecaller(CommandTool):
     reference = ToolInput("reference", RefFasta())
     outputfile_HaplotypeCaller = ToolInput("outputfile_HaplotypeCaller", String())
     dbsnp = ToolInput("dbsnp", Dbsnp())

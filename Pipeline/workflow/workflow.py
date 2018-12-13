@@ -14,6 +14,7 @@ from Pipeline.workflow.step import Step, StepNode
 from Pipeline.workflow.input import Input, InputNode
 from Pipeline.workflow.output import Output, OutputNode
 from Pipeline.tool.tool import Tool, ToolInput, ToolOutput
+from Pipeline.tool.commandtool import CommandTool
 
 from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
     InvalidInputsException
@@ -21,7 +22,8 @@ from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifie
 from Pipeline.translations.cwl.cwl import Cwl
 
 
-class Workflow:
+class Workflow(Tool):
+
     identifier = BaseDescriptor()
     label = BaseDescriptor()
     doc = BaseDescriptor()
@@ -43,6 +45,12 @@ class Workflow:
         self.connections: Dict[str, Set[NodeAndTag]] = {}
 
         self.has_scatter = False
+
+    def inputs(self) -> List[ToolInput]:
+        return [ToolInput(i.id(), i.input.data_type) for i in self._inputs]
+
+    def outputs(self) -> List[ToolOutput]:
+        return [ToolOutput(o.id(), o.output.data_type) for o in self._outputs]
 
     def draw_graph(self):
         import matplotlib.pyplot as plt
@@ -434,7 +442,7 @@ class Workflow:
             d[Cwl.WORKFLOW.kSTEPS] = {s.id(): s.cwl() for s in self._steps}
 
         tools = []
-        tools_to_build: Dict[str, Tool] = {s.step.tool().tool(): s.step.tool() for s in self._steps}
+        tools_to_build: Dict[str, CommandTool] = {s.step.tool().tool(): s.step.tool() for s in self._steps}
         for t in tools_to_build:
             tools.append(tools_to_build[t].cwl())
 
@@ -447,7 +455,7 @@ class Workflow:
         get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
 
         tools = [s.step.tool() for s in self._steps]
-        tool_name_to_tool: Dict[str, Tool] = {t.tool().lower(): t for t in tools}
+        tool_name_to_tool: Dict[str, CommandTool] = {t.tool().lower(): t for t in tools}
         tool_name_to_alias = {}
         steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
 

@@ -57,6 +57,7 @@ class LogLevel:
 
 class Logger:
     CONSOLE_LEVEL: Optional[int] = LogLevel.INFO
+    __TEMP_CONSOLE_LEVEL: Optional[int] = None
     WRITE_LEVEL: Optional[int] = LogLevel.DEBUG
 
     WRITE_LOCATION: Optional[str] = None
@@ -65,6 +66,23 @@ class Logger:
     @staticmethod
     def set_console_level(level: Optional[int]):
         Logger.CONSOLE_LEVEL = level
+
+    @staticmethod
+    def mute():
+        """
+        Mute's the console until unmute is called
+        """
+        Logger.__TEMP_CONSOLE_LEVEL = Logger.CONSOLE_LEVEL
+        Logger.set_console_level(None)
+
+    @staticmethod
+    def unmute():
+        """
+        unmute the console, if __TEMP is None, should not do anything
+        :return:
+        """
+        if Logger.__TEMP_CONSOLE_LEVEL is not None:
+            Logger.set_console_level(Logger.__TEMP_CONSOLE_LEVEL)
 
     @staticmethod
     def set_write_level(level: Optional[int]):

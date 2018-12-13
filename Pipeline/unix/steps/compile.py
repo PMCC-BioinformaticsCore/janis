@@ -5,10 +5,10 @@
 from typing import List
 
 from Pipeline.types.common_data_types import File
-from Pipeline.tool.tool import Tool, ToolInput, ToolOutput, ToolArgument
+from Pipeline.tool.commandtool import CommandTool, ToolInput, ToolOutput, ToolArgument
 
 
-class Compile(Tool):
+class Compile(CommandTool):
     file = ToolInput("file", File())
     compiled = ToolOutput("compiled", File(), glob="*.class")
 

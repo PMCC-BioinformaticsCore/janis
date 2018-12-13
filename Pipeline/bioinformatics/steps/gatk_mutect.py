@@ -3,10 +3,10 @@ from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.dbsnp import Dbsnp
 from Pipeline.bioinformatics.data_types.ref_fasta import RefFasta
 from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
-from Pipeline import String, Array, File, Tool, ToolOutput, ToolInput
+from Pipeline import String, Array, File, CommandTool, ToolOutput, ToolInput
 
 
-class GatkMutect(Tool):
+class GatkMutect(CommandTool):
     tumor = ToolInput("tumor", Bam())
     normal = ToolInput("normal", Bam())
     reference = ToolInput("reference", RefFasta())

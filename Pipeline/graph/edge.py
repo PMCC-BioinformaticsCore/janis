@@ -1,7 +1,7 @@
 from typing import Tuple, Optional, Dict, List
 
 from Pipeline.utils.logger import Logger
-from Pipeline.tool.tool import ToolOutput, ToolInput
+from Pipeline.tool.commandtool import ToolOutput, ToolInput
 from Pipeline.types.common_data_types import Array
 from Pipeline.graph.node import Node, NodeTypes
 from Pipeline.workflow.step import StepNode

@@ -5,10 +5,10 @@ from typing import List
 from Pipeline import Array
 from Pipeline.types.filename import Filename
 from Pipeline.types.common_data_types import File
-from Pipeline.workflow.step import Tool, ToolInput, ToolOutput
+from Pipeline.tool.commandtool import CommandTool, ToolInput, ToolOutput
 
 
-class Tar(Tool):
+class Tar(CommandTool):
     inputs1: ToolInput = ToolInput("input1", Array(File()), position=2)
     input2: ToolInput = ToolInput("input2", Array(File()), position=3)
     tarred: ToolOutput = ToolOutput("tarred", File(), glob="*.tar")

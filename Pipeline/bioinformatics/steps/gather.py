@@ -1,8 +1,8 @@
 from Pipeline.bioinformatics.data_types.bam import Bam
-from Pipeline import File, Tool, ToolOutput, ToolInput
+from Pipeline import File, CommandTool, ToolOutput, ToolInput
 
 
-class Gather(Tool):
+class Gather(CommandTool):
     bamFile = ToolInput("bamFile", Bam())
     bamIndex = ToolInput("bamIndex", File())
 

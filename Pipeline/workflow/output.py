@@ -3,7 +3,7 @@ from typing import Dict, Optional, Any
 from Pipeline.graph.node import Node, NodeTypes
 from Pipeline.translations.cwl.cwl import Cwl
 from Pipeline.types.data_types import DataType
-from Pipeline.tool.tool import ToolOutput, ToolInput
+from Pipeline.tool.commandtool import ToolOutput, ToolInput
 
 
 class Output:

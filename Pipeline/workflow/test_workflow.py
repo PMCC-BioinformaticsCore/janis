@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from Pipeline import File, Array
+from Pipeline.graph.edge import Edge
 from Pipeline.types.common_data_types import String
 from Pipeline.unix.data_types.tar_file import TarFile
 from Pipeline.unix.steps.echo import Echo
@@ -89,28 +90,50 @@ class TestWorkflow(TestCase):
         w = Workflow("test_add_edge")
         inp = Input("tarred", TarFile())
         stp = Step("stp", Untar())  # Only has one input, with no output
-        outp = Output("outp", Array(File()))
+        out = Output("outp", Array(File()))
 
-        w.add_nodes([inp, stp, outp])
-        w.add_pipe(inp, stp, outp)
+        w.add_nodes([inp, stp, out])
+        w.add_pipe(inp, stp, out)
 
         # the nodes are usually internal
         inp_node = w._labels[inp.id()]
         stp_node = w._labels[stp.id()]
-        out_node = w._labels[outp.id()]
+        out_node = w._labels[out.id()]
 
+        self.assertEqual(len(inp_node.connection_map), 0)
+        self.assertEqual(len(stp_node.connection_map), 1)
+        self.assertEqual(len(out_node.connection_map), 1)
 
+        e1: Edge = next(iter(stp_node.connection_map.values()))
+        e2: Edge = next(iter(out_node.connection_map.values()))
+
+        self.assertEqual(e1.start.id(),  inp.id())
+        self.assertEqual(e1.finish.id(), stp.id())
+        self.assertEqual(e2.start.id(),  stp.id())
+        self.assertEqual(e2.finish.id(), out.id())
 
     def test_qualified_pipe(self):
         w = Workflow("test_add_edge")
         inp = Input("tarred", TarFile())
         stp = Step("stp", Untar())  # Only has one input, with no output
-        outp = Output("outp", Array(File()))
+        out = Output("outp", Array(File()))
 
-        w.add_nodes([inp, stp, outp])
-        w.add_pipe(inp, stp.files, outp)
+        w.add_nodes([inp, stp, out])
+        w.add_pipe(inp, stp.files, out)
 
+        # the nodes are usually internal
+        inp_node = w._labels[inp.id()]
+        stp_node = w._labels[stp.id()]
+        out_node = w._labels[out.id()]
 
+        self.assertEqual(len(inp_node.connection_map), 0)
+        self.assertEqual(len(stp_node.connection_map), 1)
+        self.assertEqual(len(out_node.connection_map), 1)
 
+        e1: Edge = next(iter(stp_node.connection_map.values()))
+        e2: Edge = next(iter(out_node.connection_map.values()))
 
-
+        self.assertEqual(e1.start.id(), inp.id())
+        self.assertEqual(e1.finish.id(), stp.id())
+        self.assertEqual(e2.start.id(), stp.id())
+        self.assertEqual(e2.finish.id(), out.id())

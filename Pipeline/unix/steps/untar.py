@@ -9,7 +9,7 @@ from Pipeline.workflow.step import ToolInput, ToolOutput
 class Untar(Tool):
 
     tarFile = ToolInput("tarFile", TarFile())
-    out = ToolOutput("outp", Array(File()), glob="*.java")
+    files = ToolOutput("files", Array(File()), glob="*.java")
 
     @staticmethod
     def base_command():

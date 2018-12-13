@@ -102,6 +102,18 @@ class Logger:
             Logger.__WRITE_POINTER.write(m + "\n")
 
     @staticmethod
+    def info(message: str):
+        Logger.log(message, LogLevel.INFO)
+
+    @staticmethod
+    def warn(message: str):
+        Logger.log(message, LogLevel.WARNING)
+
+    @staticmethod
+    def critical(message: str):
+        Logger.log(message, LogLevel.CRITICAL)
+
+    @staticmethod
     def log_ex(ex: Exception):
         print(LogLevel.get_color(LogLevel.CRITICAL) + str(ex) + _bcolors.ENDC)
         if Logger.__WRITE_POINTER is not None:

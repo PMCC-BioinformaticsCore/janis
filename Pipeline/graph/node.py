@@ -36,18 +36,14 @@ class Node(ABC):
 
     _N_counter: int = 1
     _N_nodeId_map: Dict[int, Any] = {}
-    _N_node_map: Dict[str, Any] = {}
 
     def __init__(self, node_type: NodeType, label: NodeLabel, depth=0):
-
-        if label in self._N_node_map:
-            raise Exception(f"Label {label} has already been used by node: {self._N_node_map[label]}")
 
         self.node_type: NodeType = node_type
         self._label: NodeLabel = label
         self.depth = depth
 
-        self.connection_map: Dict[str, NodeAndTag] = {}
+        self.connection_map: Dict[str, Any] = {}    # actually an edge
 
         # Update unique counter for hash
         self._nodeId = Node._N_counter
@@ -55,7 +51,6 @@ class Node(ABC):
 
         # Map the node, so we can look it up later
         self._N_nodeId_map[self._nodeId] = self
-        self._N_node_map[self._label] = self
 
     def id(self) -> str:
         return self._label

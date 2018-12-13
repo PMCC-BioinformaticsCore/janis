@@ -187,12 +187,15 @@ class Directory(DataType):
 
 class Array(DataType):
 
-    def __init__(self, t: DataType=File(), optional=False):
+    def __init__(self, t: DataType, optional=False):
         if not isinstance(t, DataType):
             raise Exception(f"Type t ({type(t)}) must be an instance of 'Type'")
 
         self.__t = t
         super().__init__(optional)
+
+    def subtype(self):
+        return self.__t
 
     @staticmethod
     def name():
@@ -227,7 +230,6 @@ class Array(DataType):
                 "items": NativeTypes.map_to_cwl(self.__t.primitive())
             }
         }
-
 
     def wdl(self):
         return f"{NativeTypes.map_to_wdl(self.primitive())}[{NativeTypes.map_to_wdl(self.__t.primitive())}]"

@@ -10,7 +10,7 @@ from Pipeline.tool.tool import Tool, ToolInput, ToolOutput, ToolArgument
 
 class Compile(Tool):
     file = ToolInput("file", File())
-    outp = ToolOutput("outp", File(), glob="*.class")
+    compiled = ToolOutput("compiled", File(), glob="*.class")
 
     @staticmethod
     def tool():

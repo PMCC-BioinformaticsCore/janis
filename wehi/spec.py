@@ -42,7 +42,8 @@ class Wehi:
         # Now we'll connect edges
         for step in self.steps:
             for tool_tag in step.tool().inputs():
-                inp_tag = step.input_value(tool_tag.tag)
+                inp_tag = self.doc[KEYS.STEPS][step.id()].get(tool_tag.tag)
+                # inp_tag = step.meta[tool_tag.tag]
                 if not inp_tag:
                     if tool_tag.optional: continue
                     #   2. (b)

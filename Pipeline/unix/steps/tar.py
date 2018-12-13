@@ -9,9 +9,9 @@ from Pipeline.workflow.step import Tool, ToolInput, ToolOutput
 
 
 class Tar(Tool):
-    inputs1: ToolInput = ToolInput("inputs1", Array(File()), position=2)
-    input2: ToolInput = ToolInput("input2", File(), position=3)
-    outp: ToolOutput = ToolOutput("outp", File(), glob="*.tar")
+    inputs1: ToolInput = ToolInput("input1", Array(File()), position=2)
+    input2: ToolInput = ToolInput("input2", Array(File()), position=3)
+    tarred: ToolOutput = ToolOutput("tarred", File(), glob="*.tar")
 
     # this param may be marked as optional, but the Workflow system will always give it a value
     tarName: ToolInput = ToolInput("tarName", Filename(extension="tar"), position=1)

@@ -6,21 +6,21 @@ import yaml, os
 
 class TestWehi(TestCase):
 
-    # def test_simple(self):
-    #     import Pipeline.unix
-    #     w = Wehi("Simple")
-    #     w.parse_string(_simple)
-    #     self.dump_cwl(w.workflow, to_disk=True)
-    #     self.dump_wdl(w.workflow, to_disk=True)
-    #     self.assertTrue(True)
-
-    def test_parallel(self):
-        import Pipeline.bioinformatics
-        w = Wehi("Parallel")
-        w.parse_string(_parallel)
-
-
+    def test_simple(self):
+        import Pipeline.unix
+        w = Wehi("Simple")
+        w.parse_string(_simple)
+        w.workflow.dump_cwl(w.workflow)
+        # w.workflow.dump_wdl(w.workflow, to_disk=True)
         self.assertTrue(True)
+
+    # def test_parallel(self):
+    #     import Pipeline.bioinformatics
+    #     w = Wehi("Parallel")
+    #     w.parse_string(_parallel)
+    #
+    #
+    #     self.assertTrue(True)
 
 _simple = """
 inputs:

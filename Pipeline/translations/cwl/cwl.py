@@ -62,7 +62,7 @@ class Cwl(CwlIdLabelDoc):
         class STEP(CwlIdLabelDoc, CwlHintsRequirements):
             kRUN = "run"
             kSCATTER = "scatter"
-            # kSCATTER_METHOD = "scatterMethod"         # not supported
+            kSCATTER_METHOD = "scatterMethod"         # not supported
             kIN = "in"
             kOUT = "out"
 
@@ -72,6 +72,11 @@ class Cwl(CwlIdLabelDoc):
                 kLINK_MERGE = "linkMerge"
                 kDEFAULT = "default"
                 kVALUE_FROM = "valueFrom"
+
+            class SCATTER_METHOD:
+                kDOT_PRODUCT = "dotproduct"
+                kNESTED_CROSS_PRODUCT = "nested_crossproduct"
+                kFLAT_CROSS_PRODUCT = "flat_crossproduct"
 
     class COMMANDLINETOOL(CwlIdLabelDoc, CwlHintsRequirements):
         pass

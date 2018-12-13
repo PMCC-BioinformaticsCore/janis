@@ -52,5 +52,5 @@ class OutputNode(Node):
         return {}
 
     def cwl(self):
-        source = next(iter(self.connection_map.values()))
-        return self.output.cwl(source[0])
+        source = next(iter(self.connection_map.values())).source()
+        return self.output.cwl(source)

@@ -92,22 +92,22 @@ class StepNode(Node):
         raise AttributeError(f"type object '{type(self)}' has no attribute '{item}'")
 
     def cwl(self):
-        return {
-            CS.kIN: self._prepare_cwl_inputs(),
-            ** self.step.cwl()
+        ins = self.inputs()
+        scatterable = []
+
+        dd = {
+            **self.step.cwl(),
+            CS.kIN: []
         }
 
-    def _prepare_cwl_inputs(self):
-        ds = []
-        ins = self.inputs()
         for k in ins:
             inp = ins[k]
-            d = {
-                CS.STEP_INPUT.kID: k
-            }
-
+            d = { CS.STEP_INPUT.kID: k }
             if k in self.connection_map:
-                d[CS.STEP_INPUT.kSOURCE] = self.connection_map[k][0]
+                edge = self.connection_map[k]
+                d[CS.STEP_INPUT.kSOURCE] = edge.source()
+                if edge.scatter:
+                   scatterable.append(k)
 
             elif not inp.input_type.optional:
                     raise Exception(f"Error when building connections for step '{self.id()}', "
@@ -116,8 +116,16 @@ class StepNode(Node):
             inp_t = self.inputs()[k].input_type
             if isinstance(inp_t, Filename):
                 d[CS.STEP_INPUT.kDEFAULT] = inp_t.generated_filename(self.step.id())
-            ds.append(d)
-        return ds
+            dd[CS.kIN].append(d)
+
+        if len(scatterable) > 0:
+            if len(scatterable) > 1:
+                Logger.info(f"Discovered more than one scatterable field on step '{self.id()}', "
+                            f"deciding scatterMethod to be dot_product")
+                dd[CS.kSCATTER_METHOD] = CS.SCATTER_METHOD.kDOT_PRODUCT
+            dd[CS.kSCATTER] = scatterable
+        return dd
+
 
     def wdl_map(self) -> List[str]:
         q = []

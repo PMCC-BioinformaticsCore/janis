@@ -300,9 +300,9 @@ class Workflow:
             if len(input_parts) != 2:
                 s = "/".join(input_parts)
                 under_over = "under" if len(input_parts) < 2 else "over"
-                Logger.log(f"The node '{node.id()}' {under_over}-referenced an output of the tool "
-                           f"'{snode.step.tool().id()}', this was automatically corrected "
-                           f"({s} → {lbl}/{tag})", LogLevel.WARNING)
+                Logger.warn(f"The node '{'/'.join(referenced_by)}' {under_over}-referenced an output of the tool "
+                           f"'{snode.step.tool().id()}' (step: {node.id()}, this was automatically corrected "
+                           f"({s} → {lbl}/{tag})")
             elif input_parts[-1] != tag:
                 Logger.log(f"The node '{node.id()}' did not correctly reference an output of the tool "
                            f"'{snode.step.tool().id()}', this was automatically corrected "
@@ -364,15 +364,15 @@ class Workflow:
                             f"the following tags: {possible_tags}")
         else:
             tag = input_parts[1]
-            t = snode.step.tool().inputs_map().get(tag)
-            if t:
+            tool_input: ToolInput = snode.step.tool().inputs_map().get(tag)
+            if tool_input:
                 if len(input_parts) != 2:
-                    s = input_parts
+                    s = "/".join(input_parts)
                     Logger.log(f"The node '{snode.id()}' did not correctly reference an input of the tool "
                                f"'{snode.step.tool().id()}', this was automatically corrected "
                                f"({s} → {lbl}/{tag})", LogLevel.WARNING)
                 input_parts = [lbl, tag]
-                return input_parts, t.input_type
+                return input_parts, tool_input.input_type
 
             possible_tags = ", ".join(f"'{x}'" for x in ins)
             raise Exception(f"Could not identify an input called '{tag}' on the node '{snode.id()}' "

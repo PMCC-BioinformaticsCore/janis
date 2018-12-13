@@ -30,7 +30,7 @@ inputs:
 steps:
     untar:
         tool: untar
-        tarFile: tarfile
+        tarFile: tarfile    
 
     compile:
         tool: java-compiler

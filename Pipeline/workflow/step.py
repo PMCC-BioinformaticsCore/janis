@@ -68,7 +68,7 @@ class Step:
         tags = ", ".join([f"in.{i.tag}" for i in self.tool().inputs()]
                          + [f"out.{o.tag}" for o in self.tool().outputs()])
 
-        raise AttributeError(f"Tool '{self.tool().id()}' has no identifier '{item}' ({tags})")
+        raise AttributeError(f"Step '{self.id()}' with tool '{self.tool().id()}' has no identifier '{item}' ({tags})")
 
 
 class StepNode(Node):

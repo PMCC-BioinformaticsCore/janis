@@ -62,6 +62,13 @@ class Edge:
             # this second check means that the mypy (and linter) is happy with .subtype()
             self.correct_type = isinstance(stype.output_type, Array) and \
                           ftype.input_type.can_receive_from(stype.output_type.subtype())
+        elif f_is_array and not s_is_array:
+            # check if s has a scatter step, then we sweet
+            start_is_scattered = any(e.scatter for e in self.start.connection_map.values())
+            if start_is_scattered and isinstance(ftype.input_type, Array):
+                self.correct_type = ftype.input_type.subtype().can_receive_from(stype.output_type)
+            else:
+                self.correct_type = ftype.input_type.can_receive_from(stype.output_type)
         else:
             self.correct_type = ftype.input_type.can_receive_from(stype.output_type)
 

@@ -427,32 +427,32 @@ class Workflow(Tool):
     def cwl(self, is_nested_tool=False) -> Tuple[Dict[str, Any], Dict[str, Any], List[Dict[str, Any]]]:
         # Let's try to emit CWL
         d = {
-            Cwl.kCLASS: Cwl.CLASS.kWORKFLOW,
+            Cwl.kCLASS: Cwl.Class.kWORKFLOW,
             Cwl.kCWL_VERSION: Cwl.kCUR_VERSION,
-            Cwl.WORKFLOW.kID: self.identifier,
-            Cwl.WORKFLOW.kREQUIREMENTS: [
-                {Cwl.REQUIREMENTS.kCLASS: Cwl.REQUIREMENTS.kJAVASCRIPT}
+            Cwl.Workflow.kID: self.identifier,
+            Cwl.Workflow.kREQUIREMENTS: [
+                {Cwl.Requirements.kCLASS: Cwl.Requirements.kJAVASCRIPT}
             ]
         }
 
         if self.has_scatter:
-            d[Cwl.WORKFLOW.kREQUIREMENTS].append({Cwl.REQUIREMENTS.kCLASS: Cwl.REQUIREMENTS.kSCATTER})
+            d[Cwl.Workflow.kREQUIREMENTS].append({Cwl.Requirements.kCLASS: Cwl.Requirements.kSCATTER})
         if self.has_subworkflow:
-            d[Cwl.WORKFLOW.kREQUIREMENTS].append(({Cwl.REQUIREMENTS.kCLASS: Cwl.REQUIREMENTS.kSUBWORKFLOW}))
+            d[Cwl.Workflow.kREQUIREMENTS].append(({Cwl.Requirements.kCLASS: Cwl.Requirements.kSUBWORKFLOW}))
 
         if self.label:
-            d[Cwl.WORKFLOW.kLABEL] = self.label
+            d[Cwl.Workflow.kLABEL] = self.label
         if self.doc:
-            d[Cwl.WORKFLOW.kDOC] = self.doc
+            d[Cwl.Workflow.kDOC] = self.doc
 
         if self._inputs:
-            d[Cwl.WORKFLOW.kINPUTS] = [i.cwl() for i in self._inputs]
+            d[Cwl.Workflow.kINPUTS] = [i.cwl() for i in self._inputs]
 
         if self._outputs:
-            d[Cwl.WORKFLOW.kOUTPUTS] = [o.cwl() for o in self._outputs]
+            d[Cwl.Workflow.kOUTPUTS] = [o.cwl() for o in self._outputs]
 
         if self._steps:
-            d[Cwl.WORKFLOW.kSTEPS] = {s.id(): s.cwl(is_nested_tool=is_nested_tool) for s in self._steps}
+            d[Cwl.Workflow.kSTEPS] = {s.id(): s.cwl(is_nested_tool=is_nested_tool) for s in self._steps}
 
         tools = []
         tools_to_build: Dict[str, Tool] = {s.step.tool().id(): s.step.tool() for s in self._steps}

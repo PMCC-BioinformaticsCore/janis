@@ -7,7 +7,7 @@ from Pipeline.translations.cwl.cwl import Cwl
 from Pipeline.types.filename import Filename
 from Pipeline.utils.logger import Logger
 
-CS = Cwl.WORKFLOW.STEP
+CS = Cwl.Workflow.Step
 
 
 class Step:
@@ -44,7 +44,7 @@ class Step:
     def cwl(self, is_nested_tool=False):
         run_ref = f"{self.tool().id()}.cwl" if is_nested_tool else f"tools/{self.tool().id()}.cwl"
         d = {
-            Cwl.WORKFLOW.STEP.kID: self.id(),
+            Cwl.Workflow.Step.kID: self.id(),
             CS.kRUN: run_ref,
             CS.kOUT: [o.tag for o in self.tool().outputs()]
         }
@@ -107,10 +107,10 @@ class StepNode(Node):
 
         for k in ins:
             inp = ins[k]
-            d = { CS.STEP_INPUT.kID: k }
+            d = {CS.StepInput.kID: k}
             if k in self.connection_map:
                 edge = self.connection_map[k]
-                d[CS.STEP_INPUT.kSOURCE] = edge.source()
+                d[CS.StepInput.kSOURCE] = edge.source()
                 if edge.scatter:
                    scatterable.append(k)
 
@@ -120,14 +120,14 @@ class StepNode(Node):
 
             inp_t = self.inputs()[k].input_type
             if isinstance(inp_t, Filename):
-                d[CS.STEP_INPUT.kDEFAULT] = inp_t.generated_filename(self.step.id())
+                d[CS.StepInput.kDEFAULT] = inp_t.generated_filename(self.step.id())
             dd[CS.kIN].append(d)
 
         if len(scatterable) > 0:
             if len(scatterable) > 1:
                 Logger.info(f"Discovered more than one scatterable field on step '{self.id()}', "
                             f"deciding scatterMethod to be dot_product")
-                dd[CS.kSCATTER_METHOD] = CS.SCATTER_METHOD.kDOT_PRODUCT
+                dd[CS.kSCATTER_METHOD] = CS.ScatterMethod.kDOT_PRODUCT
             dd[CS.kSCATTER] = scatterable
         return dd
 

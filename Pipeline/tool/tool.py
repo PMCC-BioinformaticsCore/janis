@@ -50,41 +50,51 @@ class ToolArgument:
 
 class ToolInput(ToolArgument):
     def __init__(self, tag: str, input_type: DataType, position: int = 0, prefix: Optional[str] = None,
-                 separate_value_from_prefix: bool = True, default: Any = None):
+                 separate_value_from_prefix: bool = True, default: Any = None, doc: Optional[str]=None):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
         """
         super().__init__("", prefix, position, separate_value_from_prefix)
+
+        if default is not None:
+            input_type.optional = True
+
         self.tag: str = tag
         self.input_type: DataType = input_type
         self.optional = self.input_type.optional
         self.default = default
+        self.doc = doc
 
     def cwl(self):
         d = {
-            "inputBinding": {
-                "position": self.position
+            Cwl.CommandLineTool.Inputs.kID: self.tag,
+            Cwl.CommandLineTool.Inputs.kINPUT_BINDING: {
+                Cwl.CommandLineTool.Inputs.InputBinding.kPOSITION: self.position
             },
             **self.input_type.cwl()
         }
 
         if self.default is not None:
-            d["default"] = self.default
+            d[Cwl.CommandLineTool.Inputs.kDEFAULT] = self.default
+
+        if self.doc is not None:
+            d[Cwl.Workflow.Input.kDOC] = self.doc
 
         return d
 
 
 class ToolOutput:
-    def __init__(self, tag: str, output_type: DataType, glob: Optional[str] = None):
+    def __init__(self, tag: str, output_type: DataType, glob: Optional[str] = None, doc: Optional[str]=None):
         self.tag = tag
         self.output_type: DataType = output_type
         self.glob = glob
+        self.doc = doc
 
     def cwl(self):
         d = { **self.output_type.cwl() }
         if self.glob is not None:
-            d[Cwl.WORKFLOW.OUTPUT.kOUTPUT_BINDING] = {
+            d[Cwl.Workflow.Output.kOUTPUT_BINDING] = {
                 "glob": self.glob
             }
         return d
@@ -118,5 +128,10 @@ class Tool(ABC):
     def outputs_map(self) -> Dict[str, ToolOutput]:
         return {outp.tag: outp for outp in self.outputs()}
 
+    @abstractmethod
     def cwl(self):
         raise Exception("Must implement cwl() method")
+
+    @staticmethod
+    def doc() -> Optional[str]:
+        return None

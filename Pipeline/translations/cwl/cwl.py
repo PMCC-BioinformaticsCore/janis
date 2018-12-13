@@ -14,18 +14,18 @@ class Cwl(CwlIdLabelDoc):
 
     kCLASS = "class"
 
-    class CLASS:
+    class Class:
         kWORKFLOW = "Workflow"
         kCOMMANDLINETOOL = "CommandLineTool"
         kEXPRESSIONTOOL = "ExpressionTool"
 
-    class WORKFLOW(CwlIdLabelDoc, CwlHintsRequirements):
+    class Workflow(CwlIdLabelDoc, CwlHintsRequirements):
 
         kINPUTS = "inputs"
         kOUTPUTS = "outputs"
         kSTEPS = "steps"
 
-        class INPUT(CwlIdLabelDoc):
+        class Input(CwlIdLabelDoc):
             kTYPE = "type"
             kFORMAT = "format"
             kSTREAMABLE = "streamable"
@@ -33,7 +33,7 @@ class Cwl(CwlIdLabelDoc):
             kSECONDARY_FILES = "secondaryFiles"
             kINPUT_BINDING = "inputBinding"
 
-            class INPUT_BINDING:
+            class InputBinding:
                 kLOAD_CONTENTS = "loadContents"
                 kPOSITION = "position"
                 kPREFIX = "prefix"
@@ -42,7 +42,7 @@ class Cwl(CwlIdLabelDoc):
                 kVALUE_FROM = "valueFrom"
                 kSHELL_QUOTE = "shellQuote"
 
-        class OUTPUT(CwlIdLabelDoc):
+        class Output(CwlIdLabelDoc):
             kTYPE = "type"
             kSTREAMABLE = "streamable"
             kFORMAT = "format"
@@ -52,36 +52,86 @@ class Cwl(CwlIdLabelDoc):
             kOUTPUT_SOURCE = "outputSource"
             kOUTPUT_BINDING = "outputBinding"
 
-            class OUTPUT_BINDING:
+            class OutputBinding:
                 kGLOB = "glob"
                 kLOAD_CONTENTS = "loadContents"
                 kOUTPUT_EVAL = "outputEval"
 
-
-
-        class STEP(CwlIdLabelDoc, CwlHintsRequirements):
+        class Step(CwlIdLabelDoc, CwlHintsRequirements):
             kRUN = "run"
             kSCATTER = "scatter"
             kSCATTER_METHOD = "scatterMethod"         # not supported
             kIN = "in"
             kOUT = "out"
 
-            class STEP_INPUT:
+            class StepInput:
                 kID = "id"
                 kSOURCE = "source"
                 kLINK_MERGE = "linkMerge"
                 kDEFAULT = "default"
                 kVALUE_FROM = "valueFrom"
 
-            class SCATTER_METHOD:
+            class ScatterMethod:
                 kDOT_PRODUCT = "dotproduct"
                 kNESTED_CROSS_PRODUCT = "nested_crossproduct"
                 kFLAT_CROSS_PRODUCT = "flat_crossproduct"
 
-    class COMMANDLINETOOL(CwlIdLabelDoc, CwlHintsRequirements):
-        pass
+    class CommandLineTool(CwlIdLabelDoc, CwlHintsRequirements):
+        kBASE_COMMAND = "baseCommand"
 
-    class REQUIREMENTS:
+        kSTDIN = "stdin"
+        kSTDERR = "stderr"
+        kSTDOUT = "stdout"
+
+        kSUCCESS_CODES = "successCodes"
+        kTEMPORARY_FAIL_CODES = "temporaryFailCodes"
+        kPERMANENT_FAIL_CODES = "permanentFailCodes"
+
+        kINPUTS = "inputs"
+        kOUTPUTS = "outputs"
+        kARGUMENTS = "arguments"
+
+        class Inputs(CwlIdLabelDoc):
+            kTYPE = "type"
+            kFORMAT = "format"
+            kSTREAMABLE = "streamable"
+            kDEFAULT = "default"
+            kSECONDARY_FILES = "secondaryFiles"
+            kINPUT_BINDING = "inputBinding"
+
+            class InputBinding:
+                kLOAD_CONTENTS = "loadContents"
+                kPOSITION = "position"
+                kPREFIX = "prefix"
+                kSEPARATE = "separate"
+                kITEM_SEPARATOR = "itemSeparator"
+                kVALUE_FROM = "valueFrom"
+                kSHELL_QUOTE = "shellQuote"
+
+        class Outputs(CwlIdLabelDoc, CwlHintsRequirements):
+            kTYPE = "type"
+            kFORMAT = "format"
+            kSTREAMABLE = "streamable"
+            kDEFAULT = "default"
+            kSECONDARY_FILES = "secondaryFiles"
+            kOUTPUT_SOURCE = "outputSource"
+            kOUTPUT_BINDING = "outputBinding"
+
+            class OutputBinding(CwlIdLabelDoc):
+                kGLOB = "glob"
+                kLOAD_CONTENTS = "loadContents"
+                kOUTPUT_EVAL = "outputEval"
+
+        class Arguments:
+            kLOAD_CONTENTS = "loadContents"
+            kPOSITION = "position"
+            kPREFIX = "prefix"
+            kSEPARATE = "separate"
+            kITEM_SEPARATOR = "itemSeparator"
+            kVALUE_FROM = "valueFrom"
+            kSHELL_QUOTE = "shellQuote"
+
+    class Requirements:
         kCLASS = "class"
         kJAVASCRIPT = "InlineJavascriptRequirement"
         kSUBWORKFLOW = "SubworkflowFeatureRequirement"
@@ -92,7 +142,7 @@ class Cwl(CwlIdLabelDoc):
         kSOFTWARE = "SoftwareRequirement"
         kINITIALWORKDIR = "InitialWorkDirRequirement"
 
-    class PRIMITIVES:
+    class Primitives:
         kNULL = "null"
         kBOOLEAN = "boolean"
         kINT = "int"
@@ -103,4 +153,3 @@ class Cwl(CwlIdLabelDoc):
         kFILE = "File"
         kDIRECTORY = "Directory"
         kARRAY = "array"
-

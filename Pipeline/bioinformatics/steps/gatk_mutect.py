@@ -1,7 +1,7 @@
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.dbsnp import Dbsnp
-from Pipeline.bioinformatics.data_types.ref_fasta import RefFasta
+from Pipeline.bioinformatics.data_types.fasta import Fasta
 from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
 from Pipeline import String, Array, File, CommandTool, ToolOutput, ToolInput
 
@@ -9,7 +9,7 @@ from Pipeline import String, Array, File, CommandTool, ToolOutput, ToolInput
 class GatkMutect(CommandTool):
     tumor = ToolInput("tumor", Bam())
     normal = ToolInput("normal", Bam())
-    reference = ToolInput("reference", RefFasta())
+    reference = ToolInput("reference", Fasta())
     bedFile = ToolInput("bedFile", Bed())
     outputFilename = ToolInput("outputFilename", String())
     dbsnp = ToolInput("dbsnp", Dbsnp())

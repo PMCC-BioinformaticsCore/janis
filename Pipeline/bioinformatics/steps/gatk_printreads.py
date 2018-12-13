@@ -1,14 +1,14 @@
 
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bed import Bed
-from Pipeline.bioinformatics.data_types.ref_fasta import RefFasta
+from Pipeline.bioinformatics.data_types.fasta import Fasta
 from Pipeline import File, String, CommandTool, ToolOutput, ToolInput
 
 
 class GatkPrintReads(CommandTool):
     inputBam_printReads = ToolInput("inputBam_printReads", Bam())
     input_baseRecalibrator = ToolInput("input_baseRecalibrator", File())
-    reference = ToolInput("reference", RefFasta())
+    reference = ToolInput("reference", Fasta())
     outputfile_printReads = ToolInput("outputfile_printReads", String())
     bedFile = ToolInput("bedFile", Bed())
 

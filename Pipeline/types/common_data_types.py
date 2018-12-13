@@ -145,7 +145,8 @@ class File(DataType):
     def get_value_from_meta(self, meta):
         return meta.get("path")
 
-    def cwl_input(self, value: Any):
+    @staticmethod
+    def cwl_input(value: Any):
         return {
             "class": "File",
             "path": value
@@ -177,7 +178,8 @@ class Directory(DataType):
     def input_field_from_input(self, meta):
         return meta["path"]
 
-    def cwl_input(self, value: Any):
+    @staticmethod
+    def cwl_input(value: Any):
         # WDL: "{workflowName}.label" = meta["path"}
         return {
             "class": "Directory",
@@ -225,7 +227,7 @@ class Array(DataType):
 
     def cwl(self) -> Dict[str, Any]:
         return {
-            Cwl.WORKFLOW.INPUT.kTYPE: {
+            Cwl.Workflow.Input.kTYPE: {
                 "type": NativeTypes.map_to_cwl(NativeTypes.kArray),
                 "items": NativeTypes.map_to_cwl(self.__t.primitive())
             }

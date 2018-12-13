@@ -45,23 +45,23 @@ class NativeTypes:
     @staticmethod
     def map_to_cwl(t: NativeType):
         if t == NativeTypes.kBool:
-            return Cwl.PRIMITIVES.kBOOLEAN
+            return Cwl.Primitives.kBOOLEAN
         elif t == NativeTypes.kInt:
-            return Cwl.PRIMITIVES.kINT
+            return Cwl.Primitives.kINT
         elif t == NativeTypes.kLong:
-            return Cwl.PRIMITIVES.kLONG
+            return Cwl.Primitives.kLONG
         elif t == NativeTypes.kFloat:
-            return Cwl.PRIMITIVES.kFLOAT
+            return Cwl.Primitives.kFLOAT
         elif t == NativeTypes.kDouble:
-            return Cwl.PRIMITIVES.kDOUBLE
+            return Cwl.Primitives.kDOUBLE
         elif t == NativeTypes.kStr:
-            return Cwl.PRIMITIVES.kSTRING
+            return Cwl.Primitives.kSTRING
         elif t == NativeTypes.kFile:
-            return Cwl.PRIMITIVES.kFILE
+            return Cwl.Primitives.kFILE
         elif t == NativeTypes.kDirectory:
-            return Cwl.PRIMITIVES.kDIRECTORY
+            return Cwl.Primitives.kDIRECTORY
         elif t == NativeTypes.kArray:
-            return Cwl.PRIMITIVES.kARRAY
+            return Cwl.Primitives.kARRAY
         raise Exception(f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}")
 
     @staticmethod
@@ -185,15 +185,16 @@ class DataType(ABC):
             raise Exception(f"{self.id()} must declare its primitive as one of the NativeTypes "
                             f"({', '.join(NativeTypes.all)})")
         d = {
-            Cwl.WORKFLOW.INPUT.kTYPE: NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
+            Cwl.Workflow.Input.kTYPE: NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
         }
 
         if self.secondary_files():
-            d[Cwl.WORKFLOW.INPUT.kSECONDARY_FILES] = self.secondary_files()
+            d[Cwl.Workflow.Input.kSECONDARY_FILES] = self.secondary_files()
 
         return d
 
-    def cwl_input(self, value: Any):
+    @staticmethod
+    def cwl_input(value: Any):
         return value
 
     def wdl(self):

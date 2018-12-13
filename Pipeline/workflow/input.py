@@ -6,7 +6,7 @@ from Pipeline.types.data_types import DataType, NativeTypes
 from Pipeline.workflow.step import ToolOutput
 from Pipeline.graph.node import Node, NodeTypes
 
-W = Cwl.WORKFLOW
+W = Cwl.Workflow
 
 
 class Input:

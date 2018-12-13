@@ -3,6 +3,7 @@ import re
 from typing import List, Dict, Optional, Any
 
 from Pipeline.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput, ToolTypes
+from Pipeline.translations.cwl.cwl import Cwl
 
 
 class CommandTool(Tool, ABC):
@@ -96,6 +97,9 @@ class CommandTool(Tool, ABC):
         if args and args is not None:
             d["arguments"] = [a.cwl() for a in args]
 
+        if self.doc() is not None:
+            d[Cwl.CommandLineTool.kDOC] = self.doc()
+
         return d
 
     def _command(self):
@@ -157,3 +161,40 @@ task {self.wdl_name()} {{
 {outputs}
     }}
 }}"""
+
+    def help(self):
+        import inspect
+        path = inspect.getfile(self.__class__)
+
+        ins = sorted(self.inputs(), key=lambda i: i.position)
+
+        prefixes = " -" + "".join(i.prefix.replace("-", "").replace(" ", "") for i in ins if i.prefix is not None)
+
+        command = (self.base_command() if isinstance(self.base_command(), str) else " ".join(self.base_command())) \
+                  + prefixes
+
+        input_format = lambda t: f"\t\t{t.tag} ({t.input_type.id()}){(' = ' + str(t.default)) if t.default is not None else ''}: {'' if t.doc is None else t.doc}"
+        output_format = lambda t: f"\t\t{t.tag} ({t.output_type.id()}): {'' if t.doc is None else t.doc}"
+
+        requiredInputs = "\n".join(input_format(x) for x in ins if not x.optional)
+        optionalInputs = "\n".join(input_format(x) for x in ins if x.optional)
+        outputs = "\n".join(output_format(o) for o in self.outputs())
+
+        return f"""
+    Pipeline tool: {path} ({self.id()})
+NAME
+    {self.id()}
+SYNOPSIS
+    {command}
+DESCRIPTION
+    {self.doc() if self.doc is not None else "No documentation provided"}
+
+INPUTS:
+    REQUIRED:
+{requiredInputs}
+    OPTIONAL:
+{optionalInputs}
+
+OUTPUTS:
+{outputs}
+"""

@@ -28,13 +28,13 @@ class Output:
         if self.data_type is not None:
             d.update(self.data_type.cwl())
 
-        d[Cwl.WORKFLOW.OUTPUT.kID] = self._identifier
-        d[Cwl.WORKFLOW.OUTPUT.kOUTPUT_SOURCE] = output_source
+        d[Cwl.Workflow.Output.kID] = self._identifier
+        d[Cwl.Workflow.Output.kOUTPUT_SOURCE] = output_source
 
         if self.label:
-            d[Cwl.WORKFLOW.kLABEL] = self.label
+            d[Cwl.Workflow.kLABEL] = self.label
         if self.doc:
-            d[Cwl.WORKFLOW.kDOC] = self.doc
+            d[Cwl.Workflow.kDOC] = self.doc
 
         return d
 

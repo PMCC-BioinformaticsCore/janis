@@ -78,7 +78,7 @@ inputs:
           path: path/here
           
     bwa_ref:
-        type: FastaRef
+        type: Fasta
         path: path/to/bwa/ref.fasta
         
     sam_tumor_output_name: string

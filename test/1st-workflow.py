@@ -2,8 +2,8 @@
 # This creates CWL for the first workflow example in in the CWL "documentation"
 #
 
-import yaml
-from pipeline_definition.pipeline_translator import PipelineTranslator
+import yaml, unittest
+from wehi.spec import Wehi
 
 _yml = """
 inputs:
@@ -56,18 +56,15 @@ ex: Hello.java
 """)
 
 
-class FirstWorkflow():
+class FirstWorkflow(unittest.TestCase):
 
   def test_graph(self):
-    translator = PipelineTranslator(debug=False)
-    translator.translate_string(_yml)
-    translation = translator.pipeline()
+    translator = Wehi("1st-workflow")
+    translator.parse_string(_yml)
     print('-'*80)
-    print(translation)
+    print(translator.workflow.cwl()[0])
     print('-'*80)
-    # self.assertTrue(True)
-    # tr_json = yaml.load(translation)
-    # self.assertTrue(tr_json == _expected_cwl)
+    self.assertTrue(True)
 
 
 if __name__ == '__main__':

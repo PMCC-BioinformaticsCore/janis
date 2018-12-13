@@ -1,4 +1,4 @@
-from Pipeline import Array, String
+from Pipeline import Array
 from Pipeline.unix.data_types.tar_file import TarFile
 
 from Pipeline.types.common_data_types import File

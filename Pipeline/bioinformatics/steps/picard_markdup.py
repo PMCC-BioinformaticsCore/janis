@@ -9,7 +9,7 @@ class PicardMarkDup(Tool):
     metricsFile = ToolInput("metricsFile", String(optional=True))
     picard_markdup_tmpdir = ToolInput("picard_markdup_tmpdir", String(optional=True))
     maxRecordsInRam = ToolInput("maxRecordsInRam", Int(optional=True))
-    validation_stringency = ToolInput("validation_stringency", String(optional=True)),
+    validation_stringency = ToolInput("validation_stringency", String(optional=True))
 
     out = ToolOutput("out", File())
     out_idx = ToolOutput("out_idx", File())

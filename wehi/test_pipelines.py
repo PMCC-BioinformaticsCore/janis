@@ -14,13 +14,12 @@ class TestWehi(TestCase):
         # w.workflow.dump_wdl(w.workflow, to_disk=True)
         self.assertTrue(True)
 
-    # def test_parallel(self):
-    #     import Pipeline.bioinformatics
-    #     w = Wehi("Parallel")
-    #     w.parse_string(_parallel)
-    #
-    #
-    #     self.assertTrue(True)
+    def test_parallel(self):
+        import Pipeline.bioinformatics
+        w = Wehi("Parallel")
+        w.parse_string(_parallel)
+
+        self.assertTrue(True)
 
 _simple = """
 inputs:
@@ -183,7 +182,7 @@ steps:
         
     gather-md-tumor-index:
         tool: gather
-        bamFile: picard-markdup-tumor/outp
+        bamFile: picard-markdup-tumor/out
         bamIndex: picard-markdup-tumor/out_idx 
             
     gatk-recalibrator-tumor:

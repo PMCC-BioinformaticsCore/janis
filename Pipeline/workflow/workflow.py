@@ -147,7 +147,7 @@ class Workflow:
 
         s = self.get_label_by_inference(start)
         f = self.get_label_by_inference(finish)
-        Logger.log(f"Adding edge between {s} and {f}", LogLevel.INFO)
+        Logger.log(f"Adding edge between {s} and {f}")
 
         # set nodes
         s_parts = s.split("/")
@@ -296,13 +296,19 @@ class Workflow:
             raise InvalidStepsException(f"The step '{referenced_by}' referenced the step '{snode.id()}' with tool "
                                         f"'{snode.step.tool().id()}' that has no inputs")
         elif len(types) == 1:
+            tag = types[0][0]
             if len(input_parts) != 2:
                 s = "/".join(input_parts)
                 under_over = "under" if len(input_parts) < 2 else "over"
                 Logger.log(f"The node '{node.id()}' {under_over}-referenced an output of the tool "
                            f"'{snode.step.tool().id()}', this was automatically corrected "
-                           f"({s} → {lbl}/{types[0][0]})", LogLevel.WARNING)
-                input_parts = [lbl, types[0][0]]
+                           f"({s} → {lbl}/{tag})", LogLevel.WARNING)
+            elif input_parts[-1] != tag:
+                Logger.log(f"The node '{node.id()}' did not correctly reference an output of the tool "
+                           f"'{snode.step.tool().id()}', this was automatically corrected "
+                           f"({'/'.join(input_parts)} → {lbl}/{tag})", LogLevel.WARNING)
+
+            input_parts = [lbl, tag]
             return input_parts, types[0][1]
 
         else:
@@ -316,7 +322,7 @@ class Workflow:
                     Logger.log(f"The node '{node.id()}' did not correctly reference an output of the tool "
                                f"'{snode.step.tool().id()}', this was automatically corrected "
                                f"({'/'.join(input_parts)} → {lbl}/{tag})", LogLevel.WARNING)
-                    input_parts = [lbl, tag]
+                input_parts = [lbl, tag]
                 return input_parts, t.output_type
 
             possible_tags = ", ".join(f"'{x}'" for x in outs)
@@ -349,7 +355,7 @@ class Workflow:
                 Logger.log(f"The node '{snode.id()}' did not correctly reference an input of the tool "
                            f"'{snode.step.tool().id()}', this was automatically corrected "
                            f"({s} → {lbl}/{t[0]})", LogLevel.WARNING)
-                input_parts = [lbl, t[0]]
+            input_parts = [lbl, t[0]]
             return input_parts, t[1]
         elif len(input_parts) < 2:
             possible_tags = ", ".join(f"'{x}'" for x in ins)
@@ -365,7 +371,7 @@ class Workflow:
                     Logger.log(f"The node '{snode.id()}' did not correctly reference an input of the tool "
                                f"'{snode.step.tool().id()}', this was automatically corrected "
                                f"({s} → {lbl}/{tag})", LogLevel.WARNING)
-                    input_parts = [lbl, tag]
+                input_parts = [lbl, tag]
                 return input_parts, t.input_type
 
             possible_tags = ", ".join(f"'{x}'" for x in ins)

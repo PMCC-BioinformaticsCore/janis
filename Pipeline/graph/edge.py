@@ -4,6 +4,7 @@ from Pipeline.utils.logger import Logger
 from Pipeline.tool.tool import ToolOutput, ToolInput
 from Pipeline.types.common_data_types import Array
 from Pipeline.graph.node import Node, NodeTypes
+from Pipeline.workflow.step import StepNode
 
 TaggedNode = Tuple[Node, Optional[List[str]]]
 
@@ -30,6 +31,21 @@ class Edge:
 
         Logger.log(f"Creating edge: ({NodeTypes.to_str(self.start.node_type)}) '{self.start.id()}.{self.stag}' → "
                    f"({NodeTypes.to_str(self.finish.node_type)}) '{self.finish.id()}.{self.ftag}'")
+
+        if self.stag is not None and self.stag not in self.start.outputs():
+            keys = ", ".join(self.start.outputs().keys())
+            tool = ""
+            if isinstance(self.start, StepNode):
+                tool = f"(Tool: {self.finish.step.tool().id()}) "
+            raise Exception(f"Could not find the tag '{self.stag}' as an input of '{self.start.id()}', "
+                            f"{tool}expected one of: {keys}")
+        if self.ftag is not None and self.ftag not in self.finish.inputs():
+            keys = ", ".join(self.finish.inputs().keys())
+            tool = ""
+            if isinstance(self.finish, StepNode):
+                tool = f"(Tool: {self.finish.step.tool().id()}) "
+            raise Exception(f"Could not find the tag '{self.stag}' as an output of '{self.finish.id()}', "
+                            f"{tool}expected one of: {keys}")
 
         stype: ToolOutput = self.start.outputs()[self.stag] \
             if self.stag is not None else first_value(self.start.outputs())

@@ -9,7 +9,7 @@ class PicardSortSam(Tool):
     validation_stringency = ToolInput("validation_stringency", String())
     maxRecordsInRam = ToolInput("maxRecordsInRam", Int(optional=True))
 
-    out = ToolOutput("out", Bam()),             # Bam file
+    out = ToolOutput("out", Bam())             # Bam file
     indexes = ToolOutput("indexes", File())     # Bai Index
 
     @staticmethod

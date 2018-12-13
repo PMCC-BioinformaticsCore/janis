@@ -60,7 +60,7 @@ class TestSimple(unittest.TestCase):
 
         w.add_nodes([inp1, step1, step2, step3, outp])
         w.add_edge(step1, step3.input2)
-        w.add_pipe(inp1, step1, step2, step3.inputs1, outp)
+        w.add_pipe(inp1, step1, step2, step3.input1, outp)
 
         w.dump_cwl(to_disk=True)
 

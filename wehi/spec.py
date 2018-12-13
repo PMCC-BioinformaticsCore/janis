@@ -126,6 +126,8 @@ class Wehi:
             return pp.Boolean()
         elif isinstance(meta, list):
             t = Wehi._parse_array_type(meta, input_id)
+            if t is None:
+                raise Exception(f"Could not parse {meta} for '{input_id}'")
             return pp.Array(t)
         elif isinstance(meta, dict):
             if "type" not in meta:

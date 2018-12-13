@@ -3,7 +3,7 @@ from Pipeline import File, Tool, ToolOutput, ToolInput
 
 
 class Gather(Tool):
-    bamFile = ToolInput("bamFile", Bam()),
+    bamFile = ToolInput("bamFile", Bam())
     bamIndex = ToolInput("bamIndex", File())
 
     out = ToolOutput("out", Bam())

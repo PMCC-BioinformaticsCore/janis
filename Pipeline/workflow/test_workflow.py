@@ -137,3 +137,25 @@ class TestWorkflow(TestCase):
         self.assertEqual(e1.finish.id(), stp.id())
         self.assertEqual(e2.start.id(), stp.id())
         self.assertEqual(e2.finish.id(), out.id())
+
+    def test_subworkflow(self):
+
+        w = Workflow("test_subworkflow")
+
+        sub_w = Workflow("subworkflow")
+        sub_inp = Input("sub_inp", TarFile())
+        sub_stp = Step("sub_stp", Untar())
+        sub_out = Output("sub_out", Array(File()))
+        sub_w.add_nodes([sub_inp, sub_stp, sub_out])
+        sub_w.add_pipe(sub_inp, sub_stp, sub_out)
+
+        inp = Input("inp", TarFile())
+        stp = Step("stp_workflow", sub_w)
+        out = Output("out", Array(File()))
+        w.add_nodes([inp, stp, out])
+        w.add_pipe(inp, stp, out)
+
+        w.dump_cwl(to_disk=True)
+
+        self.assertTrue(True)
+

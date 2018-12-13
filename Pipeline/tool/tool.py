@@ -6,6 +6,14 @@ from Pipeline.utils.logger import Logger
 from Pipeline.types.data_types import DataType
 from Pipeline.translations.cwl.cwl import Cwl
 
+ToolType = str
+
+
+class ToolTypes:
+    Workflow: ToolType = "workflow"
+    CommandTool: ToolType = "command-tool"
+    ExpressionTool: ToolType = "expression-tool"
+
 
 class ToolArgument:
     expr_pattern = "\$\(.*\)"
@@ -86,6 +94,16 @@ class Tool(ABC):
     """
     One of Workflow, CommandLineTool, ExpressionTool* (* unimplemented)
     """
+
+    @classmethod
+    def type(cls) -> ToolType:
+        print(cls)
+        raise Exception("Must implement type() method")
+
+    @abstractmethod
+    def id(self) -> str:
+        raise Exception("Must implement id() method")
+
     @abstractmethod
     def inputs(self) -> List[ToolInput]:
         raise Exception("Must implement inputs() method")
@@ -99,3 +117,6 @@ class Tool(ABC):
 
     def outputs_map(self) -> Dict[str, ToolOutput]:
         return {outp.tag: outp for outp in self.outputs()}
+
+    def cwl(self):
+        raise Exception("Must implement cwl() method")

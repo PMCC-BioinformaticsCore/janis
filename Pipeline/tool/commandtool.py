@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import re
 from typing import List, Dict, Optional, Any
 
-from Pipeline.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput
+from Pipeline.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput, ToolTypes
 
 
 class CommandTool(Tool, ABC):
@@ -49,6 +49,10 @@ class CommandTool(Tool, ABC):
 
     def arguments(self) -> Optional[List[ToolArgument]]:
         return None
+
+    @classmethod
+    def type(cls):
+        return ToolTypes.CommandTool
 
     def inputs(self) -> List[ToolInput]:
         cls = type(self)

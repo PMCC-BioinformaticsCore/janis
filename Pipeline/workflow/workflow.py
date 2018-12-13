@@ -13,7 +13,7 @@ from Pipeline.utils.descriptor import BaseDescriptor, GetOnlyDescriptor
 from Pipeline.workflow.step import Step, StepNode
 from Pipeline.workflow.input import Input, InputNode
 from Pipeline.workflow.output import Output, OutputNode
-from Pipeline.tool.tool import Tool, ToolInput, ToolOutput
+from Pipeline.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes
 from Pipeline.tool.commandtool import CommandTool
 
 from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
@@ -45,6 +45,14 @@ class Workflow(Tool):
         self.connections: Dict[str, Set[NodeAndTag]] = {}
 
         self.has_scatter = False
+        self.has_subworkflow = False
+
+    def id(self) -> str:
+        return self.identifier
+
+    @classmethod
+    def type(cls):
+        return ToolTypes.Workflow
 
     def inputs(self) -> List[ToolInput]:
         return [ToolInput(i.id(), i.input.data_type) for i in self._inputs]
@@ -108,6 +116,9 @@ class Workflow(Tool):
         for step in steps:
             Logger.log(f"Adding step '{step.id()}' to '{self.identifier}'")
             node: StepNode = StepNode(step)
+
+            self.has_subworkflow = self.has_subworkflow or step.tool().type() == ToolTypes.Workflow
+
             self._add_node(node)
             self._steps.append(node)
 
@@ -413,7 +424,7 @@ class Workflow(Tool):
 
         return matching_types[0]
 
-    def cwl(self) -> Tuple[Dict[str, Any], Dict[str, Any], List[Dict[str, Any]]]:
+    def cwl(self, is_nested_tool=False) -> Tuple[Dict[str, Any], Dict[str, Any], List[Dict[str, Any]]]:
         # Let's try to emit CWL
         d = {
             Cwl.kCLASS: Cwl.CLASS.kWORKFLOW,
@@ -426,6 +437,8 @@ class Workflow(Tool):
 
         if self.has_scatter:
             d[Cwl.WORKFLOW.kREQUIREMENTS].append({Cwl.REQUIREMENTS.kCLASS: Cwl.REQUIREMENTS.kSCATTER})
+        if self.has_subworkflow:
+            d[Cwl.WORKFLOW.kREQUIREMENTS].append(({Cwl.REQUIREMENTS.kCLASS: Cwl.REQUIREMENTS.kSUBWORKFLOW}))
 
         if self.label:
             d[Cwl.WORKFLOW.kLABEL] = self.label
@@ -439,12 +452,18 @@ class Workflow(Tool):
             d[Cwl.WORKFLOW.kOUTPUTS] = [o.cwl() for o in self._outputs]
 
         if self._steps:
-            d[Cwl.WORKFLOW.kSTEPS] = {s.id(): s.cwl() for s in self._steps}
+            d[Cwl.WORKFLOW.kSTEPS] = {s.id(): s.cwl(is_nested_tool=is_nested_tool) for s in self._steps}
 
         tools = []
-        tools_to_build: Dict[str, CommandTool] = {s.step.tool().tool(): s.step.tool() for s in self._steps}
+        tools_to_build: Dict[str, Tool] = {s.step.tool().id(): s.step.tool() for s in self._steps}
         for t in tools_to_build:
-            tools.append(tools_to_build[t].cwl())
+            tool: Tool = tools_to_build[t]
+            if isinstance(tool, Workflow):
+                wf_cwl, _, subtools = tool.cwl(is_nested_tool=True)
+                tools.append(wf_cwl)
+                tools.extend(subtools)
+            else:
+                tools.append(tool.cwl())
 
         inp = {i.id(): i.input.cwl_input() for i in self._inputs}
 
@@ -455,7 +474,7 @@ class Workflow(Tool):
         get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
 
         tools = [s.step.tool() for s in self._steps]
-        tool_name_to_tool: Dict[str, CommandTool] = {t.tool().lower(): t for t in tools}
+        tool_name_to_tool: Dict[str, Tool] = {t.tool().lower(): t for t in tools}
         tool_name_to_alias = {}
         steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
 
@@ -545,7 +564,7 @@ workflow {self.identifier} {{
 
         print(yaml.dump(cwl_data, default_flow_style=False))
         print(yaml.dump(inp_data, default_flow_style=False))
-        print(yaml.dump(tools_ar, default_flow_style=False))
+        [print(yaml.dump(t, default_flow_style=False)) for t in tools_ar]
 
         if to_disk:
             with open(d + self.identifier + ".cwl", "w+") as cwl:

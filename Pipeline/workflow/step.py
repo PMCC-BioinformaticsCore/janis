@@ -41,10 +41,11 @@ class Step:
     def tool(self) -> Tool:
         return self.__tool
 
-    def cwl(self):
+    def cwl(self, is_nested_tool=False):
+        run_ref = f"{self.tool().id()}.cwl" if is_nested_tool else f"tools/{self.tool().id()}.cwl"
         d = {
             Cwl.WORKFLOW.STEP.kID: self.id(),
-            CS.kRUN: f"tools/{self.tool().id()}.cwl",
+            CS.kRUN: run_ref,
             CS.kOUT: [o.tag for o in self.tool().outputs()]
         }
 
@@ -91,12 +92,16 @@ class StepNode(Node):
 
         raise AttributeError(f"type object '{type(self)}' has no attribute '{item}'")
 
-    def cwl(self):
+    def cwl(self, is_nested_tool=False):
+        """
+        :param is_nested_tool: changes the run reference from tools/toolName.cwl -> toolName.cwl
+        :return:
+        """
         ins = self.inputs()
         scatterable = []
 
         dd = {
-            **self.step.cwl(),
+            **self.step.cwl(is_nested_tool=is_nested_tool),
             CS.kIN: []
         }
 

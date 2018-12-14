@@ -4,6 +4,7 @@ from Pipeline import Workflow, Input, String, Step
 from Pipeline.bioinformatics.data_types.fasta import Fasta
 from Pipeline.bioinformatics.data_types.fastq import Fastq
 from Pipeline.bioinformatics.steps.bwa_mem import BwaMem
+from Pipeline.bioinformatics.steps.picard_markdup import PicardMarkDup
 from Pipeline.bioinformatics.steps.picard_sortsam import PicardSortSam
 from Pipeline.bioinformatics.steps.samtools import SamTools
 
@@ -23,6 +24,7 @@ class TestParallel(unittest.TestCase):
         step1_bwa_mem = Step("bwa_mem", BwaMem())
         step2_samtools= Step("samtools", SamTools())
         step3_sortsam = Step("sortsam", PicardSortSam())
+        step4_markdup = Step("markdup", PicardMarkDup())
 
         subworkflow.add_edge(sub_inp_bwa_ref, step1_bwa_mem)
         subworkflow.add_edge(sub_inp_bwa_reads, step1_bwa_mem)
@@ -32,6 +34,8 @@ class TestParallel(unittest.TestCase):
 
         subworkflow.add_edge(sub_inp_sortsam_valstrin, step3_sortsam)
         subworkflow.add_edge(step2_samtools, step3_sortsam)
+
+        subworkflow.add_edge(step3_sortsam, step4_markdup)
 
 
     def test_parallel(self):

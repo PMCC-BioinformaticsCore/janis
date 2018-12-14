@@ -377,10 +377,32 @@ class Workflow(Tool):
             input_parts = [lbl, t[0]]
             return input_parts, t[1]
         elif len(input_parts) < 2:
-            possible_tags = ", ".join(f"'{x}'" for x in ins)
-            s = "/".join(input_parts)
-            raise Exception(f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the one of"
-                            f"the following tags: {possible_tags}")
+            if guess_type is not None:
+                # try to guess it from the outputs
+                compatible_types = [ins[x] for x in ins if ins[x].input_type.can_receive_from(guess_type)]
+                if len(compatible_types) == 1:
+                    inp = compatible_types[0]
+                    Logger.info(f"Guessed the compatible match for '{node.id()}' with source type '{guess_type.id()}'"
+                                f" → '{inp.input_type.id()}' ('{node.id()}' → '{node.id()}/{inp.tag}')")
+                    return [lbl, inp.tag], inp.input_type
+                else:
+                    ultra_compatible = [ins[x] for x in ins if type(ins[x].input_type) == type(guess_type)]
+                    if len(ultra_compatible) == 1:
+                        Logger.warn(f"There were {len(compatible_types)} matched types for the node '{node.id()}', "
+                                    f"the program has guessed a compatible exact match of type '{guess_type.id()}'")
+                        return [lbl, ultra_compatible[0].tag], compatible_types[0].input_type
+                    else:
+                        s = "/".join(input_parts)
+                        raise Exception(f"The tag '{s}' did not specify an output, and type guessed from the start node"
+                                        f" matched {len(compatible_types)} compatible types, and matched"
+                                        f" {len(ultra_compatible)} of the exact same types, you will need to provide"
+                                        f" more information to proceed.")
+            else:
+
+                possible_tags = ", ".join(f"'{x}'" for x in ins)
+                s = "/".join(input_parts)
+                raise Exception(f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the one of"
+                                f"the following tags: {possible_tags}")
         else:
             tag = input_parts[1]
             tool_input: ToolInput = snode.step.tool().inputs_map().get(tag)

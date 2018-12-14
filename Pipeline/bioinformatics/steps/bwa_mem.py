@@ -93,4 +93,6 @@ class BwaMem(CommandTool):
 
   Note: Please read the man page for detailed description of the command line and options."""
 
-# print(BwaMem().help())
+
+if __name__ == "__main__":
+    print(BwaMem().help())

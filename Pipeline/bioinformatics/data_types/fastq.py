@@ -8,9 +8,14 @@ class Fastq(Array):
     def __init__(self, optional=False):
         super().__init__(File(optional=False), optional=optional)
 
+    def id(self):
+        if self.optional:
+            return f"Optional<{self.name()}>"
+        return self.name()
+
     @staticmethod
     def name():
-        return "FASTQ"
+        return "Fastq"
 
     @staticmethod
     def doc():

@@ -1,16 +1,17 @@
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline import File, String, Int, CommandTool, ToolOutput, ToolInput, Boolean, ToolArgument
+from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.types.filename import Filename
 
 
 class PicardSortSam(CommandTool):
-    inputFile_sortSam = ToolInput("inputFile_sortSam", File(), position=4, prefix="INPUT=",
-                                      separate_value_from_prefix=False, doc="The BAM or SAM file to sort.")
+    inputSam = ToolInput("inputSam", Sam(), position=4, prefix="INPUT=", separate_value_from_prefix=False,
+                         doc="The BAM or SAM file to sort.")
     validation_stringency = ToolInput("validation_stringency", String(), prefix="VALIDATION_STRINGENCY=", position=10,
                                       separate_value_from_prefix=False)
 
-    out = ToolOutput("out", Bam(), glob="$(inputs.outputFileName_sortSam)")                                  # Bam file
-    indexes = ToolOutput("indexes", File(), glob='$(inputs.outputFileName_sortSam.replace(".bam", ".bai"))') # Bai Index
+    out = ToolOutput("out", Bam(), glob="$(inputs.outputFilename)")                                     # Bam file
+    indexes = ToolOutput("indexes", File(), glob='$(inputs.outputFilename.replace(".bam", ".bai"))')    # Bai Index
 
     @staticmethod
     def tool():
@@ -34,7 +35,7 @@ class PicardSortSam(CommandTool):
             ToolArgument("SortSam", position=3)
         ]
 
-    outputFileName_sortSam = ToolInput("outputFileName_sortSam", Filename(), position=5, prefix="OUTPUT=",
+    outputFilename = ToolInput("outputFilename", Filename(), position=5, prefix="OUTPUT=",
                                        separate_value_from_prefix=False, doc="The sorted BAM or SAM output file.")
 
     createIndex = ToolInput("createIndex", Boolean(), default=True, position=8, prefix="CREATE_INDEX=",

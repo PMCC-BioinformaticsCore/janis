@@ -201,7 +201,7 @@ class Array(DataType):
 
     @staticmethod
     def name():
-        return f"Array"
+        return "Array"
 
 
     @staticmethod

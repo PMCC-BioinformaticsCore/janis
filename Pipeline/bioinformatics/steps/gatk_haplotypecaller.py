@@ -3,6 +3,7 @@ from Pipeline.bioinformatics.data_types.dbsnp import Dbsnp
 from Pipeline.bioinformatics.data_types.fasta import Fasta
 from Pipeline import String, Int, File, CommandTool, ToolOutput, ToolInput, ToolArgument, Boolean, Double, Array
 
+
 class GatkHaplotypeCaller(CommandTool):
     reference = ToolInput("reference", File(), position=5, prefix="-R")
     dbsnp = ToolInput("dbsnp", File(), position=7, prefix="--dbsnp", doc="latest_dbsnp.vcf set of known indels")
@@ -175,9 +176,9 @@ class GatkHaplotypeCaller(CommandTool):
     emitRefConfidence = ToolInput("emitRefConfidence", String(optional=True), position=61, prefix="--emitRefConfidence",
                                   default="NONE")
 
+
 if __name__ == "__main__":
     import yaml
 
     print(GatkHaplotypeCaller().help())
-
-    print(yaml.dump(GatkHaplotypeCaller().cwl(), default_flow_style=False))
+    # print(yaml.dump(GatkHaplotypeCaller().cwl(), default_flow_style=False))

@@ -274,7 +274,7 @@ class Workflow(Tool):
         if s_type is None or f_type is None:
             ss = '/'.join(s_parts)
             ff = '/'.join(f_parts)
-            raise Exception(f"Couldn't connect '{s_node.id()}' to '{f_node.id()}', failed to get types from"
+            raise Exception(f"Couldn't connect '{s_node.id()}' to '{f_node.id()}', failed to get types from "
                             f"tags (s: {ss} | f: {ff}) and couldn't uniquely isolate mutual types")
 
         # NOW: Let's build the connection (edge)
@@ -386,23 +386,29 @@ class Workflow(Tool):
                                 f" → '{inp.input_type.id()}' ('{node.id()}' → '{node.id()}/{inp.tag}')")
                     return [lbl, inp.tag], inp.input_type
                 else:
+                    # Should this step also take into consideration the _optional_ nature of the node,
+                    # ie: should it favour required nodes if that's an option
                     ultra_compatible = [ins[x] for x in ins if type(ins[x].input_type) == type(guess_type)]
+
                     if len(ultra_compatible) == 1:
                         Logger.warn(f"There were {len(compatible_types)} matched types for the node '{node.id()}', "
                                     f"the program has guessed a compatible exact match of type '{guess_type.id()}'")
                         return [lbl, ultra_compatible[0].tag], compatible_types[0].input_type
                     else:
                         s = "/".join(input_parts)
-                        raise Exception(f"The tag '{s}' did not specify an output, and type guessed from the start node"
-                                        f" matched {len(compatible_types)} compatible types, and matched"
-                                        f" {len(ultra_compatible)} of the exact same types, you will need to provide"
-                                        f" more information to proceed.")
+                        compat_str = ", ".join(f"{x.tag}: {x.input_type.id()}" for x in compatible_types)
+                        raise Exception(f"The node '{node.id()}' did not specify an input, and used '{guess_type.id()}'"
+                                        f" from the start node to guess the input by type, matching {len(compatible_types)}"
+                                        f" compatible ({compat_str}) and {len(ultra_compatible)} exact types."
+                                        f" You will need to provide more information to proceed.")
             else:
 
                 possible_tags = ", ".join(f"'{x}'" for x in ins)
                 s = "/".join(input_parts)
-                raise Exception(f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the one of"
-                                f"the following tags: {possible_tags}")
+                Logger.critical(f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the "
+                                f"one of the following tags: {possible_tags}")
+                return input_parts, None
+
         else:
             tag = input_parts[1]
             tool_input: ToolInput = snode.step.tool().inputs_map().get(tag)
@@ -423,16 +429,16 @@ class Workflow(Tool):
 
     @staticmethod
     def guess_connection_between_nodes(s_node: Node, f_node: Node) \
-            -> Optional[Tuple[Tuple[str, DataType], Tuple[str, DataType]]]:
+            -> Optional[Tuple[Tuple[List[str], DataType], Tuple[List[str], DataType]]]:
         outs, ins = s_node.outputs(), f_node.inputs()
 
-        s_types: List[Tuple[str, DataType]] = [(x, outs[x].output_type) for x in outs]
-        f_types: List[Tuple[str, DataType]] = [(x, ins[x].input_type) for x in ins]
+        s_types: List[Tuple[List[str], DataType]] = [([s_node.id(), x], outs[x].output_type) for x in outs]
+        f_types: List[Tuple[str, DataType]] = [([f_node.id(), x], ins[x].input_type) for x in ins]
 
         # O(n**2) for determining types
         matching_types: List[Tuple[Tuple[str, DataType], Tuple[str, DataType]]] = []
         for s_type in s_types:
-            matching_types.extend([(s_type, f_type) for f_type in f_types if f_type[1].can_receive_from(s_type)])
+            matching_types.extend([(s_type, f_type) for f_type in f_types if f_type[1].can_receive_from(s_type[1])])
 
         if len(matching_types) == 0:
             raise InvalidInputsException(f"Can't find a common type between '{s_node.id()}' and '{f_node.id()}'")
@@ -440,10 +446,12 @@ class Workflow(Tool):
         if len(matching_types) > 1:
             compat = [str(t) for t in matching_types]
             message = f"Couldn't guess the single connection between '{s_node.id()}' and '{f_node.id()}', " \
-                f"there was more than 1 compatible connection ({compat})"
+                f"there was {len(compat)} compatible connections ({compat})"
             Logger.log(message, LogLevel.CRITICAL)
             return None
 
+        matched = matching_types[0]
+        Logger.info(f"Guessed the connection between nodes '{s_node.id()}")
         return matching_types[0]
 
     def cwl(self, is_nested_tool=False) -> Tuple[Dict[str, Any], Dict[str, Any], List[Dict[str, Any]]]:

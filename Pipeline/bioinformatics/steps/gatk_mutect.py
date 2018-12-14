@@ -46,7 +46,8 @@ class Gatkmutect2(CommandTool):
 
     @staticmethod
     def docker():
-        return None
+        # TODO: Investigate why this is different to other gatk broad dockers
+        return "scidap/gatk:v3.5"
 
     @staticmethod
     def doc():

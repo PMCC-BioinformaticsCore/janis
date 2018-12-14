@@ -1,3 +1,4 @@
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fasta import Fasta
 from Pipeline import File, String, Array, CommandTool, ToolOutput, ToolInput, ToolArgument, Int, Boolean, Double
@@ -19,14 +20,18 @@ from Pipeline import File, String, Array, CommandTool, ToolOutput, ToolInput, To
 #     @staticmethod
 #     def base_command():
 #         return "javac"
+from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
+from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
 from Pipeline.types.filename import Filename
 
 
 class GatkRecalibrator(CommandTool):
-    reference = ToolInput("reference", File(), position=5, prefix="-R")
-    inputBam_BaseRecalibrator = ToolInput("inputBam_BaseRecalibrator", File(), position=6, prefix="-I",
-                                          doc="bam file produced after indelRealigner")
-    known = ToolInput("known", Array(File(), optional=True), prefix="--knownsites", position=28,
+    inputBase = ToolInput("inputBase", BamPair(), position=6, prefix="-I",
+                          doc="bam file produced after indelRealigner")
+
+    reference = ToolInput("reference", FastaWithDict(), position=5, prefix="-R")
+
+    known = ToolInput("known", Array(VcfIdx(), optional=True), prefix="--knownsites", position=28,
                       doc="Any number of VCF files representing known SNPs and/or indels. "
                           "Could be e.g. dbSNP and/or official 1000 Genomes indel calls. "
                           "SNPs in these files will be ignored unless the --mismatchFraction argument is used.")
@@ -46,7 +51,7 @@ class GatkRecalibrator(CommandTool):
 
     @staticmethod
     def docker():
-        return None
+        return "broadinstitute/gatk3:3.7-0"
 
     @staticmethod
     def doc():
@@ -123,7 +128,7 @@ class GatkRecalibrator(CommandTool):
                                            doc="default quality for the base mismatches covariate")
     downsamplingType = ToolInput("downsamplingType", String(optional=True), position=27, prefix="--downsampling_type",
                                  default="none")
-    bedFile = ToolInput("bedFile", File(optional=True), position=28, prefix="-L")
+    bedFile = ToolInput("bedFile", Bed(optional=True), position=28, prefix="-L")
     threads = ToolInput("threads", Int(optional=True), position=26, prefix="-nct", default="4")
 
 

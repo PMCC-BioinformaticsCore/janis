@@ -21,7 +21,7 @@ class SamTools(CommandTool):
 
     @staticmethod
     def docker():
-        return "biocontainers/samtools"
+        return "biocontainers/samtools:v1.2_cv3"
 
     def arguments(self):
         return [

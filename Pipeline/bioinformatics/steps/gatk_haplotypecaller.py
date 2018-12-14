@@ -24,7 +24,7 @@ class GatkHaplotypeCaller(CommandTool):
 
     @staticmethod
     def docker():
-        return None
+        return "broadinstitute/gatk3:3.7-0"
 
     @staticmethod
     def doc():

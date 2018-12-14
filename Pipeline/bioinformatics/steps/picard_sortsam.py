@@ -1,5 +1,7 @@
+from Pipeline.bioinformatics.data_types.bai import Bai
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline import File, String, Int, CommandTool, ToolOutput, ToolInput, Boolean, ToolArgument
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.types.filename import Filename
 
@@ -10,8 +12,10 @@ class PicardSortSam(CommandTool):
     validation_stringency = ToolInput("validation_stringency", String(), prefix="VALIDATION_STRINGENCY=", position=10,
                                       separate_value_from_prefix=False)
 
-    out = ToolOutput("out", Bam(), glob="$(inputs.outputFilename)")                                     # Bam file
-    indexes = ToolOutput("indexes", File(), glob='$(inputs.outputFilename.replace(".bam", ".bai"))')    # Bai Index
+    out = ToolOutput("out", Bam(), glob="$(inputs.outputFilename)")                                # Bam file
+    index = ToolOutput("index", Bai(), glob='$(inputs.outputFilename.replace(".bam", ".bai"))')    # Bai Index
+    pair = ToolOutput("pair", BamPair(), glob="$(inputs.outputFilename)", doc=".bam + .bai as secondary")
+
 
     @staticmethod
     def tool():
@@ -23,7 +27,7 @@ class PicardSortSam(CommandTool):
 
     @staticmethod
     def docker():
-        return "biocontainers/picard"
+        return "biocontainers/picard:v2.3.0_cv3"
 
     @staticmethod
     def doc():

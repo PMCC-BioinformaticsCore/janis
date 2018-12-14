@@ -1,3 +1,4 @@
+from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.fastq import Fastq
 from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.bioinformatics.data_types.fasta import Fasta
@@ -22,7 +23,7 @@ class BwaMem(CommandTool):
 
     outputFilename = ToolInput("outputFilename", Filename(extension='sam'), position=3)
 
-    out = ToolOutput("out", Sam(), glob="$(inputs.outputFilename)")
+    out = ToolOutput("out", Bam(), glob="$(inputs.outputFilename)")
 
     @staticmethod
     def tool():
@@ -34,7 +35,7 @@ class BwaMem(CommandTool):
 
     @staticmethod
     def docker():
-        return "biocontainers/bwa"
+        return "biocontainers/bwa:v0.7.15_cv3"
 
     def arguments(self):
         return [ToolArgument("-a", position=2), ToolArgument("-M", position=3)]

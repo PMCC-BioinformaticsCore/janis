@@ -1,24 +1,28 @@
 from typing import List
 
 from Pipeline import Array, String, Int, File, CommandTool, ToolOutput, ToolInput, ToolArgument, Double, Boolean
+from Pipeline.bioinformatics.data_types.bampair import BamPair
+from Pipeline.bioinformatics.data_types.bai import Bai
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.types.filename import Filename
 
+
 class PicardMarkDup(CommandTool):
-    inputFileName_markDups = ToolInput("inputFileName_markDups", Array(Bam(), optional=True), position=4,
+    inputBam = ToolInput("inputBam", Bam(), position=4,     # type should be Array(Bam(), optional=True)
                                        prefix="INPUT=",
                                        separate_value_from_prefix=False,
                                        doc="One or more input SAM or BAM files to analyze. Must be coordinate sorted. "
                                            "Default value null. This option may be specified 0 or more times")
 
-    outputFileName_markDups = ToolInput("outputFileName_markDups", String(), position=5, prefix="OUTPUT=",
+    outputFilename = ToolInput("outputFilename", Filename(), position=5, prefix="OUTPUT=",
                                         separate_value_from_prefix=False,
                                         doc="The output file to write marked records to Required")
 
-    markDups_output = ToolOutput("markDups_output", File(), glob='$(inputs.outputFileName_markDups)')
-    markDups_metric_output = ToolOutput("markDups_metric_output", File(), glob='$(inputs.metricsFile)')
-    markDups_index_output = ToolOutput("markDups_index_output", File(),
-                                       glob='$(inputs.outputFileName_markDups.replace(".bam", ".bai"))')
+    output = ToolOutput("output", Bam(), glob='$(inputs.outputFilename)')    # o09 | o12
+    metric = ToolOutput("metric", File(), glob='$(inputs.metricsFile)')  # o10 | o13
+    index = ToolOutput("index", Bai(), glob='$(inputs.outputFilename.replace(".bam", ".bai"))')
+
+    outputPair = ToolOutput("outputPair", BamPair(), glob='$(inputs.outputFilename)')
 
     @staticmethod
     def tool():

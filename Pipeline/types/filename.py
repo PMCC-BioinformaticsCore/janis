@@ -1,5 +1,6 @@
 from typing import Dict, Any
 
+from Pipeline.translations.cwl.cwl import Cwl
 from Pipeline.types.common_data_types import String
 from Pipeline.types.data_types import NativeType, NativeTypes
 
@@ -38,7 +39,7 @@ The Filename DataType should NOT be used as an output.
     def cwl(self) -> Dict[str, Any]:
         return {
             **super().cwl(),
-            "default": self.generated_filename()
+            Cwl.CommandLineTool.Inputs.kDEFAULT: self.generated_filename()
         }
 
     def generated_filename(self, prefix: str=None) -> str:

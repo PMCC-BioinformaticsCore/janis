@@ -1,7 +1,8 @@
-
+from Pipeline.bioinformatics.data_types.bai import Bai
 from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
-from Pipeline.bioinformatics.data_types.fasta import Fasta
+from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline import File, String, CommandTool, ToolOutput, ToolInput, ToolArgument, Array, Int, Boolean
 
 
@@ -25,16 +26,17 @@ from Pipeline import File, String, CommandTool, ToolOutput, ToolInput, ToolArgum
 
 
 class GatkPrintReads(CommandTool):
-    reference = ToolInput("reference", File(), position=5, prefix="-R")
+    reference = ToolInput("reference", FastaWithDict(), position=5, prefix="-R")
     input_baseRecalibrator = ToolInput("input_baseRecalibrator", File(), position=7, prefix="-BQSR",
                                        doc="the recalibration table produced by BaseRecalibration")
-    inputBam_printReads = ToolInput("inputBam_printReads", File(), position=6, prefix="-I",
+    inputBam_printReads = ToolInput("inputBam_printReads", BamPair(), position=6, prefix="-I",
                                     doc="bam file produced after indelRealigner")
-    bedFile = ToolInput("bedFile", File(), position=15, prefix="-L")
+    bedFile = ToolInput("bedFile", Bed(), position=15, prefix="-L")
 
-    output_printReads = ToolOutput("output_printReads", File(), glob='$(inputs.outputfile_printReads)')
-    printreads_index_output = ToolOutput("printreads_index_output", File(),
+    output_printReads = ToolOutput("output_printReads", Bam(), glob='$(inputs.outputfile_printReads)')
+    printreads_index_output = ToolOutput("printreads_index_output", Bai(),
                                          glob='$(inputs.outputfile_printReads.replace(".bam", ".bai"))')
+    pairedOutput = ToolOutput("pairedOutput", BamPair(), glob='$(inputs.outputfile_printReads)')
 
     @staticmethod
     def tool():

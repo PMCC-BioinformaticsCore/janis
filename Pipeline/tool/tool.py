@@ -135,3 +135,42 @@ class Tool(ABC):
     @staticmethod
     def doc() -> Optional[str]:
         return None
+
+    def help(self):
+        import inspect
+        path = inspect.getfile(self.__class__)
+
+        ins = sorted(self.inputs(), key=lambda i: i.position)
+
+        def input_format(t: ToolInput):
+            prefix_with_space = ""
+            if t.prefix is not None:
+                prefix_with_space = (t.prefix + ": ") if t.separate_value_from_prefix else t.prefix
+            return f"\t\t{t.tag} ({prefix_with_space}{t.input_type.id()}" \
+                f"{('=' + str(t.default)) if t.default is not None else ''}): {'' if t.doc is None else t.doc}"
+
+        output_format = lambda t: f"\t\t{t.tag} ({t.output_type.id()}): {'' if t.doc is None else t.doc}"
+
+        requiredInputs = "\n".join(input_format(x) for x in ins if not x.optional)
+        optionalInputs = "\n".join(input_format(x) for x in ins if x.optional)
+        outputs = "\n".join(output_format(o) for o in self.outputs())
+
+        return f"""
+Pipeline tool: {path} ({self.id()})
+NAME
+    {self.id()}
+
+DESCRIPTION
+    {self.doc() if self.doc is not None else "No documentation provided"}
+
+INPUTS:
+REQUIRED:
+{requiredInputs}
+
+OPTIONAL:
+{optionalInputs}
+
+OUTPUTS:
+{outputs}
+    """
+

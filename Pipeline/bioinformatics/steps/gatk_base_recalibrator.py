@@ -38,7 +38,7 @@ class GatkRecalibrator(CommandTool):
     outputFile = ToolInput("outputFile", Filename(), position=8, prefix="-o",
                                             doc="name of the output file from baseRecalibrator")
 
-    output_baseRecalibrator = ToolOutput("output_baseRecalibrator", File(),
+    output = ToolOutput("output", File(),
                                          glob='$(inputs.outputFile)')
 
     @staticmethod

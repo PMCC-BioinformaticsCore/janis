@@ -391,9 +391,11 @@ class Workflow(Tool):
                     ultra_compatible = [ins[x] for x in ins if type(ins[x].input_type) == type(guess_type)]
 
                     if len(ultra_compatible) == 1:
+                        ultra = ultra_compatible[0]
                         Logger.warn(f"There were {len(compatible_types)} matched types for the node '{node.id()}', "
-                                    f"the program has guessed a compatible exact match of type '{guess_type.id()}'")
-                        return [lbl, ultra_compatible[0].tag], compatible_types[0].input_type
+                                    f"the program has guessed an exact compatible match of "
+                                    f"type '{ultra.input_type.id()}' to tag '{ultra.tag}'")
+                        return [lbl, ultra.tag], ultra.input_type
                     else:
                         s = "/".join(input_parts)
                         compat_str = ", ".join(f"{x.tag}: {x.input_type.id()}" for x in compatible_types)

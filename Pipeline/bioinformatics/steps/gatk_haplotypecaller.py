@@ -1,17 +1,25 @@
 from Pipeline.bioinformatics.data_types.bam import Bam
-from Pipeline.bioinformatics.data_types.dbsnp import Dbsnp
-from Pipeline.bioinformatics.data_types.fasta import Fasta
+from Pipeline.bioinformatics.data_types.bampair import BamPair
+from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline import String, Int, File, CommandTool, ToolOutput, ToolInput, ToolArgument, Boolean, Double, Array
+from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
+from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
+from Pipeline.types.filename import Filename
 
 
 class GatkHaplotypeCaller(CommandTool):
-    reference = ToolInput("reference", File(), position=5, prefix="-R")
-    dbsnp = ToolInput("dbsnp", File(), position=7, prefix="--dbsnp", doc="latest_dbsnp.vcf set of known indels")
-    inputBam_HaplotypeCaller = ToolInput("inputBam_HaplotypeCaller", File(), position=6, prefix="-I",
+    reference = ToolInput("reference", FastaWithDict(), position=5, prefix="-R")
+    dbsnp = ToolInput("dbsnp", VcfIdx(), position=7, prefix="--dbsnp", doc="latest_dbsnp.vcf set of known indels")
+    inputBam_HaplotypeCaller = ToolInput("inputBam_HaplotypeCaller", BamPair(), position=6, prefix="-I",
                                          doc="bam file produced after printReads")
-    bedFile = ToolInput("bedFile", File(), position=60, prefix="-L")
+    bedFile = ToolInput("bedFile", Bed(), position=60, prefix="-L")
 
-    output_HaplotypeCaller = ToolOutput("output_HaplotypeCaller", File(), glob='$(inputs.outputfile_HaplotypeCaller)')
+    outputFilename = ToolInput("outputFilename", String(optional=True), position=8, prefix="-o",
+                                           doc="name of the output file from HaplotypeCaller")
+    bamOutput = ToolInput("bamOutput", Filename(), position=48, prefix="--bamOutput",
+                          doc="File to which assembled haplotypes should be written")
+
+    output_HaplotypeCaller = ToolOutput("output_HaplotypeCaller", File(), glob='$(inputs.outputFilename)')
     bamOut_HaplotypeCaller = ToolOutput("bamOut_HaplotypeCaller", File(), glob='$(inputs.bamOutput)')
 
     @staticmethod
@@ -43,8 +51,7 @@ class GatkHaplotypeCaller(CommandTool):
                                            doc="Threshold for the probability of a profile state being active.")
     alleles = ToolInput("alleles", Array(String(), optional=True), position=53,
                         doc="The set of alleles at which to genotype when --genotyping_mode is GENOTYPE_GIVEN_ALLELES")
-    outputfile_HaplotypeCaller = ToolInput("outputfile_HaplotypeCaller", String(optional=True), position=8, prefix="-o",
-                                           doc="name of the output file from HaplotypeCaller")
+
     stand_emit_conf = ToolInput("stand_emit_conf", Double(optional=True), position=11,
                                 prefix="--standard_min_confidence_threshold_for_emitting",
                                 doc="The minimum phred-scaled confidence threshold at which variants should be emitted "
@@ -77,8 +84,6 @@ class GatkHaplotypeCaller(CommandTool):
     group = ToolInput("group", Array(String(), optional=True), position=32, doc="Input prior for calls")
     pcr_indel_model = ToolInput("pcr_indel_model", String(optional=True), position=16, prefix="--pcr_indel_model",
                                 doc="The PCR indel model to use")
-    bamOutput = ToolInput("bamOutput", String(optional=True), position=48, prefix="--bamOutput",
-                          doc="File to which assembled haplotypes should be written")
     stand_call_conf = ToolInput("stand_call_conf", Double(optional=True), position=12,
                                 prefix="--standard_min_confidence_threshold_for_calling",
                                 doc="The minimum phred-scaled confidence threshold at which variants should be called")
@@ -147,6 +152,7 @@ class GatkHaplotypeCaller(CommandTool):
     indel_heterozygosity = ToolInput("indel_heterozygosity", Double(optional=True), position=29,
                                      prefix="--indel_heterozygosity", doc="Heterozygosity for indel calling")
     emitRefConfidenceDBSN = ToolInput("emitRefConfidenceDBSN", String(optional=True), position=38,
+                                      default="NONE",
                                       prefix="--emitRefConfidenceDBSN",
                                       doc="Mode for emitting reference confidence scores")
     consensus = ToolInput("consensus", Boolean(optional=True), position=44, prefix="--consensus",

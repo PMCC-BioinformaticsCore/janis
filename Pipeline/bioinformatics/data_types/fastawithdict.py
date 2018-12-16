@@ -9,4 +9,4 @@ class FastaWithDict(Fasta):
 
     @staticmethod
     def secondary_files():
-        return [*super().secondary_files(), "^.dict"]
+        return [*Fasta.secondary_files(), "^.dict"]

@@ -32,8 +32,6 @@ class TestParallel(unittest.TestCase):
         sub_inp5_recal_known = Input("recalibrator_known", Array(VcfIdx()))
         sub_inp5_recal_bed = Input("recalibrator_bed", Bed())
 
-
-
         subworkflow.add_nodes([
             sub_inp1_bwa_read_group,
             sub_inp1_bwa_reads,
@@ -50,10 +48,9 @@ class TestParallel(unittest.TestCase):
         step2_samtools= Step("samtools", SamTools())
         step3_sortsam = Step("sortsam", PicardSortSam())
         step4_markdup = Step("markdup", PicardMarkDup())
-        # step5_gather = Step("gather", Gather())
         step5_recal = Step("gatk_recal", GatkRecalibrator())
-        # step7_printread = Step("gatk_printread", GatkPrintReads())
-        # step8_haplo = Step("gatk_haplo", GatkHaplotypeCaller())
+        # step6_printread = Step("gatk_printread", GatkPrintReads())
+        # step7_haplo = Step("gatk_haplo", GatkHaplotypeCaller())
 
         # Add steps
         subworkflow.add_nodes([
@@ -85,15 +82,14 @@ class TestParallel(unittest.TestCase):
         subworkflow.add_edge(sub_inp5_recal_known, step5_recal)
         subworkflow.add_edge(sub_inp5_recal_bed, step5_recal)
 
+        subworkflow.dump_cwl(to_disk=True)
+
 
     def test_parallel(self):
-
-
         w = Workflow("parallel")
 
-
         sub_normal = self.parallel_workflow()
-        sub_tumor = self.parallel_workflow()
+        # sub_tumor = self.parallel_workflow()
 
 
 

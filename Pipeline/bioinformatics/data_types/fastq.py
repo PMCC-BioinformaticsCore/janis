@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from Pipeline import File, Array
+from Pipeline import File, Array, Logger
 
 
 class Fastq(Array):
@@ -34,6 +34,8 @@ class Fastq(Array):
     def cwl_input(self, value: Any):
         # WDL: "{workflowName}.label" = meta["path"}
         if not isinstance(value, list):
-            raise Exception("Fastq expects a list of inputs")
+
+            Logger.critical("Fastq expects a list of inputs")
+            return []
         return [{File.cwl_input(x)} for x in value]
 

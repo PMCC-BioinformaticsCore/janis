@@ -31,7 +31,7 @@ class NativeTypes:
     kDirectory: NativeType = "dir"
     kArray: NativeType = "array"
 
-    _primitives: List[NativeType] = [kStr, kInt, kLong, kDouble, kBool, kDouble]
+    _primitives: List[NativeType] = [kStr, kInt, kFloat, kLong, kDouble, kBool, kDouble]
     all: List[NativeType] = _primitives + [kFile, kDirectory, kArray]
 
     @staticmethod

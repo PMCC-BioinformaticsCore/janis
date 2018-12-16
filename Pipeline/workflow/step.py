@@ -108,16 +108,17 @@ class StepNode(Node):
         for k in ins:
             inp = ins[k]
             d = {CS.StepInput.kID: k}
-            if k in self.connection_map:
-                edge = self.connection_map[k]
-                d[CS.StepInput.kSOURCE] = edge.source()
-                if edge.scatter:
-                   scatterable.append(k)
-
-            elif not inp.input_type.optional:
+            if k not in self.connection_map:
+                if inp.input_type.optional:
+                    continue
+                else:
                     raise Exception(f"Error when building connections for step '{self.id()}', "
                                     f"could not find required connection {k}")
 
+            edge = self.connection_map[k]
+            d[CS.StepInput.kSOURCE] = edge.source()
+            if edge.scatter:
+               scatterable.append(k)
             inp_t = self.inputs()[k].input_type
             if isinstance(inp_t, Filename):
                 d[CS.StepInput.kDEFAULT] = inp_t.generated_filename(self.step.id())

@@ -189,9 +189,9 @@ class Workflow(Tool):
             self.add_piped_edge(args[i], args[i + 1])
 
     def add_piped_edge(self, start, finish):
-        s = self.get_label_and_component_by_inference(start).split("/")[0]
-        f = self.get_label_and_component_by_inference(finish)
-        self.add_edge(s, f)
+        s, sn = self.get_label_and_component_by_inference(start)
+        f, fn = self.get_label_and_component_by_inference(finish)
+        self.add_edge((s.split("/")[0], sn), (f, fn))
 
     def add_edge(self, start, finish):
 

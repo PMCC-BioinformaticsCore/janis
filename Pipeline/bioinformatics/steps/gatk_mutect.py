@@ -25,8 +25,7 @@ class GatkMutect2(CommandTool):
 
     @staticmethod
     def docker():
-        # TODO: Investigate why this is different to other gatk broad dockers
-        return "scidap/gatk:v3.5"
+        return "broadinstitute/gatk3:3.7-0"
 
     @staticmethod
     def doc():
@@ -34,7 +33,7 @@ class GatkMutect2(CommandTool):
 
     def arguments(self):
         return [
-            ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
+            ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"), # ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
             ToolArgument("MuTect2", position=4, prefix="-T")
         ]
 

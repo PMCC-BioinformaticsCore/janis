@@ -153,7 +153,6 @@ class GatkHaplotypeCaller(CommandTool):
     indel_heterozygosity = ToolInput("indel_heterozygosity", Double(optional=True), position=29,
                                      prefix="--indel_heterozygosity", doc="Heterozygosity for indel calling")
     emitRefConfidenceDBSN = ToolInput("emitRefConfidenceDBSN", String(optional=True), position=38,
-                                      default="NONE",
                                       prefix="--emitRefConfidenceDBSN",
                                       doc="Mode for emitting reference confidence scores")
     consensus = ToolInput("consensus", Boolean(optional=True), position=44, prefix="--consensus",

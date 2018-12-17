@@ -14,8 +14,6 @@ from Pipeline.workflow.step import Step, StepNode
 from Pipeline.workflow.input import Input, InputNode
 from Pipeline.workflow.output import Output, OutputNode
 from Pipeline.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes
-from Pipeline.tool.commandtool import CommandTool
-
 from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
     InvalidInputsException
 
@@ -153,7 +151,6 @@ class Workflow(Tool):
             raise DuplicateLabelIdentifier(message)
         self._labels[node.id()] = node
         self.graph.add_node(node)
-
 
     def _remove_node(self, node: Node):
 
@@ -398,7 +395,7 @@ class Workflow(Tool):
                             s = "/".join(input_parts)
                             compat_str = ", ".join(f"{x.tag}: {x.output_type.id()}" for x in compatible_types)
                             raise Exception(
-                                f"The node '{node.id()}' did not specify an input, and used '{guess_type.id()}'"
+                                f"The node '{node.id()}' did not specify an input tag, and used '{guess_type.id()}'"
                                 f" from the start node to guess the input by type, matching {len(compatible_types)}"
                                 f" compatible ({compat_str}) and {len(ultra_compatible)} exact types."
                                 f" You will need to provide more information to proceed.")

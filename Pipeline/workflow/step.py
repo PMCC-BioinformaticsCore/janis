@@ -62,9 +62,10 @@ class Step:
             return self.__dict__[item]
 
         if item in self.tool().inputs_map():
-            return f"{self.id()}/{self.tool().inputs_map()[item].tag}"
+
+            return f"{self.id()}/{self.tool().inputs_map()[item].tag}", self
         if item in self.tool().outputs_map():
-            return f"{self.id()}/{self.tool().outputs_map()[item].tag}"
+            return f"{self.id()}/{self.tool().outputs_map()[item].tag}", self
 
         tags = ", ".join([f"in.{i.tag}" for i in self.tool().inputs()]
                          + [f"out.{o.tag}" for o in self.tool().outputs()])

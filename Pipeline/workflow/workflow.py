@@ -78,7 +78,7 @@ class Workflow(Tool):
         nx.draw(G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=True)
         plt.show()
 
-    def add_nodes(self, *args):
+    def add_items(self, *args):
         mixed: List[Any] = args
         if len(args) == 0:
             raise Exception("Must have at least than one item to add")
@@ -88,48 +88,60 @@ class Workflow(Tool):
                 raise Exception("Invalid type of arguments")
             mixed = args[0]
 
-        for node in mixed:
-            if isinstance(node, Input):
-                self.add_input(node)
-            elif isinstance(node, Step):
-                self.add_step(node)
-            elif isinstance(node, Output):
-                self.add_output(node)
-            else:
-                raise Exception(f"Unexpected type '{type(node)}' passed to 'add_nodes'")
+        return [self.add_item(i) for i in mixed]
+
+    def add_item(self, item):
+        if isinstance(item, Input):
+            return self.add_input(item)
+        elif isinstance(item, Step):
+            return self.add_step(item)
+        elif isinstance(item, Output):
+            return self.add_output(item)
+        elif isinstance(item, tuple):
+            return self.add_edge(item[0], item[1])
+        else:
+            raise Exception(f"Unexpected type '{type(item)}' passed to 'add_nodes'")
 
     def add_input(self, inp: Input):
         return self.add_inputs([inp])
 
     def add_inputs(self, inputs: List[Input]):
+        ins = []
         for inp in inputs:
             Logger.log(f"Adding input '{inp.id()}' to '{self.identifier}'")
             node: InputNode = InputNode(inp)
+            ins.append(node)
             self._add_node(node)
             self._inputs.append(node)
+        return ins[0]
 
     def add_output(self, outp: Output):
-        return self.add_outputs([outp])
+        return self.add_outputs([outp])[0]
 
     def add_outputs(self, outputs: List[Output]):
+        outs = []
         for outp in outputs:
             Logger.log(f"Adding output '{outp.id()}' to '{self.identifier}'")
             node: OutputNode = OutputNode(outp)
+            outs.append(node)
             self._add_node(node)
             self._outputs.append(node)
+        return outs
 
     def add_step(self, step: Step):
-        return self.add_steps([step])
+        return self.add_steps([step])[0]
 
     def add_steps(self, steps: List[Step]):
+        ss = []
         for step in steps:
             Logger.log(f"Adding step '{step.id()}' to '{self.identifier}'")
             node: StepNode = StepNode(step)
 
             self.has_subworkflow = self.has_subworkflow or step.tool().type() == ToolTypes.Workflow
-
+            ss.append(node)
             self._add_node(node)
             self._steps.append(node)
+        return ss
 
     def _add_node(self, node: Node):
 
@@ -142,6 +154,7 @@ class Workflow(Tool):
         self._labels[node.id()] = node
         self.graph.add_node(node)
 
+
     def _remove_node(self, node: Node):
 
         if node.id() not in self._labels:
@@ -149,15 +162,18 @@ class Workflow(Tool):
             return
 
     @staticmethod
-    def get_label_by_inference(s) -> str:
+    def get_label_and_component_by_inference(s) -> Tuple[str, Optional[Any]]:
         try:
             if type(s) == str:
+                return s, None
+            elif type(s) == tuple:
+                # should have format (tag, Optional[Any])
                 return s
             else:
-                return s.id()
+                return s.id(), s
         except Exception as e:
             Logger.log_ex(e)
-            return str(s)
+            return str(s), None
 
     def connect_inputs(self, step: Any, inputs: List[Any]):
         return [self.add_piped_edge(step, i) for i in inputs]
@@ -173,14 +189,14 @@ class Workflow(Tool):
             self.add_piped_edge(args[i], args[i + 1])
 
     def add_piped_edge(self, start, finish):
-        s = self.get_label_by_inference(start).split("/")[0]
-        f = self.get_label_by_inference(finish)
+        s = self.get_label_and_component_by_inference(start).split("/")[0]
+        f = self.get_label_and_component_by_inference(finish)
         self.add_edge(s, f)
 
     def add_edge(self, start, finish):
 
-        s = self.get_label_by_inference(start)
-        f = self.get_label_by_inference(finish)
+        s, component1 = self.get_label_and_component_by_inference(start)
+        f, component2 = self.get_label_and_component_by_inference(finish)
         Logger.log(f"Adding edge between {s} and {f}")
 
         # set nodes
@@ -217,15 +233,25 @@ class Workflow(Tool):
         f_node = self._labels.get(f_label)
 
         if s_node is None:
-            message = f"The node '{s_label}' was not found in the graph, " \
-                f"please add the node to the graph before trying to add an edge"
-            Logger.log(message, LogLevel.CRITICAL)
-            raise NodeNotFound(message)
+            Logger.log(f"Could not find start node with identifier '{s_label}' in the workflow")
+            if component1 is not None:
+                Logger.log(f"Adding '{component1.id()}' to the workflow")
+                s_node = self.add_item(component1)
+            else:
+                message = f"The node '{s_label}' was not found in the graph, " \
+                    f"please add the node to the graph before trying to add an edge"
+                Logger.log(message, LogLevel.CRITICAL)
+                raise NodeNotFound(message)
         if f_node is None:
-            message = f"The node '{f_label}' was not found in the graph, " \
-                f"please add the node to the graph before trying to add an edge"
-            Logger.log(message, LogLevel.CRITICAL)
-            raise NodeNotFound(message)
+            Logger.log(f"Could not find end node with identifier '{f_label}' in the workflow")
+            if component2 is not None:
+                Logger.log(f"Adding '{component2.id()}' to the workflow")
+                f_node = self.add_item(component2)
+            else:
+                message = f"The node '{f_label}' was not found in the graph, " \
+                    f"please add the node to the graph before trying to add an edge"
+                Logger.log(message, LogLevel.CRITICAL)
+                raise NodeNotFound(message)
 
         # we have the two nodes
 

@@ -133,9 +133,7 @@ class Logger:
 
     @staticmethod
     def log_ex(ex: Exception):
-        print(LogLevel.get_color(LogLevel.CRITICAL) + str(ex) + _bcolors.ENDC)
-        if Logger.__WRITE_POINTER is not None:
-            Logger.__WRITE_POINTER.write(str(ex) + "\n")
+        Logger.critical(str(ex))
 
     @staticmethod
     def get_prefix(level: int):

@@ -46,29 +46,6 @@ class TestParallel(unittest.TestCase):
 
         o1 = Output("paired", BamPair())
         o2 = Output("haplotype_output", File())
-        subworkflow.add_outputs([o1, o2])
-
-        subworkflow.add_nodes([
-            sub_inp1_bwa_read_group,
-            sub_inp1_reads,
-            sub_inp1_bwa_ref,
-
-            sub_inp3_sortsam_valstrin,
-
-            sub_inp5_recal_ref,
-            sub_inp5_recal_known,
-            sub_inp5_recal_bed,
-
-            sub_inp6_pr_ref,
-            sub_inp6_pr_bed,
-            sub_inp6_pr_outname,
-
-            sub_inp7_haplo_ref,
-            sub_inp7_haplo_dbsnp,
-            sub_inp7_haplo_bedFile,
-            sub_inp7_haplo_bam_outname,
-            sub_inp7_haplo_outname
-        ])
 
         step1_bwa_mem = Step("bwa_mem", BwaMem())
         step2_samtools= Step("samtools", SamTools())
@@ -77,17 +54,6 @@ class TestParallel(unittest.TestCase):
         step5_recal = Step("gatk_recal", GatkRecalibrator())
         step6_printread = Step("gatk_printread", GatkPrintReads())
         step7_haplo = Step("gatk_haplo", GatkHaplotypeCaller())
-
-        # Add steps
-        subworkflow.add_nodes([
-            step1_bwa_mem,
-            step2_samtools,
-            step3_sortsam,
-            step4_markdup,
-            step5_recal,
-            step6_printread,
-            step7_haplo
-        ])
 
         # Inputs -> Step1
         subworkflow.add_edge(sub_inp1_bwa_ref, step1_bwa_mem)
@@ -177,21 +143,8 @@ class TestParallel(unittest.TestCase):
         out_sub_normal = Output("normal", BamPair())
         out_sub_mutect = Output("mutect", File())
 
-
-        w.add_inputs([
-            bwa_readGroup, bwa_ref,
-            sortsam_validation_stringency,
-            recalibrator_ref, recalibrator_known, recalibrator_bed,
-            printread_ref, printread_bed,
-            haplo_ref, haplo_dbsnp, haplo_bed,
-            mutect_ref, mutect_bed, mutect_dbsnp, mutect_cosmic
-        ])
-        w.add_steps([sub_normal, sub_tumor, step_gatk_mutect2])
-        w.add_outputs([out_sub_normal, out_sub_tumor, out_sub_mutect])
-
         # connect dependencies for both subworkflows
         for sub, inps in [[sub_normal, norms], [sub_tumor, tums]]:
-            w.add_nodes(inps)
             w.add_edges([
                 (bwa_readGroup, sub.bwa_readGroup),
                 (bwa_ref, sub),     # should work fine I think

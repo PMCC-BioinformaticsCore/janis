@@ -55,7 +55,7 @@ class TestWorkflow(TestCase):
         w = Workflow("test_add_node")
         inp = Input("inp", String())
         stp = Step("stp", Cat())
-        w.add_nodes([inp, stp])
+        w.add_items([inp, stp])
         self.assertEqual(len(w._inputs), 1)
         self.assertEqual(len(w._steps), 1)
         self.assertEqual(len(w._outputs), 0)
@@ -66,7 +66,7 @@ class TestWorkflow(TestCase):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
         stp = Step("stp", Echo())  # Only has one input, with no output
-        w.add_nodes([inp, stp])
+        w.add_items([inp, stp])
         e = w.add_edge(inp, stp.inp)
 
         self.assertEqual(e.start.id(), inp.id())
@@ -78,8 +78,32 @@ class TestWorkflow(TestCase):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
         stp = Step("stp", Echo())       # Only has one input, with no output
-        w.add_nodes([inp, stp])
+        w.add_items([inp, stp])
         e = w.add_edge(inp, stp)
+
+        self.assertEqual(e.start.id(), inp.id())
+        self.assertEqual(e.finish.id(), stp.id())
+        self.assertIsNone(e.stag)
+        self.assertEqual(e.ftag, next(iter(stp.requires())))
+
+    def test_anonymous_add_edge(self):
+        w = Workflow("test_add_edge")
+        inp = Input("inp", String())
+        stp = Step("stp", Echo())       # Only has one input, with no output
+        # w.add_items([inp, stp])
+        e = w.add_edge(inp, stp)
+
+        self.assertEqual(e.start.id(), inp.id())
+        self.assertEqual(e.finish.id(), stp.id())
+        self.assertIsNone(e.stag)
+        self.assertEqual(e.ftag, next(iter(stp.requires())))
+
+    def test_anonymous_add_qualified_edge(self):
+        w = Workflow("test_add_edge")
+        inp = Input("inp", String())
+        stp = Step("stp", Echo())       # Only has one input, with no output
+        # w.add_items([inp, stp])
+        e = w.add_edge(inp, stp.inp)
 
         self.assertEqual(e.start.id(), inp.id())
         self.assertEqual(e.finish.id(), stp.id())
@@ -92,7 +116,7 @@ class TestWorkflow(TestCase):
         stp = Step("stp", Untar())  # Only has one input, with no output
         out = Output("outp", Array(File()))
 
-        w.add_nodes([inp, stp, out])
+        w.add_items([inp, stp, out])
         w.add_pipe(inp, stp, out)
 
         # the nodes are usually internal
@@ -118,7 +142,7 @@ class TestWorkflow(TestCase):
         stp = Step("stp", Untar())  # Only has one input, with no output
         out = Output("outp", Array(File()))
 
-        w.add_nodes([inp, stp, out])
+        w.add_items([inp, stp, out])
         w.add_pipe(inp, stp.files, out)
 
         # the nodes are usually internal
@@ -146,13 +170,13 @@ class TestWorkflow(TestCase):
         sub_inp = Input("sub_inp", TarFile())
         sub_stp = Step("sub_stp", Untar())
         sub_out = Output("sub_out", Array(File()))
-        sub_w.add_nodes([sub_inp, sub_stp, sub_out])
+        sub_w.add_items([sub_inp, sub_stp, sub_out])
         sub_w.add_pipe(sub_inp, sub_stp, sub_out)
 
         inp = Input("inp", TarFile())
         stp = Step("stp_workflow", sub_w)
         out = Output("out", Array(File()))
-        w.add_nodes([inp, stp, out])
+        w.add_items([inp, stp, out])
         w.add_pipe(inp, stp, out)
 
         w.dump_cwl(to_disk=True)

@@ -2,6 +2,7 @@ from typing import Dict, Any
 
 from Pipeline.translations.cwl.cwl import Cwl
 from Pipeline.types.common_data_types import String
+from Pipeline.types.data_types import DataType
 from Pipeline.types.data_types import NativeType, NativeTypes
 
 
@@ -49,3 +50,9 @@ The Filename DataType should NOT be used as an output.
 
     def default(self) -> str:
         return self.generated_filename()
+
+    def can_receive_from(self, other: DataType):
+        # Specific override because Filename should be able to receive from string
+        if isinstance(other, String):
+            return self.optional or not other.optional
+        return super().can_receive_from(other)

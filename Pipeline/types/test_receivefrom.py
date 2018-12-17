@@ -1,6 +1,7 @@
 import unittest
 
 from Pipeline import String, Array, File, Int
+from Pipeline.types.filename import Filename
 
 
 class FileSubclass(File):
@@ -64,3 +65,13 @@ class Test_ReceiveFrom(unittest.TestCase):
         f1 = File()
         f2 = FileSubclass()
         self.assertFalse(f2.can_receive_from(f1))
+
+    def test_generatedFilename(self):
+        s1 = String()
+        s2 = Filename()
+        self.assertTrue(s2.can_receive_from(s1))
+
+    def test_receiveFromGeneratedFilename(self):
+        s1 = Filename()
+        s2 = String(optional=True)
+        self.assertTrue(s2.can_receive_from(s1))

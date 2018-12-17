@@ -3,8 +3,9 @@
 ###################
 from typing import Dict, Any
 
+from Pipeline.utils.logger import Logger
 from Pipeline.translations.cwl.cwl import Cwl
-from Pipeline.types.data_types import DataType, NativeTypes
+from Pipeline.types.data_types import DataType, NativeTypes, NativeType
 from Pipeline.types.registry import register_type
 
 
@@ -28,6 +29,63 @@ class String(DataType):
 
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
+
+    def can_receive_from(self, other):
+        if isinstance(other, Filename):
+            return True
+        return super().can_receive_from(other)
+
+
+class Filename(String):
+
+    def __init__(self, extension: str=None):
+        """
+        :param extension: with no '.' (dot)
+        """
+        super().__init__(optional=True)
+        self.extension = extension
+
+    @staticmethod
+    def name() -> str:
+        return "Filename"
+
+    @staticmethod
+    def primitive() -> NativeType:
+        return NativeTypes.kStr
+
+    @staticmethod
+    def doc() -> str:
+        return """
+This class is a placeholder for generated filenames, by default it is optional and CAN be overrided, 
+however the program has been structured in a way such that these names will be generated based on the step label. 
+These should only be used when the tool _requires_ a filename to output and you aren't 
+concerned what the filename should be. The Filename DataType should NOT be used as an output.
+""".strip()
+
+    @classmethod
+    def schema(cls) -> Dict:
+        pass
+
+    def cwl(self) -> Dict[str, Any]:
+        return {
+            **super().cwl(),
+            Cwl.CommandLineTool.Inputs.kDEFAULT: self.generated_filename()
+        }
+
+    def generated_filename(self, prefix: str=None) -> str:
+        import uuid
+        pre = (prefix + "-") if prefix is not None else ""
+        ex = "" if self.extension is None else self.extension
+        return pre + "generated-" + str(uuid.uuid1()) + ex
+
+    def default(self) -> str:
+        return self.generated_filename()
+
+    def can_receive_from(self, other: DataType):
+        # Specific override because Filename should be able to receive from string
+        if isinstance(other, String):
+            return True  # Always provides default, and is always optional
+        return super().can_receive_from(other)
 
 
 class Int(DataType):

@@ -58,7 +58,7 @@ class GatkPrintReads(CommandTool):
 
     def arguments(self):
         return [
-            ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir="),
+            ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir=", separate_value_from_prefix=False),
             ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
             ToolArgument("PrintReads", position=4, prefix="-T"),
             ToolArgument("--filter_bases_not_stored", position=20)
@@ -77,8 +77,8 @@ class GatkPrintReads(CommandTool):
                             doc="Sample name to be included in the analysis. Can be specified multiple times.")
     outputfile_printReads = ToolInput("outputfile_printReads", String(optional=True), position=8, prefix="-o",
                                       doc="name of the output file from indelRealigner")
-    java_arg = ToolInput("java_arg", String(optional=True), position=1, default="-Xmx4g")
-    threads = ToolInput("threads", Int(optional=True), position=14, prefix="-nct", default="4")
+    java_arg = ToolInput("java_arg", String(), position=1, default="-Xmx4g")
+    threads = ToolInput("threads", Int(), position=14, prefix="-nct", default=4)
     downsamplingType = ToolInput("downsamplingType", String(optional=True), position=16, prefix="--downsampling_type",
                                  default="none")
 

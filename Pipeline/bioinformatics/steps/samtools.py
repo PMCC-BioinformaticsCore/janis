@@ -1,7 +1,7 @@
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.sam import Sam
-from Pipeline import String, CommandTool, ToolOutput, ToolInput, ToolArgument, Boolean, Int, File, Float, Array
-from Pipeline.types.filename import Filename
+from Pipeline import String, CommandTool, ToolOutput, ToolInput, ToolArgument, \
+    Boolean, Int, File, Float, Array, Filename
 
 
 class SamTools(CommandTool):
@@ -9,7 +9,7 @@ class SamTools(CommandTool):
     out = ToolOutput("out", Sam(), glob="$(inputs.outputName)")
 
     # Optional params
-    outputName = ToolInput("outputName", Filename(extension="sam"), position=2, prefix="-o")
+    outputName = ToolInput("outputName", Filename(extension=".sam"), position=2, prefix="-o")
 
     @staticmethod
     def tool():

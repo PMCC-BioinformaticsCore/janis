@@ -1,24 +1,21 @@
-from typing import List
-
-from Pipeline import Array, String, Int, File, CommandTool, ToolOutput, ToolInput, ToolArgument, Double, Boolean
+from Pipeline import Array, String, Int, File, CommandTool, ToolOutput, \
+    ToolInput, ToolArgument, Double, Boolean, Filename
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bai import Bai
 from Pipeline.bioinformatics.data_types.bam import Bam
-from Pipeline.types.filename import Filename
 
 
 class PicardMarkDup(CommandTool):
-    inputBam = ToolInput("inputBam", Bam(), position=4,     # type should be Array(Bam(), optional=True)
-                                       prefix="INPUT=",
-                                       separate_value_from_prefix=False,
-                                       doc="One or more input SAM or BAM files to analyze. Must be coordinate sorted. "
-                                           "Default value null. This option may be specified 0 or more times")
+    inputBam = ToolInput("inputBam", Bam(), position=4,  # type should be Array(Bam(), optional=True)
+                         prefix="INPUT=", separate_value_from_prefix=False,
+                         doc="One or more input SAM or BAM files to analyze. Must be coordinate sorted. "
+                             "Default value null. This option may be specified 0 or more times")
 
-    outputFilename = ToolInput("outputFilename", Filename(), position=5, prefix="OUTPUT=",
-                                        separate_value_from_prefix=False,
-                                        doc="The output file to write marked records to Required")
+    outputFilename = ToolInput("outputFilename", Filename(extension=".bam"), position=5, prefix="OUTPUT=",
+                               separate_value_from_prefix=False,
+                               doc="The output file to write marked records to Required")
 
-    output = ToolOutput("output", Bam(), glob='$(inputs.outputFilename)')    # o09 | o12
+    output = ToolOutput("output", Bam(), glob='$(inputs.outputFilename)')  # o09 | o12
     metric = ToolOutput("metric", File(), glob='$(inputs.metricsFile)')  # o10 | o13
     index = ToolOutput("index", Bai(), glob='$(inputs.outputFilename.replace(".bam", ".bai"))')
 
@@ -34,7 +31,13 @@ class PicardMarkDup(CommandTool):
 
     @staticmethod
     def docker():
-        return None
+        return "biocontainers/picard:v2.3.0_cv3"
+
+    # @staticmethod
+    # def environment_variables():
+    #     return {
+    #         "PATH": "/usr/local/bin/:/usr/bin:/bin:/opt/conda/bin"
+    #     }
 
     @staticmethod
     def doc():
@@ -44,7 +47,7 @@ class PicardMarkDup(CommandTool):
 
     def arguments(self):
         return [
-            ToolArgument("/opt/conda/share/picard-2.3.0-0/picard.jar", position=2, prefix = "-jar"),
+            ToolArgument("/opt/conda/share/picard-2.3.0-0/picard.jar", position=2, prefix="-jar"),
             ToolArgument("MarkDuplicates", position=3)
         ]
 
@@ -69,8 +72,9 @@ class PicardMarkDup(CommandTool):
     readOneBarcodeTag = ToolInput("readOneBarcodeTag", String(optional=True), position=11,
                                   prefix="READ_ONE_BARCODE_TAG=", separate_value_from_prefix=False,
                                   doc="Read one barcode SAM tag (ex. BX for 10X Genomics) Default value null")
-    metricsFile = ToolInput("metricsFile", String(optional=True), position=6, prefix="METRICS_FILE=",
-                            separate_value_from_prefix=False, doc="File to write duplication metrics to Required")
+    metricsFile = ToolInput("metricsFile", Filename(), default="metricsFile-Tumor-markDuplicates",
+                            position=6, prefix="METRICS_FILE=", separate_value_from_prefix=False,
+                            doc="File to write duplication metrics to Required")
     regularExpression = ToolInput("regularExpression", String(optional=True), position=18, prefix="READ_NAME_REGEX=",
                                   separate_value_from_prefix=False,
                                   doc="Regular expression that can be used to parse read names in the incoming SAM file."
@@ -138,6 +142,7 @@ class PicardMarkDup(CommandTool):
     barcodeTag = ToolInput("barcodeTag", String(optional=True), position=10, prefix="BARCODE_TAG=",
                            separate_value_from_prefix=False,
                            doc="Barcode SAM tag (ex. BC for 10X Genomics) Default value null")
+
 
 if __name__ == "__main__":
     print(PicardMarkDup().help())

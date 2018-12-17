@@ -71,6 +71,11 @@ class CommandTool(Tool, ABC):
         d = cls.__dict__
         return [d[x] for x in attrs if x in attrs and issubclass(type(d[x]), ToolOutput)]
 
+    @staticmethod
+    def environment_variables() -> Optional[Dict[str, str]]:
+        return None
+
+
     def cwl(self) -> Dict[str, Any]:
         CLT = Cwl.CommandLineTool
         d = {
@@ -100,6 +105,17 @@ class CommandTool(Tool, ABC):
 
         if self.stdout() is not None:
             d[CLT.kSTDOUT] = self.stdout()
+
+        if self.environment_variables() is not None:
+            env = self.environment_variables()
+            d[CLT.kREQUIREMENTS] = {
+                [Cwl.Requirements.kENVIRONMENT]: [
+                    [{
+                        Cwl.kCLASS: Cwl.Requirements.kENVIRONMENT,
+                        "envDef": {"envName": r, "envValue": env[r]}
+                    } for r in env.keys()]
+                ]
+            }
 
         args = self.arguments()
         if args and args is not None:

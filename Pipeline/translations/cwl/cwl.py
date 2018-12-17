@@ -141,6 +141,7 @@ class Cwl(CwlIdLabelDoc):
         kSCHEMADEF = "SchemaDefRequirement"
         kSOFTWARE = "SoftwareRequirement"
         kINITIALWORKDIR = "InitialWorkDirRequirement"
+        kENVIRONMENT = "EnvVarRequirement"
 
     class Primitives:
         kNULL = "null"

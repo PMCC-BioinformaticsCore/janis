@@ -6,5 +6,5 @@ from Pipeline.tool.commandtool import CommandTool, ToolInput, ToolOutput, ToolAr
 from Pipeline.tool.registry import register_tool, get_tool
 from Pipeline.types.data_types import DataType
 from Pipeline.types.registry import register_type, get_type
-from Pipeline.types.common_data_types import Boolean, String, Int, Float, Double, File, Directory, Array
+from Pipeline.types.common_data_types import Boolean, String, Int, Float, Double, File, Directory, Array, Filename
 from Pipeline.utils.logger import Logger, LogLevel

@@ -3,8 +3,7 @@
 from typing import List
 
 from Pipeline import Array
-from Pipeline.types.filename import Filename
-from Pipeline.types.common_data_types import File
+from Pipeline.types.common_data_types import File, Filename
 from Pipeline.tool.commandtool import CommandTool, ToolInput, ToolOutput
 
 
@@ -14,7 +13,7 @@ class Tar(CommandTool):
     tarred: ToolOutput = ToolOutput("tarred", File(), glob="*.tar")
 
     # this param may be marked as optional, but the Workflow system will always give it a value
-    tarName: ToolInput = ToolInput("tarName", Filename(extension="tar"), position=1)
+    tarName: ToolInput = ToolInput("tarName", Filename(extension=".tar"), position=1)
 
     @staticmethod
     def tool():

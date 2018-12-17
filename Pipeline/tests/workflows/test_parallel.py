@@ -1,6 +1,6 @@
 import unittest
 
-from Pipeline import Workflow, Input, String, Step, Array, Logger, Output, File
+from Pipeline import Workflow, Input, String, Step, Array, Logger, Output, File, Filename
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fasta import Fasta
@@ -15,13 +15,9 @@ from Pipeline.bioinformatics.steps.gatk_printreads import GatkPrintReads
 from Pipeline.bioinformatics.steps.picard_markdup import PicardMarkDup
 from Pipeline.bioinformatics.steps.picard_sortsam import PicardSortSam
 from Pipeline.bioinformatics.steps.samtools import SamTools
-from Pipeline.types.filename import Filename
 
 
 class TestParallel(unittest.TestCase):
-
-
-
 
     @staticmethod
     def parallel_workflow():

@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Optional
 from Pipeline.graph.node import Node, NodeTypes
 from Pipeline.tool.tool import Tool, ToolInput, ToolOutput
 from Pipeline.translations.cwl.cwl import Cwl
-from Pipeline.types.filename import Filename
+from Pipeline.types.common_data_types import Filename
 from Pipeline.utils.logger import Logger
 
 CS = Cwl.Workflow.Step

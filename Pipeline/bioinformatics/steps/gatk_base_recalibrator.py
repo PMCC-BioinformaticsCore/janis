@@ -1,28 +1,8 @@
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
-from Pipeline.bioinformatics.data_types.fasta import Fasta
-from Pipeline import File, String, Array, CommandTool, ToolOutput, ToolInput, ToolArgument, Int, Boolean, Double
-
-# class GatkBaseRecalibrator(CommandTool):
-#
-#     inputBam_BaseRecalibrator = ToolInput("inputBam_BaseRecalibrator", File())
-#     outputfile_BaseRecalibrator = ToolInput("outputfile_BaseRecalibrator", String())
-#     reference = ToolInput("reference", Fasta())
-#     known = ToolInput("known", Array(File()))
-#     bedFile = ToolInput("bedFile", Bed())
-#
-#     out = ToolOutput("out", File())
-#
-#     @staticmethod
-#     def tool():
-#         return "gatk-base-recalibrator"
-#
-#     @staticmethod
-#     def base_command():
-#         return "javac"
+from Pipeline import File, String, Array, CommandTool, ToolOutput, ToolInput, ToolArgument, Int, Boolean, Double, Filename
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
-from Pipeline.types.filename import Filename
 
 
 class GatkRecalibrator(CommandTool):
@@ -31,15 +11,14 @@ class GatkRecalibrator(CommandTool):
 
     reference = ToolInput("reference", FastaWithDict(), position=5, prefix="-R")
 
-    known = ToolInput("known", Array(VcfIdx(), optional=True), prefix="--knownsites", position=28,
+    known = ToolInput("known", Array(VcfIdx(), optional=True), prefix="--knownSites", position=28,
                       doc="Any number of VCF files representing known SNPs and/or indels. "
                           "Could be e.g. dbSNP and/or official 1000 Genomes indel calls. "
                           "SNPs in these files will be ignored unless the --mismatchFraction argument is used.")
-    outputFile = ToolInput("outputFile", Filename(), position=8, prefix="-o",
+    outputFile = ToolInput("outputFile", Filename(extension=".grp"), position=8, prefix="-o",
                                             doc="name of the output file from baseRecalibrator")
 
-    output = ToolOutput("output", File(),
-                                         glob='$(inputs.outputFile)')
+    output = ToolOutput("output", File(), glob='$(inputs.outputFile)')
 
     @staticmethod
     def tool():
@@ -62,7 +41,7 @@ class GatkRecalibrator(CommandTool):
 
     def arguments(self):
         return [
-            ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir="),
+            ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir=", separate_value_from_prefix=False),
             ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
             ToolArgument("BaseRecalibrator", position=4, prefix="-T"),
             ToolArgument("--filter_bases_not_stored", position=30)
@@ -129,7 +108,7 @@ class GatkRecalibrator(CommandTool):
     downsamplingType = ToolInput("downsamplingType", String(optional=True), position=27, prefix="--downsampling_type",
                                  default="none")
     bedFile = ToolInput("bedFile", Bed(optional=True), position=28, prefix="-L")
-    threads = ToolInput("threads", Int(optional=True), position=26, prefix="-nct", default="4")
+    threads = ToolInput("threads", Int(optional=True), position=26, prefix="-nct", default=4)
 
 
 if __name__ == "__main__":

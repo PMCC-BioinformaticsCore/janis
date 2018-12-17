@@ -1,10 +1,10 @@
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
-from Pipeline import String, Int, File, CommandTool, ToolOutput, ToolInput, ToolArgument, Boolean, Double, Array
+from Pipeline import String, Int, File, CommandTool, ToolOutput, ToolInput, \
+    ToolArgument, Boolean, Double, Array, Filename
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
-from Pipeline.types.filename import Filename
 
 
 class GatkHaplotypeCaller(CommandTool):
@@ -39,7 +39,8 @@ class GatkHaplotypeCaller(CommandTool):
         return "None"
 
     def arguments(self):
-        return [ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir="),
+        return [ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir=",
+                             separate_value_from_prefix=False),
                 ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
                 ToolArgument("HaplotypeCaller", position=4, prefix="-T")]
 

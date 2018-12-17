@@ -19,8 +19,8 @@ class GatkHaplotypeCaller(CommandTool):
     bamOutput = ToolInput("bamOutput", Filename(), position=48, prefix="--bamOutput",
                           doc="File to which assembled haplotypes should be written")
 
-    output_HaplotypeCaller = ToolOutput("output_HaplotypeCaller", File(), glob='$(inputs.outputFilename)')
-    bamOut_HaplotypeCaller = ToolOutput("bamOut_HaplotypeCaller", File(), glob='$(inputs.bamOutput)')
+    output = ToolOutput("output", File(), glob='$(inputs.outputFilename)')
+    bamOut = ToolOutput("bamOut", File(), glob='$(inputs.bamOutput)')
 
     @staticmethod
     def tool():

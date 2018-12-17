@@ -113,7 +113,7 @@ class StepNode(Node):
                     continue
                 else:
                     raise Exception(f"Error when building connections for step '{self.id()}', "
-                                    f"could not find required connection {k}")
+                                    f"could not find required connection: '{k}'")
 
             edge = self.connection_map[k]
             d[CS.StepInput.kSOURCE] = edge.source()

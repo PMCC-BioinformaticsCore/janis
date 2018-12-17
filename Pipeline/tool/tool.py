@@ -49,7 +49,7 @@ class ToolArgument:
 
 
 class ToolInput(ToolArgument):
-    def __init__(self, tag: str, input_type: DataType, position: int = 0, prefix: Optional[str] = None,
+    def __init__(self, tag: str, input_type: DataType, position: Optional[int] = 0, prefix: Optional[str] = None,
                  separate_value_from_prefix: bool = True, default: Any = None, doc: Optional[str]=None):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
@@ -67,19 +67,25 @@ class ToolInput(ToolArgument):
         self.doc = doc
 
     def cwl(self):
+        CLTI = Cwl.CommandLineTool.Inputs
         d = {
-            Cwl.CommandLineTool.Inputs.kID: self.tag,
-            Cwl.CommandLineTool.Inputs.kINPUT_BINDING: {
-                Cwl.CommandLineTool.Inputs.InputBinding.kPOSITION: self.position
-            },
+            CLTI.kID: self.tag,
             **self.input_type.cwl()
         }
 
+        if self.position is not None or self.prefix is not None:
+            input_binding = {}
+            if self.position:
+                input_binding[CLTI.InputBinding.kPOSITION] = self.position
+            if self.prefix is not None:
+                input_binding[CLTI.InputBinding.kPREFIX] = self.prefix
+            d[Cwl.Workflow.Input.kINPUT_BINDING] = input_binding
+
         if self.default is not None:
-            d[Cwl.CommandLineTool.Inputs.kDEFAULT] = self.default
+            d[CLTI.kDEFAULT] = self.default
 
         if self.doc is not None:
-            d[Cwl.Workflow.Input.kDOC] = self.doc
+            d[CLTI.kDOC] = self.doc
 
         return d
 

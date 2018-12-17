@@ -42,6 +42,10 @@ class CommandTool(Tool, ABC):
     def base_command():
         raise Exception("Subclass MUST implement the 'base_command' method with str or [str] return types")
 
+    @staticmethod
+    def stdout() -> Optional[str]:
+        return None
+
     def memory(self) -> Optional[int]:
         return None
 
@@ -68,12 +72,13 @@ class CommandTool(Tool, ABC):
         return [d[x] for x in attrs if x in attrs and issubclass(type(d[x]), ToolOutput)]
 
     def cwl(self) -> Dict[str, Any]:
+        CLT = Cwl.CommandLineTool
         d = {
-            "class": "CommandLineTool",
-            "cwlVersion": "v1.0",
-            "baseCommand": self.base_command(),
-            "id": self.tool(),
-            "label": self.tool(),
+            Cwl.kCLASS: Cwl.Class.kCOMMANDLINETOOL,
+            Cwl.kCWL_VERSION: Cwl.kCUR_VERSION,
+            CLT.kBASE_COMMAND: self.base_command(),
+            CLT.kID: self.tool(),
+            CLT.kLABEL: self.tool(),
         }
 
         hints = {}
@@ -81,24 +86,27 @@ class CommandTool(Tool, ABC):
             hints["DockerRequirement"] = {"dockerPull": self.docker()}
 
         if hints:
-            d["hints"] = hints
+            d[Cwl.CommandLineTool.kHINTS] = hints
 
         inps = {}
         for tool_input in self.inputs():
             inps[tool_input.tag] = tool_input.cwl()
 
         if self.inputs():
-            d["inputs"] = {t.tag: t.cwl() for t in self.inputs()}
+            d[CLT.kINPUTS] = {t.tag: t.cwl() for t in self.inputs()}
 
         if self.outputs():
-            d["outputs"] = {t.tag: t.cwl() for t in self.outputs()}
+            d[CLT.kOUTPUTS] = {t.tag: t.cwl() for t in self.outputs()}
+
+        if self.stdout() is not None:
+            d[CLT.kSTDOUT] = self.stdout()
 
         args = self.arguments()
         if args and args is not None:
-            d["arguments"] = [a.cwl() for a in args]
+            d[CLT.kARGUMENTS] = [a.cwl() for a in args]
 
         if self.doc() is not None:
-            d[Cwl.CommandLineTool.kDOC] = self.doc()
+            d[CLT.kDOC] = self.doc()
 
         return d
 

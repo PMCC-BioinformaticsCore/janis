@@ -21,13 +21,17 @@ class BwaMem(CommandTool):
                         default=8, doc="-t INT\tnumber of threads [1]")
     min_std_max_min = ToolInput("min_std_max_min", Array(Int(), optional=True), position=1, prefix="-I")
 
-    outputFilename = ToolInput("outputFilename", Filename(extension='sam'), position=3)
+    outputFilename = ToolInput("outputFilename", Filename(extension='sam'), position=None)
 
     out = ToolOutput("out", Bam(), glob="$(inputs.outputFilename)")
 
     @staticmethod
     def tool():
         return "bwa-mem"
+
+    @staticmethod
+    def stdout():
+        return "$(inputs.outputFilename)"
 
     @staticmethod
     def base_command():

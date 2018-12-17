@@ -78,7 +78,16 @@ class Workflow(Tool):
         nx.draw(G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=True)
         plt.show()
 
-    def add_nodes(self, mixed: List[Any]):
+    def add_nodes(self, *args):
+        mixed: List[Any] = args
+        if len(args) == 0:
+            raise Exception("Must have at least than one item to add")
+
+        if isinstance(args[0], list):
+            if len(args) > 1:
+                raise Exception("Invalid type of arguments")
+            mixed = args[0]
+
         for node in mixed:
             if isinstance(node, Input):
                 self.add_input(node)
@@ -149,6 +158,12 @@ class Workflow(Tool):
         except Exception as e:
             Logger.log_ex(e)
             return str(s)
+
+    def connect_inputs(self, step: Any, inputs: List[Any]):
+        return [self.add_piped_edge(step, i) for i in inputs]
+
+    def add_edges(self, edges: List[Tuple[Any, Any]]):
+        return [self.add_edge(e[0], e[1]) for e in edges]
 
     def add_pipe(self, *args):
         if len(args) < 2:
@@ -225,7 +240,7 @@ class Workflow(Tool):
         elif f_node.node_type == NodeTypes.OUTPUT:
             # We'll need to determine the data_type and assign it to the output
             s_parts, s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts, referenced_by=f_parts)
-            if not s_type:
+            if s_type is None:
                 keys = ", ".join(s_node.outputs().keys())
                 raise Exception(f"The step '{s_node.id()}' must be fully qualified to connect to output node"
                                 f" (expected one of: {keys})")
@@ -262,13 +277,13 @@ class Workflow(Tool):
 
         # We got one but not the other
         if s_type is not None and f_type is None:
-            possible_outp_tags = ", ".join(f"{o.tag} ({o.output_type.name()})" for o in f_node.outputs().values())
+            possible_outp_tags = ", ".join(f"{o.tag} ({o.input_type.name()})" for o in f_node.inputs().values())
             raise Exception(f"Couldn't definitively establish a connection from the start node '{s_node.id()}' "
                             f"with type {s_type.name()} to the finish node with possibilities: {possible_outp_tags}")
         if s_type is None and f_type is not None:
-            possible_inp_tags = ", ".join(f"{i.tag} ({i.input_type.name()})" for i in s_node.inputs().values())
+            possible_inp_tags = ", ".join(f"{i.tag} ({i.output_type.name()})" for i in s_node.outputs().values())
             raise Exception(f"Couldn't definitively establish a connection to the finish node '{f_node.id()}' "
-                            f"with type {s_type.name()} from the start node with possibilities: {possible_inp_tags}")
+                            f"with type {f_type.name()} from the start node with possibilities: {possible_inp_tags}")
 
         # We couldn't get either
         if s_type is None or f_type is None:
@@ -313,7 +328,7 @@ class Workflow(Tool):
 
         if len(types) == 0:
             raise InvalidStepsException(f"The step '{referenced_by}' referenced the step '{snode.id()}' with tool "
-                                        f"'{snode.step.tool().id()}' that has no inputs")
+                                        f"'{snode.step.tool().id()}' that has no outputs")
         elif len(types) == 1:
             tag = types[0][0]
             if len(input_parts) != 2:
@@ -333,7 +348,41 @@ class Workflow(Tool):
         else:
             # if the edge tag doesn't match, we can give up
             if len(input_parts) < 2:
-                return input_parts, None
+                if guess_type is not None:
+                    # try to guess it from the outputs
+                    compatible_types = [outs[x] for x in outs if guess_type.can_receive_from(outs[x].output_type)]
+                    if len(compatible_types) == 1:
+                        out = compatible_types[0]
+                        Logger.info(
+                            f"Guessed the compatible match for '{node.id()}' with source type '{out.output_type.id()}'"
+                            f" → '{guess_type.id()}' ('{node.id()}/{out.tag}' → '{node.id()}')")
+                        return [lbl, out.tag], out.output_type
+                    else:
+                        # Should this step also take into consideration the _optional_ nature of the node,
+                        # ie: should it favour required nodes if that's an option
+                        ultra_compatible = [outs[x] for x in outs if type(outs[x].output_type) == type(guess_type)]
+
+                        if len(ultra_compatible) == 1:
+                            ultra = ultra_compatible[0]
+                            Logger.warn(f"There were {len(compatible_types)} matched types for the node '{node.id()}', "
+                                        f"the program has guessed an exact compatible match of "
+                                        f"type '{ultra.output_type.id()}' to tag '{ultra.tag}'")
+                            return [lbl, ultra.tag], ultra.output_type
+                        else:
+                            s = "/".join(input_parts)
+                            compat_str = ", ".join(f"{x.tag}: {x.output_type.id()}" for x in compatible_types)
+                            raise Exception(
+                                f"The node '{node.id()}' did not specify an input, and used '{guess_type.id()}'"
+                                f" from the start node to guess the input by type, matching {len(compatible_types)}"
+                                f" compatible ({compat_str}) and {len(ultra_compatible)} exact types."
+                                f" You will need to provide more information to proceed.")
+                else:
+                    possible_tags = ", ".join(f"'{x}'" for x in outs)
+                    s = "/".join(input_parts)
+                    Logger.critical(f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the "
+                                    f"one of the following tags: {possible_tags}")
+                    return input_parts, None
+
             tag = input_parts[1]
             t = snode.step.tool().outputs_map().get(tag)
             if t:

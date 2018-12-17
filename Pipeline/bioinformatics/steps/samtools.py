@@ -6,7 +6,7 @@ from Pipeline.types.filename import Filename
 
 class SamTools(CommandTool):
     inp = ToolInput("input", Bam(), doc="Input bam file.")
-    out = ToolOutput("out", Sam(), glob="$(inputs.output_name")
+    out = ToolOutput("out", Sam(), glob="$(inputs.outputName)")
 
     # Optional params
     outputName = ToolInput("outputName", Filename(extension="sam"), position=2, prefix="-o")

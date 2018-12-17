@@ -115,11 +115,11 @@ class Boolean(DataType):
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
 
-    def cwl(self) -> Dict[str, Any]:
-        return {
-            **super().cwl(),
-            "type": "Boolean",
-        }
+    # def cwl(self) -> Dict[str, Any]:
+        # return {
+        #     **super().cwl(),
+        #     "type": "Boolean",
+        # }
 
 
 class File(DataType):
@@ -148,7 +148,7 @@ class File(DataType):
     @staticmethod
     def cwl_input(value: Any):
         return {
-            "class": "File",
+            "class": Cwl.Primitives.kFILE,
             "path": value
         }
 
@@ -182,7 +182,7 @@ class Directory(DataType):
     def cwl_input(value: Any):
         # WDL: "{workflowName}.label" = meta["path"}
         return {
-            "class": "Directory",
+            "class": Cwl.Primitives.kDIRECTORY,
             "path": value
         }
 
@@ -226,11 +226,13 @@ class Array(DataType):
         return {"type": "array"}
 
     def cwl(self) -> Dict[str, Any]:
-        return {
-            Cwl.Workflow.Input.kTYPE: {
+        dtype = {
                 "type": NativeTypes.map_to_cwl(NativeTypes.kArray),
-                "items": NativeTypes.map_to_cwl(self.__t.primitive())
-            }
+                "items": NativeTypes.map_to_cwl(self.__t.primitive()) + self.__t._question_mark_if_optional()
+        }
+        ret_val = ["null", dtype] if self.optional else dtype
+        return {
+            Cwl.Workflow.Input.kTYPE: ret_val
         }
 
     def wdl(self):

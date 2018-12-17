@@ -1,7 +1,8 @@
 from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
-from Pipeline.bioinformatics.data_types.dbsnp import Dbsnp
 from Pipeline.bioinformatics.data_types.fasta import Fasta
+from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
 from Pipeline import String, Array, File, CommandTool, ToolOutput, ToolInput, ToolArgument
 
@@ -24,17 +25,18 @@ from Pipeline import String, Array, File, CommandTool, ToolOutput, ToolInput, To
 #     @staticmethod
 #     def base_command():
 #         return "javac"
+from Pipeline.types.filename import Filename
 
 
-class Gatkmutect2(CommandTool):
-    inputBam_tumor = ToolInput("inputBam_tumor", File(), position=5, prefix="-I:Tumor")
-    inputBam_normal = ToolInput("inputBam_normal", File(), position=6, prefix="-I:Normal")
-    bedFile = ToolInput("bedFile", File(), position=7, prefix="-L")
-    reference = ToolInput("reference", File(), position=8, prefix="-R")
-    dbsnp = ToolInput("dbsnp", Array(File()), position=10, prefix="--dbsnp")
-    cosmic = ToolInput("cosmic", Array(File()), position=11, prefix="--cosmic")
+class GatkMutect2(CommandTool):
+    inputBam_tumor = ToolInput("inputBam_tumor", BamPair(), position=5, prefix="-I:Tumor")
+    inputBam_normal = ToolInput("inputBam_normal", BamPair(), position=6, prefix="-I:Normal")
+    bedFile = ToolInput("bedFile", Bed(), position=7, prefix="-L")
+    reference = ToolInput("reference", FastaWithDict(), position=8, prefix="-R")
+    dbsnp = ToolInput("dbsnp", Array(VcfIdx()), position=10, prefix="--dbsnp")
+    cosmic = ToolInput("cosmic", Array(VcfIdx()), position=11, prefix="--cosmic")
 
-    output_mutect2 = ToolOutput("output_mutect2", File(), glob='$(inputs.outputfile_name)')
+    output = ToolOutput("output", File(), glob='$(inputs.outputfile_name)')
 
     @staticmethod
     def tool():
@@ -54,12 +56,14 @@ class Gatkmutect2(CommandTool):
         return None
 
     def arguments(self):
-        return [ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
-                ToolArgument("MuTect2", position=4, prefix="-T")]
+        return [
+            ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
+            ToolArgument("MuTect2", position=4, prefix="-T")
+        ]
 
     java_arg = ToolInput("java_arg", String(optional=True), position=1, default="-Xmx4g")
-    outputfile_name = ToolInput("outputfile_name", String(optional=True), position=9, prefix="-o")
+    outputfile_name = ToolInput("outputfile_name", Filename(), position=9, prefix="-o")
 
 
 if __name__ == "__main__":
-    print(Gatkmutect2().help())
+    print(GatkMutect2().help())

@@ -80,6 +80,15 @@ class Merge(CommandTool):
 
 
 class ParseFile(ExpressionTool):
+    @staticmethod
+    def tool():
+        return "parse-file"
+
+    def expression(self):
+        return """
+${return { lines: inputs.file.contents.split("\n")
+    .filter(function(q) { return q.length > 0; }) }}""".strip()
+
     def inputs(self) -> List[ToolInput]:
         return [
             ToolInput("file", File())
@@ -92,6 +101,11 @@ class ParseFile(ExpressionTool):
 
 
 class Parse(ExpressionTool):
+
+    @staticmethod
+    def tool():
+        return "parse"
+
     def inputs(self) -> List[ToolInput]:
         return [
             ToolInput("line", String())
@@ -103,6 +117,16 @@ class Parse(ExpressionTool):
             ToolOutput("fastq1", File()),
             ToolOutput("fastq2", File())
         ]
+
+    def expression(self):
+        return """${
+var l = inputs.line.split("\t");
+return {
+    sampleName: l[0], 
+    fastq1: { class: "File", location: "file://" + l[1] }, 
+    fastq2: { class: "File", location: "file://" + l[2] }
+};
+        }""".strip()
 
 
 class TestScatterGather:

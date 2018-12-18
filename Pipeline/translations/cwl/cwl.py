@@ -131,6 +131,12 @@ class Cwl(CwlIdLabelDoc):
             kVALUE_FROM = "valueFrom"
             kSHELL_QUOTE = "shellQuote"
 
+    class ExpressionTool(CwlIdLabelDoc):
+        kINPUTS = "inputs"
+        kOUTPUTS = "outputs"
+        kEXPRESSION = "expression"
+
+
     class Requirements:
         kCLASS = "class"
         kJAVASCRIPT = "InlineJavascriptRequirement"
@@ -154,3 +160,34 @@ class Cwl(CwlIdLabelDoc):
         kFILE = "File"
         kDIRECTORY = "Directory"
         kARRAY = "array"
+
+    class Inputs(CwlIdLabelDoc):
+        kTYPE = "type"
+        kFORMAT = "format"
+        kSTREAMABLE = "streamable"
+        kDEFAULT = "default"
+        kSECONDARY_FILES = "secondaryFiles"
+        kINPUT_BINDING = "inputBinding"
+
+    class InputBinding:
+        kLOAD_CONTENTS = "loadContents"
+        kPOSITION = "position"
+        kPREFIX = "prefix"
+        kSEPARATE = "separate"
+        kITEM_SEPARATOR = "itemSeparator"
+        kVALUE_FROM = "valueFrom"
+        kSHELL_QUOTE = "shellQuote"
+
+    class Outputs(CwlIdLabelDoc, CwlHintsRequirements):
+        kTYPE = "type"
+        kFORMAT = "format"
+        kSTREAMABLE = "streamable"
+        kDEFAULT = "default"
+        kSECONDARY_FILES = "secondaryFiles"
+        kOUTPUT_SOURCE = "outputSource"
+        kOUTPUT_BINDING = "outputBinding"
+
+    class OutputBinding(CwlIdLabelDoc):
+        kGLOB = "glob"
+        kLOAD_CONTENTS = "loadContents"
+        kOUTPUT_EVAL = "outputEval"

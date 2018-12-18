@@ -18,10 +18,10 @@ class ToolTypes:
 class ToolArgument:
     expr_pattern = "\$\(.*\)"
 
-    def __init__(self, value: str, prefix: Optional[str] = None, position: int = 0, separate_value_from_prefix=True):
-        self.prefix = prefix
+    def __init__(self, value: str, prefix: Optional[str] = None, position: Optional[int] = 0, separate_value_from_prefix=True):
+        self.prefix: Optional[str] = prefix
         self.value = value
-        self.position = position
+        self.position: Optional[int] = position
         self.is_expression = re.match(self.expr_pattern, self.value) is not None
         self.separate_value_from_prefix = separate_value_from_prefix
 
@@ -75,7 +75,7 @@ class ToolInput(ToolArgument):
 
         if self.position is not None or self.prefix is not None:
             input_binding = {}
-            if self.position:
+            if self.position is not None:
                 input_binding[CLTI.InputBinding.kPOSITION] = self.position
             if self.prefix is not None:
                 input_binding[CLTI.InputBinding.kPREFIX] = self.prefix

@@ -1,106 +1,16 @@
 from typing import List
 
-from Pipeline import Workflow, Input, File, Directory, Int, Output, Array, String, Step, CommandTool, ToolInput, \
+from Pipeline import Workflow, Input, File, Directory, Int, Output, Array, String, Step, ToolInput, \
     ToolOutput
+from Pipeline.bioinformatics.steps.blast import Blast
+from Pipeline.bioinformatics.steps.fq2fa import Fq2fa
+from Pipeline.bioinformatics.steps.idba import Idba
 from Pipeline.tool.expressiontool import ExpressionTool
+from Pipeline.unix.steps.merge import Merge
+from Pipeline.unix.steps.scatterlines import ScatterLines
 
 
-class Fasta(File):
-
-    @staticmethod
-    def name() -> str:
-        return "Fasta"
-
-    @staticmethod
-    def doc() -> str:
-        return "FASTA file"
-
-
-class Fq2fa(CommandTool):
-
-    sampleName = ToolInput("sampleName", String())
-    fastq1 = ToolInput("fastq1", File())
-    fastq2 = ToolInput("fastq2", File())
-
-    outputFasta = ToolOutput("outputFasta", File())
-
-    @staticmethod
-    def tool():
-        return "fq2fa"
-
-    @staticmethod
-    def base_command():
-        return ["fq2fa"]
-
-
-class Idba(CommandTool):
-
-    sampleName = ToolInput("sampleName", String())
-    idbaInputFasta = ToolInput("idbaInputFasta", File())
-
-    idbaOutputFasta = ToolOutput("idbaOutputFasta", File())
-
-    @staticmethod
-    def tool():
-        return "idba"
-
-    @staticmethod
-    def base_command():
-        return "blast"
-
-
-class Blast(CommandTool):
-    sampleName = ToolInput("sampleName", String())
-    db = ToolInput("db", Directory())
-    assembledContigs = ToolInput("assembledContigs", File())
-    numThreads = ToolInput("numThreads", Int(optional=True))
-
-    blastOutput = ToolOutput("blastOutput", File())
-
-    @staticmethod
-    def tool():
-        return "blast"
-
-    @staticmethod
-    def base_command():
-        return ["blast"]
-
-
-class Merge(CommandTool):
-    files = ToolInput("files", Array(File()))
-    merged = ToolOutput("merged", File())
-
-    @staticmethod
-    def tool():
-        return "merge"
-
-    @staticmethod
-    def base_command():
-        return ["cat"]
-
-
-class ParseFile(ExpressionTool):
-    @staticmethod
-    def tool():
-        return "parse-file"
-
-    def expression(self):
-        return """
-${return { lines: inputs.file.contents.split("\n")
-    .filter(function(q) { return q.length > 0; }) }}""".strip()
-
-    def inputs(self) -> List[ToolInput]:
-        return [
-            ToolInput("file", File())
-        ]
-
-    def outputs(self):
-        return [
-            ToolOutput("lines", Array(String()))
-        ]
-
-
-class Parse(ExpressionTool):
+class ParseSamplesFile(ExpressionTool):
 
     @staticmethod
     def tool():
@@ -131,7 +41,6 @@ return {
 
 class TestScatterGather:
 
-
     def subworkflow(self):
         sw = Workflow("subworkflow")
 
@@ -142,7 +51,7 @@ class TestScatterGather:
         contigd = Output("contigd", File())
         blastd = Output("blastd", File())
 
-        step1 = Step("parse", Parse())
+        step1 = Step("parse", ScatterLines())
         step2 = Step("fq2fa", Fq2fa())
         step3 = Step("idba", Idba())
         step4 = Step("blast", Blast())
@@ -168,7 +77,6 @@ class TestScatterGather:
 
         return sw
 
-
     def workflow(self):
         w = Workflow("Parkvile-data-workflow-demo")
         inputSamplesFile = Input("inputSamplesFile", File())
@@ -179,7 +87,7 @@ class TestScatterGather:
         blastd = Output("blastd", Array(File()))
         merged = Output("merged", File())
 
-        step1 = Step("parse-lines", ParseFile())
+        step1 = Step("parse-lines", ParseSamplesFile())
         step2 = Step("subworkflow", self.subworkflow())
         step3 = Step("merge", Merge())
 
@@ -198,7 +106,6 @@ class TestScatterGather:
         ])
 
         return w
-
 
 
 if __name__ == "__main__":

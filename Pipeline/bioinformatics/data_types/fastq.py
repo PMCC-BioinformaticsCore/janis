@@ -38,4 +38,3 @@ class Fastq(Array):
             Logger.critical("Fastq expects a list of inputs")
             return []
         return [{File.cwl_input(x)} for x in value]
-

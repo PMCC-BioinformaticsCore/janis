@@ -30,19 +30,6 @@ class ToolArgument:
             Logger.warn(f"Argument ({self.prefix} {self.value}) is not separating and did not end with ='")
 
     def cwl(self):
-        d = {
-            "position": self.position,
-            "valueFrom": self.value
-        }
-        if not self.separate_value_from_prefix:
-            d["separate"] = self.separate_value_from_prefix
-
-        if self.prefix:
-            d["prefix"] = self.prefix
-
-        return d
-
-    def cwl2(self):
         from cwlgen import CommandLineBinding
         return CommandLineBinding(
             # load_contents=False,
@@ -78,7 +65,7 @@ class ToolInput(ToolArgument):
         self.default = default
         self.doc = doc
 
-    def cwl2(self):
+    def cwl(self):
         from cwlgen import CommandInputParameter, CommandLineBinding
 
         default = self.default if self.default is not None else self.input_type.default()
@@ -102,29 +89,6 @@ class ToolInput(ToolArgument):
             param_type=self.input_type.cwl2_type()
         )
 
-    def cwl(self):
-        CLTI = Cwl.CommandLineTool.Inputs
-        d = {
-            CLTI.kID: self.tag,
-            **self.input_type.cwl()
-        }
-
-        if self.position is not None or self.prefix is not None:
-            input_binding = {}
-            if self.position is not None:
-                input_binding[CLTI.InputBinding.kPOSITION] = self.position
-            if self.prefix is not None:
-                input_binding[CLTI.InputBinding.kPREFIX] = self.prefix
-            d[Cwl.Workflow.Input.kINPUT_BINDING] = input_binding
-
-        if self.default is not None:
-            d[CLTI.kDEFAULT] = self.default
-
-        if self.doc is not None:
-            d[CLTI.kDOC] = self.doc
-
-        return d
-
 
 class ToolOutput:
     def __init__(self, tag: str, output_type: DataType, glob: Optional[str] = None, doc: Optional[str]=None):
@@ -134,14 +98,6 @@ class ToolOutput:
         self.doc = doc
 
     def cwl(self):
-        d = { **self.output_type.cwl() }
-        if self.glob is not None:
-            d[Cwl.Workflow.Output.kOUTPUT_BINDING] = {
-                "glob": self.glob
-            }
-        return d
-
-    def cwl2(self):
         from cwlgen import CommandOutputParameter, CommandOutputBinding
         return CommandOutputParameter(
             param_id=self.tag,

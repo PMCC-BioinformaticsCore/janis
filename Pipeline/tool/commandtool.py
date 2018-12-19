@@ -76,7 +76,7 @@ class CommandTool(Tool, ABC):
     def environment_variables() -> Optional[Dict[str, str]]:
         return None
 
-    def cwl2(self) -> cwl.CommandLineTool:
+    def cwl(self) -> cwl.CommandLineTool:
         tool = cwl.CommandLineTool(
             tool_id=self.id(),
             base_command=self.base_command(),
@@ -100,64 +100,13 @@ class CommandTool(Tool, ABC):
             ),
         ])
 
-        tool.inputs.extend(i.cwl2() for i in self.inputs())
-        tool.outputs.extend(o.cwl2() for o in self.outputs())
+        tool.inputs.extend(i.cwl() for i in self.inputs())
+        tool.outputs.extend(o.cwl() for o in self.outputs())
         args = self.arguments()
         if args is not None:
-            tool.arguments.extend(a.cwl2() for a in self.arguments())
+            tool.arguments.extend(a.cwl() for a in self.arguments())
 
         return tool.get_dict()
-
-    def cwl(self) -> Dict[str, Any]:
-        return self.cwl2()
-        # CLT = Cwl.CommandLineTool
-        # d = {
-        #     Cwl.kCLASS: Cwl.Class.kCOMMANDLINETOOL,
-        #     Cwl.kCWL_VERSION: Cwl.kCUR_VERSION,
-        #     CLT.kBASE_COMMAND: self.base_command(),
-        #     CLT.kID: self.tool(),
-        #     CLT.kLABEL: self.tool(),
-        # }
-        #
-        # hints = {}
-        # if self.docker() is not None:
-        #     hints["DockerRequirement"] = {"dockerPull": self.docker()}
-        #
-        # if hints:
-        #     d[Cwl.CommandLineTool.kHINTS] = hints
-        #
-        # inps = {}
-        # for tool_input in self.inputs():
-        #     inps[tool_input.tag] = tool_input.cwl()
-        #
-        # if self.inputs():
-        #     d[CLT.kINPUTS] = {t.tag: t.cwl() for t in self.inputs()}
-        #
-        # if self.outputs():
-        #     d[CLT.kOUTPUTS] = {t.tag: t.cwl() for t in self.outputs()}
-        #
-        # if self.stdout() is not None:
-        #     d[CLT.kSTDOUT] = self.stdout()
-        #
-        # if self.environment_variables() is not None:
-        #     env = self.environment_variables()
-        #     d[CLT.kREQUIREMENTS] = {
-        #         [Cwl.Requirements.kENVIRONMENT]: [
-        #             [{
-        #                 Cwl.kCLASS: Cwl.Requirements.kENVIRONMENT,
-        #                 "envDef": {"envName": r, "envValue": env[r]}
-        #             } for r in env.keys()]
-        #         ]
-        #     }
-        #
-        # args = self.arguments()
-        # if args and args is not None:
-        #     d[CLT.kARGUMENTS] = [a.cwl() for a in args]
-        #
-        # if self.doc() is not None:
-        #     d[CLT.kDOC] = self.doc()
-        #
-        # return d
 
     def _command(self):
 

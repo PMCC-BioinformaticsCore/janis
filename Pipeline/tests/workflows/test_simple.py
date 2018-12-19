@@ -57,12 +57,11 @@ class TestSimple(unittest.TestCase):
         step3 = Step("tar", Tar())
         outp = Output("output", File())
 
-        w.add_items([inp1, step1, step2, step3, outp])
-        w.add_edge(step1, step3.input2)
         w.add_pipe(inp1, step1, step2, step3.input1, outp)
+        w.add_edge(step1, step3.input2)
 
+        w.dump_cwl(to_disk=True)
         Logger.unmute()
-        # w.dump_cwl(to_disk=True)
 
         return w
 

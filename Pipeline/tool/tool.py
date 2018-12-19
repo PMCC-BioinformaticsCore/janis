@@ -80,13 +80,16 @@ class ToolInput(ToolArgument):
 
     def cwl2(self):
         from cwlgen import CommandInputParameter, CommandLineBinding
+
+        default = self.default if self.default is not None else self.input_type.default()
+
         return CommandInputParameter(
             param_id=self.tag,
             label=self.tag,
             secondary_files=self.input_type.secondary_files(),
             # streamable=False,
             doc=self.doc,
-            default=self.default,
+            default=default,
             input_binding=CommandLineBinding(
                 # load_contents=self.load_contents,
                 position=self.position,

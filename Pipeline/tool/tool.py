@@ -3,7 +3,7 @@ from typing import Optional, List, Dict, Any
 import re
 
 from Pipeline.utils.logger import Logger
-from Pipeline.types.data_types import DataType
+from Pipeline.types.data_types import DataType, NativeTypes
 from Pipeline.translations.cwl.cwl import Cwl
 
 ToolType = str
@@ -42,6 +42,18 @@ class ToolArgument:
 
         return d
 
+    def cwl2(self):
+        from cwlgen import CommandLineBinding
+        return CommandLineBinding(
+            # load_contents=False,
+            position=self.position,
+            prefix=self.prefix,
+            separate=self.separate_value_from_prefix,
+            # item_separator=None,
+            value_from=self.value,
+            # shell_quote=True
+        )
+
     def wdl(self):
         return (self.prefix if self.prefix is not None else "") \
                + (" " if self.separate_value_from_prefix else "") \
@@ -65,6 +77,27 @@ class ToolInput(ToolArgument):
         self.optional = self.input_type.optional
         self.default = default
         self.doc = doc
+
+    def cwl2(self):
+        from cwlgen import CommandInputParameter, CommandLineBinding
+        return CommandInputParameter(
+            param_id=self.tag,
+            label=self.tag,
+            secondary_files=self.input_type.secondary_files(),
+            # streamable=False,
+            doc=self.doc,
+            default=self.default,
+            input_binding=CommandLineBinding(
+                # load_contents=self.load_contents,
+                position=self.position,
+                prefix=self.prefix,
+                separate=self.separate_value_from_prefix
+                # item_separator=self.item_separator,
+                # value_from=self.value_from,
+                # shell_quote=self.shell_quote
+            ),
+            param_type=self.input_type.cwl2_type()
+        )
 
     def cwl(self):
         CLTI = Cwl.CommandLineTool.Inputs
@@ -104,6 +137,23 @@ class ToolOutput:
                 "glob": self.glob
             }
         return d
+
+    def cwl2(self):
+        from cwlgen import CommandOutputParameter, CommandOutputBinding
+        return CommandOutputParameter(
+            param_id=self.tag,
+            label=self.tag,
+            secondary_files=self.output_type.secondary_files(),
+            # param_format=None,
+            # streamable=False,
+            doc=self.doc,
+            output_binding=CommandOutputBinding(
+                glob=self.glob,
+                # load_contents=False,
+                # output_eval=None
+            ),
+            param_type=self.output_type.cwl2_type()
+        )
 
 
 class Tool(ABC):

@@ -283,6 +283,15 @@ class Array(DataType):
     def schema(cls) -> Dict:
         return {"type": "array"}
 
+    def cwl2_type(self):
+        items = NativeTypes.map_to_cwl(self.__t.primitive()) + self.__t._question_mark_if_optional()
+        from cwlgen import CommandInputArraySchema
+        return CommandInputArraySchema(
+            items=items,
+            # label=None,
+            # input_binding=None
+        )
+
     def cwl(self) -> Dict[str, Any]:
         dtype = {
                 "type": NativeTypes.map_to_cwl(NativeTypes.kArray),

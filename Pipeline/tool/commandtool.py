@@ -5,6 +5,7 @@ from typing import List, Dict, Optional, Any
 from Pipeline.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput, ToolTypes
 from Pipeline.translations.cwl.cwl import Cwl
 
+import cwlgen as cwl
 
 class CommandTool(Tool, ABC):
     """
@@ -75,6 +76,35 @@ class CommandTool(Tool, ABC):
     def environment_variables() -> Optional[Dict[str, str]]:
         return None
 
+    def cwl2(self):
+        tool = cwl.CommandLineTool(
+            tool_id=self.id(),
+            base_command=self.base_command(),
+            label=self.id(),
+            doc=self.doc(),
+            cwl_version=Cwl.kCUR_VERSION,
+            stdin=None,
+            stderr=None,
+            stdout=self.stdout()
+        )
+
+        # tool.requirements.extend([
+        #     cwl.Requirement(cwl.InlineJavascriptReq),
+        #     cwl.Requirement(cwl.DockerRequirement(
+        #         docker_pull=self.docker,
+        #         # docker_load=None,
+        #         # docker_file=None,
+        #         # docker_import=None,
+        #         # docker_image_id=None,
+        #         # docker_output_dir=None
+        #     )),
+        # ])
+
+        tool.inputs.extend(i.cwl2() for i in self.inputs())
+        tool.outputs.extend(o.cwl2() for o in self.outputs())
+        tool.arguments.extend(a.cwl2() for a in self.arguments())
+
+        return tool
 
     def cwl(self) -> Dict[str, Any]:
         CLT = Cwl.CommandLineTool

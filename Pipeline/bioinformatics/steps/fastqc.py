@@ -1,3 +1,20 @@
+from Pipeline import CommandTool
+
+
+class FastQC(CommandTool):
+
+    @staticmethod
+    def tool():
+        pass
+
+    @staticmethod
+    def base_command():
+        return "fastqc"
+
+    @staticmethod
+    def docker():
+        return "biocontainers/fastqc:v0.11.5_cv3"
+
 # from typing import Dict
 #
 # from Pipeline import Step, ToolInput, ToolOutput

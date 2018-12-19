@@ -98,7 +98,7 @@ class TestParallel(unittest.TestCase):
         Logger.unmute()
         print(subworkflow.help())
 
-        subworkflow.draw_graph()
+        # subworkflow.draw_graph()
         # subworkflow.dump_cwl(to_disk=True)
 
         return subworkflow
@@ -180,5 +180,5 @@ class TestParallel(unittest.TestCase):
             (step_gatk_mutect2, out_sub_mutect)
         ])
 
-        w.draw_graph()
-        # w.dump_cwl(to_disk=True)
+        # w.draw_graph()
+        w.dump_cwl(to_disk=True)

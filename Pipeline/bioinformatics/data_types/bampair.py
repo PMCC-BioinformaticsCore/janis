@@ -14,5 +14,5 @@ class BamPair(File):
 
     @staticmethod
     def doc():
-        return "A Bam and bai as the sescondary"
+        return "A Bam and bai as the secondary"
 

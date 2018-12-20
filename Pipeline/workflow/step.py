@@ -41,21 +41,37 @@ class Step:
     def tool(self) -> Tool:
         return self.__tool
 
+    # def cwl(self, is_nested_tool=False):
+    #     run_ref = f"{self.tool().id()}.cwl" if is_nested_tool else f"tools/{self.tool().id()}.cwl"
+    #     d = {
+    #         Cwl.Workflow.Step.kID: self.id(),
+    #         CS.kRUN: run_ref,
+    #         CS.kOUT: [o.tag for o in self.tool().outputs()]
+    #     }
+    #
+    #     if self.label:
+    #         d[CS.kLABEL] = self.label
+    #
+    #     if self.doc:
+    #         d[CS.kDOC] = self.doc
+    #
+    #     return d
+
     def cwl(self, is_nested_tool=False):
-        run_ref = f"{self.tool().id()}.cwl" if is_nested_tool else f"tools/{self.tool().id()}.cwl"
-        d = {
-            Cwl.Workflow.Step.kID: self.id(),
-            CS.kRUN: run_ref,
-            CS.kOUT: [o.tag for o in self.tool().outputs()]
-        }
+        import cwlgen
+        run_ref = ("{tool}.cwl" if is_nested_tool else "tools/{tool}.cwl").format(tool=self.tool().id())
+        step = cwlgen.WorkflowStep(
+            step_id=self.id(),
+            run=run_ref,
+            label=self.label,
+            doc=self.doc,
+            scatter=None,           # Filled by StepNode
+            scatter_method=None     # Filled by StepNode
+        )
 
-        if self.label:
-            d[CS.kLABEL] = self.label
+        step.out = [cwlgen.WorkflowStepOutput(output_id=o.tag) for o in self.tool().outputs()]
 
-        if self.doc:
-            d[CS.kDOC] = self.doc
-
-        return d
+        return step
 
     def __getattr__(self, item):
         if item in self.__dict__:
@@ -94,21 +110,15 @@ class StepNode(Node):
         raise AttributeError(f"type object '{type(self)}' has no attribute '{item}'")
 
     def cwl(self, is_nested_tool=False):
-        """
-        :param is_nested_tool: changes the run reference from tools/toolName.cwl -> toolName.cwl
-        :return:
-        """
+        import cwlgen
+
+        step = self.step.cwl(is_nested_tool)
+
         ins = self.inputs()
         scatterable = []
 
-        dd = {
-            **self.step.cwl(is_nested_tool=is_nested_tool),
-            CS.kIN: []
-        }
-
         for k in ins:
             inp = ins[k]
-            d = {CS.StepInput.kID: k}
             if k not in self.connection_map:
                 if inp.input_type.optional:
                     continue
@@ -117,21 +127,69 @@ class StepNode(Node):
                                     f"could not find required connection: '{k}'")
 
             edge = self.connection_map[k]
-            d[CS.StepInput.kSOURCE] = edge.source()
+            d = cwlgen.WorkflowStepInput(
+                input_id=inp.tag,
+                source=edge.source(),
+                link_merge=None,
+                default=None,
+                value_from=None
+            )
+
             if edge.scatter:
                scatterable.append(k)
             inp_t = self.inputs()[k].input_type
             if isinstance(inp_t, Filename):
-                d[CS.StepInput.kDEFAULT] = inp_t.generated_filename(self.step.id())
-            dd[CS.kIN].append(d)
+                d.default = inp_t.generated_filename(self.step.id())
+            step.inputs.append(d)
 
         if len(scatterable) > 0:
             if len(scatterable) > 1:
-                Logger.info(f"Discovered more than one scatterable field on step '{self.id()}', "
-                            f"deciding scatterMethod to be dot_product")
-                dd[CS.kSCATTER_METHOD] = CS.ScatterMethod.kDOT_PRODUCT
-            dd[CS.kSCATTER] = scatterable
-        return dd
+                Logger.info("Discovered more than one scatterable field on step '{step_id}', "
+                            "deciding scatterMethod to be dot_product".format(step_id=self.id()))
+                step.scatterMethod = CS.ScatterMethod.kDOT_PRODUCT
+            step.scatter = scatterable
+        return step
+
+
+    # def cwl(self, is_nested_tool=False):
+    #     """
+    #     :param is_nested_tool: changes the run reference from tools/toolName.cwl -> toolName.cwl
+    #     :return:
+    #     """
+    #     ins = self.inputs()
+    #     scatterable = []
+    #
+    #     dd = {
+    #         **self.step.cwl(is_nested_tool=is_nested_tool),
+    #         CS.kIN: []
+    #     }
+    #
+    #     for k in ins:
+    #         inp = ins[k]
+    #         d = {CS.StepInput.kID: k}
+    #         if k not in self.connection_map:
+    #             if inp.input_type.optional:
+    #                 continue
+    #             else:
+    #                 raise Exception(f"Error when building connections for step '{self.id()}', "
+    #                                 f"could not find required connection: '{k}'")
+    #
+    #         edge = self.connection_map[k]
+    #         d[CS.StepInput.kSOURCE] = edge.source()
+    #         if edge.scatter:
+    #            scatterable.append(k)
+    #         inp_t = self.inputs()[k].input_type
+    #         if isinstance(inp_t, Filename):
+    #             d[CS.StepInput.kDEFAULT] = inp_t.generated_filename(self.step.id())
+    #         dd[CS.kIN].append(d)
+    #
+    #     if len(scatterable) > 0:
+    #         if len(scatterable) > 1:
+    #             Logger.info(f"Discovered more than one scatterable field on step '{self.id()}', "
+    #                         f"deciding scatterMethod to be dot_product")
+    #             dd[CS.kSCATTER_METHOD] = CS.ScatterMethod.kDOT_PRODUCT
+    #         dd[CS.kSCATTER] = scatterable
+    #     return dd
 
 
     def wdl_map(self) -> List[str]:

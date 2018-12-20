@@ -22,21 +22,36 @@ class Output:
     def id(self) -> str:
         return self._identifier
 
-    def cwl(self, output_source: str):
-        d: Dict[str, Any] = {}
+    def cwl(self, output_source):
+        import cwlgen
+        return cwlgen.WorkflowOutputParameter(
+            param_id=self.id(),
+            output_source=output_source,
+            label=self.label,
+            secondary_files=self.data_type.secondary_files(),
+            param_format=None,
+            streamable=False,
+            doc=self.doc,
+            param_type=self.data_type.cwl2_type(),
+            output_binding=None,
+            linkMerge=None
+        )
 
-        if self.data_type is not None:
-            d.update(self.data_type.cwl())
-
-        d[Cwl.Workflow.Output.kID] = self._identifier
-        d[Cwl.Workflow.Output.kOUTPUT_SOURCE] = output_source
-
-        if self.label:
-            d[Cwl.Workflow.kLABEL] = self.label
-        if self.doc:
-            d[Cwl.Workflow.kDOC] = self.doc
-
-        return d
+    # def cwl(self, output_source: str):
+    #     d: Dict[str, Any] = {}
+    #
+    #     if self.data_type is not None:
+    #         d.update(self.data_type.cwl())
+    #
+    #     d[Cwl.Workflow.Output.kID] = self._identifier
+    #     d[Cwl.Workflow.Output.kOUTPUT_SOURCE] = output_source
+    #
+    #     if self.label:
+    #         d[Cwl.Workflow.kLABEL] = self.label
+    #     if self.doc:
+    #         d[Cwl.Workflow.kDOC] = self.doc
+    #
+    #     return d
 
 
 class OutputNode(Node):

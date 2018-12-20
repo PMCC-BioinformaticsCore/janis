@@ -54,7 +54,7 @@ class ToolInput(ToolArgument):
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
         """
-        super().__init__("", prefix, position, separate_value_from_prefix)
+        super().__init__("", prefix, 0, separate_value_from_prefix)
 
         if default is not None:
             input_type.optional = True
@@ -144,7 +144,7 @@ class Tool(ABC):
         return {outp.tag: outp for outp in self.outputs()}
 
     @abstractmethod
-    def cwl(self):
+    def cwl(self) -> Dict[str, Any]:
         raise Exception("Must implement cwl() method")
 
     @staticmethod

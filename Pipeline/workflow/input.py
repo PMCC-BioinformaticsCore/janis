@@ -26,17 +26,31 @@ class Input:
         return self._identifier
 
     def cwl(self):
-        d = {
-            W.kID: self._identifier,
-            **self.data_type.cwl()
-        }
+        import cwlgen as cwl
 
-        if self.label:
-            d[W.kLABEL] = self.label
-        if self.doc:
-            d[W.kDOC] = self.doc
+        return cwl.InputParameter(
+            param_id=self._identifier,
+            label=self.label,
+            secondary_files=self.data_type.secondary_files(),
+            param_format=None,
+            streamable=False,
+            doc=self.doc,
+            input_binding=None,
+            param_type=self.data_type.cwl2_type()
+        )
 
-        return d
+    # def cwl(self):
+    #     d = {
+    #         W.kID: self._identifier,
+    #         **self.data_type.cwl()
+    #     }
+    #
+    #     if self.label:
+    #         d[W.kLABEL] = self.label
+    #     if self.doc:
+    #         d[W.kDOC] = self.doc
+    #
+    #     return d
 
     def cwl_input(self):
         return self.data_type.cwl_input(self.value)
@@ -48,7 +62,7 @@ class Input:
 class InputNode(Node):
 
     def __init__(self, inp: Input):
-        super().__init__(NodeTypes.INPUT, inp.id())
+        Node.__init__(self, NodeTypes.INPUT, inp.id())
         self.input: Input = inp
 
     def outputs(self) -> Dict[str, ToolOutput]:

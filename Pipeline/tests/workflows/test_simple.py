@@ -51,7 +51,7 @@ class TestSimple(unittest.TestCase):
         Logger.mute()
         w = Workflow("simple")
 
-        inp1 = Input("tarFile", TarFile())
+        inp1 = Input("tarFile", TarFile(), "/Users/franklinmichael/source/simple-workflow/hello.tar")
         step1 = Step("untar", Untar())
         step2 = Step("compile", Compile())
         step3 = Step("tar", Tar())

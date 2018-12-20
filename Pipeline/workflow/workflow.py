@@ -528,35 +528,21 @@ class Workflow(Tool):
         Logger.info(f"Guessed the connection between nodes '{s_node.id()}")
         return matching_types[0]
 
-    def cwl(self, is_nested_tool=False) -> Tuple[Dict[str, Any], Dict[str, Any], List[Dict[str, Any]]]:
-        # Let's try to emit CWL
-        d = {
-            Cwl.kCLASS: Cwl.Class.kWORKFLOW,
-            Cwl.kCWL_VERSION: Cwl.kCUR_VERSION,
-            Cwl.Workflow.kID: self.identifier,
-            Cwl.Workflow.kREQUIREMENTS: [
-                {Cwl.Requirements.kCLASS: Cwl.Requirements.kJAVASCRIPT}
-            ]
-        }
+    def cwl(self, is_nested_tool=False):
+        import cwlgen
+
+        w = cwlgen.Workflow(self.identifier, self.label, self.doc)
+
+        w.inputs = [i.cwl() for i in self._inputs]
+        w.steps = [s.cwl() for s in self._steps]
+        w.outputs = [o.cwl() for o in self._outputs]
+
+        w.requirements.append(cwlgen.InlineJavascriptReq())
 
         if self.has_scatter:
-            d[Cwl.Workflow.kREQUIREMENTS].append({Cwl.Requirements.kCLASS: Cwl.Requirements.kSCATTER})
+            w.requirements.append(cwlgen.ScatterFeatureRequirement())
         if self.has_subworkflow:
-            d[Cwl.Workflow.kREQUIREMENTS].append(({Cwl.Requirements.kCLASS: Cwl.Requirements.kSUBWORKFLOW}))
-
-        if self.label:
-            d[Cwl.Workflow.kLABEL] = self.label
-        if self.doc:
-            d[Cwl.Workflow.kDOC] = self.doc
-
-        if self._inputs:
-            d[Cwl.Workflow.kINPUTS] = [i.cwl() for i in self._inputs]
-
-        if self._outputs:
-            d[Cwl.Workflow.kOUTPUTS] = [o.cwl() for o in self._outputs]
-
-        if self._steps:
-            d[Cwl.Workflow.kSTEPS] = {s.id(): s.cwl(is_nested_tool=is_nested_tool) for s in self._steps}
+            w.requirements.append(cwlgen.SubworkflowFeatureRequirement())
 
         tools = []
         tools_to_build: Dict[str, Tool] = {s.step.tool().id(): s.step.tool() for s in self._steps}
@@ -571,7 +557,54 @@ class Workflow(Tool):
 
         inp = {i.id(): i.input.cwl_input() for i in self._inputs}
 
-        return d, inp, tools
+        return w.get_dict(), inp, tools
+
+    # def cwl(self, is_nested_tool=False) -> Tuple[Dict[str, Any], Dict[str, Any], List[Dict[str, Any]]]:
+    #     import cwlgen as cwl
+    #     w = cwl.Workflow()
+    #     # Let's try to emit CWL
+    #     d = {
+    #         Cwl.kCLASS: Cwl.Class.kWORKFLOW,
+    #         Cwl.kCWL_VERSION: Cwl.kCUR_VERSION,
+    #         Cwl.Workflow.kID: self.identifier,
+    #         Cwl.Workflow.kREQUIREMENTS: [
+    #             {Cwl.Requirements.kCLASS: Cwl.Requirements.kJAVASCRIPT}
+    #         ]
+    #     }
+    #
+    #     if self.has_scatter:
+    #         d[Cwl.Workflow.kREQUIREMENTS].append({Cwl.Requirements.kCLASS: Cwl.Requirements.kSCATTER})
+    #     if self.has_subworkflow:
+    #         d[Cwl.Workflow.kREQUIREMENTS].append(({Cwl.Requirements.kCLASS: Cwl.Requirements.kSUBWORKFLOW}))
+    #
+    #     if self.label:
+    #         d[Cwl.Workflow.kLABEL] = self.label
+    #     if self.doc:
+    #         d[Cwl.Workflow.kDOC] = self.doc
+    #
+    #     if self._inputs:
+    #         d[Cwl.Workflow.kINPUTS] = [i.cwl() for i in self._inputs]
+    #
+    #     if self._outputs:
+    #         d[Cwl.Workflow.kOUTPUTS] = [o.cwl() for o in self._outputs]
+    #
+    #     if self._steps:
+    #         d[Cwl.Workflow.kSTEPS] = {s.id(): s.cwl(is_nested_tool=is_nested_tool) for s in self._steps}
+    #
+    #     tools = []
+    #     tools_to_build: Dict[str, Tool] = {s.step.tool().id(): s.step.tool() for s in self._steps}
+    #     for t in tools_to_build:
+    #         tool: Tool = tools_to_build[t]
+    #         if isinstance(tool, Workflow):
+    #             wf_cwl, _, subtools = tool.cwl(is_nested_tool=True)
+    #             tools.append(wf_cwl)
+    #             tools.extend(subtools)
+    #         else:
+    #             tools.append(tool.cwl())
+    #
+    #     inp = {i.id(): i.input.cwl_input() for i in self._inputs}
+    #
+    #     return d, inp, tools
 
     def wdl(self):
 

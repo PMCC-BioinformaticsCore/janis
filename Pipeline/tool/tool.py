@@ -48,13 +48,13 @@ class ToolArgument:
 
 
 class ToolInput(ToolArgument):
-    def __init__(self, tag: str, input_type: DataType, position: Optional[int] = 0, prefix: Optional[str] = None,
+    def __init__(self, tag: str, input_type: DataType, position: Optional[int] = None, prefix: Optional[str] = None,
                  separate_value_from_prefix: bool = True, default: Any = None, doc: Optional[str]=None):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
         """
-        super().__init__("", prefix, 0, separate_value_from_prefix)
+        super().__init__("", prefix, position, separate_value_from_prefix)
 
         if default is not None:
             input_type.optional = True
@@ -115,7 +115,7 @@ class ToolOutput:
         )
 
 
-class Tool(ABC):
+class Tool(ABC, object):
     """
     One of Workflow, CommandLineTool, ExpressionTool* (* unimplemented)
     """

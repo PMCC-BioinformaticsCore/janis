@@ -174,7 +174,7 @@ task {self.wdl_name()} {{
         import inspect
         path = inspect.getfile(self.__class__)
 
-        ins = sorted(self.inputs(), key=lambda i: i.position)
+        ins = sorted(self.inputs(), key=lambda i: i.position if i.position is not None else 0)
 
         prefixes = " -" + "".join(i.prefix.replace("-", "").replace(" ", "") for i in ins if i.prefix is not None)
 

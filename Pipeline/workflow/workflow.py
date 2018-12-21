@@ -528,7 +528,7 @@ class Workflow(Tool):
         Logger.info(f"Guessed the connection between nodes '{s_node.id()}")
         return matching_types[0]
 
-    def cwl(self, is_nested_tool=False):
+    def cwl(self, is_nested_tool=False, with_docker=True):
         import cwlgen
 
         w = cwlgen.Workflow(self.identifier, self.label, self.doc)
@@ -549,11 +549,11 @@ class Workflow(Tool):
         for t in tools_to_build:
             tool: Tool = tools_to_build[t]
             if isinstance(tool, Workflow):
-                wf_cwl, _, subtools = tool.cwl(is_nested_tool=True)
+                wf_cwl, _, subtools = tool.cwl(is_nested_tool=True, with_docker=with_docker)
                 tools.append(wf_cwl)
                 tools.extend(subtools)
             else:
-                tools.append(tool.cwl())
+                tools.append(tool.cwl(with_docker=with_docker))
 
         inp = {i.id(): i.input.cwl_input() for i in self._inputs}
 
@@ -687,9 +687,9 @@ workflow {self.identifier} {{
 
         return workflow, inp, tools
 
-    def dump_cwl(self, to_disk: False):
+    def dump_cwl(self, to_disk: False, with_docker: True):
         import os, yaml
-        cwl_data, inp_data, tools_ar = self.cwl()
+        cwl_data, inp_data, tools_ar = self.cwl(with_docker=with_docker)
 
         d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/cwl/"
         d_tools = d + "tools/"

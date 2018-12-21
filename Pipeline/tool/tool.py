@@ -144,7 +144,7 @@ class Tool(ABC):
         return {outp.tag: outp for outp in self.outputs()}
 
     @abstractmethod
-    def cwl(self) -> Dict[str, Any]:
+    def cwl(self, with_docker=True) -> Dict[str, Any]:
         raise Exception("Must implement cwl() method")
 
     @staticmethod

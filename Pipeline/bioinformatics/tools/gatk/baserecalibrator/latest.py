@@ -1,0 +1,3 @@
+from Pipeline.bioinformatics.tools.gatk.baserecalibrator.baserecalibrator_4_0 import GatkBaseRecalibrator_4_0
+
+GatkBaseRecalibratorLatest = GatkBaseRecalibrator_4_0

@@ -76,7 +76,7 @@ class CommandTool(Tool, ABC):
     def environment_variables() -> Optional[Dict[str, str]]:
         return None
 
-    def cwl(self) -> cwl.CommandLineTool:
+    def cwl(self, with_docker=True) -> Dict[str, Any]:
         tool = cwl.CommandLineTool(
             tool_id=self.id(),
             base_command=self.base_command(),
@@ -89,16 +89,18 @@ class CommandTool(Tool, ABC):
         )
 
         tool.requirements.extend([
-            cwl.InlineJavascriptReq(),
-            cwl.DockerRequirement(
+            cwl.InlineJavascriptReq()
+        ])
+
+        if with_docker:
+            tool.requirements.append(cwl.DockerRequirement(
                 docker_pull=self.docker(),
                 # docker_load=None,
                 # docker_file=None,
                 # docker_import=None,
                 # docker_image_id=None,
                 # docker_output_dir=None
-            ),
-        ])
+            ))
 
         tool.inputs.extend(i.cwl() for i in self.inputs())
         tool.outputs.extend(o.cwl() for o in self.outputs())

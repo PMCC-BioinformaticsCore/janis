@@ -1,6 +1,6 @@
 from abc import ABC
 
-from Pipeline import ToolInput, Array, Filename
+from Pipeline import ToolInput, Array, Filename, ToolArgument
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
@@ -24,6 +24,12 @@ class GatkMutect2Base(GatkBase, ABC):
             ToolInput("dbsnp", Array(VcfIdx()), position=10, prefix="--dbsnp"),
             ToolInput("cosmic", Array(VcfIdx()), position=11, prefix="--cosmic"),
             ToolInput("outputfile_name", Filename(), position=9, prefix="-o")
+        ]
+
+    def arguments(self):
+        return [
+            *super(GatkMutect2Base, self).arguments(),
+            ToolArgument("MuTect2", position=4, prefix="-T")
         ]
 
     additional_args = []

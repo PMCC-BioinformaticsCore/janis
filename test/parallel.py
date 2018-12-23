@@ -122,7 +122,7 @@ steps:
         reads: bwa_tumor_reads 
         reference: bwa_ref
         threads: bwa_threads
-        
+         
     sam-view-tumor:
         tool: samtools-view
         input: bwa-mem-tumor/out

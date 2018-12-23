@@ -1,31 +1,15 @@
+from abc import ABC
+
+from Pipeline import CommandTool, ToolInput, File, ToolOutput, ToolArgument, Array, String, Boolean
 from Pipeline.bioinformatics.data_types.bai import Bai
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
-from Pipeline import File, String, CommandTool, ToolOutput, ToolInput, ToolArgument, Array, Int, Boolean
+from Pipeline.bioinformatics.tools.gatk.gatkbase import GatkBase
 
 
-# class GatkPrintReads(CommandTool):
-#     inputBam_printReads = ToolInput("inputBam_printReads", Bam())
-#     input_baseRecalibrator = ToolInput("input_baseRecalibrator", File())
-#     reference = ToolInput("reference", Fasta())
-#     outputfile_printReads = ToolInput("outputfile_printReads", String())
-#     bedFile = ToolInput("bedFile", Bed())
-#
-#     out = ToolOutput("out", File())
-#     out_idx = ToolOutput("out_idx", File())
-#
-#     @staticmethod
-#     def tool():
-#         return "gatk-printreads"
-#
-#     @staticmethod
-#     def base_command():
-#         return "javac"
-
-
-class GatkPrintReads(CommandTool):
+class GatkPrintReadsBase(GatkBase, ABC):
     reference = ToolInput("reference", FastaWithDict(), position=5, prefix="-R")
     input_baseRecalibrator = ToolInput("input_baseRecalibrator", File(), position=7, prefix="-BQSR",
                                        doc="the recalibration table produced by BaseRecalibration")
@@ -43,14 +27,6 @@ class GatkPrintReads(CommandTool):
         return "GatkPrintReads"
 
     @staticmethod
-    def base_command():
-        return ['java']
-
-    @staticmethod
-    def docker():
-        return "broadinstitute/gatk3:3.7-0"
-
-    @staticmethod
     def doc():
         return "GATK-RealignTargetCreator.cwl is developed for CWL consortiumPrints all reads that have a mapping " \
                "quality above zero  Usage: java -Xmx4g -jar GenomeAnalysisTK.jar -T PrintReads -R reference.fasta " \
@@ -59,7 +35,6 @@ class GatkPrintReads(CommandTool):
     def arguments(self):
         return [
             ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir=", separate_value_from_prefix=False),
-            ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
             ToolArgument("PrintReads", position=4, prefix="-T"),
             ToolArgument("--filter_bases_not_stored", position=20)
         ]
@@ -84,4 +59,4 @@ class GatkPrintReads(CommandTool):
 
 
 if __name__ == "__main__":
-    print(GatkPrintReads().help())
+    print(GatkPrintReadsBase().help())

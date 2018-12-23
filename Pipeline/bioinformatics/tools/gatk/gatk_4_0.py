@@ -1,6 +1,5 @@
 from abc import ABC
 
-from Pipeline import CommandTool, ToolInput, Boolean
 from Pipeline.bioinformatics.tools.gatk.gatkbase import GatkBase
 
 

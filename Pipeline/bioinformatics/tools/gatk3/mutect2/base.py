@@ -5,18 +5,23 @@ from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx
-from Pipeline.bioinformatics.tools.gatk.gatktoolbase import GatkToolBase
+from Pipeline.bioinformatics.tools.gatk3.gatk3toolbase import Gatk3ToolBase
 
 
-class GatkMutect2Base(GatkToolBase, ABC):
+class Gatk3Mutect2Base(Gatk3ToolBase, ABC):
+
+    @staticmethod
+    def analysis_type():
+        return "MuTect2"
+
     @staticmethod
     def tool():
         return "gatkmutect2"
 
     def inputs(self):
         return [
-            *super(GatkMutect2Base, self).inputs(),
-            *GatkMutect2Base.additional_args,
+            *super(Gatk3Mutect2Base, self).inputs(),
+            *Gatk3Mutect2Base.additional_args,
             ToolInput("inputBam_tumor", BamPair(), position=5, prefix="-I:Tumor",
                       doc="BAM/SAM/CRAM file containing reads, tagged as a 'Tumor'"),
             ToolInput("inputBam_normal", BamPair(), position=6, prefix="-I:Normal",
@@ -25,19 +30,19 @@ class GatkMutect2Base(GatkToolBase, ABC):
                       doc="One or more genomic intervals over which to operate (previously, .bedFile)"),
             ToolInput("reference", FastaWithDict(), position=8, prefix="-R", doc="Reference sequence file"),
             ToolInput("dbsnp", Array(VcfIdx()), position=10, prefix="--dbsnp"),
-            ToolInput("cosmic", Array(VcfIdx()), position=11, prefix="--cosmic"),   # idk about this?
-            ToolInput("outputFilename", Filename(), position=9, prefix="-o")
+            ToolInput("cosmic", Array(VcfIdx()), position=11, prefix="--cosmic",
+                      doc="MuTect2 has the ability to use COSMIC data in conjunction with dbSNP to adjust the "
+                          "threshold for evidence of a variant in the normal. If a variant is present in dbSNP, "
+                          "but not in COSMIC, then more evidence is required from the normal sample to prove the "
+                          "variant is not present in germline. This argument supports reference-ordered data (ROD) "
+                          "files in the following formats: BCF2, VCF, VCF3"),
+            ToolInput("outputFilename", Filename(), position=9, prefix="-o",
+                      doc="File to which variants should be written (default: stdout)")
         ]
 
     def outputs(self):
         return [
-            ToolOutput("output", File(), glob="")
-        ]
-
-    def arguments(self):
-        return [
-            *super(GatkMutect2Base, self).arguments(),
-            ToolArgument("MuTect2", position=4, prefix="-T")
+            ToolOutput("output", File(), glob="$(inputs.outputFilename)")
         ]
 
     additional_args = []
@@ -45,21 +50,15 @@ class GatkMutect2Base(GatkToolBase, ABC):
     @staticmethod
     def doc():
         return """
-    Call somatic short variants via local assembly of haplotypes. Short variants include single nucleotide (SNV) 
-    and insertion and deletion (indel) variants. The caller combines the DREAM challenge-winning somatic 
-    genotyping engine of the original MuTect (Cibulskis et al., 2013) with the assembly-based machinery of HaplotypeCaller.
-
-    This tool is featured in the Somatic Short Mutation calling Best Practice Workflow. See Tutorial#11136 
-    for a step-by-step description of the workflow and Article#11127 for an overview of what traditional 
-    somatic calling entails. For the latest pipeline scripts, see the Mutect2 WDL scripts directory. 
-    Although we present the tool for somatic calling, it may apply to other contexts, 
-    such as mitochondrial variant calling.
+    MuTect2 is a somatic SNP and indel caller that combines the DREAM challenge-winning somatic genotyping 
+    engine of the original MuTect (Cibulskis et al., 2013) with the assembly-based machinery of HaplotypeCaller.
     
-    Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php
+    Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/3.8-0/org_broadinstitute_gatk_tools_walkers_cancer_m2_MuTect2.php
 """.strip()
 
+
 if __name__ == "__main__":
-    print(GatkMutect2Base().help())
+    print(Gatk3Mutect2Base().help())
 
 
 

@@ -1,16 +1,19 @@
 from abc import ABC
 
-from Pipeline.bioinformatics.data_types.bam import Bam
-from Pipeline.bioinformatics.data_types.bampair import BamPair
-from Pipeline.bioinformatics.data_types.bed import Bed
-from Pipeline import String, Int, File, CommandTool, ToolOutput, ToolInput, \
+from Pipeline import String, Int, File, ToolOutput, ToolInput, \
     ToolArgument, Boolean, Double, Array, Filename
+from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx, Vcf
-from Pipeline.bioinformatics.tools.gatk.gatk4base import Gatk4Base
+from Pipeline.bioinformatics.tools.gatk.gatktoolbase import GatkToolBase
 
 
-class GatkHaplotypeCallerBase(Gatk4Base, ABC):
+class GatkHaplotypeCallerBase(GatkToolBase, ABC):
+
+    @staticmethod
+    def tool():
+        return "GatkHaplotypeCaller"
 
     def inputs(self):
         return [
@@ -39,10 +42,6 @@ class GatkHaplotypeCallerBase(Gatk4Base, ABC):
             ToolOutput("bamOut", Bam(), glob='$(inputs.bamOutput)',
                        doc="File to which assembled haplotypes should be written")
         ]
-
-    @staticmethod
-    def tool():
-        return "GatkHaplotypeCaller"
 
 
     # def base_command(self):
@@ -226,7 +225,5 @@ class GatkHaplotypeCallerBase(Gatk4Base, ABC):
 
 
 if __name__ == "__main__":
-    import yaml
-
     print(GatkHaplotypeCallerBase().help())
     # print(yaml.dump(GatkHaplotypeCaller().cwl(), default_flow_style=False))

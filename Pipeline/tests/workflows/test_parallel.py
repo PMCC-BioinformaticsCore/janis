@@ -6,15 +6,15 @@ from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fasta import Fasta
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.fastq import Fastq
-from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
-from Pipeline.bioinformatics.steps.bwa_mem import BwaMem
-from Pipeline.bioinformatics.steps.gatk_base_recalibrator import GatkRecalibrator
-from Pipeline.bioinformatics.steps.gatk_haplotypecaller import GatkHaplotypeCaller
-from Pipeline.bioinformatics.steps.gatk_mutect import GatkMutect2
-from Pipeline.bioinformatics.steps.gatk_printreads import GatkPrintReads
-from Pipeline.bioinformatics.steps.picard_markdup import PicardMarkDup
-from Pipeline.bioinformatics.steps.picard_sortsam import PicardSortSam
-from Pipeline.bioinformatics.steps.samtools import SamTools
+from Pipeline.bioinformatics.data_types.vcf import VcfIdx
+from Pipeline.bioinformatics.tools.bwa_mem import BwaMem
+# from Pipeline.bioinformatics.tools.gatk_base_recalibrator import GatkRecalibratorLatest
+# from Pipeline.bioinformatics.tools.gatk_haplotypecaller import GatkHaplotypeCaller
+# from Pipeline.bioinformatics.tools.gatk_mutect import GatkMutect2
+# from Pipeline.bioinformatics.tools.gatk_printreads import GatkPrintReads
+from Pipeline.bioinformatics.tools.picard_markdup import PicardMarkDup
+from Pipeline.bioinformatics.tools.picard_sortsam import PicardSortSam
+from Pipeline.bioinformatics.tools.samtools import SamTools
 
 
 class TestParallel(unittest.TestCase):
@@ -98,7 +98,7 @@ class TestParallel(unittest.TestCase):
         Logger.unmute()
         print(subworkflow.help())
 
-        # subworkflow.draw_graph()
+        subworkflow.draw_graph()
         # subworkflow.dump_cwl(to_disk=True)
 
         return subworkflow

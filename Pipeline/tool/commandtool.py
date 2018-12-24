@@ -178,6 +178,8 @@ task {self.wdl_name()} {{
 
         prefixes = " -" + "".join(i.prefix.replace("-", "").replace(" ", "") for i in ins if i.prefix is not None)
 
+        docker = self.docker()
+
         command = (self.base_command() if isinstance(self.base_command(), str) else " ".join(self.base_command())) \
                   + prefixes
 
@@ -198,8 +200,12 @@ task {self.wdl_name()} {{
     Pipeline tool: {path} ({self.id()})
 NAME
     {self.id()}
+
 SYNOPSIS
     {command}
+
+DOCKER
+    {docker}
 
 DESCRIPTION
     {self.doc() if self.doc is not None else "No documentation provided"}

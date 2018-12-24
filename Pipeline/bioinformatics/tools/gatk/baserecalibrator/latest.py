@@ -1,6 +1,9 @@
 from Pipeline.bioinformatics.tools.gatk.gatk_latest import GatkLatest
-from Pipeline.bioinformatics.tools.gatk.gatk_base_recalibrator import GatkRecalibratorBase
+from Pipeline.bioinformatics.tools.gatk.baserecalibrator.base import GatkRecalibratorBase
 
 
-class GatkBaseRecalibratorLatest(GatkLatest, GatkRecalibratorBase):
+class GatkRecalibratorLatest(GatkLatest, GatkRecalibratorBase):
     pass
+
+if __name__ == "__main__":
+    print(GatkRecalibratorLatest().help())

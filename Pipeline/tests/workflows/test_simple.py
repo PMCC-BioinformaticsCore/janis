@@ -60,6 +60,7 @@ class TestSimple(unittest.TestCase):
         w.add_pipe(inp1, step1, step2, step3.input1, outp)
         w.add_edge(step1, step3.input2)
 
+        w.draw_graph()
         w.dump_cwl(to_disk=True)
         Logger.unmute()
 

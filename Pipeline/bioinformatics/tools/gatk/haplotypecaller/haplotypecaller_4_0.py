@@ -4,3 +4,7 @@ from Pipeline.bioinformatics.tools.gatk.haplotypecaller.base import GatkHaplotyp
 
 class GatkHaplotypeCaller_4_0(Gatk_4_0, GatkHaplotypeCallerBase):
     pass
+
+
+if __name__ == "__main__":
+    print(GatkHaplotypeCaller_4_0().help())

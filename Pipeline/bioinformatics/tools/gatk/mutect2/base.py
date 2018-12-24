@@ -1,14 +1,14 @@
 from abc import ABC
 
-from Pipeline import ToolInput, Array, Filename, ToolArgument
+from Pipeline import ToolInput, Array, Filename, ToolArgument, ToolOutput
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
-from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
-from Pipeline.bioinformatics.tools.gatk.gatkbase import GatkBase
+from Pipeline.bioinformatics.data_types.vcf import VcfIdx
+from Pipeline.bioinformatics.tools.gatk.gatk4base import Gatk4Base
 
 
-class GatkMutect2Base(GatkBase, ABC):
+class GatkMutect2Base(Gatk4Base, ABC):
     @staticmethod
     def tool():
         return "gatkmutect2"
@@ -17,13 +17,21 @@ class GatkMutect2Base(GatkBase, ABC):
         return [
             *super(GatkMutect2Base, self).inputs(),
             *GatkMutect2Base.additional_args,
-            ToolInput("inputBam_tumor", BamPair(), position=5, prefix="-I:Tumor"),
-            ToolInput("inputBam_normal", BamPair(), position=6, prefix="-I:Normal"),
-            ToolInput("bedFile", Bed(), position=7, prefix="-L"),
-            ToolInput("reference", FastaWithDict(), position=8, prefix="-R"),
+            ToolInput("inputBam_tumor", BamPair(), position=5, prefix="-I:Tumor",
+                      doc="BAM/SAM/CRAM file containing reads, tagged as a 'Tumor'"),
+            ToolInput("inputBam_normal", BamPair(), position=6, prefix="-I:Normal",
+                      doc="BAM/SAM/CRAM file containing reads, tagged as a 'Normal'"),
+            ToolInput("intervals", Bed(), position=7, prefix="-L",
+                      doc="One or more genomic intervals over which to operate (previously, .bedFile)"),
+            ToolInput("reference", FastaWithDict(), position=8, prefix="-R", doc="Reference sequence file"),
             ToolInput("dbsnp", Array(VcfIdx()), position=10, prefix="--dbsnp"),
-            ToolInput("cosmic", Array(VcfIdx()), position=11, prefix="--cosmic"),
-            ToolInput("outputfile_name", Filename(), position=9, prefix="-o")
+            ToolInput("cosmic", Array(VcfIdx()), position=11, prefix="--cosmic"),   # idk about this?
+            ToolInput("outputFilename", Filename(), position=9, prefix="-o")
+        ]
+
+    def outputs(self):
+        return [
+            ToolOutput("output", File(), glob="")
         ]
 
     def arguments(self):

@@ -1,9 +1,9 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from Pipeline import CommandTool, ToolInput, Boolean, ToolArgument
 
 
-class GatkBase(CommandTool, ABC):
+class Gatk4Base(CommandTool, ABC):
 
     @staticmethod
     def base_command():
@@ -16,8 +16,10 @@ class GatkBase(CommandTool, ABC):
         ]
 
     @staticmethod
+    @abstractmethod
     def docker():
-        raise Exception("An error likely occurred when resolving the method order for docker for the Gatk classes. "
+        raise Exception("An error likely occurred when resolving the method order for docker for the Gatk classes "
+                        "or you're trying to execute the docker method of the base class (ie, don't do that). "
                         "The method order resolution must preference Gatkbase subclasses, "
                         "and the subclass must contain a definition for docker.")
 

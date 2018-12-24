@@ -4,21 +4,21 @@ from Pipeline import ToolArgument, ToolInput, ToolOutput, Filename, Array, File,
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
-from Pipeline.bioinformatics.data_types.vcfidx import VcfIdx
-from Pipeline.bioinformatics.tools.gatk.gatkbase import GatkBase
+from Pipeline.bioinformatics.data_types.vcf import VcfIdx
+from Pipeline.bioinformatics.tools.gatk.gatktoolbase import GatkToolBase
 
 
-class GatkBaseRecalibratorBase(GatkBase, ABC):
+class GatkRecalibratorBase(GatkToolBase, ABC):
     output = ToolOutput("output", File(), glob='$(inputs.outputFile)')
 
     @staticmethod
     def tool():
-        return "gatkBaseRecalibrator"
+        return "GatkBaseRecalibrator"
 
     def inputs(self):
         return [
-            *super(GatkBaseRecalibratorBase, self).inputs(),
-            *GatkBaseRecalibratorBase.additional_args,
+            *super(GatkRecalibratorBase, self).inputs(),
+            *GatkRecalibratorBase.additional_args,
 
             ToolInput("input", BamPair(), position=6, prefix="-I", doc="BAM/SAM/CRAM file containing reads"),
             ToolInput("knownSites", Array(VcfIdx()), prefix="--knownSites", position=28,
@@ -62,7 +62,7 @@ class GatkBaseRecalibratorBase(GatkBase, ABC):
 
     def arguments(self):
         return [
-            *super(GatkBaseRecalibratorBase, self).arguments(),
+            *super(GatkRecalibratorBase, self).arguments(),
             ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir=", separate_value_from_prefix=False),
             ToolArgument("BaseRecalibrator", position=4, prefix="-T"),
             ToolArgument("--filter_bases_not_stored", position=30)
@@ -132,6 +132,5 @@ class GatkBaseRecalibratorBase(GatkBase, ABC):
         ToolInput("threads", Int(optional=True), position=26, prefix="-nct", default=4)
     ]
 
-
 if __name__ == "__main__":
-    print(GatkBaseRecalibratorBase().help())
+    print(GatkRecalibratorBase().help())

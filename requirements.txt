@@ -1,4 +1,3 @@
-cwlgen
 matplotlib
 Cerberus==1.1
 decorator==4.2.1

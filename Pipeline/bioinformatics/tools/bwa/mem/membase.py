@@ -21,7 +21,7 @@ class BwaMemBase(BwaToolBase):
         return [
             *super(BwaMemBase, self).inputs(),
             *BwaMemBase.additional_inputs,
-            ToolInput("referennce", File(), position=9),
+            ToolInput("reference", File(), position=9),
             ToolInput("reads", Fastq(), position=10, doc=None),
             ToolInput("mates", Fastq(optional=True), position=11, doc=None),
             ToolInput("outputFilename", Filename(extension=".sam"))

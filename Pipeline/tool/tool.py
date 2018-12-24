@@ -18,12 +18,14 @@ class ToolTypes:
 class ToolArgument:
     expr_pattern = "\$\(.*\)"
 
-    def __init__(self, value: str, prefix: Optional[str] = None, position: Optional[int] = 0, separate_value_from_prefix=True):
+    def __init__(self, value: str, prefix: Optional[str] = None, position: Optional[int] = 0,
+                 separate_value_from_prefix=True, doc: Optional[str]=None):
         self.prefix: Optional[str] = prefix
         self.value = value
         self.position: Optional[int] = position
         self.is_expression = re.match(self.expr_pattern, self.value) is not None
         self.separate_value_from_prefix = separate_value_from_prefix
+        self.doc = doc
 
         if self.prefix and not self.separate_value_from_prefix and not self.prefix.endswith("="):
             # I don't really know what this means.
@@ -38,7 +40,7 @@ class ToolArgument:
             separate=self.separate_value_from_prefix,
             # item_separator=None,
             value_from=self.value,
-            # shell_quote=True
+            # shell_quote=True,
         )
 
     def wdl(self):

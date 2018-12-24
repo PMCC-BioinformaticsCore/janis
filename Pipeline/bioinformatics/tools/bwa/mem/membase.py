@@ -1,4 +1,5 @@
-from Pipeline import ToolInput, Int, Float, Boolean, String
+from Pipeline import ToolInput, Int, Float, Boolean, String, ToolOutput, Filename, File
+from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.fastq import Fastq
 from Pipeline.bioinformatics.tools.bwa.bwatoolbase import BwaToolBase
 
@@ -20,33 +21,44 @@ class BwaMemBase(BwaToolBase):
         return [
             *super(BwaMemBase, self).inputs(),
             *BwaMemBase.additional_inputs,
+            ToolInput("referennce", File(), position=9),
             ToolInput("reads", Fastq(), position=10, doc=None),
-            ToolInput("mates", Fastq(optional=True), position=11, doc=None)
+            ToolInput("mates", Fastq(optional=True), position=11, doc=None),
+            ToolInput("outputFilename", Filename(extension=".sam"))
+        ]
+
+    @staticmethod
+    def stdout():
+        return "$(inputs.outputFilename)"
+
+    def outputs(self):
+        return [
+            ToolOutput("out", Bam(), glob="$(inputs.outputFilename)")
         ]
 
     @staticmethod
     def doc():
         return """
+    bwa - Burrows-Wheeler Alignment Tool
+    
     Align 70bp-1Mbp query sequences with the BWA-MEM algorithm. Briefly, the algorithm works by seeding alignments 
     with maximal exact matches (MEMs) and then extending seeds with the affine-gap Smith-Waterman algorithm (SW).
 
-    If mates.fq file is absent and option -p is not set, this command regards input reads are single-end. If mates.fq 
+    If mates.fq file is absent and option -p is not set, this command regards input reads are single-end. If 'mates.fq' 
     is present, this command assumes the i-th read in reads.fq and the i-th read in mates.fq constitute a read pair. 
-    If -p is used, the command assumes the 2i-th and the (2i+1)-th read in reads.fq constitute a read pair (such 
-    input file is said to be interleaved). In this case, mates.fq is ignored. In the paired-end mode, the mem 
-    command will infer the read orientation and the insert size distribution from a batch of reads.
+    If -p is used, the command assumes the 2i-th and the (2i+1)-th read in reads.fq constitute a read pair (such input 
+    file is said to be interleaved). In this case, mates.fq is ignored. In the paired-end mode, the mem command will 
+    infer the read orientation and the insert size distribution from a batch of reads.
     
-    The BWA-MEM algorithm performs local alignment. It may produce multiple primary alignments for different part 
-    of a query sequence. This is a crucial feature for long sequences. However, some tools such as Picard’s 
-    markDuplicates does not work with split alignments. One may consider to use option -M to flag shorter 
-    split hits as secondary.
+    The BWA-MEM algorithm performs local alignment. It may produce multiple primary alignments for different part of a 
+    query sequence. This is a crucial feature for long sequences. However, some tools such as Picard’s markDuplicates 
+    does not work with split alignments. One may consider to use option -M to flag shorter split hits as secondary.
 
     Documentation: http://bio-bwa.sourceforge.net/bwa.shtml#3
         """.strip()
 
     def arguments(self):
         return []
-
 
     additional_inputs = [
         ToolInput("threads", Int(optional=True), prefix="-t", doc="Number of threads. (default = 1)"),
@@ -94,9 +106,9 @@ class BwaMemBase(BwaToolBase):
         ToolInput("assumeInterleavedFirstInput", Boolean(optional=True), prefix="-p",
                   doc="Assume the first input query file is interleaved paired-end FASTA/Q. "),
         ToolInput("readGroupHeaderLine", String(optional=True), prefix="-R",
-                  doc="Complete read group header line. ’\t’ can be used in STR and will be converted to a TAB i"
+                  doc="Complete read group header line. ’\\t’ can be used in STR and will be converted to a TAB i"
                       "n the output SAM. The read group ID will be attached to every read in the output. "
-                      "An example is ’@RG\tID:foo\tSM:bar’. (Default=null)"),
+                      "An example is ’@RG\\tID:foo\\tSM:bar’. (Default=null)"),
         ToolInput("outputAlignmentThreshold", Int(optional=True), prefix="-T",
                   doc="Don’t output alignment with score lower than INT. Only affects output. (Default: 30)"),
         ToolInput("outputAllElements", Boolean(optional=True), prefix="-a",

@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: workflow
+Version: 0.1
+Summary: Contains classes to represent a workflow, and provide options to convert to CWL / WDL
+Home-page: https://github.com/WEHI-ResearchComputing/wehi-pipeline-definition
+Author: Michael Franklin, Evan Richards, Mohammad Bhuyan
+Author-email: michael.franklin@petermac.org
+License: TBD
+Description: UNKNOWN
+Platform: UNKNOWN

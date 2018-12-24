@@ -1,8 +1,8 @@
-from Pipeline.bioinformatics.tools.gatk.gatk_4_0 import Gatk_4_0
-from Pipeline.bioinformatics.tools.gatk.mutect2.base import GatkMutect2Base
+from Pipeline.bioinformatics.tools.gatk4.gatk_4_0 import Gatk_4_0
+from Pipeline.bioinformatics.tools.gatk4.mutect2.base import Gatk4Mutect2Base
 
 
-class GatkMutect2_4_0(Gatk_4_0, GatkMutect2Base):
+class GatkMutect2_4_0(Gatk_4_0, Gatk4Mutect2Base):
     pass
 
 

@@ -2,23 +2,22 @@ from abc import ABC
 
 from Pipeline import ToolArgument, ToolInput, ToolOutput, Filename, Array, File, String, Int, Boolean, Double
 from Pipeline.bioinformatics.data_types.bampair import BamPair
-from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx
-from Pipeline.bioinformatics.tools.gatk.gatktoolbase import GatkToolBase
+from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
-class GatkRecalibratorBase(GatkToolBase, ABC):
+class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
     output = ToolOutput("output", File(), glob='$(inputs.outputFile)')
 
     @staticmethod
     def tool():
-        return "GatkBaseRecalibrator"
+        return "Gatk4BaseRecalibrator"
 
     def inputs(self):
         return [
-            *super(GatkRecalibratorBase, self).inputs(),
-            *GatkRecalibratorBase.additional_args,
+            *super(Gatk4BaseRecalibratorBase, self).inputs(),
+            *Gatk4BaseRecalibratorBase.additional_args,
 
             ToolInput("input", BamPair(), position=6, prefix="-I", doc="BAM/SAM/CRAM file containing reads"),
             ToolInput("knownSites", Array(VcfIdx()), prefix="--knownSites", position=28,
@@ -62,75 +61,16 @@ class GatkRecalibratorBase(GatkToolBase, ABC):
 
     def arguments(self):
         return [
-            *super(GatkRecalibratorBase, self).arguments(),
+            *super(Gatk4BaseRecalibratorBase, self).arguments(),
             ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir=", separate_value_from_prefix=False),
             ToolArgument("BaseRecalibrator", position=4, prefix="-T"),
             ToolArgument("--filter_bases_not_stored", position=30)
         ]
 
     additional_args = [
-        ToolInput("inputIndex", File(optional=True)),
-        ToolInput("deletions_default_quality", Int(optional=True), position=24,
-                  prefix="--deletions_default_quality",
-                  doc="default quality for the base deletions covariate"),
-        ToolInput("binary_tag_name", String(optional=True), position=27, prefix="--binary_tag_name",
-                  doc="the binary tag covariate name if using it"),
-        ToolInput("no_standard_covs", Boolean(optional=True), position=15, prefix="--no_standard_covs",
-                  doc="Do not use the standard set of covariates, "
-                      "but rather just the ones listed using the -cov argument"),
-        ToolInput("solid_nocall_strategy", String(optional=True), position=11,
-                  prefix="--solid_nocall_strategy",
-                  doc="Defines the behavior of the recalibrator when it encounters "
-                      "no calls in the color space. Options = THROW_EXCEPTION, LEAVE_READ_UNRECALIBRATED, or PURGE_READ"),
-        ToolInput("low_quality_tail", Int(optional=True), position=20, prefix="--low_quality_tail",
-                  doc="minimum quality for the bases in the tail of the reads to be considered"),
-        ToolInput("java_arg", String(optional=True), position=1, default="-Xmx4g"),
-        ToolInput("out", File(optional=True), position=14, prefix="--out",
-                  doc="The output recalibration table file to create"),
-        ToolInput("quantizing_levels", Boolean(optional=True), position=13,
-                  prefix="--quantizing_levels",
-                  doc="Sort the rows in the tables of reports. Whether GATK report tables should "
-                      "have rows in sorted order, starting from leftmost column"),
-        ToolInput("bqsrBAQGapOpenPenalty", Double(optional=True), position=26,
-                  prefix="--bqsrBAQGapOpenPenalty",
-                  doc="BQSR BAQ gap open penalty (Phred Scaled). Default value is 40. 30 is "
-                      "perhaps better for whole genome call sets"),
-        ToolInput("mismatches_context_size", Int(optional=True), position=17,
-                  prefix="--mismatches_context_size",
-                  doc="Size of the k-mer context to be used for base mismatches"),
-        ToolInput("maximum_cycle_value", Int(optional=True), position=18,
-                  prefix="--maximum_cycle_value",
-                  doc="The maximum cycle value permitted for the Cycle covariate"),
-        ToolInput("run_without_dbsnp_potentially_ruining_quality",
-                  Boolean(optional=True), position=12,
-                  prefix="--run_without_dbsnp_potentially_ruining_quality",
-                  doc="If specified, allows the recalibrator to be used "
-                      "without a dbsnp rod. Very unsafe and for expert users only."),
-        ToolInput("lowMemoryMode", Boolean(optional=True), position=19, prefix="--lowMemoryMode",
-                  doc="Reduce memory usage in multi-threaded code at the expense of threading efficiency"),
-        ToolInput("solid_recal_mode", String(optional=True), position=10, prefix="--solid_recal_mode",
-                  doc="How should we recalibrate solid bases in which the reference was inserted? "
-                      "OPTIONS=DO_NOTHING, SET_Q_ZERO, SET_Q_ZERO_BASE_N, or REMOVE_REF_BIAS"),
-        ToolInput("insertions_default_quality", Int(optional=True), position=22,
-                  prefix="--insertions_default_quality",
-                  doc="default quality for the base insertions covariate"),
-        ToolInput("sort_by_all_columns", Boolean(optional=True), position=9,
-                  prefix="--sort_by_all_columns",
-                  doc="Sort the rows in the tables of reports. Whether GATK report tables "
-                      "should have rows in sorted order, starting from leftmost column"),
-        ToolInput("list", Boolean(optional=True), position=21, prefix="--list",
-                  doc="List the available covariates and exit"),
-        ToolInput("indels_context_size", Int(optional=True), position=23,
-                  prefix="--indels_context_size",
-                  doc="Size of the k-mer context to be used for base insertions and deletions"),
-        ToolInput("mismatches_default_quality", Int(optional=True), position=16,
-                  prefix="--mismatches_default_quality",
-                  doc="default quality for the base mismatches covariate"),
-        ToolInput("downsamplingType", String(optional=True), position=27, prefix="--downsampling_type",
-                  default="none"),
-        ToolInput("bedFile", Bed(optional=True), position=28, prefix="-L"),
-        ToolInput("threads", Int(optional=True), position=26, prefix="-nct", default=4)
+
     ]
 
+
 if __name__ == "__main__":
-    print(GatkRecalibratorBase().help())
+    print(Gatk4BaseRecalibratorBase().help())

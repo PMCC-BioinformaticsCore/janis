@@ -1,9 +1,6 @@
 from abc import ABC
 
-from Pipeline.bioinformatics.tools.gatk.gatk4base import Gatk4Base
-
-
-class Gatk_4_0(Gatk4Base, ABC):
+class Gatk_4_0(ABC):
 
     @staticmethod
     def docker():

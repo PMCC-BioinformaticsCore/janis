@@ -1,43 +1,58 @@
 from abc import ABC
 
-from Pipeline import ToolInput, Array, Filename, ToolArgument, ToolOutput, File
+from Pipeline import ToolInput, Array, Filename, ToolArgument, ToolOutput, File, String, Float
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx
-from Pipeline.bioinformatics.tools.gatk.gatktoolbase import GatkToolBase
+from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
-class GatkMutect2Base(GatkToolBase, ABC):
+class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
     @staticmethod
     def tool():
         return "gatkmutect2"
 
+    @staticmethod
+    def tumor_normal_inputs():
+        return [
+            ToolInput("tumor", BamPair(), position=5, prefix="-I", doc="BAM/SAM/CRAM file containing reads"),
+            ToolInput("tumorName", String(), position=6, prefix="-tumor",
+                      doc="BAM sample name of tumor. May be URL-encoded as output by GetSampleName with -encode."),
+            ToolInput("normal", BamPair(), position=5, prefix="-I", doc="BAM/SAM/CRAM file containing reads"),
+            ToolInput("normalName", String(), position=6, prefix="-normal",
+                      doc="BAM sample name of normal. May be URL-encoded as output by GetSampleName with -encode."),
+        ]
+
     def inputs(self):
         return [
-            *super(GatkMutect2Base, self).inputs(),
-            *GatkMutect2Base.additional_args,
-            ToolInput("inputBam_tumor", BamPair(), position=5, prefix="-I:Tumor",
-                      doc="BAM/SAM/CRAM file containing reads, tagged as a 'Tumor'"),
-            ToolInput("inputBam_normal", BamPair(), position=6, prefix="-I:Normal",
-                      doc="BAM/SAM/CRAM file containing reads, tagged as a 'Normal'"),
-            ToolInput("intervals", Bed(), position=7, prefix="-L",
-                      doc="One or more genomic intervals over which to operate (previously, .bedFile)"),
+            *super(Gatk4Mutect2Base, self).inputs(),
+            *Gatk4Mutect2Base.additional_args,
+            *Gatk4Mutect2Base.tumor_normal_inputs(),
+            ToolInput("intervals", Bed(optional=True), position=7, prefix="-L",
+                      doc="One or more genomic intervals over which to operate"),
             ToolInput("reference", FastaWithDict(), position=8, prefix="-R", doc="Reference sequence file"),
-            ToolInput("dbsnp", Array(VcfIdx()), position=10, prefix="--dbsnp"),
-            ToolInput("cosmic", Array(VcfIdx()), position=11, prefix="--cosmic"),   # idk about this?
-            ToolInput("outputFilename", Filename(), position=9, prefix="-o")
+            ToolInput("outputFilename", Filename(extension=".vcf.gz"), position=20, prefix="-O"),
+            ToolInput("germlineResource", VcfIdx(optional=True), position=10, prefix="--germline-resource"),
+            ToolInput("afOfAllelesNotInResource", Float(optional=True), position=11,
+                      prefix="--af-of-alleles-not-in-resource",
+                      doc="Population allele fraction assigned to alleles not found in germline resource. "
+                          "Please see docs/mutect/mutect2.pdf fora derivation of the default value."),
+            ToolInput("panelOfNormals", VcfIdx(optional=True), position=10, prefix="--panel-of-normals",
+                      doc="A panel of normals can be a useful (optional) input to help filter out "
+                          "commonly seen sequencing noise that may appear as low allele-fraction somatic variants.")
         ]
 
     def outputs(self):
         return [
-            ToolOutput("output", File(), glob="")
+            # Todo: Determine type of Gatk4Mutect2 output (.vcf.gz?)
+            ToolOutput("output", File(), glob="$(inputs.outputFilename)", doc="To determine type")
         ]
 
     def arguments(self):
         return [
-            *super(GatkMutect2Base, self).arguments(),
-            ToolArgument("MuTect2", position=4, prefix="-T")
+            *super(Gatk4Mutect2Base, self).arguments(),
+            ToolArgument("MuTect2", position=4)
         ]
 
     additional_args = []
@@ -58,8 +73,8 @@ class GatkMutect2Base(GatkToolBase, ABC):
     Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php
 """.strip()
 
-if __name__ == "__main__":
-    print(GatkMutect2Base().help())
+# if __name__ == "__main__":
+#     print(Gatk4Mutect2Base().help())
 
 
 

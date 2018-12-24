@@ -6,10 +6,10 @@ from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx, Vcf
-from Pipeline.bioinformatics.tools.gatk.gatktoolbase import GatkToolBase
+from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
-class GatkHaplotypeCallerBase(GatkToolBase, ABC):
+class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
 
     @staticmethod
     def tool():
@@ -17,8 +17,8 @@ class GatkHaplotypeCallerBase(GatkToolBase, ABC):
 
     def inputs(self):
         return [
-            *super(GatkHaplotypeCallerBase, self).inputs(),
-            *GatkHaplotypeCallerBase.optional_args,
+            *super(Gatk4HaplotypeCallerBase, self).inputs(),
+            *Gatk4HaplotypeCallerBase.optional_args,
             ToolInput("inputRead", Bam(), doc="BAM/SAM/CRAM file containing reads", prefix="--input"),
             ToolInput("reference", FastaWithDict(), position=5, prefix="-R", doc="Reference sequence file"),
             ToolInput("outputFilename", String(optional=True), position=8, prefix="-o",
@@ -56,21 +56,21 @@ class GatkHaplotypeCallerBase(GatkToolBase, ABC):
     Call germline SNPs and indels via local re-assembly of haplotypes
     
     The HaplotypeCaller is capable of calling SNPs and indels simultaneously via local de-novo assembly of haplotypes 
-    in an active region. In other words, whenever the program encounters a region showing signs of variation, 
-    it discards the existing mapping information and completely reassembles the reads in that region. 
-    This allows the HaplotypeCaller to be more accurate when calling regions that are traditionally difficult to call, 
-    for example when they contain different types of variants close to each other. 
-    It also makes the HaplotypeCaller much better at calling indels than position-based callers like UnifiedGenotyper.
+    in an active region. In other words, whenever the program encounters a region showing signs of variation, it 
+    discards the existing mapping information and completely reassembles the reads in that region. This allows the 
+    HaplotypeCaller to be more accurate when calling regions that are traditionally difficult to call, for example when 
+    they contain different types of variants close to each other. It also makes the HaplotypeCaller much better at 
+    calling indels than position-based callers like UnifiedGenotyper.
     
     In the GVCF workflow used for scalable variant calling in DNA sequence data, HaplotypeCaller runs per-sample to 
-    generate an intermediate GVCF (not to be used in final analysis), which can then be used in GenotypeGVCFs for 
-    joint genotyping of multiple samples in a very efficient way. The GVCF workflow enables rapid incremental processing 
-    of samples as they roll off the sequencer, as well as scaling to very large cohort sizes (e.g. the 92K exomes of ExAC).
+    generate an intermediate GVCF (not to be used in final analysis), which can then be used in GenotypeGVCFs for joint 
+    genotyping of multiple samples in a very efficient way. The GVCF workflow enables rapid incremental processing of 
+    samples as they roll off the sequencer, as well as scaling to very large cohort sizes (e.g. the 92K exomes of ExAC).
     
     In addition, HaplotypeCaller is able to handle non-diploid organisms as well as pooled experiment data. 
-    Note however that the algorithms used to calculate variant likelihoods is not well suited to 
-    extreme allele frequencies (relative to ploidy) so its use is not recommended for somatic (cancer) 
-    variant discovery. For that purpose, use Mutect2 instead.
+    Note however that the algorithms used to calculate variant likelihoods is not well suited to extreme allele 
+    frequencies (relative to ploidy) so its use is not recommended for somatic (cancer) variant discovery. 
+    For that purpose, use Mutect2 instead.
     
     Finally, HaplotypeCaller is also able to correctly handle the splice junctions that make RNAseq a challenge 
     for most variant callers, on the condition that the input read data has previously been processed according 
@@ -80,7 +80,7 @@ class GatkHaplotypeCallerBase(GatkToolBase, ABC):
 """.strip()
 
     def arguments(self):
-        return [*super(GatkHaplotypeCallerBase, self).arguments(),
+        return [*super(Gatk4HaplotypeCallerBase, self).arguments(),
                 ToolArgument("HaplotypeCaller", position=4, prefix="-T")]
 
     optional_args = [
@@ -225,5 +225,5 @@ class GatkHaplotypeCallerBase(GatkToolBase, ABC):
 
 
 if __name__ == "__main__":
-    print(GatkHaplotypeCallerBase().help())
+    print(Gatk4HaplotypeCallerBase().help())
     # print(yaml.dump(GatkHaplotypeCaller().cwl(), default_flow_style=False))

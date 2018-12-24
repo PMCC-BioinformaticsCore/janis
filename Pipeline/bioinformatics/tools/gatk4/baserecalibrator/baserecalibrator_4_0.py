@@ -1,10 +1,10 @@
-from Pipeline.bioinformatics.tools.gatk.gatk_4_0 import Gatk_4_0
-from Pipeline.bioinformatics.tools.gatk.baserecalibrator.base import GatkRecalibratorBase
+from Pipeline.bioinformatics.tools.gatk4.gatk_4_0 import Gatk_4_0
+from Pipeline.bioinformatics.tools.gatk4.baserecalibrator.base import Gatk4BaseRecalibratorBase
 
 
-class GatkBaseRecalibrator_4_0(Gatk_4_0, GatkRecalibratorBase):
+class Gatk4BaseRecalibrator_4_0(Gatk_4_0, Gatk4BaseRecalibratorBase):
     pass
 
 
 if __name__ == "__main__":
-    print(GatkBaseRecalibrator_4_0().help())
+    print(Gatk4BaseRecalibrator_4_0().help())

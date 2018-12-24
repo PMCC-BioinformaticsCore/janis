@@ -13,7 +13,7 @@ class Gatk3RecalibratorBase(GatkToolBase, ABC):
 
     @staticmethod
     def tool():
-        return "GatkBaseRecalibrator"
+        return "Gatk3BaseRecalibrator"
 
     def inputs(self):
         return [

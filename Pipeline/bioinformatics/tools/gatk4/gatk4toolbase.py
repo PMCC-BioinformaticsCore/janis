@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from Pipeline import CommandTool, ToolInput, Boolean, ToolArgument
 
 
-class Gatk4Base(CommandTool, ABC):
+class Gatk4ToolBase(CommandTool, ABC):
 
     @staticmethod
     def base_command():

@@ -1,10 +1,10 @@
-from Pipeline.bioinformatics.tools.gatk.gatk_4_0 import Gatk_4_0
-from Pipeline.bioinformatics.tools.gatk.haplotypecaller.base import GatkHaplotypeCallerBase
+from Pipeline.bioinformatics.tools.gatk4.gatk_4_0 import Gatk_4_0
+from Pipeline.bioinformatics.tools.gatk4.haplotypecaller.base import Gatk4HaplotypeCallerBase
 
 
-class GatkHaplotypeCaller_4_0(Gatk_4_0, GatkHaplotypeCallerBase):
+class Gatk4HaplotypeCaller_4_0(Gatk_4_0, Gatk4HaplotypeCallerBase):
     pass
 
 
 if __name__ == "__main__":
-    print(GatkHaplotypeCaller_4_0().help())
+    print(Gatk4HaplotypeCaller_4_0().help())

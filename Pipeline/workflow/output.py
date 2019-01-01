@@ -1,7 +1,7 @@
 from typing import Dict, Optional, Any
 
 from Pipeline.graph.node import Node, NodeTypes
-from Pipeline.translations.cwl.cwl import Cwl
+import cwlgen.cwlgen as cwl
 from Pipeline.types.data_types import DataType
 from Pipeline.tool.commandtool import ToolOutput, ToolInput
 
@@ -23,8 +23,7 @@ class Output:
         return self._identifier
 
     def cwl(self, output_source):
-        import cwlgen
-        return cwlgen.WorkflowOutputParameter(
+        return cwl.WorkflowOutputParameter(
             param_id=self.id(),
             output_source=output_source,
             label=self.label,
@@ -36,22 +35,6 @@ class Output:
             output_binding=None,
             linkMerge=None
         )
-
-    # def cwl(self, output_source: str):
-    #     d: Dict[str, Any] = {}
-    #
-    #     if self.data_type is not None:
-    #         d.update(self.data_type.cwl())
-    #
-    #     d[Cwl.Workflow.Output.kID] = self._identifier
-    #     d[Cwl.Workflow.Output.kOUTPUT_SOURCE] = output_source
-    #
-    #     if self.label:
-    #         d[Cwl.Workflow.kLABEL] = self.label
-    #     if self.doc:
-    #         d[Cwl.Workflow.kDOC] = self.doc
-    #
-    #     return d
 
 
 class OutputNode(Node):

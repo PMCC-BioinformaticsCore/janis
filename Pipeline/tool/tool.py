@@ -4,8 +4,7 @@ import re
 
 from Pipeline.utils.logger import Logger
 from Pipeline.types.data_types import DataType, NativeTypes
-from Pipeline.translations.cwl.cwl import Cwl
-
+import cwlgen.cwlgen as cwl
 ToolType = str
 
 
@@ -32,8 +31,7 @@ class ToolArgument:
             Logger.warn(f"Argument ({self.prefix} {self.value}) is not separating and did not end with ='")
 
     def cwl(self):
-        from cwlgen import CommandLineBinding
-        return CommandLineBinding(
+        return cwl.CommandLineBinding(
             # load_contents=False,
             position=self.position,
             prefix=self.prefix,
@@ -68,18 +66,17 @@ class ToolInput(ToolArgument):
         self.doc = doc
 
     def cwl(self):
-        from cwlgen import CommandInputParameter, CommandLineBinding
 
         default = self.default if self.default is not None else self.input_type.default()
 
-        return CommandInputParameter(
+        return cwl.CommandInputParameter(
             param_id=self.tag,
             label=self.tag,
             secondary_files=self.input_type.secondary_files(),
             # streamable=False,
             doc=self.doc,
             default=default,
-            input_binding=CommandLineBinding(
+            input_binding=cwl.CommandLineBinding(
                 # load_contents=self.load_contents,
                 position=self.position,
                 prefix=self.prefix,
@@ -100,15 +97,14 @@ class ToolOutput:
         self.doc = doc
 
     def cwl(self):
-        from cwlgen import CommandOutputParameter, CommandOutputBinding
-        return CommandOutputParameter(
+        return cwl.CommandOutputParameter(
             param_id=self.tag,
             label=self.tag,
             secondary_files=self.output_type.secondary_files(),
             # param_format=None,
             # streamable=False,
             doc=self.doc,
-            output_binding=CommandOutputBinding(
+            output_binding=cwl.CommandOutputBinding(
                 glob=self.glob,
                 # load_contents=False,
                 # output_eval=None
@@ -123,9 +119,9 @@ class Tool(ABC, object):
     """
 
     @classmethod
+    @abstractmethod
     def type(cls) -> ToolType:
-        print(cls)
-        raise Exception("Must implement type() method")
+        raise Exception(f"'{cls}' must implement type() method")
 
     @abstractmethod
     def id(self) -> str:

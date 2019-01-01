@@ -9,12 +9,13 @@ from Pipeline.bioinformatics.data_types.fastq import Fastq
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx
 from Pipeline.bioinformatics.tools.bwa_mem import BwaMem
 # from Pipeline.bioinformatics.tools.gatk_base_recalibrator import GatkRecalibratorLatest
+from Pipeline.bioinformatics.tools.gatk3.baserecalibrator.latest import GatkRecalibratorLatest as Gatk3Recalibrator
 # from Pipeline.bioinformatics.tools.gatk_haplotypecaller import GatkHaplotypeCaller
 # from Pipeline.bioinformatics.tools.gatk_mutect import GatkMutect2
 # from Pipeline.bioinformatics.tools.gatk_printreads import GatkPrintReads
 from Pipeline.bioinformatics.tools.picard_markdup import PicardMarkDup
 from Pipeline.bioinformatics.tools.picard_sortsam import PicardSortSam
-from Pipeline.bioinformatics.tools.samtools import SamTools
+from Pipeline.bioinformatics.tools.samtools.samtoolslatest import SamToolsLatest as SamTools
 
 
 class TestParallel(unittest.TestCase):

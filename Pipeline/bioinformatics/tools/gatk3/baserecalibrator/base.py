@@ -5,15 +5,19 @@ from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx
-from Pipeline.bioinformatics.tools.gatktoolbase import GatkToolBase
+from Pipeline.bioinformatics.tools.gatk3.gatk3toolbase import Gatk3ToolBase
 
 
-class Gatk3RecalibratorBase(GatkToolBase, ABC):
+class Gatk3RecalibratorBase(Gatk3ToolBase, ABC):
     output = ToolOutput("output", File(), glob='$(inputs.outputFile)')
 
     @staticmethod
     def tool():
         return "Gatk3BaseRecalibrator"
+
+    @staticmethod
+    def analysis_type():
+        return "BaseRecalibrator"
 
     def inputs(self):
         return [
@@ -62,7 +66,7 @@ class Gatk3RecalibratorBase(GatkToolBase, ABC):
 
     def arguments(self):
         return [
-            *super(GatkRecalibratorBase, self).arguments(),
+            *super(Gatk3RecalibratorBase, self).arguments(),
             ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir=", separate_value_from_prefix=False),
             ToolArgument("BaseRecalibrator", position=4, prefix="-T"),
             ToolArgument("--filter_bases_not_stored", position=30)
@@ -133,4 +137,4 @@ class Gatk3RecalibratorBase(GatkToolBase, ABC):
     ]
 
 if __name__ == "__main__":
-    print(GatkRecalibratorBase().help())
+    print(Gatk3RecalibratorBase().help())

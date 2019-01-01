@@ -1,12 +1,10 @@
 from typing import Dict, Optional
 
 from Pipeline.utils.logger import Logger, LogLevel
-from Pipeline.translations.cwl.cwl import Cwl
+import cwlgen.cwlgen as cwl
 from Pipeline.types.data_types import DataType, NativeTypes
 from Pipeline.workflow.step import ToolOutput
 from Pipeline.graph.node import Node, NodeTypes
-
-W = Cwl.Workflow
 
 
 class Input:
@@ -26,7 +24,6 @@ class Input:
         return self._identifier
 
     def cwl(self):
-        import cwlgen as cwl
 
         return cwl.InputParameter(
             param_id=self._identifier,
@@ -38,19 +35,6 @@ class Input:
             input_binding=None,
             param_type=self.data_type.cwl2_type()
         )
-
-    # def cwl(self):
-    #     d = {
-    #         W.kID: self._identifier,
-    #         **self.data_type.cwl()
-    #     }
-    #
-    #     if self.label:
-    #         d[W.kLABEL] = self.label
-    #     if self.doc:
-    #         d[W.kDOC] = self.doc
-    #
-    #     return d
 
     def cwl_input(self):
         return self.data_type.cwl_input(self.value)

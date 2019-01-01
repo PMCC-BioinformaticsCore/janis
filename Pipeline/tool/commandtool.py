@@ -3,9 +3,9 @@ import re
 from typing import List, Dict, Optional, Any
 
 from Pipeline.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput, ToolTypes
-from Pipeline.translations.cwl.cwl import Cwl
 
 import cwlgen.cwlgen as cwl
+
 
 class CommandTool(Tool, ABC):
     """

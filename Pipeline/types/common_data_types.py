@@ -4,7 +4,7 @@
 from typing import Dict, Any
 
 from Pipeline.utils.logger import Logger
-from Pipeline.translations.cwl.cwl import Cwl
+import cwlgen.cwlgen as cwl
 from Pipeline.types.data_types import DataType, NativeTypes, NativeType
 from Pipeline.types.registry import register_type
 
@@ -66,11 +66,9 @@ concerned what the filename should be. The Filename DataType should NOT be used 
     def schema(cls) -> Dict:
         pass
 
-    def cwl(self) -> Dict[str, Any]:
-        return {
-            **super().cwl(),
-            Cwl.CommandLineTool.Inputs.kDEFAULT: self.generated_filename()
-        }
+    def map_cwl_type(self, parameter: cwl.Parameter):
+        super().map_cwl_type(parameter)
+        parameter.default = self.generated_filename()
 
     def generated_filename(self, prefix: str=None) -> str:
         import uuid
@@ -109,6 +107,7 @@ class Int(DataType):
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
 
+
 class Float(DataType):
 
     @staticmethod
@@ -129,6 +128,7 @@ class Float(DataType):
 
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
+
 
 class Double(DataType):
 
@@ -206,7 +206,7 @@ class File(DataType):
     @staticmethod
     def cwl_input(value: Any):
         return {
-            "class": Cwl.Primitives.kFILE,
+            "class": cwl.CwlTypes.FILE,
             "path": value
         }
 
@@ -240,7 +240,7 @@ class Directory(DataType):
     def cwl_input(value: Any):
         # WDL: "{workflowName}.label" = meta["path"}
         return {
-            "class": Cwl.Primitives.kDIRECTORY,
+            "class": cwl.CwlTypes.DIRECTORY,
             "path": value
         }
 
@@ -260,7 +260,6 @@ class Array(DataType):
     @staticmethod
     def name():
         return "Array"
-
 
     @staticmethod
     def primitive():
@@ -285,22 +284,29 @@ class Array(DataType):
 
     def cwl2_type(self):
         items = NativeTypes.map_to_cwl(self.__t.primitive()) + self.__t._question_mark_if_optional()
-        from cwlgen import CommandInputArraySchema
-        return CommandInputArraySchema(
+        return cwl.CommandInputArraySchema(
             items=items,
             # label=None,
             # input_binding=None
         )
 
-    def cwl(self) -> Dict[str, Any]:
-        dtype = {
-                "type": NativeTypes.map_to_cwl(NativeTypes.kArray),
-                "items": NativeTypes.map_to_cwl(self.__t.primitive()) + self.__t._question_mark_if_optional()
-        }
-        ret_val = ["null", dtype] if self.optional else dtype
-        return {
-            Cwl.Workflow.Input.kTYPE: ret_val
-        }
+    # def cwl(self) -> Dict[str, Any]:
+    #     dtype = {
+    #             "type": NativeTypes.map_to_cwl(NativeTypes.kArray),
+    #             "items": NativeTypes.map_to_cwl(self.__t.primitive()) + self.__t._question_mark_if_optional()
+    #     }
+    #     ret_val = ["null", dtype] if self.optional else dtype
+    #     return {
+    #         Cwl.Workflow.Input.kTYPE: ret_val
+    #     }
+
+    def map_cwl_type(self, parameter: cwl.Parameter) -> cwl.Parameter:
+        parameter.type = cwl.CommandInputArraySchema(
+            items=None,
+            label=None,
+            input_binding=None
+        )
+        return parameter
 
     def wdl(self):
         return f"{NativeTypes.map_to_wdl(self.primitive())}[{NativeTypes.map_to_wdl(self.__t.primitive())}]"

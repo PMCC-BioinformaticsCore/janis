@@ -3,11 +3,9 @@ from typing import List, Dict, Any, Optional
 
 from Pipeline.graph.node import Node, NodeTypes
 from Pipeline.tool.tool import Tool, ToolInput, ToolOutput
-from Pipeline.translations.cwl.cwl import Cwl
+import cwlgen.cwlgen as cwl
 from Pipeline.types.common_data_types import Filename
 from Pipeline.utils.logger import Logger
-
-CS = Cwl.Workflow.Step
 
 
 class Step:
@@ -58,9 +56,8 @@ class Step:
     #     return d
 
     def cwl(self, is_nested_tool=False):
-        import cwlgen
         run_ref = ("{tool}.cwl" if is_nested_tool else "tools/{tool}.cwl").format(tool=self.tool().id())
-        step = cwlgen.WorkflowStep(
+        step = cwl.WorkflowStep(
             step_id=self.id(),
             run=run_ref,
             label=self.label,
@@ -69,7 +66,7 @@ class Step:
             scatter_method=None     # Filled by StepNode
         )
 
-        step.out = [cwlgen.WorkflowStepOutput(output_id=o.tag) for o in self.tool().outputs()]
+        step.out = [cwl.WorkflowStepOutput(output_id=o.tag) for o in self.tool().outputs()]
 
         return step
 
@@ -110,7 +107,6 @@ class StepNode(Node):
         raise AttributeError(f"type object '{type(self)}' has no attribute '{item}'")
 
     def cwl(self, is_nested_tool=False):
-        import cwlgen
 
         step = self.step.cwl(is_nested_tool)
 
@@ -127,7 +123,7 @@ class StepNode(Node):
                                     f"could not find required connection: '{k}'")
 
             edge = self.connection_map[k]
-            d = cwlgen.WorkflowStepInput(
+            d = cwl.WorkflowStepInput(
                 input_id=inp.tag,
                 source=edge.source(),
                 link_merge=None,
@@ -136,7 +132,7 @@ class StepNode(Node):
             )
 
             if edge.scatter:
-               scatterable.append(k)
+                scatterable.append(k)
             inp_t = self.inputs()[k].input_type
             if isinstance(inp_t, Filename):
                 d.default = inp_t.generated_filename(self.step.id())
@@ -146,51 +142,9 @@ class StepNode(Node):
             if len(scatterable) > 1:
                 Logger.info("Discovered more than one scatterable field on step '{step_id}', "
                             "deciding scatterMethod to be dot_product".format(step_id=self.id()))
-                step.scatterMethod = CS.ScatterMethod.kDOT_PRODUCT
+                step.scatterMethod = "dot_product"
             step.scatter = scatterable
         return step
-
-
-    # def cwl(self, is_nested_tool=False):
-    #     """
-    #     :param is_nested_tool: changes the run reference from tools/toolName.cwl -> toolName.cwl
-    #     :return:
-    #     """
-    #     ins = self.inputs()
-    #     scatterable = []
-    #
-    #     dd = {
-    #         **self.step.cwl(is_nested_tool=is_nested_tool),
-    #         CS.kIN: []
-    #     }
-    #
-    #     for k in ins:
-    #         inp = ins[k]
-    #         d = {CS.StepInput.kID: k}
-    #         if k not in self.connection_map:
-    #             if inp.input_type.optional:
-    #                 continue
-    #             else:
-    #                 raise Exception(f"Error when building connections for step '{self.id()}', "
-    #                                 f"could not find required connection: '{k}'")
-    #
-    #         edge = self.connection_map[k]
-    #         d[CS.StepInput.kSOURCE] = edge.source()
-    #         if edge.scatter:
-    #            scatterable.append(k)
-    #         inp_t = self.inputs()[k].input_type
-    #         if isinstance(inp_t, Filename):
-    #             d[CS.StepInput.kDEFAULT] = inp_t.generated_filename(self.step.id())
-    #         dd[CS.kIN].append(d)
-    #
-    #     if len(scatterable) > 0:
-    #         if len(scatterable) > 1:
-    #             Logger.info(f"Discovered more than one scatterable field on step '{self.id()}', "
-    #                         f"deciding scatterMethod to be dot_product")
-    #             dd[CS.kSCATTER_METHOD] = CS.ScatterMethod.kDOT_PRODUCT
-    #         dd[CS.kSCATTER] = scatterable
-    #     return dd
-
 
     def wdl_map(self) -> List[str]:
         q = []

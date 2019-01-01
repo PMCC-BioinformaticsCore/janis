@@ -56,7 +56,7 @@ class Workflow(Tool):
         return [ToolInput(i.id(), i.input.data_type) for i in self._inputs]
 
     def outputs(self) -> List[ToolOutput]:
-        return [ToolOutput(o.id(), o.output.data_type) for o in self._outputs]
+        return [ToolOutput(o.id(), o.output.data_type) for o in self._outputs if o.output.data_type is not None]
 
     def draw_graph(self):
         import matplotlib.pyplot as plt
@@ -344,6 +344,9 @@ class Workflow(Tool):
             return input_parts, next(iter(node.outputs().values())).output_type
 
         # We are a step node now
+        if not isinstance(node, StepNode):
+            raise Exception("An internal error has occurred in 'get_tag_and_type_from_start_edge_node'"
+                            " when converting Node to StepNode.")
         snode: StepNode = node
         outs: Dict[str, ToolOutput] = node.outputs()
 
@@ -430,6 +433,10 @@ class Workflow(Tool):
         if node.node_type == NodeTypes.OUTPUT:
             raise Exception("An internal error has occurred: output nodes should be filtered from the "
                             "function 'get_tag_and_type_from_final_edge_node'")
+
+        if not isinstance(node, StepNode):
+            raise Exception("An internal error has occurred in 'get_tag_and_type_from_start_edge_node'"
+                            " when converting Node to StepNode.")
 
         snode: StepNode = node
         ins = snode.inputs()
@@ -653,7 +660,8 @@ workflow {self.identifier} {{
 
         print(yaml.dump(cwl_data, default_flow_style=False))
         print(yaml.dump(inp_data, default_flow_style=False))
-        [print(yaml.dump(t, default_flow_style=False)) for t in tools_ar]
+        for t in tools_ar:
+            print(yaml.dump(t, default_flow_style=False))
 
         if to_disk:
             with open(d + self.identifier + ".cwl", "w+") as cwl:

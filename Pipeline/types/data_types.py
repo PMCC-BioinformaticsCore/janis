@@ -14,7 +14,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, List, Dict, Optional
 
-from Pipeline.translations.cwl.cwl import Cwl
+import cwlgen.cwlgen as cwl
 from Pipeline.translations.wdl.wdl import Wdl
 
 NativeType = str
@@ -45,23 +45,23 @@ class NativeTypes:
     @staticmethod
     def map_to_cwl(t: NativeType):
         if t == NativeTypes.kBool:
-            return Cwl.Primitives.kBOOLEAN
+            return cwl.CwlTypes.BOOLEAN
         elif t == NativeTypes.kInt:
-            return Cwl.Primitives.kINT
+            return cwl.CwlTypes.INT
         elif t == NativeTypes.kLong:
-            return Cwl.Primitives.kLONG
+            return cwl.CwlTypes.LONG
         elif t == NativeTypes.kFloat:
-            return Cwl.Primitives.kFLOAT
+            return cwl.CwlTypes.FLOAT
         elif t == NativeTypes.kDouble:
-            return Cwl.Primitives.kDOUBLE
+            return cwl.CwlTypes.DOUBLE
         elif t == NativeTypes.kStr:
-            return Cwl.Primitives.kSTRING
+            return cwl.CwlTypes.STRING
         elif t == NativeTypes.kFile:
-            return Cwl.Primitives.kFILE
+            return cwl.CwlTypes.FILE
         elif t == NativeTypes.kDirectory:
-            return Cwl.Primitives.kDIRECTORY
+            return cwl.CwlTypes.DIRECTORY
         elif t == NativeTypes.kArray:
-            return Cwl.Primitives.kARRAY
+            return cwl.CwlTypes.ARRAY
         raise Exception(f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}")
 
     @staticmethod
@@ -183,18 +183,14 @@ class DataType(ABC):
     def cwl2_type(self):
         return NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
 
-    def cwl(self) -> Dict[str, Any]:
+    def map_cwl_type(self, parameter: cwl.Parameter) -> cwl.Parameter:
         if not NativeTypes.is_valid(self.primitive()):
             raise Exception(f"{self.id()} must declare its primitive as one of the NativeTypes "
                             f"({', '.join(NativeTypes.all)})")
-        d = {
-            Cwl.Workflow.Input.kTYPE: NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
-        }
 
-        if self.secondary_files():
-            d[Cwl.Workflow.Input.kSECONDARY_FILES] = self.secondary_files()
-
-        return d
+        parameter.type = NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
+        parameter.secondaryFiles = self.secondary_files()
+        return parameter
 
     @staticmethod
     def cwl_input(value: Any):

@@ -6,10 +6,14 @@ from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx, Vcf
-from Pipeline.bioinformatics.tools.gatktoolbase import GatkToolBase
+from Pipeline.bioinformatics.tools.gatk3.gatk3toolbase import Gatk3ToolBase
 
 
-class Gatk3HaplotypeCallerBase(GatkToolBase, ABC):
+class Gatk3HaplotypeCallerBase(Gatk3ToolBase, ABC):
+
+    @staticmethod
+    def analysis_type():
+        return "HaplotypeCaller"
 
     @staticmethod
     def tool():

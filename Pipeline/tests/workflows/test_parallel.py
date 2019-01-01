@@ -8,14 +8,13 @@ from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.fastq import Fastq
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx
 from Pipeline.bioinformatics.tools.bwa_mem import BwaMem
-# from Pipeline.bioinformatics.tools.gatk_base_recalibrator import GatkRecalibratorLatest
-from Pipeline.bioinformatics.tools.gatk3.baserecalibrator.latest import GatkRecalibratorLatest as Gatk3Recalibrator
-# from Pipeline.bioinformatics.tools.gatk_haplotypecaller import GatkHaplotypeCaller
-# from Pipeline.bioinformatics.tools.gatk_mutect import GatkMutect2
-# from Pipeline.bioinformatics.tools.gatk_printreads import GatkPrintReads
+from Pipeline.bioinformatics.tools.gatk3.baserecalibrator.latest import Gatk3RecalibratorLatest as Gatk3Recalibrator
+from Pipeline.bioinformatics.tools.gatk3.haplotypecaller.latest import Gatk3HaplotypeCallerLatest as Gatk3HaplotypeCaller
+from Pipeline.bioinformatics.tools.gatk3.mutect2.latest import Gatk3Mutect2Latest as Gatk3Mutect2
+from Pipeline.bioinformatics.tools.gatk3.printreads.latest import Gatk3PrintReadsLatest as Gatk3PrintReads
 from Pipeline.bioinformatics.tools.picard_markdup import PicardMarkDup
 from Pipeline.bioinformatics.tools.picard_sortsam import PicardSortSam
-from Pipeline.bioinformatics.tools.samtools.samtoolslatest import SamToolsLatest as SamTools
+from Pipeline.bioinformatics.tools.samtools.view.viewlatest import SamToolsViewLatest as SamToolsView
 
 
 class TestParallel(unittest.TestCase):
@@ -49,12 +48,12 @@ class TestParallel(unittest.TestCase):
         o2 = Output("haplotype_output", File())
 
         step1_bwa_mem = Step("bwa_mem", BwaMem())
-        step2_samtools= Step("samtools", SamTools())
+        step2_samtools= Step("samtools", SamToolsView())
         step3_sortsam = Step("sortsam", PicardSortSam())
         step4_markdup = Step("markdup", PicardMarkDup())
-        step5_recal = Step("gatk_recal", GatkRecalibrator())
-        step6_printread = Step("gatk_printread", GatkPrintReads())
-        step7_haplo = Step("gatk_haplo", GatkHaplotypeCaller())
+        step5_recal = Step("gatk_recal", Gatk3Recalibrator())
+        step6_printread = Step("gatk_printread", Gatk3PrintReads())
+        step7_haplo = Step("gatk_haplo", Gatk3HaplotypeCaller())
 
         # Inputs -> Step1
         subworkflow.add_edge(sub_inp1_bwa_ref, step1_bwa_mem)
@@ -138,7 +137,7 @@ class TestParallel(unittest.TestCase):
 
         sub_normal: Step = Step("normal_subworkflow", self.parallel_workflow())
         sub_tumor: Step = Step("tumor_subworkflow", self.parallel_workflow())
-        step_gatk_mutect2 = Step("gatk_mutect", GatkMutect2())
+        step_gatk_mutect2 = Step("gatk_mutect", Gatk3Mutect2())
 
         out_sub_tumor = Output("tumor", BamPair())
         out_sub_normal = Output("normal", BamPair())
@@ -182,4 +181,4 @@ class TestParallel(unittest.TestCase):
         ])
 
         # w.draw_graph()
-        w.dump_cwl(to_disk=True)
+        w.dump_cwl(to_disk=True, with_docker=True)

@@ -1,6 +1,6 @@
-from Pipeline.bioinformatics.tools.gatk.gatk_4_0 import Gatk_4_0
-from Pipeline.bioinformatics.tools.gatk.printreads.base import GatkPrintReadsBase
+from Pipeline.bioinformatics.tools.gatk3.gatk_3_3_7 import Gatk_3_3_7
+from Pipeline.bioinformatics.tools.gatk3.printreads.base import Gatk3PrintReadsBase
 
 
-class GatkPrintReads_4_0(Gatk_4_0, GatkPrintReadsBase):
+class GatkPrintReads_3_3_7(Gatk_3_3_7, Gatk3PrintReadsBase):
     pass

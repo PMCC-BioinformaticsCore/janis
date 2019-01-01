@@ -1,6 +1,6 @@
 from abc import ABC
 
-from Pipeline import ToolInput, Array, Filename, ToolArgument, ToolOutput, File
+from Pipeline import ToolInput, Array, Filename, ToolOutput, File
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict

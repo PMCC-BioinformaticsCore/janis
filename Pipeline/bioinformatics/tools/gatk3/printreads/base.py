@@ -4,11 +4,14 @@ from Pipeline import ToolInput, File, ToolOutput, ToolArgument, Array, String, B
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
-from Pipeline.bioinformatics.tools.gatk3.gatk3toolbase import Gatk3Base
+from Pipeline.bioinformatics.tools.gatk3.gatk3toolbase import Gatk3ToolBase
 
 
-class Gatk3PrintReadsBase(Gatk3Base, ABC):
+class Gatk3PrintReadsBase(Gatk3ToolBase, ABC):
 
+    @staticmethod
+    def analysis_type():
+        return "PrintReads"
 
     @staticmethod
     def tool():

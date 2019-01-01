@@ -1,0 +1,3 @@
+[submodule "cwlgen"]
+	path = cwlgen
+	url = git@github.com:illusional/python-cwlgen.git

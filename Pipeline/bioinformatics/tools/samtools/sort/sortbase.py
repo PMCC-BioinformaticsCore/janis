@@ -50,7 +50,7 @@ class SamToolsSortBase(SamToolsToolBase, ABC):
     when -o is used. This command will also create temporary files tmpprefix.%d.bam as needed when 
     the entire alignment data cannot fit into memory (as controlled via the -m option).
     
-    __
+    ---------------------------------------------------------------------------------------------------
     
     The following rules are used for ordering records.
 

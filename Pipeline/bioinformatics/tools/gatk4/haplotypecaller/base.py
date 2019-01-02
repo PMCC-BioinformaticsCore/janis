@@ -43,13 +43,6 @@ class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
                        doc="File to which assembled haplotypes should be written")
         ]
 
-
-    # def base_command(self):
-    #     base = super(GatkHaplotypeCallerBase, self).base_command()
-    #     if isinstance(base, list): base = base[0]
-    #     return [base, "haplotypecaller"]
-
-
     @staticmethod
     def doc():
         return """

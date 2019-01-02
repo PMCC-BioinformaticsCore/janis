@@ -190,7 +190,28 @@ class Workflow(Tool):
         f, fn = self.get_label_and_component_by_inference(finish)
         self.add_edge((s.split("/")[0], sn), (f, fn))
 
-    def add_edge(self, start, finish):
+    def add_default_value(self, node, default_value):
+        if not node:
+            raise Exception("You must pass a non-optional node to 'add_default_value'")
+        n, component = self.get_label_and_component_by_inference(node)
+
+        if not n:
+            raise Exception(f"Couldn't resolve the node identifier from '{str(node)}'")
+        components = n.split("/")
+        node = self._labels.get(components[0])
+        if not node:
+            raise Exception(f"Couldn't find a node in the graph with identifier '{n}', you must add the node "
+                            f"to the graph to add a default value")
+        if node.node_type != NodeTypes.TASK:
+            raise Exception(f"You can only add a default value to a task (step) (not to '{node.id()}'")
+        if not component:
+            has_one_value = ", even if there's only one value" if len(node.inputs()) == 1 else ""
+            raise Exception("You must fully qualify a node and it's components to add a default value" + has_one_value)
+
+        e = Edge(None, (node, components), default=default_value)
+        node.connection_map[components[-1]] = e
+
+    def add_edge(self, start, finish, default_value=None):
 
         s, component1 = self.get_label_and_component_by_inference(start)
         f, component2 = self.get_label_and_component_by_inference(finish)
@@ -318,7 +339,7 @@ class Workflow(Tool):
         # NOW: Let's build the connection (edge)
 
         # TYPE CHECKING HAS BEEN MOVED TO THE EDGE
-        e = Edge((s_node, s_parts), (f_node, f_parts))
+        e = Edge((s_node, s_parts), (f_node, f_parts), default=default_value)
         f_node.connection_map[f_parts[-1]] = e
 
         self.has_scatter = self.has_scatter or e.scatter

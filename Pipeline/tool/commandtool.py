@@ -82,7 +82,7 @@ class CommandTool(Tool, ABC):
             base_command=self.base_command(),
             label=self.id(),
             doc=self.doc(),
-            cwl_version=Cwl.kCUR_VERSION,
+            # cwl_version=Cwl.kCUR_VERSION,
             stdin=None,
             stderr=None,
             stdout=self.stdout()
@@ -175,8 +175,10 @@ task {self.wdl_name()} {{
         path = inspect.getfile(self.__class__)
 
         ins = sorted(self.inputs(), key=lambda i: i.position if i.position is not None else 0)
+        args = ""
+        if self.arguments():
+            args = " " + " ".join(f"{(a.prefix if a.prefix is not None else '') + ' ' if (a.prefix is not None and a.separate_value_from_prefix) else ''}{a.value}" for a in self.arguments())
 
-        args = " " + " ".join(f"{(a.prefix if a.prefix is not None else '') + ' ' if (a.prefix is not None and a.separate_value_from_prefix) else ''}{a.value}" for a in self.arguments())
         prefixes = " -" + "".join(i.prefix.replace("-", "").replace(" ", "") for i in ins if i.prefix is not None)
 
         docker = self.docker()

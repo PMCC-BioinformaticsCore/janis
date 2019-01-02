@@ -1,6 +1,7 @@
 from Pipeline import ToolInput, Int, Float, Boolean, String, ToolOutput, Filename, File
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.fastq import Fastq
+from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.bioinformatics.tools.bwa.bwatoolbase import BwaToolBase
 
 
@@ -33,7 +34,7 @@ class BwaMemBase(BwaToolBase):
 
     def outputs(self):
         return [
-            ToolOutput("out", Bam(), glob="$(inputs.outputFilename)")
+            ToolOutput("out", Sam(), glob="$(inputs.outputFilename)")
         ]
 
     @staticmethod

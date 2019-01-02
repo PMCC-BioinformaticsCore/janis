@@ -127,14 +127,14 @@ class StepNode(Node):
                 input_id=inp.tag,
                 source=edge.source(),
                 link_merge=None,
-                default=None,
+                default=edge.default,
                 value_from=None
             )
 
             if edge.scatter:
                 scatterable.append(k)
             inp_t = self.inputs()[k].input_type
-            if isinstance(inp_t, Filename):
+            if d.default is None and isinstance(inp_t, Filename):
                 d.default = inp_t.generated_filename(self.step.id())
             step.inputs.append(d)
 

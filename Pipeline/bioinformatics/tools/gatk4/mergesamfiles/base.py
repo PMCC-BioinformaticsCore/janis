@@ -13,7 +13,7 @@ class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
 
     def inputs(self):
         return [
-            ToolInput("input", Bam(), prefix="-I", doc="The SAM/BAM file to sort.", position=10),
+            ToolInput("input", Array(Bam()), prefix="-I", doc="The SAM/BAM file to sort.", position=10),
             ToolInput("outputFilename", Filename(extension=".bam"), position=10, prefix="-O",
                       doc="SAM/BAM file to write merged result to"),
             *self.additional_args

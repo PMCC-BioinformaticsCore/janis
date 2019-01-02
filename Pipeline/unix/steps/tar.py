@@ -8,12 +8,6 @@ from Pipeline.tool.commandtool import CommandTool, ToolInput, ToolOutput
 
 
 class Tar(CommandTool):
-    inputs1: ToolInput = ToolInput("input1", Array(File()), position=2)
-    input2: ToolInput = ToolInput("input2", Array(File()), position=3)
-    tarred: ToolOutput = ToolOutput("tarred", File(), glob="*.tar")
-
-    # this param may be marked as optional, but the Workflow system will always give it a value
-    tarName: ToolInput = ToolInput("tarName", Filename(extension=".tar"), position=1)
 
     @staticmethod
     def tool():
@@ -22,6 +16,21 @@ class Tar(CommandTool):
     @staticmethod
     def base_command():
         return ["tar", "cvf"]
+
+    def inputs(self):
+        return [
+            ToolInput("files", Array(File()), position=2),
+            ToolInput("tarName", Filename(extension=".tar"), position=1)
+        ]
+
+    def outputs(self):
+        return [
+            ToolOutput("tarred", File(), glob="*.tar")
+        ]
+
+
+if __name__ == "__main__":
+    print(Tar().help())
 
 """
 

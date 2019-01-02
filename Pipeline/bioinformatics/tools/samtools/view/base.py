@@ -21,7 +21,7 @@ class SamToolsViewBase(SamToolsToolBase, ABC):
             *super(SamToolsViewBase, self).inputs(),
             *SamToolsViewBase.additional_inputs,
 
-            ToolInput("bam", Bam(), position=10),
+            ToolInput("sam", Sam(), position=10),
 
             ToolInput("reference", FastaWithDict(optional=True), position=5, prefix="-T",
                       doc="A FASTA format reference FILE, optionally compressed by bgzip and ideally indexed "

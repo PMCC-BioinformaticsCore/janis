@@ -6,30 +6,28 @@ from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.bioinformatics.tools.samtools.samtoolstoolbase import SamToolsToolBase
 
+
 class SamToolsViewBase(SamToolsToolBase, ABC):
     @staticmethod
     def tool():
         return "SamToolsView"
 
-    @staticmethod
-    def base_command():
-        # lol python: https://stackoverflow.com/a/26807879
-        bc = super(SamToolsViewBase, SamToolsViewBase).base_command()
-        if isinstance(bc, str): bc = [bc]
-        return [*bc, "view"]
+    @classmethod
+    def samtools_command(cls):
+        return "view"
 
     def inputs(self):
         return [
             *super(SamToolsViewBase, self).inputs(),
             *SamToolsViewBase.additional_inputs,
 
-            ToolInput("sam", Bam(), position=10),
+            ToolInput("bam", Bam(), position=10),
 
             ToolInput("reference", FastaWithDict(optional=True), position=5, prefix="-T",
                       doc="A FASTA format reference FILE, optionally compressed by bgzip and ideally indexed "
                           "by samtools faidx. If an index is not present, one will be generated for you."),
 
-            ToolInput("output", Filename(extension=".bam"), position=5, prefix="-o", doc="Output to FILE [stdout]."),
+            ToolInput("outputFilename", Filename(extension=".bam"), position=5, prefix="-o", doc="Output to FILE [stdout]."),
 
         ]
 
@@ -55,8 +53,7 @@ class SamToolsViewBase(SamToolsToolBase, ABC):
     Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format).
        
        
-    Documentation: http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS
-           """.strip()
+    Documentation: http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS""".strip()
 
     def arguments(self):
         return [

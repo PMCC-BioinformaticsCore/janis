@@ -6,8 +6,18 @@ from Pipeline import CommandTool
 class SamToolsToolBase(CommandTool, ABC):
 
     @staticmethod
-    def base_command():
-        return ["samtools"]
+    @classmethod
+    def samtools_command(cls):
+        raise Exception("Subclass must implement the samtools_command method: expects one of: ["
+                        "   view, sort, index, idxstats, flagstat, stats, bedcov, depth, "
+                        "   merge, faidx, fqidx, tview, split, quickcheck, dict, fixmate, "
+                        "   mpileup, flags, fastq/a, collate, refheader, cat, rmdup, "
+                        "   addreplacerg, calmd, targetcut, phase, depad, markdup"
+                        "]")
+
+    @classmethod
+    def base_command(cls):
+        return ["samtools", cls.samtools_command()]
 
     def inputs(self):
         return [
@@ -30,8 +40,7 @@ class SamToolsToolBase(CommandTool, ABC):
     file and will download the index upon absence. Samtools does not retrieve the entire alignment file 
     unless it is asked to do so.
 
-    Documentation: http://www.htslib.org/doc/samtools.html#DESCRIPTION
-        """.strip()
+    Documentation: http://www.htslib.org/doc/samtools.html#DESCRIPTION""".strip()
 
     @staticmethod
     @abstractmethod

@@ -42,8 +42,8 @@ class Filename(String):
         """
         :param extension: with no '.' (dot)
         """
-        super().__init__(optional=True)
         self.extension = extension
+        super().__init__(optional=True, default=self.generated_filename(self.extension))
 
     @staticmethod
     def name() -> str:
@@ -75,9 +75,6 @@ concerned what the filename should be. The Filename DataType should NOT be used 
         pre = (prefix + "-") if prefix is not None else ""
         ex = "" if self.extension is None else self.extension
         return pre + "generated-" + str(uuid.uuid1()) + ex
-
-    def default(self) -> str:
-        return self.generated_filename()
 
     def can_receive_from(self, other: DataType):
         # Specific override because Filename should be able to receive from string

@@ -5,6 +5,7 @@ from Pipeline.graph.edge import Edge
 from Pipeline.types.common_data_types import String
 from Pipeline.unix.data_types.tar_file import TarFile
 from Pipeline.unix.steps.echo import Echo
+from Pipeline.unix.steps.tar import Tar
 from Pipeline.unix.steps.untar import Untar
 from Pipeline.workflow.input import Input
 from Pipeline.workflow.output import Output
@@ -182,4 +183,29 @@ class TestWorkflow(TestCase):
         w.dump_cwl(to_disk=True)
 
         self.assertTrue(True)
+
+    def test_add_default_value(self):
+
+        w = Workflow("Workflow with default value")
+        default_value = "myFile.tar"
+
+        inp1 = Input("inp1", Array(File()))
+        step = Step("tar", Tar())
+        out = Output("tarred", TarFile())
+
+        w.add_pipe(inp1, step, out)
+        w.add_default_value(step.tarName, default_value)
+        cwl, _, _ = w.cwl(is_nested_tool=False, with_docker=False)
+
+        self.assertIn("steps", cwl)
+        steps = cwl["steps"]
+        self.assertIn(step.id(), steps)
+        inp = steps[step.id()]
+        self.assertIn("in", inp),
+        in_map = inp["in"]
+        self.assertIn("tarName", in_map)
+        tarName_props = in_map["tarName"]
+        self.assertIn("default", tarName_props)
+        self.assertEqual(tarName_props["default"], default_value)
+
 

@@ -105,9 +105,10 @@ class NativeTypes:
 
 class DataType(ABC):
 
-    def __init__(self, optional=False):
+    def __init__(self, optional=False, default=None):
         self.optional = optional
         self.is_prim = NativeTypes.is_primitive(self.primitive())
+        self.default_value = None
 
     @staticmethod
     @abstractmethod
@@ -200,5 +201,5 @@ class DataType(ABC):
         return NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional()
 
     def default(self):
-        return None
+        return self.default_value
 

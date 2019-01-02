@@ -20,6 +20,7 @@ def full_lbl(node: Node, tag: Optional[str]) -> str:
 
 
 class Edge:
+    # todo: Make Edge support multiple sources
 
     def __init__(self, start: Optional[TaggedNode], finish: TaggedNode, default=None):
         if start:

@@ -122,20 +122,19 @@ class StepNode(Node):
                     raise Exception(f"Error when building connections for step '{self.id()}', "
                                     f"could not find required connection: '{k}'")
 
+            inp_t = self.inputs()[k].input_type
             edge = self.connection_map[k]
+            default = edge.default if edge.default else inp_t.default()
             d = cwl.WorkflowStepInput(
                 input_id=inp.tag,
                 source=edge.source(),
-                link_merge=None,
-                default=edge.default,
+                link_merge=None,        # this will need to change when edges have multiple sources
+                default=default,
                 value_from=None
             )
-
             if edge.scatter:
                 scatterable.append(k)
-            inp_t = self.inputs()[k].input_type
-            if d.default is None and isinstance(inp_t, Filename):
-                d.default = inp_t.generated_filename(self.step.id())
+
             step.inputs.append(d)
 
         if len(scatterable) > 0:

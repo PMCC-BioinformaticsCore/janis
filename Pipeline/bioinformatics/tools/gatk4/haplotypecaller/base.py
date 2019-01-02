@@ -25,7 +25,7 @@ class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
                       doc="File to which variants should be written"),
             ToolInput("bamOutput", Filename(), position=48, prefix="--bamout",
                       doc="File to which assembled haplotypes should be written (prefix previously --bam-output)"),
-            ToolInput("dbsnp", VcfIdx(), position=7, prefix="--dbsnp", doc="A dbSNP VCF file."),
+            ToolInput("dbsnp", VcfIdx(), position=7, prefix="--dbsnp", doc="(Also: -D) A dbSNP VCF file."),
             ToolInput("intervals", Bed(), position=60, prefix="-L",
                       doc="(Previously: .bedFile) One or more genomic intervals over which to operate")
         ]

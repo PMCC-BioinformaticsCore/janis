@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
-
 from Pipeline import CommandTool
 
 
 class SamToolsToolBase(CommandTool, ABC):
 
-    @staticmethod
     @classmethod
+    @abstractmethod
     def samtools_command(cls):
         raise Exception("Subclass must implement the samtools_command method: expects one of: ["
                         "   view, sort, index, idxstats, flagstat, stats, bedcov, depth, "

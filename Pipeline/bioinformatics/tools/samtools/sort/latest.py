@@ -1,5 +1,5 @@
 from Pipeline.bioinformatics.tools.samtools.samtoolslatest import SamToolsLatest
-from Pipeline.bioinformatics.tools.samtools.sort.sortbase import SamToolsSortBase
+from Pipeline.bioinformatics.tools.samtools.sort.base import SamToolsSortBase
 
 
 class SamToolsSortLatest(SamToolsLatest, SamToolsSortBase):

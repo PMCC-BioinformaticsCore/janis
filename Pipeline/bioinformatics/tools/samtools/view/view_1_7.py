@@ -1,5 +1,5 @@
 from Pipeline.bioinformatics.tools.samtools.samtools_1_7 import SamTools_1_7
-from Pipeline.bioinformatics.tools.samtools.view.viewbase import SamToolsViewBase
+from Pipeline.bioinformatics.tools.samtools.view.base import SamToolsViewBase
 
 
 class SamToolsView_1_7(SamTools_1_7, SamToolsViewBase):

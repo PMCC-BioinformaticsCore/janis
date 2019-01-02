@@ -1,39 +1,22 @@
-from Pipeline import ToolInput, Filename, String, ToolArgument, Array, File, Int, Boolean, ToolOutput
+from abc import ABC
+
+from Pipeline import ToolArgument, ToolInput, Filename, String, ToolOutput, Array, File, Int, Boolean
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
-from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
-class Gatk4SortSamBase(Gatk4ToolBase):
+class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
     @staticmethod
     def tool():
-        return "gatksortsam"
-
-    @staticmethod
-    def doc():
-        return """
-    Sorts a SAM/BAM/CRAM file.    
-    
-    Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_SortSam.php
-    """.strip()
+        return "Gatk4MergeSameFiles"
 
     def inputs(self):
         return [
-            *super(Gatk4SortSamBase, self).inputs(),
-            ToolInput("input", Bam(), prefix="-I", doc="The SAM/BAM/CRAM file to sort.", position=10),
+            ToolInput("input", Bam(), prefix="-I", doc="The SAM/BAM file to sort.", position=10),
             ToolInput("outputFilename", Filename(extension=".bam"), position=10, prefix="-O",
-                      doc="The sorted SAM/BAM/CRAM output file."),
-            ToolInput("sortOrder", String(), prefix="-SO", position=10,
-                      doc="The --SORT_ORDER argument is an enumerated type (SortOrder), which can have one of "
-                          "the following values: [unsorted, queryname, coordinate, duplicate, unknown]"),
-            *Gatk4SortSamBase.additional_args
-        ]
-
-    def arguments(self):
-        return [
-            *super(Gatk4SortSamBase, self).arguments(),
-            ToolArgument("SortSam", position=4)
+                      doc="SAM/BAM file to write merged result to"),
+            *self.additional_args
         ]
 
     def outputs(self):
@@ -41,9 +24,39 @@ class Gatk4SortSamBase(Gatk4ToolBase):
             ToolOutput("output", Bam(), glob="$(outputFilename)")
         ]
 
+    def arguments(self):
+        return [
+            *super(Gatk4MergeSamFilesBase, self).arguments(),
+            ToolArgument("MergeSamFiles", position=4)
+        ]
+
+    @staticmethod
+    def doc():
+        return """
+    Merges multiple SAM/BAM files into one file
+
+    Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_MergeSamFiles.php
+        """.strip()
+
     additional_args = [
         ToolInput("argumentsFile", Array(File(), optional=True), prefix="--arguments_file", position=10,
                   doc="read one or more arguments files and add them to the command line"),
+
+        ToolInput("assumeSorted", Boolean(optional=True), prefix="-AS",
+                  doc="If true, assume that the input files are in the same sort order as the requested "
+                      "output sort order, even if their headers say otherwise."),
+        ToolInput("comment", Array(String(), optional=True), prefix="-CO",
+                  doc="Comment(s) to include in the merged output file's header."),
+        ToolInput("mergeSequenceDictionaries", Boolean(optional=True), prefix="-MSD",
+                  doc="Merge the sequence dictionaries"),
+        ToolInput("sortOrder", String(optional=True), prefix="-SO", position=10,
+                  doc="The --SORT_ORDER argument is an enumerated type (SortOrder), which can have one of "
+                      "the following values: [unsorted, queryname, coordinate, duplicate, unknown]"),
+        ToolInput("useThreading", Boolean(optional=True), prefix="--USE_THREADING",
+                  doc="Option to create a background thread to encode, compress and write to disk the output file. "
+                      "The threaded version uses about 20% more CPU and decreases runtime by "
+                      "~20% when writing out a compressed BAM file."),
+
         ToolInput("compressionLevel", Int(optional=True), prefix="--COMPRESSION_LEVEL", position=11,
                   doc="Compression level for all compressed files created (e.g. BAM and GELI)."),
         ToolInput("createIndex", Boolean(optional=True), prefix="--CREATE_INDEX", position=11,
@@ -73,5 +86,5 @@ class Gatk4SortSamBase(Gatk4ToolBase):
         ToolInput("verbosity", String(optional=True), prefix="--verbosity", position=11,
                   doc="The --verbosity argument is an enumerated type (LogLevel), which can have "
                       "one of the following values: [ERROR, WARNING, INFO, DEBUG]")
-    ]
 
+    ]

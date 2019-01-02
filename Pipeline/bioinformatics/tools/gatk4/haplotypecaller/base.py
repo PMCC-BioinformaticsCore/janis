@@ -21,7 +21,7 @@ class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
             *Gatk4HaplotypeCallerBase.optional_args,
             ToolInput("inputRead", Bam(), doc="BAM/SAM/CRAM file containing reads", prefix="--input"),
             ToolInput("reference", FastaWithDict(), position=5, prefix="-R", doc="Reference sequence file"),
-            ToolInput("outputFilename", String(optional=True), position=8, prefix="-o",
+            ToolInput("outputFilename", String(optional=True), position=8, prefix="-O",
                       doc="File to which variants should be written"),
             ToolInput("bamOutput", Filename(), position=48, prefix="--bamout",
                       doc="File to which assembled haplotypes should be written (prefix previously --bam-output)"),

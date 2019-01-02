@@ -14,7 +14,7 @@ from Pipeline.bioinformatics.tools.gatk3.mutect2.latest import Gatk3Mutect2Lates
 from Pipeline.bioinformatics.tools.gatk3.printreads.latest import Gatk3PrintReadsLatest as Gatk3PrintReads
 from Pipeline.bioinformatics.tools.picard_markdup import PicardMarkDup
 from Pipeline.bioinformatics.tools.picard_sortsam import PicardSortSam
-from Pipeline.bioinformatics.tools.samtools.view.viewlatest import SamToolsViewLatest as SamToolsView
+from Pipeline.bioinformatics.tools.samtools.view.latest import SamToolsViewLatest as SamToolsView
 
 
 class TestParallel(unittest.TestCase):

@@ -280,12 +280,12 @@ class Array(DataType):
         return {"type": "array"}
 
     def cwl_type(self):
-        return cwl.CommandInputArraySchema(
+        inp = cwl.CommandInputArraySchema(
             items=self.__t.cwl_type(),
             # label=None,
             # input_binding=None
         )
-
+        return [inp, "null"] if self.optional else inp
     # def cwl(self) -> Dict[str, Any]:
     #     dtype = {
     #             "type": NativeTypes.map_to_cwl(NativeTypes.kArray),

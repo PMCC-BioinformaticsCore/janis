@@ -1,6 +1,6 @@
 from abc import ABC
 
-from Pipeline import ToolArgument, ToolInput, Filename, ToolOutput, File, Array, String, Boolean, Int, Float
+from Pipeline import ToolArgument, ToolInput, Filename, ToolOutput, File, Array, String, Boolean, Int, Float, Directory
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
@@ -134,7 +134,7 @@ class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
                   doc="Whether to suppress job-summary info on System.err."),
         ToolInput("reference", File(optional=True), prefix="--REFERENCE=SEQUENCE", position=11,
                   doc="Reference sequence file."),
-        ToolInput("tmpDir", String(optional=True), prefix="--TMP_DIR", position=11,
+        ToolInput("tmpDir", Directory(optional=True), prefix="--TMP_DIR", position=11,
                   doc="Undocumented option"),
         ToolInput("useJdkDeflater", Boolean(optional=True), prefix="--use_jdk_deflater", position=11,
                   doc="Whether to use the JdkDeflater (as opposed to IntelDeflater)"),

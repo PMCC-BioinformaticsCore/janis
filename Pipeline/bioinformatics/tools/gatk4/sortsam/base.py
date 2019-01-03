@@ -1,4 +1,4 @@
-from Pipeline import ToolInput, Filename, String, ToolArgument, Array, File, Int, Boolean, ToolOutput
+from Pipeline import ToolInput, Filename, String, ToolArgument, Array, File, Int, Boolean, ToolOutput, Directory
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
@@ -59,7 +59,7 @@ class Gatk4SortSamBase(Gatk4ToolBase):
                   doc="Whether to suppress job-summary info on System.err."),
         ToolInput("reference", FastaWithDict(optional=True), prefix="--reference", position=11,
                   doc="Reference sequence file."),
-        ToolInput("tmpDir", String(optional=True), prefix="--TMP_DIR", position=11,
+        ToolInput("tmpDir", Directory(optional=True), prefix="--TMP_DIR", position=11,
                   doc="Undocumented option"),
         ToolInput("useJdkDeflater", Boolean(optional=True), prefix="--use_jdk_deflater", position=11,
                   doc="Whether to use the JdkDeflater (as opposed to IntelDeflater)"),

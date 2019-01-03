@@ -1,6 +1,6 @@
 from abc import ABC
 
-from Pipeline import ToolInput, Filename, ToolOutput, File, String
+from Pipeline import ToolInput, Filename, ToolOutput, File, String, Directory
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
@@ -57,6 +57,6 @@ class Gatk4ApplyBqsrBase(Gatk4ToolBase, ABC):
 
     additional_args = [
         # Put more detail in here from documentation
-        ToolInput("tmpDir", String(optional=True), prefix="--TMP_DIR", position=11,
+        ToolInput("tmpDir", Directory(optional=True), prefix="--TMP_DIR", position=11,
                   doc="Undocumented option"),
     ]

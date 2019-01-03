@@ -1,6 +1,6 @@
 from abc import ABC
 
-from Pipeline import ToolArgument, ToolInput, Filename, ToolOutput, File, Array, String, Int, Boolean
+from Pipeline import ToolArgument, ToolInput, Filename, ToolOutput, File, Array, String, Int, Boolean, Directory
 from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
@@ -27,7 +27,7 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
     def outputs(self):
         return [
             ToolOutput("output", BamPair(), glob="$(inputs.outputFilename)"),
-            ToolOutput("metrics", Tsv(), glob="$(inputs.metricsFilename")
+            ToolOutput("metrics", Tsv(), glob="$(inputs.metricsFilename)")
         ]
 
     def arguments(self):
@@ -61,7 +61,7 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
                       "the number of file handles needed to sort a SAM file, and increases the amount of RAM needed."),
         ToolInput("quiet", Boolean(optional=True), prefix="--QUIET", position=11,
                   doc="Whether to suppress job-summary info on System.err."),
-        ToolInput("tmpDir", String(optional=True), prefix="--TMP_DIR", position=11,
+        ToolInput("tmpDir", Directory(optional=True), prefix="--TMP_DIR", position=11,
                   doc="Undocumented option"),
         ToolInput("useJdkDeflater", Boolean(optional=True), prefix="--use_jdk_deflater", position=11,
                   doc="Whether to use the JdkDeflater (as opposed to IntelDeflater)"),

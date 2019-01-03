@@ -196,6 +196,7 @@ class TestWorkflow(TestCase):
         w.add_pipe(inp1, step, out)
         w.add_default_value(step.tarName, default_value)
         cwl, _, _ = w.cwl(is_nested_tool=False, with_docker=False)
+        # w.dump_cwl(to_disk=False, with_docker=False)
 
         self.assertIn("steps", cwl)
         steps = cwl["steps"]

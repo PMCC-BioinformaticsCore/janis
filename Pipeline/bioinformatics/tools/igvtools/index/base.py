@@ -1,5 +1,5 @@
 from Pipeline import ToolInput
-from Pipeline.bioinformatics.data_types.vcf import Vcf
+from Pipeline.bioinformatics.data_types.vcf import TabixIdx
 from Pipeline.bioinformatics.tools.igvtools.igvtoolstoolbase import IgvToolsToolBase
 
 
@@ -14,7 +14,7 @@ class IgvToolsIndexBase(IgvToolsToolBase):
 
     def inputs(self):
         return [
-            ToolInput("input", Vcf(), doc="The alignment or feature file for which an index will be created")
+            ToolInput("input", TabixIdx(), doc="The alignment or feature file for which an index will be created")
         ]
 
     def outputs(self):

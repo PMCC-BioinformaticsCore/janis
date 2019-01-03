@@ -1,7 +1,7 @@
 from abc import ABC
 
 from Pipeline import ToolArgument, ToolInput, Filename, ToolOutput, File, Array, String, Boolean, Int, Float
-from Pipeline.bioinformatics.data_types.vcf import Vcf, VcfIdx
+from Pipeline.bioinformatics.data_types.vcf import VcfIdx
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
@@ -12,8 +12,8 @@ class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
 
     def inputs(self):
         return [
-            ToolInput("callVCF", Vcf(), prefix="--CALL_VCF", doc="The VCF containing the call sample"),
-            ToolInput("truthVCF", Vcf(), prefix="--TRUTH_VCF", doc="The VCF containing the truth sample"),
+            ToolInput("callVCF", VcfIdx(), prefix="--CALL_VCF", doc="The VCF containing the call sample"),
+            ToolInput("truthVCF", VcfIdx(), prefix="--TRUTH_VCF", doc="The VCF containing the truth sample"),
             ToolInput("outputBasename", Filename(), prefix="--OUTPUT",
                       doc="Basename for the three metrics files that are to be written. Resulting files will be:"
                           "(1) .genotype_concordance_summary_metrics, "
@@ -28,7 +28,7 @@ class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
             ToolOutput("summaryMetrics", File(), glob="*.genotype_concordance_summary_metrics"),
             ToolOutput("detailMetrics", File(), glob="*.genotype_concordance_detail_metrics"),
             ToolOutput("contingencyMetrics", File(), glob="*.genotype_concordance_contingency_metrics"),
-            ToolOutput("vcf", Vcf(optional=True), glob="*.vcf")
+            ToolOutput("vcf", VcfIdx(optional=True), glob="*.vcf")
         ]
 
     def arguments(self):

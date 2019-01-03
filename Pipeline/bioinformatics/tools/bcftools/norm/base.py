@@ -1,7 +1,7 @@
 from abc import ABC
 
 from Pipeline import ToolInput, String, Boolean, File, Filename, Array, Int, ToolOutput
-from Pipeline.bioinformatics.data_types.vcf import Vcf, GVCF
+from Pipeline.bioinformatics.data_types.vcf import TabixIdx
 from Pipeline.bioinformatics.tools.bcftools.bcftoolstoolbase import BcfToolsToolBase
 
 
@@ -17,7 +17,7 @@ class BcfToolsNormBase(BcfToolsToolBase):
 
     def inputs(self):
         return [
-            ToolInput("input", GVCF(), position=10),
+            ToolInput("input", TabixIdx(), position=10),
             ToolInput("outputFilename", Filename(extension=".vcf"), prefix="-o",
                       doc="--output: When output consists of a single stream, "
                           "write it to FILE rather than to standard output, where it is written by default."),
@@ -26,7 +26,7 @@ class BcfToolsNormBase(BcfToolsToolBase):
 
     def outputs(self):
         return [
-            ToolOutput("output", Vcf(), )
+            ToolOutput("output", TabixIdx(), glob="$(inputs.outputFilename)")
         ]
 
     @staticmethod

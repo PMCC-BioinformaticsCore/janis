@@ -561,7 +561,7 @@ class Workflow(Tool):
         w = cwl.Workflow(self.identifier, self.label, self.doc)
 
         w.inputs = [i.cwl() for i in self._inputs]
-        w.steps = [s.cwl() for s in self._steps]
+        w.steps = [s.cwl(is_nested_tool=is_nested_tool) for s in self._steps]
         w.outputs = [o.cwl() for o in self._outputs]
 
         w.requirements.append(cwl.InlineJavascriptReq())
@@ -678,6 +678,9 @@ workflow {self.identifier} {{
             os.makedirs(d)
         if not os.path.isdir(d_tools):
             os.makedirs(d_tools)
+
+        from cwlgen.cwlgen.utils import literal, literal_presenter
+        yaml.add_representer(literal, literal_presenter)
 
         print(yaml.dump(cwl_data, default_flow_style=False))
         print(yaml.dump(inp_data, default_flow_style=False))

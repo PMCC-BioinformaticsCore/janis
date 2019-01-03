@@ -2,8 +2,10 @@ from abc import ABC
 
 from Pipeline import ToolInput, Filename, ToolOutput, File, String
 from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
+from Pipeline.unix.data_types.tsv import Tsv
 
 
 class Gatk4ApplyBqsrBase(Gatk4ToolBase, ABC):
@@ -13,10 +15,10 @@ class Gatk4ApplyBqsrBase(Gatk4ToolBase, ABC):
 
     def inputs(self):
         return [
-            ToolInput("input", Bam(), prefix="-I", doc="The SAM/BAM/CRAM file containing reads.", position=10),
+            ToolInput("input", BamPair(), prefix="-I", doc="The SAM/BAM/CRAM file containing reads.", position=10),
             ToolInput("reference", FastaWithDict(), prefix="-R", doc="Reference sequence"),
             ToolInput("outputFilename", Filename(extension="recal.bam"), prefix="-O", doc="Write output to this file"),
-            ToolInput("recalFile", File(optional=True), prefix="--bqsr-recal-file",
+            ToolInput("recalFile", Tsv(optional=True), prefix="--bqsr-recal-file",
                       doc="Input recalibration table for BQSR"),
 
             *super(Gatk4ApplyBqsrBase, self).inputs(),
@@ -25,7 +27,7 @@ class Gatk4ApplyBqsrBase(Gatk4ToolBase, ABC):
 
     def outputs(self):
         return [
-            ToolOutput("output", Bam(), glob="$(inputs.outputFilename)")
+            ToolOutput("output", BamPair(), glob="$(inputs.outputFilename)")
         ]
 
     @staticmethod

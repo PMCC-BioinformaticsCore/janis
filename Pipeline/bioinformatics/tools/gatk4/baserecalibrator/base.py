@@ -1,10 +1,12 @@
 from abc import ABC
 
-from Pipeline import ToolArgument, ToolInput, ToolOutput, Filename, Array, File, String, Int, Boolean, Double
+from Pipeline import ToolArgument, ToolInput, ToolOutput, Filename, Array, File, String, Int, Boolean, Double, Directory
+from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
+from Pipeline.unix.data_types.tsv import Tsv
 
 
 class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
@@ -33,7 +35,7 @@ class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
                           "skipped by the -XL argument."),
             ToolInput("reference", FastaWithDict(), position=5, prefix="-R", doc="Reference sequence file"),
 
-            ToolInput("outputFile", Filename(extension=".grp"), position=8, prefix="-O",
+            ToolInput("outputFilename", Filename(extension=".table"), position=8, prefix="-O",
                       doc="**The output recalibration table filename to create.** "
                           "After the header, data records occur one per line until the end of the file. The first "
                           "several items on a line are the values of the individual covariates and will change "
@@ -41,6 +43,11 @@ class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
                           "data- that is, number of observations for this combination of covariates, number of "
                           "reference mismatches, and the raw empirical quality score calculated by phred-scaling "
                           "the mismatch rate. Use '/dev/stdout' to print to standard out.")
+        ]
+
+    def outputs(self):
+        return [
+            ToolOutput("output", Tsv(), glob="$(inputs.outputFilename)")
         ]
 
     @staticmethod
@@ -68,7 +75,7 @@ class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
         ]
 
     additional_args = [
-
+        ToolInput("tmpDir", Directory(optional=True), prefix="--tmp-dir", doc="Temp directory to use.")
     ]
 
 

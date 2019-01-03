@@ -3,9 +3,10 @@ from abc import ABC
 from Pipeline import String, Int, File, ToolOutput, ToolInput, \
     ToolArgument, Boolean, Double, Array, Filename
 from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
-from Pipeline.bioinformatics.data_types.vcf import VcfIdx, Vcf
+from Pipeline.bioinformatics.data_types.vcf import VcfIdx
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
@@ -19,27 +20,27 @@ class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
         return [
             *super(Gatk4HaplotypeCallerBase, self).inputs(),
             *Gatk4HaplotypeCallerBase.optional_args,
-            ToolInput("inputRead", Bam(), doc="BAM/SAM/CRAM file containing reads", prefix="--input"),
+            ToolInput("inputRead", BamPair(), doc="BAM/SAM/CRAM file containing reads", prefix="--input"),
             ToolInput("reference", FastaWithDict(), position=5, prefix="-R", doc="Reference sequence file"),
             ToolInput("outputFilename", String(optional=True), position=8, prefix="-O",
                       doc="File to which variants should be written"),
             ToolInput("bamOutput", Filename(), position=48, prefix="--bamout",
                       doc="File to which assembled haplotypes should be written (prefix previously --bam-output)"),
             ToolInput("dbsnp", VcfIdx(), position=7, prefix="--dbsnp", doc="(Also: -D) A dbSNP VCF file."),
-            ToolInput("intervals", Bed(), position=60, prefix="-L",
+            ToolInput("intervals", Bed(optional=True), position=60, prefix="-L",
                       doc="(Previously: .bedFile) One or more genomic intervals over which to operate")
         ]
 
     def outputs(self):
         return [
-            ToolOutput("output", Vcf(), glob='$(inputs.outputFilename)',
+            ToolOutput("output", VcfIdx(), glob='$(inputs.outputFilename)',
                        doc="""
     Either a VCF or GVCF file with raw, unfiltered SNP and indel calls. Regular VCFs must be filtered 
     either by variant recalibration (Best Practice) or hard-filtering before use in downstream analyses. 
     If using the GVCF workflow, the output is a GVCF file that must first be run through GenotypeGVCFs 
     and then filtering before further analysis""".strip()),
 
-            ToolOutput("bamOut", Bam(), glob='$(inputs.bamOutput)',
+            ToolOutput("bamOut", BamPair(), glob='$(inputs.bamOutput)',
                        doc="File to which assembled haplotypes should be written")
         ]
 

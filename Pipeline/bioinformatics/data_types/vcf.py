@@ -1,7 +1,9 @@
+from abc import ABC
+
 from Pipeline import File
 
 
-class Vcf(File):
+class VcfBase(File, ABC):
     @staticmethod
     def name():
         return "VCF"
@@ -18,7 +20,7 @@ class Vcf(File):
     """.strip()
 
 
-class VcfIdx(Vcf):
+class VcfIdx(VcfBase):
 
     @staticmethod
     def name():
@@ -29,7 +31,21 @@ class VcfIdx(Vcf):
         return [".idx"]
 
 
-class GVCF(Vcf):
+class TabixIdx(VcfBase):
+    @staticmethod
+    def name():
+        return "vcf-gz-tbi"
+
+    @staticmethod
+    def secondary_files():
+        return [".tbi"]
+
+    @staticmethod
+    def doc():
+        return ".vcf.gz with .vcf.gz.tbi file"
+
+
+class GVCF(VcfBase):
     @staticmethod
     def name():
         return "gVCF"

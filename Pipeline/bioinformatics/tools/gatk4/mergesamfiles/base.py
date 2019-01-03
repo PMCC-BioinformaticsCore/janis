@@ -2,6 +2,7 @@ from abc import ABC
 
 from Pipeline import ToolArgument, ToolInput, Filename, String, ToolOutput, Array, File, Int, Boolean
 from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
@@ -13,7 +14,7 @@ class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
 
     def inputs(self):
         return [
-            ToolInput("input", Array(Bam()), prefix="-I", doc="The SAM/BAM file to sort.", position=10),
+            ToolInput("input", Array(BamPair()), prefix="-I", doc="The SAM/BAM file to sort.", position=10),
             ToolInput("outputFilename", Filename(extension=".bam"), position=10, prefix="-O",
                       doc="SAM/BAM file to write merged result to"),
             *self.additional_args
@@ -21,7 +22,7 @@ class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
 
     def outputs(self):
         return [
-            ToolOutput("output", Bam(), glob="$(outputFilename)")
+            ToolOutput("output", BamPair(), glob="$(outputFilename)")
         ]
 
     def arguments(self):

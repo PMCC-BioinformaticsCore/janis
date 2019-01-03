@@ -2,7 +2,9 @@ from abc import ABC
 
 from Pipeline import ToolArgument, ToolInput, Filename, ToolOutput, File, Array, String, Int, Boolean
 from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
+from Pipeline.unix.data_types.tsv import Tsv
 
 
 class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
@@ -12,7 +14,7 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
 
     def inputs(self):
         return [
-            ToolInput("input", Bam(), prefix="-I", position=10,
+            ToolInput("input", BamPair(), prefix="-I", position=10,
                       doc="One or more input SAM or BAM files to analyze. Must be coordinate sorted."),
             ToolInput("outputFilename", Filename(extension=".bam"), position=10, prefix="-O",
                       doc="File to write duplication metrics to"),
@@ -24,8 +26,8 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
 
     def outputs(self):
         return [
-            ToolOutput("output", Bam(), glob="$(inputs.outputFilename)"),
-            ToolOutput("metrics", File(), glob="$(inputs.metricsFilename")
+            ToolOutput("output", BamPair(), glob="$(inputs.outputFilename)"),
+            ToolOutput("metrics", Tsv(), glob="$(inputs.metricsFilename")
         ]
 
     def arguments(self):

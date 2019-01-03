@@ -1,5 +1,6 @@
 from Pipeline import ToolInput, Filename, String, ToolArgument, Array, File, Int, Boolean, ToolOutput
 from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
@@ -38,7 +39,7 @@ class Gatk4SortSamBase(Gatk4ToolBase):
 
     def outputs(self):
         return [
-            ToolOutput("output", Bam(), glob="$(outputFilename)")
+            ToolOutput("output", BamPair(), glob="$(inputs.outputFilename)")
         ]
 
     additional_args = [

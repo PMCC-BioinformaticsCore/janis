@@ -60,18 +60,6 @@ class CommandTool(Tool, ABC):
     def type(cls):
         return ToolTypes.CommandTool
 
-    def inputs(self) -> List[ToolInput]:
-        cls = type(self)
-        attrs = [x for x in vars(cls) if not x.startswith("_")]
-        d = cls.__dict__
-        return [d[x] for x in attrs if x in d and issubclass(type(d[x]), ToolInput)]
-
-    def outputs(self) -> List[ToolOutput]:
-        cls = type(self)
-        attrs = [x for x in vars(cls) if not x.startswith("_")]
-        d = cls.__dict__
-        return [d[x] for x in attrs if x in attrs and issubclass(type(d[x]), ToolOutput)]
-
     @staticmethod
     def environment_variables() -> Optional[Dict[str, str]]:
         return None

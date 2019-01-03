@@ -9,8 +9,6 @@ from Pipeline.tool.commandtool import CommandTool, ToolInput, ToolOutput, ToolAr
 
 
 class Compile(CommandTool):
-    file = ToolInput("file", File())
-    compiled = ToolOutput("compiled", File(), glob="*.class")
 
     @staticmethod
     def tool():
@@ -26,3 +24,15 @@ class Compile(CommandTool):
 
     def arguments(self) -> List[ToolArgument]:
         return [ToolArgument("$(runtime.outdir)", "-d")]
+
+    def inputs(self):
+        return [
+            ToolInput("file", File())
+        ]
+
+    def outputs(self):
+        return [
+            ToolOutput("compiled", File(), glob="*.class")
+        ]
+
+

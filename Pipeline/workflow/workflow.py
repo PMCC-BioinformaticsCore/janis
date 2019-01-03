@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple, Set, Optional, Any
 
 from Pipeline.utils.logger import Logger, LogLevel
 
-from Pipeline.graph.edge import Edge
+from Pipeline.graph.stepinput import StepInput
 from Pipeline.graph.node import Node, NodeTypes, NodeAndTag, layout_nodes2
 
 from Pipeline.types.common_data_types import Array
@@ -13,7 +13,7 @@ from Pipeline.utils.descriptor import BaseDescriptor, GetOnlyDescriptor
 from Pipeline.workflow.step import Step, StepNode
 from Pipeline.workflow.input import Input, InputNode
 from Pipeline.workflow.output import Output, OutputNode
-from Pipeline.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes
+from Pipeline.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes, ToolType
 from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
     InvalidInputsException
 
@@ -26,39 +26,64 @@ class Workflow(Tool):
     label = BaseDescriptor()
     doc = BaseDescriptor()
 
-    def __init__(self, identifier: str, label: str = None, doc: str = None):
-        Logger.log(f"Creating workflow with name: '{identifier}'")
+    def __init__(self, identifier: str, label: str = None, doc: Optional[str] = None):
+        """
+        Initialise the worklow
+        :param identifier: uniquely identifies the workflow
+        :param label: a label that the engine may use to represent the workflow (should be unique)
+        :param doc: Documentation of the workflow
+        """
+        Logger.log(f"Creating workflow with identifier: '{identifier}'")
 
         self.identifier = identifier
         self.label = label
         self.doc = doc
 
-        self._labels: Dict[str, Node] = {}
+        self._nodes: Dict[str, Node] = {}       # Look up a node by its identifier
 
-        self._inputs: List[InputNode] = []
-        self._steps: List[StepNode] = []
-        self._outputs: List[OutputNode] = []
+        self._inputs: List[InputNode] = []      # InputNodes
+        self._steps: List[StepNode] = []        # StepNodes
+        self._outputs: List[OutputNode] = []    # OutputNodes
 
-        self.graph: nx.MultiDiGraph = nx.MultiDiGraph()
-        self.connections: Dict[str, Set[NodeAndTag]] = {}
+        self.graph: nx.MultiDiGraph = nx.MultiDiGraph()     # Realistically this isn't really used except for an image
 
+        # Flags for different requirements that a workflow might need
         self.has_scatter = False
         self.has_subworkflow = False
+        self.has_multiple_inputs = False
 
     def id(self) -> str:
+        """
+        Returns the identifier of the workflow
+        """
         return self.identifier
 
     @classmethod
-    def type(cls):
+    def type(cls) -> ToolType:
+        """
+        Returns the ToolType (Workflow | CommandTool | ExpressionTool)
+        """
         return ToolTypes.Workflow
 
     def inputs(self) -> List[ToolInput]:
+        """
+        List of ToolInputs of the workflow, we can toss out most of the metadata
+        about positioning, prefixes, etc that the ToolInput class uses
+        """
         return [ToolInput(i.id(), i.input.data_type) for i in self._inputs]
 
     def outputs(self) -> List[ToolOutput]:
-        return [ToolOutput(o.id(), o.output.data_type) for o in self._outputs if o.output.data_type is not None]
+        """
+        Similar to inputs, return a list of ToolOutputs of the workflow
+        """
+        return [ToolOutput(o.id(), o.output.data_type, o.output.doc)
+                for o in self._outputs if o.output.data_type is not None]
 
     def draw_graph(self):
+        """
+        Use matplotlib to draw the a diagram of the workflow (currently neglects subworkflows).
+        This will pause the execution of the program until the graph is closed.
+        """
         import matplotlib.pyplot as plt
 
         default_color = 'black'
@@ -68,7 +93,7 @@ class Workflow(Tool):
         edge_colors = [x["color"] if 'color' in x else default_color for x in edges_attributes]
         node_colors = [NodeTypes.to_col(x.node_type) for x in G.nodes]
 
-        pos = layout_nodes2(list(G.nodes))
+        pos = layout_nodes2(list(G.nodes))  # Manual layout engine of the graph, need to make this better
 
         for n in pos:
             G.node[n]['pos'] = pos[n]
@@ -76,34 +101,39 @@ class Workflow(Tool):
         nx.draw(G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=True)
         plt.show()
 
-    def add_items(self, *args):
+    def _add_items(self, *args) -> List[Any]:
+        """
+        Supports adding (Input | Step | Output | Tuple = construct edge)
+        """
         mixed: List[Any] = args
-        if len(args) == 0:
-            raise Exception("Must have at least than one item to add")
 
         if isinstance(args[0], list):
             if len(args) > 1:
                 raise Exception("Invalid type of arguments")
             mixed = args[0]
 
-        return [self.add_item(i) for i in mixed]
+        return [self._add_item(i) for i in mixed]
 
-    def add_item(self, item):
+    def _add_item(self, item):
+        """
+        Generic add whatever into the workflow: (Input | Step | Output | Tuple = construct edge)
+        :return:
+        """
         if isinstance(item, Input):
-            return self.add_input(item)
+            return self._add_inputs([item])[0]
         elif isinstance(item, Step):
-            return self.add_step(item)
+            return self._add_steps([item])[0]
         elif isinstance(item, Output):
-            return self.add_output(item)
+            return self._add_outputs([item])[0]
         elif isinstance(item, tuple):
             return self.add_edge(item[0], item[1])
         else:
             raise Exception(f"Unexpected type '{type(item)}' passed to 'add_nodes'")
 
-    def add_input(self, inp: Input):
-        return self.add_inputs([inp])
-
-    def add_inputs(self, inputs: List[Input]):
+    def _add_inputs(self, inputs: List[Input]) -> List[InputNode]:
+        """
+        Add a list of inputs into the graph, does nothing except add it into the graph
+        """
         ins = []
         for inp in inputs:
             Logger.log(f"Adding input '{inp.id()}' to '{self.identifier}'")
@@ -111,12 +141,12 @@ class Workflow(Tool):
             ins.append(node)
             self._add_node(node)
             self._inputs.append(node)
-        return ins[0]
+        return ins
 
-    def add_output(self, outp: Output):
-        return self.add_outputs([outp])[0]
-
-    def add_outputs(self, outputs: List[Output]):
+    def _add_outputs(self, outputs: List[Output]) -> List[OutputNode]:
+        """
+        Adds a list of output to the graph, and returns the created OutputNodes
+        """
         outs = []
         for outp in outputs:
             Logger.log(f"Adding output '{outp.id()}' to '{self.identifier}'")
@@ -126,10 +156,10 @@ class Workflow(Tool):
             self._outputs.append(node)
         return outs
 
-    def add_step(self, step: Step):
-        return self.add_steps([step])[0]
-
-    def add_steps(self, steps: List[Step]):
+    def _add_steps(self, steps: List[Step]) -> List[StepNode]:
+        """
+        Adds a list of steps to the graph and returns the created StepNodes
+        """
         ss = []
         for step in steps:
             Logger.log(f"Adding step '{step.id()}' to '{self.identifier}'")
@@ -142,63 +172,86 @@ class Workflow(Tool):
         return ss
 
     def _add_node(self, node: Node):
-
-        if node.id() in self._labels:
-            existing = self._labels[node.id()]
+        """
+        Add a node to the graph, does the correct error checking
+        """
+        if node.id() in self._nodes:
+            existing = self._nodes[node.id()]
             message = f"Attempted to add an input with the identifier '{node.id()}' but there was already " \
                 f"an {existing.node_type} node with representation: {str(existing)}"
             Logger.log(message)
             raise DuplicateLabelIdentifier(message)
-        self._labels[node.id()] = node
+        self._nodes[node.id()] = node
         self.graph.add_node(node)
 
-    def _remove_node(self, node: Node):
-
-        if node.id() not in self._labels:
-            Logger.log(f"Couldn't find node with id '{node.id()}' to remove")
-            return
-
     @staticmethod
-    def get_label_and_component_by_inference(s) -> Tuple[str, Optional[Any]]:
+    def get_labels_and_node_by_inference(s) -> Tuple[str, Optional[Node]]:
+        """
+        Try to get the identifier and node of the
+        :return: Tuple[str, Optional[Node]]
+        """
         try:
             if type(s) == str:
+                # just a string was passed,
                 return s, None
             elif type(s) == tuple:
-                # should have format (tag, Optional[Any])
+                # should have format (tag, Optional[Node]), check 105:step.py
                 return s
             else:
+                # s is hopefully a node (either InputNode | OutputNode)
                 return s.id(), s
         except Exception as e:
             Logger.log_ex(e)
             return str(s), None
 
-    def connect_inputs(self, step: Any, inputs: List[Any]):
+    def connect_inputs(self, step: Any, inputs: List[Any]) -> List[StepInput]:
+        """
+        Connect all the inputs to the step (infer the connections, will error if it can't be determined)
+        :param step: Step to connect to
+        :param inputs: Inputs to connect from
+        :return: List[Edge]
+        """
         return [self.add_piped_edge(step, i) for i in inputs]
 
     def add_edges(self, edges: List[Tuple[Any, Any]]):
         return [self.add_edge(e[0], e[1]) for e in edges]
 
-    def add_pipe(self, *args):
+    def add_pipe(self, *args) -> List[StepInput]:
+        """
+        Connect args[0] -> args[1] and args[1] to args[2] and ... and args[n-1] to args[n]
+        :return:
+        """
         if len(args) < 2:
             raise Exception("Must pass at least two properties to 'add_pipe'")
 
-        for i in range(len(args) - 1):
-            self.add_piped_edge(args[i], args[i + 1])
+        # add_piped_edge removes the component on the start node (ie: n0 -> n1.tag, n1 -> n2.tag2, etc)
+        return [self.add_piped_edge(args[i], args[i + 1]) for i in range(len(args) - 1)]
 
-    def add_piped_edge(self, start, finish):
-        s, sn = self.get_label_and_component_by_inference(start)
-        f, fn = self.get_label_and_component_by_inference(finish)
-        self.add_edge((s.split("/")[0], sn), (f, fn))
+    def add_piped_edge(self, start, finish) -> StepInput:
+        """
+        add_piped_edge removes the component on the start node (ie: n0 -> n1.tag, n1 -> n2.tag2, etc)
+        :param start: node to connect from
+        :param finish: node to connect to
+        :return: Edge between start and finish
+        """
+        s, sn = self.get_labels_and_node_by_inference(start)
+        f, fn = self.get_labels_and_node_by_inference(finish)
+        return self.add_edge((s.split("/")[0], sn), (f, fn))
 
-    def add_default_value(self, node, default_value):
-        if not node:
+    def add_default_value(self, tagged_node, default_value):
+        """
+        Adds a default value to the edge, will create an edge
+        :param tagged_node: will be run through get_labels_and_node_by_inference: ( string | (string, node))
+        :param default_value: value to be the default, should match the data_type
+        """
+        if not tagged_node:
             raise Exception("You must pass a non-optional node to 'add_default_value'")
-        n, component = self.get_label_and_component_by_inference(node)
+        n, component = self.get_labels_and_node_by_inference(tagged_node)
 
         if not n:
-            raise Exception(f"Couldn't resolve the node identifier from '{str(node)}'")
+            raise Exception(f"Couldn't resolve the node identifier from '{str(tagged_node)}'")
         components = n.split("/")
-        node = self._labels.get(components[0])
+        node = self._nodes.get(components[0])
         if not node:
             raise Exception(f"Couldn't find a node in the graph with identifier '{n}', you must add the node "
                             f"to the graph to add a default value")
@@ -208,18 +261,67 @@ class Workflow(Tool):
             has_one_value = ", even if there's only one value" if len(node.inputs()) == 1 else ""
             raise Exception("You must fully qualify a node and it's components to add a default value" + has_one_value)
 
-        e = Edge(None, (node, components), default=default_value)
-        node.connection_map[components[-1]] = e
+        tag = components[-1]
+
+        # # Validate the type of data?
+        # inp = node.inputs().get(tag)
+        # inp.input_type == type(default)
+
+        if tag in node.connection_map:
+            e = node.connection_map[tag]
+        else:
+            e = StepInput(node, tag)
+            node.connection_map[components[-1]] = e
+        e.set_default(default_value)
+
+    @staticmethod
+    def validate_tag_parts(parts: List[str], tag: str, node_type: str):
+        """
+        Validates the parts in a tag (between 0 and 2)
+        :param parts: list
+        :param tag:
+        :param node_type: start | finish for the error string
+        :return:
+        """
+        if len(parts) == 0 or len(parts) > 2:
+            message = f"The {node_type} tag '{tag}' contained an invalid number of parts ({len(parts)}), " \
+                f"it should follow the format: 'label/tag' (1 or 2 parts)"
+            Logger.log(message, LogLevel.CRITICAL)
+            raise InvalidNodeIdentifier(message)
+
+    def try_get_or_add_node(self, label: str, component: Optional[Node], node_type: str) -> Node:
+        node = self._nodes.get(label)
+
+        if node is not None:
+            return node
+
+        Logger.log(f"Could not find {node_type} node with identifier '{label}' in the workflow")
+        if component is not None:
+            Logger.log(f"Adding '{component.id()}' to the workflow")
+            return self._add_item(component)
+        else:
+            message = f"The node '{label}' was not found in the graph, please add the node to the graph " \
+                f"and couldn't get it from the added component before trying to add an edge"
+            Logger.log(message, LogLevel.CRITICAL)
+            raise NodeNotFound(message)
 
     def add_edge(self, start, finish, default_value=None):
+        """
+        Add the start node as a source to the finish node, will create an edge if none exists
+        :param start: an input or step node pair (via get_labels_and_node_by_inference)
+        :param finish: a step or output node pair (via get_labels_and_node_by_inference)
+        :param default_value: optionally provide a default value, if the start resolves to null
+        :return: edge
+        """
 
-        s, component1 = self.get_label_and_component_by_inference(start)
-        f, component2 = self.get_label_and_component_by_inference(finish)
+        s, s_component = self.get_labels_and_node_by_inference(start)
+        f, f_component = self.get_labels_and_node_by_inference(finish)
         Logger.log(f"Adding edge between {s} and {f}")
 
         # set nodes
         s_parts = s.split("/")
         f_parts = f.split("/")
+        stag, ftag = None, None
 
         # ORDER:
         #   1. Get the input type to link
@@ -232,46 +334,14 @@ class Workflow(Tool):
         #       (b) If there are multiple outputs, raise Exception if it doesn't exactly match
         #   5. Check that the types match
         #   6. Add edge
-
-        if len(s_parts) == 0 or len(s_parts) > 2:
-            message = f"The start tag '{s}' contained an invalid number of parts ({len(s_parts)}), " \
-                f"it should follow the format: 'label/tag' (1 or 2 parts)"
-            Logger.log(message, LogLevel.CRITICAL)
-            raise InvalidNodeIdentifier(message)
-        if len(f_parts) == 0 or len(f_parts) > 2:
-            message = f"The finish tag '{f}' contained an invalid number of parts ({len(f_parts)}), " \
-                f"it should follow the format: 'label/tag' (1 or 2 parts)"
-            Logger.log(message, LogLevel.CRITICAL)
-            raise InvalidNodeIdentifier(message)
+        self.validate_tag_parts(s_parts, s, "start")
+        self.validate_tag_parts(f_parts, f, "finish")
 
         s_label = s_parts[0]
         f_label = f_parts[0]
 
-        s_node = self._labels.get(s_label)
-        f_node = self._labels.get(f_label)
-
-        if s_node is None:
-            Logger.log(f"Could not find start node with identifier '{s_label}' in the workflow")
-            if component1 is not None:
-                Logger.log(f"Adding '{component1.id()}' to the workflow")
-                s_node = self.add_item(component1)
-            else:
-                message = f"The node '{s_label}' was not found in the graph, " \
-                    f"please add the node to the graph before trying to add an edge"
-                Logger.log(message, LogLevel.CRITICAL)
-                raise NodeNotFound(message)
-        if f_node is None:
-            Logger.log(f"Could not find end node with identifier '{f_label}' in the workflow")
-            if component2 is not None:
-                Logger.log(f"Adding '{component2.id()}' to the workflow")
-                f_node = self.add_item(component2)
-            else:
-                message = f"The node '{f_label}' was not found in the graph, " \
-                    f"please add the node to the graph before trying to add an edge"
-                Logger.log(message, LogLevel.CRITICAL)
-                raise NodeNotFound(message)
-
-        # we have the two nodes
+        s_node = self.try_get_or_add_node(s_label, s_component, "start")
+        f_node = self.try_get_or_add_node(f_label, f_component, "finish")
 
         s_node.set_depth(f_node.depth - 1)
         f_node.set_depth(s_node.depth + 1)
@@ -280,6 +350,7 @@ class Workflow(Tool):
             # Can guarantee the data_type
             s_parts, s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts, referenced_by=f_parts)
             f_parts, f_type = self.get_tag_and_type_from_final_edge_node(f_node, f_parts, guess_type=s_type)
+            stag, ftag = None, f_parts[-1]
 
         elif f_node.node_type == NodeTypes.OUTPUT:
             # We'll need to determine the data_type and assign it to the output
@@ -299,6 +370,7 @@ class Workflow(Tool):
             f_node: OutputNode = f_node
             f_parts = [f_label]
             f_node.output.data_type = f_type
+            stag, ftag = s_parts[-1], None
             Logger.log(f"Connecting '{s_node.id()}' to output '{f_node.id()}'")
         else:
 
@@ -308,8 +380,12 @@ class Workflow(Tool):
             f_parts, f_type = self.get_tag_and_type_from_final_edge_node(f_node, f_parts, guess_type=s_type)
 
             if s_type is None and f_type is not None:
-                s_parts, s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts,
-                                                                             referenced_by=f_parts, guess_type=f_type)
+                s_parts, s_type = self.get_tag_and_type_from_start_edge_node(
+                    s_node,
+                    s_parts,
+                    referenced_by=f_parts,
+                    guess_type=f_type
+                )
 
             if s_type is None and f_type is None:
                 # Try to guess both
@@ -318,6 +394,7 @@ class Workflow(Tool):
                 c = self.guess_connection_between_nodes(s_node, f_node)
                 if c is not None:
                     (s_parts, s_type), (f_parts, f_type) = c
+                    stag, ftag = s_parts[-1], f_parts[-1]
 
         # We got one but not the other
         if s_type is not None and f_type is None:
@@ -338,14 +415,20 @@ class Workflow(Tool):
 
         # NOW: Let's build the connection (edge)
 
-        # TYPE CHECKING HAS BEEN MOVED TO THE EDGE
-        e = Edge((s_node, s_parts), (f_node, f_parts), default=default_value)
-        f_node.connection_map[f_parts[-1]] = e
+        if ftag in f_node.connection_map:
+            step_inputs = f_node.connection_map[ftag]
+        else:
+            step_inputs = StepInput(f_node, ftag)
+            f_node.connection_map[ftag] = step_inputs
+
+        e = step_inputs.add_source(s_node, stag)
+        if default_value:
+            step_inputs.set_default(default_value)
 
         self.has_scatter = self.has_scatter or e.scatter
 
-        col = 'black' if e.correct_type else 'r'
-        self.graph.add_edge(s_node, f_node, type_match=e.correct_type, color=col)
+        col = 'black' if e.compatible_types else 'r'
+        self.graph.add_edge(s_node, f_node, type_match=e.compatible_types, color=col)
         return e
 
     def get_tag_and_type_from_start_edge_node(self, node: Node, input_parts: List[str], referenced_by: List[str],
@@ -667,7 +750,7 @@ workflow {self.identifier} {{
 
         return workflow, inp, tools
 
-    def dump_cwl(self, to_disk: False, with_docker: True):
+    def dump_cwl(self, to_disk: False, with_docker=True):
         import os, yaml
         cwl_data, inp_data, tools_ar = self.cwl(with_docker=with_docker)
 

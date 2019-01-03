@@ -2,8 +2,6 @@ from Pipeline import File, Array, CommandTool, ToolInput, ToolOutput
 
 
 class Merge(CommandTool):
-    files = ToolInput("files", Array(File()))
-    merged = ToolOutput("merged", File())
 
     @staticmethod
     def tool():
@@ -12,3 +10,13 @@ class Merge(CommandTool):
     @staticmethod
     def base_command():
         return ["cat"]
+
+    def inputs(self):
+        return [
+            ToolInput("files", Array(File()))
+        ]
+
+    def outputs(self):
+        return [
+            ToolOutput("merged", File())
+        ]

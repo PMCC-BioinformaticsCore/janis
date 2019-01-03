@@ -4,8 +4,6 @@ from Pipeline.types.common_data_types import Array, File
 
 class Cat(CommandTool):
 
-    files = ToolInput("files", Array(File()))
-
     @staticmethod
     def tool():
         return "CAT"
@@ -13,3 +11,11 @@ class Cat(CommandTool):
     @staticmethod
     def base_command():
         return "cat"
+
+    def inputs(self):
+        return [
+            ToolInput("files", Array(File()))
+        ]
+
+    def outputs(self):
+        return []

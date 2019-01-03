@@ -3,8 +3,6 @@ from Pipeline import CommandTool, Input, String, ToolInput
 
 class Echo(CommandTool):
 
-    inp = ToolInput("inp", String())
-
     @staticmethod
     def tool():
         return "Echo"
@@ -12,3 +10,11 @@ class Echo(CommandTool):
     @staticmethod
     def base_command():
         return "echo"
+
+    def inputs(self):
+        return [
+            ToolInput("inp", String())
+        ]
+
+    def outputs(self):
+        return []

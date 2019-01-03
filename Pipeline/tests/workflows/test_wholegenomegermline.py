@@ -83,7 +83,6 @@ class TestGermlinePipeline(unittest.TestCase):
 
         s1_sw = Step("bwa+st+sort", self.create_subworkflow())
 
-
         s2_mergeSamFiles = Step("s2_mergeSamFiles", Gatk4MergeSamFiles())
         s3_markDuplicates = Step("s3_markDuplicates", Gatk4MarkDuplicates())
         s4_baseRecal = Step("s4_baseRecal", Gatk4BaseRecalibrator())

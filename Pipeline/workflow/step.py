@@ -102,7 +102,7 @@ class StepNode(Node):
             return self.__dict__[item]
 
         if item in self.inputs() or item in self.outputs():
-            return f"{self.id()}/{item}"
+            return f"{self.id()}/{item}", self
 
         raise AttributeError(f"type object '{type(self)}' has no attribute '{item}'")
 
@@ -128,7 +128,7 @@ class StepNode(Node):
             d = cwl.WorkflowStepInput(
                 input_id=inp.tag,
                 source=edge.source(),
-                link_merge=None,        # this will need to change when edges have multiple sources
+                link_merge=None,        # this will need to change when edges have multiple source_map
                 default=default,
                 value_from=None
             )

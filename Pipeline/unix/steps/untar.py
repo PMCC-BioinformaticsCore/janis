@@ -7,9 +7,6 @@ from Pipeline.tool.commandtool import CommandTool, ToolInput, ToolOutput
 
 class Untar(CommandTool):
 
-    tarFile = ToolInput("tarFile", TarFile())
-    files = ToolOutput("files", Array(File()), glob="*.java")
-
     @staticmethod
     def base_command():
         return ["tar", "xf"]
@@ -17,6 +14,16 @@ class Untar(CommandTool):
     @staticmethod
     def tool():
         return "Untar"
+
+    def inputs(self):
+        return [
+            ToolInput("tarFile", TarFile())
+        ]
+
+    def outputs(self):
+        return [
+            ToolOutput("files", Array(File()), glob="*.java")
+        ]
 
 """
 

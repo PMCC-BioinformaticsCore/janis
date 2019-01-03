@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from Pipeline import File, Array
-from Pipeline.graph.edge import Edge
+from Pipeline.graph.stepinput import StepInput, first_value, Edge
 from Pipeline.types.common_data_types import String
 from Pipeline.unix.data_types.tar_file import TarFile
 from Pipeline.unix.steps.echo import Echo
@@ -31,43 +31,42 @@ class TestWorkflow(TestCase):
     def test_add_input(self):
         w = Workflow("test_add_input")
         inp = Input("inputLabel", String())
-        w.add_input(inp)
+        w._add_item(inp)
         self.assertEqual(len(w._inputs), 1)
         self.assertEqual(w._inputs[0].input, inp)
-        self.assertIsNotNone(w._labels[inp.id()])
+        self.assertIsNotNone(w._nodes[inp.id()])
 
     def test_add_step(self):
         w = Workflow("test_add_input")
         step = Step("catStep", Cat())
-        w.add_step(step)
+        w._add_item(step)
         self.assertEqual(len(w._steps), 1)
         self.assertEqual(w._steps[0].step, step)
-        self.assertIsNotNone(w._labels[step.id()])
+        self.assertIsNotNone(w._nodes[step.id()])
 
     def test_add_output(self):
         w = Workflow("test_add_input")
         outp = Output("outputStep", String())
-        w.add_output(outp)
+        w._add_item(outp)
         self.assertEqual(len(w._outputs), 1)
         self.assertEqual(w._outputs[0].output, outp)
-        self.assertIsNotNone(w._labels[outp.id()])
+        self.assertIsNotNone(w._nodes[outp.id()])
 
     def test_add_node(self):
         w = Workflow("test_add_node")
         inp = Input("inp", String())
         stp = Step("stp", Cat())
-        w.add_items([inp, stp])
+        w._add_items([inp, stp])
         self.assertEqual(len(w._inputs), 1)
         self.assertEqual(len(w._steps), 1)
         self.assertEqual(len(w._outputs), 0)
-        self.assertEqual(w._labels[inp.id()].id(), inp.id())
-        self.assertEqual(w._labels[stp.id()].id(), stp.id())
+        self.assertEqual(w._nodes[inp.id()].id(), inp.id())
+        self.assertEqual(w._nodes[stp.id()].id(), stp.id())
 
     def test_add_qualified_edge(self):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
         stp = Step("stp", Echo())  # Only has one input, with no output
-        w.add_items([inp, stp])
         e = w.add_edge(inp, stp.inp)
 
         self.assertEqual(e.start.id(), inp.id())
@@ -79,7 +78,7 @@ class TestWorkflow(TestCase):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
         stp = Step("stp", Echo())       # Only has one input, with no output
-        w.add_items([inp, stp])
+        w._add_items([inp, stp])
         e = w.add_edge(inp, stp)
 
         self.assertEqual(e.start.id(), inp.id())
@@ -103,7 +102,6 @@ class TestWorkflow(TestCase):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
         stp = Step("stp", Echo())       # Only has one input, with no output
-        # w.add_items([inp, stp])
         e = w.add_edge(inp, stp.inp)
 
         self.assertEqual(e.start.id(), inp.id())
@@ -117,20 +115,22 @@ class TestWorkflow(TestCase):
         stp = Step("stp", Untar())  # Only has one input, with no output
         out = Output("outp", Array(File()))
 
-        w.add_items([inp, stp, out])
         w.add_pipe(inp, stp, out)
 
         # the nodes are usually internal
-        inp_node = w._labels[inp.id()]
-        stp_node = w._labels[stp.id()]
-        out_node = w._labels[out.id()]
+        inp_node = w._nodes[inp.id()]
+        stp_node = w._nodes[stp.id()]
+        out_node = w._nodes[out.id()]
 
         self.assertEqual(len(inp_node.connection_map), 0)
         self.assertEqual(len(stp_node.connection_map), 1)
         self.assertEqual(len(out_node.connection_map), 1)
 
-        e1: Edge = next(iter(stp_node.connection_map.values()))
-        e2: Edge = next(iter(out_node.connection_map.values()))
+        s1: StepInput = first_value(stp_node.connection_map)
+        s2: StepInput = first_value(out_node.connection_map)
+
+        e1 = first_value(s1.source_map)
+        e2 = first_value(s2.source_map)
 
         self.assertEqual(e1.start.id(),  inp.id())
         self.assertEqual(e1.finish.id(), stp.id())
@@ -143,20 +143,22 @@ class TestWorkflow(TestCase):
         stp = Step("stp", Untar())  # Only has one input, with no output
         out = Output("outp", Array(File()))
 
-        w.add_items([inp, stp, out])
         w.add_pipe(inp, stp.files, out)
 
         # the nodes are usually internal
-        inp_node = w._labels[inp.id()]
-        stp_node = w._labels[stp.id()]
-        out_node = w._labels[out.id()]
+        inp_node = w._nodes[inp.id()]
+        stp_node = w._nodes[stp.id()]
+        out_node = w._nodes[out.id()]
 
         self.assertEqual(len(inp_node.connection_map), 0)
         self.assertEqual(len(stp_node.connection_map), 1)
         self.assertEqual(len(out_node.connection_map), 1)
 
-        e1: Edge = next(iter(stp_node.connection_map.values()))
-        e2: Edge = next(iter(out_node.connection_map.values()))
+        s1: StepInput = first_value(stp_node.connection_map)
+        s2: StepInput = first_value(out_node.connection_map)
+
+        e1: Edge = first_value(s1.source_map)
+        e2: Edge = first_value(s2.source_map)
 
         self.assertEqual(e1.start.id(), inp.id())
         self.assertEqual(e1.finish.id(), stp.id())
@@ -171,13 +173,12 @@ class TestWorkflow(TestCase):
         sub_inp = Input("sub_inp", TarFile())
         sub_stp = Step("sub_stp", Untar())
         sub_out = Output("sub_out", Array(File()))
-        sub_w.add_items([sub_inp, sub_stp, sub_out])
         sub_w.add_pipe(sub_inp, sub_stp, sub_out)
 
         inp = Input("inp", TarFile())
         stp = Step("stp_workflow", sub_w)
         out = Output("out", Array(File()))
-        w.add_items([inp, stp, out])
+        w._add_items([inp, stp, out])
         w.add_pipe(inp, stp, out)
 
         w.dump_cwl(to_disk=True)

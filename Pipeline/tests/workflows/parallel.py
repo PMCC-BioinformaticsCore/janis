@@ -17,7 +17,7 @@ from Pipeline.bioinformatics.tools.picard_sortsam import PicardSortSam
 from Pipeline.bioinformatics.tools.samtools.view.latest import SamToolsViewLatest as SamToolsView
 
 
-class TestParallel(unittest.TestCase):
+class TestParallel:
 
     @staticmethod
     def parallel_workflow():
@@ -103,7 +103,6 @@ class TestParallel(unittest.TestCase):
 
         return subworkflow
 
-
     def test_parallel(self):
         w = Workflow("parallel")
 
@@ -180,5 +179,10 @@ class TestParallel(unittest.TestCase):
             (step_gatk_mutect2, out_sub_mutect)
         ])
 
-        # w.draw_graph()
-        w.dump_cwl(to_disk=True, with_docker=True)
+        return w
+
+
+if __name__ == "__main__":
+    w = TestParallel().test_parallel()
+    # w.draw_graph()
+    w.dump_cwl(to_disk=True, with_docker=True)

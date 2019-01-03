@@ -33,10 +33,7 @@ class Edge:
         self.check_types()
 
     def source(self):
-        if self.stag:
-            return f"{self.start.id()}/{self.stag}"
-        else:
-            return self.start.id()
+        return full_lbl(self.start, self.stag)
 
     def validate_tags(self):
         if self.start.node_type == NodeTypes.TASK and self.stag not in self.start.outputs():
@@ -89,6 +86,7 @@ class StepInput:
 
         self.default = None
         self.scatter = False
+        self.multiple_inputs = False
 
         self.source_map: Dict[str, Edge] = {}
 
@@ -102,8 +100,12 @@ class StepInput:
         finish_type = (self.finish.inputs()[self.ftag]
                        if self.ftag is not None else
                        first_value(self.finish.inputs())).input_type
-        if len(self.source_map) == 1 and start.id() not in self.source_map and not isinstance(finish_type, Array):
-            Logger.warn(f"Adding multiple inputs to '{self.finish.id()}' and '{finish_type.id()}' is not an array")
+
+        if len(self.source_map) == 1 and start.id() not in self.source_map:
+            self.multiple_inputs = True
+
+            if not isinstance(finish_type, Array):
+                Logger.warn(f"Adding multiple inputs to '{self.finish.id()}' and '{finish_type.id()}' is not an array")
 
         e = Edge(start, stag, self.finish, self.ftag)
         self.source_map[start.id()] = e

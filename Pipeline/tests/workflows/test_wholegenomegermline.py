@@ -26,7 +26,7 @@ class TestGermlinePipeline(unittest.TestCase):
     def create_subworkflow(self):
         sw = Workflow("bwa+st+sort")
 
-        s1_bwa = Step("s1_bwa", BwaMem())
+        s1_bwa = Step("sw1_bwa", BwaMem())
         s2_samtools = Step("sw_s2", SamToolsView())
         s3_sortsam = Step("sw_s3", Gatk4SortSam())
 

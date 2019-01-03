@@ -394,7 +394,8 @@ class Workflow(Tool):
                 c = self.guess_connection_between_nodes(s_node, f_node)
                 if c is not None:
                     (s_parts, s_type), (f_parts, f_type) = c
-                    stag, ftag = s_parts[-1], f_parts[-1]
+
+            stag, ftag = s_parts[-1], f_parts[-1]
 
         # We got one but not the other
         if s_type is not None and f_type is None:
@@ -426,6 +427,7 @@ class Workflow(Tool):
             step_inputs.set_default(default_value)
 
         self.has_scatter = self.has_scatter or e.scatter
+        self.has_multiple_inputs = self.has_multiple_inputs or step_inputs.multiple_inputs
 
         col = 'black' if e.compatible_types else 'r'
         self.graph.add_edge(s_node, f_node, type_match=e.compatible_types, color=col)
@@ -653,6 +655,8 @@ class Workflow(Tool):
             w.requirements.append(cwl.ScatterFeatureRequirement())
         if self.has_subworkflow:
             w.requirements.append(cwl.SubworkflowFeatureRequirement())
+        if self.has_multiple_inputs:
+            w.requirements.append(cwl.MultipleInputFeatureRequirement())
 
         tools = []
         tools_to_build: Dict[str, Tool] = {s.step.tool().id(): s.step.tool() for s in self._steps}

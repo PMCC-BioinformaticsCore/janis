@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from Pipeline import File, Array
+from Pipeline import File, Array, Logger
 from Pipeline.graph.stepinput import StepInput, first_value, Edge
 from Pipeline.types.common_data_types import String
 from Pipeline.unix.data_types.tar_file import TarFile
@@ -15,6 +15,12 @@ from Pipeline.unix.steps.cat import Cat
 
 
 class TestWorkflow(TestCase):
+
+    def setUp(self):
+        Logger.mute()
+
+    def tearDown(self):
+        Logger.unmute()
 
     def test_name(self):
         wn = "test_name"
@@ -181,7 +187,7 @@ class TestWorkflow(TestCase):
         w._add_items([inp, stp, out])
         w.add_pipe(inp, stp, out)
 
-        w.dump_cwl(to_disk=True)
+        # w.dump_cwl(to_disk=True)
 
         self.assertTrue(True)
 

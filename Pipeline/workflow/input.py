@@ -33,7 +33,7 @@ class Input:
             streamable=False,
             doc=self.doc,
             input_binding=None,
-            param_type=self.data_type.cwl2_type()
+            param_type=self.data_type.cwl_type()
         )
 
     def cwl_input(self):

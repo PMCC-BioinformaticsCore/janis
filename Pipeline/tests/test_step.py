@@ -6,7 +6,7 @@ from Pipeline.workflow.input import InputNode
 from Pipeline.workflow.step import StepNode
 
 
-class TestTool(CommandTool):
+class ArrayTestTool(CommandTool):
 
     @staticmethod
     def tool():
@@ -35,7 +35,7 @@ class TestStep(TestCase):
 
     def test_sources_single(self):
         start1 = InputNode(Input("test1", String()))
-        step = StepNode(Step("step", TestTool()))
+        step = StepNode(Step("step", ArrayTestTool()))
 
         con_map = StepInput(step, "inputs")
         con_map.add_source(start1, None)
@@ -45,7 +45,7 @@ class TestStep(TestCase):
     def test_sources_multiple(self):
         start1 = InputNode(Input("test1", String()))
         start2 = InputNode(Input("test2", String()))
-        step = StepNode(Step("step", TestTool()))
+        step = StepNode(Step("step", ArrayTestTool()))
 
         con_map = StepInput(step, "inputs")
         con_map.add_source(start1, None)
@@ -55,7 +55,10 @@ class TestStep(TestCase):
         self.assertEqual(len(con_map.source()), 2)
 
     def test_sources_none(self):
-        step = StepNode(Step("step", TestTool()))
+        step = StepNode(Step("step", ArrayTestTool()))
         con_map = StepInput(step, "inputs")
 
         self.assertIsNone(con_map.source())
+
+    def test_scatter(self):
+        pass

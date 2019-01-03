@@ -14,7 +14,12 @@ def first_value(d: Dict):
 def full_lbl(node: Node, tag: Optional[str]) -> str:
     if tag is None:
         return node.id()
-    return "/".join([node.id(), tag])
+    return f"{node.id()}/{tag}"
+
+def full_dot(node: Node, tag: Optional[str]) -> str:
+    if tag is None:
+        return node.id()
+    return f"{node.id()}.{tag}"
 
 
 class Edge:
@@ -50,21 +55,34 @@ class Edge:
         s_is_array = isinstance(stype.output_type, Array)
         f_is_array = isinstance(ftype.input_type, Array)
 
-        if s_is_array and not f_is_array:
-            Logger.log(f"Potential scattering event between '{self.start.id()}' ({stype.output_type.id()}) "
-                       f"and '{self.finish.id()}' ({ftype.input_type.id()})")
-            # this second check means that the mypy (and linter) is happy with .subtype()
-            self.compatible_types = isinstance(stype.output_type, Array) and \
-                                    ftype.input_type.can_receive_from(stype.output_type.subtype())
-        elif f_is_array and not s_is_array:
+        if ftype.input_type.can_receive_from(stype.output_type):
+            self.compatible_types = True
+            self.scatter = False
+            return
+
+        elif isinstance(stype.output_type, Array):
+            # Potential scattering event - non-scatter if s is compatible, scatter if s.subtype is compatible
+
+            # Scattering event if ftype.input_type.canReceiveFrom(stype.output_type.subtype)
+            if ftype.input_type.can_receive_from(stype.output_type.subtype()):
+                Logger.log(f"Scattering event between '{full_dot(self.start, self.stag)}' ({stype.output_type.id()}) "
+                           f"and '{full_dot(self.finish, self.ftag)}' ({ftype.input_type.id()})")
+                self.compatible_types = True
+                self.scatter = True
+                return
+
+        elif isinstance(ftype.input_type, Array):
+            # This might be a merge
+
             # check if s has a scatter step, then we sweet
-            start_is_scattered = any(e.scatter for e in self.start.connection_map.values())
-            if start_is_scattered and isinstance(ftype.input_type, Array):
+            start_is_scattered = any(e.has_scatter() for e in self.start.connection_map.values())
+            if start_is_scattered:
                 self.compatible_types = ftype.input_type.subtype().can_receive_from(stype.output_type)
             else:
                 self.compatible_types = ftype.input_type.can_receive_from(stype.output_type)
-        else:
-            self.compatible_types = ftype.input_type.can_receive_from(stype.output_type)
+
+        self.compatible_types = False
+        self.scatter = False
 
         if not self.compatible_types:
             s = full_lbl(self.start, self.stag)
@@ -72,8 +90,6 @@ class Edge:
             Logger.critical(f"Mismatch of types when joining '{s}' to '{f}' "
                             f"({stype.output_type.id()} -/→ {ftype.input_type.id()})")
             Logger.log(f"No action taken to correct type-mismatch of '{s}' to {f}'")
-
-        self.scatter: bool = s_is_array and not f_is_array and self.compatible_types
 
 
 class StepInput:
@@ -85,7 +101,6 @@ class StepInput:
         self.ftag: Optional[str] = finish_tag
 
         self.default = None
-        self.scatter = False
         self.multiple_inputs = False
 
         self.source_map: Dict[str, Edge] = {}
@@ -110,6 +125,9 @@ class StepInput:
         e = Edge(start, stag, self.finish, self.ftag)
         self.source_map[start.id()] = e
         return e
+
+    def has_scatter(self):
+        return any(e.scatter for e in self.source_map.values())
 
     def set_default(self, default: Any):
         Logger.log(f"Setting the default of '{self.finish.id()}.{self.ftag}' to be '{str(default)}'")

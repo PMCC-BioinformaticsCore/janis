@@ -95,8 +95,8 @@ class TestGermlinePipeline(unittest.TestCase):
 
 
         # step1
+        w.add_edge(fastqInputs, s1_sw.fastq)
         w.add_edges([
-            (fastqInputs, s1_sw.fastq),
             (s1_inp_reference, s1_sw.reference),
             (s1_inp_header, s1_sw.read_group_header_line),
             (inp_tmpdir, s1_sw.tmpdir)

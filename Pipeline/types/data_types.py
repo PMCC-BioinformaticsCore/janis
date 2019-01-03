@@ -181,7 +181,7 @@ class DataType(ABC):
     def _question_mark_if_optional(self):
         return "?" if self.optional else ""
 
-    def cwl2_type(self):
+    def cwl_type(self):
         return NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
 
     def map_cwl_type(self, parameter: cwl.Parameter) -> cwl.Parameter:

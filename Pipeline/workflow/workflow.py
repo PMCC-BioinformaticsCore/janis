@@ -360,7 +360,7 @@ class Workflow(Tool):
                 raise Exception(f"The step '{s_node.id()}' must be fully qualified to connect to output node"
                                 f" (expected one of: {keys})")
 
-            step_has_scatter = any(e.scatter for e in s_node.connection_map.values())
+            step_has_scatter = any(e.has_scatter() for e in s_node.connection_map.values())
 
             if step_has_scatter:
                 f_type = Array(s_type)

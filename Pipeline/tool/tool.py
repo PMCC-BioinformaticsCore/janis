@@ -85,7 +85,7 @@ class ToolInput(ToolArgument):
                 # value_from=self.value_from,
                 # shell_quote=self.shell_quote
             ),
-            param_type=self.input_type.cwl2_type()
+            param_type=self.input_type.cwl_type()
         )
 
 
@@ -109,7 +109,7 @@ class ToolOutput:
                 # load_contents=False,
                 # output_eval=None
             ),
-            param_type=self.output_type.cwl2_type()
+            param_type=self.output_type.cwl_type()
         )
 
 

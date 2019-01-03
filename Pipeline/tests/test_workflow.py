@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from Pipeline import File, Array, Logger
+from Pipeline import File, Array, Logger, CommandTool, ToolInput
 from Pipeline.graph.stepinput import StepInput, first_value, Edge
 from Pipeline.types.common_data_types import String
 from Pipeline.unix.data_types.tar_file import TarFile
@@ -12,6 +12,44 @@ from Pipeline.workflow.output import Output
 from Pipeline.workflow.step import Step
 from Pipeline.workflow.workflow import Workflow
 from Pipeline.unix.steps.cat import Cat
+
+
+class SingleTestTool(CommandTool):
+
+    @staticmethod
+    def tool():
+        return "TestStepTool"
+
+    @staticmethod
+    def base_command():
+        return "echo"
+
+    def inputs(self):
+        return [
+            ToolInput("inputs", String())
+        ]
+
+    def outputs(self):
+        return []
+
+
+class ArrayTestTool(CommandTool):
+
+    @staticmethod
+    def tool():
+        return "ArrayStepTool"
+
+    @staticmethod
+    def base_command():
+        return "echo"
+
+    def inputs(self):
+        return [
+            ToolInput("inputs", Array(String()))
+        ]
+
+    def outputs(self):
+        return []
 
 
 class TestWorkflow(TestCase):
@@ -216,4 +254,38 @@ class TestWorkflow(TestCase):
         self.assertIn("default", tarName_props)
         self.assertEqual(tarName_props["default"], default_value)
 
+    def test_add_scatter(self):
+        w = Workflow("scattered-edge")
 
+        inp1 = Input("inp1", Array(String()))
+        step = Step("stp", SingleTestTool())
+
+        e = w.add_edge(inp1, step)
+        self.assertTrue(e.scatter)
+
+    def test_add_scatter_nested_arrays(self):
+        w = Workflow("scattered-edge")
+
+        inp1 = Input("inp1", Array(Array(String())))
+        step = Step("stp", ArrayTestTool())
+
+        e = w.add_edge(inp1, step)
+        self.assertTrue(e.scatter)
+
+    def test_add_non_scatter(self):
+        w = Workflow("scattered-edge")
+
+        inp1 = Input("inp1", String())
+        step = Step("stp", SingleTestTool())
+
+        e = w.add_edge(inp1, step)
+        self.assertFalse(e.scatter)
+
+    def test_add_non_scatter2(self):
+        w = Workflow("scattered-edge")
+
+        inp1 = Input("inp1", Array(String()))
+        step = Step("stp", ArrayTestTool())
+
+        e = w.add_edge(inp1, step)
+        self.assertFalse(e.scatter)

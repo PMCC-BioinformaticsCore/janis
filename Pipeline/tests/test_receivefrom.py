@@ -56,6 +56,11 @@ class Test_ReceiveFrom(unittest.TestCase):
         ar2 = Array(String(optional=True))
         self.assertTrue(ar2.can_receive_from(ar1))
 
+    def test_arrayarraystr_arraystr(self):
+        ar1 = Array(Array(String()))
+        ar2 = Array(String())
+        self.assertFalse(ar2.can_receive_from(ar1))
+
     def test_inheritance_forward(self):
         f1 = FileSubclass()
         f2 = File()

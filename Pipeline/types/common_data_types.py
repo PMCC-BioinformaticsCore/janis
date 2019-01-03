@@ -279,10 +279,9 @@ class Array(DataType):
     def schema(cls) -> Dict:
         return {"type": "array"}
 
-    def cwl2_type(self):
-        items = NativeTypes.map_to_cwl(self.__t.primitive()) + self.__t._question_mark_if_optional()
+    def cwl_type(self):
         return cwl.CommandInputArraySchema(
-            items=items,
+            items=self.__t.cwl_type(),
             # label=None,
             # input_binding=None
         )

@@ -39,22 +39,6 @@ class Step:
     def tool(self) -> Tool:
         return self.__tool
 
-    # def cwl(self, is_nested_tool=False):
-    #     run_ref = f"{self.tool().id()}.cwl" if is_nested_tool else f"tools/{self.tool().id()}.cwl"
-    #     d = {
-    #         Cwl.Workflow.Step.kID: self.id(),
-    #         CS.kRUN: run_ref,
-    #         CS.kOUT: [o.tag for o in self.tool().outputs()]
-    #     }
-    #
-    #     if self.label:
-    #         d[CS.kLABEL] = self.label
-    #
-    #     if self.doc:
-    #         d[CS.kDOC] = self.doc
-    #
-    #     return d
-
     def cwl(self, is_nested_tool=False):
         run_ref = ("{tool}.cwl" if is_nested_tool else "tools/{tool}.cwl").format(tool=self.tool().id())
         step = cwl.WorkflowStep(
@@ -132,7 +116,7 @@ class StepNode(Node):
                 default=default,
                 value_from=None
             )
-            if edge.scatter:
+            if edge.has_scatter():
                 scatterable.append(k)
 
             step.inputs.append(d)

@@ -31,7 +31,7 @@ class Output:
             param_format=None,
             streamable=False,
             doc=self.doc,
-            param_type=self.data_type.cwl2_type(),
+            param_type=self.data_type.cwl_type(),
             output_binding=None,
             linkMerge=None
         )

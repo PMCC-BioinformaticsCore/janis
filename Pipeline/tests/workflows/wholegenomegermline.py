@@ -7,7 +7,7 @@ from Pipeline.bioinformatics.data_types.fasta import Fasta
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.fastq import Fastq
 from Pipeline.bioinformatics.data_types.sam import Sam
-from Pipeline.bioinformatics.data_types.vcf import VcfIdx
+from Pipeline.bioinformatics.data_types.vcf import VcfIdx, TabixIdx
 from Pipeline.bioinformatics.tools.bcftools.norm.latest import BcfToolsNormLatest as BcfToolsNorm
 from Pipeline.bioinformatics.tools.bwa.mem.latest import BwaMemLatest as BwaMem
 from Pipeline.bioinformatics.tools.gatk4.applybqsr.latest import Gatk4ApplyBqsrLatest as Gatk4ApplyBqsr
@@ -25,7 +25,7 @@ class TestGermlinePipeline(unittest.TestCase):
 
 
     def create_subworkflow(self):
-        sw = Workflow("bwa+st+sort")
+        sw = Workflow("bwa_st_sort")
 
         s1_bwa = Step("s1_bwa", BwaMem())
         s2_samtools = Step("s2_samtools", SamToolsView())
@@ -79,13 +79,13 @@ class TestGermlinePipeline(unittest.TestCase):
         s1_inp_header = Input("read_group_header_line", String())
         s1_inp_reference = Input("reference", FastaWithDict())
         s4_inp_SNPS_dbSNP = Input("SNPS_dbSNP", VcfIdx())
-        s4_inp_SNPS_1000GP = Input("SNPS_1000GP", VcfIdx())
-        s4_inp_OMNI = Input("OMNI", VcfIdx())
-        s4_inp_HAPMAP = Input("HAPMAP", VcfIdx())
+        s4_inp_SNPS_1000GP = Input("SNPS_1000GP", TabixIdx())
+        s4_inp_OMNI = Input("OMNI", TabixIdx())
+        s4_inp_HAPMAP = Input("HAPMAP", TabixIdx())
 
         inp_tmpdir = Input("tmpdir", Directory())
 
-        s1_sw = Step("bwa+st+sort", self.create_subworkflow())
+        s1_sw = Step("sw_bwa_st_sort", self.create_subworkflow())
 
         s2_mergeSamFiles = Step("s2_mergeSamFiles", Gatk4MergeSamFiles())
         s3_markDuplicates = Step("s3_markDuplicates", Gatk4MarkDuplicates())

@@ -5,9 +5,14 @@ from Pipeline import CommandTool, ToolInput, Boolean, ToolArgument
 
 class Gatk4ToolBase(CommandTool, ABC):
 
-    @staticmethod
-    def base_command():
-        return ["java"]
+    @classmethod
+    def base_command(cls):
+        return ["gatk", cls.gatk_command()]
+
+    @classmethod
+    @abstractmethod
+    def gatk_command(cls):
+        raise Exception("Subclass must override 'gatk_command' method")
 
     def inputs(self):
         return [
@@ -25,7 +30,5 @@ class Gatk4ToolBase(CommandTool, ABC):
 
     def arguments(self):
         return [
-            ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir=",
-                         separate_value_from_prefix=False),
-            ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
+
         ]

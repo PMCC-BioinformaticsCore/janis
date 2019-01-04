@@ -8,6 +8,10 @@ from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
 class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
+    @classmethod
+    def gatk_command(cls):
+        return "MergeSamFiles"
+
     @staticmethod
     def tool():
         return "Gatk4MergeSameFiles"
@@ -23,12 +27,6 @@ class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
     def outputs(self):
         return [
             ToolOutput("output", BamPair(), glob="$(inputs.outputFilename)")
-        ]
-
-    def arguments(self):
-        return [
-            *super(Gatk4MergeSamFilesBase, self).arguments(),
-            ToolArgument("MergeSamFiles", position=4)
         ]
 
     @staticmethod

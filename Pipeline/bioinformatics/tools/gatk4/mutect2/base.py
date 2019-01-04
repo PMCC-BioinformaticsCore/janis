@@ -9,6 +9,10 @@ from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
 class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
+    @classmethod
+    def gatk_command(cls):
+        return "MuTect2"
+
     @staticmethod
     def tool():
         return "gatkmutect2"
@@ -47,12 +51,6 @@ class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
         return [
             # Todo: Determine type of Gatk4Mutect2 output (.vcf.gz?)
             ToolOutput("output", File(), glob="$(inputs.outputFilename)", doc="To determine type")
-        ]
-
-    def arguments(self):
-        return [
-            *super(Gatk4Mutect2Base, self).arguments(),
-            ToolArgument("MuTect2", position=4)
         ]
 
     additional_args = []

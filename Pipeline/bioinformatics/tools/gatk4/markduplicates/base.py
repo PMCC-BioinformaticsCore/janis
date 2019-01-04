@@ -1,13 +1,16 @@
 from abc import ABC
 
-from Pipeline import ToolArgument, ToolInput, Filename, ToolOutput, File, Array, String, Int, Boolean, Directory
-from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline import ToolInput, Filename, ToolOutput, File, Array, String, Int, Boolean, Directory
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 from Pipeline.unix.data_types.tsv import Tsv
 
 
 class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
+    @classmethod
+    def gatk_command(cls):
+        return "MarkDuplicates"
+
     @staticmethod
     def tool():
         return "Gatk4MarkDuplicates"
@@ -28,12 +31,6 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
         return [
             ToolOutput("output", BamPair(), glob="$(inputs.outputFilename)"),
             ToolOutput("metrics", Tsv(), glob="$(inputs.metricsFilename)")
-        ]
-
-    def arguments(self):
-        return [
-            *super(Gatk4MarkDuplicatesBase, self).arguments(),
-            ToolArgument("MarkDuplicates", position=4)
         ]
 
     additional_args = [

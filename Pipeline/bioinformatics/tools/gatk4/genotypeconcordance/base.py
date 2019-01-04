@@ -6,6 +6,10 @@ from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
 class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
+    @classmethod
+    def gatk_command(cls):
+        return "GenotypeConcordance"
+
     @staticmethod
     def tool():
         return "Gatk4GenotypeConcordance"
@@ -29,12 +33,6 @@ class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
             ToolOutput("detailMetrics", File(), glob="*.genotype_concordance_detail_metrics"),
             ToolOutput("contingencyMetrics", File(), glob="*.genotype_concordance_contingency_metrics"),
             ToolOutput("vcf", VcfIdx(optional=True), glob="*.vcf")
-        ]
-
-    def arguments(self):
-        return [
-            *super(Gatk4GenotypeConcordanceBase, self).arguments(),
-            ToolArgument("GenotypeConcordance", position=4)
         ]
 
     @staticmethod

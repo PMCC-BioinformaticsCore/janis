@@ -9,6 +9,10 @@ from Pipeline.unix.data_types.tsv import Tsv
 
 
 class Gatk4ApplyBqsrBase(Gatk4ToolBase, ABC):
+    @classmethod
+    def gatk_command(cls):
+        return "ApplyBQSR"
+
     @staticmethod
     def tool():
         return "GATK4ApplyBQSR"
@@ -58,5 +62,5 @@ class Gatk4ApplyBqsrBase(Gatk4ToolBase, ABC):
     additional_args = [
         # Put more detail in here from documentation
         ToolInput("tmpDir", Directory(optional=True), prefix="--TMP_DIR", position=11,
-                  doc="Undocumented option"),
+                  doc="Temp directory to use."),
     ]

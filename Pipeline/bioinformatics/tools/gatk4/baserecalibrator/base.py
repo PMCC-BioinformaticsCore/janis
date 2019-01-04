@@ -10,7 +10,10 @@ from Pipeline.unix.data_types.tsv import Tsv
 
 
 class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
-    output = ToolOutput("output", File(), glob='$(inputs.outputFile)')
+
+    @classmethod
+    def gatk_command(cls):
+        return "BaseRecalibrator"
 
     @staticmethod
     def tool():
@@ -69,8 +72,6 @@ class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
     def arguments(self):
         return [
             *super(Gatk4BaseRecalibratorBase, self).arguments(),
-            ToolArgument("./test/test-files", position=2, prefix="-Djava.io.tmpdir=", separate_value_from_prefix=False),
-            ToolArgument("BaseRecalibrator", position=4, prefix="-T"),
             ToolArgument("--filter_bases_not_stored", position=30)
         ]
 

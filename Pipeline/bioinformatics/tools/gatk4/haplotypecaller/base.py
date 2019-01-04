@@ -11,6 +11,9 @@ from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
 class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
+    @classmethod
+    def gatk_command(cls):
+        return "HaplotypeCaller"
 
     @staticmethod
     def tool():
@@ -72,10 +75,6 @@ class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
     
     Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_haplotypecaller_HaplotypeCaller.php#--intervals
 """.strip()
-
-    def arguments(self):
-        return [*super(Gatk4HaplotypeCallerBase, self).arguments(),
-                ToolArgument("HaplotypeCaller", position=4, prefix="-T")]
 
     optional_args = [
         ToolInput("max_alternate_alleles", Int(optional=True), position=25,

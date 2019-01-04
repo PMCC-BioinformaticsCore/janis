@@ -7,6 +7,10 @@ from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
 class Gatk4SortSamBase(Gatk4ToolBase):
+    @classmethod
+    def gatk_command(cls):
+        return "SortSam"
+
     @staticmethod
     def tool():
         return "gatksortsam"
@@ -29,12 +33,6 @@ class Gatk4SortSamBase(Gatk4ToolBase):
                       doc="The --SORT_ORDER argument is an enumerated type (SortOrder), which can have one of "
                           "the following values: [unsorted, queryname, coordinate, duplicate, unknown]"),
             *Gatk4SortSamBase.additional_args
-        ]
-
-    def arguments(self):
-        return [
-            *super(Gatk4SortSamBase, self).arguments(),
-            ToolArgument("SortSam", position=4)
         ]
 
     def outputs(self):

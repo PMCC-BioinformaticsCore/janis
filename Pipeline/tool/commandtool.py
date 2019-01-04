@@ -5,6 +5,7 @@ from typing import List, Dict, Optional, Any
 from Pipeline.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput, ToolTypes
 
 import cwlgen.cwlgen as cwl
+from Pipeline.types.common_data_types import Stdout
 
 
 class CommandTool(Tool, ABC):
@@ -43,10 +44,6 @@ class CommandTool(Tool, ABC):
     def base_command():
         raise Exception("Subclass MUST implement the 'base_command' method with str or [str] return types")
 
-    @staticmethod
-    def stdout() -> Optional[str]:
-        return None
-
     def memory(self) -> Optional[int]:
         return None
 
@@ -65,6 +62,10 @@ class CommandTool(Tool, ABC):
         return None
 
     def cwl(self, with_docker=True) -> Dict[str, Any]:
+
+        stdouts = [o.output_type for o in self.outputs() if isinstance(o.output_type, Stdout) and o.output_type.stdoutname]
+        stdout = stdouts[0].stdoutname if len(stdouts) > 0 else None
+
         tool = cwl.CommandLineTool(
             tool_id=self.id(),
             base_command=self.base_command(),
@@ -73,7 +74,7 @@ class CommandTool(Tool, ABC):
             # cwl_version=Cwl.kCUR_VERSION,
             stdin=None,
             stderr=None,
-            stdout=self.stdout()
+            stdout=stdout
         )
 
         tool.requirements.extend([

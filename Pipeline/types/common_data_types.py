@@ -318,6 +318,25 @@ class Array(DataType):
         return next(iter(meta.values()))
 
 
+class Stdout(File):
+
+    @staticmethod
+    def name():
+        return "Stdout"
+
+    @staticmethod
+    def primitive():
+        return NativeTypes.kStdout
+
+    def __init__(self, subtype=None, stdoutname=None):
+        super().__init__(optional=False)
+        self.subtype = subtype if subtype is not None else File()
+        self.stdoutname = stdoutname
+
+    def can_receive_from(self, other):
+        self.subtype.can_receive_from(other)
+
+
 register_type(String)
 register_type(Int)
 register_type(Float)
@@ -326,3 +345,4 @@ register_type(Boolean)
 register_type(Array)
 register_type(File)
 register_type(Directory)
+register_type(Stdout)

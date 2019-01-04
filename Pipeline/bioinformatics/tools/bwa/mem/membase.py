@@ -3,6 +3,7 @@ from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.fastq import Fastq
 from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.bioinformatics.tools.bwa.bwatoolbase import BwaToolBase
+from Pipeline.types.common_data_types import Stdout
 
 
 class BwaMemBase(BwaToolBase):
@@ -28,13 +29,9 @@ class BwaMemBase(BwaToolBase):
             ToolInput("outputFilename", Filename(extension=".sam"))
         ]
 
-    @staticmethod
-    def stdout():
-        return "$(inputs.outputFilename)"
-
     def outputs(self):
         return [
-            ToolOutput("out", Sam(), glob="$(inputs.outputFilename)")
+            ToolOutput("out", Stdout(Sam(), stdoutname="$(inputs.outputFilename)"))
         ]
 
     @staticmethod

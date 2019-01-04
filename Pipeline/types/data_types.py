@@ -30,6 +30,7 @@ class NativeTypes:
     kFile: NativeType = "file"
     kDirectory: NativeType = "dir"
     kArray: NativeType = "array"
+    kStdout: NativeType = "stdout"
 
     _primitives: List[NativeType] = [kStr, kInt, kFloat, kLong, kDouble, kBool, kDouble]
     all: List[NativeType] = _primitives + [kFile, kDirectory, kArray]
@@ -62,6 +63,8 @@ class NativeTypes:
             return cwl.CwlTypes.DIRECTORY
         elif t == NativeTypes.kArray:
             return cwl.CwlTypes.ARRAY
+        elif t == NativeTypes.kStdout:
+            return cwl.CwlTypes.STDOUT
         raise Exception(f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}")
 
     @staticmethod

@@ -49,7 +49,7 @@ class ToolArgument:
 
 class ToolInput(ToolArgument):
     def __init__(self, tag: str, input_type: DataType, position: Optional[int] = None, prefix: Optional[str] = None,
-                 separate_value_from_prefix: bool = True, default: Any = None, doc: Optional[str]=None):
+                 separate_value_from_prefix: bool = None, default: Any = None, doc: Optional[str]=None):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:

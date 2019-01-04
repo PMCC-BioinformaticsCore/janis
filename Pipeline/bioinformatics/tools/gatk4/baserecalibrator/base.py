@@ -25,7 +25,7 @@ class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
             *Gatk4BaseRecalibratorBase.additional_args,
 
             ToolInput("input", BamPair(), position=6, prefix="-I", doc="BAM/SAM/CRAM file containing reads"),
-            ToolInput("knownSites", Array(VcfIdx()), prefix="--knownSites", position=28,
+            ToolInput("knownSites", Array(VcfIdx()), prefix="--known-sites", position=28,
                       doc="**One or more databases of known polymorphic sites used to exclude "
                           "regions around known polymorphisms from analysis.** "
                           "This algorithm treats every reference mismatch as an indication of error. However, real "
@@ -68,12 +68,6 @@ class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
     
     Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_BaseRecalibrator.php
 """.strip()
-
-    def arguments(self):
-        return [
-            *super(Gatk4BaseRecalibratorBase, self).arguments(),
-            ToolArgument("--filter_bases_not_stored", position=30)
-        ]
 
     additional_args = [
         ToolInput("tmpDir", Directory(optional=True), prefix="--tmp-dir", doc="Temp directory to use.")

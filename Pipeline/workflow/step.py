@@ -25,6 +25,9 @@ class Step:
         t = self.__tool.id()
         return f"{self.id()}: {t}"
 
+    def __repr__(self):
+        return str(self)
+
     def set_input_value(self, tag: str, value: str):
         l = self._identifier
         Logger.log(f"Updating '{l}': setting '{tag}' -> '{value}'")
@@ -89,6 +92,9 @@ class StepNode(Node):
             return f"{self.id()}/{item}", self
 
         raise AttributeError(f"type object '{type(self)}' has no attribute '{item}'")
+
+    def __repr__(self):
+        return f"{self.node_type}: {self.step.tool().id()}"
 
     def cwl(self, is_nested_tool=False):
 

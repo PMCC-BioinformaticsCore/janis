@@ -165,13 +165,20 @@ class DataType(ABC):
         :param other:
         :return:
         """
-        if not isinstance(other, type(self)):
+        if not isinstance(other, type(self.received_type())):
             return False
         if self.optional:
             # If I'm optional I can receive from optional / non optional
             return True
         # If I'm not optional, I must receive from not optional
         return not other.optional
+
+    def received_type(self):
+        """
+        The type that will be received if joined from this type
+        :return: mostly self, except for STDOUT | STDERR | STDIN
+        """
+        return self
 
     def input_field_from_input(self, meta):
         """

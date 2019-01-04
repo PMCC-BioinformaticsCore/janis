@@ -6,6 +6,7 @@ from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.fasta import Fasta
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
 from Pipeline.bioinformatics.data_types.fastq import Fastq
+from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx
 from Pipeline.bioinformatics.tools.bcftools.norm.latest import BcfToolsNormLatest as BcfToolsNorm
 from Pipeline.bioinformatics.tools.bwa.mem.latest import BwaMemLatest as BwaMem
@@ -26,9 +27,9 @@ class TestGermlinePipeline(unittest.TestCase):
     def create_subworkflow(self):
         sw = Workflow("bwa+st+sort")
 
-        s1_bwa = Step("sw1_bwa", BwaMem())
-        s2_samtools = Step("sw_s2", SamToolsView())
-        s3_sortsam = Step("sw_s3", Gatk4SortSam())
+        s1_bwa = Step("s1_bwa", BwaMem())
+        s2_samtools = Step("s2_samtools", SamToolsView())
+        s3_sortsam = Step("s3_sortsam", Gatk4SortSam())
 
         s1_inp_header = Input("read_group_header_line", String())
         s1_inp_reference = Input("reference", Fasta())
@@ -36,7 +37,9 @@ class TestGermlinePipeline(unittest.TestCase):
 
         s3_inp_tmpdir = Input("tmpdir", Directory())
 
-        output = Output("sortedBam", BamPair())
+        o1_bwa = Output("o1_bwa", Sam())
+        o2_samtools = Output("o2_samtools", Bam())
+        o3_sortsam = Output("o3_sortsam", BamPair())
 
         # Fully connect step 1
         sw.add_edges([
@@ -60,10 +63,11 @@ class TestGermlinePipeline(unittest.TestCase):
         sw.add_default_value(s3_sortsam.maxRecordsInRam, 5000000)
 
         # connect to output
-        sw.add_edge(s3_sortsam.output, output)
+        sw.add_edge(s1_bwa, o1_bwa)
+        sw.add_edge(s2_samtools, o2_samtools)
+        sw.add_edge(s3_sortsam.output, o3_sortsam)
 
         return sw
-
 
     def test_workflow(self):
 
@@ -93,6 +97,10 @@ class TestGermlinePipeline(unittest.TestCase):
         s9_igv = Step("s9_igv", IgvToolsIndex())
         s10_genotypeConcord = Step("s10_genotypeConcord", Gatk4GenotypeConcordance())
 
+        o1_bwa = Output("sw_bwa", Sam())
+        o2_samtools = Output("sw_samtools", Bam())
+        o3_sortsam = Output("sw_sortsam", BamPair())
+
 
         # step1
         w.add_edge(fastqInputs, s1_sw.fastq)
@@ -102,8 +110,14 @@ class TestGermlinePipeline(unittest.TestCase):
             (inp_tmpdir, s1_sw.tmpdir)
         ])
 
+        w.add_edges([
+            (s1_sw.o1_bwa, o1_bwa),
+            (s1_sw.o2_samtools, o2_samtools),
+            (s1_sw.o3_sortsam, o3_sortsam)
+        ])
+
         #step2
-        w.add_edge(s1_sw, s2_mergeSamFiles.input)
+        w.add_edge(s1_sw.o3_sortsam, s2_mergeSamFiles.input)
         w.add_edge(inp_tmpdir, s2_mergeSamFiles.tmpDir)
         w.add_default_value(s2_mergeSamFiles.useThreading, True)
         w.add_default_value(s2_mergeSamFiles.createIndex, True)
@@ -148,20 +162,8 @@ class TestGermlinePipeline(unittest.TestCase):
         #     ()
         # ])
 
-
-
-
-        o1 = Output("step4_out", File())
-        o2_metrics = Output("markDuplicates_metrics", File())
-
-        # connect outputs
-        w.add_edges([
-            (s3_markDuplicates.metrics, o2_metrics),
-            (s4_baseRecal, o1)
-        ])
-
         # w.draw_graph()
-        w.dump_cwl(to_disk=True, with_docker=True)
+        w.dump_cwl(to_disk=True, with_docker=False)
 
 
         # temporary_directory = Input("tmpdir", Directory(optional=True))

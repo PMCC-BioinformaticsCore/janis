@@ -59,13 +59,18 @@ class Node(ABC):
         return self._nodeId
 
     def __repr__(self):
-        return self._label
+        return f"{self.node_type}: {self.id()}"
 
     def __str__(self):
         return f"{NodeTypes.to_str(self.node_type)}: {self._label}"
 
     def set_depth(self, depth: int):
         self.depth = max(self.depth, depth)
+
+    def __eq__(self, other):
+        if isinstance(other, Node):
+            return self._nodeId == other._nodeId
+        return False
 
     @abstractmethod
     def inputs(self) -> Dict[str, ToolInput]:

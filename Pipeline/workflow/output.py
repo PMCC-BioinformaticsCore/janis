@@ -10,13 +10,13 @@ class Output:
     """
         Only catch with output is we infer the type, we don't explicitly define it
     """
-    def __init__(self, identifier: str, data_type: Optional[DataType], meta: Any = None,
+    def __init__(self, identifier: str, meta: Any = None,
                  label: str=None, doc: str=None):
         self._identifier: str = identifier
         self.label = label
         self.doc = doc
 
-        self.data_type: Optional[DataType] = data_type
+        self.data_type: Optional[DataType] = None
         self.meta = meta
 
     def id(self) -> str:

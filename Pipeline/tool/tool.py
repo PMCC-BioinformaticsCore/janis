@@ -26,7 +26,8 @@ class ToolArgument:
         self.separate_value_from_prefix = separate_value_from_prefix
         self.doc = doc
 
-        if self.prefix and not self.separate_value_from_prefix and not self.prefix.endswith("="):
+        if self.prefix and self.separate_value_from_prefix is not None \
+                and not self.separate_value_from_prefix and not self.prefix.endswith("="):
             # I don't really know what this means.
             Logger.warn(f"Argument ({self.prefix} {self.value}) is not separating and did not end with ='")
 

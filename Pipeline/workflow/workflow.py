@@ -293,6 +293,8 @@ class Workflow(Tool):
         node = self._nodes.get(label)
 
         if node is not None:
+            if component is not None and label != component.id():
+                raise Exception(f"There already exists a node with id '{node.id()}' (clashes with {repr(component)}")
             return node
 
         Logger.log(f"Could not find {node_type} node with identifier '{label}' in the workflow")
@@ -363,9 +365,9 @@ class Workflow(Tool):
             step_has_scatter = any(e.has_scatter() for e in s_node.connection_map.values())
 
             if step_has_scatter:
-                f_type = Array(s_type)
+                f_type = Array(s_type.received_type())
             else:
-                f_type = s_type
+                f_type = s_type.received_type()
 
             f_node: OutputNode = f_node
             f_parts = [f_label]

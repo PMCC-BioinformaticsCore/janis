@@ -339,8 +339,8 @@ class Stdout(File):
         self.subtype = subtype if subtype is not None else File()
         self.stdoutname = stdoutname
 
-    def can_receive_from(self, other):
-        self.subtype.can_receive_from(other)
+    def received_type(self):
+        return self.subtype
 
 
 register_type(String)

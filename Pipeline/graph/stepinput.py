@@ -52,8 +52,9 @@ class Edge:
         ftype: ToolInput = self.finish.inputs()[self.ftag] \
             if self.ftag is not None else first_value(self.finish.inputs())
 
-        s_is_array = isinstance(stype.output_type, Array)
-        f_is_array = isinstance(ftype.input_type, Array)
+        is_merge = False
+        self.compatible_types = False
+        self.scatter = False
 
         if ftype.input_type.can_receive_from(stype.output_type):
             self.compatible_types = True
@@ -76,13 +77,12 @@ class Edge:
 
             # check if s has a scatter step, then we sweet
             start_is_scattered = any(e.has_scatter() for e in self.start.connection_map.values())
-            if start_is_scattered:
+            if start_is_scattered and self.finish.node_type != NodeTypes.OUTPUT:
+                Logger.log(f"Merge step between '{full_dot(self.start, self.stag)}' and "
+                           f"'{full_dot(self.finish, self.ftag)}'")
                 self.compatible_types = ftype.input_type.subtype().can_receive_from(stype.output_type)
             else:
                 self.compatible_types = ftype.input_type.can_receive_from(stype.output_type)
-
-        self.compatible_types = False
-        self.scatter = False
 
         if not self.compatible_types:
             s = full_lbl(self.start, self.stag)

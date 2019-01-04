@@ -18,7 +18,7 @@ class ToolArgument:
     expr_pattern = "\$\(.*\)"
 
     def __init__(self, value: str, prefix: Optional[str] = None, position: Optional[int] = 0,
-                 separate_value_from_prefix=True, doc: Optional[str]=None):
+                 separate_value_from_prefix=None, doc: Optional[str]=None):
         self.prefix: Optional[str] = prefix
         self.value = value
         self.position: Optional[int] = position
@@ -67,7 +67,7 @@ class ToolInput(ToolArgument):
 
     def cwl(self):
 
-        default = self.default if self.default is not None else self.input_type.default()
+        default = self.default if self.default else self.input_type.default()
 
         return cwl.CommandInputParameter(
             param_id=self.tag,

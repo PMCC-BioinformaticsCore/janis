@@ -111,7 +111,7 @@ class DataType(ABC):
     def __init__(self, optional=False, default=None):
         self.optional = optional
         self.is_prim = NativeTypes.is_primitive(self.primitive())
-        self.default_value = None
+        self.default_value = default
 
     @staticmethod
     @abstractmethod

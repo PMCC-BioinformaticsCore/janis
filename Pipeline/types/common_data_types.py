@@ -43,7 +43,7 @@ class Filename(String):
         :param extension: with no '.' (dot)
         """
         self.extension = extension
-        super().__init__(optional=True, default=self.generated_filename(self.extension))
+        super().__init__(optional=True, default=self.generated_filename())
 
     @staticmethod
     def name() -> str:
@@ -52,6 +52,12 @@ class Filename(String):
     @staticmethod
     def primitive() -> NativeType:
         return NativeTypes.kStr
+
+    def cwl_type(self):
+        self.optional = False
+        t = super().cwl_type()
+        self.optional = True
+        return t
 
     @staticmethod
     def doc() -> str:

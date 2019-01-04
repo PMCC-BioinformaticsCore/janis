@@ -775,18 +775,18 @@ workflow {self.identifier} {{
             print(yaml.dump(t, default_flow_style=False))
 
         if to_disk:
-            with open(d + self.identifier + ".cwl", "w+") as cwl:
+            with open(d + self.id() + ".cwl", "w+") as cwl:
                 Logger.log(f"Writing {self.identifier}.cwl to disk")
                 yaml.dump(cwl_data, cwl, default_flow_style=False)
                 Logger.log(f"Written {self.identifier}.cwl to disk")
 
-            with open(d + self.identifier + "-job.yml", "w+") as cwl:
+            with open(d + self.id()+ "-job.yml", "w+") as cwl:
                 Logger.log(f"Writing {self.identifier}-job.yml to disk")
                 yaml.dump(inp_data, cwl, default_flow_style=False)
                 Logger.log(f"Written {self.identifier}-job.yml to disk")
 
             for tool in tools_ar:
-                tool_name = tool["id"].lower()
+                tool_name = tool["id"]
                 with open(d_tools + tool_name + ".cwl", "w+") as cwl:
                     Logger.log(f"Writing {tool_name}.cwl to disk")
                     yaml.dump(tool, cwl, default_flow_style=False)

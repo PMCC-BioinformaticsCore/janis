@@ -161,7 +161,7 @@ class TestGermlinePipeline(unittest.TestCase):
         ])
 
         # w.draw_graph()
-        w.dump_cwl(to_disk=True, with_docker=True)
+        w.dump_cwl(to_disk=True, with_docker=False)
 
 
         # temporary_directory = Input("tmpdir", Directory(optional=True))

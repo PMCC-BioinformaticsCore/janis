@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, List, Dict, Any
 import re
 
+from Pipeline.types.common_data_types import Array
 from Pipeline.utils.logger import Logger
 from Pipeline.types.data_types import DataType, NativeTypes
 import cwlgen.cwlgen as cwl
@@ -50,7 +51,8 @@ class ToolArgument:
 
 class ToolInput(ToolArgument):
     def __init__(self, tag: str, input_type: DataType, position: Optional[int] = None, prefix: Optional[str] = None,
-                 separate_value_from_prefix: bool = None, default: Any = None, doc: Optional[str]=None):
+                 separate_value_from_prefix: bool = None, default: Any = None, doc: Optional[str]=None,
+                 nest_input_binding_on_array: bool=True):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
@@ -65,10 +67,40 @@ class ToolInput(ToolArgument):
         self.optional = self.input_type.optional
         self.default = default
         self.doc = doc
+        self.nest_input_binding_on_array = nest_input_binding_on_array
 
     def cwl(self):
 
         default = self.default if self.default else self.input_type.default()
+
+        data_type = self.input_type.cwl_type()
+        input_binding = cwl.CommandLineBinding(
+            # load_contents=self.load_contents,
+            position=self.position,
+            prefix=self.prefix,
+            separate=self.separate_value_from_prefix
+            # item_separator=self.item_separator,
+            # value_from=self.value_from,
+            # shell_quote=self.shell_quote
+        )
+
+        # Binding array inputs onto the console
+        # https://www.commonwl.org/user_guide/09-array-inputs/
+        if isinstance(self.input_type, Array) and isinstance(data_type, cwl.CommandInputArraySchema):
+            if self.nest_input_binding_on_array:
+                input_binding.prefix = None
+                input_binding.separate = None
+                nested_binding = cwl.CommandLineBinding(
+                    # load_contents=self.load_contents,
+                    prefix=self.prefix,
+                    separate=self.separate_value_from_prefix
+                    # item_separator=self.item_separator,
+                    # value_from=self.value_from,
+                    # shell_quote=self.shell_quote
+                )
+                data_type.inputBinding = nested_binding
+            else:
+                input_binding.itemSeparator = ","
 
         return cwl.CommandInputParameter(
             param_id=self.tag,
@@ -76,17 +108,9 @@ class ToolInput(ToolArgument):
             secondary_files=self.input_type.secondary_files(),
             # streamable=False,
             doc=self.doc,
+            input_binding=input_binding,
             default=default,
-            input_binding=cwl.CommandLineBinding(
-                # load_contents=self.load_contents,
-                position=self.position,
-                prefix=self.prefix,
-                separate=self.separate_value_from_prefix
-                # item_separator=self.item_separator,
-                # value_from=self.value_from,
-                # shell_quote=self.shell_quote
-            ),
-            param_type=self.input_type.cwl_type()
+            param_type=data_type
         )
 
 

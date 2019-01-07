@@ -61,6 +61,6 @@ class Gatk4ApplyBqsrBase(Gatk4ToolBase, ABC):
 
     additional_args = [
         # Put more detail in here from documentation
-        ToolInput("tmpDir", Directory(optional=True), prefix="--TMP_DIR", position=11,
+        ToolInput("tmpDir", Directory(optional=True), prefix="--TMP-DIR", position=11,
                   doc="Temp directory to use."),
     ]

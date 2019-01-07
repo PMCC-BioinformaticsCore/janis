@@ -97,23 +97,12 @@ class TestGermlinePipeline(unittest.TestCase):
         s9_igv = Step("s9_igv", IgvToolsIndex())
         s10_genotypeConcord = Step("s10_genotypeConcord", Gatk4GenotypeConcordance())
 
-        o1_bwa = Output("sw_bwa", Sam())
-        o2_samtools = Output("sw_samtools", Bam())
-        o3_sortsam = Output("sw_sortsam", BamPair())
-
-
         # step1
         w.add_edge(fastqInputs, s1_sw.fastq)
         w.add_edges([
             (s1_inp_reference, s1_sw.reference),
             (s1_inp_header, s1_sw.read_group_header_line),
             (inp_tmpdir, s1_sw.tmpdir)
-        ])
-
-        w.add_edges([
-            (s1_sw.o1_bwa, o1_bwa),
-            (s1_sw.o2_samtools, o2_samtools),
-            (s1_sw.o3_sortsam, o3_sortsam)
         ])
 
         #step2
@@ -161,6 +150,20 @@ class TestGermlinePipeline(unittest.TestCase):
         # w.add_edges([
         #     ()
         # ])
+
+        # Outputs
+
+        w.add_edges([
+            (s1_sw.o1_bwa, Output("sw_bwa")),
+            (s1_sw.o2_samtools, Output("sw_samtools")),
+            (s1_sw.o3_sortsam, Output("sw_sortsam")),
+            (s2_mergeSamFiles, Output("o4_merged")),
+            (s3_markDuplicates.output, Output("o5_marked_output")),
+            (s3_markDuplicates.metrics, Output("o5_marked_metrics")),
+            (s4_baseRecal, Output("o6_recal")),
+            (s5_applyBqsr, Output("o7_bqsr")),
+            (s6_haploy.output, Output("o8_halpo"))
+        ])
 
         # w.draw_graph()
         w.dump_cwl(to_disk=True, with_docker=False)

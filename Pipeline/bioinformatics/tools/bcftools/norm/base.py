@@ -41,7 +41,7 @@ class BcfToolsNormBase(BcfToolsToolBase):
     the --fasta-ref option is supplied.
     
     Documentation: https://samtools.github.io/bcftools/bcftools.html#norm
-    """
+    """.strip()
 
     additional_args = [
 
@@ -62,7 +62,7 @@ class BcfToolsNormBase(BcfToolsToolBase):
         ToolInput("reference", FastaWithDict(optional=True), prefix="-f",
                   doc="--fasta-ref: reference sequence. Supplying this option will turn on left-alignment and "
                       "normalization, however, see also the --do-not-normalize option below."),
-        ToolInput("", String(optional=True), prefix="-m",
+        ToolInput("multiallelics", String(optional=True), prefix="-m",
                   doc="--multiallelics -|+[snps|indels|both|any]: split multiallelic sites into "
                       "biallelic records (-) or join biallelic sites into multiallelic records (+). "
                       "An optional type string can follow which controls variant types which should "

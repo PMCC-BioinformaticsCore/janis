@@ -32,7 +32,7 @@ class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
             ToolOutput("summaryMetrics", File(), glob="*.genotype_concordance_summary_metrics"),
             ToolOutput("detailMetrics", File(), glob="*.genotype_concordance_detail_metrics"),
             ToolOutput("contingencyMetrics", File(), glob="*.genotype_concordance_contingency_metrics"),
-            ToolOutput("vcf", VcfIdx(optional=True), glob="*.vcf")
+            # ToolOutput("vcf", VcfIdx(optional=True), glob="*.vcf")
         ]
 
     @staticmethod
@@ -93,31 +93,31 @@ class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
         ToolInput("callSample", String(optional=True), prefix="--CALL_SAMPLE", position=10,
                   doc="The name of the call sample within the call VCF. Not required if only one sample exists."),
 
-        ToolInput("ignoreFilterStatus", Boolean(optional=True), prefix="IGNORE_FILTER_STATUS",
+        ToolInput("ignoreFilterStatus", Boolean(optional=True), prefix="--IGNORE_FILTER_STATUS",
                   doc="Default is false. If true, filter status of sites will be ignored so that we "
                       "include filtered sites when calculating genotype concordance."),
-        ToolInput("intersectIntervals", Boolean(optional=True), prefix="INTERSECT_INTERVALS",
+        ToolInput("intersectIntervals", Boolean(optional=True), prefix="--INTERSECT_INTERVALS",
                   doc="If true, multiple interval lists will be intersected. If false multiple lists will be unioned."),
-        ToolInput("intervals", Array(VcfIdx(), optional=True), prefix="INTERVALS",
+        ToolInput("intervals", Array(VcfIdx(), optional=True), prefix="--INTERVALS",
                   doc="One or more interval list files that will be used to limit the genotype concordance. "
                       "Note - if intervals are specified, the VCF files must be indexed."),
-        ToolInput("minDP", Float(optional=True), prefix="MIN_DP",
+        ToolInput("minDP", Float(optional=True), prefix="--MIN_DP",
                   doc="Genotypes below this depth will have genotypes classified as LowDp."),
-        ToolInput("minGQ", Float(optional=True), prefix="MIN_GQ",
+        ToolInput("minGQ", Float(optional=True), prefix="--MIN_GQ",
                   doc="Genotypes below this genotype quality will have genotypes classified as LowGq."),
-        ToolInput("treatMissingSitesAsHomeRef", Boolean(optional=True), prefix="MISSING_SITES_HOM_REF",
+        ToolInput("treatMissingSitesAsHomeRef", Boolean(optional=True), prefix="--MISSING_SITES_HOM_REF",
                   doc="Default is false, which follows the GA4GH Scheme. If true, missing sites in the truth "
                       "set will be treated as HOM_REF sites and sites missing in both the truth and call sets "
                       "will be true negatives. Useful when hom ref sites are left out of the truth set. "
                       "This flag can only be used with a high confidence interval list."),
-        ToolInput("outputAllRows", Boolean(optional=True), prefix="OUTPUT_ALL_ROWS",
+        ToolInput("outputAllRows", Boolean(optional=True), prefix="--OUTPUT_ALL_ROWS",
                   doc="If true, output all rows in detailed statistics even when count == 0. When false only "
                       "output rows with non-zero counts."),
-        ToolInput("outputVcf", Boolean(optional=True), prefix="OUTPUT_VCF",
+        ToolInput("outputVcf", Boolean(optional=True), prefix="--OUTPUT_VCF",
                   doc="Output a VCF annotated with concordance information."),
-        ToolInput("truthSample", String(optional=True), prefix="TRUTH_SAMPLE",
+        ToolInput("truthSample", String(optional=True), prefix="--TRUTH_SAMPLE",
                   doc="The name of the truth sample within the truth VCF. Not required if only one sample exists."),
-        ToolInput("useVcfIndex", Boolean(optional=True), prefix="USE_VCF_INDEX",
+        ToolInput("useVcfIndex", Boolean(optional=True), prefix="--USE_VCF_INDEX",
                   doc="If true, use the VCF index, else iterate over the entire VCF"),
 
         ToolInput("compressionLevel", Int(optional=True), prefix="--COMPRESSION_LEVEL", position=11,

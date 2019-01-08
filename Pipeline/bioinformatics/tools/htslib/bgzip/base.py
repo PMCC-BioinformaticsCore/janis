@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from typing import List
 
 from Pipeline import CommandTool, ToolOutput, ToolInput, Boolean, Int, String, File
-from Pipeline.bioinformatics.data_types.vcf import TabixIdx
+from Pipeline.bioinformatics.data_types.vcf import TabixIdx, VcfIdx, Vcf, CompressedVcf
 
 
 class BGZipBase(CommandTool, ABC):
@@ -16,13 +16,13 @@ class BGZipBase(CommandTool, ABC):
 
     def inputs(self) -> List[ToolInput]:
         return [
-            ToolInput("file", File(), position=100, doc="File to bgzip compress"),
+            ToolInput("file", Vcf(), position=100, doc="File to bgzip compress"),
             *self.additional_args
         ]
 
     def outputs(self) -> List[ToolOutput]:
         return [
-            ToolOutput("output", TabixIdx(), glob="$(inputs.file.basename) + '.gz')")
+            ToolOutput("output", CompressedVcf(), glob="$(inputs.file.basename + '.gz')")
         ]
 
     @staticmethod

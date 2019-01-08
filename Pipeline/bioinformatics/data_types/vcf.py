@@ -31,7 +31,17 @@ class VcfIdx(Vcf):
         return [".idx"]
 
 
-class TabixIdx(Vcf):
+class CompressedVcf(File):
+    @staticmethod
+    def name():
+        return "compressed-vcf-gz"
+
+    @staticmethod
+    def doc():
+        return ".vcf.gz"
+
+
+class TabixIdx(CompressedVcf):
     @staticmethod
     def name():
         return "vcf-gz-tbi"

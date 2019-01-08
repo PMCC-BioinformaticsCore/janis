@@ -32,7 +32,7 @@ class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
 
     def outputs(self):
         return [
-            ToolOutput("output", Vcf(), glob='$(inputs.outputFilename)',
+            ToolOutput("output", VcfIdx(), glob='$(inputs.outputFilename)',
                        doc="A raw, unfiltered, highly sensitive callset in VCF format. "
                            "File to which variants should be written"),
         ]

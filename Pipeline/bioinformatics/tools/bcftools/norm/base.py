@@ -27,7 +27,7 @@ class BcfToolsNormBase(BcfToolsToolBase):
 
     def outputs(self):
         return [
-            ToolOutput("output", VcfIdx(), glob="$(inputs.outputFilename)")
+            ToolOutput("output", Vcf(), glob="$(inputs.outputFilename)")
         ]
 
     @staticmethod

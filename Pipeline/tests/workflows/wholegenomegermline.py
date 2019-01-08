@@ -73,9 +73,9 @@ class TestGermlinePipeline(unittest.TestCase):
 
     def test_workflow(self):
 
-        w = Workflow("whole-genome-germline")
+        w = Workflow("whole-genome-germline-2nd-half")
 
-        reference = Input("reference", Fasta())
+        reference = Input("reference", FastaWithDict())
         fastqInputs = Input("inputs", Array(Fastq()))
 
         s1_inp_header = Input("read_group_header_line", String())
@@ -101,59 +101,63 @@ class TestGermlinePipeline(unittest.TestCase):
         s9_tabix = Step("s9_tabix", TabixLatest())
         s10_genotypeConcord = Step("s10_genotypeConcord", Gatk4GenotypeConcordance())
 
-        # step1
-        w.add_edge(fastqInputs, s1_sw.fastq)
-        w.add_edges([
-            (s1_inp_reference, s1_sw.reference),
-            (s1_inp_header, s1_sw.read_group_header_line),
-            (inp_tmpdir, s1_sw.tmpdir)
-        ])
+        # # step1
+        # w.add_edge(fastqInputs, s1_sw.fastq)
+        # w.add_edges([
+        #     (s1_inp_reference, s1_sw.reference),
+        #     (s1_inp_header, s1_sw.read_group_header_line),
+        #     (inp_tmpdir, s1_sw.tmpdir)
+        # ])
+        #
+        # #step2
+        # w.add_edge(s1_sw.o3_sortsam, s2_mergeSamFiles.input)
+        # w.add_edge(inp_tmpdir, s2_mergeSamFiles.tmpDir)
+        # w.add_default_value(s2_mergeSamFiles.useThreading, True)
+        # w.add_default_value(s2_mergeSamFiles.createIndex, True)
+        # w.add_default_value(s2_mergeSamFiles.maxRecordsInRam, 5000000)
+        # w.add_default_value(s2_mergeSamFiles.validationStringency, "SILENT")
+        #
+        #
+        # # step3
+        # w.add_edge(s2_mergeSamFiles, s3_markDuplicates)
+        # w.add_edge(inp_tmpdir, s3_markDuplicates.tmpDir)
+        # w.add_default_value(s3_markDuplicates.createIndex, True)
+        # w.add_default_value(s3_markDuplicates.maxRecordsInRam, 5000000)
+        #
+        # #step4 - baserecal
+        # w.add_edges([
+        #     (s3_markDuplicates, s4_baseRecal),
+        #     (reference, s4_baseRecal.reference),
+        #     (s4_inp_SNPS_dbSNP, s4_baseRecal.knownSites),
+        #     (s4_inp_SNPS_1000GP, s4_baseRecal.knownSites),
+        #     (s4_inp_OMNI, s4_baseRecal.knownSites),
+        #     (s4_inp_HAPMAP, s4_baseRecal.knownSites),
+        #     (inp_tmpdir, s4_baseRecal.tmpDir)
+        # ])
+        #
+        # # step5 - apply bqsr
+        # w.add_edges([
+        #     (s3_markDuplicates.output, s5_applyBqsr),
+        #     (s4_baseRecal, s5_applyBqsr),
+        #     (reference, s5_applyBqsr.reference),
+        #     (inp_tmpdir, s5_applyBqsr.tmpDir)
+        # ])
+        #
+        # # step6 - haplotype caller
+        # w.add_edges([
+        #     (s5_applyBqsr, s6_haploy),
+        #     (reference, s6_haploy),
+        #     (s4_inp_SNPS_dbSNP, s6_haploy)
+        # ])
 
-        #step2
-        w.add_edge(s1_sw.o3_sortsam, s2_mergeSamFiles.input)
-        w.add_edge(inp_tmpdir, s2_mergeSamFiles.tmpDir)
-        w.add_default_value(s2_mergeSamFiles.useThreading, True)
-        w.add_default_value(s2_mergeSamFiles.createIndex, True)
-        w.add_default_value(s2_mergeSamFiles.maxRecordsInRam, 5000000)
-        w.add_default_value(s2_mergeSamFiles.validationStringency, "SILENT")
-
-
-        # step3
-        w.add_edge(s2_mergeSamFiles, s3_markDuplicates)
-        w.add_edge(inp_tmpdir, s3_markDuplicates.tmpDir)
-        w.add_default_value(s3_markDuplicates.createIndex, True)
-        w.add_default_value(s3_markDuplicates.maxRecordsInRam, 5000000)
-
-        #step4 - baserecal
-        w.add_edges([
-            (s3_markDuplicates, s4_baseRecal),
-            (reference, s4_baseRecal.reference),
-            (s4_inp_SNPS_dbSNP, s4_baseRecal.knownSites),
-            (s4_inp_SNPS_1000GP, s4_baseRecal.knownSites),
-            (s4_inp_OMNI, s4_baseRecal.knownSites),
-            (s4_inp_HAPMAP, s4_baseRecal.knownSites),
-            (inp_tmpdir, s4_baseRecal.tmpDir)
-        ])
-
-        # step5 - apply bqsr
-        w.add_edges([
-            (s3_markDuplicates.output, s5_applyBqsr),
-            (s4_baseRecal, s5_applyBqsr),
-            (reference, s5_applyBqsr.reference),
-            (inp_tmpdir, s5_applyBqsr.tmpDir)
-        ])
-
-        # step6 - haplotype caller
-        w.add_edges([
-            (s5_applyBqsr, s6_haploy),
-            (reference, s6_haploy),
-            (s4_inp_SNPS_dbSNP, s6_haploy)
-        ])
+        # CHEAT TO MAKE THIS QUICKER
+        s7_cheat_inp = Input("s7_inp", VcfIdx())
 
         # step7 - BcfToolsNorm
         w.add_edges([
             (reference, s7_bcfNorm),
-            (s6_haploy, s7_bcfNorm)
+            # (s6_haploy, s7_bcfNorm)
+            (s7_cheat_inp, s7_bcfNorm.input)
         ])
 
         # step8 - BGZip
@@ -174,15 +178,15 @@ class TestGermlinePipeline(unittest.TestCase):
         # Outputs
 
         w.add_edges([
-            (s1_sw.o1_bwa, Output("sw_bwa")),
-            (s1_sw.o2_samtools, Output("sw_samtools")),
-            (s1_sw.o3_sortsam, Output("sw_sortsam")),
-            (s2_mergeSamFiles, Output("o4_merged")),
-            (s3_markDuplicates.output, Output("o5_marked_output")),
-            (s3_markDuplicates.metrics, Output("o5_marked_metrics")),
-            (s4_baseRecal, Output("o6_recal")),
-            (s5_applyBqsr, Output("o7_bqsr")),
-            (s6_haploy.output, Output("o8_halpo")),
+            # (s1_sw.o1_bwa, Output("sw_bwa")),
+            # (s1_sw.o2_samtools, Output("sw_samtools")),
+            # (s1_sw.o3_sortsam, Output("sw_sortsam")),
+            # (s2_mergeSamFiles, Output("o4_merged")),
+            # (s3_markDuplicates.output, Output("o5_marked_output")),
+            # (s3_markDuplicates.metrics, Output("o5_marked_metrics")),
+            # (s4_baseRecal, Output("o6_recal")),
+            # (s5_applyBqsr, Output("o7_bqsr")),
+            # (s6_haploy.output, Output("o8_halpo")),
             (s7_bcfNorm, Output("o9_bcfnorm")),
             (s8_bgzip, Output("o10_bgzip")),
             (s9_tabix, Output("o11_tabix")),

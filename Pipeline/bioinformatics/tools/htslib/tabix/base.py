@@ -2,7 +2,7 @@ from abc import ABC
 from typing import List
 
 from Pipeline import CommandTool, ToolOutput, ToolInput, Boolean, Int, String, File
-from Pipeline.bioinformatics.data_types.vcf import TabixIdx
+from Pipeline.bioinformatics.data_types.vcf import TabixIdx, VcfIdx, CompressedVcf
 
 
 class TabixBase(CommandTool, ABC):
@@ -16,13 +16,13 @@ class TabixBase(CommandTool, ABC):
 
     def inputs(self) -> List[ToolInput]:
         return [
-            ToolInput("file", File(), position=8,
+            ToolInput("file", CompressedVcf(), position=8,
                       doc="File from which to create the index. The input data file must be position sorted and "
                           "compressed by bgzip which has a gzip(1) like interface."),
             ToolInput("preset", String(optional=True), prefix="--preset", position=2,
                       doc="-p: Input format for indexing. Valid values are: gff, bed, sam, vcf. This option should "
                           "not be applied together with any of -s, -b, -e, -c and -0; it is not used for data "
-                          "retrieval because this setting is stored in the index file. [gff]"),
+                          "retrieval because this setting is stored in the index file. [gff]", default="vcf"),
             *self.additional_args
         ]
 

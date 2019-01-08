@@ -3,6 +3,7 @@ from typing import List
 
 from Pipeline import CommandTool, ToolOutput, ToolInput, Boolean, Int, String, File
 from Pipeline.bioinformatics.data_types.vcf import TabixIdx, VcfIdx, Vcf, CompressedVcf
+from Pipeline.types.common_data_types import Stdout
 
 
 class BGZipBase(CommandTool, ABC):
@@ -22,7 +23,7 @@ class BGZipBase(CommandTool, ABC):
 
     def outputs(self) -> List[ToolOutput]:
         return [
-            ToolOutput("output", CompressedVcf(), glob="$(inputs.file.basename + '.gz')")
+            ToolOutput("output", Stdout(CompressedVcf(), stdoutname="$(inputs.file.basename + '.gz')"))
         ]
 
     @staticmethod
@@ -56,7 +57,7 @@ class BGZipBase(CommandTool, ABC):
                   doc="b: Decompress to standard output from virtual file position "
                       "(0-based uncompressed offset). Implies -c and -d."),
 
-        ToolInput("stdout", Boolean(optional=True), prefix="--stdout",
+        ToolInput("stdout", Boolean(optional=True), default=True, prefix="--stdout",
                   doc="c: Write to standard output, keep original files unchanged."),
 
         ToolInput("decompress", Boolean(optional=True), prefix="--decompress", doc="d: Decompress."),

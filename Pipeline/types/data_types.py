@@ -165,7 +165,7 @@ class DataType(ABC):
         :param other:
         :return:
         """
-        if not isinstance(other, type(self.received_type())):
+        if not isinstance(other.received_type(), type(self.received_type())):
             return False
         if self.optional:
             # If I'm optional I can receive from optional / non optional

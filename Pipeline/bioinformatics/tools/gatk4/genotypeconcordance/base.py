@@ -83,6 +83,8 @@ class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
     VCF Output:
         - The concordance state will be stored in the CONC_ST tag in the INFO field
         - The truth sample name will be \"truth\" and call sample name will be \"call\"  
+        
+    Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.5.0/picard_vcf_GenotypeConcordance.php
     """.strip()
 
     additional_args = [

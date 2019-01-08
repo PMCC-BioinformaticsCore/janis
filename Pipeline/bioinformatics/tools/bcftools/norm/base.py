@@ -1,7 +1,8 @@
 from abc import ABC
 
 from Pipeline import ToolInput, String, Boolean, File, Filename, Array, Int, ToolOutput
-from Pipeline.bioinformatics.data_types.vcf import TabixIdx
+from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
+from Pipeline.bioinformatics.data_types.vcf import TabixIdx, Vcf, VcfIdx
 from Pipeline.bioinformatics.tools.bcftools.bcftoolstoolbase import BcfToolsToolBase
 
 
@@ -17,7 +18,7 @@ class BcfToolsNormBase(BcfToolsToolBase):
 
     def inputs(self):
         return [
-            ToolInput("input", TabixIdx(), position=10),
+            ToolInput("input", Vcf(), position=10),
             ToolInput("outputFilename", Filename(extension=".vcf"), prefix="-o",
                       doc="--output: When output consists of a single stream, "
                           "write it to FILE rather than to standard output, where it is written by default."),
@@ -26,7 +27,7 @@ class BcfToolsNormBase(BcfToolsToolBase):
 
     def outputs(self):
         return [
-            ToolOutput("output", TabixIdx(), glob="$(inputs.outputFilename)")
+            ToolOutput("output", VcfIdx(), glob="$(inputs.outputFilename)")
         ]
 
     @staticmethod
@@ -58,7 +59,7 @@ class BcfToolsNormBase(BcfToolsToolBase):
         ToolInput("removeDupsAcrossFiles", Boolean(optional=True), prefix="-D",
                   doc="--remove-duplicates: If a record is present in multiple files, "
                       "output only the first instance. Alias for -d none, deprecated."),
-        ToolInput("reference", File(optional=True), prefix="-f",
+        ToolInput("reference", FastaWithDict(optional=True), prefix="-f",
                   doc="--fasta-ref: reference sequence. Supplying this option will turn on left-alignment and "
                       "normalization, however, see also the --do-not-normalize option below."),
         ToolInput("", String(optional=True), prefix="-m",
@@ -113,7 +114,8 @@ class BcfToolsNormBase(BcfToolsToolBase):
                       "third column of the targets file must be comma-separated list of alleles, starting with "
                       "the reference allele. Note that the file must be compressed and index. "
                       "Such a file can be easily created from a VCF using: "
-                      "`bcftools query -f'%CHROM\\t%POS\\t%REF,%ALT\\n' file.vcf | bgzip -c > als.tsv.gz && tabix -s1 -b2 -e2 als.tsv.gz`"),
+                      "`bcftools query -f'%CHROM\\t%POS\\t%REF,%ALT\\n' file.vcf | bgzip -c > als.tsv.gz "
+                      "&& tabix -s1 -b2 -e2 als.tsv.gz`"),
         ToolInput("threads", Int(optional=True), prefix="--threads",
                   doc="Number of output compression threads to use in addition to main thread. "
                       "Only used when --output-type is b or z. Default: 0."),

@@ -6,7 +6,7 @@ from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
-from Pipeline.bioinformatics.data_types.vcf import VcfIdx
+from Pipeline.bioinformatics.data_types.vcf import VcfIdx, Vcf
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
@@ -25,14 +25,14 @@ class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
             *Gatk4HaplotypeCallerBase.optional_args,
             ToolInput("inputRead", BamPair(), doc="BAM/SAM/CRAM file containing reads", prefix="--input"),
             ToolInput("reference", FastaWithDict(), position=5, prefix="--reference", doc="Reference sequence file"),
-            ToolInput("outputFilename", Filename(extension=".vcf.gz"), position=8, prefix="--output",
+            ToolInput("outputFilename", Filename(extension=".vcf"), position=8, prefix="--output",
                       doc="File to which variants should be written"),
             ToolInput("dbsnp", VcfIdx(), position=7, prefix="--dbsnp", doc="(Also: -D) A dbSNP VCF file."),
         ]
 
     def outputs(self):
         return [
-            ToolOutput("output", VcfIdx(), glob='$(inputs.outputFilename)',
+            ToolOutput("output", Vcf(), glob='$(inputs.outputFilename)',
                        doc="A raw, unfiltered, highly sensitive callset in VCF format. "
                            "File to which variants should be written"),
         ]

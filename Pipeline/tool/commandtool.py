@@ -178,7 +178,7 @@ task {self.wdl_name()} {{
         def input_format(t: ToolInput):
             prefix_with_space = ""
             if t.prefix is not None:
-                prefix_with_space = (t.prefix + ": ") if t.separate_value_from_prefix else t.prefix
+                prefix_with_space = (t.prefix + ": ") if (t.separate_value_from_prefix is not False) else t.prefix
             return f"\t\t{t.tag} ({prefix_with_space}{t.input_type.id()}{('=' + str(t.default)) if t.default is not None else ''})" \
                 f": {'' if t.doc is None else t.doc}"
 

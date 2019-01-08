@@ -251,9 +251,10 @@ class Workflow(Tool):
         if not n:
             raise Exception(f"Couldn't resolve the node identifier from '{str(tagged_node)}'")
         components = n.split("/")
-        node = self._nodes.get(components[0])
+        node_id = components[0]
+        node = self._nodes.get(node_id)
         if not node:
-            raise Exception(f"Couldn't find a node in the graph with identifier '{n}', you must add the node "
+            raise Exception(f"Couldn't find a node in the graph with identifier '{node_id}', you must add the node "
                             f"to the graph to add a default value")
         if node.node_type != NodeTypes.TASK:
             raise Exception(f"You can only add a default value to a task (step) (not to '{node.id()}'")

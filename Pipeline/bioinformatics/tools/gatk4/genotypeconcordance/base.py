@@ -1,7 +1,7 @@
 from abc import ABC
 
 from Pipeline import ToolArgument, ToolInput, Filename, ToolOutput, File, Array, String, Boolean, Int, Float, Directory
-from Pipeline.bioinformatics.data_types.vcf import VcfIdx
+from Pipeline.bioinformatics.data_types.vcf import VcfIdx, TabixIdx
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
@@ -16,7 +16,7 @@ class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
 
     def inputs(self):
         return [
-            ToolInput("callVCF", VcfIdx(), prefix="--CALL_VCF", doc="The VCF containing the call sample"),
+            ToolInput("callVCF", TabixIdx(), prefix="--CALL_VCF", doc="The VCF containing the call sample"),
             ToolInput("truthVCF", VcfIdx(), prefix="--TRUTH_VCF", doc="The VCF containing the truth sample"),
             ToolInput("outputBasename", Filename(), prefix="--OUTPUT",
                       doc="Basename for the three metrics files that are to be written. Resulting files will be:"

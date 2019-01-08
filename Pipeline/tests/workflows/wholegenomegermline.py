@@ -17,6 +17,8 @@ from Pipeline.bioinformatics.tools.gatk4.haplotypecaller.latest import Gatk4Hapl
 from Pipeline.bioinformatics.tools.gatk4.markduplicates.latest import Gatk4MarkDuplicatesLatest as Gatk4MarkDuplicates
 from Pipeline.bioinformatics.tools.gatk4.mergesamfiles.latest import Gatk4MergeSamFilesLatest as Gatk4MergeSamFiles
 from Pipeline.bioinformatics.tools.gatk4.sortsam.latest import Gatk4SortSamLatest as Gatk4SortSam
+from Pipeline.bioinformatics.tools.htslib.bgzip.latest import BGZipLatest
+from Pipeline.bioinformatics.tools.htslib.tabix.latest import TabixLatest
 from Pipeline.bioinformatics.tools.igvtools.index.latest import IgvToolsIndexLatest as IgvToolsIndex
 from Pipeline.bioinformatics.tools.samtools.view.latest import SamToolsViewLatest as SamToolsView
 
@@ -82,6 +84,8 @@ class TestGermlinePipeline(unittest.TestCase):
         s4_inp_SNPS_1000GP = Input("SNPS_1000GP", TabixIdx())
         s4_inp_OMNI = Input("OMNI", TabixIdx())
         s4_inp_HAPMAP = Input("HAPMAP", TabixIdx())
+        s10_truth = Input("TRUTH_VCF", VcfIdx())
+        s10_intervals = Input("INTERVALS", Array(VcfIdx()))
 
         inp_tmpdir = Input("tmpdir", Directory())
 
@@ -93,8 +97,8 @@ class TestGermlinePipeline(unittest.TestCase):
         s5_applyBqsr = Step("s5_applyBqsr", Gatk4ApplyBqsr())
         s6_haploy = Step("s6_haploy", Gatk4HaplotypeCaller())
         s7_bcfNorm = Step("s7_bcfNorm", BcfToolsNorm())
-        s8_bcfNorm = Step("s8_bcfNorm", BcfToolsNorm())
-        s9_igv = Step("s9_igv", IgvToolsIndex())
+        s8_bgzip = Step("s8_bgzip", BGZipLatest())
+        s9_tabix = Step("s9_tabix", TabixLatest())
         s10_genotypeConcord = Step("s10_genotypeConcord", Gatk4GenotypeConcordance())
 
         # step1
@@ -147,9 +151,25 @@ class TestGermlinePipeline(unittest.TestCase):
         ])
 
         # step7 - BcfToolsNorm
-        # w.add_edges([
-        #     ()
-        # ])
+        w.add_edges([
+            (reference, s7_bcfNorm),
+            (s6_haploy, s7_bcfNorm)
+        ])
+
+        # step8 - BGZip
+        w.add_edge(s7_bcfNorm, s8_bgzip.file)
+
+        # step9 - tabix
+        w.add_edge(s8_bgzip, s9_tabix.file)
+
+        # step10 - gatk-genotypeconcordance
+        w.add_edges([
+            (s9_tabix, s10_genotypeConcord.callVCF),
+            (s10_truth, s10_genotypeConcord.truthVCF),
+            (s10_intervals, s10_genotypeConcord.intervals),
+        ])
+        w.add_default_value(s10_genotypeConcord.treatMissingSitesAsHomeRef, True)
+
 
         # Outputs
 
@@ -162,7 +182,14 @@ class TestGermlinePipeline(unittest.TestCase):
             (s3_markDuplicates.metrics, Output("o5_marked_metrics")),
             (s4_baseRecal, Output("o6_recal")),
             (s5_applyBqsr, Output("o7_bqsr")),
-            (s6_haploy.output, Output("o8_halpo"))
+            (s6_haploy.output, Output("o8_halpo")),
+            (s7_bcfNorm, Output("o9_bcfnorm")),
+            (s8_bgzip, Output("o10_bgzip")),
+            (s9_tabix, Output("o11_tabix")),
+            (s10_genotypeConcord.vcf, Output("o12_concord")),
+            (s10_genotypeConcord.summaryMetrics, Output("o12_concord")),
+            (s10_genotypeConcord.detailMetrics, Output("o12_concord")),
+            (s10_genotypeConcord.contingencyMetrics, Output("o12_concord"))
         ])
 
         # w.draw_graph()

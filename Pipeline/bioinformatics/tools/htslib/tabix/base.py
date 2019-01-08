@@ -32,6 +32,15 @@ class TabixBase(CommandTool, ABC):
         ]
 
     @staticmethod
+    def requirements():
+        import cwlgen.cwlgen as cwl
+        return [
+            cwl.InitialWorkDirRequirement([
+                cwl.InitialWorkDirRequirement.Dirent("$(inputs.file)")
+            ])
+        ]
+
+    @staticmethod
     def doc():
         return """
     tabix – Generic indexer for TAB-delimited genome position files

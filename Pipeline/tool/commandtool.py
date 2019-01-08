@@ -61,6 +61,10 @@ class CommandTool(Tool, ABC):
     def environment_variables() -> Optional[Dict[str, str]]:
         return None
 
+    @staticmethod
+    def requirements() -> Optional[List[cwl.Requirement]]:
+        return None
+
     def cwl(self, with_docker=True) -> Dict[str, Any]:
 
         stdouts = [o.output_type for o in self.outputs() if isinstance(o.output_type, Stdout) and o.output_type.stdoutname]
@@ -80,6 +84,9 @@ class CommandTool(Tool, ABC):
         tool.requirements.extend([
             cwl.InlineJavascriptReq()
         ])
+
+        if self.requirements():
+            tool.requirements.extend(self.requirements())
 
         if with_docker:
             tool.requirements.append(cwl.DockerRequirement(

@@ -1,6 +1,6 @@
 from abc import ABC
 
-from Pipeline import ToolArgument, ToolInput, Filename, ToolOutput, File, Array, String, Boolean, Int, Float, Directory
+from Pipeline import ToolInput, Filename, ToolOutput, File, Array, String, Boolean, Int, Float, Directory
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx, TabixIdx
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 

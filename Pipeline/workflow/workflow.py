@@ -758,7 +758,7 @@ workflow {self.identifier} {{
         return workflow, inp, tools
 
     def dump_cwl(self, to_disk: False, with_docker=True):
-        import os, yaml
+        import os, yaml, zipfile
         cwl_data, inp_data, tools_ar = self.cwl(with_docker=with_docker)
 
         d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/cwl/"
@@ -778,6 +778,7 @@ workflow {self.identifier} {{
             print(yaml.dump(t, default_flow_style=False))
 
         if to_disk:
+            os.chdir(d)
             with open(d + self.id() + ".cwl", "w+") as cwl:
                 Logger.log(f"Writing {self.identifier}.cwl to disk")
                 yaml.dump(cwl_data, cwl, default_flow_style=False)
@@ -788,12 +789,19 @@ workflow {self.identifier} {{
                 yaml.dump(inp_data, cwl, default_flow_style=False)
                 Logger.log(f"Written {self.identifier}-job.yml to disk")
 
+            z = zipfile.ZipFile(d + "tools.zip", "w")
             for tool in tools_ar:
                 tool_name = tool["id"]
-                with open(d_tools + tool_name + ".cwl", "w+") as cwl:
+                tool_filename = tool_name + ".cwl"
+                with open(d_tools + tool_filename, "w+") as cwl:
                     Logger.log(f"Writing {tool_name}.cwl to disk")
                     yaml.dump(tool, cwl, default_flow_style=False)
                     Logger.log(f"Written {tool_name}.cwl to disk")
+
+                z.write("tools/" + tool_filename)
+            z.close()
+
+
 
     def dump_wdl(self, to_disk: False):
         import os, json

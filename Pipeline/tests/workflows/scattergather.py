@@ -2,9 +2,9 @@ from typing import List
 
 from Pipeline import Workflow, Input, File, Directory, Int, Output, Array, String, Step, ToolInput, \
     ToolOutput
-from Pipeline.bioinformatics.steps.blast import Blast
-from Pipeline.bioinformatics.steps.fq2fa import Fq2fa
-from Pipeline.bioinformatics.steps.idba import Idba
+from Pipeline.bioinformatics.tools.blast import Blast
+from Pipeline.bioinformatics.tools.fq2fa import Fq2fa
+from Pipeline.bioinformatics.tools.idba import Idba
 from Pipeline.tool.expressiontool import ExpressionTool
 from Pipeline.unix.steps.merge import Merge
 from Pipeline.unix.steps.scatterlines import ScatterLines

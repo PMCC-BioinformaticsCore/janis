@@ -171,6 +171,10 @@ class Tool(ABC, object):
         raise Exception("Must implement cwl() method")
 
     @staticmethod
+    def version():
+        return None
+
+    @staticmethod
     def doc() -> Optional[str]:
         return None
 

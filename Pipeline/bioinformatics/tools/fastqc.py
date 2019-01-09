@@ -5,7 +5,7 @@ class FastQC(CommandTool):
 
     @staticmethod
     def tool():
-        pass
+        return "fastqc"
 
     @staticmethod
     def base_command():

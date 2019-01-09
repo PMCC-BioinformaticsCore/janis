@@ -32,10 +32,6 @@ class CommandTool(Tool, ABC):
         return cls.tool()
 
     @staticmethod
-    def version():
-        return None
-
-    @staticmethod
     def docker():
         return "ubuntu:latest"
 

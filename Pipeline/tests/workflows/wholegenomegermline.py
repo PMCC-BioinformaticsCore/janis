@@ -197,3 +197,132 @@ class TestGermlinePipeline(unittest.TestCase):
         # w.draw_graph()
         w.dump_cwl(to_disk=True, with_docker=False)
 
+
+
+original_bash = """
+#!/bin/bash
+
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --partition=debug
+#SBATCH --mem=64G
+#SBATCH --time=10-00:00:00
+#SBATCH --mail-user=jiaan.yu@petermac.org
+#SBATCH --mail-type=ALL
+#SBATCH --output=pipeline-%j.out
+#SBATCH --job-name="WGSpipeline"
+
+
+echo "Starting at `date`"
+echo "Running on hosts: $SLURM_NODELIST"
+echo "Running on $SLURM_NNODES nodes."
+echo "Running on $SLURM_NPROCS processors."
+echo "Current working directory is `pwd`"
+
+STARTTIME=$(date +%s)
+
+
+module load bwa/0.7.17
+module load samtools/1.9
+module load gatk/4.0.10.0
+module load bcftools/1.9
+module load igvtools
+
+## Input parameters: R1 of fastq files
+
+READ_GROUP_HEADER_LINE='@RG\tID:NA12878\tSM:NA12878\tLB:NA12878\tPL:ILLUMINA'
+REFERENCE="/bioinf_core/Proj/hg38_testing/Resources/Gatk_Resource_Bundle_hg38/hg38_contigs_renamed/Homo_sapiens_assembly38.fasta"
+SNPS_dbSNP='/bioinf_core/Proj/hg38_testing/Resources/Gatk_Resource_Bundle_hg38/Homo_sapiens_assembly38.dbsnp138.vcf'
+SNPS_1000GP='/bioinf_core/Proj/hg38_testing/Resources/Gatk_Resource_Bundle_hg38/1000G_phase1.snps.high_confidence.hg38.vcf.gz'
+OMNI='/bioinf_core/Proj/hg38_testing/Resources/Gatk_Resource_Bundle_hg38/1000G_omni2.5.hg38.vcf.gz'
+HAPMAP='/bioinf_core/Proj/hg38_testing/Resources/Gatk_Resource_Bundle_hg38/hapmap_3.3.hg38.vcf.gz'
+TRUTH_VCF=${1/_R1.fastq/.vcf}
+INTERVAL_LIST=${1/_R1.fastq/.interval_list}
+
+## Fill in the output file here
+SAM='test3/test.sam'
+
+
+bwa mem -R $READ_GROUP_HEADER_LINE \
+ -M \
+ -t 36 \
+ $REFERENCE \
+ $1 ${1/R1/R2} >  $SAM
+
+
+samtools view -S -h -b $SAM > ${SAM/sam/bam}
+
+
+gatk SortSam \
+ -I=$SAM \
+ -O=${SAM/sam/sorted.bam} \
+ --SORT_ORDER=coordinate \
+ --VALIDATION_STRINGENCY=SILENT \
+ --CREATE_INDEX=true \
+ --MAX_RECORDS_IN_RAM=5000000 \
+ --TMP_DIR='/researchers/jiaan.yu/WGS_pipeline/germline/tmp'
+
+
+gatk MergeSamFiles \
+ -I=${SAM/sam/sorted.bam} \
+ -O=${SAM/sam/sorted.merged.bam} \
+ --USE_THREADING=true \
+ --CREATE_INDEX=true \
+ --MAX_RECORDS_IN_RAM=5000000 \
+ --VALIDATION_STRINGENCY=SILENT \
+ --TMP_DIR='/researchers/jiaan.yu/WGS_pipeline/germline/tmp'
+
+
+gatk MarkDuplicates \
+ -I=${SAM/sam/sorted.merged.bam} \
+ -O=${SAM/sam/sorted.merged.markdups.bam} \
+ --CREATE_INDEX=true \
+ --METRICS_FILE=${SAM/sam/metrics.txt} \
+ --MAX_RECORDS_IN_RAM=5000000 \
+ --TMP_DIR='/researchers/jiaan.yu/WGS_pipeline/germline/tmp' 
+
+
+gatk BaseRecalibrator \
+ -I=${SAM/sam/sorted.merged.markdups.bam} \
+ -O=${SAM/sam/recal.table} \
+ -R=$REFERENCE \
+ --known-sites=$SNPS_dbSNP \
+ --known-sites=$SNPS_1000GP \
+ --known-sites=$OMNI \
+ --known-sites=$HAPMAP \
+ --tmp-dir='/researchers/jiaan.yu/WGS_pipeline/germline/tmp'
+
+
+gatk ApplyBQSR \
+ -R=$REFERENCE \
+ -I=${SAM/sam/sorted.merged.markdups.bam} \
+ --bqsr-recal-file=${SAM/sam/recal.table} \
+ -O=${SAM/sam/sorted.merged.markdups.recal.bam} \
+ --tmp-dir='/researchers/jiaan.yu/WGS_pipeline/germline/tmp'
+
+
+gatk HaplotypeCaller \
+ -I=${SAM/sam/sorted.merged.markdups.recal.bam} \
+ -R=$REFERENCE \
+ -O=${SAM/sam/hap.vcf}
+ -D=$SNPS_dbSNP
+
+
+# The normalised vcf for future steps
+bcftools norm -m -both -f $REFERENCE ${SAM/sam/hap.vcf} -o ${SAM/sam/hap.norm.vcf}
+
+# The compressed and indexed vcf for the sake for the validation
+bgzip -c ${SAM/sam/hap.norm.vcf} > ${SAM/sam/hap.norm.vcf.gz}
+tabix -p vcf ${SAM/sam/hap.norm.vcf.gz}
+gatk GenotypeConcordance \
+ --TRUTH_VCF $TRUTH_VCF \
+ --CALL_VCF ${SAM/sam/hap.norm.vcf.gz} \
+ --OUTPUT ${SAM/sam/hap} \
+ --MISSING_SITES_HOM_REF true \
+ --INTERVALS $INTERVAL_LIST
+
+
+ENDTIME=$(date +%s)
+
+echo "Time to complete: $(($ENDTIME - $STARTTIME))"
+"""

@@ -440,6 +440,9 @@ class Workflow(Tool):
                                               guess_type: Optional[DataType] = None) \
             -> Tuple[List[str], Optional[DataType]]:
 
+        if guess_type is not None:
+            guess_type = guess_type.received_type()
+
         if node.node_type == NodeTypes.OUTPUT:
             raise Exception(f"Can't join output node '{node.id()}' to '{referenced_by}'")
 
@@ -537,6 +540,9 @@ class Workflow(Tool):
     @staticmethod
     def get_tag_and_type_from_final_edge_node(node: Node, input_parts: List[str],
                                               guess_type: Optional[DataType]) -> Tuple[List[str], Optional[DataType]]:
+        if guess_type is not None:
+            guess_type = guess_type.received_type()
+
         if node.node_type == NodeTypes.INPUT:
             raise Exception(f"Can't connect TO input node '{node.id()}'")
         if node.node_type == NodeTypes.OUTPUT:
@@ -587,9 +593,9 @@ class Workflow(Tool):
                     else:
                         s = "/".join(input_parts)
                         compat_str = ", ".join(f"{x.tag}: {x.input_type.id()}" for x in compatible_types)
-                        raise Exception(f"The node '{node.id()}' did not specify an input, and used '{guess_type.id()}'"
-                                        f" from the start node to guess the input by type, matching {len(compatible_types)}"
-                                        f" compatible ({compat_str}) and {len(ultra_compatible)} exact types."
+                        raise Exception(f"The end node '{node.id()}' did not specify where to join '{guess_type.id()}'"
+                                        f" to, there were {len(compatible_types)} compatible types"
+                                        f" ({compat_str}) and {len(ultra_compatible)} exact types."
                                         f" You will need to provide more information to proceed.")
             else:
 

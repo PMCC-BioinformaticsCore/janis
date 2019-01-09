@@ -23,6 +23,7 @@ from Pipeline.bioinformatics.tools.gatk4.sortsam.latest import Gatk4SortSamLates
 from Pipeline.bioinformatics.tools.htslib.bgzip.latest import BGZipLatest as BGZip
 from Pipeline.bioinformatics.tools.htslib.tabix.latest import TabixLatest as Tabix
 from Pipeline.bioinformatics.tools.samtools.view.latest import SamToolsViewLatest as SamToolsView
+from Pipeline.bioinformatics.tools.validation.performancevalidator import PerformanceValidator_1_2_1
 
 
 class TestGermlinePipeline(unittest.TestCase):
@@ -86,8 +87,8 @@ class TestGermlinePipeline(unittest.TestCase):
         s4_inp_SNPS_1000GP = Input("SNPS_1000GP", TabixIdx())
         s4_inp_OMNI = Input("OMNI", TabixIdx())
         s4_inp_HAPMAP = Input("HAPMAP", TabixIdx())
-        s10_truth = Input("TRUTH_VCF", VcfIdx())
-        s10_intervals = Input("INTERVALS", Array(VcfIdx()))
+        validator_truth = Input("TRUTH_VCF", VcfIdx())
+        validator_intervals = Input("INTERVALS", Array(VcfIdx()))
 
         inp_tmpdir = Input("tmpdir", Directory())
 
@@ -99,9 +100,8 @@ class TestGermlinePipeline(unittest.TestCase):
         s5_applyBqsr = Step("s5_applyBqsr", Gatk4ApplyBqsr())
         s6_haploy = Step("s6_haploy", Gatk4HaplotypeCaller())
         s7_bcfNorm = Step("s7_bcfNorm", BcfToolsNorm())
-        s8_bgzip = Step("s8_bgzip", BGZip())
-        s9_tabix = Step("s9_tabix", Tabix())
-        s10_genotypeConcord = Step("s10_genotypeConcord", Gatk4GenotypeConcordance())
+
+        s8_validator = Step("s8_validator", PerformanceValidator_1_2_1())
 
         # step1
         w.add_edge(fastqInputs, s1_sw.fastq)
@@ -159,19 +159,13 @@ class TestGermlinePipeline(unittest.TestCase):
             # (s7_cheat_inp, s7_bcfNorm.input)
         ])
 
-        # step8 - BGZip
-        w.add_edge(s7_bcfNorm, s8_bgzip.file)
+        # step8 - validator
 
-        # step9 - tabix
-        w.add_edge(s8_bgzip, s9_tabix.file)
-
-        # step10 - gatk-genotypeconcordance
         w.add_edges([
-            (s9_tabix, s10_genotypeConcord.callVCF),
-            (s10_truth, s10_genotypeConcord.truthVCF),
-            (s10_intervals, s10_genotypeConcord.intervals),
+            (s7_bcfNorm, s8_validator),
+            (validator_truth, s8_validator.truth),
+            (validator_intervals, s8_validator.intervals)
         ])
-        w.add_default_value(s10_genotypeConcord.treatMissingSitesAsHomeRef, True)
 
 
         # Outputs
@@ -187,11 +181,9 @@ class TestGermlinePipeline(unittest.TestCase):
             (s5_applyBqsr, Output("o7_bqsr")),
             (s6_haploy.output, Output("o8_halpo")),
             (s7_bcfNorm, Output("o9_bcfnorm")),
-            (s8_bgzip, Output("o10_bgzip")),
-            (s9_tabix, Output("o11_tabix")),
-            (s10_genotypeConcord.summaryMetrics, Output("o12_concord_summary")),
-            (s10_genotypeConcord.detailMetrics, Output("o12_concord_detail")),
-            (s10_genotypeConcord.contingencyMetrics, Output("o12_concord_contig"))
+            (s8_validator.summaryMetrics, Output("o12_concord_summary")),
+            (s8_validator.detailMetrics, Output("o12_concord_detail")),
+            (s8_validator.contingencyMetrics, Output("o12_concord_contig"))
         ])
 
         # w.draw_graph()

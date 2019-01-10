@@ -182,7 +182,7 @@ class Tool(ABC, object):
         import inspect
         path = inspect.getfile(self.__class__)
 
-        ins = sorted(self.inputs(), key=lambda i: i.position)
+        ins = sorted(self.inputs(), key=lambda i: (i.position if i.position is not None else 0))
 
         def input_format(t: ToolInput):
             prefix_with_space = ""

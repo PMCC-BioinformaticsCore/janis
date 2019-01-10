@@ -56,3 +56,7 @@ def create_subworkflow():
 
 
 AlignSortedBam = create_subworkflow
+
+
+if __name__ == "__main__":
+    print(AlignSortedBam().help())

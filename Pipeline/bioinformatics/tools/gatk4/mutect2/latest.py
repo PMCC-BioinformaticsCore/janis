@@ -1,10 +1,10 @@
-from Pipeline.bioinformatics.tools.gatk.gatk_latest import GatkLatest
-from Pipeline.bioinformatics.tools.gatk.mutect2.base import GatkMutect2Base
+from Pipeline.bioinformatics.tools.gatk4.gatk_latest import Gatk4Latest
+from Pipeline.bioinformatics.tools.gatk4.mutect2.base import Gatk4Mutect2Base
 
 
-class GatkMutect2Latest(GatkLatest, GatkMutect2Base):
+class Gatk4Mutect2Latest(Gatk4Latest, Gatk4Mutect2Base):
     pass
 
 
 if __name__ == "__main__":
-    print(GatkMutect2Latest().help())
+    print(Gatk4Mutect2Latest().help())

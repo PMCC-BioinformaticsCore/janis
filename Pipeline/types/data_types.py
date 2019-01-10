@@ -80,6 +80,8 @@ class NativeTypes:
             return Wdl.PRIMITIVES.kSTRING
         elif t == NativeTypes.kFile:
             return Wdl.PRIMITIVES.kFILE
+        elif t == NativeTypes.kStdout:
+            return Wdl.PRIMITIVES.kFILE
         elif t == NativeTypes.kDirectory:
             return Wdl.PRIMITIVES.kINT
         elif t == NativeTypes.kArray:

@@ -17,8 +17,10 @@ workflow my_wf {
 """
 
 
-ww = wdl.parse(wdl_code)
+ww = wdl.parse(wdl_code).ast()
 
-print(ww.dumps(4))
+print(ww.dumps(indent=2))
+print(ww.attr('body')[1].attr('name').source_string)
+
 
 

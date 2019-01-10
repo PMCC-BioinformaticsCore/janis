@@ -170,6 +170,10 @@ class Tool(ABC, object):
     def cwl(self, with_docker=True) -> Dict[str, Any]:
         raise Exception("Must implement cwl() method")
 
+    def wdl(self, with_docker=True):
+        raise Exception("Must implement wdl() method")
+
+
     @staticmethod
     def version():
         return None
@@ -177,6 +181,9 @@ class Tool(ABC, object):
     @staticmethod
     def doc() -> Optional[str]:
         return None
+
+    def wdl_name(self):
+        return self.id().replace("-", "_")
 
     def help(self):
         import inspect

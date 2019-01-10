@@ -113,13 +113,10 @@ class CommandTool(Tool, ABC):
             base += " " + args_joined
 
         if self.inputs():
-            inps = " ".join(f"${{{s.tag}}}" for s in sorted(self.inputs(), key=lambda a: a.position))
+            inps = " ".join(f"${{{s.tag}}}" for s in sorted(self.inputs(), key=lambda a: a.position if a.position else 0))
             command += " " + inps
 
         return command
-
-    def wdl_name(self):
-        return self.tool().replace("-", "_")
 
     def wdl(self):
 

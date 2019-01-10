@@ -1,14 +1,10 @@
-from typing import Tuple, Optional, Dict, List, Any
+from typing import Optional, Dict, Any
 
-from Pipeline.utils.logger import Logger
+from Pipeline.graph.node import Node, NodeTypes
 from Pipeline.tool.commandtool import ToolOutput, ToolInput
 from Pipeline.types.common_data_types import Array
-from Pipeline.graph.node import Node, NodeTypes
-from Pipeline.workflow.step import StepNode
-
-
-def first_value(d: Dict):
-    return next(iter(d.values()))
+from Pipeline.utils import first_value
+from Pipeline.utils.logger import Logger
 
 
 def full_lbl(node: Node, tag: Optional[str]) -> str:
@@ -39,6 +35,9 @@ class Edge:
 
     def source(self):
         return full_lbl(self.start, self.stag)
+
+    def dotted_source(self):
+        return full_dot(self.start, self.stag)
 
     def validate_tags(self):
         if self.start.node_type == NodeTypes.TASK and self.stag not in self.start.outputs():
@@ -93,8 +92,6 @@ class Edge:
 
 
 class StepInput:
-    # todo: Make Edge support multiple source_map
-
     def __init__(self, finish: Node, finish_tag: str):
 
         self.finish: Node = finish
@@ -141,3 +138,12 @@ class StepInput:
             return first_value(self.source_map).source()
         else:
             return [e.source() for e in self.source_map.values()]
+
+    def dotted_source(self):
+        n = len(self.source_map)
+        if n == 0:
+            return None
+        elif n == 1:
+            return first_value(self.source_map).dotted_source()
+        else:
+            return [e.dotted_source() for e in self.source_map.values()]

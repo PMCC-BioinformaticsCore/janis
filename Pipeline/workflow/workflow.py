@@ -1,6 +1,7 @@
 import networkx as nx
 from typing import Dict, List, Tuple, Set, Optional, Any
 
+from Pipeline.utils import first_value
 from Pipeline.utils.logger import Logger, LogLevel
 
 from Pipeline.graph.stepinput import StepInput
@@ -686,8 +687,8 @@ class Workflow(Tool):
 
         get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
 
-        tools = [s.step.tool() for s in self._steps]
-        tool_name_to_tool: Dict[str, Tool] = {t.tool().lower(): t for t in tools}
+        tools: List[Tool] = [s.step.tool() for s in self._steps]
+        tool_name_to_tool: Dict[str, Tool] = {t.id().lower(): t for t in tools}
         tool_name_to_alias = {}
         steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
 
@@ -698,7 +699,7 @@ class Workflow(Tool):
             s = a
             idx = 2
             while s in aliases:
-                s = a + idx
+                s = a + str(idx)
                 idx += 1
             aliases.add(s)
             tool_name_to_alias[tool] = s
@@ -725,7 +726,7 @@ class Workflow(Tool):
 
         steps = [step_str.format(
             tb=tab_char,
-            tool_file=tool_name_to_alias[s.step.tool().tool().lower()].upper(),
+            tool_file=tool_name_to_alias[s.step.tool().id().lower()].upper(),
             tool=s.step.tool().wdl_name(),
             alias=s.id(),
             tool_mapping=', '.join(s.wdl_map())  # [2 * tab_char + w for w in s.wdl_map()])
@@ -735,8 +736,8 @@ class Workflow(Tool):
             tb2=2 * tab_char,
             data_type=o.output.data_type.wdl(),
             identifier=o.id(),
-            alias=next(iter(o.connection_map.values()))[0].split('/')[0],
-            outp=next(iter(o.connection_map.values()))[0].split('/')[1]
+            alias=first_value(first_value(o.connection_map).source_map).start.id(),
+            outp=first_value(first_value(o.connection_map).source_map).stag
         ) for o in self._outputs]
 
         # imports = '\n'.join([f"import \"tools/{t}.wdl\" as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])

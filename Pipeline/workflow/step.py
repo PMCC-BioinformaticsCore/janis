@@ -1,10 +1,9 @@
-from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 
-from Pipeline.graph.node import Node, NodeTypes
-from Pipeline.tool.tool import Tool, ToolInput, ToolOutput
 import cwlgen.cwlgen as cwl
-from Pipeline.types.common_data_types import Filename
+from Pipeline.graph.node import Node, NodeTypes
+from Pipeline.graph.stepinput import StepInput
+from Pipeline.tool.tool import Tool, ToolInput, ToolOutput
 from Pipeline.utils.logger import Logger
 
 
@@ -139,8 +138,10 @@ class StepNode(Node):
         q = []
         for inp in self.step.tool().inputs():
             if inp.tag in self.connection_map:
-                q.append(f"{inp.tag} = {self.connection_map[inp.tag][0].replace('/', '.')}")
+                si: StepInput = self.connection_map[inp.tag]
+                q.append("{tag} = {value}".format(tag=si.ftag, value=si.dotted_source()))
             elif not inp.optional:
                 raise Exception(f"Required option '{inp.tag}' for step '{self.id()}' "
                                 f"was not found during conversion to WDL")
         return q
+

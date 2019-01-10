@@ -4,18 +4,25 @@ from Pipeline import ToolInput, Array, Filename, ToolArgument, ToolOutput, File,
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
-from Pipeline.bioinformatics.data_types.vcf import VcfIdx
+from Pipeline.bioinformatics.data_types.vcf import VcfIdx, Vcf
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 
 
 class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
     @classmethod
     def gatk_command(cls):
-        return "MuTect2"
+        return "Mutect2"
 
     @staticmethod
     def tool():
         return "gatkmutect2"
+
+    @staticmethod
+    def requirements():
+        import cwlgen.cwlgen as cwl
+        return [
+            cwl.ResourceRequirement(ram_min="64000")
+        ]
 
     @staticmethod
     def tumor_normal_inputs():
@@ -50,7 +57,7 @@ class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
     def outputs(self):
         return [
             # Todo: Determine type of Gatk4Mutect2 output (.vcf.gz?)
-            ToolOutput("output", File(), glob="$(inputs.outputFilename)", doc="To determine type")
+            ToolOutput("output", Vcf(), glob="$(inputs.outputFilename)", doc="To determine type")
         ]
 
     additional_args = []

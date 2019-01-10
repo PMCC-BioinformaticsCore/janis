@@ -795,7 +795,7 @@ workflow {self.identifier} {{
                 yaml.dump(inp_data, cwl, default_flow_style=False)
                 Logger.log(f"Written {self.identifier}-job.yml to disk")
 
-            z = zipfile.ZipFile(d + "tools.zip", "w")
+            # z = zipfile.ZipFile(d + "tools.zip", "w")
             for tool in tools_ar:
                 tool_name = tool["id"]
                 tool_filename = tool_name + ".cwl"
@@ -804,8 +804,8 @@ workflow {self.identifier} {{
                     yaml.dump(tool, cwl, default_flow_style=False)
                     Logger.log(f"Written {tool_name}.cwl to disk")
 
-                z.write("tools/" + tool_filename)
-            z.close()
+            #     z.write("tools/" + tool_filename)
+            # z.close()
 
 
 

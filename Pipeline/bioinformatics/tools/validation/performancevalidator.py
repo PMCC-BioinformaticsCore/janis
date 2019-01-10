@@ -31,3 +31,8 @@ def create_performance_validator_1_2_1():
 
 
 PerformanceValidator_1_2_1 = create_performance_validator_1_2_1
+
+
+
+if __name__ == "__main__":
+    print(PerformanceValidator_1_2_1().help())

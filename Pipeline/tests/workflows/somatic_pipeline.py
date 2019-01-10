@@ -11,6 +11,7 @@ from Pipeline.bioinformatics.tools.gatk4.baserecalibrator.latest import \
 from Pipeline.bioinformatics.tools.gatk4.markduplicates.latest import Gatk4MarkDuplicatesLatest as Gatk4MarkDuplicates
 from Pipeline.bioinformatics.tools.gatk4.mergesamfiles.latest import Gatk4MergeSamFilesLatest as Gatk4MergeSamFiles
 from Pipeline.bioinformatics.tools.gatk4.mutect2.latest import Gatk4Mutect2Latest
+from Pipeline.bioinformatics.tools.validation.performancevalidator import PerformanceValidator_1_2_1
 
 
 class TestSomaticPipeline(unittest.TestCase):
@@ -108,7 +109,8 @@ class TestSomaticPipeline(unittest.TestCase):
 
         s_tum = Step("tumor", self.subpipeline())
         s_norm = Step("normal", self.subpipeline())
-        s_join = Step("mutect", Gatk4Mutect2Latest())
+        s_mutect = Step("mutect", Gatk4Mutect2Latest())
+
 
         for s,i,h in [(s_tum, tumorInputs, tumor_read_group_header_line),
                   (s_norm, normalInputs, normal_read_group_header_line)]:
@@ -124,16 +126,21 @@ class TestSomaticPipeline(unittest.TestCase):
             ])
 
         w.add_edges([
-            (reference, s_join),
-            (s_tum, s_join.tumor),
-            (s_norm, s_join.normal)
+            (reference, s_mutect),
+            (s_tum, s_mutect.tumor),
+            (s_norm, s_mutect.normal)
         ])
-        w.add_default_value(s_join.tumorName, "NA24385_tumor")
-        w.add_default_value(s_join.normalName, "NA24385_normal")
 
-        w.add_edge(s_join, Output("somatic_vcf"))
+        w.add_edge(Input("tumorName", String()), s_mutect.tumorName)
+        w.add_edge(Input("normalName", String()), s_mutect.normalName)
 
-        w.draw_graph()
+
+        w.add_edges([
+            (s_mutect, Output("somatic_vcf")),
+            # (s_validate.summaryMetrics, Output("summaryMetrics"))
+        ])
+
+        # w.draw_graph()
 
         w.dump_cwl(to_disk=True, with_docker=False)
 

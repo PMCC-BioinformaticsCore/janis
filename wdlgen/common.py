@@ -9,6 +9,8 @@ class Input(WdlBase):
         self.expression = expression
 
     def wdl(self):
+        if self.type is None:
+            raise Exception(f"Could not convert wdlgen.Input ('{self.name}') to string because type was null")
         return "{type} {name}{def_w_equals}".format(
             type=self.type.wdl(),
             name=self.name,

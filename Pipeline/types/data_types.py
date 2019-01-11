@@ -212,6 +212,10 @@ class DataType(ABC):
     def wdl(self):
         return NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional()
 
+    def wdl2(self) -> List:
+        import wdlgen as wdl
+        return [wdl.WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional())]
+
     def default(self):
         return self.default_value
 

@@ -213,6 +213,11 @@ class File(DataType):
             "path": value
         }
 
+    def wdl2(self):
+        import wdlgen as wdl
+        # Todo: SECONDARY FILES
+        return [wdl.WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional())]
+
 
 class Directory(DataType):
     @staticmethod
@@ -254,11 +259,11 @@ class Array(DataType):
         if not isinstance(t, DataType):
             raise Exception(f"Type t ({type(t)}) must be an instance of 'Type'")
 
-        self.__t = t
+        self._t = t
         super().__init__(optional)
 
     def subtype(self):
-        return self.__t
+        return self._t
 
     @staticmethod
     def name():
@@ -269,9 +274,9 @@ class Array(DataType):
         return NativeTypes.kArray
 
     def id(self):
-        if self.__t is None:
+        if self._t is None:
             return super().id()
-        t = self.__t
+        t = self._t
         typed = f"Array<{t.id()}>"
         if self.optional:
             return f"Optional<{typed}>"
@@ -287,7 +292,7 @@ class Array(DataType):
 
     def cwl_type(self):
         inp = cwl.CommandInputArraySchema(
-            items=self.__t.cwl_type(),
+            items=self._t.cwl_type(),
             # label=None,
             # input_binding=None
         )
@@ -295,7 +300,7 @@ class Array(DataType):
     # def cwl(self) -> Dict[str, Any]:
     #     dtype = {
     #             "type": NativeTypes.map_to_cwl(NativeTypes.kArray),
-    #             "items": NativeTypes.map_to_cwl(self.__t.primitive()) + self.__t._question_mark_if_optional()
+    #             "items": NativeTypes.map_to_cwl(self._t.primitive()) + self._t._question_mark_if_optional()
     #     }
     #     ret_val = ["null", dtype] if self.optional else dtype
     #     return {
@@ -311,12 +316,16 @@ class Array(DataType):
         return parameter
 
     def wdl(self):
-        return f"{NativeTypes.map_to_wdl(self.primitive())}[{NativeTypes.map_to_wdl(self.__t.primitive())}]"
+        return f"{NativeTypes.map_to_wdl(self.primitive())}[{NativeTypes.map_to_wdl(self._t.primitive())}]"
+
+    def wdl2(self):
+        from wdlgen import ArrayType
+        return ArrayType(self._t.wdl2(), requires_multiple=False)
 
     def can_receive_from(self, other):
         if isinstance(other, Array):
-            return self.__t.can_receive_from(other.__t)
-        if not self.__t.can_receive_from(other):
+            return self._t.can_receive_from(other._t)
+        if not self._t.can_receive_from(other):
             return False
         return super().can_receive_from(other)
 

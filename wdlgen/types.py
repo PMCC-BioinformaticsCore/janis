@@ -119,6 +119,8 @@ class WdlType:
 
         if requires_type:
             raise Exception("Couldn't pass '{t}'".format(t=t_orig))
+
+        _LOGGER.warning(f"Returning None type for '{t_orig}'")
         return None
 
     @staticmethod

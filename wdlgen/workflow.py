@@ -7,7 +7,7 @@ from wdlgen.workflowcall import WorkflowCallBase
 
 class Workflow(WdlBase):
 
-    def __init__(self, name, inputs: List[Input]=None, outputs: List[Output]=None, calls: List[WorkflowCallBase]=None):
+    def __init__(self, name, inputs: List[Input]=None, outputs: List[str]=None, calls: List[WorkflowCallBase]=None):
 
         self.name = name
         self.inputs = inputs if inputs else []
@@ -35,7 +35,7 @@ workflow {name} {{
         if self.outputs:
             output_block = "{tb}output {{\n{outs}\n{tb}}}".format(
                 tb=tb,
-                outs="\n".join((2 * tb) + o.wdl() for o in self.outputs)
+                outs="\n".join((2 * tb) + (o.wdl() if isinstance(o, Output) else str(o)) for o in self.outputs)
             )
 
         if self.calls:

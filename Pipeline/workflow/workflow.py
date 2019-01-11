@@ -683,7 +683,23 @@ class Workflow(Tool):
 
         return w.get_dict(), inp, tools
 
-    def wdl(self):
+    def wdl2(self, with_docker=True):
+        import wdlgen as wdl
+
+        w = wdl.Workflow(self.identifier)
+
+        for i in self._inputs:
+            d = i.input.data_type.wdl2()
+            w.inputs.append(wdl.Input(d, i.id()))
+
+        w.outputs = [wdl.Output(o.output.data_type.wdl2(), o.id(), "{a}.{b}".format(
+            a=first_value(first_value(o.connection_map).source_map).start.id(),
+            b=first_value(first_value(o.connection_map).source_map).stag
+        )) for o in self._outputs]
+
+        print(w.wdl())
+
+    def wdl(self, **kwargs):
 
         get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
 
@@ -812,7 +828,7 @@ workflow {self.identifier} {{
 
     def dump_wdl(self, to_disk: False):
         import os, json
-        wdl_data, inp_data, tools_dict = self.wdl()
+        wdl_data, inp_data, tools_dict = self.wdl2()
         print(wdl_data)
         print("================")
         print(inp_data)

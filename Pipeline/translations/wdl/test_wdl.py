@@ -3,11 +3,13 @@ import Pipeline.translations.wdl.wdl_parser as wdl
 wdl_code = """
 task my_task {
   File file
+  String test = "default_value"
   command {
     ./my_binary --input=${file} > results
   }
   output {
-    File results = "results"
+    File result = "result"
+    File results = "${test}"
   }
 }
 
@@ -20,7 +22,12 @@ workflow my_wf {
 ww = wdl.parse(wdl_code).ast()
 
 print(ww.dumps(indent=2))
-print(ww.attr('body')[1].attr('name').source_string)
+body = ww.attr('body')
+task = body[0]
+print(task.attr('name').source_string)
+task_command = task.attr('sections')[0]
+print(task_command.attr("parts"))
+
 
 
 

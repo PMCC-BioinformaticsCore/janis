@@ -1,22 +1,30 @@
 import Pipeline.translations.wdl.wdl_parser as wdl
 
 wdl_code = """
-task my_task {
-  File file
-  String test = "default_value"
+task hello {
+  String salutation
+  String name
+
   command {
-    ./my_binary --input=${file} > results
+    echo '${salutation}, ${name}!'
   }
   output {
-    File result = "result"
-    File results = "${test}"
+    String response = read_string(stdout())
   }
 }
 
-workflow my_wf {
-  call my_task
+workflow test {
+  String greeting
+  call hello {
+    input: salutation=greeting
+  }
+  call hello as hello2 {
+    input: salutation=greeting + " and nice to meet you"
+  }
 }
 """
+
+
 
 
 ww = wdl.parse(wdl_code).ast()
@@ -27,7 +35,5 @@ task = body[0]
 print(task.attr('name').source_string)
 task_command = task.attr('sections')[0]
 print(task_command.attr("parts"))
-
-
 
 

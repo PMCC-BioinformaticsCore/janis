@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from wdlgen.types import WdlType
+from wdlgen.common import Input, Output
 from wdlgen.util import WdlBase
 
 
@@ -10,34 +10,6 @@ class Runtime(WdlBase):
 
     def wdl(self):
         return ["{k}: {v}".format(k=k, v=v) for k,v in self.kwargs.items()]
-
-
-class Input(WdlBase):
-    def __init__(self, data_type: WdlType, name: str, expression: str=None):
-        self.type = data_type
-        self.name = name
-        self.expression = expression
-
-    def wdl(self):
-        return "{type} {name}{def_w_equals}".format(
-            type=self.type.wdl(),
-            name=self.name,
-            def_w_equals=(" = {val}".format(val=self.expression) if self.expression else "")
-        )
-
-
-class Output(WdlBase):
-    def __init__(self, data_type: WdlType, name: str, expression: str=None):
-        self.type = data_type
-        self.name = name
-        self.expression = expression
-
-    def wdl(self):
-        return "{type} {name}{def_w_equals}".format(
-            type=self.type.wdl(),
-            name=self.name,
-            def_w_equals=(" = {val}".format(val=self.expression) if self.expression else "")
-        )
 
 
 class Command(WdlBase):
@@ -72,7 +44,7 @@ class Command(WdlBase):
 
         @staticmethod
         def from_input(inp: Input, prefix: str=None, position: int=None):
-            return Command.CommandInput(inp.name, inp.type._optional, prefix, position)
+            return Command.CommandInput(inp.name, inp.type.optional, prefix, position)
 
         def wdl(self):
             sp = " " if self.separate else ""
@@ -124,15 +96,15 @@ class Task(WdlBase):
     Documentation: https://github.com/openwdl/wdl/blob/master/versions/draft-2/SPEC.md#task-definition
     """
 
-    def __init__(self, identifier: str, inputs: List[Input]=None, outputs: List[Output]=None, command: Command=None, runtime: Runtime=None):
-        self.identifier = identifier
+    def __init__(self, name: str, inputs: List[Input]=None, outputs: List[Output]=None, command: Command=None, runtime: Runtime=None):
+        self.name = name
         self.inputs = inputs if inputs else []
         self.outputs = outputs if outputs else []
         self.command = command
         self.runtime = runtime
 
         self.format = """
-task {identifier} {{
+task {name} {{
 {inputs_block}
 {command_block}
 {runtime_block}
@@ -143,7 +115,7 @@ task {identifier} {{
     def wdl(self):
         tb = "  "
 
-        identifier = self.identifier
+        name = self.name
         inputs_block, command_block, runtime_block, output_block = "", "", "", ""
 
         if self.inputs:
@@ -168,7 +140,7 @@ task {identifier} {{
             )
 
         return self.format.format(
-            identifier=identifier,
+            name=name,
             inputs_block=inputs_block,
             command_block=command_block,
             runtime_block=runtime_block,

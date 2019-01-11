@@ -8,15 +8,15 @@ _LOGGER = logging.getLogger(__name__)
 
 class PrimitiveType:
 
-    BOOLEAN = "Boolean"
-    INT = "Int"
-    FLOAT = "Float"
-    STRING = "String"
-    FILE = "File"
+    kBoolean = "Boolean"
+    kInt = "Int"
+    kFloat = "Float"
+    kString = "String"
+    kFile = "File"
 
-    DEF_TYPE = STRING
+    DEF_TYPE = kString
 
-    types = [BOOLEAN, INT, FLOAT, FILE, STRING]
+    types = [kBoolean, kInt, kFloat, kFile, kString]
 
     def __init__(self, prim_type):
         if prim_type not in self.types:
@@ -35,8 +35,8 @@ class PrimitiveType:
 
 
 class ArrayType:
-    ARRAY = "Array"
-    ARRAY_FORMAT = "Array[{T}]" # where T is PrimitiveTypes | $object_type | ArrayTypes
+
+    kArray = "Array"
 
     def __init__(self, subtype, requires_multiple):
 
@@ -44,7 +44,7 @@ class ArrayType:
         self._requires_multiple: bool = requires_multiple
 
     def wdl(self):
-        return "Array[{t}]{quantifier}".format(
+        return ArrayType.kArray + "[{t}]{quantifier}".format(
             t=self._subtype.wdl(),
             quantifier=("+" if self._requires_multiple else "")
         )
@@ -57,7 +57,7 @@ class ArrayType:
             requires_multiple = True
             t = t[:-1]
 
-        if not (t.startswith("Array[") and t.endswith("]")):
+        if not (t.startswith(ArrayType.kArray + "[") and t.endswith("]")):
             return None
 
         return ArrayType(t[6:-1], requires_multiple)
@@ -73,7 +73,7 @@ class WdlType:
         "+"     # can only be applied to Array types, the array is required to have one or more values in it
     ]
 
-    types = [*PrimitiveType.types, ArrayType.ARRAY]
+    types = [*PrimitiveType.types, ArrayType.kArray]
 
     def __init__(self, type_obj, optional=False):
         if not (isinstance(type_obj, PrimitiveType)
@@ -82,10 +82,10 @@ class WdlType:
             raise Exception("Must initialise WdlType with PrimitiveType, ArrayType or WdlType")
 
         self._type = type_obj
-        self._optional = optional
+        self.optional = optional
 
     def wdl(self):
-        return self._type.wdl() + ("?" if self._optional else "")
+        return self._type.wdl() + ("?" if self.optional else "")
 
     @staticmethod
     def parse_type(t, requires_type=True):
@@ -141,3 +141,9 @@ class WdlType:
 
         return optional_quantifier, multi_quantifier, t
 
+
+Boolean = WdlType(PrimitiveType(PrimitiveType.kBoolean))
+Int = WdlType(PrimitiveType(PrimitiveType.kInt))
+Float = WdlType(PrimitiveType(PrimitiveType.kFloat))
+File = WdlType(PrimitiveType(PrimitiveType.kFile))
+String = WdlType(PrimitiveType(PrimitiveType.kString))

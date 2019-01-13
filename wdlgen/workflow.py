@@ -30,12 +30,30 @@ workflow {name} {{
         inputs_block, output_block, call_block, imports_block = "", "", "", ""
 
         if self.inputs:
-            inputs_block = "\n".join(tb + i.wdl() for i in self.inputs)
+            ins = []
+            for i in self.inputs:
+                wd = i.wdl()
+                if isinstance(wd, list):
+                    ins.extend(tb + ii for ii in wd)
+                else:
+                    ins.append(tb + wd)
+            inputs_block = "\n".join(ins)
 
         if self.outputs:
+            outs = []
+            # either str | Output | list[str | Output]
+            for o in self.outputs:
+                if isinstance(o, Output):
+                    wd = o.wdl()
+                    if isinstance(wd, list):
+                        outs.extend((2 * tb) + w for w in wd)
+                    else:
+                        outs.append((2 * tb) + wd)
+                else:
+                    outs.append(str(o))
             output_block = "{tb}output {{\n{outs}\n{tb}}}".format(
                 tb=tb,
-                outs="\n".join((2 * tb) + (o.wdl() if isinstance(o, Output) else str(o)) for o in self.outputs)
+                outs="\n".join(outs)
             )
 
         if self.calls:

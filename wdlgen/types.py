@@ -44,8 +44,17 @@ class ArrayType:
         self._requires_multiple: bool = requires_multiple
 
     def wdl(self):
-        return ArrayType.kArray + "[{t}]{quantifier}".format(
-            t=self._subtype.wdl(),
+
+        f = ArrayType.kArray + "[{t}]{quantifier}"
+
+        if isinstance(self._subtype, list):
+            return [f.format(t=t.wdl(), quantifier=("+" if self._requires_multiple else "")) for t in self._subtype]
+
+        wd = self._subtype.wdl()
+        if isinstance(wd, list) and len(wd) > 1:
+            raise Exception("Internal error: unable to support array type with multiple subvalues")
+        return f.format(
+            t=wd[0] if isinstance(wd, list) else wd,
             quantifier=("+" if self._requires_multiple else "")
         )
 
@@ -85,7 +94,12 @@ class WdlType:
         self.optional = optional
 
     def wdl(self):
-        return self._type.wdl() + ("?" if self.optional else "")
+
+        wd = self._type.wdl()
+        if isinstance(wd, list):
+            return [t + ("?" if self.optional else "") for t in wd]
+        else:
+            return wd + ("?" if self.optional else "")
 
     @staticmethod
     def parse_type(t, requires_type=True):
@@ -99,6 +113,9 @@ class WdlType:
 
         if not t:
             raise Exception("Must pass a value to parse_type")
+
+        if isinstance(t, list):
+            return [WdlType.parse_type(tt, requires_type) for tt in t]
 
         if isinstance(t, WdlType):
             return t

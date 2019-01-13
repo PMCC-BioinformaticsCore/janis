@@ -828,6 +828,8 @@ workflow {self.identifier} {{
 
     def dump_wdl(self, to_disk: False):
         import os, json
+        _ = self.wdl2()
+        return
         wdl_data, inp_data, tools_dict = self.wdl2()
         print(wdl_data)
         print("================")

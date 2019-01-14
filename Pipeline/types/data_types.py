@@ -13,6 +13,7 @@
 """
 from abc import ABC, abstractmethod
 from typing import Any, List, Dict, Optional
+from wdlgen import WdlType
 
 import cwlgen.cwlgen as cwl
 from Pipeline.translations.wdl.wdl import Wdl
@@ -209,12 +210,8 @@ class DataType(ABC):
     def cwl_input(value: Any):
         return value
 
-    def wdl(self):
-        return NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional()
-
-    def wdl2(self) -> List:
-        import wdlgen as wdl
-        return [wdl.WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional())]
+    def wdl(self) -> WdlType:
+        return WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional())
 
     def default(self):
         return self.default_value

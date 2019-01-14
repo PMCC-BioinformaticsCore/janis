@@ -150,7 +150,7 @@ class StepNode(Node):
                                 f"was not found during conversion to WDL")
         return q
 
-    def wdl2(self, step_identifier: str, step_alias: str):
+    def wdl(self, step_identifier: str, step_alias: str):
         import wdlgen as wdl
 
         ins = self.inputs()
@@ -166,7 +166,7 @@ class StepNode(Node):
                                  if not isinstance(k.dotted_source(), list)}
 
         for s in scatterable:
-            new_var = ordered_variable_identifiers.pop(0)
+            new_var = s[0].lower()
             while new_var in new_to_old_identifier:
                 new_var = ordered_variable_identifiers.pop(0)
             new_to_old_identifier[s] = new_var
@@ -192,7 +192,15 @@ class StepNode(Node):
                     Logger.critical("Conversion to WDL does not currently support multiple sources")
                     ds = ds[0]
 
-            inputs_map[k] = new_to_old_identifier[ds] if ds in new_to_old_identifier else inp.tag
+            if ds in new_to_old_identifier and new_to_old_identifier[ds]:
+                inputs_map[k] = new_to_old_identifier[ds]
+            elif edge.default is not None:
+                if isinstance(edge.default, bool):
+                    inputs_map[k] = "true" if edge.default else "false"
+                else:
+                    inputs_map[k] = edge.default
+            else:
+                inputs_map[k] = inp.tag
 
         call = wdl.WorkflowCall(step_identifier, step_alias, inputs_map)
 

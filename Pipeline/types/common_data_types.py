@@ -2,6 +2,7 @@
 # Implementations #
 ###################
 from typing import Dict, Any
+import wdlgen
 
 from Pipeline.utils.logger import Logger
 import cwlgen.cwlgen as cwl
@@ -213,10 +214,9 @@ class File(DataType):
             "path": value
         }
 
-    def wdl2(self):
-        import wdlgen as wdl
-        # Todo: SECONDARY FILES
-        return [wdl.WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional())]
+    # def wdl(self):
+    #     # Todo: SECONDARY FILES
+    #     return wdlgen.WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional())
 
 
 class Directory(DataType):
@@ -297,15 +297,6 @@ class Array(DataType):
             # input_binding=None
         )
         return [inp, "null"] if self.optional else inp
-    # def cwl(self) -> Dict[str, Any]:
-    #     dtype = {
-    #             "type": NativeTypes.map_to_cwl(NativeTypes.kArray),
-    #             "items": NativeTypes.map_to_cwl(self._t.primitive()) + self._t._question_mark_if_optional()
-    #     }
-    #     ret_val = ["null", dtype] if self.optional else dtype
-    #     return {
-    #         Cwl.Workflow.Input.kTYPE: ret_val
-    #     }
 
     def map_cwl_type(self, parameter: cwl.Parameter) -> cwl.Parameter:
         parameter.type = cwl.CommandInputArraySchema(
@@ -315,12 +306,11 @@ class Array(DataType):
         )
         return parameter
 
-    def wdl(self):
-        return f"{NativeTypes.map_to_wdl(self.primitive())}[{NativeTypes.map_to_wdl(self._t.primitive())}]"
+    # def wdl(self):
+    #     return f"{NativeTypes.map_to_wdl(self.primitive())}[{NativeTypes.map_to_wdl(self._t.primitive())}]"
 
-    def wdl2(self):
-        from wdlgen import ArrayType
-        return ArrayType(self._t.wdl2(), requires_multiple=False)
+    def wdl(self) -> wdlgen.ArrayType:
+        return wdlgen.ArrayType(self._t.wdl(), requires_multiple=False)
 
     def can_receive_from(self, other):
         if isinstance(other, Array):

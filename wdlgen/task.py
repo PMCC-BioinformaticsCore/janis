@@ -8,7 +8,7 @@ class Runtime(WdlBase):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
-    def wdl(self):
+    def get_string(self):
         return ["{k}: {v}".format(k=k, v=v) for k,v in self.kwargs.items()]
 
     def add_docker(self, docker):
@@ -30,41 +30,43 @@ class Command(WdlBase):
 
     """
 
-    class CommandArgument:
+    class CommandArgument(WdlBase):
         def __init__(self, prefix: str=None, position: int=None):
             self.prefix: Optional[str] = prefix
             self.position: Optional[int] = position
 
-        def wdl(self):
+        def get_string(self):
             return self.prefix if self.prefix else ""
 
     class CommandInput(CommandArgument):
-        def __init__(self, name: str, optional: bool=False, prefix: str=None, position: int=None, separate_value_from_prefix: bool=True):
+        def __init__(self, name: str, optional: bool=False, prefix: str=None, position: int=None, separate_value_from_prefix: bool=True, default=None):
             super().__init__(prefix, position)
             self.name = name
             self.optional = optional
             self.separate = separate_value_from_prefix
+            self.default = default
 
         @staticmethod
         def from_input(inp: Input, prefix: str=None, position: int=None):
             return Command.CommandInput(inp.name, inp.type.optional, prefix, position)
 
-        def wdl(self):
+        def get_string(self):
             sp = " " if self.separate else ""
             pr = self.prefix if self.prefix else ""
             bc = pr + ("" if self.separate is False else " ") + sp
+            default = f"default={self.default} " if self.default else ""
 
-            if self.optional:
-                return '${{"{pre}" + {val}}}'.format(pre=bc, val=self.name)
+            if self.optional and not default:
+                return '${{"{pre}" + {val}}}'.format(pre=bc, val=self.name, default=default)
             else:
-                return bc + "${{{val}}}".format(val=self.name)
+                return bc + "${{{default}{val}}}".format(val=self.name, default=default)
 
     def __init__(self, command, inputs: Optional[List[CommandInput]]=None, arguments: Optional[List[CommandArgument]]=None):
         self.command = command
         self.inputs = inputs if inputs else []
         self.arguments = arguments if arguments else []
 
-    def wdl(self, indent:int=0):
+    def get_string(self, indent:int=0):
         if not self.command:
             raise Exception("No base 'command' has been set on this command object")
         if not (self.inputs or self.arguments):
@@ -76,7 +78,7 @@ class Command(WdlBase):
         tb = "  "
         tbed_arg_indent = tb * (indent + 1)
 
-        return indent * tb + command + "".join([" \\\n" + tbed_arg_indent + a.wdl() for a in args])
+        return indent * tb + command + "".join([" \\\n" + tbed_arg_indent + a.get_string() for a in args])
 
 
 class Task(WdlBase):
@@ -96,7 +98,7 @@ class Task(WdlBase):
     Tasks also define their outputs, which is essential for building dependencies between tasks.
     Any other data specified in the task definition (e.g. runtime information and meta-data) is optional.
 
-    Documentation: https://github.com/openwdl/wdl/blob/master/versions/draft-2/SPEC.md#task-definition
+    Documentation: https://github.com/openwdl/get_string/blob/master/versions/draft-2/SPEC.md#task-definition
     """
 
     def __init__(self, name: str, inputs: List[Input]=None, outputs: List[Output]=None, command: Command=None, runtime: Runtime=None):
@@ -115,31 +117,31 @@ task {name} {{
 }}
         """.strip()
 
-    def wdl(self):
+    def get_string(self):
         tb = "  "
 
         name = self.name
         inputs_block, command_block, runtime_block, output_block = "", "", "", ""
 
         if self.inputs:
-            inputs_block = "\n".join(tb + i.wdl() for i in self.inputs)
+            inputs_block = "\n".join(tb + i.get_string() for i in self.inputs)
 
         if self.outputs:
             output_block = "{tb}output {{\n{outs}\n{tb}}}".format(
                 tb=tb,
-                outs="\n".join((2*tb) + o.wdl() for o in self.outputs)
+                outs="\n".join((2*tb) + o.get_string() for o in self.outputs)
             )
 
         if self.command:
             command_block = "{tb}command {{\n{args}\n{tb}}}".format(
                 tb=tb,
-                args=self.command.wdl(indent=2)
+                args=self.command.get_string(indent=2)
             )
 
         if self.runtime:
             runtime_block = "{tb}runtime {{\n{args}\n{tb}}}".format(
                 tb=tb,
-                args="\n".join((2 * tb) + a for a in self.runtime.wdl())
+                args="\n".join((2 * tb) + a for a in self.runtime.get_string())
             )
 
         return self.format.format(

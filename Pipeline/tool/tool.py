@@ -177,7 +177,7 @@ class Tool(ABC, object):
         raise Exception("Must implement cwl() method")
 
     def wdl(self, with_docker=True):
-        raise Exception("Must implement wdl() method")
+        raise Exception("Must implement get_string() method")
 
 
     @staticmethod

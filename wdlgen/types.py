@@ -24,7 +24,7 @@ class PrimitiveType:
                             .format(t=prim_type, types=", ".join(self.types)))
         self._type = prim_type
 
-    def wdl(self):
+    def get_string(self):
         return self._type
 
     @staticmethod
@@ -43,14 +43,14 @@ class ArrayType:
         self._subtype: WdlType = WdlType.parse_type(subtype, requires_type=True)
         self._requires_multiple: bool = requires_multiple
 
-    def wdl(self):
+    def get_string(self):
 
         f = ArrayType.kArray + "[{t}]{quantifier}"
 
         if isinstance(self._subtype, list):
-            return [f.format(t=t.wdl(), quantifier=("+" if self._requires_multiple else "")) for t in self._subtype]
+            return [f.format(t=t.get_string(), quantifier=("+" if self._requires_multiple else "")) for t in self._subtype]
 
-        wd = self._subtype.wdl()
+        wd = self._subtype.get_string()
         if isinstance(wd, list) and len(wd) > 1:
             raise Exception("Internal error: unable to support array type with multiple subvalues")
         return f.format(
@@ -93,9 +93,9 @@ class WdlType:
         self._type = type_obj
         self.optional = optional
 
-    def wdl(self):
+    def get_string(self):
 
-        wd = self._type.wdl()
+        wd = self._type.get_string()
         if isinstance(wd, list):
             return [t + ("?" if self.optional else "") for t in wd]
         else:

@@ -118,18 +118,18 @@ class CommandTool(Tool, ABC):
 
         return command
 
-    def wdl2(self):
+    def wdl(self, with_docker=True):
         import wdlgen as wdl
         ins, outs = [], []
         for i in self.inputs():
-            wd = i.input_type.wdl2()
+            wd = i.input_type.wdl()
             if isinstance(wd, list):
                 ins.extend(wdl.Input(w, i.id(), i.input_type.default()) for w in wd)
             else:
                 ins.append(wdl.Input(wd, i.id(), i.input_type.default()))
 
         for o in self.outputs():
-            outs.extend(wdl.Output(w, o.id(), o.glob) for w in o.output_type.wdl2())
+            outs.append(wdl.Output(o.output_type.wdl(), o.id(), o.glob))
 
         command_ins = [wdl.Command.CommandInput(
             name=i.id(),
@@ -138,53 +138,55 @@ class CommandTool(Tool, ABC):
             position=i.position,
             separate_value_from_prefix=i.separate_value_from_prefix) for i in self.inputs()] if self.inputs() else None
 
-        command_args = [wdl.Command.CommandArgument(a.prefix, a.position) for a in self.arguments()]
+        command_args = [] # [get_string.Command.CommandArgument(a.prefix, a.position) for a in self.arguments()]
         command = wdl.Command(self.base_command(), command_ins, command_args)
 
         r = wdl.Runtime()
-        r.add_docker(self.docker())
+        if with_docker:
+            r.add_docker(self.docker())
+
         return wdl.Task(self.id(), ins, outs, command, r)
 
-    def wdl(self):
-
-        command = self._command()
-        tb = "    "
-        nl = "\n"
-
-        inputs_str = "{tb}{data_type} {identifier}{default_with_equals_if_required}"
-        outputs_str = "{tb2}{data_type} {identifier} = glob(\"{glob}\")[0]"
-
-        default_with_equals = lambda d: f' = "{str(d)}"' if d is not None else ""
-        inputs = nl.join([inputs_str.format(
-            tb=tb,
-            data_type=i.input_type.wdl(),
-            identifier=i.tag,
-            default_with_equals_if_required=default_with_equals(i.input_type.default())
-        ) for i in self.inputs()])
-        outputs = nl.join([outputs_str.format(
-            tb2=2 * tb,
-            data_type=o.output_type.wdl(),
-            identifier=o.tag,
-            glob=o.glob
-        ) for o in self.outputs()])
-
-        # inputs = "\n\t".join([f"{t.input_type.wdl()} {t.tag}" for t in self.inputs()])
-
-        # outputs = "\n\t\t".join(f"{o.output_type.wdl()} {o.tag} = glob(\"{o.glob}\")[0]" for o in self.outputs())
-
-        return f"""
-task {self.wdl_name()} {{
-{inputs}
-    
-    runtime {{ docker: "{self.docker()}" }}
-    command {{
-        {command}
-    }}
-    
-    output {{
-{outputs}
-    }}
-}}"""
+#     def get_string(self):
+#
+#         command = self._command()
+#         tb = "    "
+#         nl = "\n"
+#
+#         inputs_str = "{tb}{data_type} {identifier}{default_with_equals_if_required}"
+#         outputs_str = "{tb2}{data_type} {identifier} = glob(\"{glob}\")[0]"
+#
+#         default_with_equals = lambda d: f' = "{str(d)}"' if d is not None else ""
+#         inputs = nl.join([inputs_str.format(
+#             tb=tb,
+#             data_type=i.input_type.get_string(),
+#             identifier=i.tag,
+#             default_with_equals_if_required=default_with_equals(i.input_type.default())
+#         ) for i in self.inputs()])
+#         outputs = nl.join([outputs_str.format(
+#             tb2=2 * tb,
+#             data_type=o.output_type.get_string(),
+#             identifier=o.tag,
+#             glob=o.glob
+#         ) for o in self.outputs()])
+#
+#         # inputs = "\n\t".join([f"{t.input_type.get_string()} {t.tag}" for t in self.inputs()])
+#
+#         # outputs = "\n\t\t".join(f"{o.output_type.get_string()} {o.tag} = glob(\"{o.glob}\")[0]" for o in self.outputs())
+#
+#         return f"""
+# task {self.wdl_name()} {{
+# {inputs}
+#
+#     runtime {{ docker: "{self.docker()}" }}
+#     command {{
+#         {command}
+#     }}
+#
+#     output {{
+# {outputs}
+#     }}
+# }}"""
 
     def help(self):
         import inspect

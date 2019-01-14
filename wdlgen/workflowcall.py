@@ -7,8 +7,8 @@ from wdlgen.util import WdlBase
 
 class WorkflowCallBase(WdlBase, ABC):
     @abstractmethod
-    def wdl(self, indent=1):
-        raise Exception("Must override 'wdl(indent:int)'")
+    def get_string(self, indent=1):
+        raise Exception("Must override 'get_string(indent:int)'")
 
 
 class WorkflowCall(WorkflowCallBase):
@@ -28,7 +28,7 @@ class WorkflowCall(WorkflowCallBase):
         self.call_format = """{ind}call {name}{alias} {body}"""
         self.body_format = """{{\n{ind}{tb}input:\n{input_map}\n{ind}}}"""
 
-    def wdl(self, indent=1):
+    def get_string(self, indent=1):
         tb = "  "
 
         body = ""
@@ -52,11 +52,11 @@ class WorkflowScatter(WorkflowCallBase):
         self.expression: str = expression
         self.calls: List[WorkflowCall] = calls if calls else []
 
-    def wdl(self, indent=1):
+    def get_string(self, indent=1):
         scatter_iteration_statement = "{identifier} in {expression}"\
             .format(identifier=self.identifier, expression=self.expression)
 
-        body = "\n".join(c.wdl(indent=indent+1) for c in self.calls)
+        body = "\n".join(c.get_string(indent=indent + 1) for c in self.calls)
 
         return "{ind}scatter ({st}) {{\n {body}\n{ind}}}"\
             .format(ind=indent * '  ', st=scatter_iteration_statement, body=body)

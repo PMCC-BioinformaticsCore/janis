@@ -1,6 +1,9 @@
 import networkx as nx
 from typing import Dict, List, Tuple, Set, Optional, Any
 
+import wdlgen
+import cwlgen.cwlgen as cwl
+
 from Pipeline.utils import first_value
 from Pipeline.utils.logger import Logger, LogLevel
 
@@ -18,11 +21,8 @@ from Pipeline.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes, ToolType
 from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
     InvalidInputsException
 
-import cwlgen.cwlgen as cwl
-
 
 class Workflow(Tool):
-
     identifier = BaseDescriptor()
     label = BaseDescriptor()
     doc = BaseDescriptor()
@@ -40,13 +40,13 @@ class Workflow(Tool):
         self.label = label
         self.doc = doc
 
-        self._nodes: Dict[str, Node] = {}       # Look up a node by its identifier
+        self._nodes: Dict[str, Node] = {}  # Look up a node by its identifier
 
-        self._inputs: List[InputNode] = []      # InputNodes
-        self._steps: List[StepNode] = []        # StepNodes
-        self._outputs: List[OutputNode] = []    # OutputNodes
+        self._inputs: List[InputNode] = []  # InputNodes
+        self._steps: List[StepNode] = []  # StepNodes
+        self._outputs: List[OutputNode] = []  # OutputNodes
 
-        self.graph: nx.MultiDiGraph = nx.MultiDiGraph()     # Realistically this isn't really used except for an image
+        self.graph: nx.MultiDiGraph = nx.MultiDiGraph()  # Realistically this isn't really used except for an image
 
         # Flags for different requirements that a workflow might need
         self.has_scatter = False
@@ -474,8 +474,8 @@ class Workflow(Tool):
                 s = "/".join(input_parts)
                 under_over = "under" if len(input_parts) < 2 else "over"
                 Logger.warn(f"The node '{'/'.join(referenced_by)}' {under_over}-referenced an output of the tool "
-                           f"'{snode.step.tool().id()}' (step: {node.id()}, this was automatically corrected "
-                           f"({s} → {lbl}/{tag})")
+                            f"'{snode.step.tool().id()}' (step: {node.id()}, this was automatically corrected "
+                            f"({s} → {lbl}/{tag})")
             elif input_parts[-1] != tag:
                 Logger.log(f"The node '{node.id()}' did not correctly reference an output of the tool "
                            f"'{snode.step.tool().id()}', this was automatically corrected "
@@ -518,8 +518,9 @@ class Workflow(Tool):
                 else:
                     possible_tags = ", ".join(f"'{x}'" for x in outs)
                     s = "/".join(input_parts)
-                    Logger.critical(f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the "
-                                    f"one of the following tags: {possible_tags}")
+                    Logger.critical(
+                        f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the "
+                        f"one of the following tags: {possible_tags}")
                     return input_parts, None
 
             tag = input_parts[1]
@@ -683,18 +684,21 @@ class Workflow(Tool):
 
         return w.get_dict(), inp, tools
 
-    def wdl2(self, with_docker=True):
-        import wdlgen as wdl
+    @staticmethod
+    def build_aliases(steps):
+        """
 
-        # Prepare for call aliases
+        :param steps:
+        :return:
+        """
+
         get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
+        aliases = set()
 
-        tools: List[Tool] = [s.step.tool() for s in self._steps]
+        tools: List[Tool] = [s.step.tool() for s in steps]
         tool_name_to_tool: Dict[str, Tool] = {t.id().lower(): t for t in tools}
         tool_name_to_alias = {}
-        steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
-
-        aliases = set()
+        steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in steps}
 
         for tool in tool_name_to_tool:
             a = get_alias(tool).upper()
@@ -706,106 +710,151 @@ class Workflow(Tool):
             aliases.add(s)
             tool_name_to_alias[tool] = s
 
-        # End call alias preparation
+        return tool_name_to_alias, steps_to_alias
 
-        w = wdl.Workflow(self.identifier)
+    def wdl(self, with_docker=True, is_nested_tool=False):
+        """
 
+        :param with_docker:
+        :param is_nested_tool:
+        :return:
+        """
+
+        # Notes:
+        #   All classes have a .wdl() property that returns the wdlgen classes,
+        #       EXCEPT Workflow which returns (wdlgen.Workflow, string, (wdlgen.Task | wdlgen.Workflow)[])
+        #       All wdlgen classes have a .get_string(**kwargs) function
+        #       The wdlgen Workflow class requires a
+
+        w = wdlgen.Workflow(self.identifier)
+        tools: List[Tool] = [s.step.tool() for s in self._steps]
+
+        wtools = {}  # Store all the tools by their name in this dictionary
+        tool_aliases, step_aliases = self.build_aliases(self._steps)  # Generate call and import aliases
+
+        # Convert self._inputs -> wdlgen.Input
         for i in self._inputs:
-            wd = i.input.data_type.wdl2()
-            if isinstance(wd, list):
-                w.inputs.extend(wdl.Input(dt, i.id()) for dt in wd)
+            wd = i.input.data_type.wdl()
+            w.inputs.append(wdlgen.Input(wd, i.id(), i.input.data_type.default()))
+
+        # Convert self._outputs -> wdlgen.Output
+        w.outputs = [
+            wdlgen.Output(
+                o.output.data_type.wdl(),
+                o.id(),
+                "{a}.{b}".format(               # Generate fully qualified stepid.tag identifier (MUST be step node)
+                    a=first_value(first_value(o.connection_map).source_map).start.id(),
+                    b=first_value(first_value(o.connection_map).source_map).stag
+                ))
+            for o in self._outputs]
+
+        # Generate import statements (relative tool dir is later?)
+        w.imports = [
+            wdlgen.Workflow.WorkflowImport(
+                t.id(),
+                tool_aliases[t.id().lower()].upper(),
+                None if is_nested_tool else "tools/")
+            for t in tools]
+
+        # Step[] -> (wdlgen.Task | wdlgen.Workflow)[]
+        for s in self._steps:
+            t = s.step.tool()
+
+            if isinstance(t, Workflow):
+                wf_wdl, _, wf_tools = t.wdl(with_docker=with_docker, is_nested_tool=True)
+                wtools[s.id()] = wf_wdl
+                wtools.update(wf_tools)
             else:
-                w.inputs.append(wd)
+                wtools[s.id()] = t.wdl(with_docker=with_docker)
 
-        w.outputs = [wdl.Output(o.output.data_type.wdl2(), o.id(), "{a}.{b}".format(
-            a=first_value(first_value(o.connection_map).source_map).start.id(),
-            b=first_value(first_value(o.connection_map).source_map).stag
-        )) for o in self._outputs]
-
-        w.calls = [s.wdl2(s.step.tool().wdl_name(), s.id()) for s in self._steps]
-
-        print(w.wdl())
-
-    def wdl(self, **kwargs):
-
-        get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
-
-        tools: List[Tool] = [s.step.tool() for s in self._steps]
-        tool_name_to_tool: Dict[str, Tool] = {t.id().lower(): t for t in tools}
-        tool_name_to_alias = {}
-        steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
-
-        aliases = set()
-
-        for tool in tool_name_to_tool:
-            a = get_alias(tool).upper()
-            s = a
-            idx = 2
-            while s in aliases:
-                s = a + str(idx)
-                idx += 1
-            aliases.add(s)
-            tool_name_to_alias[tool] = s
-
-        tab_char = '  '
-        nline_char = '\n'
-
-        import_str = "import \"tools/{tool_file}.wdl\" as {alias}"
-        input_str = "{tb}{data_type} {identifier}"
-        step_str = "{tb}call {tool_file}.{tool} as {alias} {{ input: {tool_mapping} }}"
-        output_str = "{tb2}{data_type} {identifier} = {alias}.{outp}"
-
-        imports = [import_str.format(
-            tb=tab_char,
-            tool_file=t,
-            alias=tool_name_to_alias[t.lower()].upper()
-        ) for t in tool_name_to_tool]
-
-        inputs = [input_str.format(
-            tb=tab_char,
-            data_type=i.input.data_type.wdl(),
-            identifier=i.id()
-        ) for i in self._inputs]
-
-        steps = [step_str.format(
-            tb=tab_char,
-            tool_file=tool_name_to_alias[s.step.tool().id().lower()].upper(),
-            tool=s.step.tool().wdl_name(),
-            alias=s.id(),
-            tool_mapping=', '.join(s.wdl_map())  # [2 * tab_char + w for w in s.wdl_map()])
-        ) for s in self._steps]
-
-        outputs = [output_str.format(
-            tb2=2 * tab_char,
-            data_type=o.output.data_type.wdl(),
-            identifier=o.id(),
-            alias=first_value(first_value(o.connection_map).source_map).start.id(),
-            outp=first_value(first_value(o.connection_map).source_map).stag
-        ) for o in self._outputs]
-
-        # imports = '\n'.join([f"import \"tools/{t}.wdl\" as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
-        # inputs = '\n'.join([f"{tab_char}{i.input.data_type.wdl()} {i.id()}" for i in self._inputs])
-        # steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.step.get_tool().tool().lower()].upper()}"
-        #                    f".{s.step.get_tool().wdl_name()} as {s.id()} {{input: \n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n{tab_char}}}" for s in self._steps])
-        # outputs = '\n'.join([f"{2*tab_char}{o.output.data_type.wdl()} {o.id()} = {steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower()}.{o.id()}" for o in self._outputs])
-
-        workflow = f"""
-{nline_char.join(imports)}
-
-workflow {self.identifier} {{
-{nline_char.join(inputs)}
-
-{nline_char.join(steps)}
-
-{tab_char}output {{
-{nline_char.join(outputs)}
-{tab_char}}}
-}}"""
-        tools = {t.id(): t.wdl() for t in tools}
+            w.calls.append(
+                s.wdl(tool_aliases[t.id().lower()].upper() + "." + t.id(), s.id())
+            )
 
         inp = {f"{self.identifier}.{i.id()}": i.input.wdl_input() for i in self._inputs}
 
-        return workflow, inp, tools
+        return w, inp, wtools
+
+    #     def get_string(self, **kwargs):
+    #
+    #         get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
+    #
+    #         tools: List[Tool] = [s.step.tool() for s in self._steps]
+    #         tool_name_to_tool: Dict[str, Tool] = {t.id().lower(): t for t in tools}
+    #         tool_name_to_alias = {}
+    #         steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
+    #
+    #         aliases = set()
+    #
+    #         for tool in tool_name_to_tool:
+    #             a = get_alias(tool).upper()
+    #             s = a
+    #             idx = 2
+    #             while s in aliases:
+    #                 s = a + str(idx)
+    #                 idx += 1
+    #             aliases.add(s)
+    #             tool_name_to_alias[tool] = s
+    #
+    #         tab_char = '  '
+    #         nline_char = '\n'
+    #
+    #         import_str = "import \"tools/{tool_file}.get_string\" as {alias}"
+    #         input_str = "{tb}{data_type} {identifier}"
+    #         step_str = "{tb}call {tool_file}.{tool} as {alias} {{ input: {tool_mapping} }}"
+    #         output_str = "{tb2}{data_type} {identifier} = {alias}.{outp}"
+    #
+    #         imports = [import_str.format(
+    #             tb=tab_char,
+    #             tool_file=t,
+    #             alias=tool_name_to_alias[t.lower()].upper()
+    #         ) for t in tool_name_to_tool]
+    #
+    #         inputs = [input_str.format(
+    #             tb=tab_char,
+    #             data_type=i.input.data_type.get_string(),
+    #             identifier=i.id()
+    #         ) for i in self._inputs]
+    #
+    #         steps = [step_str.format(
+    #             tb=tab_char,
+    #             tool_file=tool_name_to_alias[s.step.tool().id().lower()].upper(),
+    #             tool=s.step.tool().wdl_name(),
+    #             alias=s.id(),
+    #             tool_mapping=', '.join(s.wdl_map())  # [2 * tab_char + w for w in s.wdl_map()])
+    #         ) for s in self._steps]
+    #
+    #         outputs = [output_str.format(
+    #             tb2=2 * tab_char,
+    #             data_type=o.output.data_type.get_string(),
+    #             identifier=o.id(),
+    #             alias=first_value(first_value(o.connection_map).source_map).start.id(),
+    #             outp=first_value(first_value(o.connection_map).source_map).stag
+    #         ) for o in self._outputs]
+    #
+    #         # imports = '\n'.join([f"import \"tools/{t}.get_string\" as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
+    #         # inputs = '\n'.join([f"{tab_char}{i.input.data_type.get_string()} {i.id()}" for i in self._inputs])
+    #         # steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.step.get_tool().tool().lower()].upper()}"
+    #         #                    f".{s.step.get_tool().wdl_name()} as {s.id()} {{input: \n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n{tab_char}}}" for s in self._steps])
+    #         # outputs = '\n'.join([f"{2*tab_char}{o.output.data_type.get_string()} {o.id()} = {steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower()}.{o.id()}" for o in self._outputs])
+    #
+    #         workflow = f"""
+    # {nline_char.join(imports)}
+    #
+    # workflow {self.identifier} {{
+    # {nline_char.join(inputs)}
+    #
+    # {nline_char.join(steps)}
+    #
+    # {tab_char}output {{
+    # {nline_char.join(outputs)}
+    # {tab_char}}}
+    # }}"""
+    #         tools = {t.id(): t.get_string() for t in tools}
+    #
+    #         inp = {f"{self.identifier}.{i.id()}": i.input.wdl_input() for i in self._inputs}
+    #
+    #         return workflow, inp, tools
 
     def dump_cwl(self, to_disk: False, with_docker=True):
         import os, yaml, zipfile
@@ -834,7 +883,7 @@ workflow {self.identifier} {{
                 yaml.dump(cwl_data, cwl, default_flow_style=False)
                 Logger.log(f"Written {self.identifier}.cwl to disk")
 
-            with open(d + self.id()+ "-job.yml", "w+") as cwl:
+            with open(d + self.id() + "-job.yml", "w+") as cwl:
                 Logger.log(f"Writing {self.identifier}-job.yml to disk")
                 yaml.dump(inp_data, cwl, default_flow_style=False)
                 Logger.log(f"Written {self.identifier}-job.yml to disk")
@@ -851,20 +900,19 @@ workflow {self.identifier} {{
             #     z.write("tools/" + tool_filename)
             # z.close()
 
-
-
-    def dump_wdl(self, to_disk: False):
+    def dump_wdl(self, to_disk: False, with_docker=True):
         import os, json
-        _ = self.wdl2()
-        return
-        wdl_data, inp_data, tools_dict = self.wdl2()
-        print(wdl_data)
-        print("================")
-        print(inp_data)
-        print("================")
-        print("\n*******\n".join(tools_dict.values()))
+        wf, inp, tls = self.wdl(with_docker=with_docker)
 
-        d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/wdl/"
+        wfd = wf.get_string()
+
+        print(wfd)
+        print("================")
+        print(json.dumps(inp))
+        print("================")
+        print("\n*******\n".join(t.get_string() for t in tls.values()))
+
+        d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/get_string/"
         d_tools = d + "tools/"
         if not os.path.isdir(d):
             os.makedirs(d)
@@ -872,19 +920,19 @@ workflow {self.identifier} {{
             os.makedirs(d_tools)
 
         if to_disk:
-            with open(d + self.identifier + ".wdl", "w+") as wdl:
-                Logger.log(f"Writing {self.identifier}.wdl to disk")
-                wdl.write(wdl_data)
-                Logger.log(f"Written {self.identifier}.wdl to disk")
+            with open(d + self.identifier + ".get_string", "w+") as wdl:
+                Logger.log(f"Writing {self.identifier}.get_string to disk")
+                wdl.write(wfd)
+                Logger.log(f"Written {self.identifier}.get_string to disk")
 
             with open(d + self.identifier + "-job.json", "w+") as inp:
                 Logger.log(f"Writing {self.identifier}-job.json to disk")
-                json.dump(inp_data, inp)
+                json.dump(inp, inp)
                 Logger.log(f"Written {self.identifier}-job.json to disk")
 
-            for tool_name in tools_dict:
-                tool = tools_dict[tool_name]
-                with open(d_tools + tool_name + ".wdl", "w+") as wdl:
-                    Logger.log(f"Writing {tool_name}.cwl to disk")
+            for tool_name in tls:
+                tool = tls[tool_name]
+                with open(d_tools + tool_name + ".get_string", "w+") as wdl:
+                    Logger.log(f"Writing {tool_name}.get_string to disk")
                     wdl.write(tool)
-                    Logger.log(f"Written {tool_name}.cwl to disk")
+                    Logger.log(f"Written {tool_name}.get_string to disk")

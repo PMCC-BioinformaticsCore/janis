@@ -24,7 +24,7 @@ class TestTaskGeneration(unittest.TestCase):
 
         t.command = Command("egrep", inputs=[Command.CommandInput.from_input(i) for i in t.inputs])
 
-        print(t.wdl())
+        print(t.get_string())
         return t
 
     @staticmethod
@@ -37,7 +37,7 @@ class TestTaskGeneration(unittest.TestCase):
                   )
         t1.command = Command("echo", inputs=[Command.CommandInput.from_input(t1.inputs[i], position=i) for i in range(2)])
 
-        print(t1.wdl())
+        print(t1.get_string())
 
         return t1
 
@@ -49,7 +49,7 @@ class TestCommandGeneration(unittest.TestCase):
         command.inputs.append(Command.CommandInput("pattern"))
         command.inputs.append(Command.CommandInput("in"))
 
-        print(command.wdl(2))
+        print(command.get_string(2))
 
 
 class TestWorkflowGeneration(unittest.TestCase):
@@ -70,7 +70,7 @@ class TestWorkflowGeneration(unittest.TestCase):
             }
         ))
 
-        print(w.wdl())
+        print(w.get_string())
 
 
 class TestWorkflowScatter(unittest.TestCase):
@@ -80,6 +80,6 @@ class TestWorkflowScatter(unittest.TestCase):
             WorkflowCall(Task("task2"), inputs_map={"num": "task1.output"})
         ])
 
-        print(sc.wdl(indent=0))
-        print(sc.wdl(indent=1))
-        print(sc.wdl(indent=2))
+        print(sc.get_string(indent=0))
+        print(sc.get_string(indent=1))
+        print(sc.get_string(indent=2))

@@ -12,16 +12,16 @@ class Input(WdlBase):
 
         self.format = "{type} {name}{def_w_equals}"
 
-    def wdl(self):
+    def get_string(self):
         if self.type is None:
             raise Exception(f"Could not convert wdlgen.Input ('{self.name}') to string because type was null")
 
-        wd = self.type.wdl()
+        wd = self.type.get_string()
         if isinstance(wd, list):
-            return self.wdl_from_type(wd[0])
-        return self.wdl_from_type(wd)
+            return self.get_string_from_type(wd[0])
+        return self.get_string_from_type(wd)
 
-    def wdl_from_type(self, wdtype):
+    def get_string_from_type(self, wdtype):
         return self.format.format(
             type=wdtype,
             name=self.name,
@@ -35,17 +35,17 @@ class Output(WdlBase):
         self.name = name
         self.expression = expression
 
-    def wdl(self):
+    def get_string(self):
         f = "{type} {name}{def_w_equals}"
         if isinstance(self.type, list):
             return [
                 f.format(
-                    type=self.type[i].wdl(),
+                    type=self.type[i].get_string(),
                     name=self.name + ("" if i == 0 else "_" + str(i)),
                     def_w_equals=(" = {val}".format(val=self.expression) if self.expression else ""))
                 for i in range(len(self.type))]
 
-        wd = self.type.wdl()
+        wd = self.type.get_string()
         if isinstance(wd, list):
 
             return [f.format(

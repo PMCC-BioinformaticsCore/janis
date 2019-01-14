@@ -97,7 +97,7 @@ class CommandTool(Tool, ABC):
         tool.inputs.extend(i.cwl() for i in self.inputs())
         tool.outputs.extend(o.cwl() for o in self.outputs())
         args = self.arguments()
-        if args is not None:
+        if args:
             tool.arguments.extend(a.cwl() for a in self.arguments())
 
         return tool.get_dict()
@@ -117,6 +117,33 @@ class CommandTool(Tool, ABC):
             command += " " + inps
 
         return command
+
+    def wdl2(self):
+        import wdlgen as wdl
+        ins, outs = [], []
+        for i in self.inputs():
+            wd = i.input_type.wdl2()
+            if isinstance(wd, list):
+                ins.extend(wdl.Input(w, i.id(), i.input_type.default()) for w in wd)
+            else:
+                ins.append(wdl.Input(wd, i.id(), i.input_type.default()))
+
+        for o in self.outputs():
+            outs.extend(wdl.Output(w, o.id(), o.glob) for w in o.output_type.wdl2())
+
+        command_ins = [wdl.Command.CommandInput(
+            name=i.id(),
+            optional=i.input_type.optional,
+            prefix=i.prefix,
+            position=i.position,
+            separate_value_from_prefix=i.separate_value_from_prefix) for i in self.inputs()] if self.inputs() else None
+
+        command_args = [wdl.Command.CommandArgument(a.prefix, a.position) for a in self.arguments()]
+        command = wdl.Command(self.base_command(), command_ins, command_args)
+
+        r = wdl.Runtime()
+        r.add_docker(self.docker())
+        return wdl.Task(self.id(), ins, outs, command, r)
 
     def wdl(self):
 

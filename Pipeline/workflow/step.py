@@ -56,6 +56,11 @@ class Step:
 
         return step
 
+    def wdl2(self):
+        import wdlgen as wdl
+
+
+
     def __getattr__(self, item):
         if item in self.__dict__:
             return self.__dict__[item]
@@ -144,4 +149,55 @@ class StepNode(Node):
                 raise Exception(f"Required option '{inp.tag}' for step '{self.id()}' "
                                 f"was not found during conversion to WDL")
         return q
+
+    def wdl2(self, step_identifier: str, step_alias: str):
+        import wdlgen as wdl
+
+        ins = self.inputs()
+
+        # One step => One WorkflowCall. We need to traverse the edge list to see if there's a scatter
+        # then we can build up the WorkflowCall / ScatterCall
+        scatterable = [self.connection_map[k].dotted_source()
+                       for k in self.inputs() if k in self.connection_map and self.connection_map[k].has_scatter()]
+
+        # We need to replace the scatterable key(s) with some random variable, eg: for i in iterable:
+        ordered_variable_identifiers = ["i", "j", "k", "x", "y", "z", "a", "b", "c", "ii", "jj", "kk", "xx", "yy", "zz"]
+        new_to_old_identifier = {k.dotted_source(): k.dotted_source() for k in self.connection_map.values()
+                                 if not isinstance(k.dotted_source(), list)}
+
+        for s in scatterable:
+            new_var = ordered_variable_identifiers.pop(0)
+            while new_var in new_to_old_identifier:
+                new_var = ordered_variable_identifiers.pop(0)
+            new_to_old_identifier[s] = new_var
+
+        inputs_map = {}
+        for k in ins:
+            inp = ins[k]
+            if k not in self.connection_map:
+                if inp.input_type.optional:
+                    continue
+                else:
+                    raise Exception(f"Error when building connections for step '{self.id()}', "
+                                    f"could not find required connection: '{k}'")
+
+            inp_t = self.inputs()[k].input_type
+            edge = self.connection_map[k]
+            ds = edge.dotted_source()
+            # default = edge.default if edge.default else inp_t.default()
+            if isinstance(ds, list):
+                if len(ds) == 1:
+                    ds = ds[0]
+                elif len(ds) > 1:
+                    Logger.critical("Conversion to WDL does not currently support multiple sources")
+                    ds = ds[0]
+
+            inputs_map[k] = new_to_old_identifier[ds] if ds in new_to_old_identifier else inp.tag
+
+        call = wdl.WorkflowCall(step_identifier, step_alias, inputs_map)
+
+        for s in scatterable:
+            call = wdl.WorkflowScatter(new_to_old_identifier[s], s, [call])
+
+        return call
 

@@ -13,7 +13,7 @@ class WorkflowCallBase(WdlBase, ABC):
 
 class WorkflowCall(WorkflowCallBase):
 
-    def __init__(self, task: Task, namespaced_identifier: str=None, alias: str=None, inputs_map: Dict[str, str]=None):
+    def __init__(self, namespaced_identifier: str=None, alias: str=None, inputs_map: Dict[str, str]=None):
         """
 
         :param task:
@@ -21,7 +21,6 @@ class WorkflowCall(WorkflowCallBase):
         :param alias:
         :param inputs_map:
         """
-        self.task = task
         self.namespaced_identifier = namespaced_identifier
         self.alias = alias
         self.inputs_map = inputs_map

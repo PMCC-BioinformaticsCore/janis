@@ -1,6 +1,7 @@
 import unittest
 
-from Pipeline.bioinformatics.tools.gatk4.haplotypecaller.latest import Gatk4HaplotypeCallerLatest as Gatk4HaplotypeCaller
+from Pipeline.bioinformatics.tools.gatk4.haplotypecaller.latest \
+    import Gatk4HaplotypeCallerLatest as Gatk4HaplotypeCaller
 
 
 class TestToolVersions(unittest.TestCase):

@@ -113,6 +113,9 @@ class ToolInput(ToolArgument):
             param_type=data_type
         )
 
+    def id(self):
+        return self.tag
+
 
 class ToolOutput:
     def __init__(self, tag: str, output_type: DataType, glob: Optional[str] = None, doc: Optional[str]=None):
@@ -136,6 +139,9 @@ class ToolOutput:
             ),
             param_type=self.output_type.cwl_type()
         )
+
+    def id(self):
+        return self.tag
 
 
 class Tool(ABC, object):

@@ -686,16 +686,43 @@ class Workflow(Tool):
     def wdl2(self, with_docker=True):
         import wdlgen as wdl
 
+        # Prepare for call aliases
+        get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
+
+        tools: List[Tool] = [s.step.tool() for s in self._steps]
+        tool_name_to_tool: Dict[str, Tool] = {t.id().lower(): t for t in tools}
+        tool_name_to_alias = {}
+        steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
+
+        aliases = set()
+
+        for tool in tool_name_to_tool:
+            a = get_alias(tool).upper()
+            s = a
+            idx = 2
+            while s in aliases:
+                s = a + str(idx)
+                idx += 1
+            aliases.add(s)
+            tool_name_to_alias[tool] = s
+
+        # End call alias preparation
+
         w = wdl.Workflow(self.identifier)
 
         for i in self._inputs:
-            d = i.input.data_type.wdl2()
-            w.inputs.append(wdl.Input(d, i.id()))
+            wd = i.input.data_type.wdl2()
+            if isinstance(wd, list):
+                w.inputs.extend(wdl.Input(dt, i.id()) for dt in wd)
+            else:
+                w.inputs.append(wd)
 
         w.outputs = [wdl.Output(o.output.data_type.wdl2(), o.id(), "{a}.{b}".format(
             a=first_value(first_value(o.connection_map).source_map).start.id(),
             b=first_value(first_value(o.connection_map).source_map).stag
         )) for o in self._outputs]
+
+        w.calls = [s.wdl2(s.step.tool().wdl_name(), s.id()) for s in self._steps]
 
         print(w.wdl())
 

@@ -11,6 +11,9 @@ class Runtime(WdlBase):
     def wdl(self):
         return ["{k}: {v}".format(k=k, v=v) for k,v in self.kwargs.items()]
 
+    def add_docker(self, docker):
+        self.kwargs["docker"] = docker
+
 
 class Command(WdlBase):
     """
@@ -29,8 +32,8 @@ class Command(WdlBase):
 
     class CommandArgument:
         def __init__(self, prefix: str=None, position: int=None):
-            self.prefix: str = prefix
-            self.position: int = position
+            self.prefix: Optional[str] = prefix
+            self.position: Optional[int] = position
 
         def wdl(self):
             return self.prefix if self.prefix else ""
@@ -49,7 +52,7 @@ class Command(WdlBase):
         def wdl(self):
             sp = " " if self.separate else ""
             pr = self.prefix if self.prefix else ""
-            bc = pr + sp
+            bc = pr + ("" if self.separate is False else " ") + sp
 
             if self.optional:
                 return '${{"{pre}" + {val}}}'.format(pre=bc, val=self.name)

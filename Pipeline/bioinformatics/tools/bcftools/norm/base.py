@@ -6,11 +6,11 @@ from Pipeline.bioinformatics.data_types.vcf import TabixIdx, Vcf, VcfIdx
 from Pipeline.bioinformatics.tools.bcftools.bcftoolstoolbase import BcfToolsToolBase
 
 
-class BcfToolsNormBase(BcfToolsToolBase):
+class BcfToolsNormBase(BcfToolsToolBase, ABC):
 
     @staticmethod
     def tool():
-        return "bcftools-norm"
+        return "bcftoolsNorm"
 
     @classmethod
     def bcftools_command(cls):

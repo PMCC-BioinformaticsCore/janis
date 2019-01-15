@@ -20,7 +20,7 @@ class TestGermlinePipeline(unittest.TestCase):
 
     def test_workflow(self):
 
-        w = Workflow("whole-genome-germline")
+        w = Workflow("whole_genome_germline")
 
         reference = Input("reference", FastaWithDict())
         fastqInputs = Input("inputs", Array(Fastq()))

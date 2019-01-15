@@ -6,6 +6,7 @@ from Pipeline.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput, ToolTy
 
 import cwlgen.cwlgen as cwl
 from Pipeline.types.common_data_types import Stdout
+from Pipeline.utils.validators import Validators
 
 
 class CommandTool(Tool, ABC):
@@ -120,6 +121,12 @@ class CommandTool(Tool, ABC):
 
     def wdl(self, with_docker=True):
         import wdlgen as wdl
+
+        if not Validators.validate_identifier(self.id()):
+            raise Exception(f"The identifier '{self.id()}' was not validated by '{Validators.identifier_regex}' "
+                            f"(must start with letters, and then only contain letters, numbers and an underscore)")
+
+
         ins, outs = [], []
         for i in self.inputs():
             wd = i.input_type.wdl()

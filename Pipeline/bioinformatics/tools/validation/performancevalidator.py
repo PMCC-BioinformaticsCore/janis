@@ -7,7 +7,7 @@ from Pipeline.bioinformatics.tools.htslib.tabix.tabix_1_2_1 import Tabix_1_2_1
 
 def create_performance_validator_1_2_1():
 
-    w: Workflow = Workflow("performance-validator")
+    w: Workflow = Workflow("performanceValidator")
 
     inp = Input("vcf", Vcf())
     inp_truth = Input("truth", VcfIdx())

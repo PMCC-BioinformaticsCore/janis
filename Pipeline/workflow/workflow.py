@@ -13,6 +13,7 @@ from Pipeline.graph.node import Node, NodeTypes, NodeAndTag, layout_nodes2
 from Pipeline.types.common_data_types import Array
 from Pipeline.types.data_types import DataType, NativeTypes
 from Pipeline.utils.descriptor import BaseDescriptor, GetOnlyDescriptor
+from Pipeline.utils.validators import Validators
 
 from Pipeline.workflow.step import Step, StepNode
 from Pipeline.workflow.input import Input, InputNode
@@ -35,6 +36,10 @@ class Workflow(Tool):
         :param doc: Documentation of the workflow
         """
         Logger.log(f"Creating workflow with identifier: '{identifier}'")
+
+        if not Validators.validate_identifier(identifier):
+            raise Exception(f"The identifier '{identifier}' was not validated by '{Validators.identifier_regex}' "
+                            f"(must start with letters, and then only contain letters, numbers and an underscore)")
 
         self.identifier = identifier
         self.label = label

@@ -905,14 +905,15 @@ class Workflow(Tool):
         wf, inp, tls = self.wdl(with_docker=with_docker)
 
         wfd = wf.get_string()
+        wftools = {t: tls[t].get_string() for t in tls}
 
         print(wfd)
         print("================")
         print(json.dumps(inp))
         print("================")
-        print("\n*******\n".join(t.get_string() for t in tls.values()))
+        print("\n*******\n".join(wftools.values()))
 
-        d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/get_string/"
+        d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/wdl/"
         d_tools = d + "tools/"
         if not os.path.isdir(d):
             os.makedirs(d)
@@ -920,19 +921,19 @@ class Workflow(Tool):
             os.makedirs(d_tools)
 
         if to_disk:
-            with open(d + self.identifier + ".get_string", "w+") as wdl:
+            with open(d + self.identifier + ".wdl", "w+") as wdl:
                 Logger.log(f"Writing {self.identifier}.get_string to disk")
                 wdl.write(wfd)
                 Logger.log(f"Written {self.identifier}.get_string to disk")
 
-            with open(d + self.identifier + "-job.json", "w+") as inp:
+            with open(d + self.identifier + "-job.json", "w+") as inpFile:
                 Logger.log(f"Writing {self.identifier}-job.json to disk")
-                json.dump(inp, inp)
+                json.dump(inp, inpFile)
                 Logger.log(f"Written {self.identifier}-job.json to disk")
 
-            for tool_name in tls:
-                tool = tls[tool_name]
-                with open(d_tools + tool_name + ".get_string", "w+") as wdl:
+            for tool_name in wftools:
+                tool = wftools[tool_name]
+                with open(d_tools + tool_name + ".wdl", "w+") as wdl:
                     Logger.log(f"Writing {tool_name}.get_string to disk")
                     wdl.write(tool)
                     Logger.log(f"Written {tool_name}.get_string to disk")

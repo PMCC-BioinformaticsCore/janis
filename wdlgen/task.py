@@ -54,7 +54,7 @@ class Command(WdlBase):
             sp = " " if self.separate else ""
             pr = self.prefix if self.prefix else ""
             bc = pr + ("" if self.separate is False else " ") + sp
-            default = f"default={self.default} " if self.default else ""
+            default = f"default=\"{self.default}\" " if self.default else ""
 
             if self.optional and not default:
                 return '${{"{pre}" + {val}}}'.format(pre=bc, val=self.name, default=default)

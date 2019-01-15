@@ -165,11 +165,19 @@ class StepNode(Node):
         new_to_old_identifier = {k.dotted_source(): k.dotted_source() for k in self.connection_map.values()
                                  if not isinstance(k.dotted_source(), list)}
 
+        # We'll wrap everything in the scatter block later, but let's replace the fields we need to scatter
+        # with the new scatter variable (we'll try to guess one based on the fieldname. We might need to eventually
+        # pass the workflow inputs to make sure now conflict will arise.
+        # Todo: Pass Workflow input tags to wdl scatter generation to ensure scatter var doesn't conflict with inputs
         for s in scatterable:
-            new_var = s[0].lower()
+            new_var = s.split(".")[-1][0].lower()
             while new_var in new_to_old_identifier:
                 new_var = ordered_variable_identifiers.pop(0)
             new_to_old_identifier[s] = new_var
+
+        # Let's map the inputs, to the source.
+        # We're using a dictionary for the map atm, but WDL requires the format:
+        #       fieldName: sourceCall.Output
 
         inputs_map = {}
         for k in ins:
@@ -181,26 +189,27 @@ class StepNode(Node):
                     raise Exception(f"Error when building connections for step '{self.id()}', "
                                     f"could not find required connection: '{k}'")
 
-            inp_t = self.inputs()[k].input_type
             edge = self.connection_map[k]
             ds = edge.dotted_source()
-            # default = edge.default if edge.default else inp_t.default()
+
             if isinstance(ds, list):
                 if len(ds) == 1:
                     ds = ds[0]
                 elif len(ds) > 1:
                     Logger.critical("Conversion to WDL does not currently support multiple sources")
-                    ds = ds[0]
+                    ds = f'[{", ".join(ds)}]'
 
             if ds in new_to_old_identifier and new_to_old_identifier[ds]:
                 inputs_map[k] = new_to_old_identifier[ds]
             elif edge.default is not None:
                 if isinstance(edge.default, bool):
                     inputs_map[k] = "true" if edge.default else "false"
+                elif isinstance(edge.default, str):
+                    inputs_map[k] = f'"{edge.default}"'
                 else:
                     inputs_map[k] = edge.default
             else:
-                inputs_map[k] = inp.tag
+                inputs_map[k] = ds
 
         call = wdl.WorkflowCall(step_identifier, step_alias, inputs_map)
 

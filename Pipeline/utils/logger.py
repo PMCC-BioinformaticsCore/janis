@@ -70,10 +70,10 @@ class Logger:
     @staticmethod
     def mute():
         """
-        Mute's the console until unmute is called
+        Decreases log level to critical until unmute is called
         """
         Logger.__TEMP_CONSOLE_LEVEL = Logger.CONSOLE_LEVEL
-        Logger.set_console_level(None)
+        Logger.set_console_level(LogLevel.CRITICAL)
 
     @staticmethod
     def unmute():

@@ -124,19 +124,22 @@ class CommandTool(Tool, ABC):
         for i in self.inputs():
             wd = i.input_type.wdl()
             if isinstance(wd, list):
-                ins.extend(wdl.Input(w, i.id(), i.input_type.default()) for w in wd)
+                ins.extend(wdl.Input(w, i.id()) for w in wd)
             else:
-                ins.append(wdl.Input(wd, i.id(), i.input_type.default()))
+                ins.append(wdl.Input(wd, i.id()))
 
         for o in self.outputs():
-            outs.append(wdl.Output(o.output_type.wdl(), o.id(), o.glob))
+            outs.append(wdl.Output(o.output_type.wdl(), o.id(), f'glob("{o.glob}")'))
 
-        command_ins = [wdl.Command.CommandInput(
-            name=i.id(),
-            optional=i.input_type.optional,
-            prefix=i.prefix,
-            position=i.position,
-            separate_value_from_prefix=i.separate_value_from_prefix) for i in self.inputs()] if self.inputs() else None
+        command_ins = [
+            wdl.Command.CommandInput(
+                name=i.id(),
+                optional=i.input_type.optional,
+                prefix=i.prefix,
+                position=i.position,
+                separate_value_from_prefix=i.separate_value_from_prefix,
+                default=i.default if i.default else i.input_type.default()
+            ) for i in self.inputs()] if self.inputs() else None
 
         command_args = [] # [get_string.Command.CommandArgument(a.prefix, a.position) for a in self.arguments()]
         command = wdl.Command(self.base_command(), command_ins, command_args)

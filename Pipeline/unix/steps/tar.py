@@ -25,7 +25,7 @@ class Tar(CommandTool):
 
     def outputs(self):
         return [
-            ToolOutput("tarred", File(), glob="*.tar")
+            ToolOutput("tarred", File(), glob="$(inputs.tarName)")
         ]
 
 

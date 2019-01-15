@@ -56,8 +56,8 @@ class TestSimple(unittest.TestCase):
         w.add_edge(step1, step3.files)
 
         # w.draw_graph()
-        w.dump_cwl(to_disk=True)
-        w.dump_wdl(to_disk=True)
+        w.dump_cwl(to_disk=True, with_docker=False)
+        w.dump_wdl(to_disk=True, with_docker=False)
 
         Logger.unmute()
 

@@ -5,7 +5,9 @@ from typing import List, Dict, Optional, Any
 from Pipeline.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput, ToolTypes
 
 import cwlgen.cwlgen as cwl
-from Pipeline.types.common_data_types import Stdout
+from Pipeline.types.common_data_types import Stdout, Array
+from Pipeline.utils import convert_expression_to_wdl
+from Pipeline.utils.logger import Logger
 from Pipeline.utils.validators import Validators
 
 
@@ -123,8 +125,9 @@ class CommandTool(Tool, ABC):
         import wdlgen as wdl
 
         if not Validators.validate_identifier(self.id()):
-            raise Exception(f"The identifier '{self.id()}' was not validated by '{Validators.identifier_regex}' "
-                            f"(must start with letters, and then only contain letters, numbers and an underscore)")
+            raise Exception(f"The identifier '{self.id()}' for class '{self.__class__.__name__}' was not validated by "
+                            f"'{Validators.identifier_regex}' (must start with letters, and then only contain letters, "
+                            f"numbers or an underscore)")
 
 
         ins, outs = [], []
@@ -136,7 +139,21 @@ class CommandTool(Tool, ABC):
                 ins.append(wdl.Input(wd, i.id()))
 
         for o in self.outputs():
-            outs.append(wdl.Output(o.output_type.wdl(), o.id(), f'glob("{o.glob}")'))
+
+            # $(inputs.filename) -> "{filename}"
+            # $(inputs.filename).out -> "{filename}.out"
+            # randomtext.filename -> "randomtext.filename
+
+            glob = convert_expression_to_wdl(o.glob)
+            if glob is not None and "*" in glob:
+                glob = f'glob({glob})'
+                if not isinstance(o.output_type, Array):
+                    Logger.warn(f"The command tool '{self.id()}.{o.tag}' used a star-bind (*) glob to find the output, "
+                                f"but the return type was not an array. For WDL, the first element will be used, "
+                                f"ie: '{glob}[0]'")
+                    glob = glob + "[0]"
+
+            outs.append(wdl.Output(o.output_type.wdl(), o.id(), glob))
 
         command_ins = [
             wdl.Command.CommandInput(

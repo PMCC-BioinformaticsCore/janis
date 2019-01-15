@@ -12,7 +12,7 @@ class Compile(CommandTool):
 
     @staticmethod
     def tool():
-        return "java-compiler"
+        return "javaCompiler"
 
     @staticmethod
     def base_command():

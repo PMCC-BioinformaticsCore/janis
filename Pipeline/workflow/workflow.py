@@ -770,7 +770,7 @@ class Workflow(Tool):
                 wtools[s.id()] = wf_wdl
                 wtools.update(wf_tools)
             else:
-                wtools[s.id()] = t.wdl(with_docker=with_docker)
+                wtools[t.id()] = t.wdl(with_docker=with_docker)
 
             w.calls.append(
                 s.wdl(tool_aliases[t.id().lower()].upper() + "." + t.id(), s.id())

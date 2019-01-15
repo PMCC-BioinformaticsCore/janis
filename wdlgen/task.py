@@ -9,7 +9,7 @@ class Runtime(WdlBase):
         self.kwargs = kwargs
 
     def get_string(self):
-        return ["{k}: {v}".format(k=k, v=v) for k,v in self.kwargs.items()]
+        return ['{k}: "{v}"'.format(k=k, v=v) for k,v in self.kwargs.items()]
 
     def add_docker(self, docker):
         self.kwargs["docker"] = docker

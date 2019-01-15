@@ -98,7 +98,7 @@ workflow {name} {{
 
         def get_string(self):
             as_alias = " as " + self.alias if self.alias else ""
-            return "import \"{tools_dir}{tool}\"{as_alias}".format(
+            return "import \"{tools_dir}{tool}.wdl\"{as_alias}".format(
                 tools_dir=self.tools_dir if self.tools_dir else "",
                 tool=self.name,
                 as_alias=as_alias

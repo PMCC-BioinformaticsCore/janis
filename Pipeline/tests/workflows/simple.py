@@ -43,7 +43,16 @@ class TestSimple(unittest.TestCase):
         return w
 
     def test_pipe(self):
-        Logger.mute()
+
+        import Pipeline as p
+
+
+        w = p.Workflow("id")
+
+        inp1 = p.Input()
+
+
+        # Logger.mute()
         w = Workflow("simple")
 
         inp1 = Input("tarFile", TarFile(), "/Users/franklinmichael/source/simple-workflow/hello.tar")
@@ -57,9 +66,9 @@ class TestSimple(unittest.TestCase):
 
         # w.draw_graph()
         w.dump_cwl(to_disk=True, with_docker=False)
-        w.dump_wdl(to_disk=True, with_docker=False)
+        w.dump_wdl(to_disk=True, with_docker=True)
 
-        Logger.unmute()
+        # Logger.unmute()
 
         return w
 

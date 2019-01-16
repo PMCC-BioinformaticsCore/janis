@@ -31,12 +31,15 @@ class Command(WdlBase):
     """
 
     class CommandArgument(WdlBase):
-        def __init__(self, prefix: str=None, position: int=None):
+        def __init__(self, prefix: str=None, value: str=None, position: int=None):
             self.prefix: Optional[str] = prefix
             self.position: Optional[int] = position
+            self.value = value
 
         def get_string(self):
-            return self.prefix if self.prefix else ""
+            pre = self.prefix if self.prefix else ""
+            val = self.value if self.value else ""
+            return (pre + " " + val).strip()
 
     class CommandInput(CommandArgument):
         def __init__(self, name: str, optional: bool=False, prefix: str=None, position: int=None, separate_value_from_prefix: bool=True, default=None):

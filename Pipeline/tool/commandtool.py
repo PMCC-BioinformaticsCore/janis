@@ -105,22 +105,6 @@ class CommandTool(Tool, ABC):
 
         return tool.get_dict()
 
-    def _command(self):
-
-        base = self.base_command() if type(self.base_command()) == str else " ".join(self.base_command())
-        command = base
-
-        if self.arguments():
-            args: List[ToolArgument] = sorted(self.arguments(), key=lambda a: a.position)
-            args_joined = " ".join(a.wdl() for a in args)
-            base += " " + args_joined
-
-        if self.inputs():
-            inps = " ".join(f"${{{s.tag}}}" for s in sorted(self.inputs(), key=lambda a: a.position if a.position else 0))
-            command += " " + inps
-
-        return command
-
     def wdl(self, with_docker=True):
         import wdlgen as wdl
 
@@ -128,7 +112,6 @@ class CommandTool(Tool, ABC):
             raise Exception(f"The identifier '{self.id()}' for class '{self.__class__.__name__}' was not validated by "
                             f"'{Validators.identifier_regex}' (must start with letters, and then only contain letters, "
                             f"numbers or an underscore)")
-
 
         ins, outs = [], []
         for i in self.inputs():
@@ -144,16 +127,21 @@ class CommandTool(Tool, ABC):
             # $(inputs.filename).out -> "{filename}.out"
             # randomtext.filename -> "randomtext.filename
 
-            glob = convert_expression_to_wdl(o.glob)
-            if glob is not None and "*" in glob:
-                glob = f'glob({glob})'
-                if not isinstance(o.output_type, Array):
-                    Logger.warn(f"The command tool '{self.id()}.{o.tag}' used a star-bind (*) glob to find the output, "
-                                f"but the return type was not an array. For WDL, the first element will be used, "
-                                f"ie: '{glob}[0]'")
-                    glob = glob + "[0]"
+            if isinstance(o.output_type, Stdout):
+                expression = "stdout()"
+            else:
 
-            outs.append(wdl.Output(o.output_type.wdl(), o.id(), glob))
+                glob = convert_expression_to_wdl(o.glob)
+                if glob is not None and "*" in glob:
+                    glob = f'glob({glob})'
+                    if not isinstance(o.output_type, Array):
+                        Logger.warn(f"The command tool '{self.id()}.{o.tag}' used a star-bind (*) glob to find the output, "
+                                    f"but the return type was not an array. For WDL, the first element will be used, "
+                                    f"ie: '{glob}[0]'")
+                        glob = glob + "[0]"
+                expression = glob
+
+            outs.append(wdl.Output(o.output_type.wdl(), o.id(), expression))
 
         command_ins = [
             wdl.Command.CommandInput(
@@ -165,7 +153,20 @@ class CommandTool(Tool, ABC):
                 default=i.default if i.default else i.input_type.default()
             ) for i in self.inputs()] if self.inputs() else None
 
-        command_args = [] # [get_string.Command.CommandArgument(a.prefix, a.position) for a in self.arguments()]
+        command_args = None
+        if self.arguments():
+            command_args = []
+            for a in self.arguments():
+                if a.value is None:
+                    val = None
+                elif callable(getattr(a.value, "wdl", None)):
+                    val = a.value.wdl()
+                else:
+                    val = a.value
+                command_args.append(wdl.Command.CommandArgument(a.prefix, val, a.position))
+
+        # command_args = [wdl.Command.CommandArgument(a.prefix, a.value, a.position) for a in self.arguments()] \
+        #     if self.arguments() else None
         command = wdl.Command(self.base_command(), command_ins, command_args)
 
         r = wdl.Runtime()

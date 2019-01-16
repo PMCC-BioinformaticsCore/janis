@@ -342,6 +342,14 @@ class Stdout(File):
         return self.subtype
 
 
+class CurrentWorkingDirectory(str):
+    def wdl(self):
+        return "."
+
+    def cwl(self):
+        return "$(runtime.outdir)"
+
+
 register_type(String)
 register_type(Int)
 register_type(Float)

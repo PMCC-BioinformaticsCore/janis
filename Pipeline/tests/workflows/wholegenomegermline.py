@@ -129,8 +129,8 @@ class TestGermlinePipeline(unittest.TestCase):
         ])
 
         # w.draw_graph()
-        # w.dump_cwl(to_disk=True, with_docker=False)
-        w.dump_wdl(to_disk=False)
+        w.dump_cwl(to_disk=True, with_docker=True)
+        w.dump_wdl(to_disk=True, with_docker=False)
 
 
 

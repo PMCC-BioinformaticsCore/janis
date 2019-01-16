@@ -4,7 +4,7 @@
 
 from typing import List
 
-from Pipeline.types.common_data_types import File
+from Pipeline.types.common_data_types import File, CurrentWorkingDirectory
 from Pipeline.tool.commandtool import CommandTool, ToolInput, ToolOutput, ToolArgument
 
 
@@ -23,7 +23,7 @@ class Compile(CommandTool):
         return "openjdk:8"
 
     def arguments(self) -> List[ToolArgument]:
-        return [ToolArgument("$(runtime.outdir)", "-d")]
+        return [ToolArgument(CurrentWorkingDirectory(), "-d")]
 
     def inputs(self):
         return [

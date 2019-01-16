@@ -33,20 +33,21 @@ class ToolArgument:
             Logger.warn(f"Argument ({self.prefix} {self.value}) is not separating and did not end with ='")
 
     def cwl(self):
+        if self.value is None:
+            val = None
+        elif callable(getattr(self.value, "cwl", None)):
+            val = self.value.cwl()
+        else:
+            val = self.value
         return cwl.CommandLineBinding(
             # load_contents=False,
             position=self.position,
             prefix=self.prefix,
             separate=self.separate_value_from_prefix,
             # item_separator=None,
-            value_from=self.value,
+            value_from=val,
             # shell_quote=True,
         )
-
-    def wdl(self):
-        return (self.prefix if self.prefix is not None else "") \
-               + (" " if self.separate_value_from_prefix else "") \
-               + (self.value if self.value is not None else "")
 
 
 class ToolInput(ToolArgument):

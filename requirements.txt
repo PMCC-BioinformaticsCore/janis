@@ -4,3 +4,5 @@ decorator==4.2.1
 networkx==2.1
 py-dag==3.0.1
 PyYAML==3.12
+sphinx-build==1.8.2
+recommonmark==0.8.1

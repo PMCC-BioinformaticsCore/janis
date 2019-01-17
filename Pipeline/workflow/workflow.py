@@ -24,13 +24,16 @@ from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifie
 
 
 class Workflow(Tool):
+    """
+    Documentation here
+    """
     identifier = BaseDescriptor()
     label = BaseDescriptor()
     doc = BaseDescriptor()
 
     def __init__(self, identifier: str, label: str = None, doc: Optional[str] = None):
         """
-        Initialise the worklow
+        Initialise the workflow
         :param identifier: uniquely identifies the workflow
         :param label: a label that the engine may use to represent the workflow (should be unique)
         :param doc: Documentation of the workflow

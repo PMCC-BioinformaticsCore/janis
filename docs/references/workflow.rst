@@ -2,9 +2,16 @@ Workflow
 ========
 *A class to manage a workflow*
 
-Much woah!
+########
+Overview
+########
 
+You use workflows to represent a combination of steps
 
-.. autoclass:: Pipeline.workflow.workflow.Workflow
+You will need to understand the :func:`Pipeline.Workflow.add_edge` method.
+
+A :class:`Pipeline.Workflow` is the class th
+
+.. autoclass:: Pipeline.Workflow
    :members:
  

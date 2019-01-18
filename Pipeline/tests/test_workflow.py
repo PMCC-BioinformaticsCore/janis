@@ -231,7 +231,7 @@ class TestWorkflow(TestCase):
 
     def test_add_default_value(self):
 
-        w = Workflow("Workflow with default value")
+        w = Workflow("Workflow_with_default_value")
         default_value = "myFile.tar"
 
         inp1 = Input("inp1", Array(File()))
@@ -255,7 +255,7 @@ class TestWorkflow(TestCase):
         self.assertEqual(tarName_props["default"], default_value)
 
     def test_add_scatter(self):
-        w = Workflow("scattered-edge")
+        w = Workflow("scatterededge")
 
         inp1 = Input("inp1", Array(String()))
         step = Step("stp", SingleTestTool())
@@ -264,7 +264,7 @@ class TestWorkflow(TestCase):
         self.assertTrue(e.scatter)
 
     def test_add_scatter_nested_arrays(self):
-        w = Workflow("scattered-edge")
+        w = Workflow("scatterededge")
 
         inp1 = Input("inp1", Array(Array(String())))
         step = Step("stp", ArrayTestTool())
@@ -273,7 +273,7 @@ class TestWorkflow(TestCase):
         self.assertTrue(e.scatter)
 
     def test_add_non_scatter(self):
-        w = Workflow("scattered-edge")
+        w = Workflow("scatterededge")
 
         inp1 = Input("inp1", String())
         step = Step("stp", SingleTestTool())
@@ -282,7 +282,7 @@ class TestWorkflow(TestCase):
         self.assertFalse(e.scatter)
 
     def test_add_non_scatter2(self):
-        w = Workflow("scattered-edge")
+        w = Workflow("scatterededge")
 
         inp1 = Input("inp1", Array(String()))
         step = Step("stp", ArrayTestTool())

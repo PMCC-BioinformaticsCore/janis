@@ -1,7 +1,7 @@
 from abc import ABC
 
 from Pipeline import ToolInput, String, Boolean, File, Filename, Array, Int, ToolOutput
-from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
+from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import TabixIdx, Vcf, VcfIdx
 from Pipeline.bioinformatics.tools.bcftools.bcftoolstoolbase import BcfToolsToolBase
 

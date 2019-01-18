@@ -3,7 +3,7 @@ from abc import ABC
 from Pipeline import ToolInput, File, ToolOutput, ToolArgument, Array, String, Boolean, Int
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
-from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
+from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
 from Pipeline.bioinformatics.tools.gatk3.gatk3toolbase import Gatk3ToolBase
 
 

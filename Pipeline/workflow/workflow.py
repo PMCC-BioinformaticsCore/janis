@@ -249,7 +249,7 @@ class Workflow(Tool):
 
     def add_default_value(self, tagged_node, default_value):
         """
-        Adds a default value to the edge, will create an edge
+        Adds a default value to the edge, will create an edge!
         :param tagged_node: will be run through get_labels_and_node_by_inference: ( string | (string, node))
         :param default_value: value to be the default, should match the data_type
         """

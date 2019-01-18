@@ -1,7 +1,7 @@
 import unittest
 
 from Pipeline import Input, String, Step, Directory, Workflow, Array, Output, get_tool
-from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
+from Pipeline.bioinformatics.data_types.fasta import Fasta
 from Pipeline.bioinformatics.data_types.fastq import Fastq
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx, TabixIdx
 from Pipeline.bioinformatics.tools.bcftools.norm.latest import BcfToolsNormLatest as BcfToolsNorm

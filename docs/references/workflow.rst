@@ -6,7 +6,7 @@ Workflow
 Overview
 ########
 
-You use workflows to represent a combination of steps
+You use workflows to represent a combination of steps!
 
 You will need to understand the :func:`Pipeline.Workflow.add_edge` method.
 

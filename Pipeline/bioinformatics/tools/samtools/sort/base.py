@@ -2,7 +2,7 @@ from abc import ABC
 
 from Pipeline import ToolInput, Filename, Int, String, Boolean, ToolOutput, Array
 from Pipeline.bioinformatics.data_types.bam import Bam
-from Pipeline.bioinformatics.data_types.fastawithdict import FastaWithDict
+from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
 from Pipeline.bioinformatics.tools.samtools.samtoolstoolbase import SamToolsToolBase
 
 

@@ -37,14 +37,12 @@ A diagram is great way to get an intuitive understanding of what a workflow is, 
 
 .. image:: resources/bakecookie-wf.png
 
-
-
-
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    :caption: Contents:
 
    self
+   tools/index
    references/workflow
 
 Indices and tables
@@ -53,11 +51,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`search`
 .. * :ref:`modindex`
-
-
-
-
-
-
-
-

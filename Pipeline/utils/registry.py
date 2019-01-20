@@ -64,7 +64,7 @@ class TaggedRegistry(Generic[T]):
         self.registry[name] = d
         return True
 
-    def objects(self) -> List[T]:
+    def objects(self) -> List[List[T]]:
         return list([list(y for y in x.values() if y != self.default_tag) for x in self.registry.values()])
 
     def get(self, type_name, tag: Optional[str]) -> Optional[T]:

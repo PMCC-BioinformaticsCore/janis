@@ -23,6 +23,10 @@ class IgvToolsIndexBase(IgvToolsToolBase):
         ]
 
     @staticmethod
+    def docurl():
+        return "https://software.broadinstitute.org/software/igv/igvtools_commandline#index"
+
+    @staticmethod
     def doc():
         return IgvToolsToolBase.doc() + """
         
@@ -37,6 +41,4 @@ class IgvToolsIndexBase(IgvToolsToolBase):
 
     Supported input file formats are: .sam, .bam, .aligned, .vcf, .psl, and .bed.
     
-    Note: The "sai" index is an IGV format, it does not work with samtools or any other application.
-    
-    Documentation: https://software.broadinstitute.org/software/igv/igvtools_commandline#index"""
+    Note: The "sai" index is an IGV format, it does not work with samtools or any other application."""

@@ -8,6 +8,11 @@ def first_value(d: Dict):
 def convert_expression_to_wdl(expression):
     import re
 
+    # Some examples
+    # $(inputs.filename) -> "{filename}"
+    # $(inputs.filename).out -> "{filename}.out"
+    # randomtext.filename -> "randomtext.filename
+
     if not expression:
         return expression
 

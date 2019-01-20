@@ -36,6 +36,9 @@ class SamToolsSortBase(SamToolsToolBase, ABC):
                            "in the current directory as samtools.mmm.mmm.tmp.nnnn.bam.")
         ]
 
+    @staticmethod
+    def docurl():
+        return "http://www.htslib.org/doc/samtools.html#DESCRIPTION"
 
     @staticmethod
     def doc():

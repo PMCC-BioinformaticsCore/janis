@@ -28,13 +28,15 @@ class BcfToolsAnnotateBase(BcfToolsToolBase, ABC):
         ]
 
     @staticmethod
+    def docurl():
+        return "https://samtools.github.io/bcftools/bcftools.html#annotate"
+
+    @staticmethod
     def doc():
         return BcfToolsToolBase.doc() + """
     -------------------------------------------------------------------------
 
     Add or remove annotations.
-
-    Documentation: https://samtools.github.io/bcftools/bcftools.html#annotate
     """
 
     additional_args = [

@@ -30,11 +30,13 @@ class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
         ]
 
     @staticmethod
+    def docurl():
+        return "https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_MergeSamFiles.php"
+
+    @staticmethod
     def doc():
         return """
     Merges multiple SAM/BAM files into one file
-
-    Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_MergeSamFiles.php
         """.strip()
 
     additional_args = [

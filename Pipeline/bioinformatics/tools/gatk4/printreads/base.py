@@ -28,6 +28,9 @@ class Gatk4PrintReadsBase(Gatk4ToolBase, ABC):
             ToolOutput("output", BamPair(), glob="$(inputs.outputFilename)")
         ]
 
+    @staticmethod
+    def docurl():
+        return "https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php"
 
     @staticmethod
     def doc():
@@ -38,8 +41,4 @@ A common use case is to subset reads by genomic interval using the -L argument. 
 
 By default, PrintReads applies the WellformedReadFilter at the engine level. What this means is that the tool does not print reads that fail the WellformedReadFilter filter. You can similarly apply other engine-level filters to remove specific types of reads with the --read-filter argument. See documentation category 'Read Filters' for a list of available filters. To keep reads that do not pass the WellformedReadFilter, either disable the filter with --disable-read-filter or disable all default filters with --disable-tool-default-read-filters.
 
-The reference is strictly required when handling CRAM files.
-
-Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php
-        
-        """
+The reference is strictly required when handling CRAM files."""

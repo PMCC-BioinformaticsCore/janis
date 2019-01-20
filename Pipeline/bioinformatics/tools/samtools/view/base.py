@@ -41,6 +41,10 @@ class SamToolsViewBase(SamToolsToolBase, ABC):
         ]
 
     @staticmethod
+    def docurl():
+        return "http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS"
+
+    @staticmethod
     def doc():
         return """
     SAMTOOLS: view
@@ -50,10 +54,7 @@ class SamToolsViewBase(SamToolsToolBase, ABC):
     
     You may specify one or more space-separated region specifications after the input filename to 
     restrict output to only those alignments which overlap the specified region(s). 
-    Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format).
-       
-       
-    Documentation: http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS""".strip()
+    Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format).""".strip()
 
     def arguments(self):
         return [

@@ -35,6 +35,10 @@ class Gatk4ApplyBqsrBase(Gatk4ToolBase, ABC):
         ]
 
     @staticmethod
+    def docurl():
+        return "https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_ApplyBQSR.php"
+
+    @staticmethod
     def doc():
         return """
     Apply base quality score recalibration: This tool performs the second pass in a two-stage 
@@ -55,8 +59,6 @@ class Gatk4ApplyBqsrBase(Gatk4ToolBase, ABC):
     - You should only run ApplyBQSR with the covariates table created from the input BAM or CRAM file(s).
     - Original qualities can be retained in the output file under the "OQ" tag if desired. 
         See the `--emit-original-quals` argument for details.
-    
-    Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_ApplyBQSR.php
     """.strip()
 
     additional_args = [

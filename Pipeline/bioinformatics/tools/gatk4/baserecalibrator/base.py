@@ -54,6 +54,10 @@ class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
         ]
 
     @staticmethod
+    def docurl():
+        return "https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_BaseRecalibrator.php"
+
+    @staticmethod
     def doc():
         return """
     First pass of the base quality score recalibration. Generates a recalibration table based on various covariates. 
@@ -65,8 +69,6 @@ class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
     Since there is a large amount of data one can then calculate an empirical probability of error given the 
     particular covariates seen at this site, where p(error) = num mismatches / num observations. The output file is a 
     table (of the several covariate values, num observations, num mismatches, empirical quality score).  
-    
-    Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_BaseRecalibrator.php
 """.strip()
 
     additional_args = [

@@ -63,6 +63,10 @@ class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
     additional_args = []
 
     @staticmethod
+    def docurl():
+        return "https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php"
+
+    @staticmethod
     def doc():
         return """
     Call somatic short variants via local assembly of haplotypes. Short variants include single nucleotide (SNV) 
@@ -74,8 +78,6 @@ class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
     somatic calling entails. For the latest pipeline scripts, see the Mutect2 WDL scripts directory. 
     Although we present the tool for somatic calling, it may apply to other contexts, 
     such as mitochondrial variant calling.
-    
-    Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php
 """.strip()
 
 # if __name__ == "__main__":

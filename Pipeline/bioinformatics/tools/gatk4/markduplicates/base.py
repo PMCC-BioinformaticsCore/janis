@@ -76,6 +76,10 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
     ]
 
     @staticmethod
+    def docurl():
+        return "https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php"
+
+    @staticmethod
     def doc():
         return """
     MarkDuplicates (Picard)
@@ -123,6 +127,4 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
     reads are not excluded from the duplication test and can be marked as duplicate reads.
     
     If desired, duplicates can be removed using the REMOVE_DUPLICATE and REMOVE_SEQUENCING_DUPLICATES options.
-    
-    Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php
     """.strip()

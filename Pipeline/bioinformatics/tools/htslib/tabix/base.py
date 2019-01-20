@@ -41,6 +41,10 @@ class TabixBase(CommandTool, ABC):
         ]
 
     @staticmethod
+    def docurl():
+        return "http://www.htslib.org/doc/tabix.html"
+
+    @staticmethod
     def doc():
         return """
     tabix – Generic indexer for TAB-delimited genome position files
@@ -53,9 +57,7 @@ class TabixBase(CommandTool, ABC):
     "chr:beginPos-endPos". (Coordinates specified in this region format are 1-based and inclusive.)
 
     Fast data retrieval also works over network if URI is given as a file name and in this case the 
-    index file will be downloaded if it is not present locally.
-    
-    Documentation: http://www.htslib.org/doc/tabix.html""".strip()
+    index file will be downloaded if it is not present locally.""".strip()
 
     additional_args = [
         ToolInput("zeroBased", Boolean(optional=True), prefix="--zero-based", position=1,

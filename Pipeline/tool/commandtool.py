@@ -61,6 +61,10 @@ class CommandTool(Tool, ABC):
         return None
 
     @staticmethod
+    def docurl() -> Optional[str]:
+        return None
+
+    @staticmethod
     def requirements() -> Optional[List[cwl.Requirement]]:
         return None
 
@@ -108,6 +112,7 @@ class CommandTool(Tool, ABC):
     def wdl(self, with_docker=True):
         import wdlgen as wdl
 
+        # Todo: Move this to python-wdlgen
         if not Validators.validate_identifier(self.id()):
             raise Exception(f"The identifier '{self.id()}' for class '{self.__class__.__name__}' was not validated by "
                             f"'{Validators.identifier_regex}' (must start with letters, and then only contain letters, "
@@ -122,10 +127,6 @@ class CommandTool(Tool, ABC):
                 ins.append(wdl.Input(wd, i.id()))
 
         for o in self.outputs():
-
-            # $(inputs.filename) -> "{filename}"
-            # $(inputs.filename).out -> "{filename}.out"
-            # randomtext.filename -> "randomtext.filename
 
             if isinstance(o.output_type, Stdout):
                 expression = "stdout()"
@@ -165,8 +166,6 @@ class CommandTool(Tool, ABC):
                     val = a.value
                 command_args.append(wdl.Command.CommandArgument(a.prefix, val, a.position))
 
-        # command_args = [wdl.Command.CommandArgument(a.prefix, a.value, a.position) for a in self.arguments()] \
-        #     if self.arguments() else None
         command = wdl.Command(self.base_command(), command_ins, command_args)
 
         r = wdl.Runtime()
@@ -175,46 +174,6 @@ class CommandTool(Tool, ABC):
 
         return wdl.Task(self.id(), ins, outs, command, r)
 
-#     def get_string(self):
-#
-#         command = self._command()
-#         tb = "    "
-#         nl = "\n"
-#
-#         inputs_str = "{tb}{data_type} {identifier}{default_with_equals_if_required}"
-#         outputs_str = "{tb2}{data_type} {identifier} = glob(\"{glob}\")[0]"
-#
-#         default_with_equals = lambda d: f' = "{str(d)}"' if d is not None else ""
-#         inputs = nl.join([inputs_str.format(
-#             tb=tb,
-#             data_type=i.input_type.get_string(),
-#             identifier=i.tag,
-#             default_with_equals_if_required=default_with_equals(i.input_type.default())
-#         ) for i in self.inputs()])
-#         outputs = nl.join([outputs_str.format(
-#             tb2=2 * tb,
-#             data_type=o.output_type.get_string(),
-#             identifier=o.tag,
-#             glob=o.glob
-#         ) for o in self.outputs()])
-#
-#         # inputs = "\n\t".join([f"{t.input_type.get_string()} {t.tag}" for t in self.inputs()])
-#
-#         # outputs = "\n\t\t".join(f"{o.output_type.get_string()} {o.tag} = glob(\"{o.glob}\")[0]" for o in self.outputs())
-#
-#         return f"""
-# task {self.wdl_name()} {{
-# {inputs}
-#
-#     runtime {{ docker: "{self.docker()}" }}
-#     command {{
-#         {command}
-#     }}
-#
-#     output {{
-# {outputs}
-#     }}
-# }}"""
 
     def help(self):
         import inspect
@@ -256,8 +215,11 @@ SYNOPSIS
 DOCKER
     {docker}
 
+DOCUMENTATION URL
+    {self.docurl() if self.docurl() else "No url provided"}
+
 DESCRIPTION
-    {self.doc() if self.doc is not None else "No documentation provided"}
+    {self.doc() if self.doc() is not None else "No documentation provided"}
 
 INPUTS:
     REQUIRED:

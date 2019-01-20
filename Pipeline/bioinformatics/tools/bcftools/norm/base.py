@@ -31,6 +31,10 @@ class BcfToolsNormBase(BcfToolsToolBase, ABC):
         ]
 
     @staticmethod
+    def docurl():
+        return "https://samtools.github.io/bcftools/bcftools.html#norm"
+
+    @staticmethod
     def doc():
         return BcfToolsToolBase.doc() + """\n
     -------------------------------------------------------------------------
@@ -39,8 +43,6 @@ class BcfToolsNormBase(BcfToolsToolBase, ABC):
     split multiallelic sites into multiple rows; recover multiallelics from 
     multiple rows. Left-alignment and normalization will only be applied if 
     the --fasta-ref option is supplied.
-    
-    Documentation: https://samtools.github.io/bcftools/bcftools.html#norm
     """.strip()
 
     additional_args = [

@@ -27,6 +27,10 @@ class BGZipBase(CommandTool, ABC):
         ]
 
     @staticmethod
+    def docurl():
+        return "http://www.htslib.org/doc/bgzip.html"
+
+    @staticmethod
     def doc():
         return """
     bgzip – Block compression/decompression utility
@@ -40,9 +44,7 @@ class BGZipBase(CommandTool, ABC):
     If the -c option is used, the result will be written to standard output, otherwise when compressing bgzip 
     will write to a new file with a .gz suffix and remove the original. When decompressing the input file must 
     have a .gz suffix, which will be removed to make the output name. 
-    Again after decompression completes the input file will be removed.
-
-    Documentation: http://www.htslib.org/doc/bgzip.html""".strip()
+    Again after decompression completes the input file will be removed.""".strip()
 
     @staticmethod
     @abstractmethod

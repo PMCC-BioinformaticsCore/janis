@@ -35,6 +35,10 @@ class BwaMemBase(BwaToolBase):
         ]
 
     @staticmethod
+    def docurl():
+        return "http://bio-bwa.sourceforge.net/bwa.shtml#3"
+
+    @staticmethod
     def doc():
         return """
     bwa - Burrows-Wheeler Alignment Tool
@@ -51,9 +55,7 @@ class BwaMemBase(BwaToolBase):
     The BWA-MEM algorithm performs local alignment. It may produce multiple primary alignments for different part of a 
     query sequence. This is a crucial feature for long sequences. However, some tools such as Picard’s markDuplicates 
     does not work with split alignments. One may consider to use option -M to flag shorter split hits as secondary.
-
-    Documentation: http://bio-bwa.sourceforge.net/bwa.shtml#3
-        """.strip()
+    """.strip()
 
     def arguments(self):
         return []

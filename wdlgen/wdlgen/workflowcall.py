@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List
 
-from wdlgen.task import Task
-from wdlgen.util import WdlBase
+from wdlgen.wdlgen.task import Task
+from wdlgen.wdlgen.util import WdlBase
 
 
 class WorkflowCallBase(WdlBase, ABC):

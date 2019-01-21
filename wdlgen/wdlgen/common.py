@@ -1,7 +1,7 @@
 from typing import Union, List
 
-from wdlgen.types import WdlType
-from wdlgen.util import WdlBase
+from wdlgen.wdlgen.types import WdlType
+from wdlgen.wdlgen.util import WdlBase
 
 
 class Input(WdlBase):

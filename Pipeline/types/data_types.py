@@ -13,7 +13,7 @@
 """
 from abc import ABC, abstractmethod
 from typing import Any, List, Dict, Optional
-from wdlgen import WdlType
+from wdlgen.wdlgen import WdlType
 
 import cwlgen.cwlgen as cwl
 from Pipeline.translations.wdl.wdl import Wdl

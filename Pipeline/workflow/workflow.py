@@ -1,7 +1,7 @@
 import networkx as nx
 from typing import Dict, List, Tuple, Set, Optional, Any
 
-import wdlgen
+import wdlgen.wdlgen as wdl
 import cwlgen.cwlgen as cwl
 
 from Pipeline.utils import first_value
@@ -733,25 +733,25 @@ class Workflow(Tool):
         """
 
         # Notes:
-        #   All classes have a .wdl() property that returns the wdlgen classes,
-        #       EXCEPT Workflow which returns (wdlgen.Workflow, string, (wdlgen.Task | wdlgen.Workflow)[])
+        #   All classes have a .wdl() property that returns the wdl classes,
+        #       EXCEPT Workflow which returns (wdl.Workflow, string, (wdl.Task | wdl.Workflow)[])
         #       All wdlgen classes have a .get_string(**kwargs) function
         #       The wdlgen Workflow class requires a
 
-        w = wdlgen.Workflow(self.identifier)
+        w = wdl.Workflow(self.identifier)
         tools: List[Tool] = [s.step.tool() for s in self._steps]
 
         wtools = {}  # Store all the tools by their name in this dictionary
         tool_aliases, step_aliases = self.build_aliases(self._steps)  # Generate call and import aliases
 
-        # Convert self._inputs -> wdlgen.Input
+        # Convert self._inputs -> wdl.Input
         for i in self._inputs:
             wd = i.input.data_type.wdl()
-            w.inputs.append(wdlgen.Input(wd, i.id(), i.input.data_type.default()))
+            w.inputs.append(wdl.Input(wd, i.id(), i.input.data_type.default()))
 
-        # Convert self._outputs -> wdlgen.Output
+        # Convert self._outputs -> wdl.Output
         w.outputs = [
-            wdlgen.Output(
+            wdl.Output(
                 o.output.data_type.wdl(),
                 o.id(),
                 "{a}.{b}".format(               # Generate fully qualified stepid.tag identifier (MUST be step node)
@@ -762,13 +762,13 @@ class Workflow(Tool):
 
         # Generate import statements (relative tool dir is later?)
         w.imports = [
-            wdlgen.Workflow.WorkflowImport(
+            wdl.Workflow.WorkflowImport(
                 t.id(),
                 tool_aliases[t.id().lower()].upper(),
                 None if is_nested_tool else "tools/")
             for t in tools]
 
-        # Step[] -> (wdlgen.Task | wdlgen.Workflow)[]
+        # Step[] -> (wdl.Task | wdl.Workflow)[]
         for s in self._steps:
             t = s.step.tool()
 
@@ -890,7 +890,8 @@ class Workflow(Tool):
 
         if to_disk:
             os.chdir(d)
-            with open(d + self.id() + ".cwl", "w+") as cwl:
+            wf_filename = d + self.id() + ".cwl"
+            with open(wf_filename, "w+") as cwl:
                 Logger.log(f"Writing {self.identifier}.cwl to disk")
                 yaml.dump(cwl_data, cwl, default_flow_style=False)
                 Logger.log(f"Written {self.identifier}.cwl to disk")
@@ -908,6 +909,25 @@ class Workflow(Tool):
                     Logger.log(f"Writing {tool_name}.cwl to disk")
                     yaml.dump(tool, cwl, default_flow_style=False)
                     Logger.log(f"Written {tool_name}.cwl to disk")
+
+            import subprocess
+
+            Logger.info("Validing outputted CWL")
+
+            cwltool_result = subprocess.run(["cwltool", "--validate", wf_filename])
+            if cwltool_result.returncode == 0:
+                Logger.info("Exported workflow is valid CWL.")
+            else:
+                Logger.critical(cwltool_result.stderr)
+
+            Logger.info("Zipping tools")
+            os.chdir(d)
+
+            zip_result = subprocess.run(["zip", "-r", "tools.zip", "tools/"])
+            if zip_result.returncode == 0:
+                Logger.info("Zipped tools")
+            else:
+                Logger.critical(zip_result.stderr)
 
             #     z.write("tools/" + tool_filename)
             # z.close()

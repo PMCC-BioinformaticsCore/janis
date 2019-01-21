@@ -2,7 +2,7 @@
 # Implementations #
 ###################
 from typing import Dict, Any
-import wdlgen
+import wdlgen.wdlgen as wdl
 
 from Pipeline.utils.logger import Logger
 import cwlgen.cwlgen as cwl
@@ -309,8 +309,8 @@ class Array(DataType):
     # def wdl(self):
     #     return f"{NativeTypes.map_to_wdl(self.primitive())}[{NativeTypes.map_to_wdl(self._t.primitive())}]"
 
-    def wdl(self) -> wdlgen.ArrayType:
-        return wdlgen.ArrayType(self._t.wdl(), requires_multiple=False)
+    def wdl(self) -> wdl.ArrayType:
+        return wdl.ArrayType(self._t.wdl(), requires_multiple=False)
 
     def can_receive_from(self, other):
         if isinstance(other, Array):

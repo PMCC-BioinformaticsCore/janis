@@ -106,7 +106,7 @@ class CommandTool(Tool, ABC):
         return tool.get_dict()
 
     def wdl(self, with_docker=True):
-        import wdlgen as wdl
+        import wdlgen.wdlgen as wdl
 
         # Todo: Move this to python-wdlgen
         if not Validators.validate_identifier(self.id()):

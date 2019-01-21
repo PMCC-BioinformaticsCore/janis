@@ -57,7 +57,7 @@ class Step:
         return step
 
     def wdl2(self):
-        import wdlgen as wdl
+        import wdlgen.wdlgen as wdl
 
 
 
@@ -151,7 +151,7 @@ class StepNode(Node):
         return q
 
     def wdl(self, step_identifier: str, step_alias: str):
-        import wdlgen as wdl
+        import wdlgen.wdlgen as wdl
 
         ins = self.inputs()
 

@@ -13,7 +13,7 @@ class SplitMultiAllele(CommandTool):
 
     @staticmethod
     def base_command():
-        return ""
+        return None
 
     @staticmethod
     def docker():
@@ -22,7 +22,8 @@ class SplitMultiAllele(CommandTool):
     def inputs(self) -> List[ToolInput]:
         return [
             ToolInput("input", Vcf(), position=2, shell_quote=False),
-            ToolInput("reference", FastaWithDict(), prefix="-r", position=6, shell_quote=False),
+            ToolInput("reference", FastaWithDict(), prefix="-r", position=7, shell_quote=False),
+            ToolInput("outputFilename", Filename(extension=".norm.vcf"), prefix=">", position=10, shell_quote=False),
         ]
 
     def arguments(self):
@@ -30,13 +31,16 @@ class SplitMultiAllele(CommandTool):
             ToolArgument("sed 's/ID=AD,Number=./ID=AD,Number=R/' <", position=1, shell_quote=False),
             ToolArgument("|", position=3, shell_quote=False),
             ToolArgument("vt decompose -s - -o -", position=4, shell_quote=False),
-            ToolArgument("vt normalize -n -q - -o -", position=5, shell_quote=False),
-            ToolArgument("sed 's/ID=AD,Number=./ID=AD,Number=1/'", position=7, shell_quote=False),
+            ToolArgument("|", position=5, shell_quote=False),
+            ToolArgument("vt normalize -n -q - -o -", position=6, shell_quote=False),
+            ToolArgument("|", position=8, shell_quote=False),
+            ToolArgument("sed 's/ID=AD,Number=./ID=AD,Number=1/'", position=9, shell_quote=False),
+
         ]
 
     def outputs(self) -> List[ToolOutput]:
         return [
-            ToolOutput("output", Stdout(Vcf()))
+            ToolOutput("output", Vcf(), glob="$(inputs.outputFilename)")
         ]
 
     @staticmethod

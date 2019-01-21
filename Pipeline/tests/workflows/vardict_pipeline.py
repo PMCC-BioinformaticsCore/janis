@@ -1,4 +1,4 @@
-from Pipeline import File, Array
+from Pipeline import File, Array, String, Float
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
@@ -19,8 +19,10 @@ def create():
     indexed_bam = p.Input("indexed_bam", BamPair())
     reference = p.Input("reference", FastaWithDict())
     header_lines = p.Input("headerLines", File())
-    truth_vcf = p.Input("truthVcf", Array(VcfIdx()))
+    truth_vcf = p.Input("truthVcf", VcfIdx())
     intervals = p.Input("intervals", Array(File()))
+    sample_name = p.Input("sampleName", String())
+    allele_freq_threshold = p.Input("allelFreqThreshold", Float())
 
     step1 = p.Step("vardict", VarDict())
     step2 = p.Step("annotate", BcfToolsAnnotateLatest())
@@ -33,17 +35,18 @@ def create():
     w.add_edges([
         (input_bed, step1.input),
         (indexed_bam, step1.indexedBam),
-        (reference, step1)
+        (reference, step1),
+        (sample_name, step1.sampleName),
+        (sample_name, step1.var2vcfSampleName),
+        (allele_freq_threshold, step1.alleleFreqThreshold),
+        (allele_freq_threshold, step1.var2vcfAlleleFreqThreshold)
+
     ])
     w.add_default_value(step1.chromNamesAreNumbers, True)
     w.add_default_value(step1.vcfFormat, True)
-    w.add_default_value(step1.alleleFreqThreshold, 0.05)
-    w.add_default_value(step1.sampleName, "NA12878")
     w.add_default_value(step1.chromColumn, 1)
     w.add_default_value(step1.regStartCol, 2)
     w.add_default_value(step1.geneEndCol, 3)
-    w.add_default_value(step1.var2vcfSampleName, "NA12878")
-    w.add_default_value(step1.var2vcfAlleleFreqThreshold, 0.05)
 
 
     # Step2
@@ -74,6 +77,8 @@ def create():
     w.add_default_value(step6.treatMissingSitesAsHomeRef, True)
 
     w.dump_cwl(to_disk=True, with_docker=False)
+    w.dump_wdl(to_disk=True, with_docker=False)
+
 
 VardictPipeline = create
 

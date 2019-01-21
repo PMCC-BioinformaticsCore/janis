@@ -8,7 +8,7 @@ Documentation
 
 URL
 ******
-`http://www.htslib.org/doc/samtools.html#DESCRIPTION <http://www.htslib.org/doc/samtools.html#DESCRIPTION/>`_
+`http://www.htslib.org/doc/samtools.html#DESCRIPTION <http://www.htslib.org/doc/samtools.html#DESCRIPTION>`_
 
 Docstring
 *********
@@ -27,7 +27,7 @@ Samtools is a set of utilities that manipulate alignments in the BAM format. It 
 
     Documentation: http://www.htslib.org/doc/samtools.html#DESCRIPTION
         
-    ------------
+    ---------------------------------------------------------------------------------------------------
 
     Sort alignments by leftmost coordinates, or by read name when -n is used. An appropriate 
     @HD-SO sort order header tag will be added or an existing one updated if necessary.
@@ -36,7 +36,7 @@ Samtools is a set of utilities that manipulate alignments in the BAM format. It 
     when -o is used. This command will also create temporary files tmpprefix.%d.bam as needed when 
     the entire alignment data cannot fit into memory (as controlled via the -m option).
     
-    ------------
+    ---------------------------------------------------------------------------------------------------
     
     The following rules are used for ordering records.
 

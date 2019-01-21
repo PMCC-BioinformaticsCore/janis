@@ -8,7 +8,7 @@ Documentation
 
 URL
 ******
-`https://samtools.github.io/bcftools/bcftools.html#annotate <https://samtools.github.io/bcftools/bcftools.html#annotate/>`_
+`https://samtools.github.io/bcftools/bcftools.html#annotate <https://samtools.github.io/bcftools/bcftools.html#annotate>`_
 
 Docstring
 *********

@@ -8,7 +8,7 @@ Documentation
 
 URL
 ******
-`http://www.htslib.org/doc/bgzip.html <http://www.htslib.org/doc/bgzip.html/>`_
+`http://www.htslib.org/doc/bgzip.html <http://www.htslib.org/doc/bgzip.html>`_
 
 Docstring
 *********

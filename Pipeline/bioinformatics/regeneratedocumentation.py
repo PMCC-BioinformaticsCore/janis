@@ -11,7 +11,7 @@ tools_dir = docs_dir + "tools/"
 
 
 def format_rst_link(text, link):
-    return f"`{text} <{link}/>`_"
+    return f"`{text} <{link}>`_"
 
 
 def prepare_tool(tool: Tool):
@@ -24,7 +24,7 @@ def prepare_tool(tool: Tool):
     tool_dir = tools_dir + tool_module + "/" + tool.id() + ".rst"
 
     formatted_url = format_rst_link(tool.docurl(), tool.docurl()) if tool.docurl() \
-        else "*No URL to the documentation was provided, " + format_rst_link("contribute one", "github.com/illusional")
+        else "*No URL to the documentation was provided*: " + format_rst_link("contribute one", "https://github.com/illusional")
 
     return tool_module, tool_dir, f"""
 {tool.id()}

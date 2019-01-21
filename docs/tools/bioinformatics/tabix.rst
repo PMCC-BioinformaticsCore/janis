@@ -8,7 +8,7 @@ Documentation
 
 URL
 ******
-`http://www.htslib.org/doc/tabix.html <http://www.htslib.org/doc/tabix.html/>`_
+`http://www.htslib.org/doc/tabix.html <http://www.htslib.org/doc/tabix.html>`_
 
 Docstring
 *********

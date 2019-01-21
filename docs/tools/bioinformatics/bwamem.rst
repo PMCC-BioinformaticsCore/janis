@@ -8,7 +8,7 @@ Documentation
 
 URL
 ******
-`http://bio-bwa.sourceforge.net/bwa.shtml#3 <http://bio-bwa.sourceforge.net/bwa.shtml#3/>`_
+`http://bio-bwa.sourceforge.net/bwa.shtml#3 <http://bio-bwa.sourceforge.net/bwa.shtml#3>`_
 
 Docstring
 *********

@@ -8,7 +8,7 @@ Documentation
 
 URL
 ******
-`https://software.broadinstitute.org/software/igv/igvtools_commandline#index <https://software.broadinstitute.org/software/igv/igvtools_commandline#index/>`_
+`https://software.broadinstitute.org/software/igv/igvtools_commandline#index <https://software.broadinstitute.org/software/igv/igvtools_commandline#index>`_
 
 Docstring
 *********

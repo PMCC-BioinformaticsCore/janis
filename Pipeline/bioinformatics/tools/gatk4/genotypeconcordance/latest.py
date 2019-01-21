@@ -7,6 +7,4 @@ class Gatk4GenotypeConcordanceLatest(Gatk4Latest, Gatk4GenotypeConcordanceBase):
 
 
 if __name__ == "__main__":
-    # print(Gatk4GenotypeConcordanceLatest().help())
-
-    print(Gatk4GenotypeConcordanceLatest().wdl2().get_string())
+    print(Gatk4GenotypeConcordanceLatest().help())

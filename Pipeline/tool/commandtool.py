@@ -61,10 +61,6 @@ class CommandTool(Tool, ABC):
         return None
 
     @staticmethod
-    def docurl() -> Optional[str]:
-        return None
-
-    @staticmethod
     def requirements() -> Optional[List[cwl.Requirement]]:
         return None
 

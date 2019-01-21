@@ -17,7 +17,7 @@ class BcfToolsAnnotateBase(BcfToolsToolBase, ABC):
 
     def inputs(self):
         return [
-            ToolInput("file", File(), position=100),
+            ToolInput("file", Vcf(), position=100),
             ToolInput("outputFilename", Filename(extension=".vcf"), prefix="--output", doc='[-o] see Common Options'),
             *self.additional_args
         ]

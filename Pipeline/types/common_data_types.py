@@ -333,7 +333,7 @@ class Stdout(File):
     def primitive():
         return NativeTypes.kStdout
 
-    def __init__(self, subtype=None, stdoutname=None):
+    def __init__(self, subtype=File(), stdoutname=None):
         super().__init__(optional=False)
         self.subtype = subtype if subtype is not None else File()
         self.stdoutname = stdoutname

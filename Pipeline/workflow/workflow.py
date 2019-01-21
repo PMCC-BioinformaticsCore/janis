@@ -307,8 +307,23 @@ class Workflow(Tool):
         node = self._nodes.get(label)
 
         if node is not None:
-            if component is not None and label != component.id():
-                raise Exception(f"There already exists a node with id '{node.id()}' (clashes with {repr(component)}")
+            # Try to do some proper matching
+            node_comp = None
+            if isinstance(node, InputNode):
+                node_comp = node.input
+            elif isinstance(node, StepNode):
+                node_comp = node.step
+            elif isinstance(node, OutputNode):
+                node_comp = node.output
+
+            if component is not None and (
+                    label != component.id() or
+                    (isinstance(component, Input) and not node.node_type == NodeTypes.INPUT) or
+                    (isinstance(component, Step) and not node.node_type == NodeTypes.TASK) or
+                    (isinstance(component, Output) and not node.node_type == NodeTypes.OUTPUT) or
+                    (node_comp != component)):
+                raise Exception(f"There already exists a node with id '{node.id()}' "
+                                f"('{repr(component)}' clashes with '{repr(node_comp)}')")
             return node
 
         Logger.log(f"Could not find {node_type} node with identifier '{label}' in the workflow")

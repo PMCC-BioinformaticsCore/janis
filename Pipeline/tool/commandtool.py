@@ -141,7 +141,8 @@ class CommandTool(Tool, ABC):
             outs.append(wdl.Output(o.output_type.wdl(), o.id(), expression))
 
         command_ins = [
-            wdl.Command.CommandInput(
+
+            wdl.Task.Command.CommandInput(
                 name=i.id(),
                 optional=i.input_type.optional,
                 prefix=i.prefix,
@@ -160,11 +161,11 @@ class CommandTool(Tool, ABC):
                     val = a.value.wdl()
                 else:
                     val = a.value
-                command_args.append(wdl.Command.CommandArgument(a.prefix, val, a.position))
+                command_args.append(wdl.Task.Command.CommandArgument(a.prefix, val, a.position))
 
-        command = wdl.Command(self.base_command(), command_ins, command_args)
+        command = wdl.Task.Command(self.base_command(), command_ins, command_args)
 
-        r = wdl.Runtime()
+        r = wdl.Task.Runtime()
         if with_docker:
             r.add_docker(self.docker())
 

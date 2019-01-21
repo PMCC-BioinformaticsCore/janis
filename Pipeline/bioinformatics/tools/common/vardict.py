@@ -1,6 +1,7 @@
 from typing import List
 
 from Pipeline import CommandTool, ToolOutput, ToolInput, Filename, File, ToolArgument, Boolean, Float, Int, String
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fasta import FastaFai
 from Pipeline.bioinformatics.data_types.vcf import Vcf
@@ -10,7 +11,7 @@ from Pipeline.types.common_data_types import Stdout
 class VarDict(CommandTool):
     @staticmethod
     def tool():
-        return "SplitMultiAllele"
+        return "vardict"
 
     @staticmethod
     def base_command():
@@ -23,7 +24,7 @@ class VarDict(CommandTool):
         return [
             ToolInput("input", Bed(), position=2),
             ToolInput("outputFilename", Filename(extension=".vcf")),
-            ToolInput("indexedBam", String(), prefix="-b", position=1, doc="The indexed BAM file"),
+            ToolInput("indexedBam", BamPair(), prefix="-b", position=1, doc="The indexed BAM file"),
 
             ToolInput("referenceFasta", FastaFai(), prefix="-G", position=1,
                       doc="The reference fasta. Should be indexed (.fai). "

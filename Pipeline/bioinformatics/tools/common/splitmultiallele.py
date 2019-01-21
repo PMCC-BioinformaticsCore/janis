@@ -132,7 +132,5 @@ class SplitMultiAllele(CommandTool):
               -?  displays help 
         """.strip()
 
-
-
 if __name__ == "__main__":
     print(SplitMultiAllele().help())

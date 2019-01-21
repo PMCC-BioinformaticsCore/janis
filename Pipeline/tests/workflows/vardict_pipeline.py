@@ -1,8 +1,8 @@
-from Pipeline import File
-from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline import File, Array
+from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
-from Pipeline.bioinformatics.data_types.vcf import TabixIdx, VcfIdx
+from Pipeline.bioinformatics.data_types.vcf import VcfIdx
 from Pipeline.bioinformatics.tools.bcftools.annotate.latest import BcfToolsAnnotateLatest
 from Pipeline.bioinformatics.tools.common.splitmultiallele import SplitMultiAllele
 from Pipeline.bioinformatics.tools.common.vardict import VarDict
@@ -16,11 +16,11 @@ def create():
     w = p.Workflow("vardict_pipeline")
 
     input_bed = p.Input("input_bed", Bed())
-    indexed_bam = p.Input("indexed_bam", Bam())
+    indexed_bam = p.Input("indexed_bam", BamPair())
     reference = p.Input("reference", FastaWithDict())
     header_lines = p.Input("headerLines", File())
-    truth_vcf = p.Input("truthVcf", VcfIdx())
-    intervals = p.Input("intervals", File())
+    truth_vcf = p.Input("truthVcf", Array(VcfIdx()))
+    intervals = p.Input("intervals", Array(File()))
 
     step1 = p.Step("vardict", VarDict())
     step2 = p.Step("annotate", BcfToolsAnnotateLatest())
@@ -66,15 +66,16 @@ def create():
 
     # Step6 - genotypeConcordance
     w.add_edges([
-        (truth_vcf, step6),
+        (truth_vcf, step6.truthVCF),
         (step5, step6.callVCF),
         (intervals, step6.intervals)
     ])
 
     w.add_default_value(step6.treatMissingSitesAsHomeRef, True)
 
-    w.dump_cwl(to_disk=False, with_docker=False)
+    w.dump_cwl(to_disk=True, with_docker=False)
 
+VardictPipeline = create
 
 if __name__ == "__main__":
     create()

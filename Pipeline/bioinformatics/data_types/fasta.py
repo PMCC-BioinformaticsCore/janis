@@ -19,7 +19,7 @@ class Fasta(FastaFai):
 
     @staticmethod
     def secondary_files():
-        return [".amb", ".ann", ".bwt", ".pac", ".sa", FastaFai.secondary_files()]
+        return [".amb", ".ann", ".bwt", ".pac", ".sa", *FastaFai.secondary_files()]
 
 
 class FastaWithDict(Fasta):

@@ -73,7 +73,7 @@ class VarDict(CommandTool):
         ToolInput("filter", String(optional=True), prefix="-F", position=1,
                   doc="The hexical to filter reads using samtools. Default: 0x500 (filter 2nd alignments and "
                       "duplicates). Use -F 0 to turn it off."),
-        ToolInput("alleleFreqThreshold", Int(optional=True), prefix="-f", position=1,
+        ToolInput("alleleFreqThreshold", Float(optional=True), prefix="-f", position=1,
                   doc="The threshold for allele frequency, default: 0.05 or 5%"),
         ToolInput("geneNameCol", Int(optional=True), prefix="-g", position=1,
                   doc="The column for gene name, or segment annotation"),

@@ -35,4 +35,4 @@ Call germline SNPs and indels via local re-assembly of haplotypes
     for most variant callers, on the condition that the input read data has previously been processed according 
     to our recommendations as documented (https://software.broadinstitute.org/gatk/documentation/article?id=4067).
 
-    
+*This page was automatically generated*

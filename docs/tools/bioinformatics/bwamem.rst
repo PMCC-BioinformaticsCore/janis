@@ -27,4 +27,4 @@ bwa - Burrows-Wheeler Alignment Tool
     query sequence. This is a crucial feature for long sequences. However, some tools such as Picard’s markDuplicates 
     does not work with split alignments. One may consider to use option -M to flag shorter split hits as secondary.
 
-    
+*This page was automatically generated*

@@ -18,14 +18,15 @@ class ToolTypes:
 class ToolArgument:
     expr_pattern = "\$\(.*\)"
 
-    def __init__(self, value: str, prefix: Optional[str] = None, position: Optional[int] = 0,
-                 separate_value_from_prefix=None, doc: Optional[str]=None):
+    def __init__(self, value: Any, prefix: Optional[str] = None, position: Optional[int] = 0,
+                 separate_value_from_prefix=None, doc: Optional[str]=None, shell_quote: bool=None):
         self.prefix: Optional[str] = prefix
         self.value = value
         self.position: Optional[int] = position
-        self.is_expression = re.match(self.expr_pattern, self.value) is not None
+        self.is_expression = (re.match(self.expr_pattern, self.value) is not None) if self.value else None
         self.separate_value_from_prefix = separate_value_from_prefix
         self.doc = doc
+        self.shell_quote = shell_quote
 
         if self.prefix and self.separate_value_from_prefix is not None \
                 and not self.separate_value_from_prefix and not self.prefix.endswith("="):
@@ -38,7 +39,7 @@ class ToolArgument:
         elif callable(getattr(self.value, "cwl", None)):
             val = self.value.cwl()
         else:
-            val = self.value
+            val = str(self.value)
         return cwl.CommandLineBinding(
             # load_contents=False,
             position=self.position,
@@ -46,19 +47,20 @@ class ToolArgument:
             separate=self.separate_value_from_prefix,
             # item_separator=None,
             value_from=val,
-            # shell_quote=True,
+            shell_quote=self.shell_quote,
         )
 
 
 class ToolInput(ToolArgument):
     def __init__(self, tag: str, input_type: DataType, position: Optional[int] = None, prefix: Optional[str] = None,
                  separate_value_from_prefix: bool = None, default: Any = None, doc: Optional[str]=None,
-                 nest_input_binding_on_array: bool=True):
+                 nest_input_binding_on_array: bool=True, shell_quote=None):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
         """
-        super().__init__("", prefix, position, separate_value_from_prefix)
+        super().__init__(value=None, prefix=prefix, position=position,
+                         separate_value_from_prefix=separate_value_from_prefix, doc=doc, shell_quote=shell_quote)
 
         if default is not None:
             input_type.optional = True
@@ -67,7 +69,6 @@ class ToolInput(ToolArgument):
         self.input_type: DataType = input_type
         self.optional = self.input_type.optional
         self.default = default
-        self.doc = doc
         self.nest_input_binding_on_array = nest_input_binding_on_array
 
     def cwl(self):
@@ -79,10 +80,10 @@ class ToolInput(ToolArgument):
             # load_contents=self.load_contents,
             position=self.position,
             prefix=self.prefix,
-            separate=self.separate_value_from_prefix
+            separate=self.separate_value_from_prefix,
             # item_separator=self.item_separator,
             # value_from=self.value_from,
-            # shell_quote=self.shell_quote
+            shell_quote=self.shell_quote,
         )
 
         # Binding array inputs onto the console
@@ -94,10 +95,10 @@ class ToolInput(ToolArgument):
                 nested_binding = cwl.CommandLineBinding(
                     # load_contents=self.load_contents,
                     prefix=self.prefix,
-                    separate=self.separate_value_from_prefix
+                    separate=self.separate_value_from_prefix,
                     # item_separator=self.item_separator,
                     # value_from=self.value_from,
-                    # shell_quote=self.shell_quote
+                    shell_quote=self.shell_quote,
                 )
                 data_type.inputBinding = nested_binding
             else:
@@ -180,6 +181,9 @@ class Tool(ABC, object):
     def wdl(self, with_docker=True):
         raise Exception("Must implement get_string() method")
 
+    @staticmethod
+    def docurl():
+        return None
 
     @staticmethod
     def version():

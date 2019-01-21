@@ -8,5 +8,22 @@ Automatically generated index page for bioinformatics related tools.
    :maxdepth: 2
    :caption: Contents:
 
-   gatkhaplotypecaller
+   tabix
+   bgzip
+   igvtools-index
+   bcftoolsannotate
+   bcftoolsnorm
    bwamem
+   splitmultiallele
+   gatksortsam
+   samtoolsview
+   samtoolssort
+   gatk4genotypeconcordance
+   gatkhaplotypecaller
+   gatk4baserecalibrator
+   gatk4applybqsr
+   gatk4printreads
+   gatk4markduplicates
+   gatk4mergesamefiles
+   gatkmutect2
+   gatkprintreads

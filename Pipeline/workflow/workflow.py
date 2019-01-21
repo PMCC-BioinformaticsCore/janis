@@ -46,7 +46,7 @@ class Workflow(Tool):
 
         self.identifier = identifier
         self.label = label
-        self.doc = doc
+        self.documentation = doc
 
         self._nodes: Dict[str, Node] = {}  # Look up a node by its identifier
 
@@ -66,6 +66,10 @@ class Workflow(Tool):
         Returns the identifier of the workflow
         """
         return self.identifier
+
+    @staticmethod
+    def doc():
+        return None
 
     @classmethod
     def type(cls) -> ToolType:

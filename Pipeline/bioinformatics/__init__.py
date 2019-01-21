@@ -9,7 +9,7 @@ from constants import PROJECT_ROOT_DIR
 from Pipeline.types.data_types import DataType
 from Pipeline.types.registry import register_type
 from Pipeline.tool.commandtool import CommandTool
-from Pipeline.tool.registry import register_tool
+from Pipeline.tool.registry import register_tool, get_tools
 from Pipeline.utils.logger import Logger
 
 def try_register_type(cls):
@@ -43,12 +43,18 @@ def try_register_type(cls):
         Logger.log_ex(e)
         Logger.warn(traceback.format_exc())
 
+ignore_files = set(["regeneratedocumentation.py"])
 
 d = os.path.dirname(os.path.abspath(__file__))
+Logger.log("Locating modules from " + d)
 files = list(glob.glob(os.path.join(d, "**/*.py"), recursive=True))
+Logger.info(f"Finding modules in {len(files)} files")
 for file in files:
     if os.path.basename(file).startswith("__"):
         continue
+    if os.path.basename(file) in ignore_files:
+        continue
+
 
     name = os.path.splitext(file.replace(PROJECT_ROOT_DIR + "/", ""))[0].replace("/", ".")
     try:

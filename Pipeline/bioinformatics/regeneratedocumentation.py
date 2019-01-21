@@ -1,17 +1,23 @@
-from Pipeline import CommandTool
-from Pipeline.bioinformatics.tools.bwa.mem.latest import BwaMemLatest
-from Pipeline.bioinformatics.tools.gatk4.haplotypecaller.latest import Gatk4HaplotypeCallerLatest
+from Pipeline import CommandTool, Logger
+# from Pipeline.bioinformatics.tools.bwa.mem.latest import BwaMemLatest
+# from Pipeline.bioinformatics.tools.gatk4.haplotypecaller.latest import Gatk4HaplotypeCallerLatest
 
 from Pipeline.tool.registry import get_tools
+from Pipeline.tool.tool import Tool
 from constants import PROJECT_ROOT_DIR
 
 docs_dir = PROJECT_ROOT_DIR + "/docs/"
 tools_dir = docs_dir + "tools/"
 
+
 def format_rst_link(text, link):
     return f"`{text} <{link}/>`_"
 
-def prepare_tool(tool: CommandTool):
+
+def prepare_tool(tool: Tool):
+
+    if not tool:
+        return None, None, None
 
     tool_module = tool.__module__.split(".")[1]     # Pipeline._bioinformatics_.tools.$toolproducer.$toolname.$version
 
@@ -36,17 +42,21 @@ Docstring
 *********
 {tool.doc()}
 
-    """
+*This page was automatically generated*
+"""
 
 
 def prepare_all_tools():
     import Pipeline.bioinformatics
+    # tools = [[Gatk4HaplotypeCallerLatest], [BwaMemLatest]]
+    tools = get_tools()
 
-    tools = [[Gatk4HaplotypeCallerLatest], [BwaMemLatest]]
+    Logger.info(f"Preparing documentation for {len(tools)} tools")
     tool_module_index = {}
 
     for tool_vs in tools:
-        tool = tool_vs[0]()
+        tool = tool_vs[0][0]()
+        Logger.log("Preparing " + tool.id())
         module, output_filename, output_str, = prepare_tool(tool)
 
         if module in tool_module_index: tool_module_index[module].append(tool.id())
@@ -54,6 +64,7 @@ def prepare_all_tools():
 
         with open(output_filename, "w+") as tool_file:
             tool_file.write(output_str)
+        Logger.log("Prepared " + tool.id())
 
     for module in tool_module_index:
         module_filename = tools_dir + module + "/index.rst"
@@ -89,7 +100,4 @@ Tools
         tool_index_file.write(tool_index_page)
 
 
-
-
-if __name__ == "__main___":
-    prepare_all_tools()
+prepare_all_tools()

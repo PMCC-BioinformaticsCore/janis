@@ -26,7 +26,6 @@ class VarDict(CommandTool):
             ToolInput("referenceFasta", FastaFai(), prefix="-G", position=1, shell_quote=False,
                       doc="The reference fasta. Should be indexed (.fai). "
                           "Defaults to: /ngs/reference_data/genomes/Hsapiens/hg19/seq/hg19.fa"),
-            # ToolInput("reference", FastaWithDict()) # eventually
             *VarDict.vardict_inputs,
             *VarDict.var2vcf_inputs
         ]
@@ -39,7 +38,7 @@ class VarDict(CommandTool):
     def arguments(self):
         return [
             # ToolArgument("export VarDict=\"/config/binaries/vardict/1.5.1/bin/VarDict\";", position=0, shell_quote=False),
-            ToolArgument("$VarDict", position=0, shell_quote=False),
+            ToolArgument("vardict", position=0, shell_quote=False),
             ToolArgument("| $teststrandbias |", position=3, shell_quote=False),  # teststrandbias.R -> teststrandbias
             ToolArgument("$var2vcf_valid", position=4, shell_quote=False)     # var2vcf_valid.pl -> var2vcf_valid
         ]

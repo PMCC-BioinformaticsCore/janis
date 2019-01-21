@@ -76,6 +76,16 @@ def create():
 
     w.add_default_value(step6.treatMissingSitesAsHomeRef, True)
 
+
+    w.add_edges([
+        (step1.output, p.Output("vardicted")),
+        (step5.output, p.Output("tabixed")),
+        (step6.summaryMetrics, p.Output("summaryMetrics")),
+        (step6.detailMetrics, p.Output("detailMetrics")),
+        (step6.contingencyMetrics, p.Output("contingencyMetrics"))
+    ])
+
+
     w.dump_cwl(to_disk=True, with_docker=False)
     w.dump_wdl(to_disk=True, with_docker=False)
 

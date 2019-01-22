@@ -31,4 +31,26 @@ Apply base quality score recalibration: This tool performs the second pass in a 
     - Original qualities can be retained in the output file under the "OQ" tag if desired. 
         See the `--emit-original-quals` argument for details.
 
+Outputs
+-------
+======  =======
+name    type
+======  =======
+output  BamPair
+======  =======
+
+Inputs
+------
+==============  ===================  ===============================  ==========  =====================================================
+name            type                 prefix                             position  documentation
+==============  ===================  ===============================  ==========  =====================================================
+input           BamPair              -I                                       10  The SAM/BAM/CRAM file containing reads.
+reference       FastaWithDict        -R                                           Reference sequence
+outputFilename  Optional<Filename>   -O                                           Write output to this file
+recalFile       Optional<tsv>        --bqsr-recal-file                            Input recalibration table for BQSR
+pg-tag          Optional<Boolean>    --add-output-sam-program-record              If true, adds a PG tag to created SAM/BAM/CRAM files.
+tmpDir          Optional<Directory>  --tmp-dir                                11  Temp directory to use.
+==============  ===================  ===============================  ==========  =====================================================
+
+
 *This page was automatically generated*

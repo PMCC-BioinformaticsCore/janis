@@ -73,4 +73,31 @@ Samtools is a set of utilities that manipulate alignments in the BAM format. It 
         should be changed to an appropriate combination of -T PREFIX and -o FILE. The previous -o 
         option should be removed, as output defaults to standard output.
 
+Outputs
+-------
+================  ====================
+name              type
+================  ====================
+output            BAM
+temporaryOutputs  Optional<Array<BAM>>
+================  ====================
+
+Inputs
+------
+====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
+name                  type                prefix      position  documentation
+====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
+compression           Optional<Integer>   -l                    Set the desired compression level for the final output file, ranging from 0 (uncompressed) or 1 (fastest but minimal compression) to 9 (best compression but slowest to write), similarly to gzip(1)'s compression level setting.
+                                                                If -l is not used, the default compression level will apply.
+maximumMemory         Optional<String>    -m                    Approximately the maximum required memory per thread, specified  either in bytes or with a K, M, or G suffix [768 MiB]. To prevent sort from creating a huge number of temporary files, it enforces a minimum value of 1M for this setting.
+sortByReadNames       Optional<Boolean>   -n                    Sort by read names (i.e., the QNAME field) rather than by chromosomal coordinates.
+outputType            Optional<String>    -O                    Write the final output as sam, bam, or cram. By default, samtools tries to select a format based on the -o filename extension; if output is to standard output or no format can be deduced, bam is selected.
+temporaryFilesPrefix  Optional<String>    -T                    Write temporary files to PREFIX.nnnn.bam, or if the specified PREFIX is an existing directory, to PREFIX/samtools.mmm.mmm.tmp.nnnn.bam, where mmm is unique to this invocation of the sort command.
+                                                                By default, any temporary files are written alongside the output file, as out.bam.tmp.nnnn.bam, or if output is to standard output, in the current directory as samtools.mmm.mmm.tmp.nnnn.bam.
+threads               Optional<Integer>   -@                    Set number of sorting and compression threads. By default, operation is single-threaded.
+bam                   BAM                                   10
+outputFilename        Optional<Filename>  -o                 5  Output to FILE [stdout].
+====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
+
+
 *This page was automatically generated*

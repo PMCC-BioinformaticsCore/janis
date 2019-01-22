@@ -52,4 +52,20 @@ The igvtools utility provides a set of tools for pre-processing data files.
     
     Note: The "sai" index is an IGV format, it does not work with samtools or any other application.
 
+Outputs
+-------
+======  ======
+name    type
+======  ======
+======  ======
+
+Inputs
+------
+======  ==========  ========  ==========  ================================================================
+name    type        prefix    position    documentation
+======  ==========  ========  ==========  ================================================================
+input   vcf-gz-tbi                        The alignment or feature file for which an index will be created
+======  ==========  ========  ==========  ================================================================
+
+
 *This page was automatically generated*

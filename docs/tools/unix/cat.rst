@@ -14,4 +14,20 @@ Docstring
 *********
 None
 
+Outputs
+-------
+======  ======
+name    type
+======  ======
+======  ======
+
+Inputs
+------
+======  ===========  ========  ==========  ===============
+name    type         prefix    position    documentation
+======  ===========  ========  ==========  ===============
+files   Array<File>
+======  ===========  ========  ==========  ===============
+
+
 *This page was automatically generated*

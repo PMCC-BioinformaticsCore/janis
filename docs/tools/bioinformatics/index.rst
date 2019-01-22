@@ -14,6 +14,7 @@ Automatically generated index page for bioinformatics related tools.
    bcftoolsannotate
    bcftoolsnorm
    bwamem
+   vardict
    splitmultiallele
    gatksortsam
    samtoolsview

@@ -14,4 +14,21 @@ Docstring
 *********
 None
 
+Outputs
+-------
+======  ======
+name    type
+======  ======
+merged  File
+======  ======
+
+Inputs
+------
+======  ===========  ========  ==========  ===============
+name    type         prefix    position    documentation
+======  ===========  ========  ==========  ===============
+files   Array<File>
+======  ===========  ========  ==========  ===============
+
+
 *This page was automatically generated*

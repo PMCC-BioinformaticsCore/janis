@@ -1,4 +1,5 @@
 from Pipeline import CommandTool, Logger
+import tabulate
 # from Pipeline.bioinformatics.tools.bwa.mem.latest import BwaMemLatest
 # from Pipeline.bioinformatics.tools.gatk4.haplotypecaller.latest import Gatk4HaplotypeCallerLatest
 
@@ -16,6 +17,12 @@ def format_rst_link(text, link):
 
 def prepare_tool(tool: Tool):
 
+    # Stuff to list on the documentation page:
+    #   - Versions of tools
+    #   - Generated command
+    #   - Cool if it grouped the tools by vendor
+    #   -
+
     if not tool:
         return None, None, None
 
@@ -25,6 +32,14 @@ def prepare_tool(tool: Tool):
 
     formatted_url = format_rst_link(tool.docurl(), tool.docurl()) if tool.docurl() \
         else "*No URL to the documentation was provided*: " + format_rst_link("contribute one", "https://github.com/illusional")
+
+    input_headers = ["name", "type", "prefix", "position", "documentation"]
+    input_tuples = [[i.id(), i.input_type.id(), i.prefix, i.position, i.doc] for i in tool.inputs()]
+    formatted_inputs = tabulate.tabulate(input_tuples, input_headers, tablefmt="rst")
+
+    output_headers = ["name", "type"]
+    output_tuples = [[o.id(), o.output_type.id()] for o in tool.outputs()]
+    formatted_outputs = tabulate.tabulate(output_tuples, output_headers, tablefmt="rst")
 
     return tool_module, tool_dir, f"""
 {tool.id()}
@@ -41,6 +56,15 @@ URL
 Docstring
 *********
 {tool.doc()}
+
+Outputs
+-------
+{formatted_outputs}
+
+Inputs
+------
+{formatted_inputs}
+
 
 *This page was automatically generated*
 """
@@ -74,7 +98,7 @@ def prepare_all_tools():
 {module}
 {"=" * len(module)}
 
-Automatically generated index page for {module} related tools.
+Automatically generated index page for {module} tools.
 
 .. toctree::
    :maxdepth: 2

@@ -14,4 +14,26 @@ Docstring
 *********
 None
 
+Outputs
+-------
+===========  =======
+name         type
+===========  =======
+o1_bwa       SAM
+o2_samtools  BAM
+o3_sortsam   BamPair
+===========  =======
+
+Inputs
+------
+======================  =========  ========  ==========  ===============
+name                    type       prefix    position    documentation
+======================  =========  ========  ==========  ===============
+read_group_header_line  String
+fastq                   Fastq
+reference               Fasta
+tmpdir                  Directory
+======================  =========  ========  ==========  ===============
+
+
 *This page was automatically generated*

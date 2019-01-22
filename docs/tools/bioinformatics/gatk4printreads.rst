@@ -21,4 +21,22 @@ By default, PrintReads applies the WellformedReadFilter at the engine level. Wha
 
 The reference is strictly required when handling CRAM files.
 
+Outputs
+-------
+======  =======
+name    type
+======  =======
+output  BamPair
+======  =======
+
+Inputs
+------
+==============  ==================  ========  ==========  ===============
+name            type                prefix    position    documentation
+==============  ==================  ========  ==========  ===============
+input           BAM
+outputFilename  Optional<Filename>
+==============  ==================  ========  ==========  ===============
+
+
 *This page was automatically generated*

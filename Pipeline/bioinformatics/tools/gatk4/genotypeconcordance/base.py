@@ -107,7 +107,7 @@ class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
         ToolInput("minGQ", Float(optional=True), prefix="--MIN_GQ",
                   doc="Genotypes below this genotype quality will have genotypes classified as LowGq."),
         ToolInput("treatMissingSitesAsHomeRef", Boolean(optional=True), prefix="--MISSING_SITES_HOM_REF",
-                  doc="Default is false, which follows the GA4GH Scheme. If true, missing sites in the truth "
+                  doc="Default is false, which follows the GA4GH Scheme. If true, missing sites in the truth \n"
                       "set will be treated as HOM_REF sites and sites missing in both the truth and call sets "
                       "will be true negatives. Useful when hom ref sites are left out of the truth set. "
                       "This flag can only be used with a high confidence interval list."),

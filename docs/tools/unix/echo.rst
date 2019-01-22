@@ -14,4 +14,20 @@ Docstring
 *********
 None
 
+Outputs
+-------
+======  ======
+name    type
+======  ======
+======  ======
+
+Inputs
+------
+======  ======  ========  ==========  ===============
+name    type    prefix    position    documentation
+======  ======  ========  ==========  ===============
+inp     String
+======  ======  ========  ==========  ===============
+
+
 *This page was automatically generated*

@@ -14,4 +14,21 @@ Docstring
 *********
 None
 
+Outputs
+-------
+======  ===========
+name    type
+======  ===========
+files   Array<File>
+======  ===========
+
+Inputs
+------
+=======  =======  ========  ==========  ===============
+name     type     prefix    position    documentation
+=======  =======  ========  ==========  ===============
+tarFile  TarFile
+=======  =======  ========  ==========  ===============
+
+
 *This page was automatically generated*

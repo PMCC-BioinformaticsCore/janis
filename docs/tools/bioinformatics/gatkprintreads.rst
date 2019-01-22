@@ -30,4 +30,35 @@ The reference is strictly required when handling CRAM files.
 
 Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php
 
+Outputs
+-------
+============  =======
+name          type
+============  =======
+pairedOutput  BamPair
+============  =======
+
+Inputs
+------
+======================  =======================  ===================  ==========  ============================================================================
+name                    type                     prefix                 position  documentation
+======================  =======================  ===================  ==========  ============================================================================
+showFullBamList         Optional<Boolean>        --showFullBamList                Emit list of input BAM/CRAM files to log
+inputBam                BamPair                  -I                            6  BAM/SAM/CRAM file containing reads
+reference               FastaWithDict            -R                            5
+input_baseRecalibrator  File                     -BQSR                         7  the recalibration table produced by BaseRecalibration
+bedFile                 bed                      -L                           15
+sample_file             Optional<Array<File>>                                 11
+platform                Optional<String>         --platform                   13  Exclude all reads with this platform from the output
+number                  Optional<String>         --number                     13  Exclude all reads with this platform from the output
+simplify                Optional<Boolean>        --simplify                    9  Erase all extra attributes in the read but keep the read group information
+readGroup               Optional<String>         --readGroup                  12  Exclude all reads with this read group from the output
+sample_name             Optional<Array<String>>                               10  Sample name to be included in the analysis. Can be specified multiple times.
+outputFilename          Optional<String>         -o                            8  name of the output file from indelRealigner
+java_arg                Optional<String>                                       1
+threads                 Optional<Integer>        -nct                         14
+downsamplingType        Optional<String>         --downsampling_type          16
+======================  =======================  ===================  ==========  ============================================================================
+
+
 *This page was automatically generated*

@@ -69,7 +69,11 @@ Portability
    :caption: Contents:
 
    self
+
    workflowspecifications
+
+   userguide
+
    tools/index
    references/pipeline
 

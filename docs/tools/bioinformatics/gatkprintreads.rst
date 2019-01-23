@@ -32,11 +32,11 @@ Documentation: https://software.broadinstitute.org/gatk/documentation/tooldocs/c
 
 Outputs
 -------
-============  =======
-name          type
-============  =======
-pairedOutput  BamPair
-============  =======
+============  =======  =========================
+name          type     documentation
+============  =======  =========================
+pairedOutput  BamPair  Write output to this file
+============  =======  =========================
 
 Inputs
 ------

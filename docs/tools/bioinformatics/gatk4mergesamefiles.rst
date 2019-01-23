@@ -16,11 +16,11 @@ Merges multiple SAM/BAM files into one file
 
 Outputs
 -------
-======  =======
-name    type
-======  =======
+======  =======  ===============
+name    type     documentation
+======  =======  ===============
 output  BamPair
-======  =======
+======  =======  ===============
 
 Inputs
 ------

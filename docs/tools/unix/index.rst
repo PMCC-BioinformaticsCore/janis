@@ -2,7 +2,7 @@
 unix
 ====
 
-Automatically generated index page for unix related tools.
+Automatically generated index page for unix tools.
 
 .. toctree::
    :maxdepth: 2

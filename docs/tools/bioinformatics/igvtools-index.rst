@@ -54,10 +54,10 @@ The igvtools utility provides a set of tools for pre-processing data files.
 
 Outputs
 -------
-======  ======
-name    type
-======  ======
-======  ======
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+======  ======  ===============
 
 Inputs
 ------

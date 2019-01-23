@@ -2,7 +2,7 @@
 bioinformatics
 ==============
 
-Automatically generated index page for bioinformatics related tools.
+Automatically generated index page for bioinformatics tools.
 
 .. toctree::
    :maxdepth: 2
@@ -13,12 +13,14 @@ Automatically generated index page for bioinformatics related tools.
    igvtools-index
    bcftoolsannotate
    bcftoolsnorm
+   bcftoolsview
    bwamem
    vardict
    splitmultiallele
    gatksortsam
    samtoolsview
    samtoolssort
+   strelka
    gatk4genotypeconcordance
    gatkhaplotypecaller
    gatk4baserecalibrator

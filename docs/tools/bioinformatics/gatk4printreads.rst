@@ -23,11 +23,11 @@ The reference is strictly required when handling CRAM files.
 
 Outputs
 -------
-======  =======
-name    type
-======  =======
+======  =======  ===============
+name    type     documentation
+======  =======  ===============
 output  BamPair
-======  =======
+======  =======  ===============
 
 Inputs
 ------

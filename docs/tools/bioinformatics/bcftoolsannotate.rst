@@ -31,11 +31,11 @@ BCFtools is a set of utilities that manipulate variant calls in the Variant Call
 
 Outputs
 -------
-======  ======
-name    type
-======  ======
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
 output  VCF
-======  ======
+======  ======  ===============
 
 Inputs
 ------

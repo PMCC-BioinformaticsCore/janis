@@ -29,11 +29,11 @@ bwa - Burrows-Wheeler Alignment Tool
 
 Outputs
 -------
-======  ======
-name    type
-======  ======
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
 out     Stdout
-======  ======
+======  ======  ===============
 
 Inputs
 ------

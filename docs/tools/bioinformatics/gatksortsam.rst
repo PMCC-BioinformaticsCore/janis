@@ -16,11 +16,11 @@ Sorts a SAM/BAM/CRAM file.
 
 Outputs
 -------
-======  =======
-name    type
-======  =======
+======  =======  ===============
+name    type     documentation
+======  =======  ===============
 output  BamPair
-======  =======
+======  =======  ===============
 
 Inputs
 ------

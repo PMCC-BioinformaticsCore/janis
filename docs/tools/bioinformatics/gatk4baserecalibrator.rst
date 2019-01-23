@@ -24,11 +24,11 @@ First pass of the base quality score recalibration. Generates a recalibration ta
 
 Outputs
 -------
-======  ======
-name    type
-======  ======
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
 output  tsv
-======  ======
+======  ======  ===============
 
 Inputs
 ------

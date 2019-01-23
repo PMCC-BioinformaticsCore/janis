@@ -2,7 +2,7 @@
 workflow
 ========
 
-Automatically generated index page for workflow related tools.
+Automatically generated index page for workflow tools.
 
 .. toctree::
    :maxdepth: 2

@@ -26,11 +26,11 @@ tabix – Generic indexer for TAB-delimited genome position files
 
 Outputs
 -------
-======  ==========
-name    type
-======  ==========
+======  ==========  ===============
+name    type        documentation
+======  ==========  ===============
 output  vcf-gz-tbi
-======  ==========
+======  ==========  ===============
 
 Inputs
 ------

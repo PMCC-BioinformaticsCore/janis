@@ -37,8 +37,8 @@ def prepare_tool(tool: Tool):
     input_tuples = [[i.id(), i.input_type.id(), i.prefix, i.position, i.doc] for i in tool.inputs()]
     formatted_inputs = tabulate.tabulate(input_tuples, input_headers, tablefmt="rst")
 
-    output_headers = ["name", "type"]
-    output_tuples = [[o.id(), o.output_type.id()] for o in tool.outputs()]
+    output_headers = ["name", "type", "documentation"]
+    output_tuples = [[o.id(), o.output_type.id(), o.doc] for o in tool.outputs()]
     formatted_outputs = tabulate.tabulate(output_tuples, output_headers, tablefmt="rst")
 
     return tool_module, tool_dir, f"""
@@ -107,13 +107,13 @@ Automatically generated index page for {module} tools.
 {module_list}
 """)
 
-    modules = "\n".join("   " + k + "/index" for k in tool_module_index.keys())
+    modules = "\n".join("   " + k + "/index" for k in sorted(tool_module_index.keys()))
     tool_index_page = f"""
 Tools
 ======
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
 {modules}

@@ -60,12 +60,12 @@ MarkDuplicates (Picard)
 
 Outputs
 -------
-=======  =======
-name     type
-=======  =======
+=======  =======  ===============
+name     type     documentation
+=======  =======  ===============
 output   BamPair
 metrics  tsv
-=======  =======
+=======  =======  ===============
 
 Inputs
 ------

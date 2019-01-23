@@ -33,11 +33,11 @@ Apply base quality score recalibration: This tool performs the second pass in a 
 
 Outputs
 -------
-======  =======
-name    type
-======  =======
+======  =======  ===============
+name    type     documentation
+======  =======  ===============
 output  BamPair
-======  =======
+======  =======  ===============
 
 Inputs
 ------

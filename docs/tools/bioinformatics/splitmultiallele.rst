@@ -94,11 +94,11 @@ VcfSplitMultiAllele.sh
 
 Outputs
 -------
-======  ======
-name    type
-======  ======
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
 output  VCF
-======  ======
+======  ======  ===============
 
 Inputs
 ------

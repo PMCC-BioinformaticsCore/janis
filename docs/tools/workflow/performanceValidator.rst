@@ -16,13 +16,13 @@ None
 
 Outputs
 -------
-==================  ======
-name                type
-==================  ======
+==================  ======  ===============
+name                type    documentation
+==================  ======  ===============
 summaryMetrics      File
 detailMetrics       File
 contingencyMetrics  File
-==================  ======
+==================  ======  ===============
 
 Inputs
 ------

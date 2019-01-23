@@ -27,11 +27,11 @@ bgzip – Block compression/decompression utility
 
 Outputs
 -------
-======  ======
-name    type
-======  ======
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
 output  Stdout
-======  ======
+======  ======  ===============
 
 Inputs
 ------

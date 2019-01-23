@@ -37,11 +37,11 @@ Call germline SNPs and indels via local re-assembly of haplotypes
 
 Outputs
 -------
-======  ======
-name    type
-======  ======
-output  VCFIDX
-======  ======
+======  ======  ===================================================================================================
+name    type    documentation
+======  ======  ===================================================================================================
+output  VCFIDX  A raw, unfiltered, highly sensitive callset in VCF format. File to which variants should be written
+======  ======  ===================================================================================================
 
 Inputs
 ------

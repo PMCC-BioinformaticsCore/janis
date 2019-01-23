@@ -24,11 +24,11 @@ Call somatic short variants via local assembly of haplotypes. Short variants inc
 
 Outputs
 -------
-======  ======
-name    type
-======  ======
-output  VCF
-======  ======
+======  ======  =================
+name    type    documentation
+======  ======  =================
+output  VCF     To determine type
+======  ======  =================
 
 Inputs
 ------

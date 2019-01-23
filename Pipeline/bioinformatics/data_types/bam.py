@@ -7,8 +7,7 @@ class Bam(File):
     def name():
         return "BAM"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "A binary version of a SAM file, http://software.broadinstitute.org/software/igv/bam"
 
 

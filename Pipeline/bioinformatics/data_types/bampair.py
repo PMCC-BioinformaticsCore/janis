@@ -12,7 +12,6 @@ class BamPair(File):
     def secondary_files():
         return ["^.bai"]
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "A Bam and bai as the secondary"
 

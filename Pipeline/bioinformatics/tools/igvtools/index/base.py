@@ -26,8 +26,7 @@ class IgvToolsIndexBase(IgvToolsToolBase):
     def docurl():
         return "https://software.broadinstitute.org/software/igv/igvtools_commandline#index"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return IgvToolsToolBase.doc() + """
         
     ---------------------------------------------------------

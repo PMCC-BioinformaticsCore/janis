@@ -40,8 +40,7 @@ class SamToolsSortBase(SamToolsToolBase, ABC):
     def docurl():
         return "http://www.htslib.org/doc/samtools.html#DESCRIPTION"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return SamToolsToolBase.doc() + """
         
     ---------------------------------------------------------------------------------------------------

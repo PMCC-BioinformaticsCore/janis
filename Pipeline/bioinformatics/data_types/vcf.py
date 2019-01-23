@@ -8,8 +8,7 @@ class Vcf(File):
     def name():
         return "VCF"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     Variant Call Format:
 
@@ -36,8 +35,7 @@ class CompressedVcf(File):
     def name():
         return "compressed-vcf-gz"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return ".vcf.gz"
 
 
@@ -50,8 +48,7 @@ class TabixIdx(CompressedVcf):
     def secondary_files():
         return [".tbi"]
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return ".vcf.gz with .vcf.gz.tbi file"
 
 
@@ -60,8 +57,7 @@ class GVCF(Vcf):
     def name():
         return "gVCF"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
 Section 5.5: Representing unspecified alleles and REF only blocks (gVCF)
 Documentation: https://samtools.github.io/hts-specs/VCFv4.3.pdf

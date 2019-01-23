@@ -7,6 +7,5 @@ class Sam(File):
     def name():
         return "SAM"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "Tab-delimited text file that contains sequence alignment data"

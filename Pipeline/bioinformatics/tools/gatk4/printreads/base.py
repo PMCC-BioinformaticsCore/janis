@@ -32,8 +32,7 @@ class Gatk4PrintReadsBase(Gatk4ToolBase, ABC):
     def docurl():
         return "https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
         Overview
 Write reads from SAM format file (SAM/BAM/CRAM) that pass criteria to a new file.

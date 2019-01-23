@@ -44,8 +44,7 @@ class SamToolsViewBase(SamToolsToolBase, ABC):
     def docurl():
         return "http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     SAMTOOLS: view
     

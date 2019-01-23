@@ -57,8 +57,7 @@ class Gatk4BaseRecalibratorBase(Gatk4ToolBase, ABC):
     def docurl():
         return "https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_BaseRecalibrator.php"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     First pass of the base quality score recalibration. Generates a recalibration table based on various covariates. 
     The default covariates are read group, reported quality score, machine cycle, and nucleotide context.

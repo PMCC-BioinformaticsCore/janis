@@ -17,8 +17,7 @@ class Fastq(Array):
     def name():
         return "Fastq"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "FASTQ files are text files containing sequence data with quality score, there are different types" \
                "with no standard: https://www.drive5.com/usearch/manual/fastq_files.html"
 

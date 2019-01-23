@@ -48,8 +48,7 @@ class Gatk3RecalibratorBase(Gatk3ToolBase, ABC):
                           "the mismatch rate. Use '/dev/stdout' to print to standard out.")
         ]
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     First pass of the base quality score recalibration. Generates a recalibration table based on various covariates. 
     The default covariates are read group, reported quality score, machine cycle, and nucleotide context.

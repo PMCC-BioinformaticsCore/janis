@@ -31,8 +31,7 @@ class BcfToolsAnnotateBase(BcfToolsToolBase, ABC):
     def docurl():
         return "https://samtools.github.io/bcftools/bcftools.html#annotate"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return BcfToolsToolBase.doc() + """
     -------------------------------------------------------------------------
 

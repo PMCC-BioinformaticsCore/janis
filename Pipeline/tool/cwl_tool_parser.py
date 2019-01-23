@@ -25,8 +25,7 @@ class {toolClass}(CommandTool):
     def docker():
         return {docker}
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return {doc}
 
     def arguments(self):

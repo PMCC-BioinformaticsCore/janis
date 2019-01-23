@@ -20,8 +20,7 @@ class String(DataType):
     def primitive():
         return NativeTypes.kStr
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "A string"
 
     @classmethod
@@ -60,8 +59,7 @@ class Filename(String):
         self.optional = True
         return t
 
-    @staticmethod
-    def doc() -> str:
+    def doc(self) -> str:
         return """
 This class is a placeholder for generated filenames, by default it is optional and CAN be overrided, 
 however the program has been structured in a way such that these names will be generated based on the step label. 
@@ -100,8 +98,7 @@ class Int(DataType):
     def primitive():
         return NativeTypes.kInt
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "An integer"
 
     @classmethod
@@ -122,8 +119,7 @@ class Float(DataType):
     def primitive():
         return NativeTypes.kFloat
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "A float"
 
     @classmethod
@@ -144,8 +140,7 @@ class Double(DataType):
     def primitive():
         return NativeTypes.kDouble
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "An integer"
 
     @classmethod
@@ -166,8 +161,7 @@ class Boolean(DataType):
     def primitive():
         return NativeTypes.kBool
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "A boolean"
 
     @classmethod
@@ -194,8 +188,7 @@ class File(DataType):
     def primitive():
         return NativeTypes.kFile
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "A local file"
 
     @classmethod
@@ -228,8 +221,7 @@ class Directory(DataType):
     def primitive():
         return NativeTypes.kDirectory
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "A directory of files"
 
     def get_value_from_meta(self, meta):
@@ -282,8 +274,7 @@ class Array(DataType):
             return f"Optional<{typed}>"
         return typed
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "An array"
 
     @classmethod

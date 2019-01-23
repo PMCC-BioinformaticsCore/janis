@@ -19,8 +19,7 @@ class Gatk4SortSamBase(Gatk4ToolBase):
     def docurl():
         return "https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_SortSam.php"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     Sorts a SAM/BAM/CRAM file.    
     """.strip()

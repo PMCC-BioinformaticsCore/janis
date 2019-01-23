@@ -39,8 +39,7 @@ class Gatk4GenotypeConcordanceBase(Gatk4ToolBase, ABC):
     def docurl():
         return "https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.5.0/picard_vcf_GenotypeConcordance.php"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     GenotypeConcordance (Picard)
     Calculates the concordance between genotype data of one samples in each of two VCFs - one being 

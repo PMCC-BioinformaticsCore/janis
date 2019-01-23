@@ -44,8 +44,7 @@ class TabixBase(CommandTool, ABC):
     def docurl():
         return "http://www.htslib.org/doc/tabix.html"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     tabix – Generic indexer for TAB-delimited genome position files
     

@@ -23,8 +23,7 @@ class SamToolsToolBase(CommandTool, ABC):
 
         ]
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     Samtools is a set of utilities that manipulate alignments in the BAM format. It imports from 
     and exports to the SAM (Sequence Alignment/Map) format, does sorting, merging and indexing, 

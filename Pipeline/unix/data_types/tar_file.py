@@ -6,8 +6,7 @@ class TarFile(File):
     def name():
         return "TarFile"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "A tarfile, ending with .tar"
 
 

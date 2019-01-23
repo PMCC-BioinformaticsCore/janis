@@ -40,8 +40,7 @@ class Gatk3PrintReadsBase(Gatk3ToolBase, ABC):
 
         ]
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
 Write reads from SAM format file (SAM/BAM/CRAM) that pass criteria to a new file.
 A common use case is to subset reads by genomic interval using the -L argument. 

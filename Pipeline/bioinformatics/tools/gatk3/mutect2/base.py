@@ -47,8 +47,7 @@ class Gatk3Mutect2Base(Gatk3ToolBase, ABC):
 
     additional_args = []
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     MuTect2 is a somatic SNP and indel caller that combines the DREAM challenge-winning somatic genotyping 
     engine of the original MuTect (Cibulskis et al., 2013) with the assembly-based machinery of HaplotypeCaller.

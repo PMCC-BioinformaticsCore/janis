@@ -30,8 +30,7 @@ class BGZipBase(CommandTool, ABC):
     def docurl():
         return "http://www.htslib.org/doc/bgzip.html"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     bgzip – Block compression/decompression utility
 

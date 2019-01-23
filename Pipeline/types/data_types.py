@@ -16,7 +16,7 @@ from typing import Any, List, Dict, Optional
 from wdlgen.wdlgen import WdlType
 
 import cwlgen.cwlgen as cwl
-from Pipeline.translations.wdl.wdl import Wdl
+import wdlgen.wdlgen as wdl
 
 NativeType = str
 
@@ -71,22 +71,22 @@ class NativeTypes:
     @staticmethod
     def map_to_wdl(t: NativeType):
         if t == NativeTypes.kBool:
-            return Wdl.PRIMITIVES.kBOOLEAN
+            return wdl.PrimitiveType.kBoolean
         elif t == NativeTypes.kInt:
-            return Wdl.PRIMITIVES.kINT
+            return wdl.PrimitiveType.kInt
 
         elif t == NativeTypes.kLong or t == NativeTypes.kFloat or t == NativeTypes.kDouble:
-            return Wdl.PRIMITIVES.kFLOAT
+            return wdl.PrimitiveType.kFloat
         elif t == NativeTypes.kStr:
-            return Wdl.PRIMITIVES.kSTRING
+            return wdl.PrimitiveType.kString
         elif t == NativeTypes.kFile:
-            return Wdl.PRIMITIVES.kFILE
+            return wdl.PrimitiveType.kFile
         elif t == NativeTypes.kStdout:
-            return Wdl.PRIMITIVES.kFILE
+            return wdl.PrimitiveType.kFile
         elif t == NativeTypes.kDirectory:
-            return Wdl.PRIMITIVES.kINT
+            return None # wdl.PrimitiveType
         elif t == NativeTypes.kArray:
-            return Wdl.PRIMITIVES.kARRAY
+            return wdl.ArrayType.kArray
         raise Exception(f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}")
 
     @staticmethod
@@ -107,6 +107,8 @@ class NativeTypes:
             return {"type": "File", "path": "path/to/file"}
         elif t == NativeTypes.kDirectory:
             return { "type": "Directory", "path": "path/to/file"}
+        elif t == NativeTypes.kArray:
+            return []
 
 
 class DataType(ABC):

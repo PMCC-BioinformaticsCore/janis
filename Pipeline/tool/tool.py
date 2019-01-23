@@ -179,7 +179,12 @@ class Tool(ABC, object):
         raise Exception("Must implement cwl() method")
 
     def wdl(self, with_docker=True):
-        raise Exception("Must implement get_string() method")
+        raise Exception("Must implement wdl() method")
+
+    @abstractmethod
+    def friendly_name(self) -> str:
+        # maps to CWL label (still exploring for WDL)
+        raise Exception("Tools must implement friendly_name() method")
 
     @staticmethod
     def docurl():
@@ -189,12 +194,8 @@ class Tool(ABC, object):
     def version():
         return None
 
-    @staticmethod
-    def doc() -> Optional[str]:
+    def doc(self) -> Optional[str]:
         return None
-
-    def wdl_name(self):
-        return self.id().replace("-", "_")
 
     def help(self):
         import inspect
@@ -218,10 +219,10 @@ class Tool(ABC, object):
         return f"""
 Pipeline tool: {path} ({self.id()})
 NAME
-    {self.id()}
+    {self.friendly_name()} ({self.id()})
 
 DESCRIPTION
-    {self.doc() if self.doc is not None else "No documentation provided"}
+    {self.doc() if self.doc() is not None else "No documentation provided"}
 
 INPUTS:
 REQUIRED:

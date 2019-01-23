@@ -54,8 +54,7 @@ class Gatk3HaplotypeCallerBase(Gatk3ToolBase, ABC):
     #     return [base, "haplotypecaller"]
 
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     Call germline SNPs and indels via local re-assembly of haplotypes
     

@@ -49,8 +49,7 @@ class SplitMultiAllele(CommandTool):
         return [ShellCommandRequirement()]
 
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     VcfSplitMultiAllele.sh
     

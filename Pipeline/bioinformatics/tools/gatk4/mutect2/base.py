@@ -66,8 +66,7 @@ class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
     def docurl():
         return "https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     Call somatic short variants via local assembly of haplotypes. Short variants include single nucleotide (SNV) 
     and insertion and deletion (indel) variants. The caller combines the DREAM challenge-winning somatic 

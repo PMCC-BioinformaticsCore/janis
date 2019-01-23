@@ -38,8 +38,7 @@ class BwaMemBase(BwaToolBase):
     def docurl():
         return "http://bio-bwa.sourceforge.net/bwa.shtml#3"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     bwa - Burrows-Wheeler Alignment Tool
     

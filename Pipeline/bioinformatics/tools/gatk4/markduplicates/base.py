@@ -79,8 +79,7 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
     def docurl():
         return "https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     MarkDuplicates (Picard)
     

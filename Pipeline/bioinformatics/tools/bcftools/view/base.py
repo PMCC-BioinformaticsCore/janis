@@ -30,8 +30,7 @@ class BcfToolsViewBase(BcfToolsToolBase, ABC):
     def docurl():
         return "https://samtools.github.io/bcftools/bcftools.html#view"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "View, subset and filter VCF or BCF files by position and filtering expression. " \
                "Convert between VCF and BCF. Former bcftools subset."
 

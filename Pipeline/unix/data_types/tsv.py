@@ -6,6 +6,5 @@ class Tsv(File):
     def name():
         return "tsv"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "A tab separated file"

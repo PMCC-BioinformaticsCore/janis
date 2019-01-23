@@ -17,8 +17,7 @@ class TestDataType(DataType):
     def primitive() -> NativeType:
         return "test"  # This will intentionally break in production
 
-    @staticmethod
-    def doc() -> str:
+    def doc(self) -> str:
         return "This class is purely used to test how the register"
 
 

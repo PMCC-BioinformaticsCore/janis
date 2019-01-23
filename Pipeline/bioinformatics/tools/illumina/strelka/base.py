@@ -93,8 +93,7 @@ class StrelkaBase(CommandTool, ABC):
     def docurl():
         return "https://github.com/Illumina/strelka"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     Strelka2 is a fast and accurate small variant caller optimized for analysis of germline variation 
     in small cohorts and somatic variation in tumor/normal sample pairs. The germline caller employs 

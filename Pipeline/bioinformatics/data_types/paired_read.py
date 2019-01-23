@@ -10,8 +10,7 @@ class SequenceReadArchivePaired(DataType):
     def name():
         return "SequenceReadArchivePaired"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         pass
 
     @classmethod

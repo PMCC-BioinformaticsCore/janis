@@ -38,8 +38,7 @@ class Gatk4ApplyBqsrBase(Gatk4ToolBase, ABC):
     def docurl():
         return "https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_ApplyBQSR.php"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     Apply base quality score recalibration: This tool performs the second pass in a two-stage 
     process called Base Quality Score Recalibration (BQSR). Specifically, it recalibrates the 

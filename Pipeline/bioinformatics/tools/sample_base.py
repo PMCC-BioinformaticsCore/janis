@@ -10,8 +10,7 @@ class SampleBase(CommandTool):
     def tool():
         return "sample-tool-name"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """Documentation""".strip()
 
     def inputs(self):

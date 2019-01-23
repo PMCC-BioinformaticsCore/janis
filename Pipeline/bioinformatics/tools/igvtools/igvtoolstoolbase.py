@@ -14,8 +14,7 @@ class IgvToolsToolBase(CommandTool, ABC):
     def base_command(cls):
         return ["samtools", cls.igvtools_command()]
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     The igvtools utility provides a set of tools for pre-processing data files. 
     File names must contain an accepted file extension, e.g. test-xyz.bam. Tools include:

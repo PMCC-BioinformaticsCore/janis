@@ -167,8 +167,7 @@ class VarDict(CommandTool):
     def docurl():
         return "https://github.com/AstraZeneca-NGS/VarDict"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return  """
     VarDict
     

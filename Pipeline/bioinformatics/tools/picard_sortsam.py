@@ -28,8 +28,7 @@ class PicardSortSam(CommandTool):
     def docker():
         return "biocontainers/picard:v2.3.0_cv3"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "picard-SortSam.cwl is developed for CWL consortium. Generates a sorted file."
 
     def arguments(self):

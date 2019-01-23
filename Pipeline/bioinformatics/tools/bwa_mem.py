@@ -42,8 +42,7 @@ class BwaMem(CommandTool):
     def arguments(self):
         return [ToolArgument("-a", position=2), ToolArgument("-M", position=3)]
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """Usage: bwa mem [options] <idxbase> <in1.fq> [in2.fq]
 
   Algorithm options:

@@ -17,8 +17,7 @@ class BcfToolsToolBase(CommandTool, ABC):
     def base_command(cls):
         return ["bcftools", cls.bcftools_command()]
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     BCFtools is a set of utilities that manipulate variant calls in the Variant Call Format (VCF) and its binary 
     counterpart BCF. All commands work transparently with both VCFs and BCFs, both uncompressed and BGZF-compressed.

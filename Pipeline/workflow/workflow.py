@@ -67,8 +67,7 @@ class Workflow(Tool):
         """
         return self.identifier
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return None
 
     @classmethod

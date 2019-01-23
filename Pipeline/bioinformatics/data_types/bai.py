@@ -7,6 +7,5 @@ class Bai(File):
     def name():
         return "BAI"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return "Indexed BAM file (https://www.biostars.org/p/15847/), http://software.broadinstitute.org/software/igv/bam"

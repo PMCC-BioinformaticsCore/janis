@@ -41,8 +41,7 @@ class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
     def docurl():
         return "https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_haplotypecaller_HaplotypeCaller.php#"
 
-    @staticmethod
-    def doc():
+    def doc(self):
         return """
     Call germline SNPs and indels via local re-assembly of haplotypes
     

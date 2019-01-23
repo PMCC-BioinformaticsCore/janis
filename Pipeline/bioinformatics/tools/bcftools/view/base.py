@@ -42,7 +42,7 @@ class BcfToolsViewBase(BcfToolsToolBase, ABC):
                   doc="(-h) print the header only"),
         ToolInput("noHeader", Boolean(optional=True), prefix="--no-header", position=1,
                   doc="(-H) suppress the header in VCF output"),
-        ToolInput("compressionLeveßl", Int(optional=True), prefix="--compression-level", position=1,
+        ToolInput("compressionLevel", Int(optional=True), prefix="--compression-level", position=1,
                   doc="(-l) compression level: 0 uncompressed, 1 best speed, 9 best compression [-1]"),
         ToolInput("noVersion", Boolean(optional=True), prefix="--no-version", position=1,
                   doc="do not append version and command line to the header"),

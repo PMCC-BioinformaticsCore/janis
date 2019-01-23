@@ -61,15 +61,15 @@ class StrelkaBase(CommandTool, ABC):
             ToolOutput("configPickle", File(),
                        glob="$(inputs.relativeStrelkaDirectory + '/runWorkflow.py.config.pickle')"),
             ToolOutput("script", File(), glob="$(inputs.relativeStrelkaDirectory + '/runWorkflow.py')"),
-            ToolOutput("stats", Tsv(), glob="$(inputs.relativeStrelkaDirectory + '/stats/runStats.tsv')",
+            ToolOutput("stats", Tsv(), glob="$(inputs.relativeStrelkaDirectory + '/results/stats/runStats.tsv')",
                        doc="A tab-delimited report of various internal statistics from the variant calling process: "
                            "Runtime information accumulated for each genome segment, excluding auxiliary steps such "
                            "as BAM indexing and vcf merging. Indel candidacy statistics"),
             ToolOutput("variants", TabixIdx(),
-                       glob="$inputs.relativeStrelkaDirectory + '/results/variants/variants.vcf.gz')",
+                       glob="$(inputs.relativeStrelkaDirectory + '/results/variants/variants.vcf.gz')",
                        doc="Primary variant inferences are provided as a series of VCF 4.1 files"),
             ToolOutput("genome", TabixIdx(),
-                       glob="$inputs.relativeStrelkaDirectory + '/results/variants/genome.vcf.gz')"),
+                       glob="$(inputs.relativeStrelkaDirectory + '/results/variants/genome.vcf.gz')"),
         ]
 
     def arguments(self) -> List[ToolArgument]:

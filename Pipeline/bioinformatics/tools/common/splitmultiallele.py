@@ -17,7 +17,7 @@ class SplitMultiAllele(CommandTool):
 
     @staticmethod
     def docker():
-        return "SEE (mfranklin's notes in) DOCUMENTATION"
+        return "heuermh/vt"     # "SEE (mfranklin's notes in) DOCUMENTATION"
 
     def inputs(self) -> List[ToolInput]:
         return [

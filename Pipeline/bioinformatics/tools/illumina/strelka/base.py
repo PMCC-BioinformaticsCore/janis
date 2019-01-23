@@ -57,7 +57,7 @@ class StrelkaBase(CommandTool, ABC):
 
     def outputs(self) -> List[ToolOutput]:
         return [
-            ToolOutput("directory", Directory(), glob="$(inputs.relativeStrelkaDirectory)"),
+            # ToolOutput("directory", Directory(), glob="$(inputs.relativeStrelkaDirectory)"),
             ToolOutput("configPickle", File(),
                        glob="$(inputs.relativeStrelkaDirectory + '/runWorkflow.py.config.pickle')"),
             ToolOutput("script", File(), glob="$(inputs.relativeStrelkaDirectory + '/runWorkflow.py')"),

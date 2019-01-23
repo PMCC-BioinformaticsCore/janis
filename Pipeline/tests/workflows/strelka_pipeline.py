@@ -20,7 +20,7 @@ def strelka_pipeline():
     w.add_edges([
         (bam, s1_strelka),
         (ref, s1_strelka),
-        (s1_strelka.directory, p.Output("directory")),
+        # (s1_strelka.directory, p.Output("directory")),
         (s1_strelka.script, p.Output("script")),
         (s1_strelka.stats, p.Output("stats")),
         (s1_strelka.variants, p.Output("variants"))
@@ -41,4 +41,4 @@ def strelka_pipeline():
 
 
 w = strelka_pipeline()
-w.dump_cwl(to_disk=True, with_docker=False)
+w.dump_cwl(to_disk=True, with_docker=True)

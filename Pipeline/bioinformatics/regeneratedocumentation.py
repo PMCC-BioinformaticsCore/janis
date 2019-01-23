@@ -41,6 +41,10 @@ def prepare_tool(tool: Tool):
     output_tuples = [[o.id(), o.output_type.id(), o.doc] for o in tool.outputs()]
     formatted_outputs = tabulate.tabulate(output_tuples, output_headers, tablefmt="rst")
 
+    docker_tag = ""
+    if isinstance(tool, CommandTool):
+        docker_tag = "Docker\n******\n``" + tool.docker() + "``\n"
+
     return tool_module, tool_dir, f"""
 {tool.id()}
 {"=" * len(tool.id())}
@@ -49,6 +53,7 @@ def prepare_tool(tool: Tool):
 Documentation
 -------------
 
+{docker_tag}
 URL
 ******
 {formatted_url}

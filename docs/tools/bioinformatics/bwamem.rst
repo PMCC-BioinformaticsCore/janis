@@ -6,6 +6,10 @@ bwamem
 Documentation
 -------------
 
+Docker
+******
+``biocontainers/bwa:v0.7.15_cv3``
+
 URL
 ******
 `http://bio-bwa.sourceforge.net/bwa.shtml#3 <http://bio-bwa.sourceforge.net/bwa.shtml#3>`_

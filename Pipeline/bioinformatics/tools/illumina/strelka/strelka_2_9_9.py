@@ -6,7 +6,7 @@ from Pipeline.bioinformatics.tools.illumina.strelka.base import StrelkaBase
 class Strelka_2_9_9(StrelkaBase):
     @staticmethod
     def docker():
-        return "mgibio/strelka:2.9.9"
+        return "illusional/strelka"
 
 
 if __name__ == "__main__":

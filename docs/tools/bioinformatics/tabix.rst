@@ -6,6 +6,10 @@ tabix
 Documentation
 -------------
 
+Docker
+******
+``ubuntu:latest``
+
 URL
 ******
 `http://www.htslib.org/doc/tabix.html <http://www.htslib.org/doc/tabix.html>`_

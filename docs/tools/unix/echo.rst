@@ -6,6 +6,10 @@ echo
 Documentation
 -------------
 
+Docker
+******
+``ubuntu:latest``
+
 URL
 ******
 *No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_

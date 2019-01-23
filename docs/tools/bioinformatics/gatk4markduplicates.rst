@@ -6,6 +6,10 @@ gatk4markduplicates
 Documentation
 -------------
 
+Docker
+******
+``broadinstitute/gatk:4.0.12.0``
+
 URL
 ******
 `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php>`_

@@ -6,6 +6,10 @@ bcftoolsannotate
 Documentation
 -------------
 
+Docker
+******
+``biocontainers/bcftools:v1.5_cv2``
+
 URL
 ******
 `https://samtools.github.io/bcftools/bcftools.html#annotate <https://samtools.github.io/bcftools/bcftools.html#annotate>`_

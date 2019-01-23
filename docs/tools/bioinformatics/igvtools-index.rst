@@ -6,6 +6,10 @@ igvtools-index
 Documentation
 -------------
 
+Docker
+******
+``maxulysse/igvtools:2.0.0``
+
 URL
 ******
 `https://software.broadinstitute.org/software/igv/igvtools_commandline#index <https://software.broadinstitute.org/software/igv/igvtools_commandline#index>`_

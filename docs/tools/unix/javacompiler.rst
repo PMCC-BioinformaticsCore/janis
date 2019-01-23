@@ -6,6 +6,10 @@ javacompiler
 Documentation
 -------------
 
+Docker
+******
+``openjdk:8``
+
 URL
 ******
 *No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_

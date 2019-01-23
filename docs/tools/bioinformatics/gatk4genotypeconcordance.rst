@@ -6,6 +6,10 @@ gatk4genotypeconcordance
 Documentation
 -------------
 
+Docker
+******
+``broadinstitute/gatk:4.0.12.0``
+
 URL
 ******
 `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.5.0/picard_vcf_GenotypeConcordance.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.5.0/picard_vcf_GenotypeConcordance.php>`_

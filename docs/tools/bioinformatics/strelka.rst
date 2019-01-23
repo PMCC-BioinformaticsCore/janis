@@ -6,6 +6,10 @@ strelka
 Documentation
 -------------
 
+Docker
+******
+``illusional/strelka``
+
 URL
 ******
 `https://github.com/Illumina/strelka <https://github.com/Illumina/strelka>`_
@@ -42,7 +46,6 @@ Outputs
 ============  ==========  ===========================================================================================================================================================================================================================================
 name          type        documentation
 ============  ==========  ===========================================================================================================================================================================================================================================
-directory     Directory
 configPickle  File
 script        File
 stats         tsv         A tab-delimited report of various internal statistics from the variant calling process: Runtime information accumulated for each genome segment, excluding auxiliary steps such as BAM indexing and vcf merging. Indel candidacy statistics

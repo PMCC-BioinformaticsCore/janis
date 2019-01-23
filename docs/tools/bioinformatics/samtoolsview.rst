@@ -6,6 +6,10 @@ samtoolsview
 Documentation
 -------------
 
+Docker
+******
+``biocontainers/samtools:v1.7.0_cv3``
+
 URL
 ******
 `http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS <http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS>`_

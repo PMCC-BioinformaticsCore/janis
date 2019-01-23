@@ -1,5 +1,4 @@
 import Pipeline as p
-from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
 from Pipeline.bioinformatics.tools.bcftools.view.latest import BcfToolsViewLatest

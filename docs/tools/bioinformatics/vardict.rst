@@ -6,6 +6,10 @@ vardict
 Documentation
 -------------
 
+Docker
+******
+``ubuntu:latest``
+
 URL
 ******
 `https://github.com/AstraZeneca-NGS/VarDict <https://github.com/AstraZeneca-NGS/VarDict>`_

@@ -6,6 +6,10 @@ gatk4printreads
 Documentation
 -------------
 
+Docker
+******
+``broadinstitute/gatk:4.0.12.0``
+
 URL
 ******
 `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php>`_

@@ -6,6 +6,10 @@ bcftoolsnorm
 Documentation
 -------------
 
+Docker
+******
+``biocontainers/bcftools:v1.5_cv2``
+
 URL
 ******
 `https://samtools.github.io/bcftools/bcftools.html#norm <https://samtools.github.io/bcftools/bcftools.html#norm>`_

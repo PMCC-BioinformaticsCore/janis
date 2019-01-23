@@ -6,6 +6,10 @@ gatkprintreads
 Documentation
 -------------
 
+Docker
+******
+``broadinstitute/gatk3:3.7-0``
+
 URL
 ******
 *No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_

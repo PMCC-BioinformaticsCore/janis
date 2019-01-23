@@ -6,6 +6,10 @@ bgzip
 Documentation
 -------------
 
+Docker
+******
+``biodckrdev/htslib:1.2.1``
+
 URL
 ******
 `http://www.htslib.org/doc/bgzip.html <http://www.htslib.org/doc/bgzip.html>`_

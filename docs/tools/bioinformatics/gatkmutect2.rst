@@ -6,6 +6,10 @@ gatkmutect2
 Documentation
 -------------
 
+Docker
+******
+``broadinstitute/gatk:4.0.12.0``
+
 URL
 ******
 `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php>`_

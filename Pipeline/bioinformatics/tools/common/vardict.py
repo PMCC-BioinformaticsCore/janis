@@ -163,6 +163,43 @@ class VarDict(CommandTool):
         ToolInput("var2vcfAlleleFreqThreshold", Float(), prefix="-f", position=5, shell_quote=False),
     ]
 
+    @staticmethod
+    def docurl():
+        return "https://github.com/AstraZeneca-NGS/VarDict"
+
+    @staticmethod
+    def doc():
+        return  """
+    VarDict
+    
+    VarDict is an ultra sensitive variant caller for both single and paired sample variant 
+    calling from BAM files. VarDict implements several novel features such as amplicon bias 
+    aware variant calling from targeted sequencing experiments, rescue of long indels by 
+    realigning bwa soft clipped reads and better scalability than many Java based variant callers.
+
+    Due to the philosophy of VarDict in calling "everything", several downstream strategies have 
+    been developed to filter variants to for example the most likely cancer driving events. 
+    These strategies are based on evidence in different databases and/or quality metrics. 
+    http://bcb.io/2016/04/04/vardict-filtering/ provides an overview of how to develop further 
+    filters for VarDict. The script at https://github.com/AstraZeneca-NGS/VarDict/blob/master/vcf2txt.pl 
+    can be used to put the variants into a context by including information from dbSNP, Cosmic and ClinVar. 
+    We are open to suggestions from the community on how to best narrow down to the variants of most interest.
+    
+    A Java based drop-in replacement for vardict.pl is being developed at 
+    https://github.com/AstraZeneca-NGS/VarDictJava. The Java implementation is approximately 
+    10 times faster than the original Perl implementation and does not depend on samtools
+    
+    To enable amplicon aware variant calling (single sample mode only; not supported in paired 
+    variant calling), please make sure the bed file has 8 columns with the 7th and 8th columns 
+    containing the insert interval (therefore subset of the 2nd and 3rd column interval). 
+    
+    Requirements
+
+        - Perl (uses /usr/bin/env perl)
+        - R (uses /usr/bin/env R)
+        - samtools (must be in path, not required if using the Java implementation in place of vardict.pl)
+    """
+
 
 if __name__ == "__main__":
     print(VarDict().help())

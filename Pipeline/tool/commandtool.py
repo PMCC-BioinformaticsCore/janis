@@ -185,8 +185,9 @@ class CommandTool(Tool, ABC):
 
         docker = self.docker()
 
-        command = (self.base_command() if isinstance(self.base_command(), str) else " ".join(self.base_command())) \
-                  + args + prefixes
+        base = (self.base_command() if isinstance(self.base_command(), str) else " ".join(self.base_command())) \
+            if self.base_command() else ''
+        command = base + args + prefixes
 
         def input_format(t: ToolInput):
             prefix_with_space = ""

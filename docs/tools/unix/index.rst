@@ -5,12 +5,12 @@ unix
 Automatically generated index page for unix tools.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
+   cat
+   echo
+   javacompiler
    merge
    tar
-   cat
    untar
-   javacompiler
-   echo

@@ -92,7 +92,7 @@ def prepare_all_tools():
 
     for module in tool_module_index:
         module_filename = tools_dir + module + "/index.rst"
-        module_list = "\n".join("   " + m for m in tool_module_index[module])
+        module_list = "\n".join("   " + m for m in sorted(tool_module_index[module]))
         with open(module_filename, "w+") as module_file:
             module_file.write(f"""
 {module}
@@ -101,7 +101,7 @@ def prepare_all_tools():
 Automatically generated index page for {module} tools.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
 {module_list}
@@ -113,7 +113,7 @@ Tools
 ======
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
 {modules}

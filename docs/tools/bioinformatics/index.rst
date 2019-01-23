@@ -5,28 +5,28 @@ bioinformatics
 Automatically generated index page for bioinformatics tools.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
-   tabix
-   bgzip
-   igvtools-index
    bcftoolsannotate
    bcftoolsnorm
    bcftoolsview
+   bgzip
    bwamem
-   vardict
-   splitmultiallele
-   gatksortsam
-   samtoolsview
-   samtoolssort
-   strelka
-   gatk4genotypeconcordance
-   gatkhaplotypecaller
-   gatk4baserecalibrator
    gatk4applybqsr
-   gatk4printreads
+   gatk4baserecalibrator
+   gatk4genotypeconcordance
    gatk4markduplicates
    gatk4mergesamefiles
+   gatk4printreads
+   gatkhaplotypecaller
    gatkmutect2
    gatkprintreads
+   gatksortsam
+   igvtools-index
+   samtoolssort
+   samtoolsview
+   splitmultiallele
+   strelka
+   tabix
+   vardict

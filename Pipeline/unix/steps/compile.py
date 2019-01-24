@@ -18,6 +18,9 @@ class Compile(CommandTool):
     def base_command():
         return "javac"
 
+    def friendly_name(self):
+        return "Java compiler"
+
     @staticmethod
     def docker():
         return "openjdk:8"

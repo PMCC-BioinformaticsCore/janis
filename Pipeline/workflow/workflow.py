@@ -683,9 +683,15 @@ class Workflow(Tool):
 
     def cwl(self, is_nested_tool=False, with_docker=True):
 
-        w = cwl.Workflow(self.identifier, self.label, self.doc())
+        w = cwl.Workflow(self.identifier, self.friendly_name(), self.doc())
 
-        w.inputs = [i.cwl() for i in self._inputs]
+        w.inputs: List[cwl.InputParameter] = [i.cwl() for i in self._inputs]
+
+        rOverride = cwl.InputParameter(
+            "resourceOverride",
+            param_type=["null", self._generate_cwl_resource_override_schema()]
+        )
+        w.inputs.append(rOverride)
         w.steps = [s.cwl(is_nested_tool=is_nested_tool) for s in self._steps]
         w.outputs = [o.cwl() for o in self._outputs]
 
@@ -712,6 +718,23 @@ class Workflow(Tool):
         inp = {i.id(): i.input.cwl_input() for i in self._inputs}
 
         return w.get_dict(), inp, tools
+
+    def _generate_cwl_resource_override_schema(self):
+        schema = cwl.CommandInputRecordSchema()
+        resource_fields = [
+            cwl.CommandInputRecordSchema.CommandInputRecordField("coresMin", ["long", "string", "null"]),
+            cwl.CommandInputRecordSchema.CommandInputRecordField("coresMax", ["int", "string", "null"]),
+            cwl.CommandInputRecordSchema.CommandInputRecordField("ramMin", ["long", "string", "null"]),
+            cwl.CommandInputRecordSchema.CommandInputRecordField("ramMax", ["int", "string", "null"])
+        ]
+
+        for step in self._steps:
+            key = step.step.id()
+            step_resource_schema = cwl.CommandInputRecordSchema()
+            step_resource_schema.fields = resource_fields
+            schema.fields.append(cwl.CommandInputRecordSchema.CommandInputRecordField(key, ["null", step_resource_schema]))
+
+        return schema
 
     @staticmethod
     def build_aliases(steps):

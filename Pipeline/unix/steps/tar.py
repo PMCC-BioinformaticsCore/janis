@@ -13,6 +13,9 @@ class Tar(CommandTool):
     def tool():
         return "Tar"
 
+    def friendly_name(self):
+        return "Tar archive"
+
     @staticmethod
     def base_command():
         return ["tar", "cvf"]

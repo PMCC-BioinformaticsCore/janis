@@ -11,6 +11,9 @@ class SplitMultiAllele(CommandTool):
     def tool():
         return "SplitMultiAllele"
 
+    def friendly_name(self):
+        return "Split Multiple Alleles"
+
     @staticmethod
     def base_command():
         return None

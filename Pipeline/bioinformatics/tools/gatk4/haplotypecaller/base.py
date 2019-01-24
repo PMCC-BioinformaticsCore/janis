@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import Dict, Any, Optional
 
 from Pipeline import String, Int, File, ToolOutput, ToolInput, \
     ToolArgument, Boolean, Double, Array, Filename
@@ -9,6 +10,7 @@ from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx, Vcf
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 from Pipeline.utils.metadata import ToolMetadata
+from Pipeline.utils.resources import Resources
 
 
 class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
@@ -40,6 +42,37 @@ class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
                        doc="A raw, unfiltered, highly sensitive callset in VCF format. "
                            "File to which variants should be written"),
         ]
+
+
+
+
+
+    ################ HINTS TESTING ################
+
+
+
+
+    def resources(self, hints: Dict[str, Any]) -> Optional[Resources]:
+        if "genome_type" not in hints: return
+
+        gt = hints.get("genome_type")
+        if gt == "human":
+            return Resources(ram_min=64000)     # 64GiB
+        if gt == "cat":
+            return Resources(ram_min=16000)     # 16GiB
+        elif gt == "mouse":
+            return Resources(ram_min=4000)      # 4GiB
+
+
+
+
+
+    ############### / HINTS TESTING ###############
+
+
+
+
+
 
     def metadata(self):
         from datetime import date
@@ -85,7 +118,8 @@ to our recommendations as documented (https://software.broadinstitute.org/gatk/d
         ToolInput("alleles", File(optional=True), prefix="--alleles",
                   doc="(default: null) The set of alleles at which to genotype when --genotyping_mode "
                       "is GENOTYPE_GIVEN_ALLELES"),
-        ToolInput("annotateWithNumDiscoveredAlleles", Boolean(optional=True), prefix="--annotate-with-num-discovered-alleles",
+        ToolInput("annotateWithNumDiscoveredAlleles", Boolean(optional=True),
+                  prefix="--annotate-with-num-discovered-alleles",
                   doc="If provided, we will annotate records with the number of alternate alleles that were "
                       "discovered (but not necessarily genotyped) at a given site"),
         ToolInput("annotation", Array(String(), optional=True), prefix="--annotation",
@@ -172,7 +206,8 @@ to our recommendations as documented (https://software.broadinstitute.org/gatk/d
                   doc="-mbq (default: 10) Minimum base quality required to consider a base for calling"),
         ToolInput("nativePairHmmThreads", Int(optional=True), prefix="--native-pair-hmm-threads",
                   doc="(default: 4) How many threads should a native pairHMM implementation use"),
-        ToolInput("nativePairHmmUseDoublePrecision", Boolean(optional=True), prefix="--native-pair-hmm-use-double-precision",
+        ToolInput("nativePairHmmUseDoublePrecision", Boolean(optional=True),
+                  prefix="--native-pair-hmm-use-double-precision",
                   doc="use double precision in the native pairHmm. "
                       "This is slower but matches the java implementation better"),
         ToolInput("numReferenceSamplesIfNoCall", Int(optional=True), prefix="--num-reference-samples-if-no-call",

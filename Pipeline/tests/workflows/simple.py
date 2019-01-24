@@ -46,12 +46,6 @@ class TestSimple(unittest.TestCase):
 
         import Pipeline as p
 
-
-        w = p.Workflow("id")
-
-        inp1 = p.Input()
-
-
         # Logger.mute()
         w = Workflow("simple")
 
@@ -62,11 +56,11 @@ class TestSimple(unittest.TestCase):
         outp = Output("output", File())
 
         w.add_pipe(inp1, step1, step2, step3.files, outp)
-        w.add_edge(step1, step3.files)
+        # w.add_edge(step1, step3.files)
 
         # w.draw_graph()
         w.dump_cwl(to_disk=True, with_docker=False)
-        w.dump_wdl(to_disk=True, with_docker=True)
+        # w.dump_wdl(to_disk=True, with_docker=True)
 
         # Logger.unmute()
 

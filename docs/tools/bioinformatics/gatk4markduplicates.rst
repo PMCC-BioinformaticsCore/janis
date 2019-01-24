@@ -1,7 +1,9 @@
 
-gatk4markduplicates
-===================
-*bioinformatics*
+GATK4: Mark Duplicates
+============================================
+*bioinformatics* (gatk4markduplicates)
+
+
 
 Documentation
 -------------

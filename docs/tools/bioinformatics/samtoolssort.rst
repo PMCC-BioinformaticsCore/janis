@@ -1,7 +1,9 @@
 
-samtoolssort
-============
-*bioinformatics*
+SamTools: Sort
+=============================
+*bioinformatics* (samtoolssort)
+
+
 
 Documentation
 -------------

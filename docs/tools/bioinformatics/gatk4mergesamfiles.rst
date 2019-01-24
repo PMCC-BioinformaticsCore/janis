@@ -1,7 +1,9 @@
 
-gatk4mergesamfiles
-==================
-*bioinformatics*
+GATK4: Merge SAM Files
+===========================================
+*bioinformatics* (gatk4mergesamfiles)
+
+
 
 Documentation
 -------------

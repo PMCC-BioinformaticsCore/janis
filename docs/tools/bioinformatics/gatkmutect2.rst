@@ -1,7 +1,9 @@
 
-gatkmutect2
-===========
-*bioinformatics*
+GATK4: MuTect2
+============================
+*bioinformatics* (gatkmutect2)
+
+
 
 Documentation
 -------------

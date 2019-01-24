@@ -1,7 +1,9 @@
 
-strelka-germline
-================
-*bioinformatics*
+Strelka (Germline)
+=====================================
+*bioinformatics* (strelka-germline)
+
+
 
 Documentation
 -------------

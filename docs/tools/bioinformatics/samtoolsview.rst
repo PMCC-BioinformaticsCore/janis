@@ -1,7 +1,9 @@
 
-samtoolsview
-============
-*bioinformatics*
+SamTools: View
+=============================
+*bioinformatics* (samtoolsview)
+
+
 
 Documentation
 -------------

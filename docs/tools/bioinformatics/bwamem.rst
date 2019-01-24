@@ -1,7 +1,9 @@
 
-bwamem
-======
-*bioinformatics*
+BWA-MEM
+================
+*bioinformatics* (bwamem)
+
+
 
 Documentation
 -------------

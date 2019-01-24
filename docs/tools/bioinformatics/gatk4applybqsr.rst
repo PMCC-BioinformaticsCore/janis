@@ -1,7 +1,9 @@
 
-gatk4applybqsr
-==============
-*bioinformatics*
+GATK4: Apply base quality score recalibration
+==============================================================
+*bioinformatics* (gatk4applybqsr)
+
+
 
 Documentation
 -------------

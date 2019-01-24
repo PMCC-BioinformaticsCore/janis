@@ -1,7 +1,9 @@
 
-igvtools-index
-==============
-*bioinformatics*
+IGVTools: Index
+================================
+*bioinformatics* (igvtools-index)
+
+
 
 Documentation
 -------------

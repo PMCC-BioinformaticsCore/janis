@@ -1,7 +1,9 @@
 
-gatk4genotypeconcordance
-========================
-*bioinformatics*
+GATK4: Genotype Concordance
+======================================================
+*bioinformatics* (gatk4genotypeconcordance)
+
+
 
 Documentation
 -------------

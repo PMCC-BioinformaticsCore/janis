@@ -1,7 +1,9 @@
 
-bcftoolsview
-============
-*bioinformatics*
+BCFTools: View
+=============================
+*bioinformatics* (bcftoolsview)
+
+
 
 Documentation
 -------------

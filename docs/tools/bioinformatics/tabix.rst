@@ -1,7 +1,9 @@
 
-tabix
-=====
-*bioinformatics*
+Tabix
+=============
+*bioinformatics* (tabix)
+
+
 
 Documentation
 -------------

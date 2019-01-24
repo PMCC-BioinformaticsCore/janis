@@ -1,7 +1,9 @@
 
-gatkhaplotypecaller
-===================
-*bioinformatics*
+GATK4: Haplotype Caller
+=============================================
+*bioinformatics* (gatkhaplotypecaller)
+
+
 
 Documentation
 -------------

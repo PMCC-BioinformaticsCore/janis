@@ -35,6 +35,10 @@ def prepare_tool(tool: Tool):
     if not metadata:
         metadata = Metadata()
 
+    fn = tool.friendly_name() if tool.friendly_name() else tool.id()
+    en = f" ({tool.id()})" if fn != tool.id() else ""
+    tn = fn + en
+
     formatted_url = format_rst_link(metadata.documentationUrl, metadata.documentationUrl) if metadata.documentationUrl \
         else "*No URL to the documentation was provided*: " + format_rst_link("contribute one", "https://github.com/illusional")
 
@@ -51,9 +55,11 @@ def prepare_tool(tool: Tool):
         docker_tag = "Docker\n******\n``" + tool.docker() + "``\n"
 
     return tool_module, tool_dir, f"""
-{tool.id()}
-{"=" * len(tool.id())}
-*{tool_module}*
+{fn}
+{"=" * len(tn)}
+*{tool_module}*{en}
+
+
 
 Documentation
 -------------

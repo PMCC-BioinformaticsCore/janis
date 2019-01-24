@@ -1,7 +1,9 @@
 
-bcftoolsnorm
-============
-*bioinformatics*
+BCFTools: Normalize
+==================================
+*bioinformatics* (bcftoolsnorm)
+
+
 
 Documentation
 -------------

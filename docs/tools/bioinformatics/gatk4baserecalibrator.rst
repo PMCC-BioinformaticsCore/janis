@@ -1,7 +1,9 @@
 
-gatk4baserecalibrator
-=====================
-*bioinformatics*
+GATK4: Base Recalibrator
+================================================
+*bioinformatics* (gatk4baserecalibrator)
+
+
 
 Documentation
 -------------

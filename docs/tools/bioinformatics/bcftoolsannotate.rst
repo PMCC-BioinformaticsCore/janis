@@ -1,7 +1,9 @@
 
-bcftoolsannotate
-================
-*bioinformatics*
+BCFTools: Annotate
+=====================================
+*bioinformatics* (bcftoolsannotate)
+
+
 
 Documentation
 -------------

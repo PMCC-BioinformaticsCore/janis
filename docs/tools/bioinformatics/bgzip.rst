@@ -1,7 +1,9 @@
 
-bgzip
-=====
-*bioinformatics*
+BGZip
+=============
+*bioinformatics* (bgzip)
+
+
 
 Documentation
 -------------

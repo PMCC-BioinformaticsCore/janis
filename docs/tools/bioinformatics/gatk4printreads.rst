@@ -1,7 +1,9 @@
 
-gatk4printreads
-===============
-*bioinformatics*
+GATK4: Print Reads
+====================================
+*bioinformatics* (gatk4printreads)
+
+
 
 Documentation
 -------------

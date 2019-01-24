@@ -38,11 +38,6 @@ class BcfToolsAnnotateBase(BcfToolsToolBase, ABC):
             *self.additional_args
         ]
 
-    def outputs(self):
-        return [
-            ToolOutput("output", Vcf(), glob="$(inputs.outputFilename)")
-        ]
-
     @staticmethod
     def docurl():
         return "https://samtools.github.io/bcftools/bcftools.html#annotate"

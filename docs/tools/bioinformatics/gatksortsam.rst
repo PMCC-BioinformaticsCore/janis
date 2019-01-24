@@ -1,7 +1,9 @@
 
-gatksortsam
-===========
-*bioinformatics*
+GATK4: Base Recalibrator
+======================================
+*bioinformatics* (gatksortsam)
+
+
 
 Documentation
 -------------

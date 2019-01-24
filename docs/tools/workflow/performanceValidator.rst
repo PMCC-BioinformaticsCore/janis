@@ -3,8 +3,6 @@ performanceValidator
 ====================
 *workflow*
 
-
-
 Documentation
 -------------
 
@@ -37,5 +35,6 @@ truth      VCFIDX
 intervals  Array<VCFIDX>
 =========  =============  ========  ==========  ===============
 
+*performanceValidator was last updated on **Unknown***
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-24*

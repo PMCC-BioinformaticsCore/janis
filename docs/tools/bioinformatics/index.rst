@@ -8,7 +8,6 @@ Automatically generated index page for bioinformatics tools.
    :maxdepth: 1
    :caption: Contents:
 
-   bcftoolsannotate
    bcftoolsnorm
    bcftoolsview
    bgzip

@@ -1,3 +1,5 @@
+from datetime import date
+
 from Pipeline import CommandTool, Logger
 import tabulate
 # from Pipeline.bioinformatics.tools.bwa.mem.latest import BwaMemLatest
@@ -59,8 +61,6 @@ def prepare_tool(tool: Tool):
 {"=" * len(tn)}
 *{tool_module}*{en}
 
-
-
 Documentation
 -------------
 
@@ -81,8 +81,9 @@ Inputs
 ------
 {formatted_inputs}
 
+*{fn} was last updated on {metadata.dateUpdated if metadata.dateUpdated else "**Unknown**"}*.
 
-*This page was automatically generated*
+*This page was automatically generated on {date.today().strftime("%Y-%m-%d")}*.
 """
 
 

@@ -3,8 +3,6 @@ bwa_st_sort
 ===========
 *workflow*
 
-
-
 Documentation
 -------------
 
@@ -38,5 +36,6 @@ reference               Fasta
 tmpdir                  Directory
 ======================  =========  ========  ==========  ===============
 
+*bwa_st_sort was last updated on **Unknown***
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-24*

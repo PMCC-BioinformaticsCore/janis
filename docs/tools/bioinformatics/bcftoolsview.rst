@@ -3,8 +3,6 @@ BCFTools: View
 =============================
 *bioinformatics* (bcftoolsview)
 
-
-
 Documentation
 -------------
 
@@ -73,5 +71,6 @@ private           Optional<Boolean>        --private                     1  (-x)
 excludePrivate    Optional<Boolean>        --exclude-private             1  (-X) exclude sites where the non-reference alleles are exclusive (private) to the subset samples
 ================  =======================  ===================  ==========  ==============================================================================================================================================================================
 
+*BCFTools: View was last updated on **Unknown***
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-24*

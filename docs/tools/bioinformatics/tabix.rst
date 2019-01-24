@@ -3,8 +3,6 @@ Tabix
 =============
 *bioinformatics* (tabix)
 
-
-
 Documentation
 -------------
 
@@ -62,5 +60,6 @@ regions      Optional<File>     --regions               11  -R: Restrict to regi
 targets      Optional<File>     --targets               11  -T: Similar to -R but the entire input will be read sequentially and regions not listed in FILE will be skipped
 ===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
 
+*Tabix was last updated on 2018-12-24*
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-24*

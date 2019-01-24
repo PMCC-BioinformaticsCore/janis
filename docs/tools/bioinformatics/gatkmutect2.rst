@@ -3,8 +3,6 @@ GATK4: MuTect2
 ============================
 *bioinformatics* (gatkmutect2)
 
-
-
 Documentation
 -------------
 
@@ -54,5 +52,6 @@ afOfAllelesNotInResource  Optional<Float>     --af-of-alleles-not-in-resource   
 panelOfNormals            Optional<VCFIDX>    --panel-of-normals                       10  A panel of normals can be a useful (optional) input to help filter out commonly seen sequencing noise that may appear as low allele-fraction somatic variants.
 ========================  ==================  ===============================  ==========  ==============================================================================================================================================================
 
+*GATK4: MuTect2 was last updated on 2018-12-24*
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-24*

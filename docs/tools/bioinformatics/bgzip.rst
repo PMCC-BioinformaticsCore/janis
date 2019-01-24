@@ -3,8 +3,6 @@ BGZip
 =============
 *bioinformatics* (bgzip)
 
-
-
 Documentation
 -------------
 
@@ -59,5 +57,6 @@ size        Optional<Integer>  --size                    s: Decompress INT bytes
 threads     Optional<Integer>  --threads                 @: Number of threads to use [1].
 ==========  =================  ============  ==========  ========================================================================================================================================================================================================================================================
 
+*BGZip was last updated on 2018-12-24*
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-24*

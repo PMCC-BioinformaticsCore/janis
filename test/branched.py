@@ -1,35 +1,41 @@
 import unittest
 
-from pipeline_definition.pipeline_translator import PipelineTranslator
+from wehi.spec import Wehi
 import json
-import examples.bio_informatics
 
 _yml = """
 inputs:
-  fastq:
-    SequenceReadArchivePaired:
-      forward-pattern: '*_R1.fastq.gz'
-      backward-pattern: '*_R2.fastq.gz'
-  ref:
-    REFERENCE:
-      path: 'path/to/reference'
+    fastq:
+        type: SequenceReadArchivePaired
+        forward-pattern: '*_R1.fastq.gz'
+        backward-pattern: '*_R2.fastq.gz'
+    ref:
+        type: REFERENCE:
+        path: 'path/to/reference'
 
 steps:
-  - qc:
-      fastqc:
-  - remove-adaptors:
-      trim:
-  - align-to-human:
-      align:
-  - dedup:
-      dedup:
-  - intersect-genic:
-      input_scope: [dedup]
-      bedtools-intersect:
+    qc:
+      tool: fastqc      # outputs REFERENCE
+      input: fastq
+    remove-adaptors:
+      tool: trim        # outputs TrimmedReads
+      reads2: fastq 
+    align-to-human:
+      tool: align       # outputs: BAMFILE
+      trimmed-reads: remove-adaptors/output
+      reference: qc/output
+    dedup:
+        tool: dedup     # outputs BAMFILE
+        bamfile: align-to-human/output
+    intersect-genic:
+        # input: [dedup]
+        read: trim
+        tool: bedtools-intersect
         split: true
-  - intersect-nongenic:
-      input_scope: [dedup]
-      bedtools-intersect:
+    intersect-nongenic:
+        # input: [dedup]
+        read: trim
+        tool: bedtools-intersect
         reportNoOverlaps: true
 """
 
@@ -239,10 +245,10 @@ _expected = json.loads("""
 class BranchedPipeline(unittest.TestCase):
 
   def test_graph(self):
-    translator = PipelineTranslator(debug=True)
-    translation = translator.translate_string(_yml)
-    tr_json = json.loads(translation)
-    self.assertTrue(tr_json == _expected)
+    translator = Wehi("Branched Pipeline")
+    translator.parse_string(_yml)
+    # tr_json = json.loads(translation)
+    self.assertTrue(True)
 
 
 if __name__ == '__main__':

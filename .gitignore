@@ -74,8 +74,10 @@ venv/
 **/*.retry
 
 
+docs/_build/
 
 
 
 
 
+\.mypy_cache/

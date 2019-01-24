@@ -12,11 +12,11 @@ Docker
 
 URL
 ******
-`https://samtools.github.io/bcftools/bcftools.html#view <https://samtools.github.io/bcftools/bcftools.html#view>`_
+*No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_
 
 Docstring
 *********
-View, subset and filter VCF or BCF files by position and filtering expression. Convert between VCF and BCF. Former bcftools subset.
+None
 
 Outputs
 -------

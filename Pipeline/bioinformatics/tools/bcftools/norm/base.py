@@ -4,6 +4,7 @@ from Pipeline import ToolInput, String, Boolean, File, Filename, Array, Int, Too
 from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import TabixIdx, Vcf, VcfIdx
 from Pipeline.bioinformatics.tools.bcftools.bcftoolstoolbase import BcfToolsToolBase
+from Pipeline.utils.metadata import ToolMetadata
 
 
 class BcfToolsNormBase(BcfToolsToolBase, ABC):
@@ -12,6 +13,8 @@ class BcfToolsNormBase(BcfToolsToolBase, ABC):
     def tool():
         return "bcftoolsNorm"
 
+    def friendly_name(self):
+        return "BCFTools: Normalize"
     @classmethod
     def bcftools_command(cls):
         return "norm"
@@ -30,19 +33,24 @@ class BcfToolsNormBase(BcfToolsToolBase, ABC):
             ToolOutput("output", Vcf(), glob="$(inputs.outputFilename)")
         ]
 
-    @staticmethod
-    def docurl():
-        return "https://samtools.github.io/bcftools/bcftools.html#norm"
+    def metadata(self):
+        from datetime import date
 
-    def doc(self):
-        return BcfToolsToolBase.doc() + """\n
-    -------------------------------------------------------------------------
-    
-    Left-align and normalize indels, check if REF alleles match the reference, 
-    split multiallelic sites into multiple rows; recover multiallelics from 
-    multiple rows. Left-alignment and normalization will only be applied if 
-    the --fasta-ref option is supplied.
-    """.strip()
+        metadata: ToolMetadata = super(BcfToolsNormBase, self).metadata()
+        metadata.dateUpdated = date(2019, 1, 24)
+        metadata.doi = "http://www.ncbi.nlm.nih.gov/pubmed/19505943"
+        metadata.citation = "Li H, Handsaker B, Wysoker A, Fennell T, Ruan J, Homer N, Marth G, Abecasis G, Durbin R, " \
+                            "and 1000 Genome Project Data Processing Subgroup, The Sequence alignment/map (SAM) " \
+                            "format and SAMtools, Bioinformatics (2009) 25(16) 2078-9"
+        metadata.documentationUrl = "https://samtools.github.io/bcftools/bcftools.html#norm"
+        metadata.documentation = (metadata.documentation if metadata.documentation else "") + """\n
+-------------------------------------------------------------------------
+
+Left-align and normalize indels, check if REF alleles match the reference, 
+split multiallelic sites into multiple rows; recover multiallelics from 
+multiple rows. Left-alignment and normalization will only be applied if 
+the --fasta-ref option is supplied.
+"""
 
     additional_args = [
 

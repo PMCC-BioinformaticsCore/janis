@@ -186,8 +186,7 @@ class Tool(ABC, object):
         # maps to CWL label (still exploring for WDL)
         raise Exception("Tools must implement friendly_name() method")
 
-    @staticmethod
-    def docurl():
+    def metadata(self):
         return None
 
     @staticmethod
@@ -216,10 +215,13 @@ class Tool(ABC, object):
         optionalInputs = "\n".join(input_format(x) for x in ins if x.optional)
         outputs = "\n".join(output_format(o) for o in self.outputs())
 
+        fn = self.friendly_name() if self.friendly_name() else self.id()
+        en = f" ({self.id()})" if fn != self.id() else ""
+
         return f"""
-Pipeline tool: {path} ({self.id()})
+Pipeline tool: {path} ({fn})
 NAME
-    {self.friendly_name()} ({self.id()})
+    {fn + en}
 
 DESCRIPTION
     {self.doc() if self.doc() is not None else "No documentation provided"}

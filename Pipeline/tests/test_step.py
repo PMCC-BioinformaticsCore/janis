@@ -24,6 +24,9 @@ class ArrayTestTool(CommandTool):
     def outputs(self):
         return []
 
+    def friendly_name(self):
+        return "'test_step' array of strings tool"
+
 
 class TestStep(TestCase):
 

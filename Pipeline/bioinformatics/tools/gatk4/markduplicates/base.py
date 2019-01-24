@@ -4,6 +4,7 @@ from Pipeline import ToolInput, Filename, ToolOutput, File, Array, String, Int, 
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
 from Pipeline.unix.data_types.tsv import Tsv
+from Pipeline.utils.metadata import ToolMetadata
 
 
 class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
@@ -14,6 +15,9 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
     @staticmethod
     def tool():
         return "Gatk4MarkDuplicates"
+
+    def friendly_name(self):
+        return "GATK4: Mark Duplicates"
 
     def inputs(self):
         return [
@@ -32,6 +36,64 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
             ToolOutput("output", BamPair(), glob="$(inputs.outputFilename)"),
             ToolOutput("metrics", Tsv(), glob="$(inputs.metricsFilename)")
         ]
+
+    def metadata(self):
+        from datetime import date
+        return ToolMetadata(
+            creator="Michael Franklin",
+            maintainer="Michael Franklin",
+            maintainer_email="michael.franklin@petermac.org",
+            date_created=date(2018, 12, 24),
+            date_updated=date(2019, 1, 24),
+            institution="Broad Institute",
+            doi=None,
+            citation="See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information",
+            keywords=["gatk", "gatk4", "broad", "mark", "duplicates"],
+            documentation_url="https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php",
+            documentation="""MarkDuplicates (Picard): Identifies duplicate reads.
+
+This tool locates and tags duplicate reads in a BAM or SAM file, where duplicate reads are 
+defined as originating from a single fragment of DNA. Duplicates can arise during sample 
+preparation e.g. library construction using PCR. See also EstimateLibraryComplexity for 
+additional notes on PCR duplication artifacts. Duplicate reads can also result from a single 
+amplification cluster, incorrectly detected as multiple clusters by the optical sensor of the 
+sequencing instrument. These duplication artifacts are referred to as optical duplicates.
+
+The MarkDuplicates tool works by comparing sequences in the 5 prime positions of both reads 
+and read-pairs in a SAM/BAM file. An BARCODE_TAG option is available to facilitate duplicate
+marking using molecular barcodes. After duplicate reads are collected, the tool differentiates 
+the primary and duplicate reads using an algorithm that ranks reads by the sums of their 
+base-quality scores (default method).
+
+The tool's main output is a new SAM or BAM file, in which duplicates have been identified 
+in the SAM flags field for each read. Duplicates are marked with the hexadecimal value of 0x0400, 
+which corresponds to a decimal value of 1024. If you are not familiar with this type of annotation, 
+please see the following blog post for additional information.
+
+Although the bitwise flag annotation indicates whether a read was marked as a duplicate, 
+it does not identify the type of duplicate. To do this, a new tag called the duplicate type (DT) 
+tag was recently added as an optional output in the 'optional field' section of a SAM/BAM file. 
+Invoking the TAGGING_POLICY option, you can instruct the program to mark all the duplicates (All), 
+only the optical duplicates (OpticalOnly), or no duplicates (DontTag). The records within the 
+output of a SAM/BAM file will have values for the 'DT' tag (depending on the invoked TAGGING_POLICY), 
+as either library/PCR-generated duplicates (LB), or sequencing-platform artifact duplicates (SQ). 
+This tool uses the READ_NAME_REGEX and the OPTICAL_DUPLICATE_PIXEL_DISTANCE options as the 
+primary methods to identify and differentiate duplicate types. Set READ_NAME_REGEX to null to 
+skip optical duplicate detection, e.g. for RNA-seq or other data where duplicate sets are 
+extremely large and estimating library complexity is not an aim. Note that without optical 
+duplicate counts, library size estimation will be inaccurate.
+
+MarkDuplicates also produces a metrics file indicating the numbers 
+of duplicates for both single- and paired-end reads.
+
+The program can take either coordinate-sorted or query-sorted inputs, however the behavior 
+is slightly different. When the input is coordinate-sorted, unmapped mates of mapped records 
+and supplementary/secondary alignments are not marked as duplicates. However, when the input 
+is query-sorted (actually query-grouped), then unmapped mates and secondary/supplementary 
+reads are not excluded from the duplication test and can be marked as duplicate reads.
+
+If desired, duplicates can be removed using the REMOVE_DUPLICATE and REMOVE_SEQUENCING_DUPLICATES options.""".strip()
+        )
 
     additional_args = [
         ToolInput("argumentsFile", Array(File(), optional=True), prefix="--arguments_file", position=10,
@@ -74,56 +136,3 @@ class Gatk4MarkDuplicatesBase(Gatk4ToolBase, ABC):
                   doc="The --verbosity argument is an enumerated type (LogLevel), which can have "
                       "one of the following values: [ERROR, WARNING, INFO, DEBUG]")
     ]
-
-    @staticmethod
-    def docurl():
-        return "https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php"
-
-    def doc(self):
-        return """
-    MarkDuplicates (Picard)
-    
-    Identifies duplicate reads.
-    
-    This tool locates and tags duplicate reads in a BAM or SAM file, where duplicate reads are 
-    defined as originating from a single fragment of DNA. Duplicates can arise during sample 
-    preparation e.g. library construction using PCR. See also EstimateLibraryComplexity for 
-    additional notes on PCR duplication artifacts. Duplicate reads can also result from a single 
-    amplification cluster, incorrectly detected as multiple clusters by the optical sensor of the 
-    sequencing instrument. These duplication artifacts are referred to as optical duplicates.
-    
-    The MarkDuplicates tool works by comparing sequences in the 5 prime positions of both reads 
-    and read-pairs in a SAM/BAM file. An BARCODE_TAG option is available to facilitate duplicate
-    marking using molecular barcodes. After duplicate reads are collected, the tool differentiates 
-    the primary and duplicate reads using an algorithm that ranks reads by the sums of their 
-    base-quality scores (default method).
-    
-    The tool's main output is a new SAM or BAM file, in which duplicates have been identified 
-    in the SAM flags field for each read. Duplicates are marked with the hexadecimal value of 0x0400, 
-    which corresponds to a decimal value of 1024. If you are not familiar with this type of annotation, 
-    please see the following blog post for additional information.
-    
-    Although the bitwise flag annotation indicates whether a read was marked as a duplicate, 
-    it does not identify the type of duplicate. To do this, a new tag called the duplicate type (DT) 
-    tag was recently added as an optional output in the 'optional field' section of a SAM/BAM file. 
-    Invoking the TAGGING_POLICY option, you can instruct the program to mark all the duplicates (All), 
-    only the optical duplicates (OpticalOnly), or no duplicates (DontTag). The records within the 
-    output of a SAM/BAM file will have values for the 'DT' tag (depending on the invoked TAGGING_POLICY), 
-    as either library/PCR-generated duplicates (LB), or sequencing-platform artifact duplicates (SQ). 
-    This tool uses the READ_NAME_REGEX and the OPTICAL_DUPLICATE_PIXEL_DISTANCE options as the 
-    primary methods to identify and differentiate duplicate types. Set READ_NAME_REGEX to null to 
-    skip optical duplicate detection, e.g. for RNA-seq or other data where duplicate sets are 
-    extremely large and estimating library complexity is not an aim. Note that without optical 
-    duplicate counts, library size estimation will be inaccurate.
-    
-    MarkDuplicates also produces a metrics file indicating the numbers 
-    of duplicates for both single- and paired-end reads.
-    
-    The program can take either coordinate-sorted or query-sorted inputs, however the behavior 
-    is slightly different. When the input is coordinate-sorted, unmapped mates of mapped records 
-    and supplementary/secondary alignments are not marked as duplicates. However, when the input 
-    is query-sorted (actually query-grouped), then unmapped mates and secondary/supplementary 
-    reads are not excluded from the duplication test and can be marked as duplicate reads.
-    
-    If desired, duplicates can be removed using the REMOVE_DUPLICATE and REMOVE_SEQUENCING_DUPLICATES options.
-    """.strip()

@@ -5,6 +5,7 @@ from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
+from Pipeline.utils.metadata import ToolMetadata
 
 
 class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
@@ -14,7 +15,10 @@ class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
 
     @staticmethod
     def tool():
-        return "Gatk4MergeSameFiles"
+        return "Gatk4MergeSamFiles"
+
+    def friendly_name(self):
+        return "GATK4: Merge SAM Files"
 
     def inputs(self):
         return [
@@ -29,14 +33,21 @@ class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
             ToolOutput("output", BamPair(), glob="$(inputs.outputFilename)")
         ]
 
-    @staticmethod
-    def docurl():
-        return "https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_MergeSamFiles.php"
-
-    def doc(self):
-        return """
-    Merges multiple SAM/BAM files into one file
-        """.strip()
+    def metadata(self):
+        from datetime import date
+        return ToolMetadata(
+            creator="Michael Franklin",
+            maintainer="Michael Franklin",
+            maintainer_email="michael.franklin@petermac.org",
+            date_created=date(2018, 12, 24),
+            date_updated=date(2019, 1, 24),
+            institution="Broad Institute",
+            doi=None,
+            citation="See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information",
+            keywords=["gatk", "gatk4", "broad", "merge", "sam"],
+            documentation_url="https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_MergeSamFiles.php",
+            documentation="Merges multiple SAM/BAM files into one file"
+        )
 
     additional_args = [
         ToolInput("argumentsFile", Array(File(), optional=True), prefix="--arguments_file", position=10,
@@ -86,5 +97,4 @@ class Gatk4MergeSamFilesBase(Gatk4ToolBase, ABC):
         ToolInput("verbosity", String(optional=True), prefix="--verbosity", position=11,
                   doc="The --verbosity argument is an enumerated type (LogLevel), which can have "
                       "one of the following values: [ERROR, WARNING, INFO, DEBUG]")
-
     ]

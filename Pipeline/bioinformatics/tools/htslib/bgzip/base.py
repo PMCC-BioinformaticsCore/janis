@@ -4,6 +4,7 @@ from typing import List
 from Pipeline import CommandTool, ToolOutput, ToolInput, Boolean, Int, String, File
 from Pipeline.bioinformatics.data_types.vcf import TabixIdx, VcfIdx, Vcf, CompressedVcf
 from Pipeline.types.common_data_types import Stdout
+from Pipeline.utils.metadata import ToolMetadata
 
 
 class BGZipBase(CommandTool, ABC):
@@ -26,24 +27,35 @@ class BGZipBase(CommandTool, ABC):
             ToolOutput("output", Stdout(CompressedVcf(), stdoutname="$(inputs.file.basename + '.gz')"))
         ]
 
-    @staticmethod
-    def docurl():
-        return "http://www.htslib.org/doc/bgzip.html"
+    def friendly_name(self):
+        return "BGZip"
 
-    def doc(self):
-        return """
-    bgzip – Block compression/decompression utility
+    def metadata(self):
+        from datetime import date
+        return ToolMetadata(
+            creator="Michael Franklin",
+            maintainer="Michael Franklin",
+            maintainer_email="michael.franklin@petermac.org",
+            date_created=date(2018, 12, 24),
+            date_updated=date(2019, 1, 24),
+            institution="HTSLib",
+            doi=None,
+            citation=None,  #"",
+            keywords=["htslib", "bgzip", "compression"],
+            documentation_url="http://www.htslib.org/doc/bgzip.html",
+            documentation="""bgzip – Block compression/decompression utility
 
-    Bgzip compresses files in a similar manner to, and compatible with, gzip(1). The file is compressed 
-    into a series of small (less than 64K) 'BGZF' blocks. This allows indexes to be built against the 
-    compressed file and used to retrieve portions of the data without having to decompress the entire file.
+Bgzip compresses files in a similar manner to, and compatible with, gzip(1). The file is compressed 
+into a series of small (less than 64K) 'BGZF' blocks. This allows indexes to be built against the 
+compressed file and used to retrieve portions of the data without having to decompress the entire file.
 
-    If no files are specified on the command line, bgzip will compress (or decompress if the -d option is used) 
-    standard input to standard output. If a file is specified, it will be compressed (or decompressed with -d). 
-    If the -c option is used, the result will be written to standard output, otherwise when compressing bgzip 
-    will write to a new file with a .gz suffix and remove the original. When decompressing the input file must 
-    have a .gz suffix, which will be removed to make the output name. 
-    Again after decompression completes the input file will be removed.""".strip()
+If no files are specified on the command line, bgzip will compress (or decompress if the -d option is used) 
+standard input to standard output. If a file is specified, it will be compressed (or decompressed with -d). 
+If the -c option is used, the result will be written to standard output, otherwise when compressing bgzip 
+will write to a new file with a .gz suffix and remove the original. When decompressing the input file must 
+have a .gz suffix, which will be removed to make the output name. 
+Again after decompression completes the input file will be removed.""".strip()
+            )
 
     @staticmethod
     @abstractmethod

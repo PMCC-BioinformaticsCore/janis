@@ -17,16 +17,13 @@ Automatically generated index page for bioinformatics tools.
    gatk4baserecalibrator
    gatk4genotypeconcordance
    gatk4markduplicates
-   gatk4mergesamefiles
+   gatk4mergesamfiles
    gatk4printreads
    gatkhaplotypecaller
    gatkmutect2
-   gatkprintreads
    gatksortsam
    igvtools-index
    samtoolssort
    samtoolsview
-   splitmultiallele
-   strelka
+   strelka-germline
    tabix
-   vardict

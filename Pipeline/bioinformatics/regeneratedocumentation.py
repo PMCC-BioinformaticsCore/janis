@@ -5,6 +5,7 @@ import tabulate
 
 from Pipeline.tool.registry import get_tools
 from Pipeline.tool.tool import Tool
+from Pipeline.utils.metadata import Metadata
 from constants import PROJECT_ROOT_DIR
 
 docs_dir = PROJECT_ROOT_DIR + "/docs/"
@@ -30,7 +31,11 @@ def prepare_tool(tool: Tool):
 
     tool_dir = tools_dir + tool_module + "/" + tool.id() + ".rst"
 
-    formatted_url = format_rst_link(tool.docurl(), tool.docurl()) if tool.docurl() \
+    metadata = tool.metadata()
+    if not metadata:
+        metadata = Metadata()
+
+    formatted_url = format_rst_link(metadata.documentationUrl, metadata.documentationUrl) if metadata.documentationUrl \
         else "*No URL to the documentation was provided*: " + format_rst_link("contribute one", "https://github.com/illusional")
 
     input_headers = ["name", "type", "prefix", "position", "documentation"]
@@ -60,7 +65,7 @@ URL
 
 Docstring
 *********
-{tool.doc()}
+{metadata.documentation if metadata.documentation else tool.doc()}
 
 Outputs
 -------

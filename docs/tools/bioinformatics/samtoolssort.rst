@@ -16,66 +16,53 @@ URL
 
 Docstring
 *********
-Samtools is a set of utilities that manipulate alignments in the BAM format. It imports from 
-    and exports to the SAM (Sequence Alignment/Map) format, does sorting, merging and indexing, 
-    and allows to retrieve reads in any regions swiftly.
+Ensure SAMTOOLS.SORT is inheriting from parent metadata
+    
+---------------------------------------------------------------------------------------------------
 
-    Samtools is designed to work on a stream. It regards an input file `-' as the standard input (stdin) 
-    and an output file `-' as the standard output (stdout). Several commands can thus be combined with 
-    Unix pipes. Samtools always output warning and error messages to the standard error output (stderr).
+Sort alignments by leftmost coordinates, or by read name when -n is used. An appropriate 
+@HD-SO sort order header tag will be added or an existing one updated if necessary.
 
-    Samtools is also able to open a BAM (not SAM) file on a remote FTP or HTTP server if the BAM file 
-    name starts with `ftp://' or `http://'. Samtools checks the current working directory for the index 
-    file and will download the index upon absence. Samtools does not retrieve the entire alignment file 
-    unless it is asked to do so.
+The sorted output is written to standard output by default, or to the specified file (out.bam) 
+when -o is used. This command will also create temporary files tmpprefix.%d.bam as needed when 
+the entire alignment data cannot fit into memory (as controlled via the -m option).
 
-    Documentation: http://www.htslib.org/doc/samtools.html#DESCRIPTION
-        
-    ---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
-    Sort alignments by leftmost coordinates, or by read name when -n is used. An appropriate 
-    @HD-SO sort order header tag will be added or an existing one updated if necessary.
-    
-    The sorted output is written to standard output by default, or to the specified file (out.bam) 
-    when -o is used. This command will also create temporary files tmpprefix.%d.bam as needed when 
-    the entire alignment data cannot fit into memory (as controlled via the -m option).
-    
-    ---------------------------------------------------------------------------------------------------
-    
-    The following rules are used for ordering records.
+The following rules are used for ordering records.
 
-    If option -t is in use, records are first sorted by the value of the given alignment tag, and then 
-    by position or name (if using -n). For example, “-t RG” will make read group the primary sort key. 
-    The rules for ordering by tag are:
+If option -t is in use, records are first sorted by the value of the given alignment tag, and then 
+by position or name (if using -n). For example, “-t RG” will make read group the primary sort key. 
+The rules for ordering by tag are:
+
+- Records that do not have the tag are sorted before ones that do.
+- If the types of the tags are different, they will be sorted so that single character tags (type A) 
+    come before array tags (type B), then string tags (types H and Z), then numeric tags (types f and i).
+- Numeric tags (types f and i) are compared by value. Note that comparisons of floating-point values 
+    are subject to issues of rounding and precision.
+- String tags (types H and Z) are compared based on the binary contents of the tag using the C strcmp(3) function.
+- Character tags (type A) are compared by binary character value.
+- No attempt is made to compare tags of other types — notably type B array values will not be compared.
+
+When the -n option is present, records are sorted by name. Names are compared so as to give a 
+“natural” ordering — i.e. sections consisting of digits are compared numerically while all other 
+sections are compared based on their binary representation. This means “a1” will come before 
+“b1” and “a9” will come before “a10”. Records with the same name will be ordered according to 
+the values of the READ1 and READ2 flags (see flags).
+
+When the -n option is not present, reads are sorted by reference (according to the order of the 
+@SQ header records), then by position in the reference, and then by the REVERSE flag.
+
+*Note*
+
+    Historically samtools sort also accepted a less flexible way of specifying the 
+    final and temporary output filenames:
     
-    - Records that do not have the tag are sorted before ones that do.
-    - If the types of the tags are different, they will be sorted so that single character tags (type A) 
-        come before array tags (type B), then string tags (types H and Z), then numeric tags (types f and i).
-    - Numeric tags (types f and i) are compared by value. Note that comparisons of floating-point values 
-        are subject to issues of rounding and precision.
-    - String tags (types H and Z) are compared based on the binary contents of the tag using the C strcmp(3) function.
-    - Character tags (type A) are compared by binary character value.
-    - No attempt is made to compare tags of other types — notably type B array values will not be compared.
+    |   samtools sort [-f] [-o] in.bam out.prefix
     
-    When the -n option is present, records are sorted by name. Names are compared so as to give a 
-    “natural” ordering — i.e. sections consisting of digits are compared numerically while all other 
-    sections are compared based on their binary representation. This means “a1” will come before 
-    “b1” and “a9” will come before “a10”. Records with the same name will be ordered according to 
-    the values of the READ1 and READ2 flags (see flags).
-    
-    When the -n option is not present, reads are sorted by reference (according to the order of the 
-    @SQ header records), then by position in the reference, and then by the REVERSE flag.
-    
-    *Note*
-    
-        Historically samtools sort also accepted a less flexible way of specifying the 
-        final and temporary output filenames:
-        
-        |   samtools sort [-f] [-o] in.bam out.prefix
-        
-        This has now been removed. The previous out.prefix argument (and -f option, if any) 
-        should be changed to an appropriate combination of -T PREFIX and -o FILE. The previous -o 
-        option should be removed, as output defaults to standard output.
+    This has now been removed. The previous out.prefix argument (and -f option, if any) 
+    should be changed to an appropriate combination of -T PREFIX and -o FILE. The previous -o 
+    option should be removed, as output defaults to standard output.
 
 Outputs
 -------

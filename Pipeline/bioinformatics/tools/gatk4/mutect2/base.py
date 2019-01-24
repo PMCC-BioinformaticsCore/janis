@@ -6,6 +6,7 @@ from Pipeline.bioinformatics.data_types.bed import Bed
 from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import VcfIdx, Vcf
 from Pipeline.bioinformatics.tools.gatk4.gatk4toolbase import Gatk4ToolBase
+from Pipeline.utils.metadata import ToolMetadata
 
 
 class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
@@ -16,6 +17,9 @@ class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
     @staticmethod
     def tool():
         return "gatkmutect2"
+
+    def friendly_name(self):
+        return "GATK4: MuTect2"
 
     @staticmethod
     def requirements():
@@ -62,54 +66,28 @@ class Gatk4Mutect2Base(Gatk4ToolBase, ABC):
 
     additional_args = []
 
-    @staticmethod
-    def docurl():
-        return "https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php"
+    def metadata(self):
+        from datetime import date
+        return ToolMetadata(
+            creator="Michael Franklin",
+            maintainer="Michael Franklin",
+            maintainer_email="michael.franklin@petermac.org",
+            date_created=date(2018, 12, 24),
+            date_updated=date(2019, 1, 24),
+            institution="Broad Institute",
+            doi=None,
+            citation="See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information",
+            keywords=["gatk", "gatk4", "broad", "mutect2"],
+            documentation_url="https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php",
+            documentation="""
+Call somatic short variants via local assembly of haplotypes. Short variants include single nucleotide (SNV) 
+and insertion and deletion (indel) variants. The caller combines the DREAM challenge-winning somatic 
+genotyping engine of the original MuTect (Cibulskis et al., 2013) with the assembly-based machinery of HaplotypeCaller.
 
-    def doc(self):
-        return """
-    Call somatic short variants via local assembly of haplotypes. Short variants include single nucleotide (SNV) 
-    and insertion and deletion (indel) variants. The caller combines the DREAM challenge-winning somatic 
-    genotyping engine of the original MuTect (Cibulskis et al., 2013) with the assembly-based machinery of HaplotypeCaller.
-
-    This tool is featured in the Somatic Short Mutation calling Best Practice Workflow. See Tutorial#11136 
-    for a step-by-step description of the workflow and Article#11127 for an overview of what traditional 
-    somatic calling entails. For the latest pipeline scripts, see the Mutect2 WDL scripts directory. 
-    Although we present the tool for somatic calling, it may apply to other contexts, 
-    such as mitochondrial variant calling.
+This tool is featured in the Somatic Short Mutation calling Best Practice Workflow. See Tutorial#11136 
+for a step-by-step description of the workflow and Article#11127 for an overview of what traditional 
+somatic calling entails. For the latest pipeline scripts, see the Mutect2 WDL scripts directory. 
+Although we present the tool for somatic calling, it may apply to other contexts, 
+such as mitochondrial variant calling.
 """.strip()
-
-# if __name__ == "__main__":
-#     print(Gatk4Mutect2Base().help())
-
-
-
-# class GatkMutect2(CommandTool):
-#     inputBam_tumor =
-#
-#     output = ToolOutput("output", File(), glob='$(inputs.outputfile_name)')
-#
-#     @staticmethod
-#     def tool():
-#         return "GatkMutect2"
-#
-#     @staticmethod
-#     def base_command():
-#         return ['java']
-#
-#     @staticmethod
-#     def docker():
-#         return "broadinstitute/gatk3:3.7-0"
-#
-#     @staticmethod
-#     def doc():
-#         return None
-#
-#     def arguments(self):
-#         return [
-#             ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
-#             # ToolArgument("/usr/GenomeAnalysisTK.jar", position=3, prefix="-jar"),
-#             ToolArgument("MuTect2", position=4, prefix="-T")
-#         ]
-#
-#     java_arg = ToolInput("java_arg", String(optional=True), position=1, default="-Xmx4g")
+        )

@@ -37,6 +37,9 @@ class TestTool(CommandTool):
     def outputs(self) -> List[ToolOutput]:
         return []
 
+    def friendly_name(self):
+        return "Registry tool test"
+
 
 class TestTaggedTool(TestTool):
 

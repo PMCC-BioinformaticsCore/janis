@@ -5,6 +5,7 @@ from Pipeline.bioinformatics.data_types.bam import Bam
 from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
 from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.bioinformatics.tools.samtools.samtoolstoolbase import SamToolsToolBase
+from Pipeline.utils.metadata import ToolMetadata
 
 
 class SamToolsViewBase(SamToolsToolBase, ABC):
@@ -40,20 +41,33 @@ class SamToolsViewBase(SamToolsToolBase, ABC):
             ToolOutput("out", Bam(), glob="$(inputs.outputFilename)"),
         ]
 
-    @staticmethod
-    def docurl():
-        return "http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS"
+    def friendly_name(self):
+        return "SamTools: View"
 
-    def doc(self):
-        return """
-    SAMTOOLS: view
+    def metadata(self):
+        from datetime import date
+        return ToolMetadata(
+            creator="Michael Franklin",
+            maintainer="Michael Franklin",
+            maintainer_email="michael.franklin@petermac.org",
+            date_created=date(2018, 12, 24),
+            date_updated=date(2019, 1, 24),
+            institution="Samtools",
+            doi=None,
+            citation=None,  # find citation
+            keywords=["samtools", "view"],
+            documentation_url="http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS",
+            documentation="""Ensure SAMTOOLS.SORT is inheriting from parent metadata
+        
+---------------------------------------------------------------------------------------------------
     
-    With no options or regions specified, prints all alignments in the specified input alignment file 
-    (in SAM, BAM, or CRAM format) to standard output in SAM format (with no header).
-    
-    You may specify one or more space-separated region specifications after the input filename to 
-    restrict output to only those alignments which overlap the specified region(s). 
-    Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format).""".strip()
+With no options or regions specified, prints all alignments in the specified input alignment file 
+(in SAM, BAM, or CRAM format) to standard output in SAM format (with no header).
+
+You may specify one or more space-separated region specifications after the input filename to 
+restrict output to only those alignments which overlap the specified region(s). 
+Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format).""".strip()
+        )
 
     def arguments(self):
         return [

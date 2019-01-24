@@ -1,6 +1,7 @@
 from Pipeline import ToolInput
 from Pipeline.bioinformatics.data_types.vcf import TabixIdx
 from Pipeline.bioinformatics.tools.igvtools.igvtoolstoolbase import IgvToolsToolBase
+from Pipeline.utils.metadata import ToolMetadata
 
 
 class IgvToolsIndexBase(IgvToolsToolBase):
@@ -22,13 +23,25 @@ class IgvToolsIndexBase(IgvToolsToolBase):
 
         ]
 
-    @staticmethod
-    def docurl():
-        return "https://software.broadinstitute.org/software/igv/igvtools_commandline#index"
+    def friendly_name(self):
+        return "IGVTools: Index"
 
-    def doc(self):
-        return IgvToolsToolBase.doc() + """
-        
+    def metadata(self):
+        from datetime import date
+        return ToolMetadata(
+            creator="Michael Franklin",
+            maintainer="Michael Franklin",
+            maintainer_email="michael.franklin@petermac.org",
+            date_created=date(2018, 12, 24),
+            date_updated=date(2019, 1, 24),
+            institution="Broad Institute",
+            doi=None,
+            citation=None, # find citation
+            keywords=["broad", "igvtools", "index"],
+            documentation_url="https://software.broadinstitute.org/software/igv/igvtools_commandline#index",
+            documentation="""
+    TODO: ensure igvtools.index is inheriting the metadata from it's superclass
+    
     ---------------------------------------------------------
     
     Creates an index for an alignment or feature file. Index files are required for loading alignment files 
@@ -41,3 +54,4 @@ class IgvToolsIndexBase(IgvToolsToolBase):
     Supported input file formats are: .sam, .bam, .aligned, .vcf, .psl, and .bed.
     
     Note: The "sai" index is an IGV format, it does not work with samtools or any other application."""
+        )

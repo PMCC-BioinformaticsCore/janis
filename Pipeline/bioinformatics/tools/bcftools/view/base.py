@@ -4,9 +4,14 @@ from typing import List
 from Pipeline import ToolOutput, ToolInput, Boolean, Int, String, File, Array, Float, Stdout
 from Pipeline.bioinformatics.data_types.vcf import Vcf
 from Pipeline.bioinformatics.tools.bcftools.bcftoolstoolbase import BcfToolsToolBase
+from Pipeline.utils.metadata import ToolMetadata
 
 
 class BcfToolsViewBase(BcfToolsToolBase, ABC):
+
+    def friendly_name(self):
+        return "BCFTools: View"
+
     @classmethod
     def bcftools_command(cls):
         return "view"
@@ -14,6 +19,20 @@ class BcfToolsViewBase(BcfToolsToolBase, ABC):
     @staticmethod
     def tool():
         return "bcftoolsview"
+
+    def metadata(self):
+        from datetime import date
+
+        metadata: ToolMetadata = super(BcfToolsViewBase, self).metadata()
+        metadata.dateUpdated = date(2019, 1, 24)
+        metadata.doi = "http://www.ncbi.nlm.nih.gov/pubmed/19505943"
+        metadata.citation = "Li H, Handsaker B, Wysoker A, Fennell T, Ruan J, Homer N, Marth G, Abecasis G, Durbin R, " \
+                            "and 1000 Genome Project Data Processing Subgroup, The Sequence alignment/map (SAM) " \
+                            "format and SAMtools, Bioinformatics (2009) 25(16) 2078-9"
+        metadata.documentationUrl = "https://samtools.github.io/bcftools/bcftools.html#view"
+        metadata.documentation += """________________________________\n 
+View, subset and filter VCF or BCF files by position and filtering expression
+Convert between VCF and BCF. Former bcftools subset."""
 
     def inputs(self) -> List[ToolInput]:
         return [
@@ -26,13 +45,6 @@ class BcfToolsViewBase(BcfToolsToolBase, ABC):
             ToolOutput("output", Stdout(File()))
         ]
 
-    @staticmethod
-    def docurl():
-        return "https://samtools.github.io/bcftools/bcftools.html#view"
-
-    def doc(self):
-        return "View, subset and filter VCF or BCF files by position and filtering expression. " \
-               "Convert between VCF and BCF. Former bcftools subset."
 
     additional_inputs = [
         ToolInput("dropGenotypes", Boolean(optional=True), prefix="--drop-genotypes", position=1,

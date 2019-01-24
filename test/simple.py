@@ -131,15 +131,15 @@ class SimplePipeline:
         print(yaml.dump(tools_ar, default_flow_style=False))
 
         if to_disk:
-            with open(d + translator.label + ".cwl", "w+") as cwl:
-                Logger.log(f"Writing {translator.label}.cwl to disk")
+            with open(d + translator.id() + ".cwl", "w+") as cwl:
+                Logger.log(f"Writing {translator.id()}.cwl to disk")
                 yaml.dump(cwl_data, cwl, default_flow_style=False)
-                Logger.log(f"Written {translator.label}.cwl to disk")
+                Logger.log(f"Written {translator.id()}.cwl to disk")
 
-            with open(d + translator.label + "-job.yml", "w+") as cwl:
-                Logger.log(f"Writing {translator.label}-job.yml to disk")
+            with open(d + translator.id() + "-job.yml", "w+") as cwl:
+                Logger.log(f"Writing {translator.id()}-job.yml to disk")
                 yaml.dump(inp_data, cwl, default_flow_style=False)
-                Logger.log(f"Written {translator.label}-job.yml to disk")
+                Logger.log(f"Written {translator.id()}-job.yml to disk")
 
             for tool in tools_ar:
                 tool_name = tool["id"].lower()

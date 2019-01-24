@@ -27,15 +27,15 @@ class Workflow(Tool):
     """
     Documentation here
     """
-    identifier = BaseDescriptor()
-    label = BaseDescriptor()
-    doc = BaseDescriptor()
+    # identifier = BaseDescriptor()
+    # label = BaseDescriptor()
+    # doc = BaseDescriptor()
 
-    def __init__(self, identifier: str, label: str = None, doc: Optional[str] = None):
+    def __init__(self, identifier: str, friendly_name: str = None, doc: Optional[str] = None):
         """
         Initialise the workflow
         :param identifier: uniquely identifies the workflow
-        :param label: a label that the engine may use to represent the workflow (should be unique)
+        :param friendly_name: a label that the engine may use to represent the workflow (should be unique)
         :param doc: Documentation of the workflow
         """
         Logger.log(f"Creating workflow with identifier: '{identifier}'")
@@ -45,7 +45,7 @@ class Workflow(Tool):
                             f"(must start with letters, and then only contain letters, numbers and an underscore)")
 
         self.identifier = identifier
-        self.label = label
+        self.name = friendly_name
         self.documentation = doc
 
         self._nodes: Dict[str, Node] = {}  # Look up a node by its identifier
@@ -67,8 +67,11 @@ class Workflow(Tool):
         """
         return self.identifier
 
+    def friendly_name(self):
+        return self.name
+
     def doc(self):
-        return None
+        return self.documentation
 
     @classmethod
     def type(cls) -> ToolType:
@@ -680,7 +683,7 @@ class Workflow(Tool):
 
     def cwl(self, is_nested_tool=False, with_docker=True):
 
-        w = cwl.Workflow(self.identifier, self.label, self.doc)
+        w = cwl.Workflow(self.identifier, self.label, self.doc())
 
         w.inputs = [i.cwl() for i in self._inputs]
         w.steps = [s.cwl(is_nested_tool=is_nested_tool) for s in self._steps]

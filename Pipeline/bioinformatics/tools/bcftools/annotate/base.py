@@ -3,6 +3,7 @@ from abc import ABC
 from Pipeline import ToolInput, File, Boolean, String, Array, Int, Filename, ToolOutput
 from Pipeline.bioinformatics.data_types.vcf import Vcf
 from Pipeline.bioinformatics.tools.bcftools.bcftoolstoolbase import BcfToolsToolBase
+from Pipeline.utils.metadata import ToolMetadata
 
 
 class BcfToolsAnnotateBase(BcfToolsToolBase, ABC):
@@ -11,10 +12,25 @@ class BcfToolsAnnotateBase(BcfToolsToolBase, ABC):
     def tool():
         return "bcftoolsAnnotate"
 
+    def friendly_name(self):
+        return "BCFTools: Annotate"
+
     @classmethod
     def bcftools_command(cls):
         return "annotate"
 
+    def metadata(self):
+        from datetime import date
+
+        metadata: ToolMetadata = super(BcfToolsAnnotateBase, self).metadata()
+        metadata.dateUpdated = date(2019, 1, 24)
+        metadata.doi = "http://www.ncbi.nlm.nih.gov/pubmed/19505943"
+        metadata.citation = "Li H, Handsaker B, Wysoker A, Fennell T, Ruan J, Homer N, Marth G, Abecasis G, Durbin R, " \
+                            "and 1000 Genome Project Data Processing Subgroup, The Sequence alignment/map (SAM) " \
+                            "format and SAMtools, Bioinformatics (2009) 25(16) 2078-9"
+        metadata.documentationUrl = "https://samtools.github.io/bcftools/bcftools.html#annotate"
+        metadata.documentation = (metadata.documentation if metadata.documentation else "") + \
+            "------------------------------------\n\nAdd or remove annotations."
     def inputs(self):
         return [
             ToolInput("file", Vcf(), position=100),
@@ -30,13 +46,6 @@ class BcfToolsAnnotateBase(BcfToolsToolBase, ABC):
     @staticmethod
     def docurl():
         return "https://samtools.github.io/bcftools/bcftools.html#annotate"
-
-    def doc(self):
-        return BcfToolsToolBase.doc() + """
-    -------------------------------------------------------------------------
-
-    Add or remove annotations.
-    """
 
     additional_args = [
         ToolInput("annotations", File(optional=True), prefix="--annotations",

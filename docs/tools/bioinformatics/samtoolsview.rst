@@ -16,14 +16,16 @@ URL
 
 Docstring
 *********
-SAMTOOLS: view
+Ensure SAMTOOLS.SORT is inheriting from parent metadata
+        
+---------------------------------------------------------------------------------------------------
     
-    With no options or regions specified, prints all alignments in the specified input alignment file 
-    (in SAM, BAM, or CRAM format) to standard output in SAM format (with no header).
-    
-    You may specify one or more space-separated region specifications after the input filename to 
-    restrict output to only those alignments which overlap the specified region(s). 
-    Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format).
+With no options or regions specified, prints all alignments in the specified input alignment file 
+(in SAM, BAM, or CRAM format) to standard output in SAM format (with no header).
+
+You may specify one or more space-separated region specifications after the input filename to 
+restrict output to only those alignments which overlap the specified region(s). 
+Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format).
 
 Outputs
 -------

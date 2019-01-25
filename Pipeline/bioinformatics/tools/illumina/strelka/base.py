@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from Pipeline import CommandTool, ToolOutput, ToolInput, ToolArgument, Boolean, String, File, Directory
-from Pipeline.bioinformatics.data_types.bam import Bam
+from Pipeline import CommandTool, ToolOutput, ToolInput, ToolArgument, Boolean, String, File
 from Pipeline.bioinformatics.data_types.bampair import BamPair
 from Pipeline.bioinformatics.data_types.fasta import FastaWithDict
 from Pipeline.bioinformatics.data_types.vcf import TabixIdx

@@ -44,36 +44,6 @@ class Gatk4HaplotypeCallerBase(Gatk4ToolBase, ABC):
         ]
 
 
-
-
-
-    ################ HINTS TESTING ################
-
-
-
-
-    def resources(self, hints: Dict[str, Any]) -> Optional[Resources]:
-        if "genome_type" not in hints: return
-
-        gt = hints.get("genome_type")
-        if gt == "human":
-            return Resources(ram_min=64000)     # 64GiB
-        if gt == "cat":
-            return Resources(ram_min=16000)     # 16GiB
-        elif gt == "mouse":
-            return Resources(ram_min=4000)      # 4GiB
-
-
-
-
-
-    ############### / HINTS TESTING ###############
-
-
-
-
-
-
     def metadata(self):
         from datetime import date
         return ToolMetadata(
@@ -147,7 +117,7 @@ to our recommendations as documented (https://software.broadinstitute.org/gatk/d
                       "(for all samples) to aggressively remove"),
         ToolInput("correctOverlappingQuality", Boolean(optional=True), prefix="--correct-overlapping-quality",
                   doc="Undocumented option"),
-        ToolInput("dbsnp", VcfIdx(optional=True), prefix="--dbsnp", doc="-D (default: null) dbSNP file"),
+        # ToolInput("dbsnp", VcfIdx(optional=True), prefix="--dbsnp", doc="-D (default: null) dbSNP file"),
         ToolInput("disableBamIndexCaching", Boolean(optional=True), prefix="--disable-bam-index-caching",
                   doc="-DBIC. If true, don't cache bam indexes, this will reduce memory requirements but may harm "
                       "performance if many intervals are specified. Caching is automatically disabled if "

@@ -8,7 +8,6 @@ from Pipeline.unix.data_types.tar_file import TarFile
 
 from Pipeline import Workflow, Input, Output, Step, String, File, Logger
 
-
 # file.tar -> untar -> compile -> tar -> out.tar
 #                  \_____________↗
 
@@ -55,11 +54,11 @@ class TestSimple(unittest.TestCase):
         step2 = Step("compile", Compile())
         step3 = Step("tar", Tar())
         debug = Step("debug", DebugEchoInputs())
-        outp = Output("output", File())
 
-        w.add_pipe(inp1, step1, step2, step3.files, outp)
+        w.add_pipe(inp1, step1, step2, step3.files, Output("output"))
         w.add_edge(step1, step3.files)
         w.add_edge(step3, debug)
+        w.add_edge(debug, Output("debugout"))
 
         # w.draw_graph()
         w.dump_cwl(to_disk=True, with_docker=False)

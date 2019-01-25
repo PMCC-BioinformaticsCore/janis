@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Tuple, Optional, Any, Union
 
 import networkx as nx
 
@@ -6,6 +6,7 @@ import cwlgen.cwlgen as cwl
 import wdlgen.wdlgen as wdl
 from Pipeline.graph.node import Node, NodeTypes, layout_nodes2
 from Pipeline.graph.stepinput import StepInput
+from Pipeline.hints.hints import get_cwl_schema_for_recognised_hints
 from Pipeline.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes, ToolType
 from Pipeline.types.common_data_types import Array, Int
 from Pipeline.types.data_types import DataType
@@ -29,6 +30,7 @@ class Workflow(Tool):
     # doc = BaseDescriptor()
 
     RESOURCE_OVERRIDE_KEY = "RESOURCE_OVERRIDE"
+    HINTS_KEY = "hints"
 
     def __init__(self, identifier: str, friendly_name: str = None, doc: Optional[str] = None):
         """
@@ -308,8 +310,20 @@ class Workflow(Tool):
             Logger.log(message, LogLevel.CRITICAL)
             raise InvalidNodeIdentifier(message)
 
-    def try_get_or_add_node(self, label: str, component: Optional[Node], node_type: str) -> Node:
-        node = self._nodes.get(label)
+    def try_get_or_add_node(self, identifier: str, component: Optional[Union[Input, Step, Output]], node_type: str) -> Node:
+        """
+        Given the label (and the component [Input \ Step | Output], get the node if it's in the graph
+        (and check that it's referencing the correct component), else add it to the graph.
+        :param identifier: identifier
+        :type identifier: str
+        :param component: the step | input | output that the node contains
+        :type component: Input | Step | Output
+        :param node_type: Used to better classify errors ["input" | "step" | "output"]
+        :type node_type: str
+        :return: Node | Exception
+        :returns: Node
+        """
+        node = self._nodes.get(identifier)
 
         if node is not None:
             # Try to do some proper matching
@@ -322,22 +336,22 @@ class Workflow(Tool):
                 node_comp = node.output
 
             if component is not None and (
-                    label != component.id() or
+                    identifier != component.id() or
                     (isinstance(component, Input) and not node.node_type == NodeTypes.INPUT) or
                     (isinstance(component, Step) and not node.node_type == NodeTypes.TASK) or
                     (isinstance(component, Output) and not node.node_type == NodeTypes.OUTPUT) or
                     (node_comp != component)):
-                raise Exception(f"There already exists a node with id '{node.id()}' "
-                                f"('{repr(component)}' clashes with '{repr(node_comp)}')")
+                raise Exception(f"There already exists a node (and component) with id '{node.id()}'. The added "
+                                f"component ('{repr(component)}') clashes with '{repr(node_comp)}').")
             return node
 
-        Logger.log(f"Could not find {node_type} node with identifier '{label}' in the workflow")
+        Logger.log(f"Could't find a(n) {node_type} node with the identifier '{identifier}' in the workflow.")
         if component is not None:
             Logger.log(f"Adding '{component.id()}' to the workflow")
             return self._add_item(component)
         else:
-            message = f"The node '{label}' was not found in the graph, please add the node to the graph " \
-                f"and couldn't get it from the added component before trying to add an edge"
+            message = f"There was no node or component referenced by '{identifier}' in the graph. When creating edges "\
+                        "by identifiers, you must add the component to the graph first"
             Logger.log(message, LogLevel.CRITICAL)
             raise NodeNotFound(message)
 
@@ -663,10 +677,10 @@ class Workflow(Tool):
         outs, ins = s_node.outputs(), f_node.inputs()
 
         s_types: List[Tuple[List[str], DataType]] = [([s_node.id(), x], outs[x].output_type) for x in outs]
-        f_types: List[Tuple[str, DataType]] = [([f_node.id(), x], ins[x].input_type) for x in ins]
+        f_types: List[Tuple[List[str], DataType]] = [([f_node.id(), x], ins[x].input_type) for x in ins]
 
         # O(n**2) for determining types
-        matching_types: List[Tuple[Tuple[str, DataType], Tuple[str, DataType]]] = []
+        matching_types: List[Tuple[Tuple[List[str], DataType], Tuple[List[str], DataType]]] = []
         for s_type in s_types:
             matching_types.extend([(s_type, f_type) for f_type in f_types if f_type[1].can_receive_from(s_type[1])])
 
@@ -682,38 +696,46 @@ class Workflow(Tool):
 
         matched = matching_types[0]
         Logger.info(f"Guessed the connection between nodes '{s_node.id()}")
-        return matching_types[0]
+        return matched
 
-    def cwl(self, is_nested_tool=False, with_docker=True) -> Tuple[cwl.Workflow, dict, List[cwl.Serializable]]:
+    def cwl(self, is_nested_tool=False, with_docker=True, with_hints=True, with_resource_overrides=True) -> Tuple[cwl.Workflow, dict, List[cwl.Serializable]]:
 
-        w = cwl.Workflow(self.identifier, self.friendly_name(), self.doc())
+        metadata = self.metadata() if self.metadata() else WorkflowMetadata()
+        w = cwl.Workflow(self.identifier, self.friendly_name(), metadata.documentation)
 
         w.inputs: List[cwl.InputParameter] = [i.cwl() for i in self._inputs]
 
-        rOverride = cwl.InputParameter(
-            self.RESOURCE_OVERRIDE_KEY,
-            param_type=["null", self._generate_cwl_resource_override_schema_for_steps()]
-        )
-        w.inputs.append(rOverride)
+        if with_resource_overrides:
+            rOverride = cwl.InputParameter(
+                self.RESOURCE_OVERRIDE_KEY,
+                param_type=["null", self._generate_cwl_resource_override_schema_for_steps()]
+            )
+            w.inputs.append(rOverride)
+
         w.steps: List[cwl.WorkflowStep] = [s.cwl(is_nested_tool=is_nested_tool) for s in self._steps]
         w.outputs = [o.cwl() for o in self._outputs]
 
-        keys = ["coresMin", "coresMax", "ramMin",  "ramMax"]
-        for s in w.steps:
-            # work out whether (the tool of) s is a workflow or tool
-            is_tool = True
-
-            if is_tool:
+        #
+        sins = []
+        if with_resource_overrides:
+            keys = ["coresMin", "coresMax", "ramMin",  "ramMax"]
+            sins = [ToolInput(k, Int(optional=True)).cwl() for k in keys]
+            for s in w.steps:
+                # work out whether (the tool of) s is a workflow or tool
                 resource_override_step_inputs = [cwl.WorkflowStepInput(
                     input_id=k,
                     source=self.RESOURCE_OVERRIDE_KEY,
-                    value_from=f"${{var k = \"{k}\";var stepId = \"{s.id}\";if (!(stepId in self)) return null;return self[stepId][k]}}"
+                    value_from=f"${{var k = \"{k}\";var stepId = \"{s.id}\";if(!self) return null;if (!(stepId in self)) return null;return self[stepId][k]}}"
                     # value_from=f"$(!self ? null : (!self['{s.id}'] ? null : self['{s.id}']['{k}']))"
                 ) for k in keys]
                 s.inputs.extend(resource_override_step_inputs)
-            else:
-                # pass the nested thing
-                pass
+
+        if with_hints:
+            resource_schema = get_cwl_schema_for_recognised_hints()
+            nullable_resource_schema = ["null", resource_schema]
+            w.inputs.append(cwl.InputParameter(self.HINTS_KEY, param_type=nullable_resource_schema))
+            for s in w.steps:
+                s.inputs.append(cwl.WorkflowStepInput(self.HINTS_KEY, self.HINTS_KEY))
 
         w.requirements.append(cwl.InlineJavascriptReq())
         w.requirements.append(cwl.StepInputExpressionRequirement())
@@ -727,16 +749,18 @@ class Workflow(Tool):
 
         tools = []
         tools_to_build: Dict[str, Tool] = {s.step.tool().id(): s.step.tool() for s in self._steps}
-        sins = [ToolInput(k, Int(optional=True)).cwl() for k in keys]
         for t in tools_to_build:
             tool: Tool = tools_to_build[t]
             if isinstance(tool, Workflow):
-                wf_cwl, _, subtools = tool.cwl(is_nested_tool=True, with_docker=with_docker)
+                wf_cwl, _, subtools = tool.cwl(is_nested_tool=True, with_docker=with_docker, with_hints=with_hints, with_resource_overrides=with_resource_overrides)
                 tools.append(wf_cwl)
                 tools.extend(subtools)
             else:
                 tool_cwl = tool.cwl(with_docker=with_docker)
-                tool_cwl.inputs.extend(sins)
+                if with_resource_overrides:
+                    tool_cwl.inputs.extend(sins)
+                if with_hints:
+                    tool_cwl.inputs.append(cwl.InputParameter(self.HINTS_KEY, param_type=["null", get_cwl_schema_for_recognised_hints()]))
                 tools.append(tool_cwl)
 
         inp = {i.id(): i.input.cwl_input() for i in self._inputs}

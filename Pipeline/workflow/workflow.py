@@ -756,7 +756,7 @@ class Workflow(Tool):
         for step in self._steps:
             tool = step.step.tool()
             if isinstance(tool, Workflow):
-                key = self.RESOURCE_OVERRIDE_KEY
+                key = tool.id() + "_resource_override" # self.RESOURCE_OVERRIDE_KEY
                 override_schema = tool._generate_cwl_resource_override_schema_for_steps()
             else:
                 key = step.step.id()

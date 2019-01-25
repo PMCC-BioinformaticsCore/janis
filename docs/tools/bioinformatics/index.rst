@@ -24,5 +24,6 @@ Automatically generated index page for bioinformatics tools.
    igvtools-index
    samtoolssort
    samtoolsview
+   splitmultiallele
    strelka-germline
    tabix

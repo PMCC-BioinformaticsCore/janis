@@ -35,6 +35,6 @@ truth      VCFIDX
 intervals  Array<VCFIDX>
 =========  =============  ========  ==========  ===============
 
-*performanceValidator was last updated on **Unknown***
+*performanceValidator was last updated on **Unknown***.
 
-*This page was automatically generated on 2019-01-24*
+*This page was automatically generated on 2019-01-25*.

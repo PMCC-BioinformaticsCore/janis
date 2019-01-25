@@ -47,6 +47,6 @@ name    type        prefix    position    documentation
 input   vcf-gz-tbi                        The alignment or feature file for which an index will be created
 ======  ==========  ========  ==========  ================================================================
 
-*IGVTools: Index was last updated on 2018-12-24*
+*IGVTools: Index was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-24*
+*This page was automatically generated on 2019-01-25*.

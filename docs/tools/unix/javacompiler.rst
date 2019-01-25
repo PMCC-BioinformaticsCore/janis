@@ -1,7 +1,7 @@
 
-javacompiler
-============
-*unix*
+Java compiler
+============================
+*unix* (javacompiler)
 
 Documentation
 -------------
@@ -29,10 +29,11 @@ compiled  File
 Inputs
 ------
 ======  ======  ========  ==========  ===============
-name    type    prefix    position    documentation
+name    type    prefix      position  documentation
 ======  ======  ========  ==========  ===============
-file    File
+file    File                       1
 ======  ======  ========  ==========  ===============
 
+*Java compiler was last updated on **Unknown***.
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-25*.

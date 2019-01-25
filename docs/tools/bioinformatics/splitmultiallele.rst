@@ -1,7 +1,7 @@
 
-splitmultiallele
-================
-*bioinformatics*
+Split Multiple Alleles
+=========================================
+*bioinformatics* (splitmultiallele)
 
 Documentation
 -------------
@@ -114,5 +114,6 @@ reference       FastaWithDict       -r                 7
 outputFilename  Optional<Filename>  >                 10
 ==============  ==================  ========  ==========  ===============
 
+*Split Multiple Alleles was last updated on **Unknown***.
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-25*.

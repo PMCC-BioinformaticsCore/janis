@@ -10,7 +10,13 @@ from Pipeline.bioinformatics.tools.samtools.view.latest import SamToolsViewLates
 
 
 def create_subworkflow():
-    sw = Workflow("bwa_st_sort")
+    sw = Workflow("alignsortedbam", friendly_name="Align sorted bam")
+
+    m = sw.metadata()
+    m.documentation = "Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam"
+    m.creator = "Michael Franklin"
+    m.dateCreated = "2018-12-24"
+    m.version = "1.0.0"
 
     s1_bwa = Step("s1_bwa", BwaMemLatest())
     s2_samtools = Step("s2_samtools", SamToolsViewLatest())

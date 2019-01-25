@@ -61,6 +61,8 @@ class TestGermlinePipeline(unittest.TestCase):
         w.add_default_value(s2_mergeSamFiles.validationStringency, "SILENT")
 
 
+
+
         # step3
         w.add_edge(s2_mergeSamFiles, s3_markDuplicates)
         w.add_edge(inp_tmpdir, s3_markDuplicates.tmpDir)

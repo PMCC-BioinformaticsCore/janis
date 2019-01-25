@@ -52,6 +52,6 @@ validationStringency       Optional<String>         --VALIDATION_STRINGENCY     
 verbosity                  Optional<String>         --verbosity                      11  The --verbosity argument is an enumerated type (LogLevel), which can have one of the following values: [ERROR, WARNING, INFO, DEBUG]
 =========================  =======================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 
-*GATK4: Merge SAM Files was last updated on 2018-12-24*
+*GATK4: Merge SAM Files was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-24*
+*This page was automatically generated on 2019-01-25*.

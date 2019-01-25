@@ -13,6 +13,7 @@ from Pipeline.utils import first_value
 from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
     InvalidInputsException
 from Pipeline.utils.logger import Logger, LogLevel
+from Pipeline.utils.metadata import WorkflowMetadata
 from Pipeline.utils.validators import Validators
 from Pipeline.workflow.input import Input, InputNode
 from Pipeline.workflow.output import Output, OutputNode
@@ -44,12 +45,13 @@ class Workflow(Tool):
 
         self.identifier = identifier
         self.name = friendly_name
-        self.documentation = doc
+        self._metadata = WorkflowMetadata(documentation=doc)
 
         self._nodes: Dict[str, Node] = {}  # Look up a node by its identifier
 
         self._inputs: List[InputNode] = []  # InputNodes
         self._steps: List[StepNode] = []  # StepNodes
+        self._outputs: List[OutputNode] = []  # OutputNodes
         self._outputs: List[OutputNode] = []  # OutputNodes
 
         self.graph: nx.MultiDiGraph = nx.MultiDiGraph()  # Realistically this isn't really used except for an image
@@ -68,8 +70,11 @@ class Workflow(Tool):
     def friendly_name(self):
         return self.name
 
+    def metadata(self):
+        return self._metadata
+
     def doc(self):
-        return self.documentation
+        return self._metadata.documentation
 
     @classmethod
     def type(cls) -> ToolType:

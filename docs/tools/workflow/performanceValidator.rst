@@ -9,11 +9,11 @@ Documentation
 
 URL
 ******
-*No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_
+*No URL to the documentation was provided*
 
 Docstring
 *********
-None
+*No documentation was provided:`contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------

@@ -42,7 +42,7 @@ def prepare_tool(tool: Tool):
     tn = fn + en
 
     formatted_url = format_rst_link(metadata.documentationUrl, metadata.documentationUrl) if metadata.documentationUrl \
-        else "*No URL to the documentation was provided*: " + format_rst_link("contribute one", "https://github.com/illusional")
+        else "*No URL to the documentation was provided*"
 
     input_headers = ["name", "type", "prefix", "position", "documentation"]
     input_tuples = [[i.id(), i.input_type.id(), i.prefix, i.position, i.doc] for i in tool.inputs()]
@@ -71,7 +71,7 @@ URL
 
 Docstring
 *********
-{metadata.documentation if metadata.documentation else tool.doc()}
+{metadata.documentation if metadata.documentation else "*No documentation was provided:" + format_rst_link("contribute one", "https://github.com/illusional") + "*"}
 
 Outputs
 -------

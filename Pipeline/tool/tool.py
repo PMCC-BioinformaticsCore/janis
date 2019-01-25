@@ -108,7 +108,7 @@ class ToolInput(ToolArgument):
             param_id=self.tag,
             label=self.tag,
             secondary_files=self.input_type.secondary_files(),
-            # streamable=False,
+            # streamable=None,
             doc=self.doc,
             input_binding=input_binding,
             default=default,
@@ -132,7 +132,7 @@ class ToolOutput:
             label=self.tag,
             secondary_files=self.output_type.secondary_files(),
             # param_format=None,
-            # streamable=False,
+            # streamable=None,
             doc=self.doc,
             output_binding=cwl.CommandOutputBinding(
                 glob=self.glob,
@@ -175,7 +175,7 @@ class Tool(ABC, object):
         return {outp.tag: outp for outp in self.outputs()}
 
     @abstractmethod
-    def cwl(self, with_docker=True) -> Dict[str, Any]:
+    def cwl(self, with_docker=True) -> cwl.CommandLineTool:
         raise Exception("Must implement cwl() method")
 
     def wdl(self, with_docker=True):

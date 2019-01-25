@@ -1,26 +1,22 @@
+from typing import Dict, List, Tuple, Optional, Any
+
 import networkx as nx
-from typing import Dict, List, Tuple, Set, Optional, Any
 
-import wdlgen.wdlgen as wdl
 import cwlgen.cwlgen as cwl
-
-from Pipeline.utils import first_value
-from Pipeline.utils.logger import Logger, LogLevel
-
+import wdlgen.wdlgen as wdl
+from Pipeline.graph.node import Node, NodeTypes, layout_nodes2
 from Pipeline.graph.stepinput import StepInput
-from Pipeline.graph.node import Node, NodeTypes, NodeAndTag, layout_nodes2
-
-from Pipeline.types.common_data_types import Array
-from Pipeline.types.data_types import DataType, NativeTypes
-from Pipeline.utils.descriptor import BaseDescriptor, GetOnlyDescriptor
-from Pipeline.utils.validators import Validators
-
-from Pipeline.workflow.step import Step, StepNode
-from Pipeline.workflow.input import Input, InputNode
-from Pipeline.workflow.output import Output, OutputNode
 from Pipeline.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes, ToolType
+from Pipeline.types.common_data_types import Array, Int
+from Pipeline.types.data_types import DataType
+from Pipeline.utils import first_value
 from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
     InvalidInputsException
+from Pipeline.utils.logger import Logger, LogLevel
+from Pipeline.utils.validators import Validators
+from Pipeline.workflow.input import Input, InputNode
+from Pipeline.workflow.output import Output, OutputNode
+from Pipeline.workflow.step import Step, StepNode
 
 
 class Workflow(Tool):
@@ -30,6 +26,8 @@ class Workflow(Tool):
     # identifier = BaseDescriptor()
     # label = BaseDescriptor()
     # doc = BaseDescriptor()
+
+    RESOURCE_OVERRIDE_KEY = "RESOURCE_OVERRIDE"
 
     def __init__(self, identifier: str, friendly_name: str = None, doc: Optional[str] = None):
         """
@@ -681,21 +679,39 @@ class Workflow(Tool):
         Logger.info(f"Guessed the connection between nodes '{s_node.id()}")
         return matching_types[0]
 
-    def cwl(self, is_nested_tool=False, with_docker=True):
+    def cwl(self, is_nested_tool=False, with_docker=True) -> Tuple[cwl.Workflow, dict, List[cwl.Serializable]]:
 
         w = cwl.Workflow(self.identifier, self.friendly_name(), self.doc())
 
         w.inputs: List[cwl.InputParameter] = [i.cwl() for i in self._inputs]
 
         rOverride = cwl.InputParameter(
-            "resourceOverride",
-            param_type=["null", self._generate_cwl_resource_override_schema()]
+            self.RESOURCE_OVERRIDE_KEY,
+            param_type=["null", self._generate_cwl_resource_override_schema_for_steps()]
         )
         w.inputs.append(rOverride)
-        w.steps = [s.cwl(is_nested_tool=is_nested_tool) for s in self._steps]
+        w.steps: List[cwl.WorkflowStep] = [s.cwl(is_nested_tool=is_nested_tool) for s in self._steps]
         w.outputs = [o.cwl() for o in self._outputs]
 
+        keys = ["coresMin", "coresMax", "ramMin",  "ramMax"]
+        for s in w.steps:
+            # work out whether (the tool of) s is a workflow or tool
+            is_tool = True
+
+            if is_tool:
+                resource_override_step_inputs = [cwl.WorkflowStepInput(
+                    input_id=k,
+                    source=self.RESOURCE_OVERRIDE_KEY,
+                    value_from=f"${{var k = \"{k}\";var stepId = \"{s.id}\";if (!(stepId in self)) return null;return self[stepId][k]}}"
+                    # value_from=f"$(!self ? null : (!self['{s.id}'] ? null : self['{s.id}']['{k}']))"
+                ) for k in keys]
+                s.inputs.extend(resource_override_step_inputs)
+            else:
+                # pass the nested thing
+                pass
+
         w.requirements.append(cwl.InlineJavascriptReq())
+        w.requirements.append(cwl.StepInputExpressionRequirement())
 
         if self.has_scatter:
             w.requirements.append(cwl.ScatterFeatureRequirement())
@@ -706,6 +722,7 @@ class Workflow(Tool):
 
         tools = []
         tools_to_build: Dict[str, Tool] = {s.step.tool().id(): s.step.tool() for s in self._steps}
+        sins = [ToolInput(k, Int(optional=True)).cwl() for k in keys]
         for t in tools_to_build:
             tool: Tool = tools_to_build[t]
             if isinstance(tool, Workflow):
@@ -713,26 +730,39 @@ class Workflow(Tool):
                 tools.append(wf_cwl)
                 tools.extend(subtools)
             else:
-                tools.append(tool.cwl(with_docker=with_docker))
+                tool_cwl = tool.cwl(with_docker=with_docker)
+                tool_cwl.inputs.extend(sins)
+                tools.append(tool_cwl)
 
         inp = {i.id(): i.input.cwl_input() for i in self._inputs}
 
-        return w.get_dict(), inp, tools
+        return w, inp, tools
 
-    def _generate_cwl_resource_override_schema(self):
+    @staticmethod
+    def _generate_cwl_resource_override_schema():
+
         schema = cwl.CommandInputRecordSchema()
-        resource_fields = [
+        schema.fields = [
             cwl.CommandInputRecordSchema.CommandInputRecordField("coresMin", ["long", "string", "null"]),
             cwl.CommandInputRecordSchema.CommandInputRecordField("coresMax", ["int", "string", "null"]),
             cwl.CommandInputRecordSchema.CommandInputRecordField("ramMin", ["long", "string", "null"]),
             cwl.CommandInputRecordSchema.CommandInputRecordField("ramMax", ["int", "string", "null"])
         ]
+        return schema
+
+    def _generate_cwl_resource_override_schema_for_steps(self):
+        schema = cwl.CommandInputRecordSchema()
 
         for step in self._steps:
-            key = step.step.id()
-            step_resource_schema = cwl.CommandInputRecordSchema()
-            step_resource_schema.fields = resource_fields
-            schema.fields.append(cwl.CommandInputRecordSchema.CommandInputRecordField(key, ["null", step_resource_schema]))
+            tool = step.step.tool()
+            if isinstance(tool, Workflow):
+                key = self.RESOURCE_OVERRIDE_KEY
+                override_schema = tool._generate_cwl_resource_override_schema_for_steps()
+            else:
+                key = step.step.id()
+                override_schema = self._generate_cwl_resource_override_schema()
+
+            schema.fields.append(cwl.CommandInputRecordSchema.CommandInputRecordField(key, ["null", override_schema]))
 
         return schema
 
@@ -827,90 +857,13 @@ class Workflow(Tool):
 
         return w, inp, wtools
 
-    #     def get_string(self, **kwargs):
-    #
-    #         get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
-    #
-    #         tools: List[Tool] = [s.step.tool() for s in self._steps]
-    #         tool_name_to_tool: Dict[str, Tool] = {t.id().lower(): t for t in tools}
-    #         tool_name_to_alias = {}
-    #         steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
-    #
-    #         aliases = set()
-    #
-    #         for tool in tool_name_to_tool:
-    #             a = get_alias(tool).upper()
-    #             s = a
-    #             idx = 2
-    #             while s in aliases:
-    #                 s = a + str(idx)
-    #                 idx += 1
-    #             aliases.add(s)
-    #             tool_name_to_alias[tool] = s
-    #
-    #         tab_char = '  '
-    #         nline_char = '\n'
-    #
-    #         import_str = "import \"tools/{tool_file}.get_string\" as {alias}"
-    #         input_str = "{tb}{data_type} {identifier}"
-    #         step_str = "{tb}call {tool_file}.{tool} as {alias} {{ input: {tool_mapping} }}"
-    #         output_str = "{tb2}{data_type} {identifier} = {alias}.{outp}"
-    #
-    #         imports = [import_str.format(
-    #             tb=tab_char,
-    #             tool_file=t,
-    #             alias=tool_name_to_alias[t.lower()].upper()
-    #         ) for t in tool_name_to_tool]
-    #
-    #         inputs = [input_str.format(
-    #             tb=tab_char,
-    #             data_type=i.input.data_type.get_string(),
-    #             identifier=i.id()
-    #         ) for i in self._inputs]
-    #
-    #         steps = [step_str.format(
-    #             tb=tab_char,
-    #             tool_file=tool_name_to_alias[s.step.tool().id().lower()].upper(),
-    #             tool=s.step.tool().wdl_name(),
-    #             alias=s.id(),
-    #             tool_mapping=', '.join(s.wdl_map())  # [2 * tab_char + w for w in s.wdl_map()])
-    #         ) for s in self._steps]
-    #
-    #         outputs = [output_str.format(
-    #             tb2=2 * tab_char,
-    #             data_type=o.output.data_type.get_string(),
-    #             identifier=o.id(),
-    #             alias=first_value(first_value(o.connection_map).source_map).start.id(),
-    #             outp=first_value(first_value(o.connection_map).source_map).stag
-    #         ) for o in self._outputs]
-    #
-    #         # imports = '\n'.join([f"import \"tools/{t}.get_string\" as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
-    #         # inputs = '\n'.join([f"{tab_char}{i.input.data_type.get_string()} {i.id()}" for i in self._inputs])
-    #         # steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.step.get_tool().tool().lower()].upper()}"
-    #         #                    f".{s.step.get_tool().wdl_name()} as {s.id()} {{input: \n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n{tab_char}}}" for s in self._steps])
-    #         # outputs = '\n'.join([f"{2*tab_char}{o.output.data_type.get_string()} {o.id()} = {steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower()}.{o.id()}" for o in self._outputs])
-    #
-    #         workflow = f"""
-    # {nline_char.join(imports)}
-    #
-    # workflow {self.identifier} {{
-    # {nline_char.join(inputs)}
-    #
-    # {nline_char.join(steps)}
-    #
-    # {tab_char}output {{
-    # {nline_char.join(outputs)}
-    # {tab_char}}}
-    # }}"""
-    #         tools = {t.id(): t.get_string() for t in tools}
-    #
-    #         inp = {f"{self.identifier}.{i.id()}": i.input.wdl_input() for i in self._inputs}
-    #
-    #         return workflow, inp, tools
+    def get_cwl_dicts(self, with_docker=True):
+        cwl_data, inp_data, tools_ar = self.cwl(with_docker=with_docker)
+        return cwl_data.get_dict(), inp_data, [t.get_dict() for t in tools_ar]
 
     def dump_cwl(self, to_disk: False, with_docker=True):
-        import os, yaml, zipfile
-        cwl_data, inp_data, tools_ar = self.cwl(with_docker=with_docker)
+        import os, yaml
+        cwl_data, inp_data, tools_ar = self.get_cwl_dicts(with_docker=with_docker)
 
         d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/cwl/"
         d_tools = d + "tools/"

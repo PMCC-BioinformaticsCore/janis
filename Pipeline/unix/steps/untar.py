@@ -25,7 +25,7 @@ class Untar(CommandTool):
 
     def outputs(self):
         return [
-            ToolOutput("files", Array(File()), glob="*.java")
+            ToolOutput("files", File(), glob="*.java")
         ]
 
 """

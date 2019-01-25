@@ -29,7 +29,7 @@ class Output:
             label=self.label,
             secondary_files=self.data_type.secondary_files(),
             param_format=None,
-            streamable=False,
+            streamable=None,
             doc=self.doc,
             param_type=self.data_type.cwl_type(),
             output_binding=None,

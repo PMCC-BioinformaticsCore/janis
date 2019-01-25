@@ -103,7 +103,7 @@ class CommandTool(Tool, ABC):
         if args:
             tool.arguments.extend(a.cwl() for a in self.arguments())
 
-        return tool.get_dict()
+        return tool
 
     def wdl(self, with_docker=True):
         import wdlgen.wdlgen as wdl

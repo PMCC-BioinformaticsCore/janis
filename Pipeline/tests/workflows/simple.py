@@ -1,5 +1,6 @@
 import unittest
 
+from Pipeline.unix.steps.echoinputs import DebugEchoInputs
 from Pipeline.unix.steps.tar import Tar
 from Pipeline.unix.steps.untar import Untar
 from Pipeline.unix.steps.compile import Compile
@@ -53,10 +54,12 @@ class TestSimple(unittest.TestCase):
         step1 = Step("untar", Untar())
         step2 = Step("compile", Compile())
         step3 = Step("tar", Tar())
+        debug = Step("debug", DebugEchoInputs())
         outp = Output("output", File())
 
         w.add_pipe(inp1, step1, step2, step3.files, outp)
-        # w.add_edge(step1, step3.files)
+        w.add_edge(step1, step3.files)
+        w.add_edge(step3, debug)
 
         # w.draw_graph()
         w.dump_cwl(to_disk=True, with_docker=False)

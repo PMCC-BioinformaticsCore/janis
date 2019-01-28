@@ -23,6 +23,7 @@ class Tar(CommandTool):
     def inputs(self):
         return [
             ToolInput("files", Array(File()), position=2),
+            ToolInput("additional_file", File(optional=True), position=3),
             ToolInput("tarName", Filename(extension=".tar"), position=1)
         ]
 

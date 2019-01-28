@@ -135,7 +135,7 @@ class Workflow(Tool):
 
         return [self._add_item(i) for i in mixed]
 
-    def _add_item(self, item):
+    def _add_item(self, item: Union[Input, Step, Output, Tuple]):
         """
         Generic add whatever into the workflow: (Input | Step | Output | Tuple = construct edge)
         :return:
@@ -204,6 +204,10 @@ class Workflow(Tool):
             raise DuplicateLabelIdentifier(message)
         self._nodes[node.id()] = node
         self.graph.add_node(node)
+        return node
+
+    def add_items(self, items: List[Union[Input, Step, Output, Tuple]]):
+        return [self._add_item(n) for n in items]
 
     @staticmethod
     def get_labels_and_node_by_inference(s) -> Tuple[str, Optional[Node]]:
@@ -699,7 +703,7 @@ class Workflow(Tool):
         Logger.info(f"Guessed the connection between nodes '{s_node.id()}")
         return matched
 
-    def cwl(self, is_nested_tool=False, with_docker=True, with_hints=True, with_resource_overrides=True) -> Tuple[cwl.Workflow, dict, List[cwl.Serializable]]:
+    def cwl(self, is_nested_tool=False, with_docker=True, with_hints=False, with_resource_overrides=False) -> Tuple[cwl.Workflow, dict, List[cwl.Serializable]]:
 
         metadata = self.metadata() if self.metadata() else WorkflowMetadata()
         w = cwl.Workflow(self.identifier, self.friendly_name(), metadata.documentation)

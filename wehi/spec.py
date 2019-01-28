@@ -32,12 +32,15 @@ class Wehi:
         # self.workflow.draw_graph()
 
     def build_graph(self):
-        for inp in self.inputs:
-            self.workflow.add_input(inp)
-        for step in self.steps:
-            self.workflow.add_step(step)
-        for out in self.outputs:
-            self.workflow.add_output(out)
+
+        self.workflow.add_items([*self.inputs, *self.steps, *self.outputs])
+
+        # for inp in self.inputs:
+        #     self.workflow.add_input(inp)
+        # for step in self.steps:
+        #     self.workflow.add_step(step)
+        # for out in self.outputs:
+        #     self.workflow.add_output(out)
 
         # Now we'll connect edges
         for step in self.steps:
@@ -49,8 +52,10 @@ class Wehi:
                     #   2. (b)
                     raise Exception(f"Step '{step.id()}' (tool: '{step.tool().id()}') did not contain"
                                     f" the required input '{tool_tag.tag}' with type: '{tool_tag.input_type.id()}'")
-
-                self.workflow.add_edge(inp_tag, f"{step.id()}/{tool_tag.tag}")
+                if isinstance(inp_tag, list):
+                    [self.workflow.add_edge(source, f"{step.id()}/{tool_tag.tag}") for source in inp_tag]
+                else:
+                    self.workflow.add_edge(inp_tag, f"{step.id()}/{tool_tag.tag}")
 
         for out in self.outputs:
             self.workflow.add_edge(out.meta, out)
@@ -95,7 +100,13 @@ class Wehi:
         if step_type is None:
             raise ValueError(f"There was no tool specified for step: {step_id}")
 
-        tool_type = pp.get_tool(step_type)
+
+        tool_name = step_type
+        tool_version = None
+        if len(tool_name.split(":")) == 2:
+            [tool_name, tool_version] = tool_name.split(":")
+
+        tool_type = pp.get_tool(tool_name, tool_version)
         if tool_type is None:
             raise ValueError(f"Could not find the tool '{step_type}' for step: {step_id}")
 
@@ -107,7 +118,7 @@ class Wehi:
 
     @staticmethod
     def parse_output(output_id: str, meta: str) -> pp.Output:
-        return pp.Output(output_id, None, meta)
+        return pp.Output(identifier=output_id, meta=meta)
 
     @staticmethod
     def _parse_known_type(input_id, meta) -> pp.DataType:

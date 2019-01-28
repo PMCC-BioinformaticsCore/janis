@@ -30,31 +30,7 @@ class TestWehi(TestCase):
 
         self.assertTrue(True)
 
-_simple = """
-inputs:
-    tarfile:
-        type: TarFile
-        path: /Users/franklinmichael/source/simple-workflow/hello.tar
 
-steps:
-    untar:
-        tool: untar
-        tarFile: tarfile    
-
-    compile:
-        tool: java-compiler
-        file: untar
-
-    tar:
-        tool: tar
-        input1: untar
-        input2: compile
-
-outputs:
-    untarred: untar
-    compiled: compile
-    tarred: tar
-"""
 
 _parallel = """
 hints:

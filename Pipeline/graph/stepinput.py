@@ -83,6 +83,14 @@ class Edge:
             else:
                 self.compatible_types = ftype.input_type.can_receive_from(stype.output_type)
 
+            # although they're not strictly compatible, we'll double check if its array -> single (scatter)
+            if not self.compatible_types and isinstance(ftype.input_type, Array) \
+                    and ftype.input_type.subtype().can_receive_from(stype.output_type):
+                self.compatible_types = True
+                s = full_lbl(self.start, self.stag)
+                f = full_lbl(self.finish, self.ftag)
+                Logger.info(f"The edge that joins '{s}' → '{f}' will implicitly scatter")
+
         if not self.compatible_types:
             s = full_lbl(self.start, self.stag)
             f = full_lbl(self.finish, self.ftag)

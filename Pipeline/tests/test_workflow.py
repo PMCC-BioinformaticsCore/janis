@@ -29,6 +29,9 @@ class SingleTestTool(CommandTool):
             ToolInput("inputs", String())
         ]
 
+    def friendly_name(self):
+        return None
+
     def outputs(self):
         return []
 
@@ -38,6 +41,9 @@ class ArrayTestTool(CommandTool):
     @staticmethod
     def tool():
         return "ArrayStepTool"
+
+    def friendly_name(self):
+        return None
 
     @staticmethod
     def base_command():
@@ -240,7 +246,8 @@ class TestWorkflow(TestCase):
 
         w.add_pipe(inp1, step, out)
         w.add_default_value(step.tarName, default_value)
-        cwl, _, _ = w.cwl(is_nested_tool=False, with_docker=False)
+        cwlwf, _, _ = w.cwl(is_nested_tool=False, with_docker=False)
+        cwl = cwlwf.get_dict()
         # w.dump_cwl(to_disk=False, with_docker=False)
 
         self.assertIn("steps", cwl)

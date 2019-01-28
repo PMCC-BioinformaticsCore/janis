@@ -6,7 +6,10 @@ class Cat(CommandTool):
 
     @staticmethod
     def tool():
-        return "CAT"
+        return "cat"
+
+    def friendly_name(self):
+        return "Concatenate"
 
     @staticmethod
     def base_command():

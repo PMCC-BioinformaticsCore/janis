@@ -6,6 +6,8 @@ from Pipeline.types.common_data_types import Array
 from Pipeline.utils.logger import Logger
 from Pipeline.types.data_types import DataType, NativeTypes
 import cwlgen.cwlgen as cwl
+from Pipeline.utils.metadata import Metadata
+
 ToolType = str
 
 
@@ -108,7 +110,7 @@ class ToolInput(ToolArgument):
             param_id=self.tag,
             label=self.tag,
             secondary_files=self.input_type.secondary_files(),
-            # streamable=False,
+            # streamable=None,
             doc=self.doc,
             input_binding=input_binding,
             default=default,
@@ -132,7 +134,7 @@ class ToolOutput:
             label=self.tag,
             secondary_files=self.output_type.secondary_files(),
             # param_format=None,
-            # streamable=False,
+            # streamable=None,
             doc=self.doc,
             output_binding=cwl.CommandOutputBinding(
                 glob=self.glob,
@@ -175,7 +177,7 @@ class Tool(ABC, object):
         return {outp.tag: outp for outp in self.outputs()}
 
     @abstractmethod
-    def cwl(self, with_docker=True) -> Dict[str, Any]:
+    def cwl(self, with_docker=True) -> cwl.CommandLineTool:
         raise Exception("Must implement cwl() method")
 
     def wdl(self, with_docker=True):
@@ -186,7 +188,7 @@ class Tool(ABC, object):
         # maps to CWL label (still exploring for WDL)
         raise Exception("Tools must implement friendly_name() method")
 
-    def metadata(self):
+    def metadata(self) -> Optional[Metadata]:
         return None
 
     @staticmethod
@@ -215,6 +217,8 @@ class Tool(ABC, object):
         optionalInputs = "\n".join(input_format(x) for x in ins if x.optional)
         outputs = "\n".join(output_format(o) for o in self.outputs())
 
+        meta = self.metadata() if self.metadata() else Metadata()
+
         fn = self.friendly_name() if self.friendly_name() else self.id()
         en = f" ({self.id()})" if fn != self.id() else ""
 
@@ -224,7 +228,7 @@ NAME
     {fn + en}
 
 DESCRIPTION
-    {self.doc() if self.doc() is not None else "No documentation provided"}
+    {meta.documentation if meta.documentation else "No documentation provided"}
 
 INPUTS:
 REQUIRED:

@@ -72,6 +72,6 @@ quiet                     Optional<Boolean>  --quiet                    3  Don't
 mailTo                    Optional<String>   --mailTo                   3  (-e) send email notification of job completion status to this address (may be provided multiple times for more than one email address)
 ========================  =================  ================  ==========  =========================================================================================================================================================================================================
 
-*Strelka (Germline) was last updated on 2018-12-24*
+*Strelka (Germline) was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-24*
+*This page was automatically generated on 2019-01-25*.

@@ -8,5 +8,5 @@ Automatically generated index page for workflow tools.
    :maxdepth: 1
    :caption: Contents:
 
-   bwa_st_sort
+   alignsortedbam
    performanceValidator

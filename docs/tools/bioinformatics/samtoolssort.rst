@@ -90,6 +90,6 @@ bam                   BAM                                   10
 outputFilename        Optional<Filename>  -o                 5  Output to FILE [stdout].
 ====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
 
-*SamTools: Sort was last updated on 2018-12-24*
+*SamTools: Sort was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-24*
+*This page was automatically generated on 2019-01-25*.

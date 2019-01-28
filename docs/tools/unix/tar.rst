@@ -1,7 +1,7 @@
 
-tar
-===
-*unix*
+Tar archive
+=================
+*unix* (tar)
 
 Documentation
 -------------
@@ -12,11 +12,11 @@ Docker
 
 URL
 ******
-*No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_
+*No URL to the documentation was provided*
 
 Docstring
 *********
-None
+*No documentation was provided:`contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
@@ -35,5 +35,6 @@ files    Array<File>                            2
 tarName  Optional<Filename>                     1
 =======  ==================  ========  ==========  ===============
 
+*Tar archive was last updated on **Unknown***.
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-25*.

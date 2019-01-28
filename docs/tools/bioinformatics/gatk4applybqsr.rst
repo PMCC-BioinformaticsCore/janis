@@ -56,6 +56,6 @@ pg-tag          Optional<Boolean>    --add-output-sam-program-record            
 tmpDir          Optional<Directory>  --tmp-dir                                11  Temp directory to use.
 ==============  ===================  ===============================  ==========  =====================================================
 
-*GATK4: Apply base quality score recalibration was last updated on 2018-12-24*
+*GATK4: Apply base quality score recalibration was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-24*
+*This page was automatically generated on 2019-01-25*.

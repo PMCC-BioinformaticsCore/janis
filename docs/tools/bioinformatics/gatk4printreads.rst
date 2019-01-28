@@ -51,6 +51,6 @@ input           BAM
 outputFilename  Optional<Filename>
 ==============  ==================  ========  ==========  ===============
 
-*GATK4: Print Reads was last updated on 2018-12-24*
+*GATK4: Print Reads was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-24*
+*This page was automatically generated on 2019-01-25*.

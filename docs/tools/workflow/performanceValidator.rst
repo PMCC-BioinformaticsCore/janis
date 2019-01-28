@@ -9,11 +9,11 @@ Documentation
 
 URL
 ******
-*No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_
+*No URL to the documentation was provided*
 
 Docstring
 *********
-None
+*No documentation was provided:`contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
@@ -35,6 +35,6 @@ truth      VCFIDX
 intervals  Array<VCFIDX>
 =========  =============  ========  ==========  ===============
 
-*performanceValidator was last updated on **Unknown***
+*performanceValidator was last updated on **Unknown***.
 
-*This page was automatically generated on 2019-01-24*
+*This page was automatically generated on 2019-01-25*.

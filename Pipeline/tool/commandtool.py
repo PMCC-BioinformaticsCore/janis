@@ -8,6 +8,7 @@ import cwlgen.cwlgen as cwl
 from Pipeline.types.common_data_types import Stdout, Array
 from Pipeline.utils import convert_expression_to_wdl
 from Pipeline.utils.logger import Logger
+from Pipeline.utils.metadata import Metadata
 from Pipeline.utils.validators import Validators
 
 
@@ -64,8 +65,13 @@ class CommandTool(Tool, ABC):
     def requirements() -> Optional[List[cwl.Requirement]]:
         return None
 
-    def cwl(self, with_docker=True) -> Dict[str, Any]:
+    @staticmethod
+    def hint_map() -> Optional[Dict[str, Any]]:
+        return None
 
+    def cwl(self, with_docker=True) -> cwl.CommandLineTool:
+
+        metadata = self.metadata() if self.metadata() else Metadata()
         stdouts = [o.output_type for o in self.outputs() if isinstance(o.output_type, Stdout) and o.output_type.stdoutname]
         stdout = stdouts[0].stdoutname if len(stdouts) > 0 else None
 
@@ -73,7 +79,7 @@ class CommandTool(Tool, ABC):
             tool_id=self.id(),
             base_command=self.base_command(),
             label=self.id(),
-            doc=self.doc(),
+            doc=metadata.documentation,
             # cwl_version=Cwl.kCUR_VERSION,
             stdin=None,
             stderr=None,
@@ -103,7 +109,7 @@ class CommandTool(Tool, ABC):
         if args:
             tool.arguments.extend(a.cwl() for a in self.arguments())
 
-        return tool.get_dict()
+        return tool
 
     def wdl(self, with_docker=True):
         import wdlgen.wdlgen as wdl
@@ -183,6 +189,7 @@ class CommandTool(Tool, ABC):
 
         prefixes = " -" + "".join(i.prefix.replace("-", "").replace(" ", "") for i in ins if i.prefix is not None)
 
+        metadata = self.metadata() if self.metadata() else Metadata()
         docker = self.docker()
 
         base = (self.base_command() if isinstance(self.base_command(), str) else " ".join(self.base_command())) \
@@ -214,10 +221,10 @@ DOCKER
     {docker}
 
 DOCUMENTATION URL
-    {self.docurl() if self.docurl() else "No url provided"}
+    {metadata.documentationUrl if metadata.documentationUrl else "No url provided"}
 
 DESCRIPTION
-    {self.doc() if self.doc() is not None else "No documentation provided"}
+    {metadata.documentation if metadata.documentation else "No documentation provided"}
 
 INPUTS:
     REQUIRED:

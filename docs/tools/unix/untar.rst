@@ -1,7 +1,7 @@
 
-untar
-=====
-*unix*
+Untar archive
+=====================
+*unix* (untar)
 
 Documentation
 -------------
@@ -12,27 +12,28 @@ Docker
 
 URL
 ******
-*No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_
+*No URL to the documentation was provided*
 
 Docstring
 *********
-None
+*No documentation was provided:`contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
-======  ===========  ===============
-name    type         documentation
-======  ===========  ===============
-files   Array<File>
-======  ===========  ===============
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+files   File
+======  ======  ===============
 
 Inputs
 ------
 =======  =======  ========  ==========  ===============
-name     type     prefix    position    documentation
+name     type     prefix      position  documentation
 =======  =======  ========  ==========  ===============
-tarFile  TarFile
+tarFile  TarFile                     0
 =======  =======  ========  ==========  ===============
 
+*Untar archive was last updated on **Unknown***.
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-25*.

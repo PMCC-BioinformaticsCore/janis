@@ -1,26 +1,25 @@
+from typing import Dict, List, Tuple, Optional, Any, Union
+
 import networkx as nx
-from typing import Dict, List, Tuple, Set, Optional, Any
 
-import wdlgen.wdlgen as wdl
 import cwlgen.cwlgen as cwl
-
-from Pipeline.utils import first_value
-from Pipeline.utils.logger import Logger, LogLevel
-
+import wdlgen.wdlgen as wdl
+from Pipeline.tool.commandtool import CommandTool
+from Pipeline.graph.node import Node, NodeTypes, layout_nodes2
 from Pipeline.graph.stepinput import StepInput
-from Pipeline.graph.node import Node, NodeTypes, NodeAndTag, layout_nodes2
-
-from Pipeline.types.common_data_types import Array
-from Pipeline.types.data_types import DataType, NativeTypes
-from Pipeline.utils.descriptor import BaseDescriptor, GetOnlyDescriptor
-from Pipeline.utils.validators import Validators
-
-from Pipeline.workflow.step import Step, StepNode
-from Pipeline.workflow.input import Input, InputNode
-from Pipeline.workflow.output import Output, OutputNode
+from Pipeline.hints.hints import get_cwl_schema_for_recognised_hints
 from Pipeline.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes, ToolType
+from Pipeline.types.common_data_types import Array, Int
+from Pipeline.types.data_types import DataType
+from Pipeline.utils import first_value
 from Pipeline.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
     InvalidInputsException
+from Pipeline.utils.logger import Logger, LogLevel
+from Pipeline.utils.metadata import WorkflowMetadata
+from Pipeline.utils.validators import Validators
+from Pipeline.workflow.input import Input, InputNode
+from Pipeline.workflow.output import Output, OutputNode
+from Pipeline.workflow.step import Step, StepNode
 
 
 class Workflow(Tool):
@@ -30,6 +29,9 @@ class Workflow(Tool):
     # identifier = BaseDescriptor()
     # label = BaseDescriptor()
     # doc = BaseDescriptor()
+
+    RESOURCE_OVERRIDE_KEY = "RESOURCE_OVERRIDE"
+    HINTS_KEY = "hints"
 
     def __init__(self, identifier: str, friendly_name: str = None, doc: Optional[str] = None):
         """
@@ -46,12 +48,13 @@ class Workflow(Tool):
 
         self.identifier = identifier
         self.name = friendly_name
-        self.documentation = doc
+        self._metadata = WorkflowMetadata(documentation=doc)
 
         self._nodes: Dict[str, Node] = {}  # Look up a node by its identifier
 
         self._inputs: List[InputNode] = []  # InputNodes
         self._steps: List[StepNode] = []  # StepNodes
+        self._outputs: List[OutputNode] = []  # OutputNodes
         self._outputs: List[OutputNode] = []  # OutputNodes
 
         self.graph: nx.MultiDiGraph = nx.MultiDiGraph()  # Realistically this isn't really used except for an image
@@ -70,8 +73,11 @@ class Workflow(Tool):
     def friendly_name(self):
         return self.name
 
+    def metadata(self):
+        return self._metadata
+
     def doc(self):
-        return self.documentation
+        return self._metadata.documentation
 
     @classmethod
     def type(cls) -> ToolType:
@@ -305,8 +311,20 @@ class Workflow(Tool):
             Logger.log(message, LogLevel.CRITICAL)
             raise InvalidNodeIdentifier(message)
 
-    def try_get_or_add_node(self, label: str, component: Optional[Node], node_type: str) -> Node:
-        node = self._nodes.get(label)
+    def try_get_or_add_node(self, identifier: str, component: Optional[Union[Input, Step, Output]], node_type: str) -> Node:
+        """
+        Given the label (and the component [Input \ Step | Output], get the node if it's in the graph
+        (and check that it's referencing the correct component), else add it to the graph.
+        :param identifier: identifier
+        :type identifier: str
+        :param component: the step | input | output that the node contains
+        :type component: Input | Step | Output
+        :param node_type: Used to better classify errors ["input" | "step" | "output"]
+        :type node_type: str
+        :return: Node | Exception
+        :returns: Node
+        """
+        node = self._nodes.get(identifier)
 
         if node is not None:
             # Try to do some proper matching
@@ -319,22 +337,22 @@ class Workflow(Tool):
                 node_comp = node.output
 
             if component is not None and (
-                    label != component.id() or
+                    identifier != component.id() or
                     (isinstance(component, Input) and not node.node_type == NodeTypes.INPUT) or
                     (isinstance(component, Step) and not node.node_type == NodeTypes.TASK) or
                     (isinstance(component, Output) and not node.node_type == NodeTypes.OUTPUT) or
                     (node_comp != component)):
-                raise Exception(f"There already exists a node with id '{node.id()}' "
-                                f"('{repr(component)}' clashes with '{repr(node_comp)}')")
+                raise Exception(f"There already exists a node (and component) with id '{node.id()}'. The added "
+                                f"component ('{repr(component)}') clashes with '{repr(node_comp)}').")
             return node
 
-        Logger.log(f"Could not find {node_type} node with identifier '{label}' in the workflow")
+        Logger.log(f"Could't find a(n) {node_type} node with the identifier '{identifier}' in the workflow.")
         if component is not None:
             Logger.log(f"Adding '{component.id()}' to the workflow")
             return self._add_item(component)
         else:
-            message = f"The node '{label}' was not found in the graph, please add the node to the graph " \
-                f"and couldn't get it from the added component before trying to add an edge"
+            message = f"There was no node or component referenced by '{identifier}' in the graph. When creating edges "\
+                        "by identifiers, you must add the component to the graph first"
             Logger.log(message, LogLevel.CRITICAL)
             raise NodeNotFound(message)
 
@@ -660,10 +678,10 @@ class Workflow(Tool):
         outs, ins = s_node.outputs(), f_node.inputs()
 
         s_types: List[Tuple[List[str], DataType]] = [([s_node.id(), x], outs[x].output_type) for x in outs]
-        f_types: List[Tuple[str, DataType]] = [([f_node.id(), x], ins[x].input_type) for x in ins]
+        f_types: List[Tuple[List[str], DataType]] = [([f_node.id(), x], ins[x].input_type) for x in ins]
 
         # O(n**2) for determining types
-        matching_types: List[Tuple[Tuple[str, DataType], Tuple[str, DataType]]] = []
+        matching_types: List[Tuple[Tuple[List[str], DataType], Tuple[List[str], DataType]]] = []
         for s_type in s_types:
             matching_types.extend([(s_type, f_type) for f_type in f_types if f_type[1].can_receive_from(s_type[1])])
 
@@ -679,17 +697,48 @@ class Workflow(Tool):
 
         matched = matching_types[0]
         Logger.info(f"Guessed the connection between nodes '{s_node.id()}")
-        return matching_types[0]
+        return matched
 
-    def cwl(self, is_nested_tool=False, with_docker=True):
+    def cwl(self, is_nested_tool=False, with_docker=True, with_hints=True, with_resource_overrides=True) -> Tuple[cwl.Workflow, dict, List[cwl.Serializable]]:
 
-        w = cwl.Workflow(self.identifier, self.label, self.doc())
+        metadata = self.metadata() if self.metadata() else WorkflowMetadata()
+        w = cwl.Workflow(self.identifier, self.friendly_name(), metadata.documentation)
 
-        w.inputs = [i.cwl() for i in self._inputs]
-        w.steps = [s.cwl(is_nested_tool=is_nested_tool) for s in self._steps]
+        w.inputs: List[cwl.InputParameter] = [i.cwl() for i in self._inputs]
+
+        if with_resource_overrides:
+            rOverride = cwl.InputParameter(
+                self.RESOURCE_OVERRIDE_KEY,
+                param_type=["null", self._generate_cwl_resource_override_schema_for_steps()]
+            )
+            w.inputs.append(rOverride)
+
+        w.steps: List[cwl.WorkflowStep] = [s.cwl(is_nested_tool=is_nested_tool) for s in self._steps]
         w.outputs = [o.cwl() for o in self._outputs]
 
+        #
+        keys = ["coresMin", "coresMax", "ramMin", "ramMax"]
+        sins = [ToolInput(k, Int(optional=True)).cwl() for k in keys]
+        if with_resource_overrides:
+            for s in w.steps:
+                # work out whether (the tool of) s is a workflow or tool
+                resource_override_step_inputs = [cwl.WorkflowStepInput(
+                    input_id=k,
+                    source=self.RESOURCE_OVERRIDE_KEY,
+                    value_from=f"${{var k = \"{k}\";var stepId = \"{s.id}\";if(!self) return null;if (!(stepId in self)) return null;return self[stepId][k]}}"
+                    # value_from=f"$(!self ? null : (!self['{s.id}'] ? null : self['{s.id}']['{k}']))"
+                ) for k in keys]
+                s.inputs.extend(resource_override_step_inputs)
+
+        if with_hints:
+            resource_schema = get_cwl_schema_for_recognised_hints()
+            nullable_resource_schema = ["null", resource_schema]
+            w.inputs.append(cwl.InputParameter(self.HINTS_KEY, param_type=nullable_resource_schema))
+            for s in w.steps:
+                s.inputs.append(cwl.WorkflowStepInput(self.HINTS_KEY, self.HINTS_KEY))
+
         w.requirements.append(cwl.InlineJavascriptReq())
+        w.requirements.append(cwl.StepInputExpressionRequirement())
 
         if self.has_scatter:
             w.requirements.append(cwl.ScatterFeatureRequirement())
@@ -703,15 +752,85 @@ class Workflow(Tool):
         for t in tools_to_build:
             tool: Tool = tools_to_build[t]
             if isinstance(tool, Workflow):
-                wf_cwl, _, subtools = tool.cwl(is_nested_tool=True, with_docker=with_docker)
+                wf_cwl, _, subtools = tool.cwl(is_nested_tool=True, with_docker=with_docker, with_hints=with_hints, with_resource_overrides=with_resource_overrides)
                 tools.append(wf_cwl)
                 tools.extend(subtools)
+            elif isinstance(tool, CommandTool):
+                tool_cwl = tool.cwl(with_docker=with_docker)
+                if with_hints:
+                    tool_cwl.inputs.append(
+                        cwl.InputParameter(self.HINTS_KEY, param_type=["null", get_cwl_schema_for_recognised_hints()]))
+                    hm = tool.hint_map()
+                    if hm:
+                        tool_cwl.requirements.append(cwl.ResourceRequirement(
+                            cores_min=self._generate_hint_selectors_for_hint_map("coresMin", hm),
+                            cores_max=self._generate_hint_selectors_for_hint_map("coresMax", hm),
+                            ram_min=self._generate_hint_selectors_for_hint_map("ramMin", hm),
+                            ram_max=self._generate_hint_selectors_for_hint_map("ramMax", hm)
+                        ))
+
+                    # if tool.hint_map():
+                    #     for s in sins:
+                    #         bind = s.inputBinding if s.inputBinding else cwl.CommandLineBinding()
+                    #         bind.valueFrom = self._generate_hint_selectors_for_hint_map(s.id, tool.hint_map())
+
+                if with_resource_overrides:
+                    tool_cwl.inputs.extend(sins)
+
+                tools.append(tool_cwl)
             else:
-                tools.append(tool.cwl(with_docker=with_docker))
+                raise Exception(f"Unknown tool type: '{type(tool)}'")
 
         inp = {i.id(): i.input.cwl_input() for i in self._inputs}
 
-        return w.get_dict(), inp, tools
+        return w, inp, tools
+
+    @staticmethod
+    def _generate_cwl_resource_override_schema():
+        schema = cwl.CommandInputRecordSchema()
+        schema.fields = [
+            cwl.CommandInputRecordSchema.CommandInputRecordField("coresMin", ["long", "string", "null"]),
+            cwl.CommandInputRecordSchema.CommandInputRecordField("coresMax", ["int", "string", "null"]),
+            cwl.CommandInputRecordSchema.CommandInputRecordField("ramMin", ["long", "string", "null"]),
+            cwl.CommandInputRecordSchema.CommandInputRecordField("ramMax", ["int", "string", "null"])
+        ]
+        return schema
+
+    def _generate_cwl_resource_override_schema_for_steps(self):
+        schema = cwl.CommandInputRecordSchema()
+
+        for step in self._steps:
+            tool = step.step.tool()
+            if isinstance(tool, Workflow):
+                key = tool.id() + "_resource_override" # self.RESOURCE_OVERRIDE_KEY
+                override_schema = tool._generate_cwl_resource_override_schema_for_steps()
+            else:
+                key = step.step.id()
+                override_schema = self._generate_cwl_resource_override_schema()
+
+            schema.fields.append(cwl.CommandInputRecordSchema.CommandInputRecordField(key, ["null", override_schema]))
+
+        return schema
+
+    @staticmethod
+    def _generate_hint_selectors_for_hint_map(resource_key, hint_map):
+        import json
+        return f"""${{
+    var key = '{resource_key}';
+    if (inputs["{Workflow.RESOURCE_OVERRIDE_KEY}"] && inputs["{Workflow.RESOURCE_OVERRIDE_KEY}"][key])
+        return inputs["{Workflow.RESOURCE_OVERRIDE_KEY}"][key];
+    var hints = inputs.hints;
+    if (!hints) return null;
+
+    var hintMap = {json.dumps(hint_map)};
+    for (var hint in hintMap) {{
+        var providedHintValue = hints[hint];
+        if (!providedHintValue || !(providedHintValue in hintMap[hint])) continue;
+        var hintValueToResourceMap = hintMap[hint][providedHintValue];
+        if (hintValueToResourceMap[key]) return hintValueToResourceMap[key];
+    }}
+    return null;
+}}"""# .replace("    ", "").replace("\n", "")
 
     @staticmethod
     def build_aliases(steps):
@@ -804,90 +923,13 @@ class Workflow(Tool):
 
         return w, inp, wtools
 
-    #     def get_string(self, **kwargs):
-    #
-    #         get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
-    #
-    #         tools: List[Tool] = [s.step.tool() for s in self._steps]
-    #         tool_name_to_tool: Dict[str, Tool] = {t.id().lower(): t for t in tools}
-    #         tool_name_to_alias = {}
-    #         steps_to_alias: Dict[str, str] = {s.id().lower(): get_alias(s.id()).lower() for s in self._steps}
-    #
-    #         aliases = set()
-    #
-    #         for tool in tool_name_to_tool:
-    #             a = get_alias(tool).upper()
-    #             s = a
-    #             idx = 2
-    #             while s in aliases:
-    #                 s = a + str(idx)
-    #                 idx += 1
-    #             aliases.add(s)
-    #             tool_name_to_alias[tool] = s
-    #
-    #         tab_char = '  '
-    #         nline_char = '\n'
-    #
-    #         import_str = "import \"tools/{tool_file}.get_string\" as {alias}"
-    #         input_str = "{tb}{data_type} {identifier}"
-    #         step_str = "{tb}call {tool_file}.{tool} as {alias} {{ input: {tool_mapping} }}"
-    #         output_str = "{tb2}{data_type} {identifier} = {alias}.{outp}"
-    #
-    #         imports = [import_str.format(
-    #             tb=tab_char,
-    #             tool_file=t,
-    #             alias=tool_name_to_alias[t.lower()].upper()
-    #         ) for t in tool_name_to_tool]
-    #
-    #         inputs = [input_str.format(
-    #             tb=tab_char,
-    #             data_type=i.input.data_type.get_string(),
-    #             identifier=i.id()
-    #         ) for i in self._inputs]
-    #
-    #         steps = [step_str.format(
-    #             tb=tab_char,
-    #             tool_file=tool_name_to_alias[s.step.tool().id().lower()].upper(),
-    #             tool=s.step.tool().wdl_name(),
-    #             alias=s.id(),
-    #             tool_mapping=', '.join(s.wdl_map())  # [2 * tab_char + w for w in s.wdl_map()])
-    #         ) for s in self._steps]
-    #
-    #         outputs = [output_str.format(
-    #             tb2=2 * tab_char,
-    #             data_type=o.output.data_type.get_string(),
-    #             identifier=o.id(),
-    #             alias=first_value(first_value(o.connection_map).source_map).start.id(),
-    #             outp=first_value(first_value(o.connection_map).source_map).stag
-    #         ) for o in self._outputs]
-    #
-    #         # imports = '\n'.join([f"import \"tools/{t}.get_string\" as {tool_name_to_alias[t.lower()].upper()}" for t in tool_name_to_tool])
-    #         # inputs = '\n'.join([f"{tab_char}{i.input.data_type.get_string()} {i.id()}" for i in self._inputs])
-    #         # steps = '\n'.join([f"{tab_char}call {tool_name_to_alias[s.step.get_tool().tool().lower()].upper()}"
-    #         #                    f".{s.step.get_tool().wdl_name()} as {s.id()} {{input: \n{(',' + nline_char).join([2 * tab_char + w for w in s.wdl_map()])}\n{tab_char}}}" for s in self._steps])
-    #         # outputs = '\n'.join([f"{2*tab_char}{o.output.data_type.get_string()} {o.id()} = {steps_to_alias[next(iter(o.connection_map.values()))[0].split('/')[0].lower()].lower()}.{o.id()}" for o in self._outputs])
-    #
-    #         workflow = f"""
-    # {nline_char.join(imports)}
-    #
-    # workflow {self.identifier} {{
-    # {nline_char.join(inputs)}
-    #
-    # {nline_char.join(steps)}
-    #
-    # {tab_char}output {{
-    # {nline_char.join(outputs)}
-    # {tab_char}}}
-    # }}"""
-    #         tools = {t.id(): t.get_string() for t in tools}
-    #
-    #         inp = {f"{self.identifier}.{i.id()}": i.input.wdl_input() for i in self._inputs}
-    #
-    #         return workflow, inp, tools
-
-    def dump_cwl(self, to_disk: False, with_docker=True):
-        import os, yaml, zipfile
+    def get_cwl_dicts(self, with_docker=True):
         cwl_data, inp_data, tools_ar = self.cwl(with_docker=with_docker)
+        return cwl_data.get_dict(), inp_data, [t.get_dict() for t in tools_ar]
+
+    def dump_cwl(self, to_disk: False, with_docker=True, write_inputs_file=True):
+        import os, yaml
+        cwl_data, inp_data, tools_ar = self.get_cwl_dicts(with_docker=with_docker)
 
         d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/cwl/"
         d_tools = d + "tools/"
@@ -913,10 +955,13 @@ class Workflow(Tool):
                 yaml.dump(cwl_data, cwl, default_flow_style=False)
                 Logger.log(f"Written {self.identifier}.cwl to disk")
 
-            with open(d + self.id() + "-job.yml", "w+") as cwl:
-                Logger.log(f"Writing {self.identifier}-job.yml to disk")
-                yaml.dump(inp_data, cwl, default_flow_style=False)
-                Logger.log(f"Written {self.identifier}-job.yml to disk")
+            if write_inputs_file:
+                with open(d + self.id() + "-job.yml", "w+") as cwl:
+                    Logger.log(f"Writing {self.identifier}-job.yml to disk")
+                    yaml.dump(inp_data, cwl, default_flow_style=False)
+                    Logger.log(f"Written {self.identifier}-job.yml to disk")
+            else:
+                Logger.log("Skipping writing input (yaml) job file")
 
             # z = zipfile.ZipFile(d + "tools.zip", "w")
             for tool in tools_ar:

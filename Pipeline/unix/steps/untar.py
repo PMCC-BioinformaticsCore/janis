@@ -11,18 +11,21 @@ class Untar(CommandTool):
     def base_command():
         return ["tar", "xf"]
 
+    def friendly_name(self):
+        return "Untar archive"
+
     @staticmethod
     def tool():
         return "Untar"
 
     def inputs(self):
         return [
-            ToolInput("tarFile", TarFile())
+            ToolInput("tarFile", TarFile(), position=0)
         ]
 
     def outputs(self):
         return [
-            ToolOutput("files", Array(File()), glob="*.java")
+            ToolOutput("files", File(), glob="*.java")
         ]
 
 """

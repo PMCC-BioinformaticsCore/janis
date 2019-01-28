@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 from Pipeline.utils.logger import Logger, LogLevel
 import cwlgen.cwlgen as cwl
@@ -23,14 +23,14 @@ class Input:
     def id(self):
         return self._identifier
 
-    def cwl(self):
+    def cwl(self) -> cwl.InputParameter:
 
         return cwl.InputParameter(
             param_id=self._identifier,
             label=self.label,
             secondary_files=self.data_type.secondary_files(),
             param_format=None,
-            streamable=False,
+            streamable=None,
             doc=self.doc,
             input_binding=None,
             param_type=self.data_type.cwl_type()
@@ -56,5 +56,5 @@ class InputNode(Node):
     def inputs(self):
         return None
 
-    def cwl(self):
+    def cwl(self) -> cwl.InputParameter:
         return self.input.cwl()

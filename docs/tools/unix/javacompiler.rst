@@ -1,7 +1,7 @@
 
-javacompiler
-============
-*unix*
+Java compiler
+============================
+*unix* (javacompiler)
 
 Documentation
 -------------
@@ -12,11 +12,11 @@ Docker
 
 URL
 ******
-*No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_
+*No URL to the documentation was provided*
 
 Docstring
 *********
-None
+*No documentation was provided:`contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
@@ -29,10 +29,11 @@ compiled  File
 Inputs
 ------
 ======  ======  ========  ==========  ===============
-name    type    prefix    position    documentation
+name    type    prefix      position  documentation
 ======  ======  ========  ==========  ===============
-file    File
+file    File                       1
 ======  ======  ========  ==========  ===============
 
+*Java compiler was last updated on **Unknown***.
 
-*This page was automatically generated*
+*This page was automatically generated on 2019-01-25*.

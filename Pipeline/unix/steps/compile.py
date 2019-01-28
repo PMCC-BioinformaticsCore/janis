@@ -18,16 +18,19 @@ class Compile(CommandTool):
     def base_command():
         return "javac"
 
+    def friendly_name(self):
+        return "Java compiler"
+
     @staticmethod
     def docker():
         return "openjdk:8"
 
     def arguments(self) -> List[ToolArgument]:
-        return [ToolArgument(CurrentWorkingDirectory(), "-d")]
+        return [ToolArgument(".", "-d")]    # CurrentWorkingDirectory()
 
     def inputs(self):
         return [
-            ToolInput("file", File())
+            ToolInput("file", File(), position=1)
         ]
 
     def outputs(self):

@@ -16,11 +16,15 @@ class Metadata(object):
         :param maintainer:
         :param maintainer_email:
         :param date_created:
+        :param date_updated:
         :param institution:
         :param doi:
         :param citation:
         :type citation: str | list[str] | None
         :param keywords:
+        :param documentation_url:
+        :param documentation:
+        :param version:
         """
         self.creator = creator
         self.maintainer = maintainer

@@ -1,12 +1,12 @@
 import unittest
 
+from Pipeline.unix.steps.debugecho import DebugEchoInputs
 from Pipeline.unix.steps.tar import Tar
 from Pipeline.unix.steps.untar import Untar
 from Pipeline.unix.steps.compile import Compile
 from Pipeline.unix.data_types.tar_file import TarFile
 
 from Pipeline import Workflow, Input, Output, Step, String, File, Logger
-
 
 # file.tar -> untar -> compile -> tar -> out.tar
 #                  \_____________↗
@@ -46,12 +46,6 @@ class TestSimple(unittest.TestCase):
 
         import Pipeline as p
 
-
-        w = p.Workflow("id")
-
-        inp1 = p.Input()
-
-
         # Logger.mute()
         w = Workflow("simple")
 
@@ -59,14 +53,16 @@ class TestSimple(unittest.TestCase):
         step1 = Step("untar", Untar())
         step2 = Step("compile", Compile())
         step3 = Step("tar", Tar())
-        outp = Output("output", File())
+        debug = Step("debug", DebugEchoInputs())
 
-        w.add_pipe(inp1, step1, step2, step3.files, outp)
+        w.add_pipe(inp1, step1, step2, step3.files, Output("output"))
         w.add_edge(step1, step3.files)
+        w.add_edge(step3, debug)
+        w.add_edge(debug, Output("debugout"))
 
         # w.draw_graph()
-        w.dump_cwl(to_disk=True, with_docker=False)
-        w.dump_wdl(to_disk=True, with_docker=True)
+        w.dump_cwl(to_disk=True, with_docker=False, write_inputs_file=False)
+        # w.dump_wdl(to_disk=True, with_docker=True)
 
         # Logger.unmute()
 

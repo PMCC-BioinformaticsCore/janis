@@ -26,7 +26,6 @@ class TestGermlinePipeline(unittest.TestCase):
         fastqInputs = Input("inputs", Array(Fastq()))
 
         s1_inp_header = Input("read_group_header_line", String())
-        s1_inp_reference = Input("reference", FastaWithDict())
         s4_inp_SNPS_dbSNP = Input("SNPS_dbSNP", VcfIdx())
         s4_inp_SNPS_1000GP = Input("SNPS_1000GP", TabixIdx())
         s4_inp_OMNI = Input("OMNI", TabixIdx())
@@ -48,7 +47,7 @@ class TestGermlinePipeline(unittest.TestCase):
         # step1
         w.add_edge(fastqInputs, s1_sw.fastq)
         w.add_edges([
-            (s1_inp_reference, s1_sw.reference),
+            (reference, s1_sw.reference),
             (s1_inp_header, s1_sw.read_group_header_line),
             (inp_tmpdir, s1_sw.tmpdir)
         ])
@@ -60,6 +59,8 @@ class TestGermlinePipeline(unittest.TestCase):
         w.add_default_value(s2_mergeSamFiles.createIndex, True)
         w.add_default_value(s2_mergeSamFiles.maxRecordsInRam, 5000000)
         w.add_default_value(s2_mergeSamFiles.validationStringency, "SILENT")
+
+
 
 
         # step3

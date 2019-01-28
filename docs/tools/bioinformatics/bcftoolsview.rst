@@ -12,11 +12,11 @@ Docker
 
 URL
 ******
-*No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_
+*No URL to the documentation was provided*
 
 Docstring
 *********
-None
+*No documentation was provided:`contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
@@ -71,6 +71,6 @@ private           Optional<Boolean>        --private                     1  (-x)
 excludePrivate    Optional<Boolean>        --exclude-private             1  (-X) exclude sites where the non-reference alleles are exclusive (private) to the subset samples
 ================  =======================  ===================  ==========  ==============================================================================================================================================================================
 
-*BCFTools: View was last updated on **Unknown***
+*BCFTools: View was last updated on **Unknown***.
 
-*This page was automatically generated on 2019-01-24*
+*This page was automatically generated on 2019-01-25*.

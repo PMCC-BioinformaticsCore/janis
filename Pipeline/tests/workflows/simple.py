@@ -1,6 +1,6 @@
 import unittest
 
-from Pipeline.unix.steps.echoinputs import DebugEchoInputs
+from Pipeline.unix.steps.debugecho import DebugEchoInputs
 from Pipeline.unix.steps.tar import Tar
 from Pipeline.unix.steps.untar import Untar
 from Pipeline.unix.steps.compile import Compile
@@ -61,7 +61,7 @@ class TestSimple(unittest.TestCase):
         w.add_edge(debug, Output("debugout"))
 
         # w.draw_graph()
-        w.dump_cwl(to_disk=True, with_docker=False)
+        w.dump_cwl(to_disk=True, with_docker=False, write_inputs_file=False)
         # w.dump_wdl(to_disk=True, with_docker=True)
 
         # Logger.unmute()

@@ -65,7 +65,11 @@ class CommandTool(Tool, ABC):
     def requirements() -> Optional[List[cwl.Requirement]]:
         return None
 
-    def cwl(self, with_docker=True) -> Dict[str, Any]:
+    @staticmethod
+    def hint_map() -> Optional[Dict[str, Any]]:
+        return None
+
+    def cwl(self, with_docker=True) -> cwl.CommandLineTool:
 
         metadata = self.metadata() if self.metadata() else Metadata()
         stdouts = [o.output_type for o in self.outputs() if isinstance(o.output_type, Stdout) and o.output_type.stdoutname]

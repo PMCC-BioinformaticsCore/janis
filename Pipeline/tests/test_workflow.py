@@ -4,14 +4,14 @@ from Pipeline import File, Array, Logger, CommandTool, ToolInput
 from Pipeline.graph.stepinput import StepInput, first_value, Edge
 from Pipeline.types.common_data_types import String
 from Pipeline.unix.data_types.tar_file import TarFile
-from Pipeline.unix.steps.echo import Echo
-from Pipeline.unix.steps.tar import Tar
-from Pipeline.unix.steps.untar import Untar
+from Pipeline.unix.tools.echo import Echo
+from Pipeline.unix.tools.tar import Tar
+from Pipeline.unix.tools.untar import Untar
 from Pipeline.workflow.input import Input
 from Pipeline.workflow.output import Output
 from Pipeline.workflow.step import Step
 from Pipeline.workflow.workflow import Workflow
-from Pipeline.unix.steps.cat import Cat
+from Pipeline.unix.tools.cat import Cat
 
 
 class SingleTestTool(CommandTool):
@@ -244,7 +244,7 @@ class TestWorkflow(TestCase):
         step = Step("tar", Tar())
         out = Output("tarred", TarFile())
 
-        w.add_pipe(inp1, step, out)
+        w.add_pipe(inp1, step.files, out)
         w.add_default_value(step.tarName, default_value)
         cwlwf, _, _ = w.cwl(is_nested_tool=False, with_docker=False)
         cwl = cwlwf.get_dict()

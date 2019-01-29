@@ -56,7 +56,7 @@ class LogLevel:
 
 
 class Logger:
-    CONSOLE_LEVEL: Optional[int] = LogLevel.DEBUG
+    CONSOLE_LEVEL: Optional[int] = LogLevel.INFO
     __TEMP_CONSOLE_LEVEL: Optional[int] = None
     WRITE_LEVEL: Optional[int] = LogLevel.DEBUG
 

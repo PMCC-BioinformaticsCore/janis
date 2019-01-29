@@ -1,7 +1,6 @@
 import unittest
 
 from Pipeline import Array, String
-from Pipeline.bioinformatics.data_types.fastq import Fastq
 
 
 class TestTypes(unittest.TestCase):
@@ -16,8 +15,3 @@ class TestTypes(unittest.TestCase):
         ar = Array(Array(String()))
         d = ar.cwl_type()
         self.assertEqual(d.get_dict(), {'type': 'array', 'items': {'type': 'array', 'items': 'string'}})
-
-
-    def test_nullable_fastq(self):
-        n = Fastq(optional=True)
-        print( n.cwl_type())

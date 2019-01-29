@@ -4,3 +4,6 @@
 [submodule "wdlgen"]
 	path = wdlgen
 	url = git@github.com:illusional/python-wdlgen.git
+[submodule "bioinformatics"]
+	path = bioinformatics
+	url = https://github.com/PMCC-BioinformaticsCore/pipelines-bioinformatics

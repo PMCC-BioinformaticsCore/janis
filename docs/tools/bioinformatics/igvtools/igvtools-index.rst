@@ -1,9 +1,6 @@
 
 IGVTools: Index
 ================================
-..
-    # *bioinformatics* (igvtools-index)
-
 Tool identifier: ``igvtools-index``
 
 Documentation
@@ -65,4 +62,4 @@ name    type    prefix    position    documentation
 
 
 *IGVTools: Index was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

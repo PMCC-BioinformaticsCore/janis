@@ -1,9 +1,6 @@
 
 Debug inputs (log)
 ================================
-..
-    # *unix* (debuginputs)
-
 Tool identifier: ``debuginputs``
 
 Documentation
@@ -19,7 +16,7 @@ URL
 
 Docstring
 *********
-*No documentation was provided:`contribute one <https://github.com/illusional>`_*
+*No documentation was provided: `contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
@@ -53,4 +50,4 @@ fileInput    Optional<File>
 
 
 *Debug inputs (log) was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

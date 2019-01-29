@@ -2,30 +2,21 @@
 bioinformatics
 ==============
 
-Automatically generated index page for bioinformatics tools.
+Automatically generated index page for {module} tools
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
+   GATK4/index
+   bcftools/index
+   bwa/index
+   htslib/index
+   igvtools/index
+   illumina/index
+   samtools/index
    alignsortedbam
-   bcftoolsnorm
-   bcftoolsview
-   bgzip
-   bwamem
-   gatk4applybqsr
-   gatk4baserecalibrator
-   gatk4genotypeconcordance
-   gatk4markduplicates
-   gatk4mergesamfiles
-   gatk4printreads
-   gatkhaplotypecaller
-   gatkmutect2
-   gatksortsam
-   igvtools-index
    performanceValidator
-   samtoolssort
-   samtoolsview
    splitmultiallele
-   strelka-germline
-   tabix
+
+*This page was auto-generated on 30/01/2019. Please do not directly alter the contents of this page.*

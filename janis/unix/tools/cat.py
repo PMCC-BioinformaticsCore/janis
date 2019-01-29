@@ -1,8 +1,9 @@
-from janis.tool.commandtool import CommandTool, ToolInput
+from janis.tool.commandtool import ToolInput
 from janis.types.common_data_types import Array, File
+from janis.unix.tools.unixtool import UnixTool
 
 
-class Cat(CommandTool):
+class Cat(UnixTool):
 
     @staticmethod
     def tool():

@@ -1,9 +1,6 @@
 
 Split Multiple Alleles
 =========================================
-..
-    # *bioinformatics* (splitmultiallele)
-
 Tool identifier: ``splitmultiallele``
 
 Documentation
@@ -19,7 +16,7 @@ URL
 
 Docstring
 *********
-*No documentation was provided:`contribute one <https://github.com/illusional>`_*
+*No documentation was provided: `contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
@@ -54,4 +51,4 @@ outputFilename  Optional<Filename>  >                 10
 
 
 *Split Multiple Alleles was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

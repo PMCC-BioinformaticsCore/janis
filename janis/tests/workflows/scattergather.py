@@ -2,12 +2,12 @@ from typing import List
 
 from janis import Workflow, Input, File, Directory, Int, Output, Array, String, Step, ToolInput, \
     ToolOutput
-from janis.bioinformatics.tools.blast import Blast
-from janis.bioinformatics.tools.fq2fa import Fq2fa
-from janis.bioinformatics.tools.idba import Idba
+from bioinformatics.tools.blast import Blast
+from bioinformatics.tools.fq2fa import Fq2fa
+from bioinformatics.tools.idba import Idba
 from janis.tool.expressiontool import ExpressionTool
-from janis.unix.steps.merge import Merge
-from janis.unix.steps.scatterlines import ScatterLines
+from janis.unix.tools.merge import Merge
+from janis.unix.tools.scatterlines import ScatterLines
 
 
 class ParseSamplesFile(ExpressionTool):

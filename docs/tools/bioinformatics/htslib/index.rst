@@ -1,6 +1,6 @@
 
-Tools
-=====
+htslib
+======
 
 Automatically generated index page for {module} tools
 
@@ -8,7 +8,7 @@ Automatically generated index page for {module} tools
    :maxdepth: 2
    :caption: Contents:
 
-   bioinformatics/index
-   unix/index
+   bgzip
+   tabix
 
 *This page was auto-generated on 30/01/2019. Please do not directly alter the contents of this page.*

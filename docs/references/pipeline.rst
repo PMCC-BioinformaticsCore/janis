@@ -11,17 +11,17 @@ If you want to build tool definitions, you will need a moderate understanding of
 Building workflows
 ==================
 
-.. autoclass:: Pipeline.Workflow
-.. autoclass:: Pipeline.Input
-.. autoclass:: Pipeline.Output
-.. autoclass:: Pipeline.Step
+.. autoclass:: janis.Workflow
+.. autoclass:: janis.Input
+.. autoclass:: janis.Output
+.. autoclass:: janis.Step
 
 
 Data types
 ==========
 
-.. autoclass:: Pipeline.String
-.. autoclass:: Pipeline.File
-.. autoclass:: Pipeline.Int
-.. autoclass:: Pipeline.Float
-.. autoclass:: Pipeline.File
+.. autoclass:: janis.String
+.. autoclass:: janis.File
+.. autoclass:: janis.Int
+.. autoclass:: janis.Float
+.. autoclass:: janis.File

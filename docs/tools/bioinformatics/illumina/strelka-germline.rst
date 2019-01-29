@@ -1,9 +1,6 @@
 
 Strelka (Germline)
 =====================================
-..
-    # *bioinformatics* (strelka-germline)
-
 Tool identifier: ``strelka-germline``
 
 Documentation
@@ -90,4 +87,4 @@ mailTo                    Optional<String>   --mailTo            3  (-e) send em
 
 
 *Strelka (Germline) was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

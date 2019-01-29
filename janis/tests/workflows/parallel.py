@@ -1,20 +1,20 @@
 import unittest
 
 from janis import Workflow, Input, String, Step, Array, Logger, Output, File, Filename
-from janis.bioinformatics.data_types.bampair import BamPair
-from janis.bioinformatics.data_types.bed import Bed
-from janis.bioinformatics.data_types.fasta import Fasta
-from janis.bioinformatics.data_types.fasta import FastaWithDict
-from janis.bioinformatics.data_types.fastq import Fastq
-from janis.bioinformatics.data_types.vcf import VcfIdx
-from janis.bioinformatics.tools.bwa_mem import BwaMem
-from janis.bioinformatics.tools.gatk3.baserecalibrator.latest import Gatk3RecalibratorLatest as Gatk3Recalibrator
-from janis.bioinformatics.tools.gatk3.haplotypecaller.latest import Gatk3HaplotypeCallerLatest as Gatk3HaplotypeCaller
-from janis.bioinformatics.tools.gatk3.mutect2.latest import Gatk3Mutect2Latest as Gatk3Mutect2
-from janis.bioinformatics.tools.gatk3.printreads.latest import Gatk3PrintReadsLatest as Gatk3PrintReads
-from janis.bioinformatics.tools.picard_markdup import PicardMarkDup
-from janis.bioinformatics.tools.picard_sortsam import PicardSortSam
-from janis.bioinformatics.tools.samtools.view.latest import SamToolsViewLatest as SamToolsView
+from bioinformatics.data_types.bampair import BamPair
+from bioinformatics.data_types.bed import Bed
+from bioinformatics.data_types.fasta import Fasta
+from bioinformatics.data_types.fasta import FastaWithDict
+from bioinformatics.data_types.fastq import Fastq
+from bioinformatics.data_types.vcf import VcfIdx
+from bioinformatics.tools.bwa_mem import BwaMem
+from bioinformatics.tools.gatk3.baserecalibrator.latest import Gatk3RecalibratorLatest as Gatk3Recalibrator
+from bioinformatics.tools.gatk3.haplotypecaller.latest import Gatk3HaplotypeCallerLatest as Gatk3HaplotypeCaller
+from bioinformatics.tools.gatk3.mutect2.latest import Gatk3Mutect2Latest as Gatk3Mutect2
+from bioinformatics.tools.gatk3.printreads.latest import Gatk3PrintReadsLatest as Gatk3PrintReads
+from bioinformatics.tools.picard_markdup import PicardMarkDup
+from bioinformatics.tools.picard_sortsam import PicardSortSam
+from bioinformatics.tools.samtools.view.latest import SamToolsViewLatest as SamToolsView
 
 
 class TestParallel:

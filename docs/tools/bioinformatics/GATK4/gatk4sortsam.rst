@@ -1,10 +1,7 @@
 
 GATK4: Sort SAM
-=============================
-..
-    # *bioinformatics* (gatksortsam)
-
-Tool identifier: ``gatksortsam``
+==============================
+Tool identifier: ``gatk4sortsam``
 
 Documentation
 -------------
@@ -67,4 +64,4 @@ verbosity             Optional<String>         --verbosity                      
 
 
 *GATK4: Sort SAM was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

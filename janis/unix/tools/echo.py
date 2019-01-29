@@ -1,7 +1,8 @@
-from janis import CommandTool, String, ToolInput, ToolOutput, Stdout
+from janis import String, ToolInput, ToolOutput, Stdout
+from janis.unix.tools.unixtool import UnixTool
 
 
-class Echo(CommandTool):
+class Echo(UnixTool):
 
     @staticmethod
     def tool():

@@ -1,11 +1,11 @@
 from janis import Array
-from janis.unix.data_types.tar_file import TarFile
-
+from janis.tool.commandtool import ToolInput, ToolOutput
 from janis.types.common_data_types import File
-from janis.tool.commandtool import CommandTool, ToolInput, ToolOutput
+from janis.unix.data_types.tar_file import TarFile
+from janis.unix.tools.unixtool import UnixTool
 
 
-class Untar(CommandTool):
+class Untar(UnixTool):
 
     @staticmethod
     def base_command():

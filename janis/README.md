@@ -1,6 +1,8 @@
 # Janis
 _Portable pipelines assistant_
 
+[![Documentation Status](https://readthedocs.org/projects/janis/badge/?version=latest)](https://janis.readthedocs.io/en/latest/?badge=latest)
+
 ## Quickstart
 
 Install through PIP ([project page](https://pypi.org/project/janis/)):
@@ -8,11 +10,13 @@ Install through PIP ([project page](https://pypi.org/project/janis/)):
 pip install janis
 ```
 
+And ReadTheDocs: https://janis.readthedocs.io/en/latest/
+___
 OR
 
-Clone the [GitHub repository](https://github.com/PMCC-BioinformaticsCore/pipelines):
+Clone the [GitHub repository](https://github.com/PMCC-BioinformaticsCore/janis):
 ```bash
-git clone git@github.com:PMCC-BioinformaticsCore/pipelines.git
+git clone git@github.com:PMCC-BioinformaticsCore/janis.git
 ```
 
 
@@ -23,16 +27,19 @@ This project was produced as part of the Portable Pipelines Project in partnersh
 - [Peter MacCallum Cancer Centre](https://www.petermac.org/)
 - [Walter and Eliza Hall Institute of Medical Research (WEHI) ](https://www.wehi.edu.au/)
 
+Related project links:
+- 
+
 ## Usage
 
-You must import `Pipeline` into your project, that is:
+You must import `janis` into your project, that is:
 ```python
 import janis as j
 ``` 
 
 ### Included definitions
 
-Some unix tools have been wrapped and included as part of the pip module. They are located at `Pipeline.unix.tools/`.
+Some unix tools have been wrapped and included as part of the pip module. They are located at `janis.unix.tools/`.
 The examples will use the included unix tools, with more information about bioinformatics tools down below. 
 See the section about contributions if you find an error in the tool definitions.
 
@@ -67,6 +74,7 @@ The git submodule is embedded here for reference, but can also be found here: [h
 
 ### Intended usage
 
+_Not yet available_
 ```
 pip install portable-pipeline-bioinformatics
 ```
@@ -79,7 +87,7 @@ All sections of this module are written in Python, however a fair understanding 
 might be required to make changes.
 
 If you find an issue with Pipeline related functionality, please report it through the 
-[Github issues page](https://github.com/PMCC-BioinformaticsCore/pipelines/issues).
+[Github issues page](https://github.com/PMCC-BioinformaticsCore/janis/issues).
 
 If you find an issue with the tool definitions, please see the relevant issue page:
 - [Pipeline-bioinformatics](https://github.com/PMCC-BioinformaticsCore/pipelines-bioinformatics/issues)
@@ -98,7 +106,7 @@ python setup.py bdist_wheel
 To complete the upload, you will need to install `twine` and have your Pip settings configured:
 
 ```
-python -m twine upload dist/portable_pipelines-$VERSION-py3-none-any.whl
+python -m twine upload dist/janis_pipelines-$VERSION-py3-none-any.whl
 ``` 
 
 And that's it!

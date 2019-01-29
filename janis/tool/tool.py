@@ -162,6 +162,14 @@ class Tool(ABC, object):
     def id(self) -> str:
         raise Exception("Must implement id() method")
 
+    @staticmethod
+    def tool_module():
+        return None
+
+    @staticmethod
+    def tool_provider():
+        return None
+
     @abstractmethod
     def inputs(self) -> List[ToolInput]:
         raise Exception("Must implement inputs() method")

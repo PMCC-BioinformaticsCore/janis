@@ -1,9 +1,6 @@
 
 SamTools: Sort
 =============================
-..
-    # *bioinformatics* (samtoolssort)
-
 Tool identifier: ``samtoolssort``
 
 Documentation
@@ -108,4 +105,4 @@ outputFilename        Optional<Filename>  -o                 5  Output to FILE [
 
 
 *SamTools: Sort was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

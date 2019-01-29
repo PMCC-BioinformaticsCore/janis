@@ -1,9 +1,6 @@
 
 GATK4: Mark Duplicates
 ============================================
-..
-    # *bioinformatics* (gatk4markduplicates)
-
 Tool identifier: ``gatk4markduplicates``
 
 Documentation
@@ -112,4 +109,4 @@ verbosity             Optional<String>         --verbosity                      
 
 
 *GATK4: Mark Duplicates was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

@@ -1,9 +1,6 @@
 
 Echo - Print to console
 ==============================
-..
-    # *unix* (echo)
-
 Tool identifier: ``echo``
 
 Documentation
@@ -19,13 +16,14 @@ URL
 
 Docstring
 *********
-*No documentation was provided:`contribute one <https://github.com/illusional>`_*
+*No documentation was provided: `contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
 ======  ======  ===============
 name    type    documentation
 ======  ======  ===============
+output  Stdout
 ======  ======  ===============
 
 Inputs
@@ -38,7 +36,7 @@ Required inputs
 ======  ======  ========  ==========  ===============
 name    type    prefix    position    documentation
 ======  ======  ========  ==========  ===============
-inp     String
+input   String
 ======  ======  ========  ==========  ===============
 
 Optional inputs
@@ -51,4 +49,4 @@ name    type    prefix    position    documentation
 
 
 *Echo - Print to console was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

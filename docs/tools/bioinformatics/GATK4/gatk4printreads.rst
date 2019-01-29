@@ -1,9 +1,6 @@
 
 GATK4: Print Reads
 ====================================
-..
-    # *bioinformatics* (gatk4printreads)
-
 Tool identifier: ``gatk4printreads``
 
 Documentation
@@ -69,4 +66,4 @@ outputFilename  Optional<Filename>
 
 
 *GATK4: Print Reads was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

@@ -1,17 +1,17 @@
 import unittest
 
 from janis import Input, String, Step, Directory, Workflow, Array, Output
-from janis.bioinformatics.data_types.fasta import FastaWithDict
-from janis.bioinformatics.data_types.fastq import Fastq
-from janis.bioinformatics.data_types.vcf import VcfIdx, TabixIdx
-from janis.bioinformatics.tools.common.alignsortedbam import AlignSortedBam
-from janis.bioinformatics.tools.gatk4.applybqsr.latest import Gatk4ApplyBqsrLatest as Gatk4ApplyBqsr
-from janis.bioinformatics.tools.gatk4.baserecalibrator.latest import \
+from bioinformatics.data_types.fasta import FastaWithDict
+from bioinformatics.data_types.fastq import Fastq
+from bioinformatics.data_types.vcf import VcfIdx, TabixIdx
+from bioinformatics.tools.common.alignsortedbam import AlignSortedBam
+from bioinformatics.tools.gatk4.applybqsr.latest import Gatk4ApplyBqsrLatest as Gatk4ApplyBqsr
+from bioinformatics.tools.gatk4.baserecalibrator.latest import \
     Gatk4BaseRecalibratorLatest as Gatk4BaseRecalibrator
-from janis.bioinformatics.tools.gatk4.markduplicates.latest import Gatk4MarkDuplicatesLatest as Gatk4MarkDuplicates
-from janis.bioinformatics.tools.gatk4.mergesamfiles.latest import Gatk4MergeSamFilesLatest as Gatk4MergeSamFiles
-from janis.bioinformatics.tools.gatk4.mutect2.latest import Gatk4Mutect2Latest
-from janis.bioinformatics.tools.validation.performancevalidator import PerformanceValidator_1_2_1
+from bioinformatics.tools.gatk4.markduplicates.latest import Gatk4MarkDuplicatesLatest as Gatk4MarkDuplicates
+from bioinformatics.tools.gatk4.mergesamfiles.latest import Gatk4MergeSamFilesLatest as Gatk4MergeSamFiles
+from bioinformatics.tools.gatk4.mutect2.latest import Gatk4Mutect2Latest
+from bioinformatics.tools.validation.performancevalidator import PerformanceValidator_1_2_1
 
 
 class TestSomaticPipeline(unittest.TestCase):

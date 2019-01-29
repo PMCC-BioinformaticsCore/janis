@@ -2,9 +2,18 @@ from typing import List
 
 from janis import ToolInput, File, ToolOutput, Array, String
 from janis.tool.expressiontool import ExpressionTool
+from janis.unix.tools.unixtool import UnixTool
 
 
-class ScatterLines(ExpressionTool):
+class ScatterLines(ExpressionTool, UnixTool):
+
+    @staticmethod
+    def base_command():
+        return None
+
+    def friendly_name(self) -> str:
+        return "Scatter across lines"
+
     @staticmethod
     def tool():
         return "parse-file"

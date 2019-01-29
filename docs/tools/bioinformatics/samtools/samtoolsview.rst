@@ -1,9 +1,6 @@
 
 SamTools: View
 =============================
-..
-    # *bioinformatics* (samtoolsview)
-
 Tool identifier: ``samtoolsview``
 
 Documentation
@@ -84,4 +81,4 @@ outputFilename                         Optional<Filename>       -o              
 
 
 *SamTools: View was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

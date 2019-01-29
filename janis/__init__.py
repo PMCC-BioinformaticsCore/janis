@@ -8,4 +8,5 @@ from janis.types.data_types import DataType
 from janis.types.registry import register_type, get_type
 from janis.types.common_data_types import Boolean, String, Int, Float, Double, File, Directory, Array, Filename, Stdout
 from janis.utils.logger import Logger, LogLevel
+from janis.utils.metadata import Metadata, WorkflowMetadata, ToolMetadata
 from janis.unix import *

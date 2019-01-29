@@ -1,7 +1,7 @@
 
-merge
-=====
-*unix*
+Merge Files
+===================
+Tool identifier: ``merge``
 
 Documentation
 -------------
@@ -12,27 +12,41 @@ Docker
 
 URL
 ******
-*No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_
+*No URL to the documentation was provided*
 
 Docstring
 *********
-None
+*No documentation was provided: `contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
 ======  ======  ===============
 name    type    documentation
 ======  ======  ===============
-merged  File
+merged  Stdout
 ======  ======  ===============
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
 ======  ===========  ========  ==========  ===============
 name    type         prefix    position    documentation
 ======  ===========  ========  ==========  ===============
 files   Array<File>
 ======  ===========  ========  ==========  ===============
 
+Optional inputs
+***************
 
-*This page was automatically generated*
+======  ======  ========  ==========  ===============
+name    type    prefix    position    documentation
+======  ======  ========  ==========  ===============
+======  ======  ========  ==========  ===============
+
+
+*Merge Files was last updated on **Unknown***.
+*This page was automatically generated on 2019-01-30*.

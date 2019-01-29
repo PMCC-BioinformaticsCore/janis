@@ -1,9 +1,6 @@
 
 GATK4: MuTect2
 ============================
-..
-    # *bioinformatics* (gatkmutect2)
-
 Tool identifier: ``gatkmutect2``
 
 Documentation
@@ -70,4 +67,4 @@ panelOfNormals            Optional<VCFIDX>    --panel-of-normals                
 
 
 *GATK4: MuTect2 was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

@@ -1,9 +1,6 @@
 
 BCFTools: View
 =============================
-..
-    # *bioinformatics* (bcftoolsview)
-
 Tool identifier: ``bcftoolsview``
 
 Documentation
@@ -19,7 +16,7 @@ URL
 
 Docstring
 *********
-*No documentation was provided:`contribute one <https://github.com/illusional>`_*
+*No documentation was provided: `contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
@@ -89,4 +86,4 @@ excludePrivate    Optional<Boolean>        --exclude-private             1  (-X)
 
 
 *BCFTools: View was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

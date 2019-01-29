@@ -1,9 +1,6 @@
 
 Tabix
 =============
-..
-    # *bioinformatics* (tabix)
-
 Tool identifier: ``tabix``
 
 Documentation
@@ -78,4 +75,4 @@ targets      Optional<File>     --targets               11  -T: Similar to -R bu
 
 
 *Tabix was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

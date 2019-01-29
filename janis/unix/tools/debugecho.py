@@ -1,10 +1,11 @@
 from typing import List
 
-from janis import CommandTool, ToolOutput, ToolInput, String, Stdout, File
 import janis.hints.hints as hints
+from janis import ToolOutput, ToolInput, String, Stdout, File
+from janis.unix.tools.unixtool import UnixTool
 
 
-class DebugEchoInputs(CommandTool):
+class DebugEchoInputs(UnixTool):
     @staticmethod
     def tool():
         return "debuginputs"

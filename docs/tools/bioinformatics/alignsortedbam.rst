@@ -1,9 +1,6 @@
 
 Align sorted BAM
 =================================
-..
-    # *bioinformatics* (alignsortedbam)
-
 Tool identifier: ``alignsortedbam``
 
 Documentation
@@ -54,4 +51,4 @@ name    type    prefix    position    documentation
 
 
 *Align sorted BAM was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

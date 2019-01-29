@@ -1,13 +1,13 @@
 #
 # Untar a file
-from typing import List
 
 from janis import Array
+from janis.tool.commandtool import ToolInput, ToolOutput
 from janis.types.common_data_types import File, Filename
-from janis.tool.commandtool import CommandTool, ToolInput, ToolOutput
+from janis.unix.tools.unixtool import UnixTool
 
 
-class Tar(CommandTool):
+class Tar(UnixTool):
 
     @staticmethod
     def tool():

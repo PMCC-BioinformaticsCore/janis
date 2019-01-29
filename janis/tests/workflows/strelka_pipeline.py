@@ -1,9 +1,9 @@
 import janis as p
-from janis.bioinformatics.data_types.bampair import BamPair
-from janis.bioinformatics.data_types.fasta import FastaWithDict
-from janis.bioinformatics.tools.bcftools.view.latest import BcfToolsViewLatest
-from janis.bioinformatics.tools.common.splitmultiallele import SplitMultiAllele
-from janis.bioinformatics.tools.illumina.strelka.strelka_2_9_9 import Strelka_2_9_9
+from bioinformatics.data_types.bampair import BamPair
+from bioinformatics.data_types.fasta import FastaWithDict
+from bioinformatics.tools.bcftools.view.latest import BcfToolsViewLatest
+from bioinformatics.tools.common.splitmultiallele import SplitMultiAllele
+from bioinformatics.tools.illumina.strelka.strelka_2_9_9 import Strelka_2_9_9
 
 
 def strelka_pipeline():

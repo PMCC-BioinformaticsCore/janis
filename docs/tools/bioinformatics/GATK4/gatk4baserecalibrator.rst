@@ -1,9 +1,6 @@
 
 GATK4: Base Recalibrator
 ================================================
-..
-    # *bioinformatics* (gatk4baserecalibrator)
-
 Tool identifier: ``gatk4baserecalibrator``
 
 Documentation
@@ -65,4 +62,4 @@ outputFilename  Optional<Filename>   -O                                        8
 
 
 *GATK4: Base Recalibrator was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

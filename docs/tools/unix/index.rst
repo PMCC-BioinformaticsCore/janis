@@ -2,15 +2,18 @@
 unix
 ====
 
-Automatically generated index page for unix tools.
+Automatically generated index page for {module} tools
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
    cat
    debuginputs
    echo
    javacompiler
+   merge
    tar
    untar
+
+*This page was auto-generated on 30/01/2019. Please do not directly alter the contents of this page.*

@@ -1,9 +1,6 @@
 
 GATK4: Genotype Concordance
 ======================================================
-..
-    # *bioinformatics* (gatk4genotypeconcordance)
-
 Tool identifier: ``gatk4genotypeconcordance``
 
 Documentation
@@ -125,4 +122,4 @@ verbosity                   Optional<String>         --verbosity                
 
 
 *GATK4: Genotype Concordance was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

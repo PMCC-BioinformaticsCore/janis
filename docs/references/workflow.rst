@@ -8,10 +8,10 @@ Overview
 
 You use workflows to represent a combination of steps!
 
-You will need to understand the :func:`Pipeline.Workflow.add_edge` method.
+You will need to understand the :func:`janis.Workflow.add_edge` method.
 
-A :class:`Pipeline.Workflow` is the class th
+A :class:`janis.Workflow` is the class th
 
-.. autoclass:: Pipeline.Workflow
+.. autoclass:: janis.Workflow
    :members:
  

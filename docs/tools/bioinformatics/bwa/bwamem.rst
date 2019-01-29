@@ -1,9 +1,6 @@
 
 BWA-MEM
 ================
-..
-    # *bioinformatics* (bwamem)
-
 Tool identifier: ``bwamem``
 
 Documentation
@@ -89,4 +86,4 @@ outputFilename               Optional<Filename>
 
 
 *BWA-MEM was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

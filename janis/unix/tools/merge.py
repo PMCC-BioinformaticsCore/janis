@@ -1,7 +1,11 @@
-from janis import File, Array, CommandTool, ToolInput, ToolOutput
+from janis import File, Array, ToolInput, ToolOutput, Stdout
+from janis.unix.tools.unixtool import UnixTool
 
 
-class Merge(CommandTool):
+class Merge(UnixTool):
+
+    def friendly_name(self) -> str:
+        return "Merge Files"
 
     @staticmethod
     def tool():
@@ -18,5 +22,5 @@ class Merge(CommandTool):
 
     def outputs(self):
         return [
-            ToolOutput("merged", File())
+            ToolOutput("merged", Stdout())
         ]

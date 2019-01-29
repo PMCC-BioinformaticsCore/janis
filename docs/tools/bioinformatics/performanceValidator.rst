@@ -1,9 +1,6 @@
 
 Performance Validator
 ============================================
-..
-    # *bioinformatics* (performanceValidator)
-
 Tool identifier: ``performanceValidator``
 
 Documentation
@@ -16,7 +13,7 @@ URL
 
 Docstring
 *********
-*No documentation was provided:`contribute one <https://github.com/illusional>`_*
+*No documentation was provided: `contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
@@ -53,4 +50,4 @@ name    type    prefix    position    documentation
 
 
 *Performance Validator was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

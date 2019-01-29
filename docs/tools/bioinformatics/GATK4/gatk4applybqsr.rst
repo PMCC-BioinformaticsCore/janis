@@ -1,9 +1,6 @@
 
 GATK4: Apply base quality score recalibration
 ==============================================================
-..
-    # *bioinformatics* (gatk4applybqsr)
-
 Tool identifier: ``gatk4applybqsr``
 
 Documentation
@@ -74,4 +71,4 @@ tmpDir          Optional<Directory>  --tmp-dir                                11
 
 
 *GATK4: Apply base quality score recalibration was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-29*.
+*This page was automatically generated on 2019-01-30*.

@@ -4,11 +4,12 @@
 
 from typing import List
 
-from janis.types.common_data_types import File, CurrentWorkingDirectory
-from janis.tool.commandtool import CommandTool, ToolInput, ToolOutput, ToolArgument
+from janis.tool.commandtool import ToolInput, ToolOutput, ToolArgument
+from janis.types.common_data_types import File
+from janis.unix.tools.unixtool import UnixTool
 
 
-class Compile(CommandTool):
+class Compile(UnixTool):
 
     @staticmethod
     def tool():

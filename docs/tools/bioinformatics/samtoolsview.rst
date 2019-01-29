@@ -1,7 +1,10 @@
 
 SamTools: View
 =============================
-*bioinformatics* (samtoolsview)
+..
+    # *bioinformatics* (samtoolsview)
+
+Tool identifier: ``samtoolsview``
 
 Documentation
 -------------
@@ -37,6 +40,20 @@ out     BAM
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+======  ======  ========  ==========  ===============
+name    type    prefix      position  documentation
+======  ======  ========  ==========  ===============
+sam     SAM                       10
+======  ======  ========  ==========  ===============
+
+Optional inputs
+***************
+
 =====================================  =======================  ========  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================
 name                                   type                     prefix      position  documentation
 =====================================  =======================  ========  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================
@@ -61,11 +78,10 @@ readTagToExclude                       Optional<String>         -x              
 collapseBackwardCIGAR                  Optional<Boolean>        -B                 5  Collapse the backward CIGAR operation.
 subsamplingProportion                  Optional<Float>          -s                 5  Output only a proportion of the input alignments. This subsampling acts in the same way on all of the alignment records in the same template or read pair, so it never keeps a read but not its mate. The integer and fractional parts of the -s INT.FRAC option are used separately: the part after the decimal point sets the fraction of templates/pairs to be kept, while the integer part is used as a seed that influences which subset of reads is kept.
 threads                                Optional<Integer>        -@                 5  Number of BAM compression threads to use in addition to main thread [0].
-sam                                    SAM                                        10
 reference                              Optional<FastaWithDict>  -T                 5  A FASTA format reference FILE, optionally compressed by bgzip and ideally indexed by samtools faidx. If an index is not present, one will be generated for you.
 outputFilename                         Optional<Filename>       -o                 5  Output to FILE [stdout].
 =====================================  =======================  ========  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================
 
-*SamTools: View was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-25*.
+*SamTools: View was last updated on 2018-12-24*.
+*This page was automatically generated on 2019-01-29*.

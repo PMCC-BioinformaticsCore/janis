@@ -2,6 +2,7 @@ import unittest
 
 from wehi.spec import Logger, Wehi
 
+
 _simple = """
 inputs:
     tarfile:
@@ -20,7 +21,7 @@ steps:
     tar:
         tool: tar
         files: compile  # will implicitly merge
-        additional_file: untar 
+        files2: untar 
 
 outputs:
     untarred: untar
@@ -32,10 +33,11 @@ outputs:
 class SimpleTest(unittest.TestCase):
 
     def test_simple(self, mute=False):
+        import Pipeline.unix
+
         if mute:
             Logger.mute()
 
-        import Pipeline.unix
         w = Wehi("Simple")
         w.parse_string(_simple)
         w.workflow.dump_cwl(w.workflow)

@@ -1,7 +1,10 @@
 
 Tabix
 =============
-*bioinformatics* (tabix)
+..
+    # *bioinformatics* (tabix)
+
+Tool identifier: ``tabix``
 
 Documentation
 -------------
@@ -38,10 +41,23 @@ output  vcf-gz-tbi
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+======  =================  ========  ==========  ============================================================================================================================================
+name    type               prefix      position  documentation
+======  =================  ========  ==========  ============================================================================================================================================
+file    compressed-vcf-gz                     8  File from which to create the index. The input data file must be position sorted and compressed by bgzip which has a gzip(1) like interface.
+======  =================  ========  ==========  ============================================================================================================================================
+
+Optional inputs
+***************
+
 ===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
 name         type               prefix            position  documentation
 ===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
-file         compressed-vcf-gz                           8  File from which to create the index. The input data file must be position sorted and compressed by bgzip which has a gzip(1) like interface.
 preset       Optional<String>   --preset                 2  -p: Input format for indexing. Valid values are: gff, bed, sam, vcf. This option should not be applied together with any of -s, -b, -e, -c and -0; it is not used for data retrieval because this setting is stored in the index file. [gff]
 zeroBased    Optional<Boolean>  --zero-based             1  -0: Specify that the position in the data file is 0-based (e.g. UCSC files) rather than 1-based.
 begin        Optional<Integer>  --begin                  4  -b: Column of start chromosomal position. [4]
@@ -60,6 +76,6 @@ regions      Optional<File>     --regions               11  -R: Restrict to regi
 targets      Optional<File>     --targets               11  -T: Similar to -R but the entire input will be read sequentially and regions not listed in FILE will be skipped
 ===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
 
-*Tabix was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-25*.
+*Tabix was last updated on 2018-12-24*.
+*This page was automatically generated on 2019-01-29*.

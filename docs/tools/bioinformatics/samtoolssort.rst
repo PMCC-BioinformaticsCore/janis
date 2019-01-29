@@ -1,7 +1,10 @@
 
 SamTools: Sort
 =============================
-*bioinformatics* (samtoolssort)
+..
+    # *bioinformatics* (samtoolssort)
+
+Tool identifier: ``samtoolssort``
 
 Documentation
 -------------
@@ -75,6 +78,20 @@ temporaryOutputs  Optional<Array<BAM>>  By default, any temporary files are writ
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+======  ======  ========  ==========  ===============
+name    type    prefix      position  documentation
+======  ======  ========  ==========  ===============
+bam     BAM                       10
+======  ======  ========  ==========  ===============
+
+Optional inputs
+***************
+
 ====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
 name                  type                prefix      position  documentation
 ====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
@@ -86,10 +103,9 @@ outputType            Optional<String>    -O                    Write the final 
 temporaryFilesPrefix  Optional<String>    -T                    Write temporary files to PREFIX.nnnn.bam, or if the specified PREFIX is an existing directory, to PREFIX/samtools.mmm.mmm.tmp.nnnn.bam, where mmm is unique to this invocation of the sort command.
                                                                 By default, any temporary files are written alongside the output file, as out.bam.tmp.nnnn.bam, or if output is to standard output, in the current directory as samtools.mmm.mmm.tmp.nnnn.bam.
 threads               Optional<Integer>   -@                    Set number of sorting and compression threads. By default, operation is single-threaded.
-bam                   BAM                                   10
 outputFilename        Optional<Filename>  -o                 5  Output to FILE [stdout].
 ====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
 
-*SamTools: Sort was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-25*.
+*SamTools: Sort was last updated on 2018-12-24*.
+*This page was automatically generated on 2019-01-29*.

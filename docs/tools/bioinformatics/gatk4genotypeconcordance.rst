@@ -1,7 +1,10 @@
 
 GATK4: Genotype Concordance
 ======================================================
-*bioinformatics* (gatk4genotypeconcordance)
+..
+    # *bioinformatics* (gatk4genotypeconcordance)
+
+Tool identifier: ``gatk4genotypeconcordance``
 
 Documentation
 -------------
@@ -74,11 +77,24 @@ contingencyMetrics  File
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+========  ==========  ===========  ==========  ===================================
+name      type        prefix       position    documentation
+========  ==========  ===========  ==========  ===================================
+callVCF   vcf-gz-tbi  --CALL_VCF               The VCF containing the call sample
+truthVCF  VCFIDX      --TRUTH_VCF              The VCF containing the truth sample
+========  ==========  ===========  ==========  ===================================
+
+Optional inputs
+***************
+
 ==========================  =======================  ===============================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 name                        type                     prefix                             position  documentation
 ==========================  =======================  ===============================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
-callVCF                     vcf-gz-tbi               --CALL_VCF                                   The VCF containing the call sample
-truthVCF                    VCFIDX                   --TRUTH_VCF                                  The VCF containing the truth sample
 outputBasename              Optional<Filename>       --OUTPUT                                     Basename for the three metrics files that are to be written. Resulting files will be:(1) .genotype_concordance_summary_metrics, (2) .genotype_concordance_detail_metrics, (3) .genotype_concordance_contingency_metrics.
 pg-tag                      Optional<Boolean>        --add-output-sam-program-record              If true, adds a PG tag to created SAM/BAM/CRAM files.
 argumentsFile               Optional<Array<File>>    --arguments_file                         10  read one or more arguments files and add them to the command line
@@ -107,6 +123,6 @@ validationStringency        Optional<String>         --VALIDATION_STRINGENCY    
 verbosity                   Optional<String>         --verbosity                              11  The --verbosity argument is an enumerated type (LogLevel), which can have one of the following values: [ERROR, WARNING, INFO, DEBUG]
 ==========================  =======================  ===============================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 
-*GATK4: Genotype Concordance was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-25*.
+*GATK4: Genotype Concordance was last updated on 2018-12-24*.
+*This page was automatically generated on 2019-01-29*.

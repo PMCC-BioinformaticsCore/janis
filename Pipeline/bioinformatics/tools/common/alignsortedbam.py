@@ -7,61 +7,61 @@ from Pipeline.bioinformatics.data_types.sam import Sam
 from Pipeline.bioinformatics.tools.bwa.mem.latest import BwaMemLatest
 from Pipeline.bioinformatics.tools.gatk4.sortsam.latest import Gatk4SortSamLatest
 from Pipeline.bioinformatics.tools.samtools.view.latest import SamToolsViewLatest
+from Pipeline.utils.metadata import WorkflowMetadata
 
 
-def create_subworkflow():
-    sw = Workflow("alignsortedbam", friendly_name="Align sorted bam")
+class AlignSortedBam(Workflow):
 
-    m = sw.metadata()
-    m.documentation = "Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam"
-    m.creator = "Michael Franklin"
-    m.dateCreated = "2018-12-24"
-    m.version = "1.0.0"
+    def __init__(self):
+        super(AlignSortedBam, self).__init__("alignsortedbam", friendly_name="Align sorted BAM")
 
-    s1_bwa = Step("s1_bwa", BwaMemLatest())
-    s2_samtools = Step("s2_samtools", SamToolsViewLatest())
-    s3_sortsam = Step("s3_sortsam", Gatk4SortSamLatest())
+        if not self._metadata:
+            self._metadata = WorkflowMetadata()
 
-    s1_inp_header = Input("read_group_header_line", String())
-    s1_inp_reference = Input("reference", Fasta())
-    s1_inp_fastq = Input("fastq", Fastq())
+        self._metadata.documentation = "Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam"
+        self._metadata.creator = "Michael Franklin"
+        self._metadata.dateCreated = "2018-12-24"
+        self._metadata.version = "1.0.0"
 
-    s3_inp_tmpdir = Input("tmpdir", Directory())
+        s1_bwa = Step("s1_bwa", BwaMemLatest())
+        s2_samtools = Step("s2_samtools", SamToolsViewLatest())
+        s3_sortsam = Step("s3_sortsam", Gatk4SortSamLatest())
 
-    o1_bwa = Output("o1_bwa", Sam())
-    o2_samtools = Output("o2_samtools", Bam())
-    o3_sortsam = Output("o3_sortsam", BamPair())
+        s1_inp_header = Input("read_group_header_line", String())
+        s1_inp_reference = Input("reference", Fasta())
+        s1_inp_fastq = Input("fastq", Fastq())
 
-    # Fully connect step 1
-    sw.add_edges([
-        (s1_inp_header, s1_bwa.readGroupHeaderLine),
-        (s1_inp_fastq, s1_bwa.reads),
-        (s1_inp_reference, s1_bwa.reference)
-    ])
-    sw.add_default_value(s1_bwa.threads, 36)
+        s3_inp_tmpdir = Input("tmpdir", Directory())
 
-    # fully connect step 2
-    sw.add_edge(s1_bwa, s2_samtools.sam)
+        o1_bwa = Output("o1_bwa", Sam())
+        o2_samtools = Output("o2_samtools", Bam())
+        o3_sortsam = Output("o3_sortsam", BamPair())
 
-    # fully connect step 3
-    sw.add_edges([
-        (s2_samtools.out, s3_sortsam.input),
-        (s3_inp_tmpdir, s3_sortsam.tmpDir),
-    ])
-    sw.add_default_value(s3_sortsam.sortOrder, "coordinate")
-    sw.add_default_value(s3_sortsam.createIndex, True)
-    sw.add_default_value(s3_sortsam.validationStringency, "SILENT")
-    sw.add_default_value(s3_sortsam.maxRecordsInRam, 5000000)
+        # Fully connect step 1
+        self.add_edges([
+            (s1_inp_header, s1_bwa.readGroupHeaderLine),
+            (s1_inp_fastq, s1_bwa.reads),
+            (s1_inp_reference, s1_bwa.reference)
+        ])
+        self.add_default_value(s1_bwa.threads, 36)
 
-    # connect to output
-    sw.add_edge(s1_bwa, o1_bwa)
-    sw.add_edge(s2_samtools, o2_samtools)
-    sw.add_edge(s3_sortsam.output, o3_sortsam)
+        # fully connect step 2
+        self.add_edge(s1_bwa, s2_samtools.sam)
 
-    return sw
+        # fully connect step 3
+        self.add_edges([
+            (s2_samtools.out, s3_sortsam.input),
+            (s3_inp_tmpdir, s3_sortsam.tmpDir),
+        ])
+        self.add_default_value(s3_sortsam.sortOrder, "coordinate")
+        self.add_default_value(s3_sortsam.createIndex, True)
+        self.add_default_value(s3_sortsam.validationStringency, "SILENT")
+        self.add_default_value(s3_sortsam.maxRecordsInRam, 5000000)
 
-
-AlignSortedBam = create_subworkflow
+        # connect to output
+        self.add_edge(s1_bwa, o1_bwa)
+        self.add_edge(s2_samtools, o2_samtools)
+        self.add_edge(s3_sortsam.output, o3_sortsam)
 
 
 if __name__ == "__main__":

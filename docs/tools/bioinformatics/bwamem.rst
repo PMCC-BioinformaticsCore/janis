@@ -1,7 +1,10 @@
 
 BWA-MEM
 ================
-*bioinformatics* (bwamem)
+..
+    # *bioinformatics* (bwamem)
+
+Tool identifier: ``bwamem``
 
 Documentation
 -------------
@@ -41,6 +44,21 @@ out     Stdout
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+=========  ======  ========  ==========  ===============
+name       type    prefix      position  documentation
+=========  ======  ========  ==========  ===============
+reference  File                       9
+reads      Fastq                     10
+=========  ======  ========  ==========  ===============
+
+Optional inputs
+***************
+
 ===========================  ==================  ========  ==========  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 name                         type                prefix      position  documentation
 ===========================  ==================  ========  ==========  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
@@ -65,12 +83,10 @@ appendComments               Optional<Boolean>   -C                    Append ap
 hardClipping                 Optional<Boolean>   -H                    Use hard clipping ’H’ in the SAM output. This option may dramatically reduce the redundancy of output when mapping long contig or BAC sequences.
 markShorterSplits            Optional<Boolean>   -M                    Mark shorter split hits as secondary (for Picard compatibility).
 verboseLevel                 Optional<Integer>   -v                    Control the verbose level of the output. This option has not been fully supported throughout BWA. Ideally, a value: 0 for disabling all the output to stderr; 1 for outputting errors only; 2 for warnings and errors; 3 for all normal messages; 4 or higher for debugging. When this option takes value 4, the output is not SAM. (Default: 3)
-reference                    File                                   9
-reads                        Fastq                                 10
 mates                        Optional<Fastq>                       11
 outputFilename               Optional<Filename>
 ===========================  ==================  ========  ==========  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 
-*BWA-MEM was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-25*.
+*BWA-MEM was last updated on 2018-12-24*.
+*This page was automatically generated on 2019-01-29*.

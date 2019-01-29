@@ -8,6 +8,7 @@ Automatically generated index page for bioinformatics tools.
    :maxdepth: 1
    :caption: Contents:
 
+   alignsortedbam
    bcftoolsnorm
    bcftoolsview
    bgzip
@@ -22,6 +23,7 @@ Automatically generated index page for bioinformatics tools.
    gatkmutect2
    gatksortsam
    igvtools-index
+   performanceValidator
    samtoolssort
    samtoolsview
    splitmultiallele

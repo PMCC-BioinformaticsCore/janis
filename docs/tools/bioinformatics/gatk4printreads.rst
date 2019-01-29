@@ -1,7 +1,10 @@
 
 GATK4: Print Reads
 ====================================
-*bioinformatics* (gatk4printreads)
+..
+    # *bioinformatics* (gatk4printreads)
+
+Tool identifier: ``gatk4printreads``
 
 Documentation
 -------------
@@ -44,13 +47,26 @@ output  BamPair
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+======  ======  ========  ==========  ===============
+name    type    prefix    position    documentation
+======  ======  ========  ==========  ===============
+input   BAM
+======  ======  ========  ==========  ===============
+
+Optional inputs
+***************
+
 ==============  ==================  ========  ==========  ===============
 name            type                prefix    position    documentation
 ==============  ==================  ========  ==========  ===============
-input           BAM
 outputFilename  Optional<Filename>
 ==============  ==================  ========  ==========  ===============
 
-*GATK4: Print Reads was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-25*.
+*GATK4: Print Reads was last updated on 2018-12-24*.
+*This page was automatically generated on 2019-01-29*.

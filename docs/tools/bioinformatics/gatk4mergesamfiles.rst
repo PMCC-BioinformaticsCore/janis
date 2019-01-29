@@ -1,7 +1,10 @@
 
 GATK4: Merge SAM Files
 ===========================================
-*bioinformatics* (gatk4mergesamfiles)
+..
+    # *bioinformatics* (gatk4mergesamfiles)
+
+Tool identifier: ``gatk4mergesamfiles``
 
 Documentation
 -------------
@@ -28,10 +31,23 @@ output  BamPair
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+======  ==============  ========  ==========  =========================
+name    type            prefix      position  documentation
+======  ==============  ========  ==========  =========================
+input   Array<BamPair>  -I                10  The SAM/BAM file to sort.
+======  ==============  ========  ==========  =========================
+
+Optional inputs
+***************
+
 =========================  =======================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 name                       type                     prefix                     position  documentation
 =========================  =======================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
-input                      Array<BamPair>           -I                               10  The SAM/BAM file to sort.
 outputFilename             Optional<Filename>       -O                               10  SAM/BAM file to write merged result to
 argumentsFile              Optional<Array<File>>    --arguments_file                 10  read one or more arguments files and add them to the command line
 assumeSorted               Optional<Boolean>        -AS                                  If true, assume that the input files are in the same sort order as the requested output sort order, even if their headers say otherwise.
@@ -52,6 +68,6 @@ validationStringency       Optional<String>         --VALIDATION_STRINGENCY     
 verbosity                  Optional<String>         --verbosity                      11  The --verbosity argument is an enumerated type (LogLevel), which can have one of the following values: [ERROR, WARNING, INFO, DEBUG]
 =========================  =======================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 
-*GATK4: Merge SAM Files was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-25*.
+*GATK4: Merge SAM Files was last updated on 2018-12-24*.
+*This page was automatically generated on 2019-01-29*.

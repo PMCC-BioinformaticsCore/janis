@@ -1,7 +1,10 @@
 
 Debug inputs (log)
 ================================
-*unix* (debuginputs)
+..
+    # *unix* (debuginputs)
+
+Tool identifier: ``debuginputs``
 
 Documentation
 -------------
@@ -28,6 +31,19 @@ output  Stdout
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+======  ======  ========  ==========  ===============
+name    type    prefix    position    documentation
+======  ======  ========  ==========  ===============
+======  ======  ========  ==========  ===============
+
+Optional inputs
+***************
+
 ===========  ================  ========  ==========  ===============
 name         type              prefix    position    documentation
 ===========  ================  ========  ==========  ===============
@@ -35,6 +51,6 @@ stringInput  Optional<String>
 fileInput    Optional<File>
 ===========  ================  ========  ==========  ===============
 
-*Debug inputs (log) was last updated on **Unknown***.
 
-*This page was automatically generated on 2019-01-25*.
+*Debug inputs (log) was last updated on **Unknown***.
+*This page was automatically generated on 2019-01-29*.

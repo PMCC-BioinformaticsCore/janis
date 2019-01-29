@@ -30,4 +30,5 @@ class FastaWithDict(Fasta):
 
     @staticmethod
     def secondary_files():
+        # [".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict"]
         return [*Fasta.secondary_files(), "^.dict"]

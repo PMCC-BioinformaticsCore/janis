@@ -1,7 +1,10 @@
 
 BGZip
 =============
-*bioinformatics* (bgzip)
+..
+    # *bioinformatics* (bgzip)
+
+Tool identifier: ``bgzip``
 
 Documentation
 -------------
@@ -39,10 +42,23 @@ output  Stdout
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+======  ======  ========  ==========  ======================
+name    type    prefix      position  documentation
+======  ======  ========  ==========  ======================
+file    VCF                      100  File to bgzip compress
+======  ======  ========  ==========  ======================
+
+Optional inputs
+***************
+
 ==========  =================  ============  ==========  ========================================================================================================================================================================================================================================================
-name        type               prefix          position  documentation
+name        type               prefix        position    documentation
 ==========  =================  ============  ==========  ========================================================================================================================================================================================================================================================
-file        VCF                                     100  File to bgzip compress
 offset      Optional<Integer>  --offset                  b: Decompress to standard output from virtual file position (0-based uncompressed offset). Implies -c and -d.
 stdout      Optional<Boolean>  --stdout                  c: Write to standard output, keep original files unchanged.
 decompress  Optional<Boolean>  --decompress              d: Decompress.
@@ -57,6 +73,6 @@ size        Optional<Integer>  --size                    s: Decompress INT bytes
 threads     Optional<Integer>  --threads                 @: Number of threads to use [1].
 ==========  =================  ============  ==========  ========================================================================================================================================================================================================================================================
 
-*BGZip was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-25*.
+*BGZip was last updated on 2018-12-24*.
+*This page was automatically generated on 2019-01-29*.

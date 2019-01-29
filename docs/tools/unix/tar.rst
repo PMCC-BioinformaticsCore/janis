@@ -1,7 +1,10 @@
 
 Tar archive
 =================
-*unix* (tar)
+..
+    # *unix* (tar)
+
+Tool identifier: ``tar``
 
 Documentation
 -------------
@@ -28,13 +31,27 @@ tarred  File
 
 Inputs
 ------
-=======  ==================  ========  ==========  ===============
-name     type                prefix      position  documentation
-=======  ==================  ========  ==========  ===============
-files    Array<File>                            2
-tarName  Optional<Filename>                     1
-=======  ==================  ========  ==========  ===============
+Find the inputs below
+
+Required inputs
+***************
+
+======  ===========  ========  ==========  ===============
+name    type         prefix      position  documentation
+======  ===========  ========  ==========  ===============
+files   Array<File>                     2
+======  ===========  ========  ==========  ===============
+
+Optional inputs
+***************
+
+=======  =====================  ========  ==========  ===============
+name     type                   prefix      position  documentation
+=======  =====================  ========  ==========  ===============
+files2   Optional<Array<File>>                     3
+tarName  Optional<Filename>                        1
+=======  =====================  ========  ==========  ===============
+
 
 *Tar archive was last updated on **Unknown***.
-
-*This page was automatically generated on 2019-01-25*.
+*This page was automatically generated on 2019-01-29*.

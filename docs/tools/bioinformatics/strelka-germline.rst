@@ -1,7 +1,10 @@
 
 Strelka (Germline)
 =====================================
-*bioinformatics* (strelka-germline)
+..
+    # *bioinformatics* (strelka-germline)
+
+Tool identifier: ``strelka-germline``
 
 Documentation
 -------------
@@ -55,23 +58,36 @@ genome        vcf-gz-tbi
 
 Inputs
 ------
-========================  =================  ================  ==========  =========================================================================================================================================================================================================
-name                      type               prefix              position  documentation
-========================  =================  ================  ==========  =========================================================================================================================================================================================================
-bam                       BamPair            --bam                      1  Sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [required] (no default)
-reference                 FastaWithDict      --referenceFasta           1  samtools-indexed reference fasta file [required]
-relativeStrelkaDirectory  Optional<String>   --runDir                   1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory.
-version                   Optional<Boolean>  --version                  3  show program's version number and exit
-help                      Optional<Boolean>  --help                     3  (-h) show this help message and exit
-mode                      Optional<String>   --mode                     3  (-m MODE)  select run mode (local|sge)
-queue                     Optional<String>   --queue                    3  (-q QUEUE) specify scheduler queue name
-jobs                      Optional<String>   --jobs                     3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
-memGb                     Optional<String>   --memGb                    3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
-dryRun                    Optional<Boolean>  --dryRun                   3  dryRun (-d,) workflow code without actually running command-tasks
-quiet                     Optional<Boolean>  --quiet                    3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
-mailTo                    Optional<String>   --mailTo                   3  (-e) send email notification of job completion status to this address (may be provided multiple times for more than one email address)
-========================  =================  ================  ==========  =========================================================================================================================================================================================================
+Find the inputs below
+
+Required inputs
+***************
+
+=========  =============  ================  ==========  ===================================================================================================================================================================
+name       type           prefix              position  documentation
+=========  =============  ================  ==========  ===================================================================================================================================================================
+bam        BamPair        --bam                      1  Sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [required] (no default)
+reference  FastaWithDict  --referenceFasta           1  samtools-indexed reference fasta file [required]
+=========  =============  ================  ==========  ===================================================================================================================================================================
+
+Optional inputs
+***************
+
+========================  =================  =========  ==========  =========================================================================================================================================================================================================
+name                      type               prefix       position  documentation
+========================  =================  =========  ==========  =========================================================================================================================================================================================================
+relativeStrelkaDirectory  Optional<String>   --runDir            1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory.
+version                   Optional<Boolean>  --version           3  show program's version number and exit
+help                      Optional<Boolean>  --help              3  (-h) show this help message and exit
+mode                      Optional<String>   --mode              3  (-m MODE)  select run mode (local|sge)
+queue                     Optional<String>   --queue             3  (-q QUEUE) specify scheduler queue name
+jobs                      Optional<String>   --jobs              3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
+memGb                     Optional<String>   --memGb             3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
+dryRun                    Optional<Boolean>  --dryRun            3  dryRun (-d,) workflow code without actually running command-tasks
+quiet                     Optional<Boolean>  --quiet             3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
+mailTo                    Optional<String>   --mailTo            3  (-e) send email notification of job completion status to this address (may be provided multiple times for more than one email address)
+========================  =================  =========  ==========  =========================================================================================================================================================================================================
+
 
 *Strelka (Germline) was last updated on 2018-12-24*.
-
-*This page was automatically generated on 2019-01-25*.
+*This page was automatically generated on 2019-01-29*.

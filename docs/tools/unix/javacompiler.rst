@@ -1,7 +1,10 @@
 
 Java compiler
 ============================
-*unix* (javacompiler)
+..
+    # *unix* (javacompiler)
+
+Tool identifier: ``javacompiler``
 
 Documentation
 -------------
@@ -28,12 +31,25 @@ compiled  File
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
 ======  ======  ========  ==========  ===============
 name    type    prefix      position  documentation
 ======  ======  ========  ==========  ===============
 file    File                       1
 ======  ======  ========  ==========  ===============
 
-*Java compiler was last updated on **Unknown***.
+Optional inputs
+***************
 
-*This page was automatically generated on 2019-01-25*.
+======  ======  ========  ==========  ===============
+name    type    prefix    position    documentation
+======  ======  ========  ==========  ===============
+======  ======  ========  ==========  ===============
+
+
+*Java compiler was last updated on **Unknown***.
+*This page was automatically generated on 2019-01-29*.

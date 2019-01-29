@@ -15,24 +15,24 @@ from Pipeline.utils.logger import Logger
 def try_register_type(cls):
     try:
         if isabstract(cls): return
-        if isfunction(cls) and len(signature(cls).parameters) == 0:
-            Logger.log(str(cls) + " is an empty-param function")
-            Logger.mute()
-            resolved = cls()
-            Logger.unmute()
-            if isinstance(resolved, Workflow):
-                if register_tool(cls, resolved.id()):
-                    Logger.log("Registered wf as tool: " + resolved.id())
+        # if isfunction(cls) and len(signature(cls).parameters) == 0:
+        #     Logger.log(str(cls) + " is an empty-param function")
+        #     Logger.mute()
+        #     resolved = cls()
+        #     Logger.unmute()
+        #     if isinstance(resolved, Workflow):
+        #         if register_tool(cls, resolved.id()):
+        #             Logger.log("Registered wf as tool: " + resolved.id())
 
         elif isclass(cls) and issubclass(cls, CommandTool) and cls != CommandTool:
             Logger.log("attempting to register " + str(cls))
             if register_tool(cls):
                 Logger.log("Registered tool: " + cls.tool())
 
-        # elif isclass(cls) and issubclass(cls, Workflow) and cls != Workflow:
-        #     identifier = cls().id()
-        #     if register_tool(cls, identifier):
-        #         Logger.log("Registered wf as tool: " + identifier)
+        elif isclass(cls) and issubclass(cls, Workflow) and cls != Workflow:
+            identifier = cls().id()
+            if register_tool(cls, identifier):
+                Logger.log("Registered wf as tool: " + identifier)
 
         elif isclass(cls) and issubclass(cls, DataType) and cls != DataType:
             if register_type(cls):

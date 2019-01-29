@@ -1,7 +1,10 @@
 
 IGVTools: Index
 ================================
-*bioinformatics* (igvtools-index)
+..
+    # *bioinformatics* (igvtools-index)
+
+Tool identifier: ``igvtools-index``
 
 Documentation
 -------------
@@ -41,12 +44,25 @@ name    type    documentation
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
 ======  ==========  ========  ==========  ================================================================
 name    type        prefix    position    documentation
 ======  ==========  ========  ==========  ================================================================
 input   vcf-gz-tbi                        The alignment or feature file for which an index will be created
 ======  ==========  ========  ==========  ================================================================
 
-*IGVTools: Index was last updated on 2018-12-24*.
+Optional inputs
+***************
 
-*This page was automatically generated on 2019-01-25*.
+======  ======  ========  ==========  ===============
+name    type    prefix    position    documentation
+======  ======  ========  ==========  ===============
+======  ======  ========  ==========  ===============
+
+
+*IGVTools: Index was last updated on 2018-12-24*.
+*This page was automatically generated on 2019-01-29*.

@@ -1,7 +1,10 @@
 
 BCFTools: View
 =============================
-*bioinformatics* (bcftoolsview)
+..
+    # *bioinformatics* (bcftoolsview)
+
+Tool identifier: ``bcftoolsview``
 
 Documentation
 -------------
@@ -28,10 +31,23 @@ output  Stdout
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+======  ======  ========  ==========  ===============
+name    type    prefix      position  documentation
+======  ======  ========  ==========  ===============
+file    VCF                        2
+======  ======  ========  ==========  ===============
+
+Optional inputs
+***************
+
 ================  =======================  ===================  ==========  ==============================================================================================================================================================================
 name              type                     prefix                 position  documentation
 ================  =======================  ===================  ==========  ==============================================================================================================================================================================
-file              VCF                                                    2
 dropGenotypes     Optional<Boolean>        --drop-genotypes              1  (-G) drop individual genotype information (after subsetting if -s option set)
 headerOnly        Optional<Boolean>        --header-only                 1  (-h) print the header only
 noHeader          Optional<Boolean>        --no-header                   1  (-H) suppress the header in VCF output
@@ -71,6 +87,6 @@ private           Optional<Boolean>        --private                     1  (-x)
 excludePrivate    Optional<Boolean>        --exclude-private             1  (-X) exclude sites where the non-reference alleles are exclusive (private) to the subset samples
 ================  =======================  ===================  ==========  ==============================================================================================================================================================================
 
-*BCFTools: View was last updated on **Unknown***.
 
-*This page was automatically generated on 2019-01-25*.
+*BCFTools: View was last updated on **Unknown***.
+*This page was automatically generated on 2019-01-29*.

@@ -1,7 +1,10 @@
 
 Untar archive
 =====================
-*unix* (untar)
+..
+    # *unix* (untar)
+
+Tool identifier: ``untar``
 
 Documentation
 -------------
@@ -20,20 +23,33 @@ Docstring
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-files   File
-======  ======  ===============
+======  ===========  ===============
+name    type         documentation
+======  ===========  ===============
+files   Array<File>
+======  ===========  ===============
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
 =======  =======  ========  ==========  ===============
 name     type     prefix      position  documentation
 =======  =======  ========  ==========  ===============
 tarFile  TarFile                     0
 =======  =======  ========  ==========  ===============
 
-*Untar archive was last updated on **Unknown***.
+Optional inputs
+***************
 
-*This page was automatically generated on 2019-01-25*.
+======  ======  ========  ==========  ===============
+name    type    prefix    position    documentation
+======  ======  ========  ==========  ===============
+======  ======  ========  ==========  ===============
+
+
+*Untar archive was last updated on **Unknown***.
+*This page was automatically generated on 2019-01-29*.

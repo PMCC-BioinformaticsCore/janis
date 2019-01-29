@@ -45,8 +45,15 @@ def prepare_tool(tool: Tool):
         else "*No URL to the documentation was provided*"
 
     input_headers = ["name", "type", "prefix", "position", "documentation"]
-    input_tuples = [[i.id(), i.input_type.id(), i.prefix, i.position, i.doc] for i in tool.inputs()]
-    formatted_inputs = tabulate.tabulate(input_tuples, input_headers, tablefmt="rst")
+
+
+    required_input_tuples = [[i.id(), i.input_type.id(), i.prefix, i.position, i.doc] for i in tool.inputs() if not i.input_type.optional]
+    optional_input_tuples = [[i.id(), i.input_type.id(), i.prefix, i.position, i.doc] for i in tool.inputs() if i.input_type.optional]
+
+
+    formatted_required_inputs = tabulate.tabulate(required_input_tuples, input_headers, tablefmt="rst")
+    formatted_optional_inputs = tabulate.tabulate(optional_input_tuples, input_headers, tablefmt="rst")
+
 
     output_headers = ["name", "type", "documentation"]
     output_tuples = [[o.id(), o.output_type.id(), o.doc] for o in tool.outputs()]
@@ -59,7 +66,10 @@ def prepare_tool(tool: Tool):
     return tool_module, tool_dir, f"""
 {fn}
 {"=" * len(tn)}
-*{tool_module}*{en}
+..
+    # *{tool_module}*{en}
+
+Tool identifier: ``{tool.id()}``
 
 Documentation
 -------------
@@ -79,10 +89,20 @@ Outputs
 
 Inputs
 ------
-{formatted_inputs}
+Find the inputs below
+
+Required inputs
+***************
+
+{formatted_required_inputs}
+
+Optional inputs
+***************
+
+{formatted_optional_inputs}
+
 
 *{fn} was last updated on {metadata.dateUpdated if metadata.dateUpdated else "**Unknown**"}*.
-
 *This page was automatically generated on {date.today().strftime("%Y-%m-%d")}*.
 """
 

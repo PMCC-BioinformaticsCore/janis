@@ -1,7 +1,10 @@
 
-GATK4: Base Recalibrator
-======================================
-*bioinformatics* (gatksortsam)
+GATK4: Sort SAM
+=============================
+..
+    # *bioinformatics* (gatksortsam)
+
+Tool identifier: ``gatksortsam``
 
 Documentation
 -------------
@@ -28,13 +31,26 @@ output  BamPair
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
+=========  ======  ========  ==========  ==============================================================================================================================================================
+name       type    prefix      position  documentation
+=========  ======  ========  ==========  ==============================================================================================================================================================
+input      BAM     -I                10  The SAM/BAM/CRAM file to sort.
+sortOrder  String  -SO               10  The --SORT_ORDER argument is an enumerated type (SortOrder), which can have one of the following values: [unsorted, queryname, coordinate, duplicate, unknown]
+=========  ======  ========  ==========  ==============================================================================================================================================================
+
+Optional inputs
+***************
+
 ====================  =======================  ===============================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 name                  type                     prefix                             position  documentation
 ====================  =======================  ===============================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 pg-tag                Optional<Boolean>        --add-output-sam-program-record              If true, adds a PG tag to created SAM/BAM/CRAM files.
-input                 BAM                      -I                                       10  The SAM/BAM/CRAM file to sort.
 outputFilename        Optional<Filename>       -O                                       10  The sorted SAM/BAM/CRAM output file.
-sortOrder             String                   -SO                                      10  The --SORT_ORDER argument is an enumerated type (SortOrder), which can have one of the following values: [unsorted, queryname, coordinate, duplicate, unknown]
 argumentsFile         Optional<Array<File>>    --arguments_file                         10  read one or more arguments files and add them to the command line
 compressionLevel      Optional<Integer>        --COMPRESSION_LEVEL                      11  Compression level for all compressed files created (e.g. BAM and GELI).
 createIndex           Optional<Boolean>        --CREATE_INDEX                           11  Whether to create a BAM index when writing a coordinate-sorted BAM file.
@@ -49,6 +65,6 @@ validationStringency  Optional<String>         --VALIDATION_STRINGENCY          
 verbosity             Optional<String>         --verbosity                              11  The --verbosity argument is an enumerated type (LogLevel), which can have one of the following values: [ERROR, WARNING, INFO, DEBUG]
 ====================  =======================  ===============================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 
-*GATK4: Base Recalibrator was last updated on 2018-12-24*.
 
-*This page was automatically generated on 2019-01-25*.
+*GATK4: Sort SAM was last updated on 2018-12-24*.
+*This page was automatically generated on 2019-01-29*.

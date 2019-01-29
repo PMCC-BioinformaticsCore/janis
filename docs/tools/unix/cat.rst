@@ -1,7 +1,10 @@
 
-cat
-===
-*unix*
+Concatenate
+=================
+..
+    # *unix* (cat)
+
+Tool identifier: ``cat``
 
 Documentation
 -------------
@@ -12,11 +15,11 @@ Docker
 
 URL
 ******
-*No URL to the documentation was provided*: `contribute one <https://github.com/illusional>`_
+*No URL to the documentation was provided*
 
 Docstring
 *********
-None
+*No documentation was provided:`contribute one <https://github.com/illusional>`_*
 
 Outputs
 -------
@@ -27,11 +30,25 @@ name    type    documentation
 
 Inputs
 ------
+Find the inputs below
+
+Required inputs
+***************
+
 ======  ===========  ========  ==========  ===============
 name    type         prefix    position    documentation
 ======  ===========  ========  ==========  ===============
 files   Array<File>
 ======  ===========  ========  ==========  ===============
 
+Optional inputs
+***************
 
-*This page was automatically generated*
+======  ======  ========  ==========  ===============
+name    type    prefix    position    documentation
+======  ======  ========  ==========  ===============
+======  ======  ========  ==========  ===============
+
+
+*Concatenate was last updated on **Unknown***.
+*This page was automatically generated on 2019-01-29*.

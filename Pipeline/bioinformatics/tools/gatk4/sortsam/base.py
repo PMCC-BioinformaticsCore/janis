@@ -17,7 +17,7 @@ class Gatk4SortSamBase(Gatk4ToolBase):
         return "gatksortsam"
 
     def friendly_name(self):
-        return "GATK4: Base Recalibrator"
+        return "GATK4: Sort SAM"
 
     def metadata(self):
         from datetime import date

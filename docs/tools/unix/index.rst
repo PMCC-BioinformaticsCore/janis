@@ -8,7 +8,9 @@ Automatically generated index page for unix tools.
    :maxdepth: 1
    :caption: Contents:
 
+   cat
    debuginputs
+   echo
    javacompiler
    tar
    untar

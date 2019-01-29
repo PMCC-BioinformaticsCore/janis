@@ -75,6 +75,7 @@ venv/
 
 
 docs/_build/
+portable_pipelines.egg-info/
 
 
 

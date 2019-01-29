@@ -1,4 +1,4 @@
-from Pipeline import CommandTool, Input, String, ToolInput
+from Pipeline import CommandTool, String, ToolInput, ToolOutput, Stdout
 
 
 class Echo(CommandTool):
@@ -16,8 +16,8 @@ class Echo(CommandTool):
 
     def inputs(self):
         return [
-            ToolInput("inp", String())
+            ToolInput("input", String())
         ]
 
     def outputs(self):
-        return []
+        return [ToolOutput("output", Stdout())]

@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'WEHI janis Definition'
+project = 'janis'
 copyright = '2019, Michael Franklin, Evan Thomas, Mohammad Bhuyan'
 author = 'Michael Franklin, Evan Thomas, Mohammad Bhuyan'
 

@@ -1,9 +1,9 @@
 [submodule "cwlgen"]
 	path = cwlgen
-	url = git@github.com:illusional/python-cwlgen.git
+	url = https://github.com/illusional/python-cwlgen
 [submodule "wdlgen"]
 	path = wdlgen
-	url = git@github.com:illusional/python-wdlgen.git
+	url = https://github.com/illusional/python-wdlgen
 [submodule "bioinformatics"]
 	path = bioinformatics
 	url = https://github.com/PMCC-BioinformaticsCore/pipelines-bioinformatics

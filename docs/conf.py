@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'WEHI Pipeline Definition'
+project = 'WEHI janis Definition'
 copyright = '2019, Michael Franklin, Evan Thomas, Mohammad Bhuyan'
 author = 'Michael Franklin, Evan Thomas, Mohammad Bhuyan'
 
@@ -140,7 +140,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'WEHIPipelineDefinition.tex', 'WEHI Pipeline Definition Documentation',
+    (master_doc, 'WEHIPipelineDefinition.tex', 'WEHI janis Definition Documentation',
      'Michael Franklin, Evan Thomas, Mohammad Bhuyan', 'manual'),
 ]
 
@@ -150,7 +150,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'wehipipelinedefinition', 'WEHI Pipeline Definition Documentation',
+    (master_doc, 'wehipipelinedefinition', 'WEHI janis Definition Documentation',
      [author], 1)
 ]
 
@@ -161,7 +161,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'WEHIPipelineDefinition', 'WEHI Pipeline Definition Documentation',
+    (master_doc, 'WEHIPipelineDefinition', 'WEHI janis Definition Documentation',
      author, 'WEHIPipelineDefinition', 'One line description of project.',
      'Miscellaneous'),
 ]

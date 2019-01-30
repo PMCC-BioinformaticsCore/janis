@@ -6,6 +6,13 @@
 Welcome to Janis!
 ********************************
 
+.. image:: https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master
+    :target: https://travis-ci.org/PMCC-BioinformaticsCore/janis
+
+.. image:: https://readthedocs.org/projects/janis/badge/?version=latest
+    :target: https://janis.readthedocs.io/en/latest/?badge=latest)
+
+
 .. note::
 	This repository is a work-in-progress. 	
 

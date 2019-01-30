@@ -4,7 +4,8 @@ python:
 install:
 - pip install -r requirements/tests.txt
 - pip install codecov coverage requests_mock nose_parameterized
-script: nosetests
+script: nosetests --with-coverage --cover-package=janis
+# after_success: codecov
 deploy:
   provider: pypi
   user: illusional

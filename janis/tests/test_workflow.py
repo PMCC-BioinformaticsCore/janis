@@ -4,7 +4,6 @@ from janis import File, Array, Logger, CommandTool, ToolInput, String, Input, Ou
 from janis.graph.stepinput import StepInput, first_value, Edge
 
 from janis.unix.data_types.tar_file import TarFile
-from janis.unix import Echo
 from janis.unix.tools.echo import Echo
 from janis.unix.tools.tar import Tar
 from janis.unix.tools.untar import Untar

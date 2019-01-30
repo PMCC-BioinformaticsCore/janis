@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = "0.2.2"
+VERSION = "v0.2.3"
 DESCRIPTION = "Contains classes to represent a workflow, and provide options to convert to CWL / WDL"
 
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########

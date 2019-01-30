@@ -1,9 +1,1 @@
-matplotlib
-Cerberus==1.1
-decorator==4.2.1
-networkx==2.1
-py-dag==3.0.1
-pyyaml>=4.2b1
-Sphinx==1.8.2
-sphinx-autobuild==0.7.1
-tabulate==0.8.2
+-r requirements/tests.txt

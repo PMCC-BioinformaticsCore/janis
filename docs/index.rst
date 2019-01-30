@@ -26,6 +26,12 @@ There are a few parts to this project that will help you to write high quality p
 - **Types registry** - Sometimes a singular file isn't enough to contain all information; in some cases reference files have indexes or files as metadata, called `secondary files <https://docs.sevenbridges.com/page/secondary-files/>`_. To aid in sanity checking pipelines, on top of the ordinary data types (such as strings, files, numbers) we've created a number of collection types so you don't need to think about forgetting index files again!
 
 
+Quick-start
+===========
+
+You can also Janis via PIP: ``pip install janis-pipelines``
+
+
 Introduction
 ============
 

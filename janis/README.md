@@ -5,9 +5,9 @@ _Portable pipelines assistant_
 
 ## Quickstart
 
-Install through PIP ([project page](https://pypi.org/project/janis/)):
+Install through PIP ([project page](https://pypi.org/project/janis-pipelines/)):
 ```
-pip install janis
+pip install janis-pipelines
 ```
 
 And ReadTheDocs: https://janis.readthedocs.io/en/latest/

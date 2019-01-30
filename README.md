@@ -1,5 +1,6 @@
 # Janis
 
+[![Build Status](https://travis-ci.org/PMCC-BioinformaticsCore/janis/pull_requests#)](https://travis-ci.org/PMCC-BioinformaticsCore/janis/pull_requests#)
 [![Documentation Status](https://readthedocs.org/projects/janis/badge/?version=latest)](https://janis.readthedocs.io/en/latest/?badge=latest)
 
 _Portable pipelines assistant_: A framework for creating specialised, simple workflow definitions that are then converted to Common Workflow Language or Workflow Definition Language.
@@ -9,9 +10,9 @@ _Portable pipelines assistant_: A framework for creating specialised, simple wor
 
 Janis is designed to assist in building pipelines. It has a collection of prebuilt tools
 
-Install through PIP ([project page](https://pypi.org/project/janis/)):
+Install through PIP ([project page](https://pypi.org/project/janis-pipelines/)):
 ```
-pip install janis
+pip install janis-pipelines
 ```
 
 And ReadTheDocs: https://janis.readthedocs.io/en/latest/

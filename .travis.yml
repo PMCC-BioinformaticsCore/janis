@@ -1,0 +1,14 @@
+language: python
+python:
+- 3.7.2
+install:
+- pip install -r requirements/tests.txt
+- pip install codecov coverage requests_mock nose_parameterized
+script: nosetests
+deploy:
+  provider: pypi
+  user: illusional
+  password:
+    secure: bhpWlsF2yvtU897X4Z8rdvSLjdeJJAoh0keLlxQuivdJ3Xub/ehthuR9YhZNEEIa6IkECXDgI4OQknVfyLeXW11bAAC4wW05N1YPAVSGXzzLz3Q1pQgWuDc1avMQImpMXvymkUigkC4VPEAIMjFaeRqaXoRjpXVcn+TX+qA3cPOQIfdOa13WTYv8aCzpeYIZLPUXm8uqDmyHUs4f8/roikg2BSBttEYYtKHuEf9+6dZAxl528fj74utLlNnbPNF1+m7zDEItnixrucgw1cLNtFCSbb4hs1Zp55BMOtrKNzZ06cC9QTqUMhXC78RJRqzdD1rff2If70w2N7OW/cGDrYbKqL/NmO28w+VtkzfrpQ9Xksn+ldfEdKZ3vdoCxpaVUI3J9FvOwfGbzRW1l/mWhHtmDBbVdBqp18ZNin0n+2DlLCn0y7y9E4MWIFtVB8fJkeeQWj7QBhyTScuDMirXBoaZvcWcZXwd9SNugI5o0teovMgPSs2SOYCgII6ymnc/A9g0IKn00rC/V0VWhiCm+AbtFMCYNt6XFzVJhpHxR5iIxxV05rA0KwmjuND9uu+klqW2roNAFTP//Pa/NcjO5LCVsywtz0b/62JFHr3LJM4x6bARPMjzcxzyeOZMSZiYWbKyvzDGCiKGbIFiTH/MAQdR7sKyJQqWM22U5jG9gyk=
+  on:
+    tags: true

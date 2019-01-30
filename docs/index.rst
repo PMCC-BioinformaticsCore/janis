@@ -12,6 +12,8 @@ Welcome to Janis!
 .. image:: https://readthedocs.org/projects/janis/badge/?version=latest
     :target: https://janis.readthedocs.io/en/latest/?badge=latest)
 
+.. image:: https://badge.fury.io/py/janis-pipelines.svg
+    :target: https://pypi.org/project/janis-pipelines/
 
 .. note::
 	This repository is a work-in-progress. 	
@@ -44,7 +46,7 @@ Introduction
 
 Before writing pipelines, it's useful to have some background knowledge of what makes up a Workflow. Simply put:
 
-	*A workflow is a series of steps that are joined to each other.*
+    *A workflow is a series of steps that are joined to each other.*
 
 A diagram is great way to get an intuitive understanding of what a workflow is, for example to bake `Chocolate chip cookies <https://www.taste.com.au/recipes/chocolate-chip-cookies-2/1bfaa0e6-13b4-489d-bbd8-1cc5caf1fa32 />`_, we can refer to the following workflow:
 

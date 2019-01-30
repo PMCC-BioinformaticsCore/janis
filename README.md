@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master)](https://travis-ci.org/PMCC-BioinformaticsCore/janis)
 [![Documentation Status](https://readthedocs.org/projects/janis/badge/?version=latest)](https://janis.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/janis-pipelines.svg)](https://badge.fury.io/py/janis-pipelines)
 
 _Portable pipelines assistant_: A framework for creating specialised, simple workflow definitions that are then converted to Common Workflow Language or Workflow Definition Language.
 

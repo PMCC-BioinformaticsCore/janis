@@ -73,7 +73,7 @@ venv/
 #Ansible retry file
 **/*.retry
 
-
+.coverage
 docs/_build/
 portable_pipelines.egg-info/
 

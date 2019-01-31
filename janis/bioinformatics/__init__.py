@@ -1,1 +1,1 @@
-from bioinformatics.janis_bioinformatics import *
+# from janis_bioinformatics import *

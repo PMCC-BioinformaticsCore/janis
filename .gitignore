@@ -75,7 +75,9 @@ venv/
 
 .coverage
 docs/_build/
-portable_pipelines.egg-info/
+janis_pipelines.egg-info/
+dist/
+build/
 
 
 

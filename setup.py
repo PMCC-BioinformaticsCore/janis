@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages, find_namespace_packages
 
-VERSION = "v0.2.3"
+VERSION = "v0.2.4"
 DESCRIPTION = "Contains classes to represent a workflow, and provide options to convert to CWL / WDL"
 
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########

@@ -17,7 +17,7 @@ setup(
     author_email="michael.franklin@petermac.org",
     license="GNU",
     packages=["janis"] + ["janis." + p for p in sorted(find_packages('./janis'))],
-    install_requires=["ruamel.yaml==0.15.77", "networkx==2.1", "six"],
+    install_requires=["ruamel.yaml==0.15.77", "networkx==2.1", "six", "git+https://github.com/illusional/python-cwlgen"],
     zip_safe=False,
     long_description=long_description,
     long_description_content_type="text/markdown",

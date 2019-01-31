@@ -1,0 +1,3 @@
+illusional.cwlgen>=0.0.4
+illusional.wdlgen
+networkx>=2.1

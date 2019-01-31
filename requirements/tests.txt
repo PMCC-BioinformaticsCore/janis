@@ -1,2 +1,1 @@
-ruamel.yaml==0.15.77
-networkx==2.1
+-r base.txt

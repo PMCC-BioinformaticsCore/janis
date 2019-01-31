@@ -773,11 +773,6 @@ class Workflow(Tool):
                             ram_max=self._generate_hint_selectors_for_hint_map("ramMax", hm)
                         ))
 
-                    # if tool.hint_map():
-                    #     for s in sins:
-                    #         bind = s.inputBinding if s.inputBinding else cwl.CommandLineBinding()
-                    #         bind.valueFrom = self._generate_hint_selectors_for_hint_map(s.id, tool.hint_map())
-
                 if with_resource_overrides:
                     tool_cwl.inputs.extend(sins)
 

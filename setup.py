@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages, find_namespace_packages
+from setuptools import setup, find_packages
 from janis import __version__
 
 DESCRIPTION = "Contains classes and helpers to build a workflow, and provide options to convert to CWL / WDL"
@@ -17,7 +17,7 @@ setup(
     author_email="michael.franklin@petermac.org",
     license="GNU",
     packages=["janis"] + ["janis." + p for p in sorted(find_packages('./janis'))],
-    install_requires=["ruamel.yaml==0.15.77", "networkx==2.1", "six", "git+https://github.com/illusional/python-cwlgen"],
+    install_requires=["networkx>=2.1", "six", "illusional.wdlgen", "illusional.cwlgen>=0.0.4"],
     zip_safe=False,
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -29,6 +29,6 @@ setup(
         'Topic :: Scientific/Engineering :: Bio-Informatics'
     ],
     extras_require={
-        'bioinformatics': ['bioinformatics']
+        'bioinformatics': ['janis.bioinformatics']
     }
 )

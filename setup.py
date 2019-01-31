@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages, find_namespace_packages
 
 VERSION = "v0.2.3"
 DESCRIPTION = "Contains classes to represent a workflow, and provide options to convert to CWL / WDL"
@@ -16,7 +16,7 @@ setup(
     author="Michael Franklin, Evan Thomas, Mohammad Bhuyan",
     author_email="michael.franklin@petermac.org",
     license="GNU",
-    packages=["janis"],
+    packages=["janis"] + sorted(find_packages('./janis')),
     install_requires=["ruamel.yaml==0.15.77", "networkx==2.1", "six"],
     zip_safe=False,
     long_description=long_description,

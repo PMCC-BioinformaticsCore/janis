@@ -1,14 +1,14 @@
 from janis import File, Array, String, Float
-from bioinformatics.data_types.bampair import BamPair
-from bioinformatics.data_types.bed import Bed
-from bioinformatics.data_types.fasta import FastaWithDict
-from bioinformatics.data_types.vcf import VcfIdx
-from bioinformatics.tools.bcftools.annotate.latest import BcfToolsAnnotateLatest
-from bioinformatics.tools.common.splitmultiallele import SplitMultiAllele
-from bioinformatics.tools.common.vardict import VarDict
-from bioinformatics.tools.gatk4.genotypeconcordance.latest import Gatk4GenotypeConcordanceLatest
-from bioinformatics.tools.htslib.bgzip.latest import BGZipLatest
-from bioinformatics.tools.htslib.tabix.latest import TabixLatest
+from bioinformatics import BamPair
+from bioinformatics import Bed
+from bioinformatics import FastaWithDict
+from bioinformatics import VcfIdx
+from bioinformatics import BcfToolsAnnotateLatest
+from bioinformatics import SplitMultiAllele
+from bioinformatics import VarDict
+from bioinformatics import Gatk4GenotypeConcordanceLatest
+from bioinformatics import BGZipLatest
+from bioinformatics import TabixLatest
 
 
 def create():

@@ -2,9 +2,9 @@ from typing import List
 
 from janis import Workflow, Input, File, Directory, Int, Output, Array, String, Step, ToolInput, \
     ToolOutput
-from bioinformatics.tools.blast import Blast
-from bioinformatics.tools.fq2fa import Fq2fa
-from bioinformatics.tools.idba import Idba
+from bioinformatics import Blast
+from bioinformatics import Fq2fa
+from bioinformatics import Idba
 from janis.tool.expressiontool import ExpressionTool
 from janis.unix.tools.merge import Merge
 from janis.unix.tools.scatterlines import ScatterLines

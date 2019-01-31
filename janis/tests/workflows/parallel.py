@@ -1,20 +1,18 @@
-import unittest
-
 from janis import Workflow, Input, String, Step, Array, Logger, Output, File, Filename
-from bioinformatics.data_types.bampair import BamPair
-from bioinformatics.data_types.bed import Bed
-from bioinformatics.data_types.fasta import Fasta
-from bioinformatics.data_types.fasta import FastaWithDict
-from bioinformatics.data_types.fastq import Fastq
-from bioinformatics.data_types.vcf import VcfIdx
-from bioinformatics.tools.bwa_mem import BwaMem
-from bioinformatics.tools.gatk3.baserecalibrator.latest import Gatk3RecalibratorLatest as Gatk3Recalibrator
-from bioinformatics.tools.gatk3.haplotypecaller.latest import Gatk3HaplotypeCallerLatest as Gatk3HaplotypeCaller
-from bioinformatics.tools.gatk3.mutect2.latest import Gatk3Mutect2Latest as Gatk3Mutect2
-from bioinformatics.tools.gatk3.printreads.latest import Gatk3PrintReadsLatest as Gatk3PrintReads
-from bioinformatics.tools.picard_markdup import PicardMarkDup
-from bioinformatics.tools.picard_sortsam import PicardSortSam
-from bioinformatics.tools.samtools.view.latest import SamToolsViewLatest as SamToolsView
+from bioinformatics import BamPair
+from bioinformatics import Bed
+from bioinformatics import Fasta
+from bioinformatics import FastaWithDict
+from bioinformatics import Fastq
+from bioinformatics import VcfIdx
+from bioinformatics import BwaMem
+from bioinformatics import Gatk3RecalibratorLatest as Gatk3Recalibrator
+from bioinformatics import Gatk3HaplotypeCallerLatest as Gatk3HaplotypeCaller
+from bioinformatics import Gatk3Mutect2Latest as Gatk3Mutect2
+from bioinformatics import Gatk3PrintReadsLatest as Gatk3PrintReads
+from bioinformatics import PicardMarkDup
+from bioinformatics import PicardSortSam
+from bioinformatics import SamToolsViewLatest as SamToolsView
 
 
 class TestParallel:

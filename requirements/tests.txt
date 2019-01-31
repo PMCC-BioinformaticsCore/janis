@@ -1,3 +1,2 @@
 ruamel.yaml==0.15.77
 networkx==2.1
-py-dag==3.0.1

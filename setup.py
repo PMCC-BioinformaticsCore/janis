@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages, find_namespace_packages
+from janis import __version__
 
-VERSION = "v0.2.4"
-DESCRIPTION = "Contains classes to represent a workflow, and provide options to convert to CWL / WDL"
+DESCRIPTION = "Contains classes and helpers to build a workflow, and provide options to convert to CWL / WDL"
 
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########
 
@@ -10,13 +10,13 @@ with open("./janis/README.md") as readme:
 
 setup(
     name="janis pipelines",
-    version=VERSION,
+    version=__version__,
     description=DESCRIPTION,
     url="https://github.com/PMCC-BioinformaticsCore/janis",
     author="Michael Franklin, Evan Thomas, Mohammad Bhuyan",
     author_email="michael.franklin@petermac.org",
     license="GNU",
-    packages=["janis"] + sorted(find_packages('./janis')),
+    packages=["janis"] + ["janis." + p for p in sorted(find_packages('./janis'))],
     install_requires=["ruamel.yaml==0.15.77", "networkx==2.1", "six"],
     zip_safe=False,
     long_description=long_description,

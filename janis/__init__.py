@@ -1,3 +1,5 @@
+__version__ = "v0.2.4"
+
 from janis.workflow.workflow import Workflow
 from janis.workflow.step import Step
 from janis.workflow.input import Input

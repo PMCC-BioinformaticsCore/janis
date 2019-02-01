@@ -1,5 +1,5 @@
 import os
-import yaml
+import ruamel.yaml
 import cwlgen
 from typing import List, Dict, Type
 
@@ -23,13 +23,13 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
     wf_data = wf_cwl.get_dict()
     tools_data = [t.get_dict() for t in tools_cwl]
 
-    yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
+    ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
 
     if to_console:
-        print(yaml.dump(wf_data, default_flow_style=False))
-        print(yaml.dump(inp_data, default_flow_style=False))
+        print(ruamel.yaml.dump(wf_data, default_flow_style=False))
+        print(ruamel.yaml.dump(inp_data, default_flow_style=False))
         for t in tools_data:
-            print(yaml.dump(t, default_flow_style=False))
+            print(ruamel.yaml.dump(t, default_flow_style=False))
 
     if to_disk:
         d = os.path.expanduser("~") + f"/Desktop/{workflow.id()}/cwl/"
@@ -44,13 +44,13 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
         wf_filename = d + workflow.id() + ".cwl"
         with open(wf_filename, "w+") as cwl:
             Logger.log(f"Writing {workflow.id()}.cwl to disk")
-            yaml.dump(wf_data, cwl, default_flow_style=False)
+            ruamel.yaml.dump(wf_data, cwl, default_flow_style=False)
             Logger.log(f"Written {workflow.id()}.cwl to disk")
 
         if write_inputs_file:
             with open(d + workflow.id() + "-job.yml", "w+") as cwl:
                 Logger.log(f"Writing {workflow.id()}-job.yml to disk")
-                yaml.dump(inp_data, cwl, default_flow_style=False)
+                ruamel.yaml.dump(inp_data, cwl, default_flow_style=False)
                 Logger.log(f"Written {workflow.id()}-job.yml to disk")
         else:
             Logger.log("Skipping writing input (yaml) job file")
@@ -61,7 +61,7 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
             tool_filename = tool_name + ".cwl"
             with open(d_tools + tool_filename, "w+") as cwl:
                 Logger.log(f"Writing {tool_name}.cwl to disk")
-                yaml.dump(tool, cwl, default_flow_style=False)
+                ruamel.yaml.dump(tool, cwl, default_flow_style=False)
                 Logger.log(f"Written {tool_name}.cwl to disk")
 
         import subprocess

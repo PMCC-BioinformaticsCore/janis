@@ -69,50 +69,8 @@ class CommandTool(Tool, ABC):
     def hint_map() -> Optional[Dict[str, Any]]:
         return None
 
-    def cwl(self, with_docker=True) -> cwl.CommandLineTool:
-
-        metadata = self.metadata() if self.metadata() else Metadata()
-        stdouts = [o.output_type for o in self.outputs() if isinstance(o.output_type, Stdout) and o.output_type.stdoutname]
-        stdout = stdouts[0].stdoutname if len(stdouts) > 0 else None
-
-        tool = cwl.CommandLineTool(
-            tool_id=self.id(),
-            base_command=self.base_command(),
-            label=self.id(),
-            doc=metadata.documentation,
-            # cwl_version=Cwl.kCUR_VERSION,
-            stdin=None,
-            stderr=None,
-            stdout=stdout
-        )
-
-        tool.requirements.extend([
-            cwl.InlineJavascriptReq()
-        ])
-
-        if self.requirements():
-            tool.requirements.extend(self.requirements())
-
-        if with_docker:
-            tool.requirements.append(cwl.DockerRequirement(
-                docker_pull=self.docker(),
-                # docker_load=None,
-                # docker_file=None,
-                # docker_import=None,
-                # docker_image_id=None,
-                # docker_output_dir=None
-            ))
-
-        tool.inputs.extend(i.cwl() for i in self.inputs())
-        tool.outputs.extend(o.cwl() for o in self.outputs())
-        args = self.arguments()
-        if args:
-            tool.arguments.extend(a.cwl() for a in self.arguments())
-
-        return tool
-
     def wdl(self, with_docker=True):
-        import wdlgen.wdlgen as wdl
+        import wdlgen as wdl
 
         # Todo: Move this to python-wdlgen
         if not Validators.validate_identifier(self.id()):

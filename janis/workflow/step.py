@@ -1,6 +1,6 @@
 from typing import List, Dict, Any, Optional
 
-import cwlgen.cwlgen as cwl
+# import cwlgen.cwlgen as cwl
 from janis.graph.node import Node, NodeTypes
 from janis.graph.stepinput import StepInput
 from janis.tool.tool import Tool, ToolInput, ToolOutput
@@ -41,20 +41,20 @@ class Step:
     def tool(self) -> Tool:
         return self.__tool
 
-    def cwl(self, is_nested_tool=False):
-        run_ref = ("{tool}.cwl" if is_nested_tool else "tools/{tool}.cwl").format(tool=self.tool().id())
-        step = cwl.WorkflowStep(
-            step_id=self.id(),
-            run=run_ref,
-            label=self.label,
-            doc=self.doc,
-            scatter=None,           # Filled by StepNode
-            scatter_method=None     # Filled by StepNode
-        )
-
-        step.out = [cwl.WorkflowStepOutput(output_id=o.tag) for o in self.tool().outputs()]
-
-        return step
+    # def cwl(self, is_nested_tool=False):
+    #     run_ref = ("{tool}.cwl" if is_nested_tool else "tools/{tool}.cwl").format(tool=self.tool().id())
+    #     step = cwl.WorkflowStep(
+    #         step_id=self.id(),
+    #         run=run_ref,
+    #         label=self.label,
+    #         doc=self.doc,
+    #         scatter=None,           # Filled by StepNode
+    #         scatter_method=None     # Filled by StepNode
+    #     )
+    #
+    #     step.out = [cwl.WorkflowStepOutput(output_id=o.tag) for o in self.tool().outputs()]
+    #
+    #     return step
 
     def wdl2(self):
         import wdlgen.wdlgen as wdl

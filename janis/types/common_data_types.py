@@ -2,10 +2,9 @@
 # Implementations #
 ###################
 from typing import Dict, Any
-import wdlgen.wdlgen as wdl
+import wdlgen as wdl
+import cwlgen as cwl
 
-from janis.utils.logger import Logger
-import cwlgen.cwlgen as cwl
 from janis.types.data_types import DataType, NativeTypes, NativeType
 from janis.types.registry import register_type
 

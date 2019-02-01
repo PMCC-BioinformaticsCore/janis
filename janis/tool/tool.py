@@ -5,7 +5,7 @@ import re
 from janis.types.common_data_types import Array
 from janis.utils.logger import Logger
 from janis.types.data_types import DataType, NativeTypes
-import cwlgen.cwlgen as cwl
+# import cwlgen.cwlgen as cwl
 from janis.utils.metadata import Metadata
 
 ToolType = str
@@ -35,22 +35,22 @@ class ToolArgument:
             # I don't really know what this means.
             Logger.warn(f"Argument ({self.prefix} {self.value}) is not separating and did not end with ='")
 
-    def cwl(self):
-        if self.value is None:
-            val = None
-        elif callable(getattr(self.value, "cwl", None)):
-            val = self.value.cwl()
-        else:
-            val = str(self.value)
-        return cwl.CommandLineBinding(
-            # load_contents=False,
-            position=self.position,
-            prefix=self.prefix,
-            separate=self.separate_value_from_prefix,
-            # item_separator=None,
-            value_from=val,
-            shell_quote=self.shell_quote,
-        )
+    # def cwl(self):
+    #     if self.value is None:
+    #         val = None
+    #     elif callable(getattr(self.value, "cwl", None)):
+    #         val = self.value.cwl()
+    #     else:
+    #         val = str(self.value)
+    #     return cwl.CommandLineBinding(
+    #         # load_contents=False,
+    #         position=self.position,
+    #         prefix=self.prefix,
+    #         separate=self.separate_value_from_prefix,
+    #         # item_separator=None,
+    #         value_from=val,
+    #         shell_quote=self.shell_quote,
+    #     )
 
 
 class ToolInput(ToolArgument):
@@ -73,49 +73,49 @@ class ToolInput(ToolArgument):
         self.default = default
         self.nest_input_binding_on_array = nest_input_binding_on_array
 
-    def cwl(self):
-
-        default = self.default if self.default else self.input_type.default()
-
-        data_type = self.input_type.cwl_type()
-        input_binding = cwl.CommandLineBinding(
-            # load_contents=self.load_contents,
-            position=self.position,
-            prefix=self.prefix,
-            separate=self.separate_value_from_prefix,
-            # item_separator=self.item_separator,
-            # value_from=self.value_from,
-            shell_quote=self.shell_quote,
-        )
-
-        # Binding array inputs onto the console
-        # https://www.commonwl.org/user_guide/09-array-inputs/
-        if isinstance(self.input_type, Array) and isinstance(data_type, cwl.CommandInputArraySchema):
-            if self.nest_input_binding_on_array:
-                input_binding.prefix = None
-                input_binding.separate = None
-                nested_binding = cwl.CommandLineBinding(
-                    # load_contents=self.load_contents,
-                    prefix=self.prefix,
-                    separate=self.separate_value_from_prefix,
-                    # item_separator=self.item_separator,
-                    # value_from=self.value_from,
-                    shell_quote=self.shell_quote,
-                )
-                data_type.inputBinding = nested_binding
-            else:
-                input_binding.itemSeparator = ","
-
-        return cwl.CommandInputParameter(
-            param_id=self.tag,
-            label=self.tag,
-            secondary_files=self.input_type.secondary_files(),
-            # streamable=None,
-            doc=self.doc,
-            input_binding=input_binding,
-            default=default,
-            param_type=data_type
-        )
+    # def cwl(self):
+    #     import cwlgen
+    #     default = self.default if self.default else self.input_type.default()
+    #
+    #     data_type = self.input_type.cwl_type()
+    #     input_binding = cwlgen.CommandLineBinding(
+    #         # load_contents=self.load_contents,
+    #         position=self.position,
+    #         prefix=self.prefix,
+    #         separate=self.separate_value_from_prefix,
+    #         # item_separator=self.item_separator,
+    #         # value_from=self.value_from,
+    #         shell_quote=self.shell_quote,
+    #     )
+    #
+    #     # Binding array inputs onto the console
+    #     # https://www.commonwl.org/user_guide/09-array-inputs/
+    #     if isinstance(self.input_type, Array) and isinstance(data_type, cwlgen.CommandInputArraySchema):
+    #         if self.nest_input_binding_on_array:
+    #             input_binding.prefix = None
+    #             input_binding.separate = None
+    #             nested_binding = cwlgen.CommandLineBinding(
+    #                 # load_contents=self.load_contents,
+    #                 prefix=self.prefix,
+    #                 separate=self.separate_value_from_prefix,
+    #                 # item_separator=self.item_separator,
+    #                 # value_from=self.value_from,
+    #                 shell_quote=self.shell_quote,
+    #             )
+    #             data_type.inputBinding = nested_binding
+    #         else:
+    #             input_binding.itemSeparator = ","
+    #
+    #     return cwlgen.CommandInputParameter(
+    #         param_id=self.tag,
+    #         label=self.tag,
+    #         secondary_files=self.input_type.secondary_files(),
+    #         # streamable=None,
+    #         doc=self.doc,
+    #         input_binding=input_binding,
+    #         default=default,
+    #         param_type=data_type
+    #     )
 
     def id(self):
         return self.tag
@@ -127,22 +127,6 @@ class ToolOutput:
         self.output_type: DataType = output_type
         self.glob = glob
         self.doc = doc
-
-    def cwl(self):
-        return cwl.CommandOutputParameter(
-            param_id=self.tag,
-            label=self.tag,
-            secondary_files=self.output_type.secondary_files(),
-            # param_format=None,
-            # streamable=None,
-            doc=self.doc,
-            output_binding=cwl.CommandOutputBinding(
-                glob=self.glob,
-                # load_contents=False,
-                # output_eval=None
-            ),
-            param_type=self.output_type.cwl_type()
-        )
 
     def id(self):
         return self.tag
@@ -184,9 +168,9 @@ class Tool(ABC, object):
     def outputs_map(self) -> Dict[str, ToolOutput]:
         return {outp.tag: outp for outp in self.outputs()}
 
-    @abstractmethod
-    def cwl(self, with_docker=True) -> cwl.CommandLineTool:
-        raise Exception("Must implement cwl() method")
+    # @abstractmethod
+    # def cwl(self, with_docker=True):
+    #     raise Exception("Must implement cwl() method")
 
     def wdl(self, with_docker=True):
         raise Exception("Must implement wdl() method")

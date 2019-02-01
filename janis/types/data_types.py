@@ -13,10 +13,9 @@
 """
 from abc import ABC, abstractmethod
 from typing import Any, List, Dict, Optional
-from wdlgen.wdlgen import WdlType
+from wdlgen import WdlType
 
-import cwlgen.cwlgen as cwl
-import wdlgen.wdlgen as wdl
+import cwlgen as cwl
 
 NativeType = str
 

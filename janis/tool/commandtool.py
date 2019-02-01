@@ -4,7 +4,7 @@ from typing import List, Dict, Optional, Any
 
 from janis.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput, ToolTypes
 
-import cwlgen.cwlgen as cwl
+import cwlgen as cwl
 from janis.types.common_data_types import Stdout, Array
 from janis.utils import convert_expression_to_wdl
 from janis.utils.logger import Logger

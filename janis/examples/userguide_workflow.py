@@ -1,10 +1,9 @@
 from janis import Workflow, Input, File, Output, Step
 from janis.unix.data_types.tar_file import TarFile
-from janis.unix.steps.compile import Compile
-from janis.unix.steps.tar import Tar
-from janis.unix.steps.untar import Untar
+from janis.unix.tools.compile import Compile
+from janis.unix.tools.untar import Untar
 
-w = Workflow("user-guide")
+w = Workflow("user_guide")
 
 tarball = Input("tarball", TarFile())
 compiled_class = Output("compiled_class")
@@ -16,4 +15,4 @@ w.add_edge(tarball, untar)
 w.add_edge(untar, compile_step)
 w.add_edge(compile_step, compiled_class)
 
-w.dump_cwl(to_disk=False)
+w.dump_translation("cwl", to_disk=False)

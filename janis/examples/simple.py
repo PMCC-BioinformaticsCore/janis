@@ -1,9 +1,9 @@
 import unittest
 
-from janis.unix.steps.debugecho import DebugEchoInputs
-from janis.unix.steps.tar import Tar
-from janis.unix.steps.untar import Untar
-from janis.unix.steps.compile import Compile
+from janis.unix.tools.debugecho import DebugEchoInputs
+from janis.unix.tools.tar import Tar
+from janis.unix.tools.untar import Untar
+from janis.unix.tools.compile import Compile
 from janis.unix.data_types.tar_file import TarFile
 
 from janis import Workflow, Input, Output, Step, String, File, Logger
@@ -56,12 +56,12 @@ class TestSimple(unittest.TestCase):
         debug = Step("debug", DebugEchoInputs())
 
         w.add_pipe(inp1, step1, step2, step3.files, Output("output"))
-        w.add_edge(step1, step3.files)
+        w.add_edge(step1, step3.files2)
         w.add_edge(step3, debug)
         w.add_edge(debug, Output("debugout"))
 
         # w.draw_graph()
-        w.dump_cwl(to_disk=True, with_docker=False, write_inputs_file=False)
+        w.dump_translation(translation="cwl", to_disk=True, with_docker=False)
         # w.dump_wdl(to_disk=True, with_docker=True)
 
         # Logger.unmute()

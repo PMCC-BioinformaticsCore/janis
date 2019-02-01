@@ -80,9 +80,9 @@ class Node(ABC):
     def outputs(self) -> Dict[str, ToolOutput]:
         raise Exception(f"Subclass {type(self)} must implement outputs, return dict: key: ToolOutput")
 
-    @abstractmethod
-    def cwl(self) -> Dict[str, Any]:
-        raise Exception("Subclass must implement the cwl() method")
+    # @abstractmethod
+    # def cwl(self) -> Dict[str, Any]:
+    #     raise Exception("Subclass must implement the cwl() method")
 
     def __setitem__(self, key, value):
         self.connection_map[key] = value

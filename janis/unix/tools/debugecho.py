@@ -1,6 +1,6 @@
 from typing import List
 
-import janis.hints.hints as hints
+import janis.hints as hints
 from janis import ToolOutput, ToolInput, String, Stdout, File
 from janis.unix.tools.unixtool import UnixTool
 

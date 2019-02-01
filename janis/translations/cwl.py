@@ -91,15 +91,7 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
     metadata = wf.metadata() if wf.metadata() else WorkflowMetadata()
     w = cwlgen.Workflow(wf.identifier, wf.friendly_name(), metadata.documentation)
 
-    w.inputs: List[cwlgen.InputParameter] = [cwlgen.InputParameter(
-        param_id=i.id(),
-        label=i.input.label,
-        secondary_files=i.input.data_type.secondary_files(),
-        param_format=None,
-        streamable=None,
-        doc=i.input.doc,
-        input_binding=None,
-        param_type=i.input.data_type.cwl_type()) for i in wf._inputs]
+    w.inputs: List[cwlgen.InputParameter] = [translate_input(i.input) for i in wf._inputs]
 
     if with_resource_overrides:
         rOverride = cwlgen.InputParameter(
@@ -110,18 +102,7 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
 
     w.steps: List[cwlgen.WorkflowStep] = [translate_step(s, is_nested_tool=is_nested_tool) for s in wf._steps]
 
-    w.outputs = [cwlgen.WorkflowOutputParameter(
-        param_id=wf.id(),
-        output_source=next(iter(o.connection_map.values())).source(),
-        label=o.output.label,
-        secondary_files=o.output.data_type.secondary_files(),
-        param_format=None,
-        streamable=None,
-        doc=o.output.doc,
-        param_type=o.output.data_type.cwl_type(),
-        output_binding=None,
-        linkMerge=None
-    ) for o in wf._outputs]
+    w.outputs = [translate_output_node(o) for o in wf._outputs]
 
     #
     keys = ["coresMin", "coresMax", "ramMin", "ramMax"]
@@ -245,6 +226,25 @@ def translate_input(inp):
             input_binding=None,
             param_type=inp.data_type.cwl_type()
         )
+
+
+def translate_output_node(node):
+    return translate_output(node.output, next(iter(node.connection_map.values())).source())
+
+
+def translate_output(outp, source):
+    return cwlgen.WorkflowOutputParameter(
+        param_id=outp.id(),
+        output_source=source,
+        label=outp.label,
+        secondary_files=outp.data_type.secondary_files(),
+        param_format=None,
+        streamable=None,
+        doc=outp.doc,
+        param_type=outp.data_type.cwl_type(),
+        output_binding=None,
+        linkMerge=None
+    )
 
 
 def translate_tool_input(toolinput):

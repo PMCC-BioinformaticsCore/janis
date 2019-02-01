@@ -170,12 +170,6 @@ class Boolean(DataType):
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
 
-    # def cwl(self) -> Dict[str, Any]:
-        # return {
-        #     **super().cwl(),
-        #     "type": "Boolean",
-        # }
-
 
 class File(DataType):
 
@@ -330,14 +324,6 @@ class Stdout(File):
 
     def received_type(self):
         return self.subtype
-
-
-class CurrentWorkingDirectory(str):
-    def wdl(self):
-        return "."
-
-    def cwl(self):
-        return "$(runtime.outdir)"
 
 
 register_type(String)

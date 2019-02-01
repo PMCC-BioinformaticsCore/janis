@@ -44,8 +44,6 @@ class TestSimple(unittest.TestCase):
 
     def test_pipe(self):
 
-        import janis as p
-
         # Logger.mute()
         w = Workflow("simple")
 
@@ -61,7 +59,7 @@ class TestSimple(unittest.TestCase):
         w.add_edge(debug, Output("debugout"))
 
         # w.draw_graph()
-        w.dump_translation(translation="cwl", to_disk=True, with_docker=False)
+        w.dump_translation(translation="cwl", to_disk=False, with_docker=False)
         # w.dump_wdl(to_disk=True, with_docker=True)
 
         # Logger.unmute()

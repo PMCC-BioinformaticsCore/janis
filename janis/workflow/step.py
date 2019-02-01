@@ -39,27 +39,8 @@ class Step:
         return self.tool().outputs_map()
 
     def tool(self) -> Tool:
+        # haha don't mispell this, otherwise infinite recursion through __getattr__
         return self.__tool
-
-    # def cwl(self, is_nested_tool=False):
-    #     run_ref = ("{tool}.cwl" if is_nested_tool else "tools/{tool}.cwl").format(tool=self.tool().id())
-    #     step = cwl.WorkflowStep(
-    #         step_id=self.id(),
-    #         run=run_ref,
-    #         label=self.label,
-    #         doc=self.doc,
-    #         scatter=None,           # Filled by StepNode
-    #         scatter_method=None     # Filled by StepNode
-    #     )
-    #
-    #     step.out = [cwl.WorkflowStepOutput(output_id=o.tag) for o in self.tool().outputs()]
-    #
-    #     return step
-
-    def wdl2(self):
-        import wdlgen.wdlgen as wdl
-
-
 
     def __getattr__(self, item):
         if item in self.__dict__:
@@ -100,44 +81,44 @@ class StepNode(Node):
     def __repr__(self):
         return f"{self.node_type}: {self.step.tool().id()}"
 
-    def cwl(self, is_nested_tool=False):
-
-        step = self.step.cwl(is_nested_tool)
-
-        ins = self.inputs()
-        scatterable = []
-
-        for k in ins:
-            inp = ins[k]
-            if k not in self.connection_map:
-                if inp.input_type.optional:
-                    continue
-                else:
-                    raise Exception(f"Error when building connections for step '{self.id()}', "
-                                    f"could not find required connection: '{k}'")
-
-            inp_t = self.inputs()[k].input_type
-            edge = self.connection_map[k]
-            default = edge.default if edge.default else inp_t.default()
-            d = cwl.WorkflowStepInput(
-                input_id=inp.tag,
-                source=edge.source(),
-                link_merge=None,        # this will need to change when edges have multiple source_map
-                default=default,
-                value_from=None
-            )
-            if edge.has_scatter():
-                scatterable.append(k)
-
-            step.inputs.append(d)
-
-        if len(scatterable) > 0:
-            if len(scatterable) > 1:
-                Logger.info("Discovered more than one scatterable field on step '{step_id}', "
-                            "deciding scatterMethod to be dot_product".format(step_id=self.id()))
-                step.scatterMethod = "dot_product"
-            step.scatter = scatterable
-        return step
+    # def cwl(self, is_nested_tool=False):
+    #
+    #     step = self.step.cwl(is_nested_tool)
+    #
+    #     ins = self.inputs()
+    #     scatterable = []
+    #
+    #     for k in ins:
+    #         inp = ins[k]
+    #         if k not in self.connection_map:
+    #             if inp.input_type.optional:
+    #                 continue
+    #             else:
+    #                 raise Exception(f"Error when building connections for step '{self.id()}', "
+    #                                 f"could not find required connection: '{k}'")
+    #
+    #         inp_t = self.inputs()[k].input_type
+    #         edge = self.connection_map[k]
+    #         default = edge.default if edge.default else inp_t.default()
+    #         d = cwl.WorkflowStepInput(
+    #             input_id=inp.tag,
+    #             source=edge.source(),
+    #             link_merge=None,        # this will need to change when edges have multiple source_map
+    #             default=default,
+    #             value_from=None
+    #         )
+    #         if edge.has_scatter():
+    #             scatterable.append(k)
+    #
+    #         step.inputs.append(d)
+    #
+    #     if len(scatterable) > 0:
+    #         if len(scatterable) > 1:
+    #             Logger.info("Discovered more than one scatterable field on step '{step_id}', "
+    #                         "deciding scatterMethod to be dot_product".format(step_id=self.id()))
+    #             step.scatterMethod = "dot_product"
+    #         step.scatter = scatterable
+    #     return step
 
     def wdl_map(self) -> List[str]:
         q = []

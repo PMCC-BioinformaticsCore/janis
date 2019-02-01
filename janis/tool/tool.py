@@ -35,23 +35,6 @@ class ToolArgument:
             # I don't really know what this means.
             Logger.warn(f"Argument ({self.prefix} {self.value}) is not separating and did not end with ='")
 
-    # def cwl(self):
-    #     if self.value is None:
-    #         val = None
-    #     elif callable(getattr(self.value, "cwl", None)):
-    #         val = self.value.cwl()
-    #     else:
-    #         val = str(self.value)
-    #     return cwl.CommandLineBinding(
-    #         # load_contents=False,
-    #         position=self.position,
-    #         prefix=self.prefix,
-    #         separate=self.separate_value_from_prefix,
-    #         # item_separator=None,
-    #         value_from=val,
-    #         shell_quote=self.shell_quote,
-    #     )
-
 
 class ToolInput(ToolArgument):
     def __init__(self, tag: str, input_type: DataType, position: Optional[int] = None, prefix: Optional[str] = None,
@@ -167,10 +150,6 @@ class Tool(ABC, object):
 
     def outputs_map(self) -> Dict[str, ToolOutput]:
         return {outp.tag: outp for outp in self.outputs()}
-
-    # @abstractmethod
-    # def cwl(self, with_docker=True):
-    #     raise Exception("Must implement cwl() method")
 
     def wdl(self, with_docker=True):
         raise Exception("Must implement wdl() method")

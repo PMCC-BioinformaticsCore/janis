@@ -23,19 +23,6 @@ class Input:
     def id(self):
         return self._identifier
 
-    # def cwl(self) -> cwl.InputParameter:
-    #
-    #     return cwl.InputParameter(
-    #         param_id=self._identifier,
-    #         label=self.label,
-    #         secondary_files=self.data_type.secondary_files(),
-    #         param_format=None,
-    #         streamable=None,
-    #         doc=self.doc,
-    #         input_binding=None,
-    #         param_type=self.data_type.cwl_type()
-    #     )
-
     def cwl_input(self):
         return self.data_type.cwl_input(self.value)
 
@@ -55,6 +42,3 @@ class InputNode(Node):
 
     def inputs(self):
         return None
-
-    # def cwl(self) -> cwl.InputParameter:
-    #     return self.input.cwl()

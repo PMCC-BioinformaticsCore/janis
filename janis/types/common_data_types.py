@@ -6,7 +6,6 @@ import wdlgen as wdl
 import cwlgen as cwl
 
 from janis.types.data_types import DataType, NativeTypes, NativeType
-from janis.types.registry import register_type
 
 
 class String(DataType):
@@ -324,14 +323,3 @@ class Stdout(File):
 
     def received_type(self):
         return self.subtype
-
-
-register_type(String)
-register_type(Int)
-register_type(Float)
-register_type(Double)
-register_type(Boolean)
-register_type(Array)
-register_type(File)
-register_type(Directory)
-register_type(Stdout)

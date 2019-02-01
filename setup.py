@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 from janis import __version__
+from janis.utils.janisconstants import GITHUB_URL
 
 DESCRIPTION = "Contains classes and helpers to build a workflow, and provide options to convert to CWL / WDL"
 
@@ -12,7 +13,7 @@ setup(
     name="janis pipelines",
     version=__version__,
     description=DESCRIPTION,
-    url="https://github.com/PMCC-BioinformaticsCore/janis",
+    url=GITHUB_URL,
     author="Michael Franklin, Evan Thomas, Mohammad Bhuyan",
     author_email="michael.franklin@petermac.org",
     license="GNU",

@@ -541,7 +541,7 @@ class Workflow(Tool):
             if len(input_parts) < 2:
                 if guess_type is not None:
                     # try to guess it from the outputs
-                    compatible_types = [outs[x] for x in outs if guess_type.can_receive_from(outs[x].output_type)]
+                    compatible_types = [outs[x] for x in outs if (not outs[x].output_type.optional) and guess_type.can_receive_from(outs[x].output_type)]
                     if len(compatible_types) == 1:
                         out = compatible_types[0]
                         Logger.info(
@@ -551,7 +551,7 @@ class Workflow(Tool):
                     else:
                         # Should this step also take into consideration the _optional_ nature of the node,
                         # ie: should it favour required nodes if that's an option
-                        ultra_compatible = [outs[x] for x in outs if type(outs[x].output_type) == type(guess_type)]
+                        ultra_compatible = [outs[x] for x in outs if (not outs[x].output_type.optional) and type(outs[x].output_type) == type(guess_type)]
 
                         if len(ultra_compatible) == 1:
                             ultra = ultra_compatible[0]
@@ -627,7 +627,7 @@ class Workflow(Tool):
         elif len(input_parts) < 2:
             if guess_type is not None:
                 # try to guess it from the outputs
-                compatible_types = [ins[x] for x in ins if ins[x].input_type.can_receive_from(guess_type)]
+                compatible_types = [ins[x] for x in ins if (not ins[x].input_type.optional) and ins[x].input_type.can_receive_from(guess_type)]
                 if len(compatible_types) == 1:
                     inp = compatible_types[0]
                     Logger.info(f"Guessed the compatible match for '{node.id()}' with source type '{guess_type.id()}'"
@@ -636,7 +636,7 @@ class Workflow(Tool):
                 else:
                     # Should this step also take into consideration the _optional_ nature of the node,
                     # ie: should it favour required nodes if that's an option
-                    ultra_compatible = [ins[x] for x in ins if type(ins[x].input_type) == type(guess_type)]
+                    ultra_compatible = [ins[x] for x in ins if (not ins[x].input_type.optional) and type(ins[x].input_type) == type(guess_type)]
 
                     if len(ultra_compatible) == 1:
                         ultra = ultra_compatible[0]
@@ -683,7 +683,7 @@ class Workflow(Tool):
         outs, ins = s_node.outputs(), f_node.inputs()
 
         s_types: List[Tuple[List[str], DataType]] = [([s_node.id(), x], outs[x].output_type) for x in outs]
-        f_types: List[Tuple[List[str], DataType]] = [([f_node.id(), x], ins[x].input_type) for x in ins]
+        f_types: List[Tuple[List[str], DataType]] = [([f_node.id(), x], ins[x].input_type) for x in ins if x.ou]
 
         # O(n**2) for determining types
         matching_types: List[Tuple[Tuple[List[str], DataType], Tuple[List[str], DataType]]] = []

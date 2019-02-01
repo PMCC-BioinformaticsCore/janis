@@ -25,7 +25,6 @@ Clone the [GitHub repository](https://github.com/PMCC-BioinformaticsCore/janis):
 git clone git@github.com:PMCC-BioinformaticsCore/janis.git
 ```
 
-
 ## About
 
 This project was produced as part of the Portable Pipelines Project in partnership with:
@@ -33,8 +32,19 @@ This project was produced as part of the Portable Pipelines Project in partnersh
 - [Peter MacCallum Cancer Centre](https://www.petermac.org/)
 - [Walter and Eliza Hall Institute of Medical Research (WEHI) ](https://www.wehi.edu.au/)
 
-Related project links:
-- 
+### Related project links:
+- Janis:
+    - Janis Documentation: https://janis.readthedocs.io/en/latest/
+    - Janis Git: https://github.com/PMCC-BioinformaticsCore/janis
+    - Janis PyPi: https://pypi.org/project/janis-pipelines/
+    - Janis Bioinformatics: 
+        - Git: https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics
+        - PyPi: _Coming soon_1
+
+- CWLGen (forked): https://github.com/illusional/python-cwlgen
+- WDLGen: https://github.com/illusional/python-wdlgen
+
+
 
 ## Usage
 
@@ -67,7 +77,7 @@ outp = j.Output("output_identifier")
 w.add_pipe(inp, step, outp)
 
 # Will print the CWL, input file and relevant tools to the console
-w.dump_cwl(to_disk=False)
+w.dump_translation("cwl", to_disk=False)
 ```
 
 
@@ -81,7 +91,12 @@ The git submodule is embedded here for reference, but can also be found here: [h
 ### Intended usage
 
 ```
-pip install portable-pipeline-bioinformatics
+pip install janis-pipelines[bioinformatics]
+```
+
+Then you can simple import:
+```
+import janis.bioinformatics
 ```
 
 
@@ -100,22 +115,15 @@ If you find an issue with the tool definitions, please see the relevant issue pa
 
 ### Releasing Portable Pipelines
 
-Currently the release process is manual. The intent is to run this project through a continuous integration 
-system for automatic releases on passing commits to master.
-
-To release, increment the version in `setup.py`, run the following command to generate the release binary
+Releasing is automatic! Simply increment the version number in `setup.py` ([SemVer](https://semver.org)), 
+and tag that commit with the same version identifier:
 ```
-python setup.py bdist_wheel
+git tag -a "v0.x.x" -m "Tag message"
+git push --follow-tags
 ```
 
-To complete the upload, you will need to install `twine` and have your Pip settings configured:
-
-```
-python -m twine upload dist/janis_pipelines-$VERSION-py3-none-any.whl
-``` 
-
-And that's it!
-
+[Travis](https://travis-ci.org/PMCC-BioinformaticsCore/janis) will automatically build the repository, 
+run the associated unit tests and if they succeed, deploy to [PyPi](https://pypi.org/project/janis-pipelines/). 
 
 __________
 

@@ -1,3 +1,3 @@
 [submodule "bioinformatics"]
 	path = bioinformatics
-	url = https://github.com/PMCC-BioinformaticsCore/pipelines-bioinformatics
+	url = https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics

@@ -15,6 +15,9 @@ Welcome to Janis!
 .. image:: https://badge.fury.io/py/janis-pipelines.svg
     :target: https://pypi.org/project/janis-pipelines/
 
+.. image:: https://codecov.io/gh/PMCC-BioinformaticsCore/janis/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/PMCC-BioinformaticsCore/janis
+
 .. note::
 	This repository is a work-in-progress. 	
 

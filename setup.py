@@ -6,7 +6,7 @@ DESCRIPTION = "Contains classes and helpers to build a workflow, and provide opt
 
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########
 
-with open("./janis/README.md") as readme:
+with open("./README.md") as readme:
     long_description = readme.read()
 
 setup(
@@ -31,6 +31,6 @@ setup(
         'Topic :: Scientific/Engineering :: Bio-Informatics'
     ],
     extras_require={
-        'bioinformatics': ['janis.bioinformatics']
+        'bioinformatics': ['janis-pipelines.bioinformatics']
     }
 )

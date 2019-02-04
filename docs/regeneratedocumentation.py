@@ -6,7 +6,7 @@ It's a bit of a random collection of things that should be refactored:
     - NestedDictionary (store values in nested structure (with root key))
     - RST Helpers
 """
-
+from inspect import isfunction, ismodule
 
 from constants import PROJECT_ROOT_DIR
 
@@ -27,7 +27,6 @@ import tabulate
 from datetime import date
 
 from janis import CommandTool, Logger, Metadata
-from janis.tool.registry import get_tools
 from janis.tool.tool import Tool
 from janis.utils.metadata import Metadata
 
@@ -167,6 +166,48 @@ def get_toc(title, intro_text, subpages, caption="Contents", max_depth=1):
 *This page was auto-generated on {date.today().strftime(
         "%d/%m/%Y")}. Please do not directly alter the contents of this page.*
 """
+
+def get_tools():
+    import janis.bioinformatics, janis.unix
+    modules = [janis.bioinformatics, janis.unix]
+
+    tools = []
+    for m in modules:
+        try:
+            tools_module = m.tools
+            q = {n: cls for n, cls in list(tools_module.__dict__.items()) if not n.startswith("__") and type(cls) != type}
+            for k in q:
+                cls = q[k]
+                if isfunction(cls): continue
+                if ismodule(cls):
+                    print("module: " + str(cls))
+                if issubclass(type(cls), CommandTool):
+                    print("Found tool")
+                    tools.append(cls)
+        except Exception as e:
+            print(e)
+            continue
+
+
+
+    # Logger.info(f"Finding modules in {len(files)} files")
+    # for file in files:
+    #     if os.path.basename(file).startswith("__"):
+    #         continue
+    #     if os.path.basename(file) in ignore_files:
+    #         continue
+    #
+    #     name = os.path.splitext(file.replace(PROJECT_ROOT_DIR + "/", ""))[0].replace("/", ".")
+    #     try:
+    #         module = importlib.import_module(name)
+    #
+    #         for cc in q:
+    #             try_register_type(q[cc])
+    #
+    #     except Exception as e:
+    #         Logger.log_ex(e)
+
+    return tools
 
 
 def prepare_all_tools():

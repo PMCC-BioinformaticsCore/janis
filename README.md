@@ -87,7 +87,7 @@ w.dump_translation("cwl", to_disk=False)
 _Coming soon_
 
 A repository of bioinformatic tools will be build to use within this pipeline. 
-The git submodule is embedded here for reference, but can also be found here: [here](https://github.com/PMCC-BioinformaticsCore/pipelines-bioinformatics).
+The git submodule is embedded here for reference, but can also be found here: [here](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics).
 
 ### Intended usage
 
@@ -111,7 +111,7 @@ If you find an issue with Pipeline related functionality, please report it throu
 [Github issues page](https://github.com/PMCC-BioinformaticsCore/janis/issues).
 
 If you find an issue with the tool definitions, please see the relevant issue page:
-- [Pipeline-bioinformatics](https://github.com/PMCC-BioinformaticsCore/pipelines-bioinformatics/issues)
+- [Pipeline-bioinformatics](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/issues)
 
 
 ### Releasing Portable Pipelines

@@ -1,6 +1,6 @@
 import unittest
 
-# from bioinformatics.tools.gatk4.haplotypecaller.latest \
+# from tools.gatk4.haplotypecaller.latest \
 #     import Gatk4HaplotypeCallerLatest as Gatk4HaplotypeCaller
 #
 #

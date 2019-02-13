@@ -405,7 +405,8 @@ class Workflow(Tool):
         if s_node.node_type == NodeTypes.INPUT:
             # Can guarantee the data_type
             s_parts, s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts, referenced_by=f_parts)
-            f_parts, f_type = self.get_tag_and_type_from_final_edge_node(f_node, f_parts, guess_type=s_type)
+            f_parts, f_type = self.get_tag_and_type_from_final_edge_node(f_node, f_parts, referenced_from=s_parts,
+                                                                         guess_type=s_type)
             stag, ftag = None, f_parts[-1]
 
         elif f_node.node_type == NodeTypes.OUTPUT:
@@ -433,7 +434,8 @@ class Workflow(Tool):
             # We can't guarantee or enforce anything, so we'll see if we are fully qualified, and if not we can try
             # and guess by comparing types between the nodes, it doesn't matter which way we'll start though
             s_parts, s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts, referenced_by=f_parts)
-            f_parts, f_type = self.get_tag_and_type_from_final_edge_node(f_node, f_parts, guess_type=s_type)
+            f_parts, f_type = self.get_tag_and_type_from_final_edge_node(f_node, f_parts, referenced_from=s_parts,
+                                                                         guess_type=s_type)
 
             if s_type is None and f_type is not None:
                 s_parts, s_type = self.get_tag_and_type_from_start_edge_node(
@@ -541,7 +543,9 @@ class Workflow(Tool):
             if len(input_parts) < 2:
                 if guess_type is not None:
                     # try to guess it from the outputs
-                    compatible_types = [outs[x] for x in outs if (not outs[x].output_type.optional) and guess_type.can_receive_from(outs[x].output_type)]
+                    compatible_types = [outs[x] for x in outs if
+                                        (not outs[x].output_type.optional) and guess_type.can_receive_from(
+                                            outs[x].output_type)]
                     if len(compatible_types) == 1:
                         out = compatible_types[0]
                         Logger.info(
@@ -551,7 +555,9 @@ class Workflow(Tool):
                     else:
                         # Should this step also take into consideration the _optional_ nature of the node,
                         # ie: should it favour required nodes if that's an option
-                        ultra_compatible = [outs[x] for x in outs if (not outs[x].output_type.optional) and type(outs[x].output_type) == type(guess_type)]
+                        ultra_compatible = [outs[x] for x in outs if
+                                            (not outs[x].output_type.optional) and type(outs[x].output_type) == type(
+                                                guess_type)]
 
                         if len(ultra_compatible) == 1:
                             ultra = ultra_compatible[0]
@@ -592,8 +598,8 @@ class Workflow(Tool):
         return input_parts, None
 
     @staticmethod
-    def get_tag_and_type_from_final_edge_node(node: Node, input_parts: List[str],
-                                              guess_type: Optional[DataType]) -> Tuple[List[str], Optional[DataType]]:
+    def get_tag_and_type_from_final_edge_node(node: Node, input_parts: List[str], guess_type: Optional[DataType],
+                                              referenced_from: List[str]) -> Tuple[List[str], Optional[DataType]]:
         if guess_type is not None:
             guess_type = guess_type.received_type()
 
@@ -627,7 +633,8 @@ class Workflow(Tool):
         elif len(input_parts) < 2:
             if guess_type is not None:
                 # try to guess it from the outputs
-                compatible_types = [ins[x] for x in ins if (not ins[x].input_type.optional) and ins[x].input_type.can_receive_from(guess_type)]
+                compatible_types = [ins[x] for x in ins if
+                                    (not ins[x].input_type.optional) and ins[x].input_type.can_receive_from(guess_type)]
                 if len(compatible_types) == 1:
                     inp = compatible_types[0]
                     Logger.info(f"Guessed the compatible match for '{node.id()}' with source type '{guess_type.id()}'"
@@ -636,7 +643,9 @@ class Workflow(Tool):
                 else:
                     # Should this step also take into consideration the _optional_ nature of the node,
                     # ie: should it favour required nodes if that's an option
-                    ultra_compatible = [ins[x] for x in ins if (not ins[x].input_type.optional) and type(ins[x].input_type) == type(guess_type)]
+                    ultra_compatible = [ins[x] for x in ins if
+                                        (not ins[x].input_type.optional) and type(ins[x].input_type) == type(
+                                            guess_type)]
 
                     if len(ultra_compatible) == 1:
                         ultra = ultra_compatible[0]
@@ -647,9 +656,9 @@ class Workflow(Tool):
                     else:
                         s = "/".join(input_parts)
                         compat_str = ", ".join(f"{x.tag}: {x.input_type.id()}" for x in compatible_types)
-                        raise Exception(f"The end node '{node.id()}' did not specify where to join '{guess_type.id()}'"
-                                        f" to, there were {len(compatible_types)} compatible types"
-                                        f" ({compat_str}) and {len(ultra_compatible)} exact types."
+                        raise Exception(f"An error occurred when connecting '{'.'.join(referenced_from)}' to "
+                                        f"'{'.'.join(input_parts)}'. There were {len(compatible_types)} compatible "
+                                        f"types ({compat_str}) and {len(ultra_compatible)} exact types."
                                         f" You will need to provide more information to proceed.")
             else:
 
@@ -683,7 +692,7 @@ class Workflow(Tool):
         outs, ins = s_node.outputs(), f_node.inputs()
 
         s_types: List[Tuple[List[str], DataType]] = [([s_node.id(), x], outs[x].output_type) for x in outs]
-        f_types: List[Tuple[List[str], DataType]] = [([f_node.id(), x], ins[x].input_type) for x in ins if x.ou]
+        f_types: List[Tuple[List[str], DataType]] = [([f_node.id(), x], ins[x].input_type) for x in ins]
 
         # O(n**2) for determining types
         matching_types: List[Tuple[Tuple[List[str], DataType], Tuple[List[str], DataType]]] = []
@@ -706,7 +715,8 @@ class Workflow(Tool):
 
     # TRANSLATIONS
 
-    def dump_translation(self, translation: SupportedTranslation, to_console=True, to_disk=False, with_docker=True, with_hints=False,
+    def dump_translation(self, translation: SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
+                         with_hints=False,
                          with_resource_overrides=False):
         return translations.dump_translation(self,
                                              translation=translation,

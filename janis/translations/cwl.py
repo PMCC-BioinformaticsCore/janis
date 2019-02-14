@@ -15,21 +15,27 @@ from janis.workflow.step import StepNode
 
 def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_hints=False,
              with_resource_overrides=False, write_inputs_file=False):
-    wf_cwl, inp_data, tools_cwl = translate_workflow(workflow,
+    wf_cwl, inp_dict, tools_cwl = translate_workflow(workflow,
                                                      with_docker=with_docker,
                                                      with_hints=with_hints,
                                                      with_resource_overrides=with_resource_overrides)
 
-    wf_data = wf_cwl.get_dict()
-    tools_data = [t.get_dict() for t in tools_cwl]
+    wf_dict = wf_cwl.get_dict()
+    tool_dicts = [t.get_dict() for t in tools_cwl]
 
     ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
 
+    wf_str = ruamel.yaml.dump(wf_dict, default_flow_style=False)
+    inp_str = ruamel.yaml.dump(inp_dict, default_flow_style=False)
+    tls_strs = [(t["id"] + ".cwl", ruamel.yaml.dump(t, default_flow_style=False)) for t in tool_dicts]
+
     if to_console:
-        print(ruamel.yaml.dump(wf_data, default_flow_style=False))
-        print(ruamel.yaml.dump(inp_data, default_flow_style=False))
-        for t in tools_data:
-            print(ruamel.yaml.dump(t, default_flow_style=False))
+        print("=== WORKFLOW ===")
+        print(wf_str)
+        print("\n=== INPUTS ===")
+        print(inp_str)
+        print("\n=== TOOLS ===")
+        [print(t) for t in tls_strs]
 
     if to_disk:
         d = os.path.expanduser("~") + f"/Desktop/{workflow.id()}/cwl/"
@@ -44,25 +50,25 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
         wf_filename = d + workflow.id() + ".cwl"
         with open(wf_filename, "w+") as cwl:
             Logger.log(f"Writing {workflow.id()}.cwl to disk")
-            ruamel.yaml.dump(wf_data, cwl, default_flow_style=False)
+            cwl.write(wf_str)
+            # ruamel.yaml.dump(wf_dict, cwl, default_flow_style=False)
             Logger.log(f"Written {workflow.id()}.cwl to disk")
 
         if write_inputs_file:
             with open(d + workflow.id() + "-job.yml", "w+") as cwl:
                 Logger.log(f"Writing {workflow.id()}-job.yml to disk")
-                ruamel.yaml.dump(inp_data, cwl, default_flow_style=False)
+                cwl.write(inp_str)
+                # ruamel.yaml.dump(inp_dict, cwl, default_flow_style=False)
                 Logger.log(f"Written {workflow.id()}-job.yml to disk")
         else:
             Logger.log("Skipping writing input (yaml) job file")
 
         # z = zipfile.ZipFile(d + "tools.zip", "w")
-        for tool in tools_data:
-            tool_name = tool["id"]
-            tool_filename = tool_name + ".cwl"
+        for (tool_filename, tool) in tls_strs:
             with open(d_tools + tool_filename, "w+") as cwl:
-                Logger.log(f"Writing {tool_name}.cwl to disk")
-                ruamel.yaml.dump(tool, cwl, default_flow_style=False)
-                Logger.log(f"Written {tool_name}.cwl to disk")
+                Logger.log(f"Writing {tool_filename} to disk")
+                cwl.write(tool)
+                Logger.log(f"Written {tool_filename} to disk")
 
         import subprocess
 
@@ -82,6 +88,8 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
             Logger.info("Zipped tools")
         else:
             Logger.critical(zip_result.stderr)
+
+    return wf_str, inp_str, tls_strs
 
 
 def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=False,

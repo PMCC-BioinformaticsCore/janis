@@ -55,11 +55,11 @@ class TestSimple(unittest.TestCase):
 
         w.add_pipe(inp1, step1, step2, step3.files, Output("output"))
         w.add_edge(step1, step3.files2)
-        w.add_edge(step3, debug)
-        w.add_edge(debug, Output("debugout"))
+        # w.add_edge(step3, debug)
+        # w.add_edge(debug, Output("debugout"))
 
         # w.draw_graph()
-        w.dump_translation(translation="cwl", to_disk=False, with_docker=False)
+        w.dump_translation(translation="wdl", to_disk=False, with_docker=False)
         # w.dump_wdl(to_disk=True, with_docker=True)
 
         # Logger.unmute()

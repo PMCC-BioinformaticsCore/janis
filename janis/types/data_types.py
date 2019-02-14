@@ -69,6 +69,7 @@ class NativeTypes:
 
     @staticmethod
     def map_to_wdl(t: NativeType):
+        import wdlgen as wdl
         if t == NativeTypes.kBool:
             return wdl.PrimitiveType.kBoolean
         elif t == NativeTypes.kInt:

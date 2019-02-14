@@ -6,7 +6,6 @@ from janis.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput, ToolTypes
 
 import cwlgen as cwl
 from janis.types.common_data_types import Stdout, Array
-from janis.utils import convert_expression_to_wdl
 from janis.utils.logger import Logger
 from janis.utils.metadata import Metadata
 from janis.utils.validators import Validators
@@ -68,73 +67,6 @@ class CommandTool(Tool, ABC):
     @staticmethod
     def hint_map() -> Optional[Dict[str, Any]]:
         return None
-
-    def wdl(self, with_docker=True):
-        import wdlgen as wdl
-
-        # Todo: Move this to python-wdlgen
-        if not Validators.validate_identifier(self.id()):
-            raise Exception(f"The identifier '{self.id()}' for class '{self.__class__.__name__}' was not validated by "
-                            f"'{Validators.identifier_regex}' (must start with letters, and then only contain letters, "
-                            f"numbers or an underscore)")
-
-        ins, outs = [], []
-        for i in self.inputs():
-            wd = i.input_type.wdl()
-            if isinstance(wd, list):
-                ins.extend(wdl.Input(w, i.id()) for w in wd)
-            else:
-                ins.append(wdl.Input(wd, i.id()))
-
-        for o in self.outputs():
-
-            if isinstance(o.output_type, Stdout):
-                expression = "stdout()"
-            else:
-
-                glob = convert_expression_to_wdl(o.glob)
-                if glob is not None and "*" in glob:
-                    glob = f'glob({glob})'
-                    if not isinstance(o.output_type, Array):
-                        Logger.warn(f"The command tool '{self.id()}.{o.tag}' used a star-bind (*) glob to find the output, "
-                                    f"but the return type was not an array. For WDL, the first element will be used, "
-                                    f"ie: '{glob}[0]'")
-                        glob = glob + "[0]"
-                expression = glob
-
-            outs.append(wdl.Output(o.output_type.wdl(), o.id(), expression))
-
-        command_ins = [
-
-            wdl.Task.Command.CommandInput(
-                name=i.id(),
-                optional=i.input_type.optional,
-                prefix=i.prefix,
-                position=i.position,
-                separate_value_from_prefix=i.separate_value_from_prefix,
-                default=i.default if i.default else i.input_type.default()
-            ) for i in self.inputs()] if self.inputs() else None
-
-        command_args = None
-        if self.arguments():
-            command_args = []
-            for a in self.arguments():
-                if a.value is None:
-                    val = None
-                elif callable(getattr(a.value, "wdl", None)):
-                    val = a.value.wdl()
-                else:
-                    val = a.value
-                command_args.append(wdl.Task.Command.CommandArgument(a.prefix, val, a.position))
-
-        command = wdl.Task.Command(self.base_command(), command_ins, command_args)
-
-        r = wdl.Task.Runtime()
-        if with_docker:
-            r.add_docker(self.docker())
-
-        return wdl.Task(self.id(), ins, outs, command, r)
-
 
     def help(self):
         import inspect

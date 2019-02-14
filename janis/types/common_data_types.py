@@ -289,9 +289,6 @@ class Array(DataType):
         )
         return parameter
 
-    # def wdl(self):
-    #     return f"{NativeTypes.map_to_wdl(self.primitive())}[{NativeTypes.map_to_wdl(self._t.primitive())}]"
-
     def wdl(self) -> wdl.ArrayType:
         return wdl.ArrayType(self._t.wdl(), requires_multiple=False)
 

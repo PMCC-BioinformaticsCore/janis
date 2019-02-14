@@ -35,7 +35,7 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
         print("\n=== INPUTS ===")
         print(inp_str)
         print("\n=== TOOLS ===")
-        [print(t) for t in tls_strs]
+        [print(t[1]) for t in tls_strs]
 
     if to_disk:
         d = os.path.expanduser("~") + f"/Desktop/{workflow.id()}/cwl/"

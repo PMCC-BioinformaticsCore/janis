@@ -151,9 +151,6 @@ class Tool(ABC, object):
     def outputs_map(self) -> Dict[str, ToolOutput]:
         return {outp.tag: outp for outp in self.outputs()}
 
-    def wdl(self, with_docker=True):
-        raise Exception("Must implement wdl() method")
-
     @abstractmethod
     def friendly_name(self) -> str:
         # maps to CWL label (still exploring for WDL)

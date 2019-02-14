@@ -113,6 +113,9 @@ def build_aliases(steps):
 
     return tool_name_to_alias, steps_to_alias
 
+def get_secondary_tag_from_original_tag(original, secondary):
+    secondary_without_punctuation = secondary.replace(".", "").replace("^", "")
+    return original + "_" + secondary_without_punctuation
 
 def translate_workflow(wf, with_docker=True, is_nested_tool=False):
     """
@@ -137,18 +140,25 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False):
     for i in wf._inputs:
         wd = i.input.data_type.wdl()
         w.inputs.append(wdl.Input(wd, i.id(), i.input.data_type.default()))
-        # w.inputs.extend(wdl.Input(wd, i.id() + "_" + s) for s in i.input.data_type.secondary_files())
+        w.inputs.extend(wdl.Input(wd, get_secondary_tag_from_original_tag(i.id(), s)) for s in i.input.data_type.secondary_files())
 
     # Convert self._outputs -> wdl.Output
-    w.outputs = [
-        wdl.Output(
+    for o in wf._outputs:
+        w.outputs.append(wdl.Output(
             o.output.data_type.wdl(),
             o.id(),
             "{a}.{b}".format(  # Generate fully qualified stepid.tag identifier (MUST be step node)
                 a=first_value(first_value(o.connection_map).source_map).start.id(),
                 b=first_value(first_value(o.connection_map).source_map).stag
-            ))
-        for o in wf._outputs]
+            )))
+        w.outputs.extend(wdl.Output(
+            o.output.data_type.wdl(),
+            get_secondary_tag_from_original_tag(o.id(), s),
+            "{a}.{b}".format(  # Generate fully qualified stepid.tag identifier (MUST be step node)
+                a=first_value(first_value(o.connection_map).source_map).start.id(),
+                b=get_secondary_tag_from_original_tag(first_value(first_value(o.connection_map).source_map).stag, s)
+            )
+        ) for s in o.output.data_type.secondary_files())
 
     # Generate import statements (relative tool dir is later?)
     w.imports = [
@@ -191,6 +201,7 @@ def translate_tool(tool, with_docker):
             ins.extend(wdl.Input(w, i.id()) for w in wd)
         else:
             ins.append(wdl.Input(wd, i.id()))
+            ins.extend(wdl.Input(wd, get_secondary_tag_from_original_tag(i.id(), s)) for s in i.input_type.secondary_files())
 
     for o in tool.outputs():
 
@@ -209,6 +220,10 @@ def translate_tool(tool, with_docker):
             expression = glob
 
         outs.append(wdl.Output(o.output_type.wdl(), o.id(), expression))
+        # TODO: Come up with better expression, maybe an InputSelector wrapper as it's super common, and may
+        #       avoid having to do the expression conversions (between JS and else), and may be easier to validate
+        outs.extend(wdl.Input(o.output_type.wdl(), get_secondary_tag_from_original_tag(o.id(), s), expression)
+                    for s in o.output_type.secondary_files())
 
     command_ins = [
 

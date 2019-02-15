@@ -1,7 +1,7 @@
 from typing import Optional, Dict, Any
 
 from janis.graph.node import Node, NodeTypes
-from janis.tool.commandtool import ToolOutput, ToolInput
+from janis.tool.tool import ToolOutput, ToolInput
 from janis.types.common_data_types import Array
 from janis.utils import first_value
 from janis.utils.logger import Logger

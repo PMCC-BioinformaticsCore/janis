@@ -1,6 +1,4 @@
-from janis import Array
-from janis.tool.commandtool import ToolInput, ToolOutput
-from janis.types.common_data_types import File
+from janis import Array, ToolInput, ToolOutput, WildcardSelector, File
 from janis.unix.data_types.tar_file import TarFile
 from janis.unix.tools.unixtool import UnixTool
 
@@ -25,7 +23,7 @@ class Untar(UnixTool):
 
     def outputs(self):
         return [
-            ToolOutput("files", Array(File()), glob="*.java")
+            ToolOutput("files", Array(File()), glob=WildcardSelector("*.java"))
         ]
 
 """

@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Union
 import re
 
+from janis.types import Selector
 from janis.types.common_data_types import Array
 from janis.utils.logger import Logger
 from janis.types.data_types import DataType, NativeTypes
@@ -105,7 +106,7 @@ class ToolInput(ToolArgument):
 
 
 class ToolOutput:
-    def __init__(self, tag: str, output_type: DataType, glob: Optional[str] = None, doc: Optional[str]=None):
+    def __init__(self, tag: str, output_type: DataType, glob: Optional[Union[Selector, str]] = None, doc: Optional[str]=None):
         self.tag = tag
         self.output_type: DataType = output_type
         self.glob = glob

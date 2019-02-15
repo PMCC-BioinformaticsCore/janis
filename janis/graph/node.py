@@ -6,7 +6,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple, Any
 
-from janis.tool.commandtool import ToolInput, ToolOutput
+from janis.tool.tool import ToolInput, ToolOutput
 
 NodeLabel = str
 NodeType = int

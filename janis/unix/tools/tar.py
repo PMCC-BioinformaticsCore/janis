@@ -1,9 +1,7 @@
 #
 # Untar a file
 
-from janis import Array
-from janis.tool.commandtool import ToolInput, ToolOutput
-from janis.types.common_data_types import File, Filename
+from janis import Array, ToolInput, ToolOutput, InputSelector, File, Filename
 from janis.unix.tools.unixtool import UnixTool
 
 
@@ -29,7 +27,7 @@ class Tar(UnixTool):
 
     def outputs(self):
         return [
-            ToolOutput("tarred", File(), glob="$(inputs.tarName)")
+            ToolOutput("tarred", File(), glob=InputSelector("tarName"))     # "$(inputs.tarName)")
         ]
 
 

@@ -1,14 +1,10 @@
 from abc import ABC, abstractmethod
-import re
 from typing import List, Dict, Optional, Any
 
-from janis.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput, ToolTypes
-
 import cwlgen as cwl
-from janis.types.common_data_types import Stdout, Array
-from janis.utils.logger import Logger
+
+from janis.tool.tool import Tool, ToolArgument, ToolInput, ToolTypes
 from janis.utils.metadata import Metadata
-from janis.utils.validators import Validators
 
 
 class CommandTool(Tool, ABC):
@@ -67,6 +63,10 @@ class CommandTool(Tool, ABC):
     @staticmethod
     def hint_map() -> Optional[Dict[str, Any]]:
         return None
+
+    def translate(self, translation, with_docker=True):
+        import janis.translations
+        return janis.translations.translate_tool(self, translation, with_docker=with_docker)
 
     def help(self):
         import inspect

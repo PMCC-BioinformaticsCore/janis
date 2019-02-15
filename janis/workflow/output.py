@@ -2,7 +2,7 @@ from typing import Dict, Optional, Any
 
 from janis.graph.node import Node, NodeTypes
 from janis.types.data_types import DataType
-from janis.tool.commandtool import ToolOutput, ToolInput
+from janis.tool.tool import ToolOutput, ToolInput
 
 
 class Output:

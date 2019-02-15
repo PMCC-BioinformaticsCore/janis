@@ -6,6 +6,7 @@ from typing import List, Dict, Type
 from janis.hints import Hint, HintEnum, HintArray, HINTS
 from janis.tool.tool import Tool, ToolInput
 from janis.tool.commandtool import CommandTool
+from janis.types import InputSelector, Selector, WildcardSelector
 from janis.types.common_data_types import Int, Stdout, Array
 from janis.utils.logger import Logger
 from janis.utils.metadata import WorkflowMetadata, ToolMetadata
@@ -181,6 +182,11 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
     return w, inp, tools
 
 
+def translate_tool_str(tool, with_docker):
+    ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
+    return ruamel.yaml.dump(translate_tool(tool, with_docker=with_docker).get_dict(), default_flow_style=False)
+
+
 def translate_tool(tool, with_docker):
     metadata = tool.metadata() if tool.metadata() else ToolMetadata()
     stdouts = [o.output_type for o in tool.outputs() if isinstance(o.output_type, Stdout) and o.output_type.stdoutname]
@@ -215,7 +221,7 @@ def translate_tool(tool, with_docker):
         ))
 
     tool_cwl.inputs.extend(translate_tool_input(i) for i in tool.inputs())
-    tool_cwl.outputs.extend(translate_tool_output(o) for o in tool.outputs())
+    tool_cwl.outputs.extend(translate_tool_output(o, tool=tool.id()) for o in tool.outputs())
     args = tool.arguments()
     if args:
         tool_cwl.arguments.extend(translate_tool_argument(a) for a in tool.arguments())
@@ -316,7 +322,9 @@ def translate_tool_argument(argument):
         shell_quote=argument.shell_quote,
     )
 
-def translate_tool_output(output):
+
+def translate_tool_output(output, **debugkwargs):
+
     return cwlgen.CommandOutputParameter(
         param_id=output.tag,
         label=output.tag,
@@ -325,12 +333,29 @@ def translate_tool_output(output):
         # streamable=None,
         doc=output.doc,
         output_binding=cwlgen.CommandOutputBinding(
-            glob=output.glob,
+            glob=translate_to_cwl_glob(output.glob, outputtag=output.tag, **debugkwargs),
             # load_contents=False,
             # output_eval=None
         ),
         param_type=output.output_type.cwl_type()
     )
+
+
+def translate_to_cwl_glob(glob, **debugkwargs):
+    if not glob: return None
+
+    if not isinstance(glob, Selector):
+        Logger.warn("String globs are being phased out from tool output selections, please use the provided "
+                    "Selector (InputSelector or WildcardSelector) classes. " + str(debugkwargs))
+        return glob
+
+    if isinstance(glob, InputSelector):
+        return f"$({glob.input_to_select}){glob.extra_text}"
+
+    elif isinstance(glob, WildcardSelector):
+        return glob.wildcard
+
+    raise Exception("Unimplemented selector type: " + glob.__class__.__name__)
 
 
 def translate_step(step: StepNode, is_nested_tool=False):

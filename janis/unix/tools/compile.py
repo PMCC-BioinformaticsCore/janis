@@ -4,8 +4,7 @@
 
 from typing import List
 
-from janis.tool.commandtool import ToolInput, ToolOutput, ToolArgument
-from janis.types.common_data_types import File
+from janis import ToolInput, ToolOutput, ToolArgument, WildcardSelector, File
 from janis.unix.tools.unixtool import UnixTool
 
 
@@ -36,7 +35,7 @@ class Compile(UnixTool):
 
     def outputs(self):
         return [
-            ToolOutput("compiled", File(), glob="*.class")
+            ToolOutput("compiled", File(), glob=WildcardSelector("*.class"))
         ]
 
 

@@ -22,11 +22,12 @@ class ToolArgument:
     expr_pattern = "\$\(.*\)"
 
     def __init__(self, value: Any, prefix: Optional[str] = None, position: Optional[int] = 0,
-                 separate_value_from_prefix=None, doc: Optional[str]=None, shell_quote: bool=None):
+                 separate_value_from_prefix=None, doc: Optional[str] = None, shell_quote: bool = None):
         self.prefix: Optional[str] = prefix
         self.value = value
         self.position: Optional[int] = position
-        self.is_expression = (re.match(self.expr_pattern, self.value) is not None) if self.value else None
+        self.is_expression = isinstance(self.value, Selector) \
+                             or (re.match(self.expr_pattern, self.value) is not None) if self.value else None
         self.separate_value_from_prefix = separate_value_from_prefix
         self.doc = doc
         self.shell_quote = shell_quote
@@ -39,8 +40,8 @@ class ToolArgument:
 
 class ToolInput(ToolArgument):
     def __init__(self, tag: str, input_type: DataType, position: Optional[int] = None, prefix: Optional[str] = None,
-                 separate_value_from_prefix: bool = None, default: Any = None, doc: Optional[str]=None,
-                 nest_input_binding_on_array: bool=True, shell_quote=None):
+                 separate_value_from_prefix: bool = None, default: Any = None, doc: Optional[str] = None,
+                 nest_input_binding_on_array: bool = True, shell_quote=None):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
@@ -106,7 +107,8 @@ class ToolInput(ToolArgument):
 
 
 class ToolOutput:
-    def __init__(self, tag: str, output_type: DataType, glob: Optional[Union[Selector, str]] = None, doc: Optional[str]=None):
+    def __init__(self, tag: str, output_type: DataType, glob: Optional[Union[Selector, str]] = None,
+                 doc: Optional[str] = None):
         self.tag = tag
         self.output_type: DataType = output_type
         self.glob = glob
@@ -209,4 +211,3 @@ OPTIONAL:
 OUTPUTS:
 {outputs}
     """
-

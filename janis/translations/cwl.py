@@ -123,7 +123,7 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
                 input_id=k,
                 source=RESOURCE_OVERRIDE_KEY,
                 value_from=f"${{var k = \"{k}\";var stepId = \"{s.id}\";if(!self) return null;if (!(stepId in self)) "
-                            "return null;return self[stepId][k]}}"
+                "return null;return self[stepId][k]}}"
             ) for k in keys]
             s.inputs.extend(resource_override_step_inputs)
 
@@ -231,15 +231,15 @@ def translate_tool(tool, with_docker):
 
 def translate_input(inp):
     return cwlgen.InputParameter(
-            param_id=inp.id(),
-            label=inp.label,
-            secondary_files=inp.data_type.secondary_files(),
-            param_format=None,
-            streamable=None,
-            doc=inp.doc,
-            input_binding=None,
-            param_type=inp.data_type.cwl_type()
-        )
+        param_id=inp.id(),
+        label=inp.label,
+        secondary_files=inp.data_type.secondary_files(),
+        param_format=None,
+        streamable=None,
+        doc=inp.doc,
+        input_binding=None,
+        param_type=inp.data_type.cwl_type()
+    )
 
 
 def translate_output_node(node):
@@ -305,11 +305,20 @@ def translate_tool_input(toolinput):
     )
 
 
+def translate_input_selector(selector: InputSelector):
+    if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
+    pre = selector.prefix if selector.prefix else ""
+    suf = selector.suffix if selector.suffix else ""
+    return f"{pre}$(inputs.{selector.input_to_select}){suf}"
+
+
 def translate_tool_argument(argument):
     if argument.value is None:
         val = None
     elif callable(getattr(argument.value, "cwl", None)):
         val = argument.value.cwl()
+    elif isinstance(argument.value, InputSelector):
+        val = translate_input_selector(argument.value)
     else:
         val = str(argument.value)
     return cwlgen.CommandLineBinding(
@@ -324,7 +333,6 @@ def translate_tool_argument(argument):
 
 
 def translate_tool_output(output, **debugkwargs):
-
     return cwlgen.CommandOutputParameter(
         param_id=output.tag,
         label=output.tag,
@@ -350,7 +358,7 @@ def translate_to_cwl_glob(glob, **debugkwargs):
         return glob
 
     if isinstance(glob, InputSelector):
-        return f"$({glob.input_to_select}){glob.extra_text}"
+        return translate_input_selector(glob)
 
     elif isinstance(glob, WildcardSelector):
         return glob.wildcard

@@ -92,6 +92,8 @@ Portability
 
    userguide
 
+   buildingTools
+
    tools/index
    references/pipeline
 

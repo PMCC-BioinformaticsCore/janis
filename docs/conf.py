@@ -58,9 +58,9 @@ templates_path = ['_templates']
 #
 source_suffix = ['.rst', '.md']
 # source_suffix = '.rst'
-# source_parsers = {
-#     '.md': 'recommonmark.parser.CommonMarkParser',
-# }
+source_parsers = {
+    # '.md': 'recommonmark.parser.CommonMarkParser',
+}
 
 # The master toctree document.
 master_doc = 'index'
@@ -87,6 +87,8 @@ pygments_style = None
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+# html_style = "styles.css"
+html_show_copyright = False
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

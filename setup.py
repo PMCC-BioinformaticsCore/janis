@@ -19,7 +19,7 @@ setup(
     license="GNU",
     packages=["janis"] + ["janis." + p for p in sorted(find_packages('./janis'))],
     install_requires=["networkx>=2.1", "ruamel.yaml >= 0.12.4, <= 0.15.77", "six", "illusional.wdlgen",
-                      "illusional.cwlgen>=0.0.4"],
+                      "illusional.cwlgen>=0.0.5"],
     zip_safe=False,
     long_description=long_description,
     long_description_content_type="text/markdown",

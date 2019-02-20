@@ -22,13 +22,13 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
                                                      with_resource_overrides=with_resource_overrides)
 
     wf_dict = wf_cwl.get_dict()
-    tool_dicts = [t.get_dict() for t in tools_cwl]
+    tool_dicts = [("tools/" + t.id + ".cwl", t.get_dict()) for t in tools_cwl]
 
     ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
 
     wf_str = ruamel.yaml.dump(wf_dict, default_flow_style=False)
     inp_str = ruamel.yaml.dump(inp_dict, default_flow_style=False)
-    tls_strs = [(t["id"] + ".cwl", ruamel.yaml.dump(t, default_flow_style=False)) for t in tool_dicts]
+    tls_strs = [(t[0], ruamel.yaml.dump(t[1], default_flow_style=False)) for t in tool_dicts]
 
     if to_console:
         print("=== WORKFLOW ===")

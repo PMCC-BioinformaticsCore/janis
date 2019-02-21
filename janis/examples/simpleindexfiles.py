@@ -1,5 +1,8 @@
 from typing import List
-from janis import ToolOutput, ToolInput, Workflow, Step, Input, Output, File
+
+from janis.types import WildcardSelector, InputSelector
+
+from janis import ToolOutput, ToolInput, Workflow, Step, Input, Output, File, Array
 from janis.tool.commandtool import CommandTool
 
 
@@ -29,14 +32,21 @@ class ToolThatAcceptsAndReturnsSecondary(CommandTool):
         return [ToolInput("input", DataTypeWithSecondary())]
 
     def outputs(self) -> List[ToolOutput]:
-        return [ToolOutput("output", DataTypeWithSecondary())]
+        return [ToolOutput("output", DataTypeWithSecondary(), glob=InputSelector("input"))]
 
 
 if __name__ == "__main__":
-    w = Workflow("test_workflow")
+    # w = Workflow("test_workflow")
+    #
+    # inp = Input("inp", DataTypeWithSecondary())
+    # stp = Step("stp", ToolThatAcceptsAndReturnsSecondary())
+    # w.add_pipe(inp, stp, Output("outp"))
+    #
+    # w.dump_translation("wdl")
 
-    inp = Input("inp", DataTypeWithSecondary())
-    stp = Step("stp", ToolThatAcceptsAndReturnsSecondary())
-    w.add_pipe(inp, stp, Output("outp"))
+    w2 = Workflow("scattered_test_workflow")
+    inp2 = Input("inp2", Array(DataTypeWithSecondary()))
+    stp2 = Step("stp2", ToolThatAcceptsAndReturnsSecondary())
+    w2.add_pipe(inp2, stp2, Output("outp2"))
+    w2.dump_translation("wdl")
 
-    w.dump_translation("wdl")

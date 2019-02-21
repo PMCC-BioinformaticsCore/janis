@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from janis import Input, String, CommandTool, ToolInput, Step, Array, Logger
-from janis.graph.stepinput import StepInput
+from janis.graph.stepinput import StepInput, Edge
 from janis.workflow.input import InputNode
 from janis.workflow.step import StepNode
 
@@ -42,8 +42,8 @@ class TestStep(TestCase):
 
         con_map = StepInput(step, "inputs")
         con_map.add_source(start1, None)
-
-        self.assertEqual(con_map.source(), start1.id())
+        source: Edge = con_map.source()
+        self.assertEqual(source.dotted_source(), start1.id())
 
     def test_sources_multiple(self):
         start1 = InputNode(Input("test1", String()))

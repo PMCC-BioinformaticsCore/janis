@@ -2,12 +2,17 @@ import os
 from typing import List, Dict
 
 import wdlgen as wdl
+from janis.workflow.step import StepNode
+
+from janis.graph.stepinput import Edge, StepInput
+
+from janis.types import InputSelector, WildcardSelector
+
 from janis.types.common_data_types import Stdout, Array
 
 from janis.utils.validators import Validators
 
 from janis.tool.commandtool import CommandTool
-
 
 from janis.utils import first_value, convert_expression_to_wdl
 
@@ -18,7 +23,6 @@ from janis.utils.logger import Logger
 
 def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_hints=False,
              with_resource_overrides=False, write_inputs_file=False):
-
     wf_wdl, inp_str, tool_dicts = translate_workflow(workflow, with_docker=with_docker)
 
     wf_str = wf_wdl.get_string()
@@ -113,9 +117,11 @@ def build_aliases(steps):
 
     return tool_name_to_alias, steps_to_alias
 
+
 def get_secondary_tag_from_original_tag(original, secondary):
     secondary_without_punctuation = secondary.replace(".", "").replace("^", "")
     return original + "_" + secondary_without_punctuation
+
 
 def translate_workflow(wf, with_docker=True, is_nested_tool=False):
     """
@@ -140,7 +146,12 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False):
     for i in wf._inputs:
         wd = i.input.data_type.wdl()
         w.inputs.append(wdl.Input(wd, i.id(), i.input.data_type.default()))
-        w.inputs.extend(wdl.Input(wd, get_secondary_tag_from_original_tag(i.id(), s)) for s in i.input.data_type.secondary_files())
+        is_array = isinstance(i.input.data_type, Array)
+        if i.input.data_type.secondary_files() or \
+                (is_array and i.input.data_type.subtype().secondary_files()):
+            secs = i.input.data_type.secondary_files() if not is_array else i.input.data_type.subtype().secondary_files()
+            w.inputs.extend(
+                wdl.Input(wd, get_secondary_tag_from_original_tag(i.id(), s)) for s in secs)
 
     # Convert self._outputs -> wdl.Output
     for o in wf._outputs:
@@ -151,14 +162,15 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False):
                 a=first_value(first_value(o.connection_map).source_map).start.id(),
                 b=first_value(first_value(o.connection_map).source_map).stag
             )))
-        w.outputs.extend(wdl.Output(
-            o.output.data_type.wdl(),
-            get_secondary_tag_from_original_tag(o.id(), s),
-            "{a}.{b}".format(  # Generate fully qualified stepid.tag identifier (MUST be step node)
-                a=first_value(first_value(o.connection_map).source_map).start.id(),
-                b=get_secondary_tag_from_original_tag(first_value(first_value(o.connection_map).source_map).stag, s)
-            )
-        ) for s in o.output.data_type.secondary_files())
+        if o.output.data_type.secondary_files():
+            w.outputs.extend(wdl.Output(
+                o.output.data_type.wdl(),
+                get_secondary_tag_from_original_tag(o.id(), s),
+                "{a}.{b}".format(  # Generate fully qualified stepid.tag identifier (MUST be step node)
+                    a=first_value(first_value(o.connection_map).source_map).start.id(),
+                    b=get_secondary_tag_from_original_tag(first_value(first_value(o.connection_map).source_map).stag, s)
+                )
+            ) for s in o.output.data_type.secondary_files())
 
     # Generate import statements (relative tool dir is later?)
     w.imports = [
@@ -188,6 +200,18 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False):
     return w, inp, wtools
 
 
+def translate_input_selector(selector: InputSelector):
+    if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
+    pre = selector.prefix if selector.prefix else ""
+    suf = selector.suffix if selector.suffix else ""
+    return f"{pre}${{{selector.input_to_select}}}{suf}"
+
+
+def translate_wildcard_selector(selector: WildcardSelector):
+    if not selector.wildcard: raise Exception("No wildcard was selected for wildcard selector: " + str(selector))
+    return f"glob({selector.wildcard})"
+
+
 def translate_tool(tool, with_docker):
     if not Validators.validate_identifier(tool.id()):
         raise Exception(f"The identifier '{tool.id()}' for class '{tool.__class__.__name__}' was not validated by "
@@ -201,29 +225,11 @@ def translate_tool(tool, with_docker):
             ins.extend(wdl.Input(w, i.id()) for w in wd)
         else:
             ins.append(wdl.Input(wd, i.id()))
-            ins.extend(wdl.Input(wd, get_secondary_tag_from_original_tag(i.id(), s)) for s in i.input_type.secondary_files())
+            ins.extend(
+                wdl.Input(wd, get_secondary_tag_from_original_tag(i.id(), s)) for s in i.input_type.secondary_files())
 
     for o in tool.outputs():
-
-        if isinstance(o.output_type, Stdout):
-            expression = "stdout()"
-        else:
-
-            glob = convert_expression_to_wdl(o.glob)
-            if glob is not None and "*" in glob:
-                glob = f'glob({glob})'
-                if not isinstance(o.output_type, Array):
-                    Logger.warn(f"The command tool '{tool.id()}.{o.tag}' used a star-bind (*) glob to find the output, "
-                                f"but the return type was not an array. For WDL, the first element will be used, "
-                                f"ie: '{glob}[0]'")
-                    glob = glob + "[0]"
-            expression = glob
-
-        outs.append(wdl.Output(o.output_type.wdl(), o.id(), expression))
-        # TODO: Come up with better expression, maybe an InputSelector wrapper as it's super common, and may
-        #       avoid having to do the expression conversions (between JS and else), and may be easier to validate
-        outs.extend(wdl.Input(o.output_type.wdl(), get_secondary_tag_from_original_tag(o.id(), s), expression)
-                    for s in o.output_type.secondary_files())
+        outs.extend(translate_output_node(o, tool))
 
     command_ins = [
 
@@ -257,6 +263,42 @@ def translate_tool(tool, with_docker):
     return wdl.Task(tool.id(), ins, outs, command, r)
 
 
+def translate_output_node(o, tool) -> List[wdl.Output]:
+    if isinstance(o.output_type, Stdout):
+        expression = "stdout()"
+        return [wdl.Output(o.output_type.wdl(), o.id(), expression)]
+
+    elif isinstance(o.glob, InputSelector):
+        expression = translate_input_selector(o.glob)
+        return [wdl.Output(o.output_type.wdl(), o.id(), f'"{expression}"')] + \
+               [wdl.Output(o.output_type.wdl(), get_secondary_tag_from_original_tag(o.id(), s), f'"{expression}{s}"')
+                for s in o.output_type.secondary_files()]
+
+    elif isinstance(o.glob, WildcardSelector):
+        expression = translate_wildcard_selector(o.glob)
+        if not isinstance(o.output_type, Array):
+            Logger.warn(f"The command tool '{tool.id()}.{o.tag}' used a star-bind (*) glob to find the output, "
+                        f"but the return type was not an array. For WDL, the first element will be used, "
+                        f"ie: '{expression}[0]'")
+        expression += "[0]"
+
+    else:
+        print("NON SELECTOR GLOB: " + o.glob)
+        glob = convert_expression_to_wdl(o.glob)
+        if glob is not None and "*" in glob:
+            glob = f'glob({glob})'
+            if not isinstance(o.output_type, Array):
+                Logger.warn(f"The command tool '{tool.id()}.{o.tag}' used a star-bind (*) glob to find the output, "
+                            f"but the return type was not an array. For WDL, the first element will be used, "
+                            f"ie: '{glob}[0]'")
+                glob = glob + "[0]"
+        expression = glob
+        wdl_type = wdl.WdlType.parse_type(o.output_type.wdl())
+        return [wdl.Output(wdl_type, o.id(), expression)] + \
+               [wdl.Output(wdl_type, get_secondary_tag_from_original_tag(o.id(), s), expression)
+                for s in o.output_type.secondary_files()]
+
+
 def translate_step_node(node, step_identifier: str, step_alias: str):
     import wdlgen as wdl
 
@@ -264,13 +306,21 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
 
     # One step => One WorkflowCall. We need to traverse the edge list to see if there's a scatter
     # then we can build up the WorkflowCall / ScatterCall
-    scatterable = [node.connection_map[k].dotted_source()
-                   for k in node.inputs() if k in node.connection_map and node.connection_map[k].has_scatter()]
+    scatterable: List[StepInput] = []
+
+    for k in node.inputs():
+        if not (k in node.connection_map and node.connection_map[k].has_scatter()): continue
+        step_input: StepInput = node.connection_map[k]
+        if step_input.multiple_inputs or isinstance(step_input.source(), list):
+            raise NotImplementedError(f"The edge '{step_input.dotted_source()}' on node '{node.id()}' has multiple "
+                                      f"inputs, and I don't know how this can be implemented in WDL")
+        scatterable.append(step_input)
 
     # We need to replace the scatterable key(s) with some random variable, eg: for i in iterable:
     ordered_variable_identifiers = ["i", "j", "k", "x", "y", "z", "a", "b", "c", "ii", "jj", "kk", "xx", "yy", "zz"]
-    new_to_old_identifier = {k.dotted_source(): k.dotted_source() for k in node.connection_map.values()
+    old_to_new_identifier = {k.dotted_source(): k.dotted_source() for k in node.connection_map.values()
                              if not isinstance(k.dotted_source(), list)}
+    current_identifiers = set(old_to_new_identifier.values())
 
     # We'll wrap everything in the scatter block later, but let's replace the fields we need to scatter
     # with the new scatter variable (we'll try to guess one based on the fieldname. We might need to eventually
@@ -278,14 +328,33 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
     # Todo: Pass Workflow input tags to wdl scatter generation to ensure scatter var doesn't conflict with inputs
 
     for s in scatterable:
-        new_var = s.split(".")[-1][0].lower()
-        while new_var in new_to_old_identifier:
+        current_identifiers.remove(s.dotted_source())
+        e: Edge = first_value(s.source_map)
+        new_var = e.stag[0] if e.stag else e.source()[0]
+
+        while new_var in current_identifiers:
             new_var = ordered_variable_identifiers.pop(0)
-        new_to_old_identifier[s] = new_var
+        old_to_new_identifier[s.dotted_source()] = new_var
+        current_identifiers.add(new_var)
 
     # Let's map the inputs, to the source.
     # We're using a dictionary for the map atm, but WDL requires the format:
     #       fieldName: sourceCall.Output
+
+    # So, the current way of mixing accessory files is not really supported, but a little complicated
+    # basically, if our scatterable edge contains secondary files, they'll all be arrays of separate files, eg:
+    #
+    # File[] bams = [...]
+    # File[] bais = [...]
+    #
+    # We can handle this by zipping (for two), or actually transposing the array of both items, eg:
+    # transpose([bam1, bam2, ..., bamn], [bai1, bai2, ..., bai3]) => [[bam1, bai1], [bam2, bai2], ..., [bamn, bain]]
+    #
+    # Providing we're delicate, we can zip these in a particlar way, and then unwrap them using their indices
+    # and hoefully have everything line up:
+    #
+    # Source: https://software.broadinstitute.org/wdl/documentation/spec#arrayarrayx-transposearrayarrayx
+    #
 
     inputs_map = {}
     for k in ins:
@@ -297,33 +366,59 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
                 raise Exception(f"Error when building connections for step '{node.id()}', "
                                 f"could not find required connection: '{k}'")
 
-        edge = node.connection_map[k]
-        ds = edge.dotted_source()
+        edge: StepInput = node.connection_map[k]
+        source: Edge = edge.source() # potentially single item or array
 
-        if isinstance(ds, list):
-            if len(ds) == 1:
-                ds = ds[0]
-            elif len(ds) > 1:
-                Logger.critical("Conversion to WDL does not currently support multiple sources")
-                ds = f'[{", ".join(ds)}]'
+        if isinstance(source, list):
+            if len(source) == 1:
+                source = source[0]
+            elif len(source) > 1:
+                raise Exception("Conversion to WDL does not currently support multiple sources")
+                # ds = f'[{", ".join(ds)}]'
 
-        if ds in new_to_old_identifier and new_to_old_identifier[ds]:
-            inputs_map[k] = new_to_old_identifier[ds]
-        elif edge.default is not None:
-            if isinstance(edge.default, bool):
-                inputs_map[k] = "true" if edge.default else "false"
-            elif isinstance(edge.default, str):
-                inputs_map[k] = f'"{edge.default}"'
-            else:
-                inputs_map[k] = edge.default
+        ds = source.dotted_source()
+        if edge in scatterable and isinstance(source.finish, StepNode) \
+                and source.finish.step.tool().inputs_map()[source.ftag].input_type.secondary_files():
+
+            # We're ensured through inheritance and receiveBy of types that secondary files will match
+            secondary = source.finish.step.tool().inputs_map()[source.ftag].input_type.secondary_files()
+            print(f"Oh boii, we're gonna have some complicated scattering here with {len(secondary)} secondary file(s)")
+
+            identifier = old_to_new_identifier[ds]
+            inputs_map[k] = identifier + "[0]"
+            for idx in range(len(secondary)):
+                sec = secondary[idx]
+                inputs_map[get_secondary_tag_from_original_tag(k, sec)] = f"{identifier}[{idx+1}]"
+
         else:
-            inputs_map[k] = ds
+            if ds in old_to_new_identifier and old_to_new_identifier[ds]:
+                inputs_map[k] = old_to_new_identifier[ds]
+            elif edge.default is not None:
+                if isinstance(edge.default, bool):
+                    inputs_map[k] = "true" if edge.default else "false"
+                elif isinstance(edge.default, str):
+                    inputs_map[k] = f'"{edge.default}"'
+                else:
+                    inputs_map[k] = edge.default
+            else:
+                inputs_map[k] = ds
 
     call = wdl.WorkflowCall(step_identifier, step_alias, inputs_map)
 
     for s in scatterable:
-        call = wdl.WorkflowScatter(new_to_old_identifier[s], s, [call])
+        if not isinstance(s.finish, StepNode):
+            raise Exception("An internal error has occured when generating scatterable input map")
+        secondary = s.finish.step.tool().inputs_map()[s.ftag].input_type.secondary_files()
+        if secondary:
+            print("There are secondary files here")
+            ds = s.dotted_source()
+            zipped = f"zip([{ds}, {', '.join(get_secondary_tag_from_original_tag(ds, sec) for sec in secondary)}])"
+            call = wdl.WorkflowScatter(old_to_new_identifier[s.dotted_source()], zipped, [call])
+
+        else:
+            call = wdl.WorkflowScatter(old_to_new_identifier[s.dotted_source()], s.dotted_source(), [call])
 
     return call
 
+# def map_inputs_for_non_secondary_scatterable_field():
 

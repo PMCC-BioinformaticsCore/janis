@@ -12,6 +12,7 @@ def full_lbl(node: Node, tag: Optional[str]) -> str:
         return node.id()
     return f"{node.id()}/{tag}"
 
+
 def full_dot(node: Node, tag: Optional[str]) -> str:
     if tag is None:
         return node.id()
@@ -143,7 +144,7 @@ class StepInput:
         if n == 0:
             return None
         elif n == 1:
-            return first_value(self.source_map).source()
+            return first_value(self.source_map)
         else:
             return [e.source() for e in self.source_map.values()]
 

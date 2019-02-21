@@ -36,13 +36,13 @@ class ToolThatAcceptsAndReturnsSecondary(CommandTool):
 
 
 if __name__ == "__main__":
-    # w = Workflow("test_workflow")
-    #
-    # inp = Input("inp", DataTypeWithSecondary())
-    # stp = Step("stp", ToolThatAcceptsAndReturnsSecondary())
-    # w.add_pipe(inp, stp, Output("outp"))
-    #
-    # w.dump_translation("wdl")
+    w = Workflow("test_workflow")
+
+    inp = Input("inp", DataTypeWithSecondary())
+    stp = Step("stp", ToolThatAcceptsAndReturnsSecondary())
+    w.add_pipe(inp, stp, Output("outp"))
+
+    w.dump_translation("wdl")
 
     w2 = Workflow("scattered_test_workflow")
     inp2 = Input("inp2", Array(DataTypeWithSecondary()))

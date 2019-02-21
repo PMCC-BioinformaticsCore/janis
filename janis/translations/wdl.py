@@ -1,5 +1,6 @@
 import os
-from typing import List, Dict
+from typing import List, Dict, Optional
+import itertools
 
 import wdlgen as wdl
 from janis.workflow.step import StepNode
@@ -122,6 +123,17 @@ def get_secondary_tag_from_original_tag(original, secondary):
     secondary_without_punctuation = secondary.replace(".", "").replace("^", "")
     return original + "_" + secondary_without_punctuation
 
+def apply_secondary_file_format_to_filename(filename: Optional[str], secondary_file: str):
+    if not filename: return None
+
+    fixed_sec = secondary_file.lstrip("^")
+    leading = len(secondary_file) - len(fixed_sec)
+    if leading <= 0:
+        return filename + fixed_sec
+
+    split = filename.split(".")
+    return ".".join(split[:-min(leading, len(split)-1)]) + fixed_sec
+
 
 def translate_workflow(wf, with_docker=True, is_nested_tool=False):
     """
@@ -195,7 +207,15 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False):
             translate_step_node(s, tool_aliases[t.id().lower()].upper() + "." + t.id(), s.id())
         )
 
-    inp = {f"{wf.id()}.{i.id()}": i.input.wdl_input() for i in wf._inputs}
+    inp = {}
+    for i in wf._inputs:
+        inp_key = f"{wf.id()}.{i.id()}"
+        inp_val = i.input.wdl_input()
+        inp[inp_key] = inp_val
+        if i.input.data_type.secondary_files():
+            for sec in i.input.data_type.secondary_files():
+                inp[get_secondary_tag_from_original_tag(inp_key, sec)] = \
+                    apply_secondary_file_format_to_filename(inp_val, sec)
 
     return w, inp, wtools
 
@@ -318,7 +338,7 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
 
     # We need to replace the scatterable key(s) with some random variable, eg: for i in iterable:
     ordered_variable_identifiers = ["i", "j", "k", "x", "y", "z", "a", "b", "c", "ii", "jj", "kk", "xx", "yy", "zz"]
-    old_to_new_identifier = {k.dotted_source(): k.dotted_source() for k in node.connection_map.values()
+    old_to_new_identifier = {k.dotted_source(): k.dotted_source() for k in scatterable
                              if not isinstance(k.dotted_source(), list)}
     current_identifiers = set(old_to_new_identifier.values())
 
@@ -377,11 +397,19 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
                 # ds = f'[{", ".join(ds)}]'
 
         ds = source.dotted_source()
-        if edge in scatterable and isinstance(source.finish, StepNode) \
-                and source.finish.step.tool().inputs_map()[source.ftag].input_type.secondary_files():
+        secondary = None
+        if isinstance(source.finish, StepNode):
+            secondary = source.finish.inputs()[source.ftag].input_type.secondary_files()
+            if isinstance(source.start, StepNode):
+                sec_out = set(source.start.outputs()[source.stag].output_type.secondary_files())
+                sec_in = set(secondary)
+                if sec_out.issubset(sec_in) > 0:
+                    raise Exception(f"An error occurred when connecting '{source.dotted_source()}' to "
+                                    f"'{source.finish.id()}.{source.ftag}', there were secondary files in the final node "
+                                    f"that weren't present in the source: {', '.join(sec_out.difference(sec_in))}")
 
-            # We're ensured through inheritance and receiveBy of types that secondary files will match
-            secondary = source.finish.step.tool().inputs_map()[source.ftag].input_type.secondary_files()
+        if edge in scatterable and secondary:
+            # We're ensured through inheritance and .receiveBy that secondary files will match.
             print(f"Oh boii, we're gonna have some complicated scattering here with {len(secondary)} secondary file(s)")
 
             identifier = old_to_new_identifier[ds]
@@ -392,6 +420,7 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
 
         else:
             if ds in old_to_new_identifier and old_to_new_identifier[ds]:
+                # can't get here with secondary
                 inputs_map[k] = old_to_new_identifier[ds]
             elif edge.default is not None:
                 if isinstance(edge.default, bool):
@@ -402,6 +431,9 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
                     inputs_map[k] = edge.default
             else:
                 inputs_map[k] = ds
+                for idx in range(len(secondary)):
+                    sec = secondary[idx]
+                    inputs_map[get_secondary_tag_from_original_tag(k, sec)] = get_secondary_tag_from_original_tag(ds, sec)
 
     call = wdl.WorkflowCall(step_identifier, step_alias, inputs_map)
 
@@ -412,8 +444,8 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
         if secondary:
             print("There are secondary files here")
             ds = s.dotted_source()
-            zipped = f"zip([{ds}, {', '.join(get_secondary_tag_from_original_tag(ds, sec) for sec in secondary)}])"
-            call = wdl.WorkflowScatter(old_to_new_identifier[s.dotted_source()], zipped, [call])
+            transformed = f"transform([{ds}, {', '.join(get_secondary_tag_from_original_tag(ds, sec) for sec in secondary)}])"
+            call = wdl.WorkflowScatter(old_to_new_identifier[s.dotted_source()], transformed, [call])
 
         else:
             call = wdl.WorkflowScatter(old_to_new_identifier[s.dotted_source()], s.dotted_source(), [call])

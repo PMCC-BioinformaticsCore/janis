@@ -15,7 +15,7 @@ from janis.workflow.step import StepNode
 
 
 def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_hints=False,
-             with_resource_overrides=False, write_inputs_file=False):
+             with_resource_overrides=False, write_inputs_file=False, should_validate=False, should_zip=True):
     wf_cwl, inp_dict, tools_cwl = translate_workflow(workflow,
                                                      with_docker=with_docker,
                                                      with_hints=with_hints,
@@ -72,23 +72,24 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
                 Logger.log(f"Written {tool_filename} to disk")
 
         import subprocess
+        if should_validate:
+            Logger.info("Validing outputted CWL")
 
-        Logger.info("Validing outputted CWL")
+            cwltool_result = subprocess.run(["cwltool", "--validate", wf_filename])
+            if cwltool_result.returncode == 0:
+                Logger.info("Exported workflow is valid CWL.")
+            else:
+                Logger.critical(cwltool_result.stderr)
 
-        cwltool_result = subprocess.run(["cwltool", "--validate", wf_filename])
-        if cwltool_result.returncode == 0:
-            Logger.info("Exported workflow is valid CWL.")
-        else:
-            Logger.critical(cwltool_result.stderr)
+        if should_zip:
+            Logger.info("Zipping tools")
+            os.chdir(d)
 
-        Logger.info("Zipping tools")
-        os.chdir(d)
-
-        zip_result = subprocess.run(["zip", "-r", "tools.zip", "tools/"])
-        if zip_result.returncode == 0:
-            Logger.info("Zipped tools")
-        else:
-            Logger.critical(zip_result.stderr)
+            zip_result = subprocess.run(["zip", "-r", "tools.zip", "tools/"])
+            if zip_result.returncode == 0:
+                Logger.info("Zipped tools")
+            else:
+                Logger.critical(zip_result.stderr)
 
     return wf_str, inp_str, tls_strs
 

@@ -66,7 +66,7 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
 
         # z = zipfile.ZipFile(d + "tools.zip", "w")
         for (tool_filename, tool) in tls_strs:
-            with open(d_tools + tool_filename, "w+") as cwl:
+            with open(d + tool_filename, "w+") as cwl:
                 Logger.log(f"Writing {tool_filename} to disk")
                 cwl.write(tool)
                 Logger.log(f"Written {tool_filename} to disk")
@@ -244,7 +244,7 @@ def translate_input(inp):
 
 
 def translate_output_node(node):
-    return translate_output(node.output, next(iter(node.connection_map.values())).source())
+    return translate_output(node.output, next(iter(node.connection_map.values())).slashed_source())
 
 
 def translate_output(outp, source):
@@ -271,7 +271,7 @@ def translate_tool_input(toolinput):
         position=toolinput.position,
         prefix=toolinput.prefix,
         separate=toolinput.separate_value_from_prefix,
-        # item_separator=toolinput.item_separator,
+        item_separator=toolinput.separator,
         # value_from=toolinput.value_from,
         shell_quote=toolinput.shell_quote,
     )
@@ -310,7 +310,8 @@ def translate_input_selector(selector: InputSelector):
     if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
     pre = selector.prefix if selector.prefix else ""
     suf = selector.suffix if selector.suffix else ""
-    return f"{pre}$(inputs.{selector.input_to_select}){suf}"
+    basename_extra = ".basename" if selector.use_basename else ""
+    return f"{pre}$(inputs.{selector.input_to_select}{basename_extra}){suf}"
 
 
 def translate_tool_argument(argument):
@@ -397,7 +398,8 @@ def translate_step(step: StepNode, is_nested_tool=False):
         default = edge.default if edge.default else inp_t.default()
         d = cwlgen.WorkflowStepInput(
             input_id=inp.tag,
-            source=edge.source(),
+            source=edge.slashed_source()
+            ,
             link_merge=None,  # this will need to change when edges have multiple source_map
             default=default,
             value_from=None

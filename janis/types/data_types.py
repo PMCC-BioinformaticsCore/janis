@@ -13,6 +13,8 @@
 """
 from abc import ABC, abstractmethod
 from typing import Any, List, Dict, Optional
+
+from janis.utils.logger import Logger
 from wdlgen import WdlType
 
 import cwlgen as cwl
@@ -84,7 +86,8 @@ class NativeTypes:
         elif t == NativeTypes.kStdout:
             return wdl.PrimitiveType.kFile
         elif t == NativeTypes.kDirectory:
-            return None # wdl.PrimitiveType
+            Logger.log("Using data_type 'Directory' for wdl, this requires cromwell>=37 and language=development")
+            return wdl.PrimitiveType.kDirectory
         elif t == NativeTypes.kArray:
             return wdl.ArrayType.kArray
         raise Exception(f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}")
@@ -147,7 +150,6 @@ class DataType(ABC):
         return True
 
     @classmethod
-    # @abstractmethod
     def schema(cls) -> Dict:
         raise Exception("Subclass MUST override the 'schema' method")
 

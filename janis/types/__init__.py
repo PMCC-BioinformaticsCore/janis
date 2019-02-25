@@ -7,10 +7,11 @@ class Selector(ABC):
 
 class InputSelector(Selector):
 
-    def __init__(self, input_to_select, suffix=None, prefix=None):
+    def __init__(self, input_to_select, suffix=None, prefix=None, use_basename=None):
         self.input_to_select = input_to_select
         self.prefix = prefix
         self.suffix = suffix
+        self.use_basename = use_basename
 
 
 class WildcardSelector(Selector):

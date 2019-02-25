@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Optional, List, Dict, Any, Union
 import re
 
+from janis.utils.validators import Validators
+
 from janis.types import Selector
 from janis.types.common_data_types import Array
 from janis.utils.logger import Logger
@@ -41,7 +43,7 @@ class ToolArgument:
 class ToolInput(ToolArgument):
     def __init__(self, tag: str, input_type: DataType, position: Optional[int] = None, prefix: Optional[str] = None,
                  separate_value_from_prefix: bool = None, default: Any = None, doc: Optional[str] = None,
-                 nest_input_binding_on_array: bool = True, shell_quote=None):
+                 nest_input_binding_on_array: bool = None, shell_quote=None, separator=None):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
@@ -52,55 +54,16 @@ class ToolInput(ToolArgument):
         if default is not None:
             input_type.optional = True
 
+        if not Validators.validate_identifier(tag):
+            raise Exception(f"The identifier '{tag}' was not validated by '{Validators.identifier_regex}' "
+                            f"(must start with letters, and then only contain letters, numbers and an underscore)")
+
         self.tag: str = tag
         self.input_type: DataType = input_type
         self.optional = self.input_type.optional
         self.default = default
         self.nest_input_binding_on_array = nest_input_binding_on_array
-
-    # def cwl(self):
-    #     import cwlgen
-    #     default = self.default if self.default else self.input_type.default()
-    #
-    #     data_type = self.input_type.cwl_type()
-    #     input_binding = cwlgen.CommandLineBinding(
-    #         # load_contents=self.load_contents,
-    #         position=self.position,
-    #         prefix=self.prefix,
-    #         separate=self.separate_value_from_prefix,
-    #         # item_separator=self.item_separator,
-    #         # value_from=self.value_from,
-    #         shell_quote=self.shell_quote,
-    #     )
-    #
-    #     # Binding array inputs onto the console
-    #     # https://www.commonwl.org/user_guide/09-array-inputs/
-    #     if isinstance(self.input_type, Array) and isinstance(data_type, cwlgen.CommandInputArraySchema):
-    #         if self.nest_input_binding_on_array:
-    #             input_binding.prefix = None
-    #             input_binding.separate = None
-    #             nested_binding = cwlgen.CommandLineBinding(
-    #                 # load_contents=self.load_contents,
-    #                 prefix=self.prefix,
-    #                 separate=self.separate_value_from_prefix,
-    #                 # item_separator=self.item_separator,
-    #                 # value_from=self.value_from,
-    #                 shell_quote=self.shell_quote,
-    #             )
-    #             data_type.inputBinding = nested_binding
-    #         else:
-    #             input_binding.itemSeparator = ","
-    #
-    #     return cwlgen.CommandInputParameter(
-    #         param_id=self.tag,
-    #         label=self.tag,
-    #         secondary_files=self.input_type.secondary_files(),
-    #         # streamable=None,
-    #         doc=self.doc,
-    #         input_binding=input_binding,
-    #         default=default,
-    #         param_type=data_type
-    #     )
+        self.separator = separator
 
     def id(self):
         return self.tag

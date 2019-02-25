@@ -716,15 +716,18 @@ class Workflow(Tool):
     # TRANSLATIONS
 
     def dump_translation(self, translation: SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
-                         with_hints=False,
-                         with_resource_overrides=False):
+                         with_hints=False, with_resource_overrides=False, write_inputs_file=False, should_validate=False,
+                     should_zip=True):
         return translations.dump_translation(self,
                                              translation=translation,
                                              to_console=to_console,
                                              to_disk=to_disk,
                                              with_docker=with_docker,
                                              with_hints=with_hints,
-                                             with_resource_overrides=with_resource_overrides)
+                                             with_resource_overrides=with_resource_overrides,
+                                             should_zip=should_zip,
+                                             write_inputs_file=write_inputs_file,
+                                             should_validate=should_validate)
 
     # def cwl(self, is_nested_tool=False, with_docker=True, with_hints=False, with_resource_overrides=False) -> Tuple[cwl.Workflow, dict, List[cwl.Serializable]]:
     #

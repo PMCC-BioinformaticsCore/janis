@@ -146,7 +146,7 @@ class StepInput:
         elif n == 1:
             return first_value(self.source_map)
         else:
-            return [e.source() for e in self.source_map.values()]
+            return list(self.source_map.values())
 
     def dotted_source(self):
         n = len(self.source_map)
@@ -156,3 +156,12 @@ class StepInput:
             return first_value(self.source_map).dotted_source()
         else:
             return [e.dotted_source() for e in self.source_map.values()]
+
+    def slashed_source(self):
+        n = len(self.source_map)
+        if n == 0:
+            return None
+        elif n == 1:
+            return first_value(self.source_map).source()
+        else:
+            return [e.source() for e in self.source_map.values()]

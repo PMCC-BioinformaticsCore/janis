@@ -7,7 +7,7 @@ from janis.hints import Hint, HintEnum, HintArray, HINTS
 from janis.tool.tool import Tool, ToolInput
 from janis.tool.commandtool import CommandTool
 from janis.types import InputSelector, Selector, WildcardSelector
-from janis.types.common_data_types import Int, Stdout, Array
+from janis.types.common_data_types import Int, Stdout, Array, File
 from janis.utils.logger import Logger
 from janis.utils.metadata import WorkflowMetadata, ToolMetadata
 from janis.utils.janisconstants import RESOURCE_OVERRIDE_KEY, HINTS_KEY
@@ -210,6 +210,11 @@ def translate_tool(tool, with_docker):
 
     if tool.requirements():
         tool_cwl.requirements.extend(tool.requirements())
+
+    inputs_that_require_localisation = [ti for ti in tool.inputs() if ti.localise_file and isinstance(ti.input_type, File)]
+    if inputs_that_require_localisation:
+        tool_cwl.requirements.append(cwlgen.InitialWorkDirRequirement([
+            "$(inputs.%s)" % ti.id() for ti in inputs_that_require_localisation]))
 
     if with_docker:
         tool_cwl.requirements.append(cwlgen.DockerRequirement(

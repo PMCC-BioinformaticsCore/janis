@@ -233,11 +233,18 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False):
     return w, inp, wtools
 
 
-def translate_input_selector(selector: InputSelector):
+def translate_input_selector(selector: InputSelector, string_environment=True):
     if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
+
     pre = selector.prefix if selector.prefix else ""
     suf = selector.suffix if selector.suffix else ""
-    return f"{pre}${{{selector.input_to_select}}}{suf}"
+
+    if string_environment:
+        return f"{pre}${{{selector.input_to_select}}}{suf}"
+    else:
+        pref = ('"%s" + ' % pre) if pre else ""
+        suff = (' + "%s"' % suf) if suf else ""
+        return pref + selector.input_to_select + suff
 
 
 def translate_wildcard_selector(selector: WildcardSelector):
@@ -287,13 +294,16 @@ def translate_tool(tool, with_docker):
                 val = a.value
             command_args.append(wdl.Task.Command.CommandArgument(a.prefix, val, a.position))
 
-    command = wdl.Task.Command(tool.base_command(), command_ins, command_args)
+    commands = [wdl.Task.Command(f"mv ${{{ti.id()}}} ${{basename({ti.id()})}}")
+                   for ti in tool.inputs() if ti.localise_file]
+
+    commands.append(wdl.Task.Command(tool.base_command(), command_ins, command_args))
 
     r = wdl.Task.Runtime()
     if with_docker:
         r.add_docker(tool.docker())
 
-    return wdl.Task(tool.id(), ins, outs, command, r, version="development")
+    return wdl.Task(tool.id(), ins, outs, commands, r, version="development")
 
 
 def translate_command_input(tool_input: ToolInput):
@@ -309,6 +319,9 @@ def translate_command_input(tool_input: ToolInput):
     prefix = tool_input.prefix
     true = None
     sep = tool_input.separator
+
+    if tool_input.localise_file:
+        name = "basename(%s)" % name
 
     separate_arrays = tool_input.nest_input_binding_on_array
     if separate_arrays is None and sep is None and isinstance(tool_input.input_type, Array):
@@ -333,35 +346,37 @@ def translate_command_input(tool_input: ToolInput):
 
 def translate_output_node(o, tool) -> List[wdl.Output]:
     if isinstance(o.output_type, Stdout):
-        expression = "stdout()"
-        return [wdl.Output(o.output_type.wdl(), o.id(), expression)]
+        base_expression = "stdout()"
+        return [wdl.Output(o.output_type.wdl(), o.id(), base_expression)]
 
     elif isinstance(o.glob, InputSelector):
-        expression = translate_input_selector(o.glob)
+        base_expression = translate_input_selector(o.glob, string_environment=False)
 
         tool_in = tool.inputs_map().get(o.glob.input_to_select)
         if not tool_in:
             raise Exception(f"The InputSelector for tool '{tool.id()}.{o.id()}' did not select an input (tried: '{o.glob.input_to_select}')")
 
-        return [wdl.Output(o.output_type.wdl(), o.id(), f'"{expression}"')] + \
+        expression = base_expression if not tool_in.localise_file else f'basename({base_expression})'
+
+        return [wdl.Output(o.output_type.wdl(), o.id(), expression)] + \
                [wdl.Output(o.output_type.wdl(), get_secondary_tag_from_original_tag(o.id(), s),
-                           f'"${{basename(\'{expression}\', \'{tool_in.input_type.extension}\')}}{s.replace("^", "")}"'
-                           if "^" in s or (isinstance(tool_in.input_type, Filename) and o.glob.use_basename) else f'"{expression}{s.replace("^", "")}"')
+                           f'basename({expression}, \"{tool_in.input_type.extension}\')}}{s.replace("^", "")}"'
+                           if "^" in s or (isinstance(tool_in.input_type, Filename) and o.glob.use_basename) else f'{expression} + "{s.replace("^", "")}"')
                 for s in value_or_default(o.output_type.secondary_files(), [])]
 
     elif isinstance(o.glob, WildcardSelector):
-        expression = translate_wildcard_selector(o.glob)
+        base_expression = translate_wildcard_selector(o.glob)
         if not isinstance(o.output_type, Array):
             Logger.warn(f"The command tool '{tool.id()}.{o.tag}' used a star-bind (*) glob to find the output, "
                         f"but the return type was not an array. For WDL, the first element will be used, "
-                        f"ie: '{expression}[0]'")
-        expression += "[0]"
+                        f"ie: '{base_expression}[0]'")
+        base_expression += "[0]"
         wdl_type = wdl.WdlType.parse_type(o.output_type.wdl())
-        outputs = [wdl.Output(wdl_type, o.id(), expression)]
+        outputs = [wdl.Output(wdl_type, o.id(), base_expression)]
 
         secondary = o.output_type.secondary_files()
         if secondary:
-            outputs.extend(wdl.Output(wdl_type, get_secondary_tag_from_original_tag(o.id(), s), expression)
+            outputs.extend(wdl.Output(wdl_type, get_secondary_tag_from_original_tag(o.id(), s), base_expression)
                            for s in o.output_type.secondary_files())
         return outputs
 
@@ -376,13 +391,13 @@ def translate_output_node(o, tool) -> List[wdl.Output]:
                             f"but the return type was not an array. For WDL, the first element will be used, "
                             f"ie: '{glob}[0]'")
                 glob = glob + "[0]"
-        expression = glob
+        base_expression = glob
         wdl_type = wdl.WdlType.parse_type(o.output_type.wdl())
-        outputs = [wdl.Output(wdl_type, o.id(), expression)]
+        outputs = [wdl.Output(wdl_type, o.id(), base_expression)]
 
         secondary = o.output_type.secondary_files()
         if secondary:
-            outputs.extend(wdl.Output(wdl_type, get_secondary_tag_from_original_tag(o.id(), s), expression)
+            outputs.extend(wdl.Output(wdl_type, get_secondary_tag_from_original_tag(o.id(), s), base_expression)
                            for s in o.output_type.secondary_files())
         return outputs
 

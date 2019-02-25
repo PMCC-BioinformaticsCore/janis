@@ -23,8 +23,9 @@ from janis.utils.logger import Logger
 
 
 def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_hints=False,
-             with_resource_overrides=False, write_inputs_file=False):
-    wf_wdl, inp_str, tool_dicts = translate_workflow(workflow, with_docker=with_docker)
+             with_resource_overrides=False, write_inputs_file=False, should_validate=False, should_zip=True):
+    import json
+    wf_wdl, inp_dict, tool_dicts = translate_workflow(workflow, with_docker=with_docker)
 
     wf_str = wf_wdl.get_string()
     tls_strs = [(t + ".wdl", tool_dicts[t].get_string()) for t in tool_dicts]
@@ -38,7 +39,7 @@ def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
         [print(t[1]) for t in tls_strs]
 
     if to_disk:
-        d = os.path.expanduser("~") + f"/Desktop/{workflow.id()}/cwl/"
+        d = os.path.expanduser("~") + f"/Desktop/{workflow.id()}/wdl/"
         d_tools = d + "tools/"
 
         if not os.path.isdir(d):
@@ -47,17 +48,17 @@ def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
             os.makedirs(d_tools)
 
         os.chdir(d)
-        wf_filename = d + workflow.id() + ".cwl"
-        with open(wf_filename, "w+") as cwl:
-            Logger.log(f"Writing {workflow.id()}.cwl to disk")
-            cwl.write(wf_str)
+        wf_filename = d + workflow.id() + ".wdl"
+        with open(wf_filename, "w+") as wdlfile:
+            Logger.log(f"Writing {workflow.id()}.wdl to disk")
+            wdlfile.write(wf_str)
             # ruamel.yaml.dump(wf_dict, cwl, default_flow_style=False)
-            Logger.log(f"Written {workflow.id()}.cwl to disk")
+            Logger.log(f"Written {workflow.id()}.wdl to disk")
 
         if write_inputs_file:
-            with open(d + workflow.id() + "-job.yml", "w+") as cwl:
+            with open(d + workflow.id() + "-job.json", "w+") as wdlfile:
                 Logger.log(f"Writing {workflow.id()}-job.yml to disk")
-                cwl.write(inp_str)
+                wdlfile.write(inp_str)
                 # ruamel.yaml.dump(inp_dict, cwl, default_flow_style=False)
                 Logger.log(f"Written {workflow.id()}-job.yml to disk")
         else:
@@ -65,31 +66,36 @@ def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
 
         # z = zipfile.ZipFile(d + "tools.zip", "w")
         for (tool_filename, tool) in tls_strs:
-            with open(d_tools + tool_filename, "w+") as cwl:
+            with open(d_tools + tool_filename, "w+") as wdlfile:
                 Logger.log(f"Writing {tool_filename} to disk")
-                cwl.write(tool)
+                wdlfile.write(tool)
                 Logger.log(f"Written {tool_filename} to disk")
 
         import subprocess
 
-        Logger.info("Validing outputted CWL")
+        Logger.info("Validing outputted WDL")
 
-        cwltool_result = subprocess.run(["cwltool", "--validate", wf_filename])
-        if cwltool_result.returncode == 0:
-            Logger.info("Exported workflow is valid CWL.")
-        else:
-            Logger.critical(cwltool_result.stderr)
+        import subprocess
+        if should_validate:
+            Logger.info("Validing outputted CWL")
 
-        Logger.info("Zipping tools")
-        os.chdir(d)
+            womtool_result = subprocess.run(["java", "-jar", "$womtool", "--validate", wf_filename])
+            if womtool_result.returncode == 0:
+                Logger.info("Exported workflow is valid WDL.")
+            else:
+                Logger.critical(womtool_result.stderr)
 
-        zip_result = subprocess.run(["zip", "-r", "tools.zip", "tools/"])
-        if zip_result.returncode == 0:
-            Logger.info("Zipped tools")
-        else:
-            Logger.critical(zip_result.stderr)
+        if should_zip:
+            Logger.info("Zipping tools")
+            os.chdir(d)
 
-    return wf_str, inp_str, tls_strs
+            zip_result = subprocess.run(["zip", "-r", "tools.zip", "tools/"])
+            if zip_result.returncode == 0:
+                Logger.info("Zipped tools")
+            else:
+                Logger.critical(zip_result.stderr)
+
+        return wf_str, inp_str, tls_strs
 
 
 def build_aliases(steps):

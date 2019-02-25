@@ -289,8 +289,9 @@ class Array(DataType):
         )
         return parameter
 
-    def wdl(self) -> wdl.ArrayType:
-        return wdl.ArrayType(self._t.wdl(), requires_multiple=False)
+    def wdl(self) -> wdl.WdlType:
+        ar = wdl.ArrayType(self._t.wdl(), requires_multiple=False)
+        return wdl.WdlType(ar, optional=self.optional)
 
     def can_receive_from(self, other):
         if isinstance(other, Array):

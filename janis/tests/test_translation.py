@@ -1,7 +1,8 @@
 import unittest
 from typing import List
+import wdlgen
 
-from janis import ToolOutput, ToolInput, String, CommandTool, Stdout, InputSelector
+from janis import ToolOutput, ToolInput, String, CommandTool, Stdout, InputSelector, Array, File
 import janis.translations.cwl as cwl
 
 
@@ -37,6 +38,15 @@ class TestCwl(unittest.TestCase):
     def test_base_input_selector(self):
         input_sel = InputSelector("random", suffix=".cwl")
         self.assertEqual("$(inputs.random).cwl", cwl.translate_input_selector(input_sel))
+
+class TestWdl(unittest.TestCase):
+
+    def test_optional_array(self):
+        t = Array(File(), optional=True)
+        wdl = t.wdl()
+        self.assertIsInstance(wdl, wdlgen.WdlType)
+        self.assertTrue(wdl.optional)
+        self.assertEqual("Array[File]?", wdl.get_string())
 
 
 cwl_testtool = """\

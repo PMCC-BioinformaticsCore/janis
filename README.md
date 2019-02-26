@@ -40,10 +40,20 @@ This project was produced as part of the Portable Pipelines Project in partnersh
     - Janis PyPi: https://pypi.org/project/janis-pipelines/
     - Janis Bioinformatics: 
         - Git: https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics
-        - PyPi: _Coming soon_1
+        - PyPi: https://pypi.org/project/illusional.wdlgen/
+
+- Shepherd: https://github.com/PMCC-BioinformaticsCore/shepherd
 
 - CWLGen (forked): https://github.com/illusional/python-cwlgen
 - WDLGen: https://github.com/illusional/python-wdlgen
+
+|  | build  | docs  | pypi | codecov |
+|---|---|---|---|---|
+| Janis |  [![Build Status](https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master)](https://travis-ci.org/PMCC-BioinformaticsCore/janis)  | [![Documentation Status](https://readthedocs.org/projects/janis/badge/?version=latest)](https://janis.readthedocs.io/en/latest/?badge=latest) | [![PyPI version](https://badge.fury.io/py/janis-pipelines.svg)](https://badge.fury.io/py/janis-pipelines) |  [![codecov](https://codecov.io/gh/PMCC-BioinformaticsCore/janis/branch/master/graph/badge.svg)](https://codecov.io/gh/PMCC-BioinformaticsCore/janis) |
+| Bioinformatics |[![Build Status](https://travis-ci.org/PMCC-BioinformaticsCore/janis-bioinformatics.svg?branch=master)](https://travis-ci.org/PMCC-BioinformaticsCore/janis-bioinformatics) | See Janis  |  [![PyPI version](https://badge.fury.io/py/janis-pipelines.bioinformatics.svg)](https://badge.fury.io/py/janis-pipelines.bioinformatics)  |   |
+| Shepherd | | | | |
+| CWL-Gen | [![Build Status](https://travis-ci.org/illusional/python-cwlgen.svg?branch=master)](https://travis-ci.org/common-workflow-language/python-cwlgen) |   |[![PyPI version](https://badge.fury.io/py/illusional.cwlgen.svg)](https://badge.fury.io/py/illusional.cwlgen) | [![codecov](https://codecov.io/gh/illusional/python-cwlgen/branch/master/graph/badge.svg)](https://codecov.io/gh/illusional/python-cwlgen)|
+| WDL-Gen | [![Build Status](https://travis-ci.org/illusional/python-wdlgen.svg?branch=master)](https://travis-ci.org/illusional/python-wdlgen) || [![PyPI version](https://badge.fury.io/py/illusional.wdlgen.svg)](https://badge.fury.io/py/illusional.wdlgen) | |
 
 
 
@@ -71,7 +81,7 @@ from janis.unix.tools.echo import Echo
 
 w = j.Workflow("workflow_identifier")
 
-inp = j.Input("input_identifier", p.String())
+inp = j.Input("input_identifier", j.String())
 step = j.Step("step_identifier", Echo())
 outp = j.Output("output_identifier")
 

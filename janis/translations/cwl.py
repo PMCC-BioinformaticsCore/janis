@@ -193,6 +193,8 @@ def translate_tool(tool, with_docker):
     stdouts = [o.output_type for o in tool.outputs() if isinstance(o.output_type, Stdout) and o.output_type.stdoutname]
     stdout = stdouts[0].stdoutname if len(stdouts) > 0 else None
 
+    if isinstance(stdout, InputSelector): stdout = translate_input_selector(stdout)
+
     tool_cwl = cwlgen.CommandLineTool(
         tool_id=tool.id(),
         base_command=tool.base_command(),

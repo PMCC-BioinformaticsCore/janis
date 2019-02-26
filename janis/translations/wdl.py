@@ -9,7 +9,7 @@ from janis.graph.stepinput import Edge, StepInput
 
 from janis.types import InputSelector, WildcardSelector
 
-from janis.types.common_data_types import Stdout, Array, Boolean, Filename
+from janis.types.common_data_types import Stdout, Array, Boolean, Filename, File
 
 from janis.utils.validators import Validators
 
@@ -358,11 +358,28 @@ def translate_output_node(o, tool) -> List[wdl.Output]:
 
         expression = base_expression if not tool_in.localise_file else f'basename({base_expression})'
 
-        return [wdl.Output(o.output_type.wdl(), o.id(), expression)] + \
-               [wdl.Output(o.output_type.wdl(), get_secondary_tag_from_original_tag(o.id(), s),
-                           f'basename({expression}, \"{tool_in.input_type.extension}\')}}{s.replace("^", "")}"'
-                           if "^" in s or (isinstance(tool_in.input_type, Filename) and o.glob.use_basename) else f'{expression} + "{s.replace("^", "")}"')
-                for s in value_or_default(o.output_type.secondary_files(), [])]
+        outputs = [wdl.Output(o.output_type.wdl(), o.id(), expression)]
+        for s in value_or_default(o.output_type.secondary_files(), []):
+            sec_expression = None
+            if "^" not in s:
+                # do stuff here
+                sec_expression = f'{expression} + "{s.replace("^", "")}"'
+
+            elif isinstance(tool_in.input_type, Filename) and tool_in.input_type.extension:
+                # use the wdl function: sub
+                sec_expression = 'sub({inp}, "\\\\{old_ext}$", "{new_ext}")'\
+                    .format(inp=expression, old_ext=tool_in.input_type.extension, new_ext=s.replace("^", ""))
+
+            elif File().can_receive_from(tool_in.input_type):
+                # use basename
+                sec_expression = f'basename({expression}, \"{tool_in.input_type.extension}\") + "{s.replace("^", "")}"'
+
+            outputs.append(wdl.Output(
+                o.output_type.wdl(),
+                get_secondary_tag_from_original_tag(o.id(), s),
+                sec_expression
+            ))
+        return outputs
 
     elif isinstance(o.glob, WildcardSelector):
         base_expression = translate_wildcard_selector(o.glob)

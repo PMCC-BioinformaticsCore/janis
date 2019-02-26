@@ -4,6 +4,7 @@
 from typing import Dict, Any
 import wdlgen as wdl
 import cwlgen as cwl
+from wdlgen import WdlType
 
 from janis.types.data_types import DataType, NativeTypes, NativeType
 
@@ -84,6 +85,10 @@ concerned what the filename should be. The Filename DataType should NOT be used 
         if isinstance(other, String):
             return True  # Always provides default, and is always optional
         return super().can_receive_from(other)
+
+    def wdl(self):
+        return WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()))
+
 
 
 class Int(DataType):

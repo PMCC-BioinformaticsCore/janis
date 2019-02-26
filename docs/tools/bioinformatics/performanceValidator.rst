@@ -32,13 +32,13 @@ Find the inputs below
 Required inputs
 ***************
 
-=========  =============  ========  ==========  ===============
-name       type           prefix    position    documentation
-=========  =============  ========  ==========  ===============
+=========  ==========  ========  ==========  ===============
+name       type        prefix    position    documentation
+=========  ==========  ========  ==========  ===============
 vcf        VCF
 truth      VCFIDX
-intervals  Array<VCFIDX>
-=========  =============  ========  ==========  ===============
+intervals  Array<VCF>
+=========  ==========  ========  ==========  ===============
 
 Optional inputs
 ***************
@@ -49,5 +49,11 @@ name    type    prefix    position    documentation
 ======  ======  ========  ==========  ===============
 
 
+Metadata
+********
+
+Author: **Unknown**
+
+
 *Performance Validator was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

@@ -34,7 +34,7 @@ Outputs
 ======  ======  ===============
 name    type    documentation
 ======  ======  ===============
-output  Stdout
+out     Stdout
 ======  ======  ===============
 
 Inputs
@@ -71,5 +71,11 @@ threads     Optional<Integer>  --threads                 @: Number of threads to
 ==========  =================  ============  ==========  ========================================================================================================================================================================================================================================================
 
 
+Metadata
+********
+
+Author: Michael Franklin
+
+
 *BGZip was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

@@ -70,21 +70,32 @@ reference  FastaWithDict  --referenceFasta           1  samtools-indexed referen
 Optional inputs
 ***************
 
-========================  =================  =========  ==========  =========================================================================================================================================================================================================
-name                      type               prefix       position  documentation
-========================  =================  =========  ==========  =========================================================================================================================================================================================================
-relativeStrelkaDirectory  Optional<String>   --runDir            1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory.
-version                   Optional<Boolean>  --version           3  show program's version number and exit
-help                      Optional<Boolean>  --help              3  (-h) show this help message and exit
-mode                      Optional<String>   --mode              3  (-m MODE)  select run mode (local|sge)
-queue                     Optional<String>   --queue             3  (-q QUEUE) specify scheduler queue name
-jobs                      Optional<String>   --jobs              3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
-memGb                     Optional<String>   --memGb             3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
-dryRun                    Optional<Boolean>  --dryRun            3  dryRun (-d,) workflow code without actually running command-tasks
-quiet                     Optional<Boolean>  --quiet             3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
-mailTo                    Optional<String>   --mailTo            3  (-e) send email notification of job completion status to this address (may be provided multiple times for more than one email address)
-========================  =================  =========  ==========  =========================================================================================================================================================================================================
+========================  ====================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+name                      type                  prefix                position  documentation
+========================  ====================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+relativeStrelkaDirectory  Optional<String>      --runDir                     1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory.
+ploidy                    Optional<vcf-gz-tbi>  --ploidy                     1  Provide ploidy file in VCF. The VCF should include one sample column per input sample labeled with the same sample names found in the input BAM/CRAM RG header sections. Ploidy should be provided in records using the FORMAT/CN field, which are interpreted to span the range [POS+1, INFO/END]. Any CN value besides 1 or 0 will be treated as 2. File must be tabix indexed. (no default)
+noCompress                Optional<vcf-gz-tbi>  --noCompress                 1  Provide BED file of regions where gVCF block compression is not allowed. File must be bgzip- compressed/tabix-indexed. (no default)
+callContinuousVf          Optional<String>      --callContinuousVf              Call variants on CHROM without a ploidy prior assumption, issuing calls with continuous variant frequencies (no default)
+rna                       Optional<Boolean>     --rna                        1  Set options for RNA-Seq input.
+indelCandidates           Optional<vcf-gz-tbi>  --indelCandidates            1  Specify a VCF of candidate indel alleles. These alleles are always evaluated but only reported in the output when they are inferred to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left-shifted/normalized, any unnormalized alleles will be ignored. This option may be specified more than once, multiple input VCFs will be merged. (default: None)
+forcedGT                  Optional<vcf-gz-tbi>  --forcedGT                   1  Specify a VCF of candidate alleles. These alleles are always evaluated and reported even if they are unlikely to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left- shifted/normalized, any unnormalized allele will trigger a runtime error. This option may be specified more than once, multiple input VCFs will be merged. Note that for any SNVs provided in the VCF, the SNV site will be reported (and for gVCF, excluded from block compression), but the specific SNV alleles are ignored. (default: None)
+exome                     Optional<File>        --exome                      1  --targeted Set options for exome or other targeted input: note in particular that this flag turns off high-depth filters
+callRegions               Optional<File>        --callRegions                1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
+mode                      Optional<String>      --mode                       3  (-m MODE)  select run mode (local|sge)
+queue                     Optional<String>      --queue                      3  (-q QUEUE) specify scheduler queue name
+jobs                      Optional<String>      --jobs                       3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
+memGb                     Optional<String>      --memGb                      3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
+quiet                     Optional<Boolean>     --quiet                      3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
+mailTo                    Optional<String>      --mailTo                     3  (-e) send email notification of job completion status to this address (may be provided multiple times for more than one email address)
+========================  ====================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+
+
+Metadata
+********
+
+Author: Michael Franklin
 
 
 *Strelka (Germline) was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

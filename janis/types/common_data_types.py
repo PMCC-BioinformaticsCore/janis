@@ -326,3 +326,6 @@ class Stdout(File):
 
     def received_type(self):
         return self.subtype
+
+
+all_types = [String, Filename, Int, Float, Double, Boolean, File, Directory, Stdout, Array]

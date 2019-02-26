@@ -17,13 +17,14 @@ Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4S
 
 Outputs
 -------
-===========  =======  ===============
-name         type     documentation
-===========  =======  ===============
-o1_bwa       SAM
-o2_samtools  BAM
-o3_sortsam   BamPair
-===========  =======  ===============
+============  =======  ===============
+name          type     documentation
+============  =======  ===============
+out_bwa       SAM
+out_samtools  BAM
+out_sortsam   BamPair
+out           BamPair
+============  =======  ===============
 
 Inputs
 ------
@@ -32,14 +33,14 @@ Find the inputs below
 Required inputs
 ***************
 
-======================  =========  ========  ==========  ===============
-name                    type       prefix    position    documentation
-======================  =========  ========  ==========  ===============
+======================  =============  ========  ==========  ===============
+name                    type           prefix    position    documentation
+======================  =============  ========  ==========  ===============
 read_group_header_line  String
 fastq                   Fastq
-reference               Fasta
+reference               FastaWithDict
 tmpdir                  Directory
-======================  =========  ========  ==========  ===============
+======================  =============  ========  ==========  ===============
 
 Optional inputs
 ***************
@@ -50,5 +51,11 @@ name    type    prefix    position    documentation
 ======  ======  ========  ==========  ===============
 
 
+Metadata
+********
+
+Author: Michael Franklin
+
+
 *Align sorted BAM was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

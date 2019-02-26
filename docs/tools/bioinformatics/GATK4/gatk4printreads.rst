@@ -39,7 +39,7 @@ Outputs
 ======  =======  ===============
 name    type     documentation
 ======  =======  ===============
-output  BamPair
+out     BamPair
 ======  =======  ===============
 
 Inputs
@@ -52,7 +52,7 @@ Required inputs
 ======  ======  ========  ==========  ===============
 name    type    prefix    position    documentation
 ======  ======  ========  ==========  ===============
-input   BAM
+bam     BAM
 ======  ======  ========  ==========  ===============
 
 Optional inputs
@@ -65,5 +65,11 @@ outputFilename  Optional<Filename>
 ==============  ==================  ========  ==========  ===============
 
 
+Metadata
+********
+
+Author: Michael Franklin
+
+
 *GATK4: Print Reads was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

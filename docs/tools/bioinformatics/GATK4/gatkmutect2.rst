@@ -31,7 +31,7 @@ Outputs
 ======  ======  =================
 name    type    documentation
 ======  ======  =================
-output  VCF     To determine type
+out     VCF     To determine type
 ======  ======  =================
 
 Inputs
@@ -57,7 +57,6 @@ Optional inputs
 ========================  ==================  ===============================  ==========  ==============================================================================================================================================================
 name                      type                prefix                             position  documentation
 ========================  ==================  ===============================  ==========  ==============================================================================================================================================================
-pg-tag                    Optional<Boolean>   --add-output-sam-program-record              If true, adds a PG tag to created SAM/BAM/CRAM files.
 intervals                 Optional<bed>       -L                                        7  One or more genomic intervals over which to operate
 outputFilename            Optional<Filename>  -O                                       20
 germlineResource          Optional<VCFIDX>    --germline-resource                      10
@@ -66,5 +65,11 @@ panelOfNormals            Optional<VCFIDX>    --panel-of-normals                
 ========================  ==================  ===============================  ==========  ==============================================================================================================================================================
 
 
+Metadata
+********
+
+Author: Michael Franklin
+
+
 *GATK4: MuTect2 was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

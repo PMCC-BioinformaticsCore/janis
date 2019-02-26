@@ -95,6 +95,7 @@ Portability
    buildingTools
 
    tools/index
+   datatypes/index
    references/pipeline
 
 Indices and tables

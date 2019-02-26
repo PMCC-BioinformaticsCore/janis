@@ -40,7 +40,7 @@ Outputs
 ======  =======  ===============
 name    type     documentation
 ======  =======  ===============
-output  BamPair
+out     BamPair
 ======  =======  ===============
 
 Inputs
@@ -53,22 +53,27 @@ Required inputs
 =========  =============  ========  ==========  =======================================
 name       type           prefix      position  documentation
 =========  =============  ========  ==========  =======================================
-input      BamPair        -I                10  The SAM/BAM/CRAM file containing reads.
+bam        BamPair        -I                10  The SAM/BAM/CRAM file containing reads.
 reference  FastaWithDict  -R                    Reference sequence
 =========  =============  ========  ==========  =======================================
 
 Optional inputs
 ***************
 
-==============  ===================  ===============================  ==========  =====================================================
-name            type                 prefix                             position  documentation
-==============  ===================  ===============================  ==========  =====================================================
-outputFilename  Optional<Filename>   -O                                           Write output to this file
-recalFile       Optional<tsv>        --bqsr-recal-file                            Input recalibration table for BQSR
-pg-tag          Optional<Boolean>    --add-output-sam-program-record              If true, adds a PG tag to created SAM/BAM/CRAM files.
-tmpDir          Optional<Directory>  --tmp-dir                                11  Temp directory to use.
-==============  ===================  ===============================  ==========  =====================================================
+==============  ===================  =================  ==========  ==================================
+name            type                 prefix               position  documentation
+==============  ===================  =================  ==========  ==================================
+outputFilename  Optional<Filename>   -O                             Write output to this file
+recalFile       Optional<tsv>        --bqsr-recal-file              Input recalibration table for BQSR
+tmpDir          Optional<Directory>  --tmp-dir                  11  Temp directory to use.
+==============  ===================  =================  ==========  ==================================
+
+
+Metadata
+********
+
+Author: Michael Franklin
 
 
 *GATK4: Apply base quality score recalibration was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

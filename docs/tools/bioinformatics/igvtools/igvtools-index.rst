@@ -46,11 +46,11 @@ Find the inputs below
 Required inputs
 ***************
 
-======  ==========  ========  ==========  ================================================================
-name    type        prefix    position    documentation
-======  ==========  ========  ==========  ================================================================
-input   vcf-gz-tbi                        The alignment or feature file for which an index will be created
-======  ==========  ========  ==========  ================================================================
+======  ======  ========  ==========  ================================================================
+name    type    prefix    position    documentation
+======  ======  ========  ==========  ================================================================
+vcf     VCFIDX                        The alignment or feature file for which an index will be created
+======  ======  ========  ==========  ================================================================
 
 Optional inputs
 ***************
@@ -61,5 +61,11 @@ name    type    prefix    position    documentation
 ======  ======  ========  ==========  ===============
 
 
+Metadata
+********
+
+Author: Michael Franklin
+
+
 *IGVTools: Index was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

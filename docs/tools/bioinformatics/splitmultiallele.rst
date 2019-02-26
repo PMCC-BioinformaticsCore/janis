@@ -23,7 +23,7 @@ Outputs
 ======  ======  ===============
 name    type    documentation
 ======  ======  ===============
-output  VCF
+out     VCF
 ======  ======  ===============
 
 Inputs
@@ -36,7 +36,7 @@ Required inputs
 =========  =============  ========  ==========  ===============
 name       type           prefix      position  documentation
 =========  =============  ========  ==========  ===============
-input      VCF                               2
+vcf        VCF                               2
 reference  FastaWithDict  -r                 7
 =========  =============  ========  ==========  ===============
 
@@ -50,5 +50,11 @@ outputFilename  Optional<Filename>  >                 10
 ==============  ==================  ========  ==========  ===============
 
 
+Metadata
+********
+
+Author: **Unknown**
+
+
 *Split Multiple Alleles was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

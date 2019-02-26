@@ -126,6 +126,10 @@ class DataType(ABC):
     def name() -> str:
         raise Exception("Subclass MUST override name field")
 
+    @classmethod
+    def __hash__(cls):
+        return cls.name()
+
     @staticmethod
     def secondary_files() -> Optional[List[str]]:
         return None

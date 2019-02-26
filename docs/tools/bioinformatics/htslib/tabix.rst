@@ -8,7 +8,7 @@ Documentation
 
 Docker
 ******
-``ubuntu:latest``
+``biodckrdev/htslib:1.2.1``
 
 URL
 ******
@@ -33,7 +33,7 @@ Outputs
 ======  ==========  ===============
 name    type        documentation
 ======  ==========  ===============
-output  vcf-gz-tbi
+out     vcf-gz-tbi
 ======  ==========  ===============
 
 Inputs
@@ -74,5 +74,11 @@ targets      Optional<File>     --targets               11  -T: Similar to -R bu
 ===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
 
 
+Metadata
+********
+
+Author: Michael Franklin
+
+
 *Tabix was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

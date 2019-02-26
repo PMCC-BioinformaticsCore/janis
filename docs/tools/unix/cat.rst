@@ -47,5 +47,11 @@ name    type    prefix    position    documentation
 ======  ======  ========  ==========  ===============
 
 
+Metadata
+********
+
+Author: **Unknown**
+
+
 *Concatenate was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

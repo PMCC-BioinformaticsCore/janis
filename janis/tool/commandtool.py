@@ -21,8 +21,12 @@ class CommandTool(Tool, ABC):
 
     @staticmethod
     @abstractmethod
-    def tool():
+    def tool() -> str:
         raise Exception(f"subclass MUST implement 'tool' method")
+
+    @classmethod
+    def __hash__(cls):
+        return cls.tool()
 
     @classmethod
     def full_name(cls):

@@ -6,9 +6,15 @@ It's a bit of a random collection of things that should be refactored:
     - NestedDictionary (store values in nested structure (with root key))
     - RST Helpers
 """
-from inspect import isfunction, ismodule
+import traceback
+from inspect import isfunction, ismodule, isabstract
 
 from constants import PROJECT_ROOT_DIR
+
+from janis.types.data_types import DataType
+from janis.workflow.workflow import Workflow
+from janis.types.common_data_types import all_types, Array
+
 
 # Import modules here so that the tool registry knows about them
 import bioinformatics
@@ -17,11 +23,12 @@ import janis.unix
 # Output settings
 docs_dir = PROJECT_ROOT_DIR + "/docs/"
 tools_dir = docs_dir + "tools/"
+dt_dir = docs_dir + "datatypes/"
 
 ###### Shouldn't need to touch below this line #####
 
 import os
-from typing import List
+from typing import List, Set, Type, Tuple
 
 import tabulate
 from datetime import date
@@ -122,7 +129,35 @@ Optional inputs
 {formatted_optional_inputs}
 
 
+Metadata
+********
+
+Author: {metadata.creator if metadata.creator else "**Unknown**"}
+
+
 *{fn} was last updated on {metadata.dateUpdated if metadata.dateUpdated else "**Unknown**"}*.
+*This page was automatically generated on {date.today().strftime("%Y-%m-%d")}*.
+"""
+
+
+def prepare_data_type(dt: DataType):
+    dt_name = dt.name()
+    secondary = ""
+
+    if dt.secondary_files():
+        secondary = "Secondary files: " + ", ".join(f"``{s}``" for s in dt.secondary_files())
+
+    return f"""
+{dt_name}
+{"=" * len(dt_name)}
+
+{secondary}
+
+Documentation
+-------------
+
+{dt.doc()}
+
 *This page was automatically generated on {date.today().strftime("%Y-%m-%d")}*.
 """
 
@@ -167,58 +202,76 @@ def get_toc(title, intro_text, subpages, caption="Contents", max_depth=1):
         "%d/%m/%Y")}. Please do not directly alter the contents of this page.*
 """
 
-def get_tools():
+
+def get_tools_and_datatypes():
     import janis.bioinformatics, janis.unix
     modules = [janis.bioinformatics, janis.unix]
 
-    tools = []
+    tools: Set[Type[Tool]] = set()
+    data_types: Set[Type[DataType]] = set(all_types)
+
     for m in modules:
+        tt, dt = get_tool_from_module(m.tools)
+        tdt, ddt = get_tool_from_module(m.data_types)
+
+        tools = tools.union(tt).union(tdt)
+        data_types = data_types.union(dt).union(ddt)
+
+    return list(tools), list(data_types)
+
+
+def get_tool_from_module(module, seen_modules=None) -> Tuple[Set[Type[Tool]], Set[Type[DataType]]]:
+    q = {n: cls for n, cls in list(module.__dict__.items()) if not n.startswith("__") and type(cls) != type}
+
+    tools: Set[Type[Tool]] = set()
+    data_types: Set[Type[DataType]] = set()
+
+    if seen_modules is None:
+        seen_modules = set()
+
+    for k in q:
         try:
-            tools_module = m.tools
-            q = {n: cls for n, cls in list(tools_module.__dict__.items()) if not n.startswith("__") and type(cls) != type}
-            for k in q:
-                cls = q[k]
-                if isfunction(cls): continue
-                if ismodule(cls):
-                    print("module: " + str(cls))
-                if issubclass(type(cls), CommandTool):
-                    print("Found tool")
-                    tools.append(cls)
+            cls = q[k]
+            if hasattr(cls, "__name__"):
+                if cls.__name__ in seen_modules: continue
+                seen_modules.add(cls.__name__)
+
+            if isfunction(cls): continue
+            if ismodule(cls):
+                t, d = get_tool_from_module(cls, seen_modules)
+                tools = tools.union(t)
+                data_types = data_types.union(d)
+            if isabstract(cls): continue
+            if issubclass(cls, CommandTool):
+                print("Found commandtool: " + cls.tool())
+                tools.add(cls)
+            elif issubclass(cls, Workflow):
+                print("Found workflow: " + cls().id())
+                tools.add(cls)
+            elif issubclass(cls, DataType):
+                print("Found datatype: " + cls().id())
+                data_types.add(cls)
         except Exception as e:
             print(e)
+            # print(traceback.format_exc())
             continue
 
-
-
-    # Logger.info(f"Finding modules in {len(files)} files")
-    # for file in files:
-    #     if os.path.basename(file).startswith("__"):
-    #         continue
-    #     if os.path.basename(file) in ignore_files:
-    #         continue
-    #
-    #     name = os.path.splitext(file.replace(PROJECT_ROOT_DIR + "/", ""))[0].replace("/", ".")
-    #     try:
-    #         module = importlib.import_module(name)
-    #
-    #         for cc in q:
-    #             try_register_type(q[cc])
-    #
-    #     except Exception as e:
-    #         Logger.log_ex(e)
-
-    return tools
+    return tools, data_types
 
 
 def prepare_all_tools():
-    tools = get_tools()
+    tools, data_types = get_tools_and_datatypes()
 
     Logger.info(f"Preparing documentation for {len(tools)} tools")
+    Logger.info(f"Preparing documentation for {len(data_types)} data_types")
+
     tool_module_index = {}
+    dt_module_index = {}
     ROOT_KEY = "root"
 
-    for tool_vs in tools:
-        tool = tool_vs[0][0]()
+    for t in tools:
+        # tool = tool_vs[0][0]()
+        tool = t()
         Logger.log("Preparing " + tool.id())
         output_str = prepare_tool(tool)
 
@@ -241,8 +294,39 @@ def prepare_all_tools():
 
         Logger.log("Prepared " + tool.id())
 
-    def prepare_modules_in_index(contents, title="Tools", output_dir=tools_dir):
-        module_filename = output_dir + "/index.rst"
+    for d in data_types:
+        # tool = tool_vs[0][0]()
+        if issubclass(d, Array):
+            Logger.info("Skipping Array DataType")
+            continue
+
+        dt = d()
+        did = dt.name().lower()
+        Logger.log("Preparing " + dt.name())
+        output_str = prepare_data_type(dt)
+
+        dt_path_components = []
+        # dt_path_components = list(filter(
+        #     lambda a: bool(a),
+        #     [, tool.tool_provider()]
+        # ))
+
+        path_components = "/".join(dt_path_components)
+        output_dir = f"{dt_dir}{path_components}/"
+        output_filename = output_dir + did + ".rst"
+
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        nested_keys_add(dt_module_index, dt_path_components, did, root_key=ROOT_KEY)
+
+        with open(output_filename, "w+") as dt_file:
+            dt_file.write(output_str)
+
+        Logger.log("Prepared " + did)
+
+    def prepare_modules_in_index(contents, title, dir, max_depth=2):
+        module_filename = dir + "/index.rst"
         module_tools = sorted(contents[ROOT_KEY] if ROOT_KEY in contents else [])
         submodule_keys = sorted(m for m in contents.keys() if m != ROOT_KEY)
         indexed_submodules_tools = [m + "/index" for m in submodule_keys]
@@ -250,19 +334,20 @@ def prepare_all_tools():
         with open(module_filename, "w+") as module_file:
             module_file.write(get_toc(
                 title=title,
-                intro_text="Automatically generated index page for {module} tools",
+                intro_text="Automatically generated index page for {module} {title}",
                 subpages=indexed_submodules_tools + module_tools,
-                max_depth=2
+                max_depth=max_depth
             ))
 
         for submodule in submodule_keys:
             prepare_modules_in_index(
                 contents=contents[submodule],
                 title=submodule,
-                output_dir=f"{output_dir}/{submodule}/"
+                dir=f"{dir}/{submodule}/"
             )
 
-    prepare_modules_in_index(tool_module_index)
+    prepare_modules_in_index(tool_module_index, title="Tools", dir=tools_dir)
+    prepare_modules_in_index(dt_module_index, title="Data Types", dir=dt_dir, max_depth=1)
 
 
 prepare_all_tools()

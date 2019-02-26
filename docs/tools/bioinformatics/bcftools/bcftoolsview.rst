@@ -23,7 +23,7 @@ Outputs
 ======  ======  ===============
 name    type    documentation
 ======  ======  ===============
-output  Stdout
+out     Stdout
 ======  ======  ===============
 
 Inputs
@@ -85,5 +85,11 @@ excludePrivate    Optional<Boolean>        --exclude-private             1  (-X)
 ================  =======================  ===================  ==========  ==============================================================================================================================================================================
 
 
+Metadata
+********
+
+Author: **Unknown**
+
+
 *BCFTools: View was last updated on **Unknown***.
-*This page was automatically generated on 2019-01-30*.
+*This page was automatically generated on 2019-02-27*.

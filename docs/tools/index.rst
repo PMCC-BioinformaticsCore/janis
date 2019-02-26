@@ -2,7 +2,7 @@
 Tools
 =====
 
-Automatically generated index page for {module} tools
+Automatically generated index page for {module} {title}
 
 .. toctree::
    :maxdepth: 2
@@ -11,4 +11,4 @@ Automatically generated index page for {module} tools
    bioinformatics/index
    unix/index
 
-*This page was auto-generated on 04/02/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 27/02/2019. Please do not directly alter the contents of this page.*

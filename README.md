@@ -1,30 +1,86 @@
 # Janis
 
+> | WARNING: this project is work-in-progress and is provided as-is without warranty of any kind. There may be breaking changes committed to this repository without notice.  |
+> | :-- |
+
+![GitHub stars](https://img.shields.io/github/stars/PMCC-BioinformaticsCore/janis.svg?style=social)
 [![Build Status](https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master)](https://travis-ci.org/PMCC-BioinformaticsCore/janis)
 [![Documentation Status](https://readthedocs.org/projects/janis/badge/?version=latest)](https://janis.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/janis-pipelines.svg)](https://badge.fury.io/py/janis-pipelines)
 [![codecov](https://codecov.io/gh/PMCC-BioinformaticsCore/janis/branch/master/graph/badge.svg)](https://codecov.io/gh/PMCC-BioinformaticsCore/janis)
 
-_Portable pipelines assistant_: A framework for creating specialised, simple workflow definitions that are then converted to Common Workflow Language or Workflow Definition Language.
+_Janis is a framework creating specialised, simple workflow definitions that are then transpiled to 
+Common Workflow Language or Workflow Definition Language._
 
+Documentation is hosted here: https://janis.readthedocs.io/
 
 ## Introduction
 
-Janis is designed to assist in building pipelines. It has a collection of prebuilt tools
+Janis is designed to assist in building computational workflows to generate a runnable workflow description (CWL | WDL).
+It can be installed through PIP ([project page](https://pypi.org/project/janis-pipelines/)) by running:
 
-Install through PIP ([project page](https://pypi.org/project/janis-pipelines/)):
 ```
 pip install janis-pipelines
 ```
 
-And ReadTheDocs: https://janis.readthedocs.io/en/latest/
-___
-OR
-
-Clone the [GitHub repository](https://github.com/PMCC-BioinformaticsCore/janis):
-```bash
-git clone git@github.com:PMCC-BioinformaticsCore/janis.git
+You can import Janis into your project by:
+```python
+import janis as j
 ```
+
+### Included tool definitions and types
+
+Some basic unix tools have been wrapped and included as part of the base Janis module and are the basis for the examples.
+You can reference these unix tools through `janis.unix.tools`.
+
+#### Bioinformatics
+
+The Janis framework can be extended to include a suite of 
+[Bioinformatics data types and tools](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics). These can be
+installed with the `bioinformatics` install extra option. 
+
+`pip install janis-pipelines[bioinformatics]`
+
+These can be referenced by `janis.bioinformatics` or `janis_bioinformatics`, the latter might be easier due to the way
+nested python imports work.
+
+### Example
+
+_Further information_: [Simple Workflow](https://janis.readthedocs.io/en/latest/tutorials/simple.html)
+
+Below we've constructed a simple example that takes a string input, uses the [echo](https://janis.readthedocs.io/en/latest/tools/unix/echo.html) 
+tool to log this to `stdout`, and explicitly outputting this `stdout` to give you a basic idea of how to construct a pipeline.
+
+```python
+import janis as j
+from janis.unix.tools.echo import Echo 
+
+w = j.Workflow("workflow_identifier")
+
+inp = j.Input("input_identifier", j.String())
+step = j.Step("step_identifier", Echo())
+outp = j.Output("output_identifier")
+
+w.add_pipe(inp, step, outp)
+
+# Will print the CWL, input file and relevant tools to the console
+w.dump_translation("cwl")
+```
+
+The `add_pipe` method is aware of the inputs and outputs of the arguments you provide it, and automatically
+joins the relevant non-optional parts together. More information can be found on creating edges on the 
+["Building Connections"](https://janis.readthedocs.io/en/latest/tutorials/buildingconnections.html) documentation.
+
+Now we can an in-memory workflow, we can export a CWL representation to the console using `.dump_translation("cwl")`. 
+
+#### More examples
+
+There are some simple example pipelines that use the unix toolset in 
+[`janis/examples`](https://github.com/PMCC-BioinformaticsCore/janis/tree/master/janis/examples). 
+
+Additionally there are example bioinformatics workflows that use Janis and the bioinformatics tools in the 
+[janis-examplepipelines repository](https://github.com/PMCC-BioinformaticsCore/janis-examplepipelines).
+
 
 ## About
 
@@ -32,6 +88,22 @@ This project was produced as part of the Portable Pipelines Project in partnersh
 - [Melbourne Bioinformatics (University of Melbourne) ](https://www.melbournebioinformatics.org.au/)
 - [Peter MacCallum Cancer Centre](https://www.petermac.org/)
 - [Walter and Eliza Hall Institute of Medical Research (WEHI) ](https://www.wehi.edu.au/)
+
+
+### Motivations
+
+Given the [awesome list of](https://github.com/pditommaso/awesome-pipeline) pipeline frameworks, languages and engines,
+why create another framework to generate workflow langauges.
+
+That's a great question, and it's a little complicated. Our project goals are to have a portable workflow specification,
+that is reproducible across many different compute platforms. And instead of backing one technology, we thought it 
+would be more powerful to create a technology that can utilise the community's work.
+
+Some additional benefits we get by writing a generic framework is we sanity check connections and also add types that 
+exist within certain domains. For example within the bioinformatics tools, there's a `BamBai` type that represents an 
+indexed `.bam` (+ `.bai`) file. With this framework, we don't need to worry about pesky secondary files, or the
+complications that come when passing them around in WDL either, this framework can take care of that.
+
 
 ### Related project links:
 - Janis:
@@ -56,82 +128,27 @@ This project was produced as part of the Portable Pipelines Project in partnersh
 | WDL-Gen | [![Build Status](https://travis-ci.org/illusional/python-wdlgen.svg?branch=master)](https://travis-ci.org/illusional/python-wdlgen) || [![PyPI version](https://badge.fury.io/py/illusional.wdlgen.svg)](https://badge.fury.io/py/illusional.wdlgen) | |
 
 
+## Support
 
-## Usage
+### Contributions
 
-You must import `janis` into your project, that is:
-```python
-import janis as j
-``` 
-
-### Included definitions
-
-Some unix tools have been wrapped and included as part of the pip module. They are located at `Pipeline.unix.tools/`.
-The examples will use the included unix tools, with more information about bioinformatics tools down below. 
-See the section about contributions if you find an error in the tool definitions.
-
-### Creating workflows
-
-A Workflow consists of inputs, outputs and steps (which each have their own tool).
-You can connect these components together with edges. Let's look the simple untar workflow.
-
-```python
-import janis as j
-from janis.unix.tools.echo import Echo 
-
-w = j.Workflow("workflow_identifier")
-
-inp = j.Input("input_identifier", j.String())
-step = j.Step("step_identifier", Echo())
-outp = j.Output("output_identifier")
-
-w.add_pipe(inp, step, outp)
-
-# Will print the CWL, input file and relevant tools to the console
-w.dump_translation("cwl", to_disk=False)
-```
-
-
-## Bioinformatics tools and data types
-
-_Coming soon_
-
-A repository of bioinformatic tools will be build to use within this pipeline. 
-The git submodule is embedded here for reference, but can also be found here: [here](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics).
-
-### Intended usage
-
-```
-pip install janis-pipelines[bioinformatics]
-```
-
-Then you can simple import:
-```
-import janis.bioinformatics
-```
-
-
-## Contributions
-
-Contributions are the bread and butter of open source, and we welcome contributions. 
-All sections of this module are written in Python, however a fair understanding of Workflows, CWL or WDL 
-might be required to make changes.
-
-If you find an issue with Pipeline related functionality, please report it through the 
-[Github issues page](https://github.com/PMCC-BioinformaticsCore/janis/issues).
+This project is work-in-progress and is still in developments. Although we welcome contributions,
+due to the immature state of this project we recommend raising issues through the 
+[Github issues page](https://github.com/PMCC-BioinformaticsCore/janis/issues) for Pipeline related issues.
 
 If you find an issue with the tool definitions, please see the relevant issue page:
 - [Pipeline-bioinformatics](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/issues)
 
+Information about the project structure and more on [contributing]() can be found within the documentation.
 
-### Releasing Portable Pipelines
+### Releasing Janis
+
+> _Further Information_: [Releasing](https://janis.readthedocs.io/en/latest/development/releasing.html)
 
 Releasing is automatic! Simply increment the version number in `setup.py` ([SemVer](https://semver.org)), 
 and tag that commit with the same version identifier:
-```
+```bash
+git commit -m "Tag for v0.x.x release"
 git tag -a "v0.x.x" -m "Tag message"
 git push --follow-tags
 ```
-
-[Travis](https://travis-ci.org/PMCC-BioinformaticsCore/janis) will automatically build the repository, 
-run the associated unit tests and if they succeed, deploy to [PyPi](https://pypi.org/project/janis-pipelines/). 

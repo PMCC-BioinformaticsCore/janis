@@ -6,22 +6,32 @@
 Welcome to Janis!
 ********************************
 
-.. image:: https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master
+.. image:: https://img.shields.io/github/stars/PMCC-BioinformaticsCore/janis.svg?style=social
+    :target: https://github.com/PMCC-BioinformaticsCore/janis
+    :alt: GitHub stars
+
+.. image:: https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master&style=flat
     :target: https://travis-ci.org/PMCC-BioinformaticsCore/janis
+    :alt: Travis Build Status
 
 .. image:: https://readthedocs.org/projects/janis/badge/?version=latest
     :target: https://janis.readthedocs.io/en/latest/?badge=latest)
+    :alt: Documentation
 
 .. image:: https://badge.fury.io/py/janis-pipelines.svg
     :target: https://pypi.org/project/janis-pipelines/
+    :alt: Pypi module
 
 .. image:: https://codecov.io/gh/PMCC-BioinformaticsCore/janis/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/PMCC-BioinformaticsCore/janis
+    :target: https://codecov.io/gh/PMCC-BioinformaticsCore/janis
+    :alt: Code Coverage
 
 .. note::
-	This repository is a work-in-progress. 	
+	This project is *work-in-progress* and is provided as-is without warranty of any kind. There may be breaking changes
+	committed to this repository without notice.
 
-Janis is an open source project to assist in writing and checking analysis pipelines at *transpile* time!
+Janis is a framework creating specialised, simple workflow definitions that are then transpiled to
+Common Workflow Language or Workflow Definition Language._
 
 It was developed as part of the Portable Pipelines Project, a collaboration between:
 
@@ -29,74 +39,185 @@ It was developed as part of the Portable Pipelines Project, a collaboration betw
 - `Peter MacCallum Cancer Centre <https://www.petermac.org/>`_ 
 - `Walter and Eliza Hall Institute of Medical Research (WEHI) <https://www.wehi.edu.au/>`_.
 
-There are a few parts to this project that will help you to write high quality pipelines:
-
-- **Pipeline** - A Python module that can be imported and provides a class structure to build a workflow.
-
-- **Tool registry** - The tool registry contains tool definitions such as GATK4, BWA and other tool suites. These make up the *steps* in your workflow. Each tool has an exact docker container so you can be sure you're always using the correct tool. 
-
-- **Types registry** - Sometimes a singular file isn't enough to contain all information; in some cases reference files have indexes or files as metadata, called `secondary files <https://docs.sevenbridges.com/page/secondary-files/>`_. To aid in sanity checking pipelines, on top of the ordinary data types (such as strings, files, numbers) we've created a number of collection types so you don't need to think about forgetting index files again!
-
-
-Quick-start
-===========
-
-You can also Janis via PIP: ``pip install janis-pipelines``
-
 
 Introduction
 ============
 
-Before writing pipelines, it's useful to have some background knowledge of what makes up a Workflow. Simply put:
+Janis is designed to assist in building computational workflows to generate a runnable workflow description (CWL | WDL).
+It can be installed through the Janis `project page <https://pypi.org/project/janis-pipelines/>`__ by running:
 
-    *A workflow is a series of steps that are joined to each other.*
+.. code-block:: bash
 
-A diagram is great way to get an intuitive understanding of what a workflow is, for example to bake `Chocolate chip cookies <https://www.taste.com.au/recipes/chocolate-chip-cookies-2/1bfaa0e6-13b4-489d-bbd8-1cc5caf1fa32 />`_, we can refer to the following workflow:
+   pip install janis-pipelines
 
-.. image:: resources/bakecookie-wf.png
+You can import Janis into your project by:
 
-There are 8 steps to baking (and eating) a chocolate chip cookie, each represented by a box. The arrows represent the dependencies between the steps (what must be completed before the step can be started). For example, to beat the butter and the eggs, we must have acquired the ingredients. Or to place the rolled cookie balls onto the tray, we must have lined the 2 baking trays and mixed in the flour and chocolate.
+.. code-block:: python
 
-We easily see how dependencies are depicted in a workflow, and given enough resources, some of these tasks could be completed at the same time. For example, we can preheat the oven while we're preparing the cookie dough.
+   import janis as j
 
-We'll come back to this example a few times over the course of this introduction.
+Included tool definitions and types
+===================================
+
+Some basic unix tools have been wrapped and included as part of the base Janis module and are the basis for the examples.
+You can reference these unix tools through `janis.unix.tools`.
+
+Bioinformatics
+--------------
+
+The Janis framework can be extended to include a suite of
+`Bioinformatics data types and tools <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`__. These can be
+installed with the ``bioinformatics`` install extra option.
+
+.. code-block:: bash
+
+   pip install janis-pipelines[bioinformatics]
+
+These can be referenced by ``janis.bioinformatics`` or ``janis_bioinformatics``, the latter might be easier due to the way
+nested python imports work.
 
 
-Inputs and Outputs
-------------------
+Example
+========
 
-The inputs to a step is what we (the user) must provide to the worfklow in order to run it. This is 
+*Further information*: `Simple Workflow </tutorials/simple.html>`__
+
+Below we've constructed a simple example that takes a string input, uses the `echo <tools/unix/echo.html>`__)
+tool to log this to ``stdout``, and explicitly outputting this ``stdout`` to give you a basic idea of how to construct a pipeline.
+
+.. code-block:: python
+
+   import janis as j
+   from janis.unix.tools.echo import Echo
+
+   w = j.Workflow("workflow_identifier")
+
+   inp = j.Input("input_identifier", j.String())
+   step = j.Step("step_identifier", Echo())
+   outp = j.Output("output_identifier")
+
+   w.add_pipe(inp, step, outp)
+
+   # Will print the CWL, input file and relevant tools to the console
+   w.dump_translation("cwl")
 
 
-Steps
------
+The ``add_pipe`` method is aware of the inputs and outputs of the arguments you provide it, and automatically
+joins the relevant non-optional parts together. More information can be found on creating edges on the
+`Building Connections <tutorials/buildingconnections.html>`__ documentation.
+
+Now we can an in-memory workflow, we can export a CWL representation to the console using ``.dump_translation("cwl")``.
+
+More examples
+-------------
+
+There are some simple example pipelines that use the unix toolset in
+`janis/examples <https://github.com/PMCC-BioinformaticsCore/janis/tree/master/janis/examples>`__.
+
+Additionally there are example bioinformatics workflows that use Janis and the bioinformatics tools in the
+`janis-examplepipelines repository <https://github.com/PMCC-BioinformaticsCore/janis-examplepipelines>`__.
 
 
-Reproducability
+Support
+=======
+
+This project is work-in-progress and is still in developments. Although we welcome contributions,
+due to the immature state of this project we recommend raising issues through the
+`Github issues page <https://github.com/PMCC-BioinformaticsCore/janis/issues>`__ for Pipeline related issues.
+
+If you find an issue with the tool definitions, please see the relevant issue page:
+
+* `Pipeline-bioinformatics <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/issues>`__
+
+Information about the project structure and more on [contributing]() can be found within the documentation.
+
+Releasing Janis
 ---------------
 
+   *Further Information*: `Releasing <development/releasing.html>`__
 
-Portability
------------
+Releasing is automatic! Simply increment the version number in `setup.py` (`SemVer <https://semver.org>`__),
+and tag that commit with the same version identifier:
 
--------
+.. code-block:: bash
+   git commit -m "Tag for v0.x.x release"
+   git tag -a "v0.x.x" -m "Tag message"
+   git push --follow-tags
 
+
+Dependencies and Resources
+==========================
+
+Janis includes a number of dependencies
+
+============== ==================== ====================== ==================== ===============
+\              build                docs                   pypi                 codecov
+============== ==================== ====================== ==================== ===============
+`Janis`_       |Build Status janis| |Documentation Status| |PyPI version janis| |codecov janis|
+Bioinformatics |Build Status bio|   See Janis              |PyPI version bio|   \
+Shepherd       \                    \                      \                    \
+CWL-Gen        |Build Status cwl|   \                      |PyPI version cwl|   |codecov cwl|
+WDL-Gen        |Build Status wdl|   \                      |PyPI version wdl|   \
+============== ==================== ====================== ==================== ===============
+
+.. _Janis: https://github.com/PMCC-BioinformaticsCore/janis
+.. _JanisPIP: https://pypi.org/project/janis-pipelines/
+
+.. |Build Status janis| image:: https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master
+   :target: https://travis-ci.org/PMCC-BioinformaticsCore/janis
+.. |Documentation Status| image:: https://readthedocs.org/projects/janis/badge/?version=latest
+   :target: https://janis.readthedocs.io/en/latest/?badge=latest
+.. |PyPI version janis| image:: https://badge.fury.io/py/janis-pipelines.svg
+   :target: https://badge.fury.io/py/janis-pipelines
+.. |codecov janis| image:: https://codecov.io/gh/PMCC-BioinformaticsCore/janis/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/PMCC-BioinformaticsCore/janis
+.. |Build Status bio| image:: https://travis-ci.org/PMCC-BioinformaticsCore/janis-bioinformatics.svg?branch=master
+   :target: https://travis-ci.org/PMCC-BioinformaticsCore/janis-bioinformatics
+.. |PyPI version bio| image:: https://badge.fury.io/py/janis-pipelines.bioinformatics.svg
+   :target: https://badge.fury.io/py/janis-pipelines.bioinformatics
+.. |Build Status cwl| image:: https://travis-ci.org/illusional/python-cwlgen.svg?branch=master
+   :target: https://travis-ci.org/common-workflow-language/python-cwlgen
+.. |PyPI version cwl| image:: https://badge.fury.io/py/illusional.cwlgen.svg
+   :target: https://badge.fury.io/py/illusional.cwlgen
+.. |codecov cwl| image:: https://codecov.io/gh/illusional/python-cwlgen/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/illusional/python-cwlgen
+.. |Build Status wdl| image:: https://travis-ci.org/illusional/python-wdlgen.svg?branch=master
+   :target: https://travis-ci.org/illusional/python-wdlgen
+.. |PyPI version wdl| image:: https://badge.fury.io/py/illusional.wdlgen.svg
+   :target: https://badge.fury.io/py/illusional.wdlgen
+
+
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    self
-
-   workflowspecifications
-
    userguide
 
-   buildingTools
+.. toctree::
+   :maxdepth: 1
+   :caption: Tutorials
+
+   tutorials/buildingconnections
+   tutorials/buildingtools
+
+.. toctree::
+   :maxdepth: 1
+   :caption: References
 
    tools/index
    datatypes/index
-   references/pipeline
+
+   references/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Development
+
+   development/releasing
+   development/documentation
 
 Indices and tables
 ^^^^^^^^^^^^^^^^^^

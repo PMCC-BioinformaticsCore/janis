@@ -14,6 +14,7 @@
 #
 import os
 import sys
+from recommonmark.parser import CommonMarkParser
 sys.path.insert(0, os.path.abspath('..'))
 
 
@@ -59,7 +60,7 @@ templates_path = ['_templates']
 source_suffix = ['.rst', '.md']
 # source_suffix = '.rst'
 source_parsers = {
-    # '.md': 'recommonmark.parser.CommonMarkParser',
+    '.md': CommonMarkParser
 }
 
 # The master toctree document.
@@ -115,7 +116,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'WEHIPipelineDefinitiondoc'
+htmlhelp_basename = 'janis'
 
 
 # -- Options for LaTeX output ------------------------------------------------

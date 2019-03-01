@@ -31,7 +31,7 @@ Welcome to Janis!
 	committed to this repository without notice.
 
 Janis is a framework creating specialised, simple workflow definitions that are then transpiled to
-Common Workflow Language or Workflow Definition Language._
+Common Workflow Language or Workflow Definition Language.
 
 It was developed as part of the Portable Pipelines Project, a collaboration between:
 

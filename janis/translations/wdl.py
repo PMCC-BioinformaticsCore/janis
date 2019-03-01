@@ -297,7 +297,9 @@ def translate_tool(tool, with_docker):
     commands = [wdl.Task.Command(f"mv ${{{ti.id()}}} ${{basename({ti.id()})}}")
                    for ti in tool.inputs() if ti.localise_file]
 
-    commands.append(wdl.Task.Command(tool.base_command(), command_ins, command_args))
+    bc = " ".join(tool.base_command()) if isinstance(tool.base_command(), list) else tool.base_command()
+
+    commands.append(wdl.Task.Command(bc, command_ins, command_args))
 
     r = wdl.Task.Runtime()
     if with_docker:

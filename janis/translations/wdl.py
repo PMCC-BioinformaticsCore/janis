@@ -312,7 +312,7 @@ def translate_command_input(tool_input: ToolInput):
 
     # make sure it has some essence of a command line binding, else we'll skip it
     # TODO: make a property on ToolInput (.bind_to_commandline) and set default to true
-    if not (tool_input.position or tool_input.prefix): return None
+    if not (tool_input.position is not None or tool_input.prefix): return None
 
     name = tool_input.id()
     optional = tool_input.input_type.optional
@@ -389,7 +389,7 @@ def translate_output_node(o, tool) -> List[wdl.Output]:
             Logger.warn(f"The command tool '{tool.id()}.{o.tag}' used a star-bind (*) glob to find the output, "
                         f"but the return type was not an array. For WDL, the first element will be used, "
                         f"ie: '{base_expression}[0]'")
-        base_expression += "[0]"
+            base_expression += "[0]"
         wdl_type = wdl.WdlType.parse_type(o.output_type.wdl())
         outputs = [wdl.Output(wdl_type, o.id(), base_expression)]
 

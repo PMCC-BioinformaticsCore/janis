@@ -213,7 +213,8 @@ def translate_tool(tool, with_docker):
     if tool.requirements():
         tool_cwl.requirements.extend(tool.requirements())
 
-    inputs_that_require_localisation = [ti for ti in tool.inputs() if ti.localise_file and isinstance(ti.input_type, File)]
+    inputs_that_require_localisation = [ti for ti in tool.inputs()
+                                        if ti.localise_file and issubclass(type(ti.input_type), File)]
     if inputs_that_require_localisation:
         tool_cwl.requirements.append(cwlgen.InitialWorkDirRequirement([
             "$(inputs.%s)" % ti.id() for ti in inputs_that_require_localisation]))
@@ -298,8 +299,9 @@ def translate_tool_input(toolinput):
                 shell_quote=toolinput.shell_quote,
             )
             data_type.inputBinding = nested_binding
-        else:
-            input_binding.itemSeparator = ","
+        # else:
+            # if input_binding.itemSeparator is None:
+            #     input_binding.itemSeparator = ","
 
     return cwlgen.CommandInputParameter(
         param_id=toolinput.tag,

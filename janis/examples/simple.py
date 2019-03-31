@@ -43,9 +43,9 @@ class TestSimple(unittest.TestCase):
     def test_pipe(self):
 
         # Logger.mute()
-        w = Workflow("simple_evan")
+        w = Workflow("simple")
 
-        inp1 = Input("tarFile", TarFile(), "/Users/franklinmichael/source/simple-workflow/hello.tar")
+        inp1 = Input("tarFile", TarFile(), "/Users/franklinmichael/Desktop/workflows-for-testing/03-simple/inputs/hello.tar")
         step1 = Step("untar", Untar())
         step2 = Step("compile", Compile())
         step3 = Step("tar", Tar())

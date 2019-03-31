@@ -37,11 +37,16 @@ class String(DataType):
 
 class Filename(String):
 
-    def __init__(self, extension: str=None):
+    def __init__(self, prefix=None, suffix=None, extension: str=None, guid: str=None):
         """
+        :param suffix: suffix the guid
         :param extension: with no '.' (dot)
+        :param guid: Use this guid instead of generating one
         """
+        self.prefix = prefix
         self.extension = extension
+        self.suffix = suffix
+        self.guid = guid
         super().__init__(optional=True, default=self.generated_filename())
 
     @staticmethod
@@ -74,11 +79,15 @@ concerned what the filename should be. The Filename DataType should NOT be used 
         super().map_cwl_type(parameter)
         parameter.default = self.generated_filename()
 
-    def generated_filename(self, prefix: str=None) -> str:
+    def generated_filename(self) -> str:
         import uuid
-        pre = (prefix + "-") if prefix is not None else ""
+
+        pre = (self.prefix + "-") if self.prefix is not None else ""
+        guid = self.guid if self.guid else str(uuid.uuid1())
+        suf = self.suffix if self.suffix else ""
         ex = "" if self.extension is None else self.extension
-        return pre + "generated-" + str(uuid.uuid1()) + ex
+
+        return pre + "generated-" + guid + suf + ex
 
     def can_receive_from(self, other: DataType):
         # Specific override because Filename should be able to receive from string
@@ -88,7 +97,6 @@ concerned what the filename should be. The Filename DataType should NOT be used 
 
     def wdl(self):
         return WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()))
-
 
 
 class Int(DataType):

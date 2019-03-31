@@ -115,18 +115,6 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
     w.outputs = [translate_output_node(o) for o in wf._outputs]
 
     #
-    keys = ["coresMin", "coresMax", "ramMin", "ramMax"]
-    sins = [translate_tool_input(ToolInput(k, Int(optional=True))) for k in keys]
-    if with_resource_overrides:
-        for s in w.steps:
-            # work out whether (the tool of) s is a workflow or tool
-            resource_override_step_inputs = [cwlgen.WorkflowStepInput(
-                input_id=k,
-                source=RESOURCE_OVERRIDE_KEY,
-                value_from=f"${{var k = \"{k}\";var stepId = \"{s.id}\";if(!self) return null;if (!(stepId in self)) "
-                "return null;return self[stepId][k]}}"
-            ) for k in keys]
-            s.inputs.extend(resource_override_step_inputs)
 
     if with_hints:
         resource_schema = get_cwl_schema_for_recognised_hints()
@@ -172,6 +160,7 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
                     ))
 
             if with_resource_overrides:
+                sins = [translate_tool_input(ToolInput(k, Int(optional=True))) for k in keys]
                 tool_cwl.inputs.extend(sins)
 
             tools.append(tool_cwl)
@@ -183,12 +172,13 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
     return w, inp, tools
 
 
-def translate_tool_str(tool, with_docker):
+def translate_tool_str(tool, with_docker, with_resource_overrides=False):
     ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
-    return ruamel.yaml.dump(translate_tool(tool, with_docker=with_docker).get_dict(), default_flow_style=False)
+    return ruamel.yaml.dump(translate_tool(tool, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
+                            .get_dict(), default_flow_style=False)
 
 
-def translate_tool(tool, with_docker):
+def translate_tool(tool, with_docker, with_resource_overrides=False):
     metadata = tool.metadata() if tool.metadata() else ToolMetadata()
     stdouts = [o.output_type for o in tool.outputs() if isinstance(o.output_type, Stdout) and o.output_type.stdoutname]
     stdout = stdouts[0].stdoutname if len(stdouts) > 0 else None
@@ -214,7 +204,9 @@ def translate_tool(tool, with_docker):
         tool_cwl.requirements.extend(tool.requirements())
 
     inputs_that_require_localisation = [ti for ti in tool.inputs()
-                                        if ti.localise_file and issubclass(type(ti.input_type), File)]
+                                        if ti.localise_file and (issubclass(type(ti.input_type), File)
+                                                                 or (issubclass(type(ti.input_type), Array))
+                                                                 and issubclass(type(ti.input_type.subtype()), File))]
     if inputs_that_require_localisation:
         tool_cwl.requirements.append(cwlgen.InitialWorkDirRequirement([
             "$(inputs.%s)" % ti.id() for ti in inputs_that_require_localisation]))
@@ -231,9 +223,21 @@ def translate_tool(tool, with_docker):
 
     tool_cwl.inputs.extend(translate_tool_input(i) for i in tool.inputs())
     tool_cwl.outputs.extend(translate_tool_output(o, tool=tool.id()) for o in tool.outputs())
+
     args = tool.arguments()
     if args:
         tool_cwl.arguments.extend(translate_tool_argument(a) for a in tool.arguments())
+
+    keys = ["coresMin", "coresMax", "ramMin", "ramMax"]
+    if with_resource_overrides:
+        # work out whether (the tool of) s is a workflow or tool
+        resource_override_step_inputs = [cwlgen.WorkflowStepInput(
+            input_id=k,
+            source=RESOURCE_OVERRIDE_KEY,
+            value_from=f"${{var k = \"{k}\";var stepId = \"{s.id}\";if(!self) return null;if (!(stepId in self)) "
+            "return null;return self[stepId][k]}}"
+        ) for k in keys]
+        tool_cwl.inputs.extend(resource_override_step_inputs)
 
     return tool_cwl
 

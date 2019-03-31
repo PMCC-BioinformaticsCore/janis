@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Optional, List, Dict, Any, Union
 import re
 
+from janis.translations import SupportedTranslation
+
 from janis.utils.validators import Validators
 
 from janis.types import Selector
@@ -132,6 +134,10 @@ class Tool(ABC, object):
 
     def doc(self) -> Optional[str]:
         return None
+
+    @abstractmethod
+    def translate(self, translation: SupportedTranslation, with_docker=True, with_resource_overrides=False):
+        raise Exception("Subclass must provide implementation for 'translate()' method")
 
     def help(self):
         import inspect

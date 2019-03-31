@@ -68,9 +68,9 @@ class CommandTool(Tool, ABC):
     def hint_map() -> Optional[Dict[str, Any]]:
         return None
 
-    def translate(self, translation, with_docker=True):
+    def translate(self, translation, with_docker=True, with_resource_overrides=False):
         import janis.translations
-        return janis.translations.translate_tool(self, translation, with_docker=with_docker)
+        return janis.translations.translate_tool(self, translation, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
 
     def help(self):
         import inspect

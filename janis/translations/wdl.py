@@ -251,6 +251,8 @@ def translate_wildcard_selector(selector: WildcardSelector):
     if not selector.wildcard: raise Exception("No wildcard was selected for wildcard selector: " + str(selector))
     return f"glob(\"{selector.wildcard}\")"
 
+def translate_tool_str(tool, with_docker):
+    return translate_tool(tool, with_docker=with_docker).get_string()
 
 def translate_tool(tool, with_docker):
     if not Validators.validate_identifier(tool.id()):
@@ -294,8 +296,7 @@ def translate_tool(tool, with_docker):
                 val = a.value
             command_args.append(wdl.Task.Command.CommandArgument(a.prefix, val, a.position))
 
-    commands = [wdl.Task.Command(f"mv ${{{ti.id()}}} ${{basename({ti.id()})}}")
-                   for ti in tool.inputs() if ti.localise_file]
+    commands = [prepare_move_statement_for_input_to_localise(ti) for ti in tool.inputs() if ti.localise_file]
 
     bc = " ".join(tool.base_command()) if isinstance(tool.base_command(), list) else tool.base_command()
 
@@ -306,6 +307,17 @@ def translate_tool(tool, with_docker):
         r.add_docker(tool.docker())
 
     return wdl.Task(tool.id(), ins, outs, commands, r, version="development")
+
+
+def prepare_move_statement_for_input_to_localise(ti: ToolInput):
+    it = ti.input_type
+
+    if issubclass(type(it), File):
+        return wdl.Task.Command(f"mv ${{{ti.id()}}} -t .")
+    if isinstance(it, Array) and issubclass(type(it.subtype()), File):
+        return wdl.Task.Command("mv ${{sep=' ' {s}}} -t .".format(s=ti.id()))
+
+    raise Exception(f"WDL is unable to localise type '{type(it)}'")
 
 
 def translate_command_input(tool_input: ToolInput):

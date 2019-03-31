@@ -24,19 +24,23 @@ import janis.translations as translations
 
 class Workflow(Tool):
     """
-    Documentation here
-    """
+    The Workflow contains information about inputs, outputs, steps and their relations to each other.
 
-    # identifier = BaseDescriptor()
-    # label = BaseDescriptor()
-    # doc = BaseDescriptor()
+    You can construct workflows in 2 ways:
+
+        1. Create an instance of Workflow
+
+        2. Subclass Workflow (if you're packaging a workflow as a tool, this is the preferred approach).
+
+
+    """
 
     def __init__(self, identifier: str, friendly_name: str = None, doc: Optional[str] = None):
         """
         Initialise the workflow
         :param identifier: uniquely identifies the workflow
-        :param friendly_name: a label that the engine may use to represent the workflow (should be unique)
-        :param doc: Documentation of the workflow
+        :param friendly_name: a label that the engine may use to represent the workflow / used as name in docs
+        :param doc: Documentation of the workflow, what is
         """
         Logger.log(f"Creating workflow with identifier: '{identifier}'")
 
@@ -48,14 +52,17 @@ class Workflow(Tool):
         self.name = friendly_name
         self._metadata = WorkflowMetadata(documentation=doc)
 
+        # The following variables allow us to quickly check data about the graph
+
         self._nodes: Dict[str, Node] = {}  # Look up a node by its identifier
 
-        self._inputs: List[InputNode] = []  # InputNodes
-        self._steps: List[StepNode] = []  # StepNodes
-        self._outputs: List[OutputNode] = []  # OutputNodes
-        self._outputs: List[OutputNode] = []  # OutputNodes
+        self._inputs: List[InputNode] = []
+        self._steps: List[StepNode] = []
+        self._outputs: List[OutputNode] = []
 
-        self.graph: nx.MultiDiGraph = nx.MultiDiGraph()  # Realistically this isn't really used except for an image
+        # We store approximate relationships on the MultiDiGraph, however
+        # it can't store multiple connections between the same pairs of nodes very easily
+        self.graph: nx.MultiDiGraph = nx.MultiDiGraph()
 
         # Flags for different requirements that a workflow might need
         self.has_scatter = False
@@ -122,6 +129,8 @@ class Workflow(Tool):
         nx.draw(G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=True)
         plt.show()
 
+    # For the most part, Just add edges as this will automatically add nodes to the graph
+
     def _add_items(self, *args) -> List[Any]:
         """
         Supports adding (Input | Step | Output | Tuple = construct edge)
@@ -141,60 +150,59 @@ class Workflow(Tool):
         :return:
         """
         if isinstance(item, Input):
-            return self._add_inputs([item])[0]
+            return self._add_input(item)
         elif isinstance(item, Step):
-            return self._add_steps([item])[0]
+            return self._add_steps(item)
         elif isinstance(item, Output):
-            return self._add_outputs([item])[0]
+            return self._add_outputs(item)
         elif isinstance(item, tuple):
             return self.add_edge(item[0], item[1])
         else:
             raise Exception(f"Unexpected type '{type(item)}' passed to 'add_nodes'")
 
-    def _add_inputs(self, inputs: List[Input]) -> List[InputNode]:
+    def _add_input(self, inp: Input) -> InputNode:
         """
-        Add a list of inputs into the graph, does nothing except add it into the graph
+        Add an input into the graph, and returns the created InputNode
+        :param: inp
+        :type: janis.Input
         """
-        ins = []
-        for inp in inputs:
-            Logger.log(f"Adding input '{inp.id()}' to '{self.identifier}'")
-            node: InputNode = InputNode(inp)
-            ins.append(node)
-            self._add_node(node)
-            self._inputs.append(node)
-        return ins
+        Logger.log(f"Adding input '{inp.id()}' to '{self.identifier}'")
+        node: InputNode = InputNode(inp)
+        self._add_node(node)
+        self._inputs.append(node)
+        return node
 
-    def _add_outputs(self, outputs: List[Output]) -> List[OutputNode]:
+    def _add_outputs(self, outp: Output) -> OutputNode:
         """
-        Adds a list of output to the graph, and returns the created OutputNodes
+        Adds an output to the graph, and returns the created OutputNode
+        :param: outp
+        :type: janis.Output
         """
-        outs = []
-        for outp in outputs:
-            Logger.log(f"Adding output '{outp.id()}' to '{self.identifier}'")
-            node: OutputNode = OutputNode(outp)
-            outs.append(node)
-            self._add_node(node)
-            self._outputs.append(node)
-        return outs
+        Logger.log(f"Adding output '{outp.id()}' to '{self.identifier}'")
+        node: OutputNode = OutputNode(outp)
+        self._add_node(node)
+        self._outputs.append(node)
+        return node
 
-    def _add_steps(self, steps: List[Step]) -> List[StepNode]:
+    def _add_steps(self, step: Step) -> StepNode:
         """
         Adds a list of steps to the graph and returns the created StepNodes
+        :param: step
+        :type: janis.Step
         """
-        ss = []
-        for step in steps:
-            Logger.log(f"Adding step '{step.id()}' to '{self.identifier}'")
-            node: StepNode = StepNode(step)
+        Logger.log(f"Adding step '{step.id()}' to '{self.identifier}'")
+        node: StepNode = StepNode(step)
 
-            self.has_subworkflow = self.has_subworkflow or step.tool().type() == ToolTypes.Workflow
-            ss.append(node)
-            self._add_node(node)
-            self._steps.append(node)
-        return ss
+        self.has_subworkflow = self.has_subworkflow or step.tool().type() == ToolTypes.Workflow
+        self._add_node(node)
+        self._steps.append(node)
+        return node
 
-    def _add_node(self, node: Node):
+    def _add_node(self, node: Node) -> Node:
         """
-        Add a node to the graph, does the correct error checking
+        Add a node to the graph. This won't allow you to add the same node twice
+        :param: node
+        :type: janis.Node
         """
         if node.id() in self._nodes:
             existing = self._nodes[node.id()]
@@ -206,13 +214,10 @@ class Workflow(Tool):
         self.graph.add_node(node)
         return node
 
-    def add_items(self, items: List[Union[Input, Step, Output, Tuple]]):
-        return [self._add_item(n) for n in items]
-
     @staticmethod
     def get_labels_and_node_by_inference(s) -> Tuple[str, Optional[Node]]:
         """
-        Try to get the identifier and node of the
+        Try to get the identifier and node of what's passed to the add_edges method
         :return: Tuple[str, Optional[Node]]
         """
         try:
@@ -390,6 +395,7 @@ class Workflow(Tool):
         #       (b) If there are multiple outputs, raise Exception if it doesn't exactly match
         #   5. Check that the types match
         #   6. Add edge
+
         self.validate_tag_parts(s_parts, s, "start")
         self.validate_tag_parts(f_parts, f, "finish")
 
@@ -499,13 +505,19 @@ class Workflow(Tool):
             guess_type = guess_type.received_type()
 
         if node.node_type == NodeTypes.OUTPUT:
-            raise Exception(f"Can't join output node '{node.id()}' to '{referenced_by}'")
+            ref_by = '.'.join(referenced_by)
+            raise Exception(f"Joining an INPUT node ('{node.id()}') to an  OUTPUT node ('{ref_by}') "
+                            f"has been explicitly disabled")
 
         lbl = input_parts[0]
         if node.node_type == NodeTypes.INPUT:
             if len(input_parts) != 1:
-                s = "/".join(input_parts)
-                message = f"The input tag '{s}' over-represents the INPUT node, this was corrected ({s} → {lbl})"
+                # You can't really get here if you're building pipelines with the Python classes, but you can build
+                # the graph purely by referencing strings, so this is still needed.
+
+                s = ".".join(input_parts)
+                f = ".".join(referenced_by)
+                message = f"The step '{f}' over-referenced the INPUT node, this was corrected ({s} → {lbl})"
                 Logger.log(message, LogLevel.WARNING)
                 input_parts = [lbl]
             return input_parts, next(iter(node.outputs().values())).output_type
@@ -527,13 +539,14 @@ class Workflow(Tool):
             if len(input_parts) != 2:
                 s = "/".join(input_parts)
                 under_over = "under" if len(input_parts) < 2 else "over"
-                Logger.warn(f"The node '{'/'.join(referenced_by)}' {under_over}-referenced an output of the tool "
-                            f"'{snode.step.tool().id()}' (step: {node.id()}, this was automatically corrected "
-                            f"({s} → {lbl}/{tag})")
+                Logger.warn(f"The node '{'.'.join(referenced_by)}' {under_over}-referenced an output the step "
+                            f"'{node.id()}' (tool: '{snode.step.tool().id()}'), this was automatically corrected "
+                            f"({s} → {lbl}.{tag})")
+
             elif input_parts[-1] != tag:
-                Logger.log(f"The node '{node.id()}' did not correctly reference an output of the tool "
-                           f"'{snode.step.tool().id()}', this was automatically corrected "
-                           f"({'/'.join(input_parts)} → {lbl}/{tag})", LogLevel.WARNING)
+                Logger.critical(f"The node '{node.id()}' did not correctly reference an output of the step "
+                                f"'{node.id()}' (tool: '{snode.step.tool().id()}'), this was automatically corrected "
+                                f"({'/'.join(input_parts)} → {lbl}/{tag})")
 
             input_parts = [lbl, tag]
             return input_parts, types[0][1]
@@ -715,9 +728,15 @@ class Workflow(Tool):
 
     # TRANSLATIONS
 
+    def translate(self, translation: SupportedTranslation, with_docker=True, with_resource_overrides=False):
+        return translations.dump_translation(self, translation=translation, to_console=False, to_disk=False,
+                                             with_hints=False, with_resource_overrides=with_resource_overrides,
+                                             should_zip=False, write_inputs_file=False, should_validate=False)
+
     def dump_translation(self, translation: SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
-                         with_hints=False, with_resource_overrides=False, write_inputs_file=False, should_validate=False,
-                     should_zip=True):
+                         with_hints=False, with_resource_overrides=False, write_inputs_file=False,
+                         should_validate=False,
+                         should_zip=True):
         return translations.dump_translation(self,
                                              translation=translation,
                                              to_console=to_console,
@@ -728,240 +747,3 @@ class Workflow(Tool):
                                              should_zip=should_zip,
                                              write_inputs_file=write_inputs_file,
                                              should_validate=should_validate)
-
-    # def cwl(self, is_nested_tool=False, with_docker=True, with_hints=False, with_resource_overrides=False) -> Tuple[cwl.Workflow, dict, List[cwl.Serializable]]:
-    #
-    #     metadata = self.metadata() if self.metadata() else WorkflowMetadata()
-    #     w = cwl.Workflow(self.identifier, self.friendly_name(), metadata.documentation)
-    #
-    #     w.inputs: List[cwl.InputParameter] = [i.cwl() for i in self._inputs]
-    #
-    #     if with_resource_overrides:
-    #         rOverride = cwl.InputParameter(
-    #             self.RESOURCE_OVERRIDE_KEY,
-    #             param_type=["null", self._generate_cwl_resource_override_schema_for_steps()]
-    #         )
-    #         w.inputs.append(rOverride)
-    #
-    #     w.steps: List[cwl.WorkflowStep] = [s.cwl(is_nested_tool=is_nested_tool) for s in self._steps]
-    #     w.outputs = [o.cwl() for o in self._outputs]
-    #
-    #     #
-    #     keys = ["coresMin", "coresMax", "ramMin", "ramMax"]
-    #     sins = [ToolInput(k, Int(optional=True)).cwl() for k in keys]
-    #     if with_resource_overrides:
-    #         for s in w.steps:
-    #             # work out whether (the tool of) s is a workflow or tool
-    #             resource_override_step_inputs = [cwl.WorkflowStepInput(
-    #                 input_id=k,
-    #                 source=self.RESOURCE_OVERRIDE_KEY,
-    #                 value_from=f"${{var k = \"{k}\";var stepId = \"{s.id}\";if(!self) return null;if (!(stepId in self)) return null;return self[stepId][k]}}"
-    #                 # value_from=f"$(!self ? null : (!self['{s.id}'] ? null : self['{s.id}']['{k}']))"
-    #             ) for k in keys]
-    #             s.inputs.extend(resource_override_step_inputs)
-    #
-    #     if with_hints:
-    #         resource_schema = get_cwl_schema_for_recognised_hints()
-    #         nullable_resource_schema = ["null", resource_schema]
-    #         w.inputs.append(cwl.InputParameter(self.HINTS_KEY, param_type=nullable_resource_schema))
-    #         for s in w.steps:
-    #             s.inputs.append(cwl.WorkflowStepInput(self.HINTS_KEY, self.HINTS_KEY))
-    #
-    #     w.requirements.append(cwl.InlineJavascriptReq())
-    #     w.requirements.append(cwl.StepInputExpressionRequirement())
-    #
-    #     if self.has_scatter:
-    #         w.requirements.append(cwl.ScatterFeatureRequirement())
-    #     if self.has_subworkflow:
-    #         w.requirements.append(cwl.SubworkflowFeatureRequirement())
-    #     if self.has_multiple_inputs:
-    #         w.requirements.append(cwl.MultipleInputFeatureRequirement())
-    #
-    #     tools = []
-    #     tools_to_build: Dict[str, Tool] = {s.step.tool().id(): s.step.tool() for s in self._steps}
-    #     for t in tools_to_build:
-    #         tool: Tool = tools_to_build[t]
-    #         if isinstance(tool, Workflow):
-    #             wf_cwl, _, subtools = tool.cwl(is_nested_tool=True, with_docker=with_docker, with_hints=with_hints, with_resource_overrides=with_resource_overrides)
-    #             tools.append(wf_cwl)
-    #             tools.extend(subtools)
-    #         elif isinstance(tool, CommandTool):
-    #             tool_cwl = tool.cwl(with_docker=with_docker)
-    #             if with_hints:
-    #                 tool_cwl.inputs.append(
-    #                     cwl.InputParameter(self.HINTS_KEY, param_type=["null", get_cwl_schema_for_recognised_hints()]))
-    #                 hm = tool.hint_map()
-    #                 if hm:
-    #                     tool_cwl.requirements.append(cwl.ResourceRequirement(
-    #                         cores_min=self._generate_hint_selectors_for_hint_map("coresMin", hm),
-    #                         cores_max=self._generate_hint_selectors_for_hint_map("coresMax", hm),
-    #                         ram_min=self._generate_hint_selectors_for_hint_map("ramMin", hm),
-    #                         ram_max=self._generate_hint_selectors_for_hint_map("ramMax", hm)
-    #                     ))
-    #
-    #             if with_resource_overrides:
-    #                 tool_cwl.inputs.extend(sins)
-    #
-    #             tools.append(tool_cwl)
-    #         else:
-    #             raise Exception(f"Unknown tool type: '{type(tool)}'")
-    #
-    #     inp = {i.id(): i.input.cwl_input() for i in self._inputs}
-    #
-    #     return w, inp, tools
-
-    #     @staticmethod
-    #     def _generate_cwl_resource_override_schema():
-    #         schema = cwl.CommandInputRecordSchema()
-    #         schema.fields = [
-    #             cwl.CommandInputRecordSchema.CommandInputRecordField("coresMin", ["long", "string", "null"]),
-    #             cwl.CommandInputRecordSchema.CommandInputRecordField("coresMax", ["int", "string", "null"]),
-    #             cwl.CommandInputRecordSchema.CommandInputRecordField("ramMin", ["long", "string", "null"]),
-    #             cwl.CommandInputRecordSchema.CommandInputRecordField("ramMax", ["int", "string", "null"])
-    #         ]
-    #         return schema
-    #
-    #     def _generate_cwl_resource_override_schema_for_steps(self):
-    #         schema = cwl.CommandInputRecordSchema()
-    #
-    #         for step in self._steps:
-    #             tool = step.step.tool()
-    #             if isinstance(tool, Workflow):
-    #                 key = tool.id() + "_resource_override" # self.RESOURCE_OVERRIDE_KEY
-    #                 override_schema = tool._generate_cwl_resource_override_schema_for_steps()
-    #             else:
-    #                 key = step.step.id()
-    #                 override_schema = self._generate_cwl_resource_override_schema()
-    #
-    #             schema.fields.append(cwl.CommandInputRecordSchema.CommandInputRecordField(key, ["null", override_schema]))
-    #
-    #         return schema
-    #
-    #     @staticmethod
-    #     def _generate_hint_selectors_for_hint_map(resource_key, hint_map):
-    #         import json
-    #         return f"""${{
-    #     var key = '{resource_key}';
-    #     if (inputs["{Workflow.RESOURCE_OVERRIDE_KEY}"] && inputs["{Workflow.RESOURCE_OVERRIDE_KEY}"][key])
-    #         return inputs["{Workflow.RESOURCE_OVERRIDE_KEY}"][key];
-    #     var hints = inputs.hints;
-    #     if (!hints) return null;
-    #
-    #     var hintMap = {json.dumps(hint_map)};
-    #     for (var hint in hintMap) {{
-    #         var providedHintValue = hints[hint];
-    #         if (!providedHintValue || !(providedHintValue in hintMap[hint])) continue;
-    #         var hintValueToResourceMap = hintMap[hint][providedHintValue];
-    #         if (hintValueToResourceMap[key]) return hintValueToResourceMap[key];
-    #     }}
-    #     return null;
-    # }}"""# .replace("    ", "").replace("\n", "")
-
-    def get_cwl_dicts(self, with_docker=True):
-        cwl_data, inp_data, tools_ar = self.cwl(with_docker=with_docker)
-        return cwl_data.get_dict(), inp_data, [t.get_dict() for t in tools_ar]
-
-    # def dump_cwl(self, to_disk: False, with_docker=True, write_inputs_file=True):
-    #     import os, yaml
-    #     cwl_data, inp_data, tools_ar = self.get_cwl_dicts(with_docker=with_docker)
-    #
-    #     d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/cwl/"
-    #     d_tools = d + "tools/"
-    #
-    #     if not os.path.isdir(d):
-    #         os.makedirs(d)
-    #     if not os.path.isdir(d_tools):
-    #         os.makedirs(d_tools)
-    #
-    #     from cwlgen.cwlgen.utils import literal, literal_presenter
-    #     yaml.add_representer(literal, literal_presenter)
-    #
-    #     print(yaml.dump(cwl_data, default_flow_style=False))
-    #     print(yaml.dump(inp_data, default_flow_style=False))
-    #     for t in tools_ar:
-    #         print(yaml.dump(t, default_flow_style=False))
-    #
-    #     if to_disk:
-    #         os.chdir(d)
-    #         wf_filename = d + self.id() + ".cwl"
-    #         with open(wf_filename, "w+") as cwl:
-    #             Logger.log(f"Writing {self.identifier}.cwl to disk")
-    #             yaml.dump(cwl_data, cwl, default_flow_style=False)
-    #             Logger.log(f"Written {self.identifier}.cwl to disk")
-    #
-    #         if write_inputs_file:
-    #             with open(d + self.id() + "-job.yml", "w+") as cwl:
-    #                 Logger.log(f"Writing {self.identifier}-job.yml to disk")
-    #                 yaml.dump(inp_data, cwl, default_flow_style=False)
-    #                 Logger.log(f"Written {self.identifier}-job.yml to disk")
-    #         else:
-    #             Logger.log("Skipping writing input (yaml) job file")
-    #
-    #         # z = zipfile.ZipFile(d + "tools.zip", "w")
-    #         for tool in tools_ar:
-    #             tool_name = tool["id"]
-    #             tool_filename = tool_name + ".cwl"
-    #             with open(d_tools + tool_filename, "w+") as cwl:
-    #                 Logger.log(f"Writing {tool_name}.cwl to disk")
-    #                 yaml.dump(tool, cwl, default_flow_style=False)
-    #                 Logger.log(f"Written {tool_name}.cwl to disk")
-    #
-    #         import subprocess
-    #
-    #         Logger.info("Validing outputted CWL")
-    #
-    #         cwltool_result = subprocess.run(["cwltool", "--validate", wf_filename])
-    #         if cwltool_result.returncode == 0:
-    #             Logger.info("Exported workflow is valid CWL.")
-    #         else:
-    #             Logger.critical(cwltool_result.stderr)
-    #
-    #         Logger.info("Zipping tools")
-    #         os.chdir(d)
-    #
-    #         zip_result = subprocess.run(["zip", "-r", "tools.zip", "tools/"])
-    #         if zip_result.returncode == 0:
-    #             Logger.info("Zipped tools")
-    #         else:
-    #             Logger.critical(zip_result.stderr)
-    #
-    #         #     z.write("tools/" + tool_filename)
-    #         # z.close()
-
-    # def dump_wdl(self, to_disk: False, with_docker=True):
-    #     import os, json
-    #     wf, inp, tls = self.wdl(with_docker=with_docker)
-    #
-    #     wfd = wf.get_string()
-    #     wftools = {t: tls[t].get_string() for t in tls}
-    #
-    #     print(wfd)
-    #     print("================")
-    #     print(json.dumps(inp))
-    #     print("================")
-    #     print("\n*******\n".join(wftools.values()))
-    #
-    #     d = os.path.expanduser("~") + f"/Desktop/{self.identifier}/wdl/"
-    #     d_tools = d + "tools/"
-    #     if not os.path.isdir(d):
-    #         os.makedirs(d)
-    #     if not os.path.isdir(d_tools):
-    #         os.makedirs(d_tools)
-    #
-    #     if to_disk:
-    #         with open(d + self.identifier + ".wdl", "w+") as wdl:
-    #             Logger.log(f"Writing {self.identifier}.get_string to disk")
-    #             wdl.write(wfd)
-    #             Logger.log(f"Written {self.identifier}.get_string to disk")
-    #
-    #         with open(d + self.identifier + "-job.json", "w+") as inpFile:
-    #             Logger.log(f"Writing {self.identifier}-job.json to disk")
-    #             json.dump(inp, inpFile)
-    #             Logger.log(f"Written {self.identifier}-job.json to disk")
-    #
-    #         for tool_name in wftools:
-    #             tool = wftools[tool_name]
-    #             with open(d_tools + tool_name + ".wdl", "w+") as wdl:
-    #                 Logger.log(f"Writing {tool_name}.get_string to disk")
-    #                 wdl.write(tool)
-    #                 Logger.log(f"Written {tool_name}.get_string to disk")

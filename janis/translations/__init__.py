@@ -27,13 +27,12 @@ def dump_translation(workflow, translation: SupportedTranslation, to_console=Tru
         raise NotImplementedError(f"The requested translation ('{translation}') has not been implemented yet, "
                                   f"why not contribute one at '{GITHUB_URL}'.")
 
-
-def translate_tool(tool, translation: SupportedTranslation, with_docker):
+def translate_tool(tool, translation: SupportedTranslation, with_docker, with_resource_overrides=False):
     if translation == SupportedTranslations.CWL:
-        return cwl.translate_tool_str(tool, with_docker=with_docker)
+        return cwl.translate_tool_str(tool, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
 
     elif translation == SupportedTranslations.WDL:
-        return wdl.translate_tool(tool, with_docker=with_docker)
+        return wdl.translate_tool_str(tool, with_docker=with_docker)
 
     else:
         raise NotImplementedError(f"The requested translation ('{translation}') has not been implemented yet, "

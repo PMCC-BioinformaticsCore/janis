@@ -2,15 +2,11 @@ from abc import ABC, abstractmethod
 from typing import Optional, List, Dict, Any, Union
 import re
 
-from janis.translations import SupportedTranslation
-
 from janis.utils.validators import Validators
 
 from janis.types import Selector
-from janis.types.common_data_types import Array
 from janis.utils.logger import Logger
 from janis.types.data_types import DataType, NativeTypes
-# import cwlgen.cwlgen as cwl
 from janis.utils.metadata import Metadata
 
 ToolType = str
@@ -75,6 +71,9 @@ class ToolInput(ToolArgument):
 class ToolOutput:
     def __init__(self, tag: str, output_type: DataType, glob: Optional[Union[Selector, str]] = None,
                  doc: Optional[str] = None):
+        if not Validators.validate_identifier(tag):
+            raise Exception(f"The identifier '{tag}' was not validated by '{Validators.identifier_regex}' "
+                            f"(must start with letters, and then only contain letters, numbers and an underscore)")
         self.tag = tag
         self.output_type: DataType = output_type
         self.glob = glob
@@ -136,7 +135,7 @@ class Tool(ABC, object):
         return None
 
     @abstractmethod
-    def translate(self, translation: SupportedTranslation, with_docker=True, with_resource_overrides=False):
+    def translate(self, translation: str, with_docker=True, with_resource_overrides=False):
         raise Exception("Subclass must provide implementation for 'translate()' method")
 
     def help(self):

@@ -205,8 +205,7 @@ class File(DataType):
     def get_value_from_meta(self, meta):
         return meta.get("path")
 
-    @staticmethod
-    def cwl_input(value: Any):
+    def cwl_input(self, value: Any):
         return {
             "class": cwl.CwlTypes.FILE,
             "path": value
@@ -241,8 +240,7 @@ class Directory(DataType):
     def input_field_from_input(self, meta):
         return meta["path"]
 
-    @staticmethod
-    def cwl_input(value: Any):
+    def cwl_input(self, value: Any):
         # WDL: "{workflowName}.label" = meta["path"}
         return {
             "class": cwl.CwlTypes.DIRECTORY,
@@ -254,7 +252,7 @@ class Array(DataType):
 
     def __init__(self, t: DataType, optional=False):
         if not isinstance(t, DataType):
-            raise Exception(f"Type t ({type(t)}) must be an instance of 'Type'")
+            raise Exception(f"Type t ({type(t)}) must be an instance of 'DataType'")
 
         self._t = t
         super().__init__(optional)
@@ -301,6 +299,14 @@ class Array(DataType):
             input_binding=None
         )
         return parameter
+
+    def cwl_input(self, value: Any):
+        if isinstance(value, list):
+            return [self._t.cwl_input(v) for v in value]
+        if value is None:
+            return None
+        else:
+            raise Exception(f"Input value for input '{self.id()}' was not an array")
 
     def wdl(self) -> wdl.WdlType:
         ar = wdl.ArrayType(self._t.wdl(), requires_multiple=False)

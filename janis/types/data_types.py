@@ -214,8 +214,7 @@ class DataType(ABC):
         parameter.secondaryFiles = self.secondary_files()
         return parameter
 
-    @staticmethod
-    def cwl_input(value: Any):
+    def cwl_input(self, value: Any):
         return value
 
     def wdl(self) -> WdlType:

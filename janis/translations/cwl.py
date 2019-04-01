@@ -13,6 +13,8 @@ from janis.utils.metadata import WorkflowMetadata, ToolMetadata
 from janis.utils.janisconstants import RESOURCE_OVERRIDE_KEY, HINTS_KEY
 from janis.workflow.step import StepNode
 
+CWL_VERSION = "v1.0"
+
 
 def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_hints=False,
              with_resource_overrides=False, write_inputs_file=False, should_validate=False, should_zip=True):
@@ -99,7 +101,7 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
     from janis.workflow.workflow import Workflow
 
     metadata = wf.metadata() if wf.metadata() else WorkflowMetadata()
-    w = cwlgen.Workflow(wf.identifier, wf.friendly_name(), metadata.documentation)
+    w = cwlgen.Workflow(wf.identifier, wf.friendly_name(), metadata.documentation, cwl_version=CWL_VERSION)
 
     w.inputs: List[cwlgen.InputParameter] = [translate_input(i.input) for i in wf._inputs]
 
@@ -190,7 +192,7 @@ def translate_tool(tool, with_docker, with_resource_overrides=False):
         base_command=tool.base_command(),
         label=tool.id(),
         doc=metadata.documentation,
-        # cwl_version=Cwl.kCUR_VERSION,
+        cwl_version=CWL_VERSION,
         stdin=None,
         stderr=None,
         stdout=stdout

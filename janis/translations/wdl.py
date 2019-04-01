@@ -33,7 +33,7 @@ def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
 
     wf_str = wf_wdl.get_string()
     inp_str = json.dumps(inp_dict, sort_keys=True, indent=4, separators=(',', ': '))
-    tls_strs = [(t + ".wdl", tool_dicts[t].get_string()) for t in tool_dicts]
+    tls_strs = [("tools/" + t + ".wdl", tool_dicts[t].get_string()) for t in tool_dicts]
 
     if to_console:
         print("=== WORKFLOW ===")
@@ -72,7 +72,7 @@ def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
 
         # z = zipfile.ZipFile(d + "tools.zip", "w")
         for (tool_filename, tool) in tls_strs:
-            with open(d_tools + tool_filename, "w+") as wdlfile:
+            with open(d + tool_filename, "w+") as wdlfile:
                 Logger.log(f"Writing {tool_filename} to disk")
                 wdlfile.write(tool)
                 Logger.log(f"Written {tool_filename} to disk")
@@ -101,7 +101,7 @@ def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
             else:
                 Logger.critical(zip_result.stderr)
 
-        return wf_str, inp_str, tls_strs
+    return wf_str, inp_str, tls_strs
 
 
 def build_aliases(steps):
@@ -290,8 +290,11 @@ def translate_tool(tool, with_docker):
         for a in tool.arguments():
             if a.value is None:
                 val = None
+            elif isinstance(a.value, InputSelector):
+                val = translate_input_selector(selector=a.value)
             elif callable(getattr(a.value, "wdl", None)):
                 val = a.value.wdl()
+
             else:
                 val = a.value
             command_args.append(wdl.Task.Command.CommandArgument(a.prefix, val, a.position))

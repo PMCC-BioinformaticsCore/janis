@@ -4,15 +4,14 @@ from .wdl import dump_wdl as wdl_dump_workflow
 
 SupportedTranslation = str
 
-
 class SupportedTranslations:
     CWL: SupportedTranslation = "cwl"
     WDL: SupportedTranslation = "wdl"
 
 
-def dump_translation(workflow, translation: SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
-                     with_hints=False, with_resource_overrides=False, write_inputs_file=False, should_validate=False,
-                     should_zip=True):
+def translate_workflow(workflow, translation: SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
+                       with_hints=False, with_resource_overrides=False, write_inputs_file=False, should_validate=False,
+                       should_zip=True):
     if translation == SupportedTranslations.CWL:
         return cwl.dump_cwl(workflow, to_console=to_console, to_disk=to_disk, with_docker=with_docker,
                             with_hints=with_hints, with_resource_overrides=with_resource_overrides,
@@ -26,6 +25,7 @@ def dump_translation(workflow, translation: SupportedTranslation, to_console=Tru
     else:
         raise NotImplementedError(f"The requested translation ('{translation}') has not been implemented yet, "
                                   f"why not contribute one at '{GITHUB_URL}'.")
+
 
 def translate_tool(tool, translation: SupportedTranslation, with_docker, with_resource_overrides=False):
     if translation == SupportedTranslations.CWL:

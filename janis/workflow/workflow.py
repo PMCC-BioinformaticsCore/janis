@@ -1,16 +1,14 @@
 from typing import Dict, List, Tuple, Optional, Any, Union
 
 import networkx as nx
-import wdlgen as wdl
 
-from janis.translations import SupportedTranslation
-from janis.utils.janisconstants import RESOURCE_OVERRIDE_KEY, HINTS_KEY
+import janis.translations as translations
 from janis.graph.node import Node, NodeTypes, layout_nodes2
 from janis.graph.stepinput import StepInput
 from janis.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes, ToolType
+from janis.translations import SupportedTranslation
 from janis.types.common_data_types import Array
 from janis.types.data_types import DataType
-from janis.utils import first_value
 from janis.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
     InvalidInputsException
 from janis.utils.logger import Logger, LogLevel
@@ -19,7 +17,6 @@ from janis.utils.validators import Validators
 from janis.workflow.input import Input, InputNode
 from janis.workflow.output import Output, OutputNode
 from janis.workflow.step import Step, StepNode
-import janis.translations as translations
 
 
 class Workflow(Tool):
@@ -729,21 +726,21 @@ class Workflow(Tool):
     # TRANSLATIONS
 
     def translate(self, translation: SupportedTranslation, with_docker=True, with_resource_overrides=False):
-        return translations.dump_translation(self, translation=translation, to_console=False, to_disk=False,
-                                             with_hints=False, with_resource_overrides=with_resource_overrides,
-                                             should_zip=False, write_inputs_file=False, should_validate=False)
+        return translations.translate_workflow(self, translation=translation, to_console=False, to_disk=False,
+                                               with_hints=False, with_resource_overrides=with_resource_overrides,
+                                               should_zip=False, write_inputs_file=False, should_validate=False)
 
     def dump_translation(self, translation: SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
                          with_hints=False, with_resource_overrides=False, write_inputs_file=False,
                          should_validate=False,
                          should_zip=True):
-        return translations.dump_translation(self,
-                                             translation=translation,
-                                             to_console=to_console,
-                                             to_disk=to_disk,
-                                             with_docker=with_docker,
-                                             with_hints=with_hints,
-                                             with_resource_overrides=with_resource_overrides,
-                                             should_zip=should_zip,
-                                             write_inputs_file=write_inputs_file,
-                                             should_validate=should_validate)
+        return translations.translate_workflow(self,
+                                               translation=translation,
+                                               to_console=to_console,
+                                               to_disk=to_disk,
+                                               with_docker=with_docker,
+                                               with_hints=with_hints,
+                                               with_resource_overrides=with_resource_overrides,
+                                               should_zip=should_zip,
+                                               write_inputs_file=write_inputs_file,
+                                               should_validate=should_validate)

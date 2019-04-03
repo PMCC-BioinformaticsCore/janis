@@ -52,7 +52,6 @@ class Edge:
         ftype: ToolInput = self.finish.inputs()[self.ftag] \
             if self.ftag is not None else first_value(self.finish.inputs())
 
-        is_merge = False
         self.compatible_types = False
         self.scatter = False
 
@@ -66,8 +65,8 @@ class Edge:
 
             # Scattering event if ftype.input_type.canReceiveFrom(stype.output_type.subtype)
             if ftype.input_type.can_receive_from(stype.output_type.subtype()):
-                Logger.log(f"Scattering event between '{full_dot(self.start, self.stag)}' ({stype.output_type.id()}) "
-                           f"and '{full_dot(self.finish, self.ftag)}' ({ftype.input_type.id()})")
+                Logger.info(f"Scatter the connection between '{full_dot(self.start, self.stag)}' → "
+                            f"'{full_dot(self.finish, self.ftag)}' ({stype.output_type.id()} → {ftype.input_type.id()})")
                 self.compatible_types = True
                 self.scatter = True
                 return
@@ -78,23 +77,22 @@ class Edge:
             # check if s has a scatter step, then we sweet
             start_is_scattered = any(e.has_scatter() for e in self.start.connection_map.values())
             if start_is_scattered and self.finish.node_type != NodeTypes.OUTPUT:
-                Logger.log(f"Merge step between '{full_dot(self.start, self.stag)}' and "
+                Logger.log(f"This edge merges the inputs from '{full_dot(self.start, self.stag)}' for "
                            f"'{full_dot(self.finish, self.ftag)}'")
                 self.compatible_types = ftype.input_type.subtype().can_receive_from(stype.output_type)
             else:
                 self.compatible_types = ftype.input_type.can_receive_from(stype.output_type)
 
-            # although they're not strictly compatible, we'll double check if its array -> single (scatter)
-            if not self.compatible_types and isinstance(ftype.input_type, Array) \
-                    and ftype.input_type.subtype().can_receive_from(stype.output_type):
+            # Check if its array -> single (scatter)
+            if not self.compatible_types and ftype.input_type.subtype().can_receive_from(stype.output_type):
                 self.compatible_types = True
-                s = full_lbl(self.start, self.stag)
-                f = full_lbl(self.finish, self.ftag)
-                Logger.info(f"The edge that joins '{s}' → '{f}' will implicitly scatter")
+                s = full_dot(self.start, self.stag)
+                f = full_dot(self.finish, self.ftag)
+                Logger.log(f"Safely provided '{s}' to the array input '{f}'")
 
         if not self.compatible_types:
-            s = full_lbl(self.start, self.stag)
-            f = full_lbl(self.finish, self.ftag)
+            s = full_dot(self.start, self.stag)
+            f = full_dot(self.finish, self.ftag)
             Logger.critical(f"Mismatch of types when joining '{s}' to '{f}' "
                             f"({stype.output_type.id()} -/→ {ftype.input_type.id()})")
             Logger.log(f"No action taken to correct type-mismatch of '{s}' to {f}'")

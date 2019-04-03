@@ -637,7 +637,7 @@ class Workflow(Tool):
                 s = "/".join(input_parts)
                 Logger.log(f"The node '{snode.id()}' did not correctly reference an input of the tool "
                            f"'{snode.step.tool().id()}', this was automatically corrected "
-                           f"({s} → {lbl}/{t[0]})", LogLevel.WARNING)
+                           f"({s} → {lbl}.{t[0]})", LogLevel.WARNING)
             input_parts = [lbl, t[0]]
             return input_parts, t[1]
         elif len(input_parts) < 2:
@@ -647,8 +647,8 @@ class Workflow(Tool):
                                     (not ins[x].input_type.optional) and ins[x].input_type.can_receive_from(guess_type)]
                 if len(compatible_types) == 1:
                     inp = compatible_types[0]
-                    Logger.info(f"Guessed the compatible match for '{node.id()}' with source type '{guess_type.id()}'"
-                                f" → '{inp.input_type.id()}' ('{node.id()}' → '{node.id()}/{inp.tag}')")
+                    Logger.info(f"Guessed the compatible match between {'.'.join(referenced_from)} → {node.id()}.[unknown] with source type '{guess_type.id()}'"
+                                f" → '{inp.input_type.id()}' ('{node.id()}' → '{node.id()}.{inp.tag}')")
                     return [lbl, inp.tag], inp.input_type
                 else:
                     # Should this step also take into consideration the _optional_ nature of the node,
@@ -664,7 +664,7 @@ class Workflow(Tool):
                                     f"type '{ultra.input_type.id()}' to tag '{ultra.tag}'")
                         return [lbl, ultra.tag], ultra.input_type
                     else:
-                        s = "/".join(input_parts)
+                        s = ".".join(input_parts)
                         compat_str = ", ".join(f"{x.tag}: {x.input_type.id()}" for x in compatible_types)
                         raise Exception(f"An error occurred when connecting '{'.'.join(referenced_from)}' to "
                                         f"'{'.'.join(input_parts)}'. There were {len(compatible_types)} compatible "
@@ -673,7 +673,7 @@ class Workflow(Tool):
             else:
 
                 possible_tags = ", ".join(f"'{x}'" for x in ins)
-                s = "/".join(input_parts)
+                s = ".".join(input_parts)
                 Logger.critical(f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the "
                                 f"one of the following tags: {possible_tags}")
                 return input_parts, None

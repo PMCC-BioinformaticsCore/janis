@@ -510,8 +510,17 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
             if len(source) == 1:
                 source = source[0]
             elif len(source) > 1:
-                Logger.critical(f"ERROR: Conversion to WDL ({k}) does not properly support multiple sources. This will "
-                                f"only work if there are no secondary files AND this field ('{k}') is not scattered")
+                input_name_maps = ", ".join(edge.dotted_source())
+
+                Logger.warn(f"Conversion to WDL for field '{node.id()}.{k}' does not fully support multiple sources."
+                            f" This will only work if all of the inputs ({input_name_maps}) have the same secondaries "
+                            f"AND this field ('{k}') is not scattered")
+
+                unique_types = set((first_value(x.start.outputs()) if not x.stag else x.start.outputs()[x.stag]).output_type.name() for x in edge.source())
+                if len(unique_types) > 1:
+                    Logger.warn(f"There is more than one type of unique types mapped to the field '{node.id()}.{k}', "
+                                f"per previous warning this might cause issues at runtime")
+
                 inputs_map[k] = "[" + ", ".join(edge.dotted_source()) + "]"
                 f = edge.finish.inputs()[edge.ftag]
                 secs = f.input_type.subtype().secondary_files() if isinstance(f.input_type, Array) \

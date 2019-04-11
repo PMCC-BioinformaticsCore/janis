@@ -214,6 +214,7 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False):
             wf_wdl, _, wf_tools = translate_workflow(t, with_docker=with_docker, is_nested_tool=True)
             wtools[t.id()] = wf_wdl
             wtools.update(wf_tools)
+
         elif isinstance(t, CommandTool):
             wtools[t.id()] = translate_tool(t, with_docker=with_docker)
 
@@ -234,6 +235,29 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False):
     return w, inp, wtools
 
 
+
+
+def get_input_value_from_potential_selector(value, tool_id, string_environment=True):
+    if not value:
+        return None
+    if isinstance(value, str):
+        return value if string_environment else f'"{value}"'
+    elif isinstance(value, int) or isinstance(value, float):
+        return value
+    elif isinstance(value, InputSelector):
+        return translate_input_selector(selector=value, string_environment=string_environment)
+    elif isinstance(value, WildcardSelector):
+        raise Exception(f"A wildcard selector cannot be used as an argument value for '{tool_id}'")
+    elif isinstance(value, CpuSelector):
+        return translate_cpu_selector(value, string_environment=string_environment)
+    elif isinstance(value, MemorySelector):
+        return translate_mem_selector(value, string_environment=string_environment)
+    elif callable(getattr(value, "wdl", None)):
+        return value.wdl()
+
+    raise Exception("Could not detect type %s to convert to input value" % type(value))
+
+
 def translate_input_selector(selector: InputSelector, string_environment=True):
     if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
 
@@ -246,6 +270,26 @@ def translate_input_selector(selector: InputSelector, string_environment=True):
         pref = ('"%s" + ' % pre) if pre else ""
         suff = (' + "%s"' % suf) if suf else ""
         return pref + selector.input_to_select + suff
+
+
+def translate_cpu_selector(selector: CpuSelector, string_environment=True):
+    if string_environment:
+        return "${runtime_cpu}"
+    return "runtime_cpu"
+
+
+def translate_mem_selector(selector: MemorySelector, string_environment=True):
+    pre = selector.prefix if selector.prefix else ""
+    suf = selector.suffix if selector.suffix else ""
+
+    val = "floor(runtime_memory)"
+
+    if string_environment:
+        return f"{pre}${{{val}}}{suf}"
+    else:
+        pref = ('"%s" + ' % pre) if pre else ""
+        suff = (' + "%s"' % suf) if suf else ""
+        return pref + val + suff
 
 
 def translate_wildcard_selector(selector: WildcardSelector):
@@ -268,7 +312,9 @@ def translate_tool(tool, with_docker):
             ins.extend(wdl.Input(w, i.id()) for w in wd)
         else:
             default = i.default if i.default else i.input_type.default()
-            ins.append(wdl.Input(wd, i.id(), default))
+            default = get_input_value_from_potential_selector(default, tool.id(), string_environment=False)
+
+            ins.append(wdl.Input(wd, i.id(), default, requires_quotes=False))
 
             sec = value_or_default(i.input_type.subtype().secondary_files() if isinstance(i.input_type, Array)
                                    else i.input_type.secondary_files(), default=[])
@@ -291,13 +337,7 @@ def translate_tool(tool, with_docker):
         for a in tool.arguments():
             if a.value is None:
                 val = None
-            elif isinstance(a.value, InputSelector):
-                val = translate_input_selector(selector=a.value)
-            elif callable(getattr(a.value, "wdl", None)):
-                val = a.value.wdl()
-
-            else:
-                val = a.value
+            val = get_input_value_from_potential_selector(a.value, tool.id())
             command_args.append(wdl.Task.Command.CommandArgument(a.prefix, val, a.position))
 
     commands = [prepare_move_statement_for_input_to_localise(ti) for ti in tool.inputs() if ti.localise_file]

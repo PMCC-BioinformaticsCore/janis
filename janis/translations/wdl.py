@@ -44,8 +44,18 @@ def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
         print("\n=== TOOLS ===")
         [print(t[1]) for t in tls_strs]
 
+    d = os.path.expanduser("~") + f"/Desktop/{workflow.id()}/wdl/"
+
+    if write_inputs_file:
+        with open(d + workflow.id() + "-job.json", "w+") as wdlfile:
+            Logger.log(f"Writing {workflow.id()}-job.yml to disk")
+            wdlfile.write(inp_str)
+            # ruamel.yaml.dump(inp_dict, cwl, default_flow_style=False)
+            Logger.log(f"Written {workflow.id()}-job.yml to disk")
+    else:
+        Logger.log("Skipping writing input (yaml) job file")
+
     if to_disk:
-        d = os.path.expanduser("~") + f"/Desktop/{workflow.id()}/wdl/"
         d_tools = d + "tools/"
 
         if not os.path.isdir(d):
@@ -60,15 +70,6 @@ def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_h
             wdlfile.write(wf_str)
             # ruamel.yaml.dump(wf_dict, cwl, default_flow_style=False)
             Logger.log(f"Written {workflow.id()}.wdl to disk")
-
-        if write_inputs_file:
-            with open(d + workflow.id() + "-job.json", "w+") as wdlfile:
-                Logger.log(f"Writing {workflow.id()}-job.yml to disk")
-                wdlfile.write(inp_str)
-                # ruamel.yaml.dump(inp_dict, cwl, default_flow_style=False)
-                Logger.log(f"Written {workflow.id()}-job.yml to disk")
-        else:
-            Logger.log("Skipping writing input (yaml) job file")
 
         # z = zipfile.ZipFile(d + "tools.zip", "w")
         for (tool_filename, tool) in tls_strs:

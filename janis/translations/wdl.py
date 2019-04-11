@@ -1,23 +1,14 @@
 import os
 from typing import List, Dict, Optional, Any
-import itertools
 
 import wdlgen as wdl
-import janis.workflow.workflow as JW
 from janis.workflow.step import StepNode
-
 from janis.graph.stepinput import Edge, StepInput
-
 from janis.types import InputSelector, WildcardSelector, CpuSelector, MemorySelector
-
 from janis.types.common_data_types import Stdout, Array, Boolean, Filename, File
-
 from janis.utils.validators import Validators
-
 from janis.tool.commandtool import CommandTool
-
 from janis.utils import first_value, convert_expression_to_wdl
-
 from janis.tool.tool import Tool, ToolInput
 
 from janis.utils.logger import Logger
@@ -30,7 +21,8 @@ def value_or_default(ar, default):
 def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=False, with_hints=False,
              with_resource_overrides=False, write_inputs_file=False, should_validate=False, should_zip=True):
     import json
-    wf_wdl, inp_dict, tool_dicts = translate_workflow(workflow, with_docker=with_docker)
+    wf_wdl, inp_dict, tool_dicts = translate_workflow(workflow, with_docker=with_docker,
+                                                      with_resource_overrides=with_resource_overrides)
 
     wf_str = wf_wdl.get_string()
     inp_str = json.dumps(inp_dict, sort_keys=True, indent=4, separators=(',', ': '))
@@ -150,7 +142,7 @@ def apply_secondary_file_format_to_filename(filename: Optional[str], secondary_f
     return ".".join(split[:-min(leading, len(split) - 1)]) + fixed_sec
 
 
-def translate_workflow(wf, with_docker=True, is_nested_tool=False):
+def translate_workflow(wf, with_docker=True, is_nested_tool=False, with_resource_overrides=False):
     """
 
     :param with_docker:
@@ -179,6 +171,11 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False):
             secs = i.input.data_type.secondary_files() if not is_array else i.input.data_type.subtype().secondary_files()
             w.inputs.extend(
                 wdl.Input(wd, get_secondary_tag_from_original_tag(i.id(), s)) for s in secs)
+
+    resource_inputs = []
+    if with_resource_overrides:
+        resource_inputs = build_wdl_resource_inputs(wf)
+        w.inputs.extend(resource_inputs)
 
     # Convert self._outputs -> wdl.Output
     for o in wf._outputs:
@@ -212,16 +209,22 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False):
         t = s.step.tool()
 
         if isinstance(t, Workflow):
-            wf_wdl, _, wf_tools = translate_workflow(t, with_docker=with_docker, is_nested_tool=True)
+            wf_wdl, _, wf_tools = translate_workflow(t, with_docker=with_docker, is_nested_tool=True,
+                                                     with_resource_overrides=with_resource_overrides)
             wtools[t.id()] = wf_wdl
             wtools.update(wf_tools)
 
         elif isinstance(t, CommandTool):
-            wtools[t.id()] = translate_tool(t, with_docker=with_docker)
+            wtools[t.id()] = translate_tool(t, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
 
-        w.calls.append(
-            translate_step_node(s, tool_aliases[t.id().lower()].upper() + "." + t.id(), s.id())
-        )
+        resource_overrides = {}
+        for r in resource_inputs:
+            if not r.name.startswith(s.id()): continue
+
+            resource_overrides[r.name[(len(s.id()) + 1):]] = r.name
+        call = translate_step_node(s, tool_aliases[t.id().lower()].upper() + "." + t.id(), s.id(), resource_overrides)
+
+        w.calls.append(call)
 
     inp = {}
     for i in wf._inputs:
@@ -300,7 +303,7 @@ def translate_wildcard_selector(selector: WildcardSelector):
 def translate_tool_str(tool, with_docker):
     return translate_tool(tool, with_docker=with_docker).get_string()
 
-def translate_tool(tool, with_docker):
+def translate_tool(tool, with_docker, with_resource_overrides=False):
     if not Validators.validate_identifier(tool.id()):
         raise Exception(f"The identifier '{tool.id()}' for class '{tool.__class__.__name__}' was not validated by "
                         f"'{Validators.identifier_regex}' (must start with letters, and then only contain letters, "
@@ -351,16 +354,17 @@ def translate_tool(tool, with_docker):
     if with_docker:
         r.add_docker(tool.docker())
 
-    # generate resource inputs, for memory, cpu and disk at the moment
-    ins.extend([
-        wdl.Input(wdl.WdlType.parse_type("Int?"), "runtime_cpu"),
-        wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_memory"),
-        wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_disks"),
-    ])
+    if with_resource_overrides:
+        # generate resource inputs, for memory, cpu and disk at the moment
+        ins.extend([
+            wdl.Input(wdl.WdlType.parse_type("Int?"), "runtime_cpu"),
+            wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_memory"),
+            wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_disks"),
+        ])
 
-    r.add_cpus("runtime_cpu")
-    r.add_memory("${runtime_memory}")
-    r.kwargs["disks"] = "runtime_disks"
+        r.add_cpus("runtime_cpu")
+        r.add_memory("${runtime_memory}")
+        r.kwargs["disks"] = "runtime_disks"
 
     return wdl.Task(tool.id(), ins, outs, commands, r, version="development")
 
@@ -489,8 +493,8 @@ def translate_output_node(o, tool) -> List[wdl.Output]:
         return outputs
 
 
-def translate_step_node(node, step_identifier: str, step_alias: str):
-    import wdlgen as wdl
+def translate_step_node(node, step_identifier: str, step_alias: str, resource_overrides: Dict[str, str])\
+        -> wdl.WorkflowCallBase:
 
     ins = node.inputs()
 
@@ -620,7 +624,7 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
         elif edge in scatterable and secondary:
             # We're ensured through inheritance and .receiveBy that secondary files will match.
             ds = source.dotted_source()
-            print(f"Oh boii, we're gonna have some complicated scattering here with {len(secondary)} secondary file(s)")
+            Logger.log(f"Oh boii, we're gonna have some complicated scattering here with {len(secondary)} secondary file(s)")
 
             identifier = old_to_new_identifier[ds]
             inputs_map[k] = identifier + "[0]"
@@ -640,6 +644,8 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
                         inputs_map[get_secondary_tag_from_original_tag(k, sec)] = get_secondary_tag_from_original_tag(
                             ds, sec)
 
+    inputs_map.update(resource_overrides)
+
     call = wdl.WorkflowCall(step_identifier, step_alias, inputs_map)
 
     for s in scatterable:
@@ -658,24 +664,56 @@ def translate_step_node(node, step_identifier: str, step_alias: str):
     return call
 
 
-def build_wdl_resource_inputs(wf, hints, prefix=None) -> Dict[str, Any]:
+def build_wdl_resource_inputs_dict(wf, hints, prefix=None) -> Dict[str, Any]:
+    from janis.workflow.workflow import Workflow
+
     # returns a list of key, value pairs
     steps = {}
     if not prefix:
-        prefix = "" # wf.id() + "."
+        prefix = wf.id() + "."
+    else:
+        prefix += "_"
 
     for s in wf._steps:
         tool: Tool = s.step.tool()
 
+
         if isinstance(tool, CommandTool):
-            tool_pre = prefix + "_" + tool.id() + "_"
+            tool_pre = prefix + tool.id() + "_"
             steps.update([
                 (tool_pre + "runtime_memory", tool.memory(hints)),
                 (tool_pre + "runtime_cpu", tool.cpus(hints)),
                 (tool_pre + "runtime_disks", None)
             ])
-        elif isinstance(tool, JW.Workflow):
-            tool_pre = prefix + "." + s.id()
-            steps.update(build_wdl_resource_inputs(tool, hints, tool_pre))
+        elif isinstance(tool, Workflow):
+            tool_pre = prefix + s.id()
+            steps.update(build_wdl_resource_inputs_dict(tool, hints, tool_pre))
 
     return steps
+
+
+def build_wdl_resource_inputs(wf, prefix=None) -> List[wdl.Input]:
+    from janis.workflow.workflow import Workflow
+
+    # returns a list of key, value pairs
+    inputs = []
+    if not prefix:
+        prefix = "" # wf.id() + "."
+    else:
+        prefix += "_"
+
+    for s in wf._steps:
+        tool: Tool = s.step.tool()
+
+        if isinstance(tool, CommandTool):
+            tool_pre = prefix + tool.id() + "_"
+            inputs.extend([
+                wdl.Input(wdl.WdlType.parse_type("String?"), tool_pre + "runtime_memory"),
+                wdl.Input(wdl.WdlType.parse_type("Int?"), tool_pre + "runtime_cpu"),
+                wdl.Input(wdl.WdlType.parse_type("String?"), tool_pre + "runtime_disks")
+            ])
+        elif isinstance(tool, Workflow):
+            tool_pre = prefix + s.id()
+            inputs.extend(build_wdl_resource_inputs(tool, tool_pre))
+
+    return inputs

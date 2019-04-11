@@ -44,7 +44,7 @@ def build_resources_input(workflow, translation: SupportedTranslation, hints):
         raise NotImplementedError("CWL implementation is coming soon!")
 
     elif translation == SupportedTranslations.WDL:
-        return wdl.build_wdl_resource_inputs(workflow, hints)
+        return wdl.build_wdl_resource_inputs_dict(workflow, hints)
 
     else:
         raise NotImplementedError(f"The requested translation ('{translation}') has not been implemented yet, "

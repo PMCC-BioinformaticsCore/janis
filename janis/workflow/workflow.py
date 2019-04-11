@@ -6,7 +6,6 @@ import janis.translations as translations
 from janis.graph.node import Node, NodeTypes, layout_nodes2
 from janis.graph.stepinput import StepInput
 from janis.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes, ToolType
-from janis.translations import SupportedTranslation
 from janis.types.common_data_types import Array
 from janis.types.data_types import DataType
 from janis.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
@@ -725,12 +724,12 @@ class Workflow(Tool):
 
     # TRANSLATIONS
 
-    def translate(self, translation: SupportedTranslation, with_docker=True, with_resource_overrides=False):
+    def translate(self, translation: translations.SupportedTranslation, with_docker=True, with_resource_overrides=False):
         return translations.translate_workflow(self, translation=translation, to_console=False, to_disk=False,
                                                with_hints=False, with_resource_overrides=with_resource_overrides,
                                                should_zip=False, write_inputs_file=False, should_validate=False)
 
-    def dump_translation(self, translation: SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
+    def dump_translation(self, translation: translations.SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
                          with_hints=False, with_resource_overrides=False, write_inputs_file=False,
                          should_validate=False,
                          should_zip=True):
@@ -745,6 +744,7 @@ class Workflow(Tool):
                                                write_inputs_file=write_inputs_file,
                                                should_validate=should_validate)
 
-    def generate_resources_file(self, translation: SupportedTranslation, hints: Dict[str, Any]):
-        return translations.build_resources_input(self, translation, hints)
+    def generate_resources_file(self, translation: translations.SupportedTranslation, hints: Dict[str, Any]):
+        import json
+        return json.dumps(translations.build_resources_input(self, translation, hints), separators=(",", ": "), indent=4)
 

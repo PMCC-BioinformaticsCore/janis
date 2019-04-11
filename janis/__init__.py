@@ -18,7 +18,7 @@ Some terminology:
 
 """
 
-__version__ = "v0.2.12"
+__version__ = "v0.2.13"
 
 from janis.workflow.workflow import Workflow
 from janis.workflow.step import Step

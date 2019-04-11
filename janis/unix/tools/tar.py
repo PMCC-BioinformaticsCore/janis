@@ -30,6 +30,10 @@ class Tar(UnixTool):
             ToolOutput("tarred", File(), glob=InputSelector("tarName"))     # "$(inputs.tarName)")
         ]
 
+    @staticmethod
+    def docker():
+        return "ubuntu:latest"
+
 
 if __name__ == "__main__":
     print(Tar().help())

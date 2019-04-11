@@ -39,3 +39,7 @@ class DebugEchoInputs(UnixTool):
                 }
             }
         }
+
+    @staticmethod
+    def docker():
+        return "ubuntu:latest"

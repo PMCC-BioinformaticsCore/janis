@@ -22,3 +22,7 @@ class Echo(UnixTool):
 
     def outputs(self):
         return [ToolOutput("output", Stdout())]
+
+    @staticmethod
+    def docker():
+        return "ubuntu:latest"

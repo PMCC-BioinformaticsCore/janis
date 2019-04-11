@@ -23,3 +23,7 @@ class Cat(UnixTool):
 
     def outputs(self):
         return []
+
+    @staticmethod
+    def docker():
+        return "ubuntu:latest"

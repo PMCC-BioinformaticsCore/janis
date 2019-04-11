@@ -26,6 +26,10 @@ class Untar(UnixTool):
             ToolOutput("files", Array(File()), glob=WildcardSelector("*.java"))
         ]
 
+    @staticmethod
+    def docker():
+        return "ubuntu:latest"
+
 """
 
 EXAMPLE XML

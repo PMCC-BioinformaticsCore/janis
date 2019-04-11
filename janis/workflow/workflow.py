@@ -128,7 +128,7 @@ class Workflow(Tool):
 
     # For the most part, Just add edges as this will automatically add nodes to the graph
 
-    def _add_items(self, *args) -> List[Any]:
+    def add_items(self, *args) -> List[Any]:
         """
         Supports adding (Input | Step | Output | Tuple = construct edge)
         """

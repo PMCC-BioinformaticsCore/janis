@@ -44,10 +44,31 @@ class CommandTool(Tool, ABC):
     def base_command():
         raise Exception("Subclass MUST implement the 'base_command' method with str or [str] return types")
 
-    def memory(self) -> Optional[int]:
+    def memory(self, hints: Dict[str, Any]) -> Optional[float]:
+        """
+        These values are used to generate a separate runtime.json / runtime.yaml input
+        that can be passed to the execution engine to fill in for the specified hints.
+
+        These are now (2019-04-10) to be kept out of the workflow, to leave the workflow
+        truly portable.
+
+        This memory must be in GB!
+        :param hints: Dict[Key: value] of hints
+        :return: Optional[int]
+        """
         return None
 
-    def cpus(self) -> Optional[int]:
+    def cpus(self, hints: Dict[str, Any]) -> Optional[int]:
+        """
+        These values are used to generate a separate runtime.json / runtime.yaml input
+        that can be passed to the execution engine to fill in for the specified hints.
+
+        These are now (2019-04-10) to be kept out of the workflow, to leave the workflow
+        truly portable.
+
+        The CPU must be a whole number. If your tool contains threads
+        :return:
+        """
         return None
 
     def arguments(self) -> Optional[List[ToolArgument]]:

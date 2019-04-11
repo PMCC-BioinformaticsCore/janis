@@ -24,3 +24,6 @@ class Merge(UnixTool):
         return [
             ToolOutput("merged", Stdout())
         ]
+    @staticmethod
+    def docker():
+        return "ubuntu:latest"

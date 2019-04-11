@@ -30,10 +30,11 @@ class CaptureType(HintEnum):
     KEY = "captureType"
     TARGETED = "targeted"
     EXOME = "exome"
+    CHROMOSOME = "chromosome"
     THIRTYX = "30x"
     NINETYX = "90x"
     THREEHUNDREDX = "300x"
-    ALL = [TARGETED, EXOME, THIRTYX, NINETYX, THREEHUNDREDX]
+    ALL = [TARGETED, EXOME, CHROMOSOME, THIRTYX, NINETYX, THREEHUNDREDX]
 
     @staticmethod
     def key(): return CaptureType.KEY

@@ -60,7 +60,7 @@ templates_path = ['_templates']
 source_suffix = ['.rst', '.md']
 # source_suffix = '.rst'
 source_parsers = {
-    '.md': CommonMarkParser
+    # '.md': CommonMarkParser
 }
 
 # The master toctree document.

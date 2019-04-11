@@ -30,7 +30,50 @@ So, place your file called: `$toolname_$version.py`in a subfolder of the tool na
 
 For the example, we'll 
 
+## Resources (CPU / Memory)
 
+Resources are specified with the tools, but kept separate from the workflow specification. 
+This allows us to generate a `runtime.yml` or `runtime.json` inputs file that 
+specifies all the resources you need to run the workflow. 
+
+This in theory allows the user to keep the same workflow, and generate a new runtime file 
+for a new environment with no other changes.
+
+In your tool, you can override the following method stubs:
+
+1. Memory: The memory must be specified in Gigabytes:
+
+```python
+    def memory(self, hints: Dict[str, Any]) -> Optional[float]:
+        return None
+``` 
+
+2. CPUs: The number of CPUs must be specified in whole numbers
+
+```python
+    def cpus(self, hints: Dict[str, Any]) -> Optional[int]:
+        return None
+```
+
+### Resource dependent tools
+
+To optimise some tools, you are required to specify some runtime conditions such as:
+
+#### Memory
+
+For example, in Java you have to specify the [maximum memory allocation pool](https://stackoverflow.com/a/14763095) 
+as a Java runtime parameter (`--xmx`). 
+
+You can use the `janis.types.MemorySelector` as a placeholder. This will return the `math.floor`
+of the memory value provided in the tool specification as a runtime attribute.
+
+For example, within the GATK application, 
+
+#### CPUs and Threads
+
+- Number of threads that the program has access to.
+
+You can specify the number of threads as a default value by using the `janis.types.CpuSelector` class as a placeholder.
 
 ## Advanced versioning
 _The section is under construction_.

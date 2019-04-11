@@ -744,3 +744,7 @@ class Workflow(Tool):
                                                should_zip=should_zip,
                                                write_inputs_file=write_inputs_file,
                                                should_validate=should_validate)
+
+    def generate_resources_file(self, translation: SupportedTranslation, hints: Dict[str, Any]):
+        return translations.build_resources_input(self, translation, hints)
+

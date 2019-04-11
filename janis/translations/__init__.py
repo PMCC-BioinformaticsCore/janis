@@ -37,3 +37,15 @@ def translate_tool(tool, translation: SupportedTranslation, with_docker, with_re
     else:
         raise NotImplementedError(f"The requested translation ('{translation}') has not been implemented yet, "
                                   f"why not contribute one at '{GITHUB_URL}'.")
+
+
+def build_resources_input(workflow, translation: SupportedTranslation, hints):
+    if translation == SupportedTranslations.CWL:
+        raise NotImplementedError("CWL implementation is coming soon!")
+
+    elif translation == SupportedTranslations.WDL:
+        return wdl.build_wdl_resource_inputs(workflow, hints)
+
+    else:
+        raise NotImplementedError(f"The requested translation ('{translation}') has not been implemented yet, "
+                                  f"why not contribute one at '{GITHUB_URL}'.")

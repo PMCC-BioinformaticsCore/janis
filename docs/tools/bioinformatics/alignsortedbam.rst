@@ -22,7 +22,6 @@ name          type     documentation
 ============  =======  ===============
 out_bwa       SAM
 out_samtools  BAM
-out_sortsam   BamPair
 out           BamPair
 ============  =======  ===============
 
@@ -36,10 +35,9 @@ Required inputs
 ======================  =============  ========  ==========  ===============
 name                    type           prefix    position    documentation
 ======================  =============  ========  ==========  ===============
-read_group_header_line  String
 fastq                   Fastq
+read_group_header_line  String
 reference               FastaWithDict
-tmpdir                  Directory
 ======================  =============  ========  ==========  ===============
 
 Optional inputs
@@ -58,4 +56,4 @@ Author: Michael Franklin
 
 
 *Align sorted BAM was last updated on **Unknown***.
-*This page was automatically generated on 2019-02-27*.
+*This page was automatically generated on 2019-04-11*.

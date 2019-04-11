@@ -59,7 +59,7 @@ name       type           prefix         position  documentation
 =========  =============  ===========  ==========  ==================================
 inputRead  BamPair        --input                  BAM/SAM/CRAM file containing reads
 reference  FastaWithDict  --reference           5  Reference sequence file
-dbsnp      VCFIDX         --dbsnp               7  (Also: -D) A dbSNP VCF file.
+dbsnp      vcf-gz-tbi     --dbsnp               7  (Also: -D) A dbSNP VCF file.
 =========  =============  ===========  ==========  ==================================
 
 Optional inputs
@@ -88,7 +88,6 @@ heterozygosity                            Optional<Double>         --heterozygos
 heterozygosityStdev                       Optional<Double>         --heterozygosity-stdev                                       (default 0.01) Standard deviation of heterozygosity for SNP and indel calling.
 indelHeterozygosity                       Optional<Double>         --indel-heterozygosity                                       (default: 1.25E-4) Heterozygosity for indel calling. This argument informs the prior probability of having an indel at a site. (See heterozygosity)
 intervalMergingRule                       Optional<String>         --interval-merging-rule                                      -imr (default: ALL) Interval merging rule for abutting intervals. By default, the program merges abutting intervals (i.e. intervals that are directly side-by-side but do not actually overlap) into a single continuous interval. However you can change this behavior if you want them to be treated as separate intervals instead. The --interval-merging-rule argument is an enumerated type (IntervalMergingRule), which can have one of the following values:[ALL, OVERLAPPING]
-intervals                                 Optional<bed>            --intervals                                                  -L	One or more genomic intervals over which to operate
 maxReadsPerAlignmentStart                 Optional<Integer>        --max-reads-per-alignment-start                              (default: 50) Maximum number of reads to retain per alignment start position. Reads above this threshold will be downsampled. Set to 0 to disable.
 minBaseQualityScore                       Optional<Integer>        --min-base-quality-score                                     -mbq (default: 10) Minimum base quality required to consider a base for calling
 nativePairHmmThreads                      Optional<Integer>        --native-pair-hmm-threads                                    (default: 4) How many threads should a native pairHMM implementation use
@@ -103,6 +102,7 @@ sitesOnlyVcfOutput                        Optional<Boolean>        --sites-only-
 standardMinConfidenceThresholdForCalling  Optional<Double>         --standard-min-confidence-threshold-for-calling              -stand-call-conf (default: 10.0) The minimum phred-scaled confidence threshold at which variants should be called
 useNewQualCalculator                      Optional<Boolean>        --use-new-qual-calculator                                    -new-qual If provided, we will use the new AF model instead of the so-called exact model
 outputFilename                            Optional<Filename>       --output                                                  8  File to which variants should be written
+intervals                                 Optional<bed>            --intervals                                                  -L (BASE) One or more genomic intervals over which to operate
 ========================================  =======================  ===============================================  ==========  =================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 
 
@@ -113,4 +113,4 @@ Author: Michael Franklin
 
 
 *GATK4: Haplotype Caller was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-02-27*.
+*This page was automatically generated on 2019-04-11*.

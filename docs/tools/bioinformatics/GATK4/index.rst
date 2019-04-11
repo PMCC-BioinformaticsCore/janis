@@ -21,9 +21,10 @@ Automatically generated index page for {module} {title}
    gatk4printreads
    gatk4printreads
    gatk4sortsam
+   gatk4sortsam
    gatkhaplotypecaller
    gatkhaplotypecaller
    gatkmutect2
    gatkmutect2
 
-*This page was auto-generated on 27/02/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 11/04/2019. Please do not directly alter the contents of this page.*

@@ -60,13 +60,14 @@ reference  FastaWithDict  -R                    Reference sequence
 Optional inputs
 ***************
 
-==============  ===================  =================  ==========  ==================================
-name            type                 prefix               position  documentation
-==============  ===================  =================  ==========  ==================================
-outputFilename  Optional<Filename>   -O                             Write output to this file
-recalFile       Optional<tsv>        --bqsr-recal-file              Input recalibration table for BQSR
-tmpDir          Optional<Directory>  --tmp-dir                  11  Temp directory to use.
-==============  ===================  =================  ==========  ==================================
+==============  ==================  =================  ==========  =============================================================
+name            type                prefix               position  documentation
+==============  ==================  =================  ==========  =============================================================
+outputFilename  Optional<Filename>  -O                             Write output to this file
+recalFile       Optional<tsv>       --bqsr-recal-file              Input recalibration table for BQSR
+intervals       Optional<bed>       --intervals                    -L (BASE) One or more genomic intervals over which to operate
+tmpDir          Optional<String>    --tmp-dir                  11  Temp directory to use.
+==============  ==================  =================  ==========  =============================================================
 
 
 Metadata
@@ -76,4 +77,4 @@ Author: Michael Franklin
 
 
 *GATK4: Apply base quality score recalibration was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-02-27*.
+*This page was automatically generated on 2019-04-11*.

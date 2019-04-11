@@ -13,4 +13,4 @@ Automatically generated index page for {module} {title}
    samtoolsview
    samtoolsview
 
-*This page was auto-generated on 27/02/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 11/04/2019. Please do not directly alter the contents of this page.*

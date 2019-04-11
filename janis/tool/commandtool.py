@@ -35,8 +35,9 @@ class CommandTool(Tool, ABC):
         return cls.tool()
 
     @staticmethod
+    @abstractmethod
     def docker():
-        return "ubuntu:latest"
+        pass
 
     @staticmethod
     @abstractmethod

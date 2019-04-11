@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Any, List, Tuple
 
 
 def first_value(d: Dict):
@@ -30,3 +30,12 @@ def convert_expression_to_wdl(expression):
         return f'"{{{m2.group()[9:-1]}}}{expression[m1.span()[1]:]}"'
 
     return f'"{expression}"'
+
+
+def get_value_for_hints_and_ordered_resource_tuple(hints: Dict[str, Any], tuples: List[Tuple[str, Dict[str, int]]]):
+    for k,d in tuples:
+        if k not in hints: continue
+        v = hints[k]
+        if v not in d: continue
+        return d[v]
+    return None

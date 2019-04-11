@@ -27,6 +27,9 @@ class ArrayTestTool(CommandTool):
     def friendly_name(self):
         return "'test_step' array of strings tool"
 
+    @staticmethod
+    def docker(): return None
+
 
 class TestStep(TestCase):
 

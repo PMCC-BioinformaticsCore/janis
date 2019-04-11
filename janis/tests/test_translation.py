@@ -20,6 +20,9 @@ class TestTool(CommandTool):
 
     def friendly_name(self) -> str: return "Tool for testing translation"
 
+    @staticmethod
+    def docker(): return "ubuntu:latest"
+
 
 class TestCwl(unittest.TestCase):
 

@@ -31,6 +31,10 @@ class SingleTestTool(CommandTool):
     def outputs(self):
         return []
 
+    @staticmethod
+    def docker():
+        return None
+
 
 class ArrayTestTool(CommandTool):
 
@@ -52,6 +56,10 @@ class ArrayTestTool(CommandTool):
 
     def outputs(self):
         return []
+
+    @staticmethod
+    def docker():
+        return None
 
 
 class TestWorkflow(TestCase):
@@ -102,7 +110,7 @@ class TestWorkflow(TestCase):
         w = Workflow("test_add_node")
         inp = Input("inp", String())
         stp = Step("stp", Cat())
-        w._add_items([inp, stp])
+        w.add_items([inp, stp])
         self.assertEqual(len(w._inputs), 1)
         self.assertEqual(len(w._steps), 1)
         self.assertEqual(len(w._outputs), 0)
@@ -124,7 +132,7 @@ class TestWorkflow(TestCase):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
         stp = Step("stp", Echo())       # Only has one input, with no output
-        w._add_items([inp, stp])
+        w.add_items([inp, stp])
         e = w.add_edge(inp, stp)
 
         self.assertEqual(e.start.id(), inp.id())
@@ -224,7 +232,7 @@ class TestWorkflow(TestCase):
         inp = Input("inp", TarFile())
         stp = Step("stp_workflow", sub_w)
         out = Output("out", Array(File()))
-        w._add_items([inp, stp, out])
+        w.add_items([inp, stp, out])
         w.add_pipe(inp, stp, out)
 
         # w.dump_cwl(to_disk=True)

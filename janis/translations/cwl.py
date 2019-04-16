@@ -1,9 +1,31 @@
+"""
+CWL
+
+This is one of the more complicated classes, it takes the janis in-memory representation of a workflow,
+and converts it into the equivalent CWL objects. Janis was built alongside testing for CWL, so a lot of
+the concepts directly or pretty closely match. There are a few extra things that Janis has that need to
+be mapped back.
+
+This file is logically structured similar to the WDL equiv:
+
+- Imports
+- dump_cwl
+- translate_workflow
+- translate_tool (command tool)
+- other translate methods
+- selector helpers (InputSelector, WildcardSelector, CpuSelector, MemorySelector)
+- helper methods
+"""
+
+## IMPORTS
+
 import os
 import ruamel.yaml
 import cwlgen
-from typing import List, Dict, Type
+from typing import List, Dict, Type, Optional, Any
 
 from janis.hints import Hint, HintEnum, HintArray, HINTS
+from janis.workflow.input import Input
 from janis.tool.tool import Tool, ToolInput
 from janis.tool.commandtool import CommandTool
 from janis.types import InputSelector, Selector, WildcardSelector
@@ -16,11 +38,12 @@ from janis.workflow.step import StepNode
 CWL_VERSION = "v1.0"
 
 
-def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False, with_hints=False,
+## TRANSLATION
+
+def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False,
              with_resource_overrides=False, write_inputs_file=False, should_validate=False, should_zip=True):
     wf_cwl, inp_dict, tools_cwl = translate_workflow(workflow,
                                                      with_docker=with_docker,
-                                                     with_hints=with_hints,
                                                      with_resource_overrides=with_resource_overrides)
 
     wf_dict = wf_cwl.get_dict()
@@ -108,25 +131,23 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
 
     w.inputs: List[cwlgen.InputParameter] = [translate_input(i.input) for i in wf._inputs]
 
+    resource_inputs = []
     if with_resource_overrides:
-        rOverride = cwlgen.InputParameter(
-            RESOURCE_OVERRIDE_KEY,
-            param_type=["null", generate_cwl_resource_override_schema_for_steps(wf)]
-        )
-        w.inputs.append(rOverride)
+        resource_inputs = build_cwl_resource_inputs(wf)
+        w.inputs.extend(resource_inputs)
 
-    w.steps: List[cwlgen.WorkflowStep] = [translate_step(s, is_nested_tool=is_nested_tool) for s in wf._steps]
+
+    w.steps: List[cwlgen.WorkflowStep] = []
+
+    for s in wf._steps:
+        resource_overrides = {}
+        for r in resource_inputs:
+            if not r.id.startswith(s.id()): continue
+
+            resource_overrides[r.id[(len(s.id()) + 1):]] = r.id
+        w.steps.append(translate_step(s, is_nested_tool=is_nested_tool, resource_overrides=resource_overrides))
 
     w.outputs = [translate_output_node(o) for o in wf._outputs]
-
-    #
-
-    if with_hints:
-        resource_schema = get_cwl_schema_for_recognised_hints()
-        nullable_resource_schema = ["null", resource_schema]
-        w.inputs.append(cwlgen.InputParameter(HINTS_KEY, param_type=nullable_resource_schema))
-        for s in w.steps:
-            s.inputs.append(cwlgen.WorkflowStepInput(HINTS_KEY, HINTS_KEY))
 
     w.requirements.append(cwlgen.InlineJavascriptReq())
     w.requirements.append(cwlgen.StepInputExpressionRequirement())
@@ -151,22 +172,7 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
             tools.append(wf_cwl)
             tools.extend(subtools)
         elif isinstance(tool, CommandTool):
-            tool_cwl = translate_tool(tool, with_docker=with_docker)  # tool.cwl(with_docker=with_docker)
-            if with_hints:
-                tool_cwl.inputs.append(
-                    cwlgen.InputParameter(HINTS_KEY, param_type=["null", get_cwl_schema_for_recognised_hints()]))
-                hm = tool.hint_map()
-                if hm:
-                    tool_cwl.requirements.append(cwlgen.ResourceRequirement(
-                        cores_min=generate_hint_selectors_for_hint_map("coresMin", hm),
-                        cores_max=generate_hint_selectors_for_hint_map("coresMax", hm),
-                        ram_min=generate_hint_selectors_for_hint_map("ramMin", hm),
-                        ram_max=generate_hint_selectors_for_hint_map("ramMax", hm)
-                    ))
-
-            if with_resource_overrides:
-                sins = [translate_tool_input(ToolInput(k, Int(optional=True))) for k in keys]
-                tool_cwl.inputs.extend(sins)
+            tool_cwl = translate_tool(tool, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
 
             tools.append(tool_cwl)
         else:
@@ -233,23 +239,27 @@ def translate_tool(tool, with_docker, with_resource_overrides=False):
     if args:
         tool_cwl.arguments.extend(translate_tool_argument(a) for a in tool.arguments())
 
-    keys = ["coresMin", "coresMax", "ramMin", "ramMax"]
     if with_resource_overrides:
         # work out whether (the tool of) s is a workflow or tool
-        resource_override_step_inputs = [cwlgen.WorkflowStepInput(
-            input_id=k,
-            source=RESOURCE_OVERRIDE_KEY,
-            value_from=f"${{var k = \"{k}\";var stepId = \"{s.id}\";if(!self) return null;if (!(stepId in self)) "
-            "return null;return self[stepId][k]}}"
-        ) for k in keys]
-        tool_cwl.inputs.extend(resource_override_step_inputs)
+        tool_cwl.inputs.extend([
+            cwlgen.CommandInputParameter("runtime_memory", param_type="string?"),
+            cwlgen.CommandInputParameter("runtime_cpu", param_type="int?"),
+            # cwlgen.CommandInputParameter("runtime_disks", param_type="string?"),
+        ])
+
+        tool_cwl.requirements.append(cwlgen.ResourceRequirement(
+            cores_min="$(inputs.runtime_cpu)",
+            ram_min="$(inputs.runtime_memory)",
+        ))
+
 
     return tool_cwl
 
 
-def translate_input(inp):
+def translate_input(inp: Input):
     return cwlgen.InputParameter(
         param_id=inp.id(),
+        default=inp.default,
         label=inp.label,
         secondary_files=inp.data_type.secondary_files(),
         param_format=None,
@@ -279,8 +289,7 @@ def translate_output(outp, source):
     )
 
 
-def translate_tool_input(toolinput):
-    default = toolinput.default if toolinput.default else toolinput.input_type.default()
+def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
 
     data_type = toolinput.input_type.cwl_type()
     input_binding = cwlgen.CommandLineBinding(
@@ -319,17 +328,9 @@ def translate_tool_input(toolinput):
         # streamable=None,
         doc=toolinput.doc,
         input_binding=input_binding,
-        default=default,
+        default=toolinput.default,
         param_type=data_type
     )
-
-
-def translate_input_selector(selector: InputSelector):
-    if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
-    pre = selector.prefix if selector.prefix else ""
-    suf = selector.suffix if selector.suffix else ""
-    basename_extra = ".basename" if selector.use_basename else ""
-    return f"{pre}$(inputs.{selector.input_to_select}{basename_extra}){suf}"
 
 
 def translate_tool_argument(argument):
@@ -369,24 +370,7 @@ def translate_tool_output(output, **debugkwargs):
     )
 
 
-def translate_to_cwl_glob(glob, **debugkwargs):
-    if not glob: return None
-
-    if not isinstance(glob, Selector):
-        Logger.warn("String globs are being phased out from tool output selections, please use the provided "
-                    "Selector (InputSelector or WildcardSelector) classes. " + str(debugkwargs))
-        return glob
-
-    if isinstance(glob, InputSelector):
-        return translate_input_selector(glob)
-
-    elif isinstance(glob, WildcardSelector):
-        return glob.wildcard
-
-    raise Exception("Unimplemented selector type: " + glob.__class__.__name__)
-
-
-def translate_step(step: StepNode, is_nested_tool=False):
+def translate_step(step: StepNode, is_nested_tool=False, resource_overrides=Dict[str, str]):
     run_ref = ("{tool}.cwl" if is_nested_tool else "tools/{tool}.cwl").format(tool=step.step.tool().id())
     cwlstep = cwlgen.WorkflowStep(
         step_id=step.id(),
@@ -411,21 +395,20 @@ def translate_step(step: StepNode, is_nested_tool=False):
                 raise Exception(f"Error when building connections for cwlstep '{step.id()}', "
                                 f"could not find required connection: '{k}'")
 
-        inp_t = step.inputs()[k].input_type
         edge = step.connection_map[k]
-        default = edge.default if edge.default else inp_t.default()
         d = cwlgen.WorkflowStepInput(
             input_id=inp.tag,
-            source=edge.slashed_source()
-            ,
+            source=edge.slashed_source(),
             link_merge=None,  # this will need to change when edges have multiple source_map
-            default=default,
             value_from=None
         )
         if edge.has_scatter():
             scatterable.append(k)
 
         cwlstep.inputs.append(d)
+
+    for r in resource_overrides:
+        cwlstep.inputs.append(cwlgen.WorkflowStepInput(input_id=r, value_from=f"$(inputs.{resource_overrides[r]})"))
 
     if len(scatterable) > 0:
         if len(scatterable) > 1:
@@ -437,70 +420,78 @@ def translate_step(step: StepNode, is_nested_tool=False):
     return cwlstep
 
 
-def generate_cwl_resource_override_schema():
-    schema = cwlgen.CommandInputRecordSchema()
-    schema.fields = [
-        cwlgen.CommandInputRecordSchema.CommandInputRecordField("coresMin", ["long", "string", "null"]),
-        cwlgen.CommandInputRecordSchema.CommandInputRecordField("coresMax", ["int", "string", "null"]),
-        cwlgen.CommandInputRecordSchema.CommandInputRecordField("ramMin", ["long", "string", "null"]),
-        cwlgen.CommandInputRecordSchema.CommandInputRecordField("ramMax", ["int", "string", "null"])
-    ]
-    return schema
+## SELECTORS
+
+def translate_input_selector(selector: InputSelector):
+    if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
+    pre = selector.prefix if selector.prefix else ""
+    suf = selector.suffix if selector.suffix else ""
+    basename_extra = ".basename" if selector.use_basename else ""
+    return f"{pre}$(inputs.{selector.input_to_select}{basename_extra}){suf}"
 
 
-def generate_cwl_resource_override_schema_for_steps(wf):
+def translate_to_cwl_glob(glob, **debugkwargs):
+    if not glob: return None
+
+    if not isinstance(glob, Selector):
+        Logger.critical("String globs are being phased out from tool output selections, please use the provided "
+                    "Selector (InputSelector or WildcardSelector) classes. " + str(debugkwargs))
+        return glob
+
+    if isinstance(glob, InputSelector):
+        return translate_input_selector(glob)
+
+    elif isinstance(glob, WildcardSelector):
+        return glob.wildcard
+
+    raise Exception("Unimplemented selector type: " + glob.__class__.__name__)
+
+
+def build_cwl_resource_inputs_dict(wf, hints, prefix=None) -> Dict[str, Any]:
     from janis.workflow.workflow import Workflow
-    schema = cwlgen.CommandInputRecordSchema()
 
-    for step in wf._steps:
-        tool = step.step.tool()
-        if isinstance(tool, Workflow):
-            key = tool.id() + "_resource_override"  # self.RESOURCE_OVERRIDE_KEY
-            override_schema = generate_cwl_resource_override_schema_for_steps(tool)
-        else:
-            key = step.step.id()
-            override_schema = generate_cwl_resource_override_schema()
+    # returns a list of key, value pairs
+    steps: Dict[str, Optional[Any]] = {}
 
-        schema.fields.append(cwlgen.CommandInputRecordSchema.CommandInputRecordField(key, ["null", override_schema]))
+    for s in wf._steps:
+        tool: Tool = s.step.tool()
 
-    return schema
+        if isinstance(tool, CommandTool):
+            tool_pre = prefix + s.id() + "_"
+            steps.update({
+                tool_pre + "runtime_memory": tool.memory(hints),
+                tool_pre + "runtime_cpu": tool.cpus(hints),
+                # tool_pre + "runtime_disks": None
+            })
+        elif isinstance(tool, Workflow):
+            tool_pre = prefix + s.id()
+            steps.update(build_cwl_resource_inputs_dict(tool, hints, tool_pre))
 
-
-def generate_hint_selectors_for_hint_map(resource_key, hint_map):
-    import json
-    return f"""${{
-var key = '{resource_key}';
-if (inputs["{RESOURCE_OVERRIDE_KEY}"] && inputs["{RESOURCE_OVERRIDE_KEY}"][key])
-    return inputs["{RESOURCE_OVERRIDE_KEY}"][key];
-var hints = inputs.hints;
-if (!hints) return null;
-var hintMap = {json.dumps(hint_map)};
-for (var hint in hintMap) {{
-    var providedHintValue = hints[hint];
-    if (!providedHintValue || !(providedHintValue in hintMap[hint])) continue;
-    var hintValueToResourceMap = hintMap[hint][providedHintValue];
-    if (hintValueToResourceMap[key]) return hintValueToResourceMap[key];
-}}
-return null;
-}}"""  # .replace("    ", "").replace("\n", "")
+    return steps
 
 
-def get_cwl_schema_for_recognised_hints():
-    schema = cwlgen.CommandInputRecordSchema("hints")
+def build_cwl_resource_inputs(wf, prefix=None) -> List[cwlgen.InputParameter]:
+    from janis.workflow.workflow import Workflow
 
-    def prepare_hint(hint_class: Type[Hint]):
-        name = hint_class.key() + "_schema"
+    # returns a list of key, value pairs
+    inputs = []
+    if not prefix:
+        prefix = "" # wf.id() + "."
+    else:
+        prefix += "_"
 
-        if issubclass(hint_class, HintEnum):
-            # assume is an enum
-            return cwlgen.CommandInputEnumSchema(label=hint_class.key(), name=name, symbols=hint_class.symbols())
-        elif issubclass(hint_class, HintArray):
-            return cwlgen.CommandInputArraySchema(items=hint_class.items(), label=hint_class.key())
-        else:
-            return "string?"
+    for s in wf._steps:
+        tool: Tool = s.step.tool()
 
-    schema.fields = [
-        cwlgen.CommandInputRecordSchema.CommandInputRecordField(hint.key(), ["null", prepare_hint(hint)])
-        for hint in HINTS]
+        if isinstance(tool, CommandTool):
+            tool_pre = prefix + s.id() + "_"
+            inputs.extend([
+                cwlgen.InputParameter(tool_pre + "runtime_memory", param_type="string?"),
+                cwlgen.InputParameter(tool_pre + "runtime_cpu", param_type="int?"),
+                # cwlgen.InputParameter(tool_pre + "runtime_disks", param_type="string?"),
+            ])
+        elif isinstance(tool, Workflow):
+            tool_pre = prefix + s.id()
+            inputs.extend(build_cwl_resource_inputs(tool, tool_pre))
 
-    return schema
+    return inputs

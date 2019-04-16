@@ -39,3 +39,18 @@ def get_value_for_hints_and_ordered_resource_tuple(hints: Dict[str, Any], tuples
         if v not in d: continue
         return d[v]
     return None
+
+
+def zip_directory(parent_dir, dir_name):
+    import subprocess
+    from .logger import Logger
+    from os import chdir
+
+    Logger.info("Zipping tools")
+    chdir(parent_dir)
+
+    zip_result = subprocess.run(["zip", "-r", f"{dir_name}.zip", f"{dir_name}/"])
+    if zip_result.returncode == 0:
+        Logger.info("Zipped tools")
+    else:
+        Logger.critical(zip_result.stderr)

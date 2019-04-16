@@ -2,9 +2,8 @@
 # Implementations #
 ###################
 from typing import Dict, Any
-import wdlgen as wdl
-import cwlgen as cwl
-from wdlgen import WdlType
+import wdlgen
+import cwlgen
 
 from janis.types.data_types import DataType, NativeTypes, NativeType
 
@@ -19,7 +18,8 @@ class String(DataType):
     def primitive():
         return NativeTypes.kStr
 
-    def doc(self):
+    @staticmethod
+    def doc():
         return "A string"
 
     @classmethod
@@ -47,7 +47,7 @@ class Filename(String):
         self.extension = extension
         self.suffix = suffix
         self.guid = guid
-        super().__init__(optional=True, default=self.generated_filename())
+        super().__init__(optional=True)
 
     @staticmethod
     def name() -> str:
@@ -63,7 +63,8 @@ class Filename(String):
         self.optional = True
         return t
 
-    def doc(self) -> str:
+    @staticmethod
+    def doc() -> str:
         return """
 This class is a placeholder for generated filenames, by default it is optional and CAN be overrided, 
 however the program has been structured in a way such that these names will be generated based on the step label. 
@@ -75,7 +76,7 @@ concerned what the filename should be. The Filename DataType should NOT be used 
     def schema(cls) -> Dict:
         pass
 
-    def map_cwl_type(self, parameter: cwl.Parameter):
+    def map_cwl_type(self, parameter: cwlgen.Parameter):
         super().map_cwl_type(parameter)
         parameter.default = self.generated_filename()
 
@@ -96,7 +97,7 @@ concerned what the filename should be. The Filename DataType should NOT be used 
         return super().can_receive_from(other)
 
     def wdl(self):
-        return WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()))
+        return wdlgen.WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()))
 
 
 class Int(DataType):
@@ -185,6 +186,12 @@ class Boolean(DataType):
 
 class File(DataType):
 
+    def __init__(self, optional=False):
+        """
+        Specifically exclude default
+        """
+        super(File, self).__init__(optional=optional)
+
     @staticmethod
     def name():
         return "File"
@@ -207,16 +214,17 @@ class File(DataType):
 
     def cwl_input(self, value: Any):
         return {
-            "class": cwl.CwlTypes.FILE,
+            "class": cwlgen.CwlTypes.FILE,
             "path": value
         }
 
-    # def wdl(self):
-    #     # Todo: SECONDARY FILES
-    #     return wdlgen.WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional())
-
-
 class Directory(DataType):
+    def __init__(self, optional=False):
+        """
+        Specifically exclude default
+        """
+        super(Directory, self).__init__(optional=optional)
+
     @staticmethod
     def name():
         return "Directory"
@@ -243,7 +251,7 @@ class Directory(DataType):
     def cwl_input(self, value: Any):
         # WDL: "{workflowName}.label" = meta["path"}
         return {
-            "class": cwl.CwlTypes.DIRECTORY,
+            "class": cwlgen.CwlTypes.DIRECTORY,
             "path": value
         }
 
@@ -285,15 +293,15 @@ class Array(DataType):
         return {"type": "array"}
 
     def cwl_type(self):
-        inp = cwl.CommandInputArraySchema(
+        inp = cwlgen.CommandInputArraySchema(
             items=self._t.cwl_type(),
             # label=None,
             # input_binding=None
         )
         return [inp, "null"] if self.optional else inp
 
-    def map_cwl_type(self, parameter: cwl.Parameter) -> cwl.Parameter:
-        parameter.type = cwl.CommandInputArraySchema(
+    def map_cwl_type(self, parameter: cwlgen.Parameter) -> cwlgen.Parameter:
+        parameter.type = cwlgen.CommandInputArraySchema(
             items=None,
             label=None,
             input_binding=None
@@ -308,9 +316,9 @@ class Array(DataType):
         else:
             raise Exception(f"Input value for input '{self.id()}' was not an array")
 
-    def wdl(self) -> wdl.WdlType:
-        ar = wdl.ArrayType(self._t.wdl(), requires_multiple=False)
-        return wdl.WdlType(ar, optional=self.optional)
+    def wdl(self) -> wdlgen.WdlType:
+        ar = wdlgen.ArrayType(self._t.wdl(), requires_multiple=False)
+        return wdlgen.WdlType(ar, optional=self.optional)
 
     def can_receive_from(self, other):
         if isinstance(other, Array):

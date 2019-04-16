@@ -9,7 +9,7 @@ from janis.graph.node import Node, NodeTypes
 
 class Input:
     def __init__(self, identifier: str, data_type: DataType, value_from_input=None,
-                 label: str=None, doc: str=None):
+                 label: str=None, doc: str=None, default=None):
         Logger.log(f"Creating input '{identifier}' with value: '{value_from_input}'")
         self._identifier: str = identifier
 
@@ -17,6 +17,7 @@ class Input:
         self.doc = doc
 
         self.value = value_from_input
+        self.default = default
 
         self.data_type: DataType = data_type
 

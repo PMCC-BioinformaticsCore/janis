@@ -28,7 +28,7 @@ class Edge:
         self.stag: Optional[str] = stag
         self.finish: Node = finish
         self.ftag: Optional[str] = ftag
-        self.compatible_types: bool = None
+        self.compatible_types: Optional[bool] = None
         self.scatter = None
 
         self.validate_tags()

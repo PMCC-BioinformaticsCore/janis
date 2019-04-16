@@ -27,11 +27,6 @@ class Step:
     def __repr__(self):
         return str(self)
 
-    def set_input_value(self, tag: str, value: str):
-        l = self._identifier
-        Logger.log(f"Updating '{l}': setting '{tag}' -> '{value}'")
-        self.__meta[tag] = value
-
     def requires(self) -> Dict[str, ToolInput]:
         return self.tool().inputs_map()
 

@@ -29,7 +29,11 @@ class OutputNode(Node):
         super().__init__(NodeTypes.OUTPUT, output.id())
 
     def inputs(self) -> Dict[str, ToolInput]:
-        return {self.output._identifier: ToolInput("outp", self.output.data_type)}
+        if not self.output.data_type:
+            raise Exception(f"Output '{self.output.id()}' did not resolve with a DataType, "
+                            f"this likely means it wasn't connected to step or an internal error has occurred.")
+
+        return {self.output.id(): ToolInput("outp", self.output.data_type)}
 
     def outputs(self) -> Dict[str, ToolOutput]:
         return {}

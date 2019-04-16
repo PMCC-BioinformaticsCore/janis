@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Optional, Any, Union
+from typing import Dict, List, Tuple, Optional, Any, Union, Iterable
 
 import networkx as nx
 
@@ -131,7 +131,7 @@ class Workflow(Tool):
         """
         Supports adding (Input | Step | Output | Tuple = construct edge)
         """
-        mixed: List[Any] = args
+        mixed: Iterable[Any] = args
 
         if isinstance(args[0], list):
             if len(args) > 1:
@@ -334,7 +334,7 @@ class Workflow(Tool):
 
         if node is not None:
             # Try to do some proper matching
-            node_comp = None
+            node_comp: Optional[Any] = None
             if isinstance(node, InputNode):
                 node_comp = node.input
             elif isinstance(node, StepNode):
@@ -679,7 +679,7 @@ class Workflow(Tool):
 
         else:
             tag = input_parts[1]
-            tool_input: ToolInput = snode.step.tool().inputs_map().get(tag)
+            tool_input: Optional[ToolInput] = snode.step.tool().inputs_map().get(tag)
             if tool_input:
                 if len(input_parts) != 2:
                     s = "/".join(input_parts)

@@ -18,7 +18,7 @@ This file is logically structured similar to the cwl equiv:
 
 import os
 import json
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Any, Set
 
 import wdlgen as wdl
 from janis.workflow.step import StepNode
@@ -228,7 +228,8 @@ def translate_tool(tool: CommandTool, with_docker, with_resource_overrides=False
                         f"'{Validators.identifier_regex}' (must start with letters, and then only contain letters, "
                         f"numbers or an underscore)")
 
-    ins, outs = [], []
+    ins: List[wdl.Input] = []
+    outs: List[wdl.Output] = []
     for i in tool.inputs():
         wd = i.input_type.wdl()
         if isinstance(wd, list):
@@ -256,10 +257,10 @@ def translate_tool(tool: CommandTool, with_docker, with_resource_overrides=False
             if cmd:
                 command_ins.append(cmd)
 
-    command_args = None
-    if tool.arguments():
-        command_args = []
-        for a in tool.arguments():
+    command_args = []
+    args = tool.arguments()
+    if args:
+        for a in args:
             val = get_input_value_from_potential_selector_or_generator(a.value, tool.id())
             command_args.append(wdl.Task.Command.CommandArgument(a.prefix, val, a.position))
 
@@ -500,11 +501,11 @@ def translate_step_node(node: StepNode, step_identifier: str, step_alias: str, r
                 continue
 
         secondary = None
-        if source and isinstance(source.finish, StepNode):
+        if source and isinstance(source.finish, StepNode) and source.ftag:
 
             it = source.finish.inputs()[source.ftag].input_type
             secondary = it.subtype().secondary_files() if isinstance(it, Array) else it.secondary_files()
-            if secondary and isinstance(source.start, StepNode):
+            if secondary and isinstance(source.start, StepNode) and source.stag:
 
                 ot = source.start.outputs()[source.stag].output_type
 
@@ -574,7 +575,7 @@ def translate_step_node(node: StepNode, step_identifier: str, step_alias: str, r
     #
     # Source: https://software.broadinstitute.org/wdl/documentation/spec#arrayarrayx-transposearrayarrayx
     for s in scatterable:
-        if not isinstance(s.finish, StepNode):
+        if not isinstance(s.finish, StepNode) or not s.ftag:
             raise Exception("An internal error has occured when generating scatterable input map")
         secondary = s.finish.step.tool().inputs_map()[s.ftag].input_type.secondary_files()
         if secondary:
@@ -691,7 +692,7 @@ def build_aliases(steps: List[StepNode]):
     """
 
     get_alias = lambda t: t[0] + "".join([c for c in t[1:] if c.isupper()])
-    aliases = set()
+    aliases: Set[str] = set()
 
     tools: List[Tool] = [s.step.tool() for s in steps]
     tool_name_to_tool: Dict[str, Tool] = {t.id().lower(): t for t in tools}
@@ -742,7 +743,7 @@ def build_wdl_resource_inputs_dict(wf, hints, prefix=None) -> Dict[str, Any]:
     from janis.workflow.workflow import Workflow
 
     # returns a list of key, value pairs
-    steps = {}
+    steps: Dict[str, Optional[Any]] = {}
     if not prefix:
         prefix = wf.id() + "."
     else:
@@ -751,14 +752,13 @@ def build_wdl_resource_inputs_dict(wf, hints, prefix=None) -> Dict[str, Any]:
     for s in wf._steps:
         tool: Tool = s.step.tool()
 
-
         if isinstance(tool, CommandTool):
             tool_pre = prefix + s.id() + "_"
-            steps.update([
-                (tool_pre + "runtime_memory", tool.memory(hints)),
-                (tool_pre + "runtime_cpu", tool.cpus(hints)),
-                (tool_pre + "runtime_disks", None)
-            ])
+            steps.update({
+                tool_pre + "runtime_memory": tool.memory(hints),
+                tool_pre + "runtime_cpu": tool.cpus(hints),
+                tool_pre + "runtime_disks": None
+            })
         elif isinstance(tool, Workflow):
             tool_pre = prefix + s.id()
             steps.update(build_wdl_resource_inputs_dict(tool, hints, tool_pre))

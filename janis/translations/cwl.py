@@ -20,19 +20,18 @@ This file is logically structured similar to the WDL equiv:
 ## IMPORTS
 
 import os
-import ruamel.yaml
-import cwlgen
-from typing import List, Dict, Type, Optional, Any
+from typing import List, Dict, Optional, Any
 
-from janis.hints import Hint, HintEnum, HintArray, HINTS
-from janis.workflow.input import Input
-from janis.tool.tool import Tool, ToolInput
+import cwlgen
+import ruamel.yaml
+
 from janis.tool.commandtool import CommandTool
-from janis.types import InputSelector, Selector, WildcardSelector
-from janis.types.common_data_types import Int, Stdout, Array, File
+from janis.tool.tool import Tool, ToolInput
+from janis.types import InputSelector, Selector, WildcardSelector, MemorySelector, CpuSelector
+from janis.types.common_data_types import Stdout, Array, File, Filename
 from janis.utils.logger import Logger
 from janis.utils.metadata import WorkflowMetadata, ToolMetadata
-from janis.utils.janisconstants import RESOURCE_OVERRIDE_KEY, HINTS_KEY
+from janis.workflow.input import Input
 from janis.workflow.step import StepNode
 
 CWL_VERSION = "v1.0"
@@ -242,14 +241,14 @@ def translate_tool(tool, with_docker, with_resource_overrides=False):
     if with_resource_overrides:
         # work out whether (the tool of) s is a workflow or tool
         tool_cwl.inputs.extend([
-            cwlgen.CommandInputParameter("runtime_memory", param_type="string?"),
+            cwlgen.CommandInputParameter("runtime_memory", param_type="float?"),
             cwlgen.CommandInputParameter("runtime_cpu", param_type="int?"),
             # cwlgen.CommandInputParameter("runtime_disks", param_type="string?"),
         ])
 
         tool_cwl.requirements.append(cwlgen.ResourceRequirement(
-            cores_min="$(inputs.runtime_cpu)",
-            ram_min="$(inputs.runtime_memory)",
+            cores_min="$(inputs.runtime_cpu ? inputs.runtime_cpu : 1)",
+            ram_min="$(inputs.runtime_memory ? Math.floor(1024 * inputs.runtime_memory) : 4096)",
         ))
 
 
@@ -292,13 +291,23 @@ def translate_output(outp, source):
 def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
 
     data_type = toolinput.input_type.cwl_type()
+
+    default, value_from = toolinput.default, None
+
+    if isinstance(toolinput.input_type, Filename):
+        default = toolinput.input_type.generated_filename()
+    elif is_selector(default):
+        default = None
+        value_from = get_input_value_from_potential_selector_or_generator(toolinput.default, toolinput.id())
+
+
     input_binding = cwlgen.CommandLineBinding(
         # load_contents=toolinput.load_contents,
         position=toolinput.position,
         prefix=toolinput.prefix,
         separate=toolinput.separate_value_from_prefix,
         item_separator=toolinput.separator,
-        # value_from=toolinput.value_from,
+        value_from=value_from,
         shell_quote=toolinput.shell_quote,
     )
 
@@ -317,9 +326,6 @@ def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
                 shell_quote=toolinput.shell_quote,
             )
             data_type.inputBinding = nested_binding
-        # else:
-            # if input_binding.itemSeparator is None:
-            #     input_binding.itemSeparator = ","
 
     return cwlgen.CommandInputParameter(
         param_id=toolinput.tag,
@@ -328,27 +334,20 @@ def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
         # streamable=None,
         doc=toolinput.doc,
         input_binding=input_binding,
-        default=toolinput.default,
+        default=default,
         param_type=data_type
     )
 
 
 def translate_tool_argument(argument):
-    if argument.value is None:
-        val = None
-    elif callable(getattr(argument.value, "cwl", None)):
-        val = argument.value.cwl()
-    elif isinstance(argument.value, InputSelector):
-        val = translate_input_selector(argument.value)
-    else:
-        val = str(argument.value)
+
     return cwlgen.CommandLineBinding(
         # load_contents=False,
         position=argument.position,
         prefix=argument.prefix,
         separate=argument.separate_value_from_prefix,
         # item_separator=None,
-        value_from=val,
+        value_from=get_input_value_from_potential_selector_or_generator(argument.value, argument.value),
         shell_quote=argument.shell_quote,
     )
 
@@ -408,7 +407,7 @@ def translate_step(step: StepNode, is_nested_tool=False, resource_overrides=Dict
         cwlstep.inputs.append(d)
 
     for r in resource_overrides:
-        cwlstep.inputs.append(cwlgen.WorkflowStepInput(input_id=r, value_from=f"$(inputs.{resource_overrides[r]})"))
+        cwlstep.inputs.append(cwlgen.WorkflowStepInput(input_id=r, source=resource_overrides[r]))
 
     if len(scatterable) > 0:
         if len(scatterable) > 1:
@@ -421,6 +420,33 @@ def translate_step(step: StepNode, is_nested_tool=False, resource_overrides=Dict
 
 
 ## SELECTORS
+
+
+def is_selector(selector):
+    return issubclass(type(selector), Selector)
+
+
+def get_input_value_from_potential_selector_or_generator(value, tool_id, string_environment=True):
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return value if string_environment else f'"{value}"'
+    elif isinstance(value, int) or isinstance(value, float):
+        return value
+    elif isinstance(value, Filename):
+        return value.generated_filename()
+    elif isinstance(value, InputSelector):
+        return translate_input_selector(selector=value)
+    elif isinstance(value, WildcardSelector):
+        raise Exception(f"A wildcard selector cannot be used as an argument value for '{tool_id}'")
+    elif isinstance(value, CpuSelector):
+        return translate_cpu_selector(value)
+    elif isinstance(value, MemorySelector):
+        return translate_memory_selector(value)
+    elif callable(getattr(value, "cwl", None)):
+        return value.cwl()
+
+    raise Exception("Could not detect type %s to convert to input value" % type(value))
 
 def translate_input_selector(selector: InputSelector):
     if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
@@ -446,12 +472,33 @@ def translate_to_cwl_glob(glob, **debugkwargs):
 
     raise Exception("Unimplemented selector type: " + glob.__class__.__name__)
 
+def translate_cpu_selector(selector: CpuSelector):
+    return "$(inputs.runtime_cpu)"
+
+
+def translate_memory_selector(selector: MemorySelector):
+    pre = selector.prefix if selector.prefix else ""
+    suf = selector.suffix if selector.suffix else ""
+
+    val = "$(Math.floor(runtime_memory))"
+
+    pref = ('"%s" + ' % pre) if pre else ""
+    suff = (' + "%s"' % suf) if suf else ""
+    return pref + val + suff
+
+
+## OTHER HELPERS
 
 def build_cwl_resource_inputs_dict(wf, hints, prefix=None) -> Dict[str, Any]:
     from janis.workflow.workflow import Workflow
 
     # returns a list of key, value pairs
     steps: Dict[str, Optional[Any]] = {}
+
+    if not prefix:
+        prefix = ""
+    else:
+        prefix += "_"
 
     for s in wf._steps:
         tool: Tool = s.step.tool()
@@ -486,7 +533,7 @@ def build_cwl_resource_inputs(wf, prefix=None) -> List[cwlgen.InputParameter]:
         if isinstance(tool, CommandTool):
             tool_pre = prefix + s.id() + "_"
             inputs.extend([
-                cwlgen.InputParameter(tool_pre + "runtime_memory", param_type="string?"),
+                cwlgen.InputParameter(tool_pre + "runtime_memory", param_type="float?"),
                 cwlgen.InputParameter(tool_pre + "runtime_cpu", param_type="int?"),
                 # cwlgen.InputParameter(tool_pre + "runtime_disks", param_type="string?"),
             ])

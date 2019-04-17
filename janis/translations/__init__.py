@@ -41,7 +41,7 @@ def translate_tool(tool, translation: SupportedTranslation, with_docker, with_re
 
 def build_resources_input(workflow, translation: SupportedTranslation, hints):
     if translation == SupportedTranslations.CWL:
-        raise NotImplementedError("CWL implementation is coming soon!")
+        return cwl.build_cwl_resource_inputs_dict(workflow, hints)
 
     elif translation == SupportedTranslations.WDL:
         return wdl.build_wdl_resource_inputs_dict(workflow, hints)

@@ -744,6 +744,12 @@ class Workflow(Tool):
                                                should_validate=should_validate)
 
     def generate_resources_file(self, translation: translations.SupportedTranslation, hints: Dict[str, Any]):
-        import json
-        return json.dumps(translations.build_resources_input(self, translation, hints), separators=(",", ": "), indent=4)
+        tr = translations.build_resources_input(self, translation, hints)
+        if translation == translations.SupportedTranslations.CWL:
+            import ruamel.yaml
+            return ruamel.yaml.dump(tr, default_flow_style=False)
+        elif translation == translations.SupportedTranslations.WDL:
+            import json
+            return json.dumps(tr, separators=(",", ": "), indent=4)
+        return tr
 

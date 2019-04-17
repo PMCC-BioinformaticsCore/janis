@@ -782,7 +782,7 @@ def build_wdl_resource_inputs(wf, prefix=None) -> List[wdl.Input]:
         if isinstance(tool, CommandTool):
             tool_pre = prefix + s.id() + "_"
             inputs.extend([
-                wdl.Input(wdl.WdlType.parse_type("String?"), tool_pre + "runtime_memory"),
+                wdl.Input(wdl.WdlType.parse_type("Float?"), tool_pre + "runtime_memory"),
                 wdl.Input(wdl.WdlType.parse_type("Int?"), tool_pre + "runtime_cpu"),
                 wdl.Input(wdl.WdlType.parse_type("String?"), tool_pre + "runtime_disks")
             ])

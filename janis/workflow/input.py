@@ -19,6 +19,9 @@ class Input:
         self.value = value_from_input
         self.default = default
 
+        if self.default is not None:
+            data_type.optional = True
+
         self.data_type: DataType = data_type
 
     def id(self):

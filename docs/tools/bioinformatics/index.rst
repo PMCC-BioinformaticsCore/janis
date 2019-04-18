@@ -11,6 +11,7 @@ Automatically generated index page for {module} {title}
    Broad Institute (GATK)/index
    GATK4/index
    Illumina/index
+   PMCC/index
    bcftools/index
    bwa/index
    cutadapt/index
@@ -23,5 +24,6 @@ Automatically generated index page for {module} {title}
    fastqc
    performanceValidator
    splitmultiallele
+   vardict
 
-*This page was auto-generated on 11/04/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 18/04/2019. Please do not directly alter the contents of this page.*

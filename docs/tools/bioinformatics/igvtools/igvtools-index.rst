@@ -3,6 +3,8 @@ IGVTools: Index
 ================================
 Tool identifier: ``igvtools-index``
 
+Tool path: ``from janis_bioinformatics.tools.igvtools import IgvToolsIndex_2_0``
+
 Documentation
 -------------
 
@@ -68,4 +70,4 @@ Author: Michael Franklin
 
 
 *IGVTools: Index was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

@@ -3,6 +3,8 @@ Echo - Print to console
 ==============================
 Tool identifier: ``echo``
 
+Tool path: ``from janis_bioinformatics.tools import Echo``
+
 Documentation
 -------------
 
@@ -55,4 +57,4 @@ Author: **Unknown**
 
 
 *Echo - Print to console was last updated on **Unknown***.
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

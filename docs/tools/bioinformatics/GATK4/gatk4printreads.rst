@@ -3,6 +3,8 @@ GATK4: Print Reads
 ====================================
 Tool identifier: ``gatk4printreads``
 
+Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4PrintReads_4_0``
+
 Documentation
 -------------
 
@@ -72,4 +74,4 @@ Author: Michael Franklin
 
 
 *GATK4: Print Reads was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

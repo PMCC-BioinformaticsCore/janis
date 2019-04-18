@@ -3,6 +3,8 @@ GATK4: MuTect2
 ============================
 Tool identifier: ``gatkmutect2``
 
+Tool path: ``from janis_bioinformatics.tools.gatk4 import GatkMutect2_4_0``
+
 Documentation
 -------------
 
@@ -28,11 +30,11 @@ such as mitochondrial variant calling.
 
 Outputs
 -------
-======  ======  =================
-name    type    documentation
-======  ======  =================
-out     VCF     To determine type
-======  ======  =================
+======  ==========  =================
+name    type        documentation
+======  ==========  =================
+out     vcf-gz-tbi  To determine type
+======  ==========  =================
 
 Inputs
 ------
@@ -72,4 +74,4 @@ Author: Michael Franklin
 
 
 *GATK4: MuTect2 was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

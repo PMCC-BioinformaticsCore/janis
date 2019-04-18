@@ -3,6 +3,8 @@ Debug inputs (log)
 ================================
 Tool identifier: ``debuginputs``
 
+Tool path: ``from janis_bioinformatics.tools import DebugEchoInputs``
+
 Documentation
 -------------
 
@@ -56,4 +58,4 @@ Author: **Unknown**
 
 
 *Debug inputs (log) was last updated on **Unknown***.
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

@@ -3,6 +3,8 @@ Java compiler
 ============================
 Tool identifier: ``javacompiler``
 
+Tool path: ``from janis_bioinformatics.tools import Compile``
+
 Documentation
 -------------
 
@@ -55,4 +57,4 @@ Author: **Unknown**
 
 
 *Java compiler was last updated on **Unknown***.
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

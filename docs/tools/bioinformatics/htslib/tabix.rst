@@ -3,6 +3,8 @@ Tabix
 =============
 Tool identifier: ``tabix``
 
+Tool path: ``from janis_bioinformatics.tools.htslib import Tabix_1_2_1``
+
 Documentation
 -------------
 
@@ -81,4 +83,4 @@ Author: Michael Franklin
 
 
 *Tabix was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

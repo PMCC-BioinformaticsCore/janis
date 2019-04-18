@@ -3,6 +3,8 @@ BGZip
 =============
 Tool identifier: ``bgzip``
 
+Tool path: ``from janis_bioinformatics.tools.htslib import BGZipLatest``
+
 Documentation
 -------------
 
@@ -78,4 +80,4 @@ Author: Michael Franklin
 
 
 *BGZip was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

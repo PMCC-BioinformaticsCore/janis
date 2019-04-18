@@ -9,4 +9,4 @@ Documentation
 
 An integer
 
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

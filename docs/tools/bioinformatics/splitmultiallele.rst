@@ -3,6 +3,8 @@ Split Multiple Alleles
 =========================================
 Tool identifier: ``splitmultiallele``
 
+Tool path: ``from janis_bioinformatics.tools import SplitMultiAllele``
+
 Documentation
 -------------
 
@@ -57,4 +59,4 @@ Author: **Unknown**
 
 
 *Split Multiple Alleles was last updated on **Unknown***.
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

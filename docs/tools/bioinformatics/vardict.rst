@@ -3,12 +3,14 @@ Vardict
 =================
 Tool identifier: ``vardict``
 
+Tool path: ``from janis_bioinformatics.tools import VarDict_1_5_7``
+
 Documentation
 -------------
 
 Docker
 ******
-``ubuntu:latest``
+``michaelfranklin/vardict:1.5.7``
 
 URL
 ******
@@ -37,8 +39,8 @@ Required inputs
 name                        type      prefix      position  documentation
 ==========================  ========  ========  ==========  =================================================================================================================
 bed                         bed                          2
-indexedBam                  BamPair   -b                 1  The indexed BAM file
-referenceFasta              FastaFai  -G                 1  The reference fasta. Should be indexed (.fai). Defaults to: /ngs/reference_data/genomes/Hsapiens/hg19/seq/hg19.fa
+bam                         BamPair   -b                 1  The indexed BAM file
+reference                   FastaFai  -G                 1  The reference fasta. Should be indexed (.fai). Defaults to: /ngs/reference_data/genomes/Hsapiens/hg19/seq/hg19.fa
 sampleName                  String    -N                 1  The sample name to be used directly.  Will overwrite -n option
 var2vcfSampleName           String    -N                 5
 var2vcfAlleleFreqThreshold  Float     -f                 5
@@ -101,4 +103,4 @@ Author: **Unknown**
 
 
 *Vardict was last updated on **Unknown***.
-*This page was automatically generated on 2019-02-27*.
+*This page was automatically generated on 2019-04-18*.

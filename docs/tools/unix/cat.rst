@@ -3,6 +3,8 @@ Concatenate
 =================
 Tool identifier: ``cat``
 
+Tool path: ``from janis_bioinformatics.tools import Cat``
+
 Documentation
 -------------
 
@@ -54,4 +56,4 @@ Author: **Unknown**
 
 
 *Concatenate was last updated on **Unknown***.
-*This page was automatically generated on 2019-04-11*.
+*This page was automatically generated on 2019-04-18*.

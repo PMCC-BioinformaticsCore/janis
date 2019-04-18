@@ -1,5 +1,7 @@
 from typing import Dict, Optional, List
 
+from janis.utils.validators import Validators
+
 from janis.utils.logger import Logger, LogLevel
 # import cwlgen.cwlgen as cwl
 from janis.types.data_types import DataType, NativeTypes
@@ -8,15 +10,27 @@ from janis.graph.node import Node, NodeTypes
 
 
 class Input:
-    def __init__(self, identifier: str, data_type: DataType, value_from_input=None,
+
+    illegal_keywords = ["input"]
+
+    def __init__(self, identifier: str, data_type: DataType, value=None,
                  label: str=None, doc: str=None, default=None):
-        Logger.log(f"Creating input '{identifier}' with value: '{value_from_input}'")
+
+        if not Validators.validate_identifier(identifier):
+            raise Exception(f"The input identifier '{identifier}' was not validated by '{Validators.identifier_regex}' "
+                            f"(must start with letters, and then only contain letters, numbers and an underscore)")
+
+        if identifier in Input.illegal_keywords:
+            raise Exception(f"The input identifier '{identifier}' is a reserved keyword "
+                            f"({', '.join(Input.illegal_keywords)})")
+
+        Logger.log(f"Creating input '{identifier}' with value: '{value}'")
         self._identifier: str = identifier
 
         self.label = label
         self.doc = doc
 
-        self.value = value_from_input
+        self.value = value
         self.default = default
 
         if self.default is not None:

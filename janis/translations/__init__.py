@@ -1,26 +1,31 @@
 from janis.utils.janisconstants import GITHUB_URL
+from janis.translations.exportpath import ExportPathKeywords
 from . import cwl, wdl
 from .wdl import dump_wdl as wdl_dump_workflow
 
 SupportedTranslation = str
+
 
 class SupportedTranslations:
     CWL: SupportedTranslation = "cwl"
     WDL: SupportedTranslation = "wdl"
 
 
-def translate_workflow(workflow, translation: SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
-                       with_resource_overrides=False, write_inputs_file=False, should_validate=False,
+def translate_workflow(workflow, translation: SupportedTranslation,
+                       to_console=True, with_docker=True, with_resource_overrides=False, to_disk=False,
+                       export_path=ExportPathKeywords.default, write_inputs_file=False, should_validate=False,
                        should_zip=True):
     if translation == SupportedTranslations.CWL:
-        return cwl.dump_cwl(workflow, to_console=to_console, to_disk=to_disk, with_docker=with_docker,
-                            with_resource_overrides=with_resource_overrides,
-                            should_zip=should_zip, write_inputs_file=write_inputs_file, should_validate=should_validate)
+        return cwl.dump_cwl(workflow, to_console=to_console, with_docker=with_docker,
+                            with_resource_overrides=with_resource_overrides, to_disk=to_disk,
+                            export_path=export_path, write_inputs_file=write_inputs_file,
+                            should_validate=should_validate, should_zip=should_zip)
 
     elif translation == SupportedTranslations.WDL:
-        return wdl.dump_wdl(workflow, to_console=to_console, to_disk=to_disk, with_docker=with_docker,
-                            with_resource_overrides=with_resource_overrides,
-                            should_zip=should_zip, write_inputs_file=write_inputs_file, should_validate=should_validate)
+        return wdl.dump_wdl(workflow, to_console=to_console, with_docker=with_docker,
+                            with_resource_overrides=with_resource_overrides, to_disk=to_disk,
+                            export_path=export_path, write_inputs_file=write_inputs_file,
+                            should_validate=should_validate, should_zip=should_zip)
 
     else:
         raise NotImplementedError(f"The requested translation ('{translation}') has not been implemented yet, "

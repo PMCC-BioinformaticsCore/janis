@@ -31,6 +31,7 @@ from janis.types import InputSelector, Selector, WildcardSelector, MemorySelecto
 from janis.types.common_data_types import Stdout, Array, File, Filename
 from janis.utils.logger import Logger
 from janis.utils.metadata import WorkflowMetadata, ToolMetadata
+from janis.translations.exportpath import ExportPathKeywords
 from janis.workflow.input import Input
 from janis.workflow.step import StepNode
 
@@ -39,8 +40,9 @@ CWL_VERSION = "v1.0"
 
 ## TRANSLATION
 
-def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False,
-             with_resource_overrides=False, write_inputs_file=False, should_validate=False, should_zip=True):
+def dump_cwl(workflow, to_console=True, with_docker=True, with_resource_overrides=False, to_disk=False,
+             export_path=ExportPathKeywords.default, write_inputs_file=False, should_validate=False,
+             should_zip=True):
     wf_cwl, inp_dict, tools_cwl = translate_workflow(workflow,
                                                      with_docker=with_docker,
                                                      with_resource_overrides=with_resource_overrides)
@@ -62,7 +64,7 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False,
         print("\n=== TOOLS ===")
         [print(t[1]) for t in tls_strs]
 
-    d = os.path.expanduser("~") + f"/Desktop/{workflow.id()}/cwl/"
+    d = ExportPathKeywords.resolve(export_path, workflow_spec="cwl", workflow_name=workflow.id())
 
     if write_inputs_file:
         with open(d + workflow.id() + "-job.yml", "w+") as cwl:
@@ -88,8 +90,6 @@ def dump_cwl(workflow, to_console=True, to_disk=False, with_docker=False,
             cwl.write(wf_str)
             # ruamel.yaml.dump(wf_dict, cwl, default_flow_style=False)
             Logger.log(f"Written {workflow.id()}.cwl to disk")
-
-
 
         # z = zipfile.ZipFile(d + "tools.zip", "w")
         for (tool_filename, tool) in tls_strs:
@@ -134,7 +134,6 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
     if with_resource_overrides:
         resource_inputs = build_cwl_resource_inputs(wf)
         w.inputs.extend(resource_inputs)
-
 
     w.steps: List[cwlgen.WorkflowStep] = []
 
@@ -184,8 +183,9 @@ def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=F
 
 def translate_tool_str(tool, with_docker, with_resource_overrides=False):
     ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
-    return ruamel.yaml.dump(translate_tool(tool, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
-                            .get_dict(), default_flow_style=False)
+    return ruamel.yaml.dump(
+        translate_tool(tool, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
+        .get_dict(), default_flow_style=False)
 
 
 def translate_tool(tool, with_docker, with_resource_overrides=False):
@@ -251,7 +251,6 @@ def translate_tool(tool, with_docker, with_resource_overrides=False):
             ram_min="$(inputs.runtime_memory ? Math.floor(1024 * inputs.runtime_memory) : 4096)",
         ))
 
-
     return tool_cwl
 
 
@@ -289,7 +288,6 @@ def translate_output(outp, source):
 
 
 def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
-
     data_type = toolinput.input_type.cwl_type()
 
     default, value_from = toolinput.default, None
@@ -299,7 +297,6 @@ def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
     elif is_selector(default):
         default = None
         value_from = get_input_value_from_potential_selector_or_generator(toolinput.default, toolinput.id())
-
 
     input_binding = cwlgen.CommandLineBinding(
         # load_contents=toolinput.load_contents,
@@ -340,7 +337,6 @@ def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
 
 
 def translate_tool_argument(argument):
-
     return cwlgen.CommandLineBinding(
         # load_contents=False,
         position=argument.position,
@@ -448,6 +444,7 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, string_
 
     raise Exception("Could not detect type %s to convert to input value" % type(value))
 
+
 def translate_input_selector(selector: InputSelector):
     if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
     pre = selector.prefix if selector.prefix else ""
@@ -461,7 +458,7 @@ def translate_to_cwl_glob(glob, **debugkwargs):
 
     if not isinstance(glob, Selector):
         Logger.critical("String globs are being phased out from tool output selections, please use the provided "
-                    "Selector (InputSelector or WildcardSelector) classes. " + str(debugkwargs))
+                        "Selector (InputSelector or WildcardSelector) classes. " + str(debugkwargs))
         return glob
 
     if isinstance(glob, InputSelector):
@@ -471,6 +468,7 @@ def translate_to_cwl_glob(glob, **debugkwargs):
         return glob.wildcard
 
     raise Exception("Unimplemented selector type: " + glob.__class__.__name__)
+
 
 def translate_cpu_selector(selector: CpuSelector):
     return "$(inputs.runtime_cpu)"
@@ -523,7 +521,7 @@ def build_cwl_resource_inputs(wf, prefix=None) -> List[cwlgen.InputParameter]:
     # returns a list of key, value pairs
     inputs = []
     if not prefix:
-        prefix = "" # wf.id() + "."
+        prefix = ""  # wf.id() + "."
     else:
         prefix += "_"
 

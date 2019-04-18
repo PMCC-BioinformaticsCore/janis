@@ -1,73 +1,31 @@
 import unittest
-from typing import List
-import wdlgen
+from os.path import expanduser
 
-from janis import ToolOutput, ToolInput, String, CommandTool, Stdout, InputSelector, Array, File
-import janis.translations.cwl as cwl
+from janis.translations.exportpath import ExportPathKeywords
 
 
-class TestTool(CommandTool):
+class TestExportPath(unittest.TestCase):
 
-    @staticmethod
-    def tool(): return "TestTranslation-tool"
+    def test_user_path(self):
+        from os.path import expanduser
 
-    @staticmethod
-    def base_command(): return "echo"
+        self.assertEqual(expanduser("~"), ExportPathKeywords.resolve("~", None, None))
 
-    def inputs(self) -> List[ToolInput]: return [ToolInput("testtool", String())]
+    def test_workflow_spec(self):
+        self.assertEqual("my/path/to/cwl", ExportPathKeywords.resolve("my/path/to/{language}", "cwl", None))
 
-    def outputs(self) -> List[ToolOutput]: return [ToolOutput("std", Stdout())]
+    def test_workflow_name(self):
+        self.assertEqual("my/workflow_name/path", ExportPathKeywords.resolve("my/{name}/path", None, "workflow_name"))
 
-    def friendly_name(self) -> str: return "Tool for testing translation"
+    def test_multi_replace(self):
+        self.assertEqual(
+            "test_multi_replace/test_multi_replace/test_multi_replace",
+            ExportPathKeywords.resolve("{name}/{name}/{name}", None, "test_multi_replace")
+        )
 
-    @staticmethod
-    def docker(): return "ubuntu:latest"
+    def test_combo_replace(self):
+        self.assertEqual(
+            expanduser('~') + "/Desktop/workflowname/wdl/",
+            ExportPathKeywords.resolve("~/Desktop/{name}/{language}/", "wdl", "workflowname")
+        )
 
-
-class TestCwl(unittest.TestCase):
-
-    def test_str_tool(self):
-        t = TestTool()
-        self.assertEqual(t.translate("cwl"), cwl_testtool)
-
-    def test_input_selector_base(self):
-        input_sel = InputSelector("random")
-        self.assertEqual("$(inputs.random)", cwl.translate_input_selector(input_sel))
-
-    def test_input_selector_prefix(self):
-        input_sel = InputSelector("random", prefix="&& ")
-        self.assertEqual("&& $(inputs.random)", cwl.translate_input_selector(input_sel))
-
-    def test_base_input_selector(self):
-        input_sel = InputSelector("random", suffix=".cwl")
-        self.assertEqual("$(inputs.random).cwl", cwl.translate_input_selector(input_sel))
-
-class TestWdl(unittest.TestCase):
-
-    def test_optional_array(self):
-        t = Array(File(), optional=True)
-        wdl = t.wdl()
-        self.assertIsInstance(wdl, wdlgen.WdlType)
-        self.assertTrue(wdl.optional)
-        self.assertEqual("Array[File]?", wdl.get_string())
-
-
-cwl_testtool = """\
-baseCommand: echo
-class: CommandLineTool
-cwlVersion: v1.0
-id: testtranslation-tool
-inputs:
-- id: testtool
-  label: testtool
-  type: string
-label: testtranslation-tool
-outputs:
-- id: std
-  label: std
-  type: stdout
-requirements:
-  DockerRequirement:
-    dockerPull: ubuntu:latest
-  InlineJavascriptRequirement: {}
-"""

@@ -1,5 +1,7 @@
 from typing import Dict, Optional, Any
 
+from janis.utils.validators import Validators
+
 from janis.graph.node import Node, NodeTypes
 from janis.types.data_types import DataType
 from janis.tool.tool import ToolOutput, ToolInput
@@ -9,9 +11,20 @@ class Output:
     """
         Only catch with output is we infer the type, we don't explicitly define it
     """
+    illegal_keywords = ["output"]
+
     def __init__(self, identifier: str, meta: Any = None,
                  label: str=None, doc: str=None):
         self._identifier: str = identifier
+
+        if not Validators.validate_identifier(identifier):
+            raise Exception(f"The output identifier '{identifier}' was not validated by '{Validators.identifier_regex}'"
+                            f" (must start with letters, and then only contain letters, numbers and an underscore)")
+
+        if identifier in Output.illegal_keywords:
+            raise Exception(f"The output identifier '{identifier}' is a reserved keyword "
+                            f"({', '.join(Output.illegal_keywords)})")
+
         self.label = label
         self.doc = doc
 

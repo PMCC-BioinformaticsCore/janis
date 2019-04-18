@@ -1,5 +1,7 @@
 import unittest
 
+from janis.hints import CaptureType
+
 from janis.unix.tools.debugecho import DebugEchoInputs
 from janis.unix.tools.tar import Tar
 from janis.unix.tools.untar import Untar
@@ -36,7 +38,9 @@ class TestSimple(unittest.TestCase):
         w.add_edge(step3.tarred, outp)
         # Logger.unmute()
 
-        w.dump_translation("cwl", to_disk=False)
+        w.dump_translation("wdl", to_disk=False, with_resource_overrides=True)
+        print(w.generate_resources_file("wdl", {CaptureType.KEY: CaptureType.CHROMOSOME}))
+
 
         return w
 
@@ -57,7 +61,7 @@ class TestSimple(unittest.TestCase):
         # w.add_edge(debug, Output("debugout"))
 
         # w.draw_graph()
-        w.dump_translation(translation="cwl", to_disk=True, write_inputs_file=True)
+        w.dump_translation(translation="cwl", to_disk=True, with_resource_overrides=False)
         # w.dump_wdl(to_disk=True, with_docker=True)
 
         # Logger.unmute()

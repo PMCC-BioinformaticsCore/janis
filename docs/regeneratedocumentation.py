@@ -7,7 +7,7 @@ It's a bit of a random collection of things that should be refactored:
     - RST Helpers
 """
 import traceback
-from inspect import isfunction, ismodule, isabstract
+from inspect import isfunction, ismodule, isabstract, isclass
 
 from constants import PROJECT_ROOT_DIR
 
@@ -92,10 +92,18 @@ def prepare_tool(tool: Tool):
     if isinstance(tool, CommandTool):
         docker_tag = "Docker\n******\n``" + tool.docker() + "``\n"
 
+    tool_prov = ""
+    if tool.tool_provider() is None:
+        print("Tool :" + tool.id() + " has no company")
+    else:
+        tool_prov = "." + tool.tool_provider().lower()
+
     return f"""
 {fn}
 {"=" * len(tn)}
 Tool identifier: ``{tool.id()}``
+
+Tool path: ``from janis_bioinformatics.tools{tool_prov} import {tool.__class__.__name__}``
 
 Documentation
 -------------
@@ -230,8 +238,8 @@ def get_tool_from_module(module, seen_modules=None) -> Tuple[Set[Type[Tool]], Se
         seen_modules = set()
 
     for k in q:
+        cls = q[k]
         try:
-            cls = q[k]
             if hasattr(cls, "__name__"):
                 if cls.__name__ in seen_modules: continue
                 seen_modules.add(cls.__name__)
@@ -241,8 +249,9 @@ def get_tool_from_module(module, seen_modules=None) -> Tuple[Set[Type[Tool]], Se
                 t, d = get_tool_from_module(cls, seen_modules)
                 tools = tools.union(t)
                 data_types = data_types.union(d)
-            if isabstract(cls): continue
-            if issubclass(cls, CommandTool):
+            elif isabstract(cls): continue
+            elif not isclass(cls): continue
+            elif issubclass(cls, CommandTool):
                 print("Found commandtool: " + cls.tool())
                 tools.add(cls)
             elif issubclass(cls, Workflow):
@@ -252,7 +261,7 @@ def get_tool_from_module(module, seen_modules=None) -> Tuple[Set[Type[Tool]], Se
                 print("Found datatype: " + cls().id())
                 data_types.add(cls)
         except Exception as e:
-            print(e)
+            print(f"{str(e)} for type {type(cls)}")
             # print(traceback.format_exc())
             continue
 
@@ -327,7 +336,7 @@ def prepare_all_tools():
 
     def prepare_modules_in_index(contents, title, dir, max_depth=2):
         module_filename = dir + "/index.rst"
-        module_tools = sorted(contents[ROOT_KEY] if ROOT_KEY in contents else [])
+        module_tools = sorted(set(contents[ROOT_KEY] if ROOT_KEY in contents else []))
         submodule_keys = sorted(m for m in contents.keys() if m != ROOT_KEY)
         indexed_submodules_tools = [m + "/index" for m in submodule_keys]
 

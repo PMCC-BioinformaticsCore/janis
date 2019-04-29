@@ -2,7 +2,7 @@ class ExportPathKeywords:
     workflow_spec = "{language}"
     workflow_name = "{name}"
 
-    default = f"~/{workflow_name}/{workflow_spec}"
+    default = f"~/Desktop/{workflow_name}/{workflow_spec}/"
 
     @staticmethod
     def resolve(path, workflow_spec, workflow_name):

@@ -29,3 +29,8 @@ class TestExportPath(unittest.TestCase):
             ExportPathKeywords.resolve("~/Desktop/{name}/{language}/", "wdl", "workflowname")
         )
 
+    def test_no_spec_except(self):
+        self.assertRaises(Exception, ExportPathKeywords.resolve, path="{language}", workflow_spec=None, workflow_name="name")
+
+    def test_no_name_except(self):
+        self.assertRaises(Exception, ExportPathKeywords.resolve, path="{name}", workflow_spec="spec", workflow_name=None)

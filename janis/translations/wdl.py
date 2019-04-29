@@ -21,6 +21,8 @@ import json
 from typing import List, Dict, Optional, Any, Set
 
 import wdlgen as wdl
+from janis.translations import ExportPathKeywords
+
 from janis.workflow.step import StepNode
 from janis.graph.stepinput import Edge, StepInput
 from janis.types import InputSelector, WildcardSelector, CpuSelector, MemorySelector
@@ -36,8 +38,9 @@ from janis.utils.logger import Logger
 ## PRIMARY TRANSLATION METHODS
 
 
-def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=True,
-             with_resource_overrides=False, write_inputs_file=False, should_validate=False, should_zip=True):
+def dump_wdl(workflow, to_console=True, with_docker=True, with_resource_overrides=False, to_disk=False,
+             export_path=ExportPathKeywords.default, write_inputs_file=False, should_validate=False,
+             should_zip=True):
     """
     This method controls converting a workflow, generating inputs file, generating resource file,
     dumping these on the console, how to write these to disks (including zipping to dependencies)
@@ -68,7 +71,7 @@ def dump_wdl(workflow, to_console=True, to_disk=False, with_docker=True,
         print("\n=== INPUTS ===")
         print(inp_str)
 
-    d = os.path.expanduser("~") + f"/Desktop/{workflow.id()}/wdl/"
+    d = ExportPathKeywords.resolve(export_path, workflow_spec="wdl", workflow_name=workflow.id())
 
     if write_inputs_file:
         with open(d + workflow.id() + "-job.json", "w+") as wdlfile:
@@ -139,11 +142,18 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False, with_resource
     # Convert self._inputs -> wdl.Input
     for i in wf._inputs:
         wd = i.input.data_type.wdl()
-        default = i.input.default
-        if isinstance(i.input.data_type, Filename):
-            default = i.input.data_type.generated_filename()
 
-        w.inputs.append(wdl.Input(wd, i.id(), default))
+        w.inputs.append(wdl.Input(
+            data_type=wd,
+            name=i.id(),
+            expression=get_input_value_from_potential_selector_or_generator(
+                i.input.default,
+                tool_id=wf.id() + "." + i.id(),
+                string_environment=False
+            ),
+            requires_quotes=False)
+        )
+
         is_array = isinstance(i.input.data_type, Array)
         if i.input.data_type.secondary_files() or \
                 (is_array and i.input.data_type.subtype().secondary_files()):
@@ -557,23 +567,22 @@ def translate_step_node(node: StepNode, step_identifier: str, step_alias: str, r
 
     call = wdl.WorkflowCall(step_identifier, step_alias, inputs_map)
 
-    #                                                                                     _
-    #                                                                                   _| |
-    #                                                                                 _| | |
-    #                                                                                | | | | __
-    #                                                                                | | | |/  \
-    # So, the current way of mixing accessory files is not really                    |       /\ \
-    # supported, but a little complicated basically, if our scatterable edge         |       \/ /
-    # contains secondary files, they'll all be arrays of separate files, eg:          \        /
-    #                                                                                  |      /
-    # File[] bams = [...]                                                              |     |
-    # File[] bais = [...]
+    # So, the current way of mixing accessory files is not really                        _
+    # supported, but a little complicated basically, if our scatterable edge           _| |
+    # contains secondary files, they'll all be arrays of separate files, eg:         _| | |
+    #                                                                               | | | | __
+    # File[] bams = [...]                                                           | | | |/  \
+    # File[] bais = [...]                                                           |       /\ \
+    #                                                                               |       \/ /
+    # We can handle this by transposing the array of both items, eg:                 \        /
+    #                                                                                 |      /
+    #     transpose([bam1, bam2, ..., bamn], [bai1, bai2, ..., bai3])                 |     |
+    #           => [[bam1, bai1], [bam2, bai2], ..., [bamn, bain]]
     #
-    # We can handle this by transposing the array of both items, eg:
-    #     transpose([bam1, bam2, ..., bamn], [bai1, bai2, ..., bai3]) => [[bam1, bai1], [bam2, bai2], ..., [bamn, bain]]
     # and then unwrap them using their indices and hoefully have everything line up:
     #
     # Source: https://software.broadinstitute.org/wdl/documentation/spec#arrayarrayx-transposearrayarrayx
+
     for s in scatterable:
         if not isinstance(s.finish, StepNode) or not s.ftag:
             raise Exception("An internal error has occured when generating scatterable input map")
@@ -593,9 +602,21 @@ def translate_step_node(node: StepNode, step_identifier: str, step_alias: str, r
 
 
 def get_input_value_from_potential_selector_or_generator(value, tool_id, string_environment=True):
+    """
+    We have a value which could be anything, and we want to convert it to a expressionable value.
+    If we have a string, it should be in quotes, etc. It should be "Type paramname = <expressionable>"
+    :param value:
+    :param tool_id:
+    :param string_environment:  Do we need to wrap string literals in quotes,
+                                or do we need to wrap variables in expr block.
+    :return:
+    """
     if value is None:
         return None
-    if isinstance(value, str):
+
+    if isinstance(value, list):
+        return f"[{', '.join(str(get_input_value_from_potential_selector_or_generator(value[i], tool_id=tool_id + '.' + str(i), string_environment=False)) for i in range(len(value)))}]"
+    elif isinstance(value, str):
         return value if string_environment else f'"{value}"'
     elif isinstance(value, int) or isinstance(value, float):
         return value
@@ -674,7 +695,7 @@ def validate_wdl_workflow(wf_path):
     :return:
     """
     import subprocess
-    Logger.info("Validing outputted CWL")
+    Logger.info("Validing outputted WDL")
 
     womtool_result = subprocess.run(["java", "-jar", "$womtool", "--validate", wf_path])
     if womtool_result.returncode == 0:

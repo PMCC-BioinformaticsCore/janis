@@ -27,7 +27,7 @@ class Tar(UnixTool):
 
     def outputs(self):
         return [
-            ToolOutput("tarred", File(), glob=InputSelector("tarName"))     # "$(inputs.tarName)")
+            ToolOutput("tarred", File(), glob=InputSelector("tarName"))
         ]
 
     @staticmethod

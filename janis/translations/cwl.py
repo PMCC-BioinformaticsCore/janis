@@ -48,7 +48,7 @@ def dump_cwl(workflow, to_console=True, with_docker=True, with_resource_override
                                                      with_resource_overrides=with_resource_overrides)
 
     wf_dict = wf_cwl.get_dict()
-    tool_dicts = [("tools/" + t.id + ".cwl", t.get_dict()) for t in tools_cwl]
+    tool_dicts = [("tools/" + t.id() + ".cwl", t.get_dict()) for t in tools_cwl]
 
     ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
 

@@ -1,5 +1,6 @@
 from typing import Optional, Dict, Any
 
+
 from janis.graph.node import Node, NodeTypes
 from janis.tool.tool import ToolOutput, ToolInput
 from janis.types.common_data_types import Array
@@ -20,6 +21,7 @@ def full_dot(node: Node, tag: Optional[str]) -> str:
 
 
 class Edge:
+
     def __init__(self, start: Node, stag: Optional[str], finish: Node, ftag: Optional[str]):
         Logger.log(f"Creating edge: ({NodeTypes.to_str(start.node_type)}) '{start.id()}.{stag}' → "
                    f"({NodeTypes.to_str(finish.node_type)}) '{finish.id()}.{ftag}'")
@@ -47,6 +49,8 @@ class Edge:
             raise Exception(f"Could not find the tag '{self.ftag}' in the outputs of '{self.finish.id()}': {list(self.finish.inputs().keys())}")
 
     def check_types(self):
+        from janis.workflow.input import InputNode
+
         stype: ToolOutput = self.start.outputs()[self.stag] \
             if self.stag is not None else first_value(self.start.outputs())
         ftype: ToolInput = self.finish.inputs()[self.ftag] \
@@ -55,7 +59,8 @@ class Edge:
         self.compatible_types = False
         self.scatter = False
 
-        if ftype.input_type.can_receive_from(stype.output_type):
+        source_has_default = isinstance(self.start, InputNode) and self.start.input.default is not None
+        if ftype.input_type.can_receive_from(stype.output_type, source_has_default=source_has_default):
             self.compatible_types = True
             self.scatter = False
             return

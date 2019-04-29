@@ -29,10 +29,10 @@ class String(DataType):
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
 
-    def can_receive_from(self, other):
+    def can_receive_from(self, other, source_has_default=False):
         if isinstance(other, Filename):
             return True
-        return super().can_receive_from(other)
+        return super().can_receive_from(other, source_has_default=source_has_default)
 
 
 class Filename(String):
@@ -90,13 +90,13 @@ concerned what the filename should be. The Filename DataType should NOT be used 
 
         return pre + "generated-" + guid + suf + ex
 
-    def can_receive_from(self, other: DataType):
+    def can_receive_from(self, other: DataType, source_has_default=False):
         # Specific override because Filename should be able to receive from string
         if isinstance(other, String):
             return True  # Always provides default, and is always optional
-        return super().can_receive_from(other)
+        return super().can_receive_from(other, source_has_default=source_has_default)
 
-    def wdl(self):
+    def wdl(self, has_default=True):
         return wdlgen.WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()))
 
 
@@ -316,16 +316,16 @@ class Array(DataType):
         else:
             raise Exception(f"Input value for input '{self.id()}' was not an array")
 
-    def wdl(self) -> wdlgen.WdlType:
-        ar = wdlgen.ArrayType(self._t.wdl(), requires_multiple=False)
-        return wdlgen.WdlType(ar, optional=self.optional)
+    def wdl(self, has_default=False) -> wdlgen.WdlType:
+        ar = wdlgen.ArrayType(self._t.wdl(has_default=False), requires_multiple=False)
+        return wdlgen.WdlType(ar, optional=self.optional and not has_default)
 
-    def can_receive_from(self, other):
+    def can_receive_from(self, other, source_has_default=False):
         if isinstance(other, Array):
             return self._t.can_receive_from(other._t)
         if not self._t.can_receive_from(other):
             return False
-        return super().can_receive_from(other)
+        return super().can_receive_from(other, source_has_default=source_has_default)
 
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))

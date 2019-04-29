@@ -169,15 +169,16 @@ class DataType(ABC):
     def identify(self):
         print(self.id())
 
-    def can_receive_from(self, other) -> bool:
+    def can_receive_from(self, other, source_has_default=False) -> bool:
         """
         Can this class receive from $other, likely going to be type(a) == type(b)
         :param other:
+        :param source_has_default: If the source has default, then we can return true even if the source is optional
         :return:
         """
         if not isinstance(other.received_type(), type(self.received_type())):
             return False
-        if self.optional:
+        if self.optional or source_has_default:
             # If I'm optional I can receive from optional / non optional
             return True
         # If I'm not optional, I must receive from not optional
@@ -216,8 +217,9 @@ class DataType(ABC):
     def cwl_input(self, value: Any):
         return value
 
-    def wdl(self) -> WdlType:
-        return WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()) + self._question_mark_if_optional())
+    def wdl(self, has_default=False) -> WdlType:
+        qm = "" if has_default else self._question_mark_if_optional()
+        return WdlType.parse_type(NativeTypes.map_to_wdl(self.primitive()) + qm)
 
     # def default(self):
     #     return self.default_value

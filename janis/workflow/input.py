@@ -1,12 +1,10 @@
-from typing import Dict, Optional, List
+from typing import Dict
 
-from janis.utils.validators import Validators
-
-from janis.utils.logger import Logger, LogLevel
-# import cwlgen.cwlgen as cwl
-from janis.types.data_types import DataType, NativeTypes
-from janis.workflow.step import ToolOutput
 from janis.graph.node import Node, NodeTypes
+from janis.types.data_types import DataType
+from janis.utils.logger import Logger
+from janis.utils.validators import Validators
+from janis.workflow.step import ToolOutput
 
 
 class Input:

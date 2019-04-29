@@ -264,43 +264,6 @@ class Workflow(Tool):
         f, fn = self.get_labels_and_node_by_inference(finish)
         return self.add_edge((s.split("/")[0], sn), (f, fn))
 
-    def add_default_value(self, tagged_node, default_value):
-        """
-        Adds a default value to the edge, will create an edge!
-        :param tagged_node: will be run through get_labels_and_node_by_inference: ( string | (string, node))
-        :param default_value: value to be the default, should match the data_type
-        """
-        if not tagged_node:
-            raise Exception("You must pass a non-optional node to 'add_default_value'")
-        n, component = self.get_labels_and_node_by_inference(tagged_node)
-
-        if not n:
-            raise Exception(f"Couldn't resolve the node identifier from '{str(tagged_node)}'")
-        components = n.split("/")
-        node_id = components[0]
-        node = self._nodes.get(node_id)
-        if not node:
-            raise Exception(f"Couldn't find a node in the graph with identifier '{node_id}', you must add the node "
-                            f"to the graph to add a default value")
-        if node.node_type != NodeTypes.TASK:
-            raise Exception(f"You can only add a default value to a task (step) (not to '{node.id()}'")
-        if not component:
-            has_one_value = ", even if there's only one value" if len(node.inputs()) == 1 else ""
-            raise Exception("You must fully qualify a node and it's components to add a default value" + has_one_value)
-
-        tag = components[-1]
-
-        # # Validate the type of data?
-        # inp = node.inputs().get(tag)
-        # inp.input_type == type(default)
-
-        if tag in node.connection_map:
-            e = node.connection_map[tag]
-        else:
-            e = StepInput(node, tag)
-            node.connection_map[components[-1]] = e
-        e.set_default(default_value)
-
     @staticmethod
     def validate_tag_parts(parts: List[str], tag: str, node_type: str):
         """
@@ -362,12 +325,11 @@ class Workflow(Tool):
             Logger.log(message, LogLevel.CRITICAL)
             raise NodeNotFound(message)
 
-    def add_edge(self, start, finish, default_value=None):
+    def add_edge(self, start, finish):
         """
         Add the start node as a source to the finish node, will create an edge if none exists
         :param start: an input or step node pair (via get_labels_and_node_by_inference)
         :param finish: a step or output node pair (via get_labels_and_node_by_inference)
-        :param default_value: optionally provide a default value, if the start resolves to null
         :return: edge
         """
 
@@ -483,8 +445,6 @@ class Workflow(Tool):
             f_node.connection_map[ftag] = step_inputs
 
         e = step_inputs.add_source(s_node, stag)
-        if default_value:
-            step_inputs.set_default(default_value)
 
         self.has_scatter = self.has_scatter or e.scatter
         self.has_multiple_inputs = self.has_multiple_inputs or step_inputs.multiple_inputs

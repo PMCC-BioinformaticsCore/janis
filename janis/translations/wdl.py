@@ -141,7 +141,7 @@ def translate_workflow(wf, with_docker=True, is_nested_tool=False, with_resource
 
     # Convert self._inputs -> wdl.Input
     for i in wf._inputs:
-        wd = i.input.data_type.wdl()
+        wd = i.input.data_type.wdl(has_default=i.input.default is not None)
 
         w.inputs.append(wdl.Input(
             data_type=wd,
@@ -246,7 +246,7 @@ def translate_tool(tool: CommandTool, with_docker, with_resource_overrides=False
             ins.extend(wdl.Input(w, i.id()) for w in wd)
         else:
             if isinstance(i.input_type, Filename):
-                default = i.input_type.generated_filename()
+                default = get_input_value_from_potential_selector_or_generator(i.input_type.generated_filename(), tool.id(), string_environment=False)
             else:
                 default = get_input_value_from_potential_selector_or_generator(i.default, tool.id(), string_environment=False)
 
@@ -284,17 +284,16 @@ def translate_tool(tool: CommandTool, with_docker, with_resource_overrides=False
     if with_docker:
         r.add_docker(tool.docker())
 
-    if with_resource_overrides:
-        # generate resource inputs, for memory, cpu and disk at the moment
-        ins.extend([
-            wdl.Input(wdl.WdlType.parse_type("Int?"), "runtime_cpu"),
-            wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_memory"),
-            wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_disks"),
-        ])
+    # generate resource inputs, for memory, cpu and disk at the moment
+    ins.extend([
+        wdl.Input(wdl.WdlType.parse_type("Int?"), "runtime_cpu", expression="2", requires_quotes=False),
+        wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_memory"),
+        wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_disks"),
+    ])
 
-        r.kwargs["cpu"] = wdl.IfThenElse("defined(runtime_cpu)", "runtime_cpu", "2")
-        r.kwargs["memory"] = wdl.IfThenElse("defined(runtime_memory)", '"${runtime_memory}G"', '"4G"')
-        r.kwargs["disks"] = wdl.IfThenElse("defined(runtime_disks)", "runtime_disks", '""')
+    r.kwargs["cpu"] = wdl.IfThenElse("defined(runtime_cpu)", "runtime_cpu", "2")
+    r.kwargs["memory"] = wdl.IfThenElse("defined(runtime_memory)", '"${runtime_memory}G"', '"4G"')
+    r.kwargs["disks"] = wdl.IfThenElse("defined(runtime_disks)", "runtime_disks", '""')
 
     return wdl.Task(tool.id(), ins, outs, commands, r, version="development")
 
@@ -621,7 +620,7 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, string_
     elif isinstance(value, int) or isinstance(value, float):
         return value
     elif isinstance(value, Filename):
-        return value.generated_filename()
+        return value.generated_filename() if string_environment else f'"{value.generated_filename()}"'
     elif isinstance(value, InputSelector):
         return translate_input_selector(selector=value, string_environment=string_environment)
     elif isinstance(value, WildcardSelector):

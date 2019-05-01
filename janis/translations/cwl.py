@@ -430,7 +430,7 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, string_
     elif isinstance(value, int) or isinstance(value, float):
         return value
     elif isinstance(value, Filename):
-        return value.generated_filename()
+        return value.generated_filename() if string_environment else '"%s"' % value.generated_filename()
     elif isinstance(value, InputSelector):
         return translate_input_selector(selector=value)
     elif isinstance(value, WildcardSelector):
@@ -478,7 +478,7 @@ def translate_memory_selector(selector: MemorySelector):
     pre = selector.prefix if selector.prefix else ""
     suf = selector.suffix if selector.suffix else ""
 
-    val = "$(Math.floor(runtime_memory))"
+    val = "$(Math.floor(inputs.runtime_memory))"
 
     pref = ('"%s" + ' % pre) if pre else ""
     suff = (' + "%s"' % suf) if suf else ""

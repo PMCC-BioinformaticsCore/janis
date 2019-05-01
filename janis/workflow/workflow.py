@@ -703,13 +703,17 @@ class Workflow(Tool):
                                                write_inputs_file=write_inputs_file,
                                                should_validate=should_validate)
 
-    def generate_resources_file(self, translation: translations.SupportedTranslation, hints: Dict[str, Any]):
+    def generate_resources_file(self, translation: translations.SupportedTranslation, hints: Dict[str, Any]=None, to_console=True):
         tr = translations.build_resources_input(self, translation, hints)
+        q = ""
         if translation == translations.SupportedTranslations.CWL:
             import ruamel.yaml
-            return ruamel.yaml.dump(tr, default_flow_style=False)
+            q = ruamel.yaml.dump(tr, default_flow_style=False)
         elif translation == translations.SupportedTranslations.WDL:
             import json
-            return json.dumps(tr, separators=(",", ": "), indent=4)
-        return tr
+            q = json.dumps(tr, separators=(",", ": "), indent=4)
+
+        if to_console:
+            print(q)
+        return q
 

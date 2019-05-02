@@ -202,15 +202,17 @@ class DataType(ABC):
     def _question_mark_if_optional(self):
         return "?" if self.optional else ""
 
-    def cwl_type(self):
-        return NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
+    def cwl_type(self, has_default=False):
+        tp = NativeTypes.map_to_cwl(self.primitive())
+        return [tp, 'null'] if self.optional and not has_default else tp
 
     def map_cwl_type(self, parameter: cwl.Parameter) -> cwl.Parameter:
         if not NativeTypes.is_valid(self.primitive()):
             raise Exception(f"{self.id()} must declare its primitive as one of the NativeTypes "
                             f"({', '.join(NativeTypes.all)})")
 
-        parameter.type = NativeTypes.map_to_cwl(self.primitive()) + self._question_mark_if_optional()
+        tp = NativeTypes.map_to_cwl(self.primitive())
+        parameter.type = [tp, 'null'] if self.optional else tp
         parameter.secondaryFiles = self.secondary_files()
         return parameter
 

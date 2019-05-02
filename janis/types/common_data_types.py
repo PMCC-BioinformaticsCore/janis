@@ -57,7 +57,7 @@ class Filename(String):
     def primitive() -> NativeType:
         return NativeTypes.kStr
 
-    def cwl_type(self):
+    def cwl_type(self, has_default=False):
         self.optional = False
         t = super().cwl_type()
         self.optional = True
@@ -292,13 +292,13 @@ class Array(DataType):
     def schema(cls) -> Dict:
         return {"type": "array"}
 
-    def cwl_type(self):
+    def cwl_type(self, has_default=False):
         inp = cwlgen.CommandInputArraySchema(
             items=self._t.cwl_type(),
             # label=None,
             # input_binding=None
         )
-        return [inp, "null"] if self.optional else inp
+        return [inp, "null"] if self.optional and not has_default else inp
 
     def map_cwl_type(self, parameter: cwlgen.Parameter) -> cwlgen.Parameter:
         parameter.type = cwlgen.CommandInputArraySchema(

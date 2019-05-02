@@ -5,6 +5,10 @@ from janis.translations.exportpath import ExportPathKeywords
 
 
 class TestExportPath(unittest.TestCase):
+    """
+    These tests are for components that apply to every single translation.
+    Perhaps the export path function, or anything in translationbase.py.
+    """
 
     def test_user_path(self):
         from os.path import expanduser

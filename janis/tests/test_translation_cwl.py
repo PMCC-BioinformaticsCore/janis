@@ -26,7 +26,7 @@ class TestTool(CommandTool):
     def docker(): return "ubuntu:latest"
 
 
-class TestCwl(unittest.TestCase):
+class TestCwlSelectorsAndGenerators(unittest.TestCase):
 
     def test_str_tool(self):
         t = TestTool()

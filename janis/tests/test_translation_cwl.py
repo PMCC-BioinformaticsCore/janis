@@ -4,7 +4,7 @@ from typing import List
 from janis.types import CpuSelector, MemorySelector
 
 from janis import ToolOutput, ToolInput, String, CommandTool, Stdout, InputSelector, Array, File, Filename, \
-    WildcardSelector
+    WildcardSelector, Input, Output
 import janis.translations.cwl as cwl
 
 
@@ -26,11 +26,23 @@ class TestTool(CommandTool):
     def docker(): return "ubuntu:latest"
 
 
-class TestCwlSelectorsAndGenerators(unittest.TestCase):
+class TestTypeWithSecondary(File):
+    @staticmethod
+    def secondary_files():
+        return [".txt"]
 
+
+class TestCwlTypesConversion(unittest.TestCase):
+    pass
+
+
+class TestCwlMisc(unittest.TestCase):
     def test_str_tool(self):
         t = TestTool()
         self.assertEqual(t.translate("cwl"), cwl_testtool)
+
+
+class TestCwlSelectorsAndGenerators(unittest.TestCase):
 
     def test_input_selector_base(self):
         input_sel = InputSelector("random")
@@ -60,6 +72,18 @@ class TestCwlSelectorsAndGenerators(unittest.TestCase):
         self.assertEqual(
             '"TestString"',
             cwl.get_input_value_from_potential_selector_or_generator("TestString", "tool_id", string_environment=False)
+        )
+
+    def test_input_value_int_stringenv(self):
+        self.assertEqual(
+            42,
+            cwl.get_input_value_from_potential_selector_or_generator(42, "tool_id", string_environment=True)
+        )
+
+    def test_input_value_int_nostringenv(self):
+        self.assertEqual(
+            42,
+            cwl.get_input_value_from_potential_selector_or_generator(42, "tool_id", string_environment=False)
         )
 
     def test_input_value_filename_stringenv(self):
@@ -152,10 +176,30 @@ class TestCwlSelectorsAndGenerators(unittest.TestCase):
         )
 
 
-class TestCwlInputSelector(unittest.TestCase):
+class TestCwlTranslateInput(unittest.TestCase):
 
-    def test_input_selector_1(self):
-        self.assertTrue(True)
+    def test_translate_input(self):
+        inp = Input(identifier="testIdentifier", data_type=String(), value="value",
+                    label="myLabel", doc="docstring", default="defaultValue")
+        tinp = cwl.translate_input(inp)
+
+        self.assertEqual("testIdentifier", tinp.id)
+        self.assertEqual("myLabel", tinp.label)
+        self.assertEqual(None, tinp.secondaryFiles)
+        self.assertEqual("docstring", tinp.doc)
+        self.assertEqual(None, tinp.inputBinding)
+        self.assertEqual("string", tinp.type)
+        self.assertEqual("defaultValue", tinp.default)
+
+    def test_secondary_file_translation(self):
+        inp = Input(identifier="testIdentifier", data_type=TestTypeWithSecondary())
+        tinp = cwl.translate_input(inp)
+
+        self.assertEqual("File", tinp.type)
+        self.assertListEqual([".txt"], tinp.secondaryFiles)
+
+
+
 
 
 

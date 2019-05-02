@@ -20,13 +20,14 @@ This file is logically structured similar to the WDL equiv:
 ## IMPORTS
 
 import os
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Any, Tuple
 
 import cwlgen
 import ruamel.yaml
 
 from janis.tool.commandtool import CommandTool
 from janis.tool.tool import Tool, ToolInput
+from janis.translations.translationbase import TranslatorBase
 from janis.types import InputSelector, Selector, WildcardSelector, MemorySelector, CpuSelector
 from janis.types.common_data_types import Stdout, Array, File, Filename
 from janis.utils.logger import Logger
@@ -40,218 +41,183 @@ CWL_VERSION = "v1.0"
 
 ## TRANSLATION
 
-def dump_cwl(workflow, to_console=True, with_docker=True, with_resource_overrides=False, to_disk=False,
-             export_path=ExportPathKeywords.default, write_inputs_file=False, should_validate=False,
-             should_zip=True):
-    wf_cwl, inp_dict, tools_cwl = translate_workflow(workflow,
-                                                     with_docker=with_docker,
-                                                     with_resource_overrides=with_resource_overrides)
+class CwlTranslator(TranslatorBase):
 
-    wf_dict = wf_cwl.get_dict()
-    tool_dicts = [("tools/" + t.id() + ".cwl", t.get_dict()) for t in tools_cwl]
+    def __init__(self):
+        super().__init__(name="cwl", workflow_extension=".cwl", inputs_extension=".yml")
+        ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
 
-    ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
 
-    wf_str = ruamel.yaml.dump(wf_dict, default_flow_style=False)
-    inp_str = ruamel.yaml.dump(inp_dict, default_flow_style=False)
-    tls_strs = [(t[0], ruamel.yaml.dump(t[1], default_flow_style=False)) for t in tool_dicts]
+    @staticmethod
+    def stringify_translated_workflow(wf):
+        return ruamel.yaml.dump(wf.get_dict(), default_flow_style=False)
 
-    if to_console:
-        print("=== WORKFLOW ===")
-        print(wf_str)
-        print("\n=== INPUTS ===")
-        print(inp_str)
-        print("\n=== TOOLS ===")
-        [print(t[1]) for t in tls_strs]
+    @staticmethod
+    def stringify_translated_tool(tool):
+        return ruamel.yaml.dump(tool.get_dict(), default_flow_style=False)
 
-    d = ExportPathKeywords.resolve(export_path, workflow_spec="cwl", workflow_name=workflow.id())
+    @staticmethod
+    def stringify_translated_inputs(inputs):
+        return ruamel.yaml.dump(inputs, default_flow_style=False)
 
-    if write_inputs_file:
-        with open(d + workflow.id() + "-job.yml", "w+") as cwl:
-            Logger.log(f"Writing {workflow.id()}-job.yml to disk")
-            cwl.write(inp_str)
-            # ruamel.yaml.dump(inp_dict, cwl, default_flow_style=False)
-            Logger.log(f"Written {workflow.id()}-job.yml to disk")
-    else:
-        Logger.log("Skipping writing input (yaml) job file")
+    @staticmethod
+    def validate_command_for(wfpath, inppath, tools_dir_path, tools_zip_path):
+        return ["cwltool", "--validate", wfpath]
 
-    if to_disk:
-        d_tools = d + "tools/"
+    @classmethod
+    def translate_workflow(cls, wf, with_docker=True, with_resource_overrides=False, is_nested_tool=False) \
+            -> Tuple[any, dict, Dict[str, any]]:
+        from janis.workflow.workflow import Workflow
 
-        if not os.path.isdir(d):
-            os.makedirs(d)
-        if not os.path.isdir(d_tools):
-            os.makedirs(d_tools)
+        metadata = wf.metadata() if wf.metadata() else WorkflowMetadata()
+        w = cwlgen.Workflow(wf.identifier, wf.friendly_name(), metadata.documentation, cwl_version=CWL_VERSION)
 
-        os.chdir(d)
-        wf_filename = d + workflow.id() + ".cwl"
-        with open(wf_filename, "w+") as cwl:
-            Logger.log(f"Writing {workflow.id()}.cwl to disk")
-            cwl.write(wf_str)
-            # ruamel.yaml.dump(wf_dict, cwl, default_flow_style=False)
-            Logger.log(f"Written {workflow.id()}.cwl to disk")
+        w.inputs: List[cwlgen.InputParameter] = [translate_input(i.input) for i in wf._inputs]
 
-        # z = zipfile.ZipFile(d + "tools.zip", "w")
-        for (tool_filename, tool) in tls_strs:
-            with open(d + tool_filename, "w+") as cwl:
-                Logger.log(f"Writing {tool_filename} to disk")
-                cwl.write(tool)
-                Logger.log(f"Written {tool_filename} to disk")
+        resource_inputs = []
+        if with_resource_overrides:
+            resource_inputs = build_resource_override_maps_for_workflow(wf)
+            w.inputs.extend(resource_inputs)
 
-        import subprocess
-        if should_validate:
-            Logger.info("Validing outputted CWL")
+        w.steps: List[cwlgen.WorkflowStep] = []
 
-            cwltool_result = subprocess.run(["cwltool", "--validate", wf_filename])
-            if cwltool_result.returncode == 0:
-                Logger.info("Exported workflow is valid CWL.")
+        for s in wf._steps:
+            resource_overrides = {}
+            for r in resource_inputs:
+                if not r.id.startswith(s.id()): continue
+
+                resource_overrides[r.id[(len(s.id()) + 1):]] = r.id
+            w.steps.append(translate_step(s, is_nested_tool=is_nested_tool, resource_overrides=resource_overrides))
+
+        w.outputs = [translate_output_node(o) for o in wf._outputs]
+
+        w.requirements.append(cwlgen.InlineJavascriptReq())
+        w.requirements.append(cwlgen.StepInputExpressionRequirement())
+
+        if wf.has_scatter:
+            w.requirements.append(cwlgen.ScatterFeatureRequirement())
+        if wf.has_subworkflow:
+            w.requirements.append(cwlgen.SubworkflowFeatureRequirement())
+        if wf.has_multiple_inputs:
+            w.requirements.append(cwlgen.MultipleInputFeatureRequirement())
+
+        tools = {}
+        tools_to_build: Dict[str, Tool] = {s.step.tool().id(): s.step.tool() for s in wf._steps}
+        for t in tools_to_build:
+            tool: Tool = tools_to_build[t]
+            if isinstance(tool, Workflow):
+                wf_cwl, _, subtools = cls.translate_workflow(
+                    tool,
+                    is_nested_tool=True,
+                    with_docker=with_docker,
+                    with_resource_overrides=with_resource_overrides
+                )
+                tools[tool.id()] = wf_cwl
+                tools.update(subtools)
+            elif isinstance(tool, CommandTool):
+                tool_cwl = cls.translate_tool(tool, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
+                tools[tool.id()] = tool_cwl
             else:
-                Logger.critical(cwltool_result.stderr)
+                raise Exception(f"Unknown tool type: '{type(tool)}'")
 
-        if should_zip:
-            Logger.info("Zipping tools")
-            os.chdir(d)
+        inp = {i.id(): i.input.cwl_input() for i in wf._inputs}
 
-            zip_result = subprocess.run(["zip", "-r", "tools.zip", "tools/"])
-            if zip_result.returncode == 0:
-                Logger.info("Zipped tools")
-            else:
-                Logger.critical(zip_result.stderr)
-
-    return wf_str, inp_str, tls_strs
+        return w, inp, tools
 
 
-def translate_workflow(wf, is_nested_tool=False, with_docker=False, with_hints=False,
-                       with_resource_overrides=False):
-    from janis.workflow.workflow import Workflow
+    @classmethod
+    def translate_tool(cls, tool, with_docker, with_resource_overrides=False):
+        metadata = tool.metadata() if tool.metadata() else ToolMetadata()
+        stdouts = [o.output_type for o in tool.outputs() if isinstance(o.output_type, Stdout) and o.output_type.stdoutname]
+        stdout = stdouts[0].stdoutname if len(stdouts) > 0 else None
 
-    metadata = wf.metadata() if wf.metadata() else WorkflowMetadata()
-    w = cwlgen.Workflow(wf.identifier, wf.friendly_name(), metadata.documentation, cwl_version=CWL_VERSION)
+        if isinstance(stdout, InputSelector): stdout = translate_input_selector(stdout)
 
-    w.inputs: List[cwlgen.InputParameter] = [translate_input(i.input) for i in wf._inputs]
+        tool_cwl = cwlgen.CommandLineTool(
+            tool_id=tool.id(),
+            base_command=tool.base_command(),
+            label=tool.id(),
+            doc=metadata.documentation,
+            cwl_version=CWL_VERSION,
+            stdin=None,
+            stderr=None,
+            stdout=stdout
+        )
 
-    resource_inputs = []
-    if with_resource_overrides:
-        resource_inputs = build_cwl_resource_inputs(wf)
-        w.inputs.extend(resource_inputs)
-
-    w.steps: List[cwlgen.WorkflowStep] = []
-
-    for s in wf._steps:
-        resource_overrides = {}
-        for r in resource_inputs:
-            if not r.id.startswith(s.id()): continue
-
-            resource_overrides[r.id[(len(s.id()) + 1):]] = r.id
-        w.steps.append(translate_step(s, is_nested_tool=is_nested_tool, resource_overrides=resource_overrides))
-
-    w.outputs = [translate_output_node(o) for o in wf._outputs]
-
-    w.requirements.append(cwlgen.InlineJavascriptReq())
-    w.requirements.append(cwlgen.StepInputExpressionRequirement())
-
-    if wf.has_scatter:
-        w.requirements.append(cwlgen.ScatterFeatureRequirement())
-    if wf.has_subworkflow:
-        w.requirements.append(cwlgen.SubworkflowFeatureRequirement())
-    if wf.has_multiple_inputs:
-        w.requirements.append(cwlgen.MultipleInputFeatureRequirement())
-
-    tools = []
-    tools_to_build: Dict[str, Tool] = {s.step.tool().id(): s.step.tool() for s in wf._steps}
-    for t in tools_to_build:
-        tool: Tool = tools_to_build[t]
-        if isinstance(tool, Workflow):
-            wf_cwl, _, subtools = translate_workflow(tool,
-                                                     is_nested_tool=True,
-                                                     with_docker=with_docker,
-                                                     with_hints=with_hints,
-                                                     with_resource_overrides=with_resource_overrides)
-            tools.append(wf_cwl)
-            tools.extend(subtools)
-        elif isinstance(tool, CommandTool):
-            tool_cwl = translate_tool(tool, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
-
-            tools.append(tool_cwl)
-        else:
-            raise Exception(f"Unknown tool type: '{type(tool)}'")
-
-    inp = {i.id(): i.input.cwl_input() for i in wf._inputs}
-
-    return w, inp, tools
-
-
-def translate_tool_str(tool, with_docker, with_resource_overrides=False):
-    ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
-    return ruamel.yaml.dump(
-        translate_tool(tool, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
-        .get_dict(), default_flow_style=False)
-
-
-def translate_tool(tool, with_docker, with_resource_overrides=False):
-    metadata = tool.metadata() if tool.metadata() else ToolMetadata()
-    stdouts = [o.output_type for o in tool.outputs() if isinstance(o.output_type, Stdout) and o.output_type.stdoutname]
-    stdout = stdouts[0].stdoutname if len(stdouts) > 0 else None
-
-    if isinstance(stdout, InputSelector): stdout = translate_input_selector(stdout)
-
-    tool_cwl = cwlgen.CommandLineTool(
-        tool_id=tool.id(),
-        base_command=tool.base_command(),
-        label=tool.id(),
-        doc=metadata.documentation,
-        cwl_version=CWL_VERSION,
-        stdin=None,
-        stderr=None,
-        stdout=stdout
-    )
-
-    tool_cwl.requirements.extend([
-        cwlgen.InlineJavascriptReq()
-    ])
-
-    if tool.requirements():
-        tool_cwl.requirements.extend(tool.requirements())
-
-    inputs_that_require_localisation = [ti for ti in tool.inputs()
-                                        if ti.localise_file and (issubclass(type(ti.input_type), File)
-                                                                 or (issubclass(type(ti.input_type), Array))
-                                                                 and issubclass(type(ti.input_type.subtype()), File))]
-    if inputs_that_require_localisation:
-        tool_cwl.requirements.append(cwlgen.InitialWorkDirRequirement([
-            "$(inputs.%s)" % ti.id() for ti in inputs_that_require_localisation]))
-
-    if with_docker:
-        tool_cwl.requirements.append(cwlgen.DockerRequirement(
-            docker_pull=tool.docker(),
-            # docker_load=None,
-            # docker_file=None,
-            # docker_import=None,
-            # docker_image_id=None,
-            # docker_output_dir=None
-        ))
-
-    tool_cwl.inputs.extend(translate_tool_input(i) for i in tool.inputs())
-    tool_cwl.outputs.extend(translate_tool_output(o, tool=tool.id()) for o in tool.outputs())
-
-    args = tool.arguments()
-    if args:
-        tool_cwl.arguments.extend(translate_tool_argument(a) for a in tool.arguments())
-
-    if with_resource_overrides:
-        # work out whether (the tool of) s is a workflow or tool
-        tool_cwl.inputs.extend([
-            cwlgen.CommandInputParameter("runtime_memory", param_type="float?"),
-            cwlgen.CommandInputParameter("runtime_cpu", param_type="int?"),
-            # cwlgen.CommandInputParameter("runtime_disks", param_type="string?"),
+        tool_cwl.requirements.extend([
+            cwlgen.InlineJavascriptReq()
         ])
 
-        tool_cwl.requirements.append(cwlgen.ResourceRequirement(
-            cores_min="$(inputs.runtime_cpu ? inputs.runtime_cpu : 1)",
-            ram_min="$(inputs.runtime_memory ? Math.floor(1024 * inputs.runtime_memory) : 4096)",
-        ))
+        if tool.requirements():
+            tool_cwl.requirements.extend(tool.requirements())
 
-    return tool_cwl
+        inputs_that_require_localisation = [ti for ti in tool.inputs()
+                                            if ti.localise_file and (issubclass(type(ti.input_type), File)
+                                                                     or (issubclass(type(ti.input_type), Array))
+                                                                     and issubclass(type(ti.input_type.subtype()), File))]
+        if inputs_that_require_localisation:
+            tool_cwl.requirements.append(cwlgen.InitialWorkDirRequirement([
+                "$(inputs.%s)" % ti.id() for ti in inputs_that_require_localisation]))
+
+        if with_docker:
+            tool_cwl.requirements.append(cwlgen.DockerRequirement(
+                docker_pull=tool.docker(),
+                # docker_load=None,
+                # docker_file=None,
+                # docker_import=None,
+                # docker_image_id=None,
+                # docker_output_dir=None
+            ))
+
+        tool_cwl.inputs.extend(translate_tool_input(i) for i in tool.inputs())
+        tool_cwl.outputs.extend(translate_tool_output(o, tool=tool.id()) for o in tool.outputs())
+
+        args = tool.arguments()
+        if args:
+            tool_cwl.arguments.extend(translate_tool_argument(a) for a in tool.arguments())
+
+        if with_resource_overrides:
+            # work out whether (the tool of) s is a workflow or tool
+            tool_cwl.inputs.extend([
+                cwlgen.CommandInputParameter("runtime_memory", param_type="float?"),
+                cwlgen.CommandInputParameter("runtime_cpu", param_type="int?"),
+                # cwlgen.CommandInputParameter("runtime_disks", param_type="string?"),
+            ])
+
+            tool_cwl.requirements.append(cwlgen.ResourceRequirement(
+                cores_min="$(inputs.runtime_cpu ? inputs.runtime_cpu : 1)",
+                ram_min="$(inputs.runtime_memory ? Math.floor(1024 * inputs.runtime_memory) : 4096)",
+            ))
+
+        return tool_cwl
+
+    @classmethod
+    def build_resources_input(cls, workflow, hints, prefix=None):
+        from janis.workflow.workflow import Workflow
+
+        # returns a list of key, value pairs
+        steps: Dict[str, Optional[Any]] = {}
+
+        if not prefix:
+            prefix = ""
+        else:
+            prefix += "_"
+
+        for s in workflow._steps:
+            tool: Tool = s.step.tool()
+
+            if isinstance(tool, CommandTool):
+                tool_pre = prefix + s.id() + "_"
+                steps.update({
+                    tool_pre + "runtime_memory": tool.memory(hints),
+                    tool_pre + "runtime_cpu": tool.cpus(hints),
+                    # tool_pre + "runtime_disks": None
+                })
+            elif isinstance(tool, Workflow):
+                tool_pre = prefix + s.id()
+                steps.update(cls.build_resources_input(tool, hints, tool_pre))
+
+        return steps
 
 
 def translate_input(inp: Input):
@@ -264,7 +230,7 @@ def translate_input(inp: Input):
         streamable=None,
         doc=inp.doc,
         input_binding=None,
-        param_type=inp.data_type.cwl_type()
+        param_type=inp.data_type.cwl_type(inp.default is not None)
     )
 
 
@@ -288,7 +254,6 @@ def translate_output(outp, source):
 
 
 def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
-    data_type = toolinput.input_type.cwl_type()
 
     default, value_from = toolinput.default, None
 
@@ -297,6 +262,8 @@ def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
     elif is_selector(default):
         default = None
         value_from = get_input_value_from_potential_selector_or_generator(toolinput.default, toolinput.id())
+
+    data_type = toolinput.input_type.cwl_type(default is not None)
 
     input_binding = cwlgen.CommandLineBinding(
         # load_contents=toolinput.load_contents,
@@ -487,35 +454,8 @@ def translate_memory_selector(selector: MemorySelector):
 
 ## OTHER HELPERS
 
-def build_cwl_resource_inputs_dict(wf, hints, prefix=None) -> Dict[str, Any]:
-    from janis.workflow.workflow import Workflow
 
-    # returns a list of key, value pairs
-    steps: Dict[str, Optional[Any]] = {}
-
-    if not prefix:
-        prefix = ""
-    else:
-        prefix += "_"
-
-    for s in wf._steps:
-        tool: Tool = s.step.tool()
-
-        if isinstance(tool, CommandTool):
-            tool_pre = prefix + s.id() + "_"
-            steps.update({
-                tool_pre + "runtime_memory": tool.memory(hints),
-                tool_pre + "runtime_cpu": tool.cpus(hints),
-                # tool_pre + "runtime_disks": None
-            })
-        elif isinstance(tool, Workflow):
-            tool_pre = prefix + s.id()
-            steps.update(build_cwl_resource_inputs_dict(tool, hints, tool_pre))
-
-    return steps
-
-
-def build_cwl_resource_inputs(wf, prefix=None) -> List[cwlgen.InputParameter]:
+def build_resource_override_maps_for_workflow(wf, prefix=None) -> List[cwlgen.InputParameter]:
     from janis.workflow.workflow import Workflow
 
     # returns a list of key, value pairs
@@ -537,6 +477,6 @@ def build_cwl_resource_inputs(wf, prefix=None) -> List[cwlgen.InputParameter]:
             ])
         elif isinstance(tool, Workflow):
             tool_pre = prefix + s.id()
-            inputs.extend(build_cwl_resource_inputs(tool, tool_pre))
+            inputs.extend(build_resource_override_maps_for_workflow(tool, tool_pre))
 
     return inputs

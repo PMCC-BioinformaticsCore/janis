@@ -1,5 +1,5 @@
 from janis import Workflow, Input, File, Output, Step
-from janis.unix.data_types.tar_file import TarFile
+from janis.unix.data_types.tarfile import TarFile
 from janis.unix.tools.compile import Compile
 from janis.unix.tools.untar import Untar
 

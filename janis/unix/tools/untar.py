@@ -1,5 +1,5 @@
 from janis import Array, ToolInput, ToolOutput, WildcardSelector, File
-from janis.unix.data_types.tar_file import TarFile
+from janis.unix.data_types.tarfile import TarFile
 from janis.unix.tools.unixtool import UnixTool
 
 

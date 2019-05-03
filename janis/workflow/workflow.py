@@ -684,15 +684,9 @@ class Workflow(Tool):
 
     # TRANSLATIONS
 
-    def translate(self, translation: translations.SupportedTranslation, with_docker=True, with_resource_overrides=False):
-        return translations.translate_workflow(self, translation=translation, to_console=False, to_disk=False,
-                                               with_resource_overrides=with_resource_overrides,
-                                               should_zip=False, write_inputs_file=False, should_validate=False)
-
-    def dump_translation(self, translation: translations.SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
+    def translate(self, translation: translations.SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
                          with_hints=False, with_resource_overrides=False, write_inputs_file=False,
-                         should_validate=False,
-                         should_zip=True):
+                         should_validate=False, should_zip=True):
         return translations.translate_workflow(self,
                                                translation=translation,
                                                to_console=to_console,

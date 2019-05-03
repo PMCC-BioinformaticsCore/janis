@@ -3,7 +3,7 @@ SamTools: View
 =============================
 Tool identifier: ``samtoolsview``
 
-Tool path: ``from janis_bioinformatics.tools.samtools import SamToolsView_1_7``
+Tool path: ``from janis_bioinformatics.tools.samtools import SamToolsViewLatest``
 
 Documentation
 -------------
@@ -89,4 +89,4 @@ Author: Michael Franklin
 
 
 *SamTools: View was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-04-18*.
+*This page was automatically generated on 2019-05-03*.

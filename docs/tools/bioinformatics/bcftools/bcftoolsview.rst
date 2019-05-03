@@ -3,7 +3,7 @@ BCFTools: View
 =============================
 Tool identifier: ``bcftoolsview``
 
-Tool path: ``from janis_bioinformatics.tools.bcftools import BcfToolsView_1_5``
+Tool path: ``from janis_bioinformatics.tools.bcftools import BcfToolsViewLatest``
 
 Documentation
 -------------
@@ -94,4 +94,4 @@ Author: **Unknown**
 
 
 *BCFTools: View was last updated on **Unknown***.
-*This page was automatically generated on 2019-04-18*.
+*This page was automatically generated on 2019-05-03*.

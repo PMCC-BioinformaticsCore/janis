@@ -5,11 +5,12 @@ GATK4
 Automatically generated index page for {module} {title}
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
    gatk4applybqsr
    gatk4baserecalibrator
+   gatk4gathervcfs
    gatk4genotypeconcordance
    gatk4markduplicates
    gatk4mergesamfiles
@@ -18,4 +19,4 @@ Automatically generated index page for {module} {title}
    gatkhaplotypecaller
    gatkmutect2
 
-*This page was auto-generated on 18/04/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 03/05/2019. Please do not directly alter the contents of this page.*

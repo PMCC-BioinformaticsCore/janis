@@ -5,10 +5,10 @@ bioinformatics
 Automatically generated index page for {module} {title}
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
-   Broad Institute (GATK)/index
+   Broad Institute/index
    GATK4/index
    Illumina/index
    PMCC/index
@@ -22,8 +22,7 @@ Automatically generated index page for {module} {title}
    alignsortedbam
    combinevariants
    fastqc
-   performanceValidator
    splitmultiallele
    vardict
 
-*This page was auto-generated on 18/04/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 03/05/2019. Please do not directly alter the contents of this page.*

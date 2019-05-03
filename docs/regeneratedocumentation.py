@@ -334,7 +334,7 @@ def prepare_all_tools():
 
         Logger.log("Prepared " + did)
 
-    def prepare_modules_in_index(contents, title, dir, max_depth=2):
+    def prepare_modules_in_index(contents, title, dir, max_depth=1):
         module_filename = dir + "/index.rst"
         module_tools = sorted(set(contents[ROOT_KEY] if ROOT_KEY in contents else []))
         submodule_keys = sorted(m for m in contents.keys() if m != ROOT_KEY)

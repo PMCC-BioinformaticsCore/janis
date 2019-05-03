@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 from janis import __version__
 from janis.utils.janisconstants import GITHUB_URL
 
+# Version information is found in the __init__ file of `janis/`
 DESCRIPTION = "Contains classes and helpers to build a workflow, and provide options to convert to CWL / WDL"
 
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########

@@ -229,12 +229,12 @@ class WdlTranslator(TranslatorBase):
 
         # generate resource inputs, for memory, cpu and disk at the moment
         ins.extend([
-            wdl.Input(wdl.WdlType.parse_type("Int?"), "runtime_cpu", expression="2", requires_quotes=False),
+            wdl.Input(wdl.WdlType.parse_type("Int"), "runtime_cpu", expression="1", requires_quotes=False),
             wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_memory"),
             wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_disks"),
         ])
 
-        r.kwargs["cpu"] = wdl.IfThenElse("defined(runtime_cpu)", "runtime_cpu", "2")
+        r.kwargs["cpu"] = "runtime_cpu" # wdl.IfThenElse("defined(runtime_cpu)", "runtime_cpu", "1")
         r.kwargs["memory"] = wdl.IfThenElse("defined(runtime_memory)", '"${runtime_memory}G"', '"4G"')
         r.kwargs["disks"] = wdl.IfThenElse("defined(runtime_disks)", "runtime_disks", '""')
 

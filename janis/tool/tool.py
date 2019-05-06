@@ -39,6 +39,8 @@ class ToolArgument:
 
 
 class ToolInput(ToolArgument):
+    illegal_keywords = ["input"]
+
     def __init__(self, tag: str, input_type: DataType, position: Optional[int] = None, prefix: Optional[str] = None,
                  separate_value_from_prefix: bool = None, default: Any = None, doc: Optional[str] = None,
                  nest_input_binding_on_array: bool = None, shell_quote=None, separator=None, localise_file=None):
@@ -56,6 +58,10 @@ class ToolInput(ToolArgument):
             raise Exception(f"The identifier '{tag}' was not validated by '{Validators.identifier_regex}' "
                             f"(must start with letters, and then only contain letters, numbers and an underscore)")
 
+        if tag in ToolInput.illegal_keywords:
+            raise Exception(f"The input identifier '{tag}' is a reserved keyword "
+                            f"({', '.join(ToolInput.illegal_keywords)})")
+
         self.tag: str = tag
         self.input_type: DataType = input_type
         self.optional = self.input_type.optional
@@ -69,11 +75,16 @@ class ToolInput(ToolArgument):
 
 
 class ToolOutput:
+    illegal_keywords = ["output"]
+
     def __init__(self, tag: str, output_type: DataType, glob: Optional[Union[Selector, str]] = None,
                  doc: Optional[str] = None):
         if not Validators.validate_identifier(tag):
             raise Exception(f"The identifier '{tag}' was not validated by '{Validators.identifier_regex}' "
                             f"(must start with letters, and then only contain letters, numbers and an underscore)")
+        if tag in ToolOutput.illegal_keywords:
+            raise Exception(f"The output identifier '{tag}' is a reserved keyword "
+                            f"({', '.join(ToolOutput.illegal_keywords)})")
         self.tag = tag
         self.output_type: DataType = output_type
         self.glob = glob

@@ -44,7 +44,7 @@ CWL_VERSION = "v1.0"
 class CwlTranslator(TranslatorBase):
 
     def __init__(self):
-        super().__init__(name="cwl", workflow_extension=".cwl", inputs_extension=".yml")
+        super().__init__(name="cwl", workflow_extension="cwl", inputs_extension="yml")
         ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
 
 

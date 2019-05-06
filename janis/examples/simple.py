@@ -36,15 +36,15 @@ class SimpleWorkflow(Workflow):
     def __init__(self):
         super().__init__("simpleWorkflow")
 
-        inp1 = Input("tarFile", TarFile())
+        inp = Input("tarFile", TarFile())
 
         step1 = Step("untar", Untar())
         step2 = Step("compile", Compile())
         step3 = Step("tar", Tar())
 
-        outp = Output("out", File())
+        outp = Output("out")
 
-        self.add_edge(inp1, step1.tarFile)
+        self.add_edge(inp, step1.tarFile)
         self.add_edge(step1.files, step2.file)  # Auto scatter
         self.add_edge(step1.files, step3.files)
         self.add_edge(step2.compiled, step3.files)

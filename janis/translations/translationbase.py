@@ -61,7 +61,7 @@ class TranslatorBase(ABC):
             print("=== WORKFLOW ===")
             print(str_wf)
             print("\n=== TOOLS ===")
-            [print(f":: {t[0]} ::" + t[1]) for t in str_tools]
+            [print(f":: {t[0]} ::\n" + t[1]) for t in str_tools]
             print("\n=== INPUTS ===")
             print(str_inp)
 

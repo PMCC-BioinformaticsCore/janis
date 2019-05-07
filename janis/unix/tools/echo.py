@@ -17,11 +17,11 @@ class Echo(UnixTool):
 
     def inputs(self):
         return [
-            ToolInput("input", String())
+            ToolInput("inp", String(), position=0)
         ]
 
     def outputs(self):
-        return [ToolOutput("output", Stdout())]
+        return [ToolOutput("outp", Stdout())]
 
     @staticmethod
     def docker():

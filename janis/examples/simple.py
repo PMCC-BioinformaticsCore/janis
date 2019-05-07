@@ -52,7 +52,7 @@ class SimpleWorkflow(Workflow):
 
 
 if __name__ == "__main__":
-    SimpleWorkflow().translate("wdl")
+    SimpleWorkflow().translate("wdl", to_disk=True)
 
 
 

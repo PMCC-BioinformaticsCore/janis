@@ -121,7 +121,7 @@ class TestWorkflow(TestCase):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
         stp = Step("stp", Echo())  # Only has one input, with no output
-        e = w.add_edge(inp, stp.input)
+        e = w.add_edge(inp, stp.inp)
 
         self.assertEqual(e.start.id(), inp.id())
         self.assertEqual(e.finish.id(), stp.id())
@@ -156,7 +156,7 @@ class TestWorkflow(TestCase):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
         stp = Step("stp", Echo())       # Only has one input, with no output
-        e = w.add_edge(inp, stp.input)
+        e = w.add_edge(inp, stp.inp)
 
         self.assertEqual(e.start.id(), inp.id())
         self.assertEqual(e.finish.id(), stp.id())

@@ -20,10 +20,13 @@ class WildcardSelector(Selector):
 
 
 class MemorySelector(Selector):
-    def __init__(self, suffix=None, prefix=None):
+    def __init__(self, suffix=None, prefix=None, default=None):
         self.suffix = suffix
         self.prefix = prefix
+        self.default = default
 
 
 class CpuSelector(Selector):
-    pass
+    def __init__(self, default=None):
+        super().__init__()
+        self.default = default

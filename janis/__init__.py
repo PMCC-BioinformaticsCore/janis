@@ -25,7 +25,7 @@ from janis.hints import CaptureType
 from janis.tool.commandtool import CommandTool
 from janis.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput
 from janis.translations import SupportedTranslations
-from janis.types import InputSelector, WildcardSelector
+from janis.types import InputSelector, WildcardSelector, MemorySelector, CpuSelector
 from janis.types.common_data_types import Boolean, String, Int, Float, Double, File, Directory, Array, Filename, Stdout
 from janis.types.data_types import DataType
 from janis.unix import *

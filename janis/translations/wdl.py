@@ -620,16 +620,26 @@ def translate_input_selector(selector: InputSelector, string_environment=True):
 
 
 def translate_cpu_selector(selector: CpuSelector, string_environment=True):
-    if string_environment:
-        return "${runtime_cpu}"
-    return "runtime_cpu"
+    value = "runtime_cpu"
+    if selector.default:
+        value = wdl.IfThenElse(f"defined(runtime_cpu)", value,
+                               get_input_value_from_potential_selector_or_generator(
+                                   selector.default, None,
+                                   string_environment=False)).get_string()
+
+    return "${%s}" % value if string_environment else value
 
 
 def translate_mem_selector(selector: MemorySelector, string_environment=True):
     pre = selector.prefix if selector.prefix else ""
     suf = selector.suffix if selector.suffix else ""
 
-    val = "floor(runtime_memory)"
+    val = "runtime_memory"  # remove floor as memory is now string
+    if selector.default:
+        val = wdl.IfThenElse("defined(runtime_memory)", val,
+                             get_input_value_from_potential_selector_or_generator(
+                                 selector.default, None,
+                                 string_environment=False)).get_string()
 
     if string_environment:
         return f"{pre}${{{val}}}{suf}"
@@ -732,7 +742,7 @@ def build_resource_override_maps_for_workflow(wf, prefix=None) -> List[wdl.Input
             inputs.extend([
                 wdl.Input(wdl.WdlType.parse_type("Float?"), tool_pre + "runtime_memory"),
                 wdl.Input(wdl.WdlType.parse_type("Int?"), tool_pre + "runtime_cpu"),
-                wdl.Input(wdl.WdlType.parse_type("String?"), tool_pre + "runtime_disks")
+                wdl.Input(wdl.WdlType.parse_type("String"), tool_pre + "runtime_disks")
             ])
         elif isinstance(tool, Workflow):
             tool_pre = prefix + s.id()

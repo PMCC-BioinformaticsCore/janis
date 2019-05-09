@@ -138,19 +138,19 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
             wdl.get_input_value_from_potential_selector_or_generator(inp, "tool_id", string_environment=False)
         )
 
-    def test_input_value_memselect_stringenv(self):
-        inp = MemorySelector()
-        self.assertEqual(
-            "${floor(runtime_memory)}",
-            wdl.get_input_value_from_potential_selector_or_generator(inp, "tool_id", string_environment=True)
-        )
-
-    def test_input_value_memselect_nostringenv(self):
-        inp = MemorySelector()
-        self.assertEqual(
-            "floor(runtime_memory)",
-            wdl.get_input_value_from_potential_selector_or_generator(inp, "tool_id", string_environment=False)
-        )
+    # def test_input_value_memselect_stringenv(self):
+    #     inp = MemorySelector()
+    #     self.assertEqual(
+    #         "${floor(runtime_memory)}",
+    #         wdl.get_input_value_from_potential_selector_or_generator(inp, "tool_id", string_environment=True)
+    #     )
+    #
+    # def test_input_value_memselect_nostringenv(self):
+    #     inp = MemorySelector()
+    #     self.assertEqual(
+    #         "floor(runtime_memory)",
+    #         wdl.get_input_value_from_potential_selector_or_generator(inp, "tool_id", string_environment=False)
+    #     )
 
     def test_input_value_wdl_callable(self):
         class CallableWdl:

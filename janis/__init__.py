@@ -18,7 +18,7 @@ Some terminology:
 
 """
 
-__version__ = "v0.2.15"
+__version__ = "v0.2.16"
 
 
 from janis.hints import CaptureType

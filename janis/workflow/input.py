@@ -12,7 +12,7 @@ class Input:
     illegal_keywords = ["input"]
 
     def __init__(self, identifier: str, data_type: DataType, value=None,
-                 label: str=None, doc: str=None, default=None):
+                 label: str=None, doc: str=None, default=None, include_in_inputs_file_if_none=True):
 
         if not Validators.validate_identifier(identifier):
             raise Exception(f"The input identifier '{identifier}' was not validated by '{Validators.identifier_regex}' "
@@ -30,6 +30,7 @@ class Input:
 
         self.value = value
         self.default = default
+        self.include_in_inputs_file_if_none = include_in_inputs_file_if_none
 
         if self.default is not None:
             data_type.optional = True

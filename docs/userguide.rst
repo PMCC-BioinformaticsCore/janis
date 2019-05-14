@@ -1,4 +1,4 @@
-User Guide to Pipeline
+Pipeline concepts
 **********************
 
 *This page is under construction*

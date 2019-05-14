@@ -13,7 +13,7 @@ Let's start with something small, something simple!
 
 ### You will need
 
-A basic installation of janis is required (see the [Getting Started](/tutorials/gettingstarted) guide for more info). You can install janis by running:
+A basic installation of janis is required (see the [Getting Started](https://janis.readthedocs.io/en/latest/tutorials/gettingstarted.html) guide for more info). You can install janis by running:
 ```bash
 pip install janis-pipelines
 ```
@@ -178,6 +178,5 @@ workflow simpleWorkflow {
 
 Congratulations on constructing and exporting your first workflow, and i You can now get more advanced with the following tutorials:
 
-- [Running workflows](/tutorials/runningworkflows)
 - [Building a simple bioinformatics workflow](/tutorials/alignsortedbam)
-- [Building tools](/tutorials/buildtools)
+- [Running workflows](https://janis.readthedocs.io/en/latest/tutorials/running.html)

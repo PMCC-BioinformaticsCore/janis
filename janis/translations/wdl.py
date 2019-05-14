@@ -27,7 +27,7 @@ from janis.tool.tool import Tool, ToolInput
 from janis.translations.translationbase import TranslatorBase
 from janis.types import InputSelector, WildcardSelector, CpuSelector, MemorySelector
 from janis.types.common_data_types import Stdout, Array, Boolean, Filename, File
-from janis.utils import first_value, convert_expression_to_wdl
+from janis.utils import first_value
 from janis.utils.logger import Logger
 from janis.utils.validators import Validators
 from janis.workflow.step import StepNode

@@ -72,7 +72,7 @@ We can export a CWL representation to the console using `.translate("cwl")`.
   
 ## About  
   
-> _Further information_: [About](https://janis.readthedocs.io/en/latest/about)   
+> _Further information_: [About](https://janis.readthedocs.io/en/latest/about.html)   
   
 This project was produced as part of the Portable Pipelines Project in partnership with:    
 - [Melbourne Bioinformatics (University of Melbourne) ](https://www.melbournebioinformatics.org.au/)    
@@ -84,7 +84,7 @@ This project was produced as part of the Portable Pipelines Project in partnersh
   
 ### Contributions  
   
-> _Further information_: [About](https://janis.readthedocs.io/en/latest/development/)  
+> _Further information_: [Development](https://janis.readthedocs.io/en/latest/development/)  
   
 This project is work-in-progress and is still in developments. Although we welcome contributions,  due to the immature state of this project we recommend raising issues through the [Github issues page](https://github.com/PMCC-BioinformaticsCore/janis/issues) for Pipeline related issues.  
   

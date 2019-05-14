@@ -3,8 +3,8 @@
   
 Welcome to this tutorial on building a simple bioinformatics workflow! Prior to starting this, we recommend completing these tutorials:  
   
-- [Getting started with Janis](#)  
-- [Constructing your first workflow](#)  
+- [Getting started with Janis](https://janis.readthedocs.io/en/latest/tutorials/gettingstarted.html)  
+- [Constructing your first workflow](https://janis.readthedocs.io/en/latest/tutorials/simple.html)  
   
 ## Overview  
   
@@ -53,8 +53,9 @@ import janis_bioinformatics
 class AlignSortedBam(j.Workflow):  
  def __init__(self):  
   super().__init__(self, "workflow_identifier_here")  
- # assemble our workflow here```  
-  
+ # assemble our workflow here
+```  
+
 (Make sure to replace `"workflow_identifier_here"` with your own workflow name.)  
   
 ### Importing from `janis_bioinformatics`  
@@ -94,7 +95,8 @@ Now that we've imported our tools, within the `__init__` block of our subclassed
   
 We'll give the step a name that corresponds with the tool we're going to use and assign the result to some variable. This makes editing our workflows easier, and also allows better tracking when we run the workflow.  
   
-To keep things simple, we'll use the step identifier `"bwamem"` and the variable name `bwamem` for the Bwa mem step, which gives:  
+To keep things simple, we'll use the step identifier `"bwamem"` and the variable name `bwamem` for the Bwa mem step, which gives:
+  
 ```python  
 bwamem = j.Step("bwamem", BwaMem_0_7_15()) ```  
   
@@ -116,16 +118,27 @@ By looking at the tool definitions, we can determine which inputs we need to pro
   
 If you've used some of these tools before, you'll know that you may have had to provide an output name, fortunately `Janis` takes over that responsibility and generates a random filename.  
   
-Let's analyse the inputs of our tools.  
-  
-|              |              Bwamem              |   Samtool .   |              SortSam              |  
-|--------------|:--------------------------------:|:-------------:|:---------------------------------:|  
-| **Required** | `reads` (`Fastq`)                | `sam` (`Sam`) | `Bam` (`Bam`)                     |  
-|              | `reference` (`FastWithDict`)     |               | `sortOrder` (`String`)            |  
-| **Optional** | `readGroupHeaderLine` (`String`) |               | `createIndex` (`Boolean`)         |  
-|              |                                  |               | `validationStringency` (`String`) |  
-|              |                                  |               | `maxRecordsInRam` (`Int`)         |  
-  
+Let's analyse the inputs of our tools:
+
+- BWA mem
+    - Required
+        - `reads` (`Fastq`)           
+        - `reference` (`FastWithDict`)
+    - Optional
+        - `readGroupHeaderLine` (`String`)
+- Samtools View
+    - Required
+        - `sam` (`Sam`)
+- SortSam
+    - Required:
+        - `Bam` (`Bam`)         
+        - `sortOrder` (`String`)
+    - Optional
+        - `createIndex` (`Boolean`)        
+        - `validationStringency` (`String`)
+        - `maxRecordsInRam` (`Int`)        
+ 
+
 #### Putting this together  
   
 We're going to connect some of the tools together, and default others, so we only need to expose the following three inputs:  
@@ -312,26 +325,42 @@ from janis_bioinformatics.tools.bwa import BwaMem_0_7_15
 from janis_bioinformatics.tools.samtools import SamToolsView_1_7  
 from janis_bioinformatics.tools.gatk4 import Gatk4SortSam_4_0  
   
-  
 class AlignSortedBam(Workflow):  
   
- def __init__(self):  
-  super(AlignSortedBam, self).__init__("alignsortedbam")  
+    def __init__(self):  
+        super(AlignSortedBam, self).__init__("alignsortedbam")  
   
- bwa = Step("bwa", BwaMem_0_7_15()) samtools = Step("samtools", SamToolsView_1_7()) sortsam = Step("sortsam", Gatk4SortSam_4_0())  
- read_group_header = Input("readGroupHeaderLine", String()) reference = Input("reference", FastaWithDict()) fastqs = Input("fastq", Fastq())         # S2: BWA mem  
-  self.add_edges([  
- (fastqs, bwa.reads), (read_group_header, bwa.readGroupHeaderLine), (reference, bwa.reference) ])  
- # S3: SamTools  self.add_edge(bwa.out, samtools.sam)  
+        bwa = Step("bwa", BwaMem_0_7_15()) 
+        samtools = Step("samtools", SamToolsView_1_7()) 
+        sortsam = Step("sortsam", Gatk4SortSam_4_0())  
+        read_group_header = Input("readGroupHeaderLine", String()) 
+        reference = Input("reference", FastaWithDict()) fastqs = Input("fastq", Fastq())         
+
+        # S1: BWA mem  
+        self.add_edges([  
+            (fastqs, bwa.reads), 
+            (read_group_header, bwa.readGroupHeaderLine), 
+            (reference, bwa.reference) 
+        ])  
+
+        # S2: SamTools  
+        self.add_edge(bwa.out, samtools.sam)  
   
- # S4: SortSam  self.add_edge(samtools.out, sortsam.bam)  
- # Step 4 defaults  self.add_edges([  
- (Input("sortOrder", String(), default="coordinate"), sortsam.sortOrder),  
- (Input("createIndex", Boolean(), default=True), sortsam.createIndex),  
- (Input("validationStringency", String(), default="SILENT"), sortsam.validationStringency),  
- (Input("maxRecordsInRam", Int(), default=5000000), sortsam.maxRecordsInRam),  
- ])  
- # connect to output  self.add_edge(sortsam.out, Output("out"))  
-  if __name__ == "__main__":  
- w = AlignSortedBam() w.translate("wdl", to_disk=True, write_inputs_file=True)  
+        # S3: SortSam  
+        self.add_edge(samtools.out, sortsam.bam)  
+
+        # + S3 defaults  
+        self.add_edges([  
+            (Input("sortOrder", String(), default="coordinate"), sortsam.sortOrder),  
+            (Input("createIndex", Boolean(), default=True), sortsam.createIndex),  
+            (Input("validationStringency", String(), default="SILENT"), sortsam.validationStringency),  
+            (Input("maxRecordsInRam", Int(), default=5000000), sortsam.maxRecordsInRam),  
+        ])  
+        # connect to output
+        self.add_edge(sortsam.out, Output("out"))  
+
+if __name__ == "__main__":  
+    w = AlignSortedBam()
+    w.translate("wdl", to_disk=True, write_inputs_file=True)  
+ 
 ```

@@ -194,14 +194,17 @@ Contents
    :maxdepth: 2
 
    self
+   about
    userguide
 
 .. toctree::
    :maxdepth: 1
    :caption: Tutorials
 
-   tutorials/buildingconnections
-   tutorials/buildingtools
+   tutorials/gettingstarted
+   tutorials/simple
+   tutorials/alignsortedbam
+   tutorials/running
 
 .. toctree::
    :maxdepth: 1
@@ -216,8 +219,9 @@ Contents
    :maxdepth: 2
    :caption: Development
 
+   development/index
+   development/testing
    development/releasing
-   development/documentation
 
 Indices and tables
 ^^^^^^^^^^^^^^^^^^

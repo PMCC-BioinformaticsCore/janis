@@ -1,167 +1,157 @@
-
-# Building Tools  
-
-_This page is under construction_
   
-In this guide, we'll go through the process of building a tool wrapper.  
+# Building Tools   
 
-In this tutorial, we'l follow the process of wrapping a tool called:   
+_This page is under construction_  
 
-## Building the basic tool
- 
-First off, you need to decide where the tool should sit. If it's a unix tool, it should sit under the [`janis`](https://github.com/PMCC-BioinformaticsCore/janis) repository, if it's a bioinformatics tool: under the [`janis-bioinformatics`](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics) repo. If it's a new domain, contact `Michael Franklin`.
+Welcome to this tutorial on building a a tool. Prior to starting this, we recommend completing these tutorials:
 
-The general structure of the tools are:
+- [Getting started with Janis](/tutorials/gettingstarted)
+- [Constructing your first workflow](/tutorials/simple)
+
+## Overview  
+
+At some point, you'll find a tool that you want to place in your workflow, but it won't be in our toolshed. In this tutorial we're going to analyse a tool to determine its inputs and outputs to build a tool wrapper that everyone can use.
+
+### What you'll need
+
+To complete this tutorial, you'll need to have an installation of janis (see the [Getting Started](/tutorials/gettingstarted.html) guide for more info). You can install janis by running:
+```bash
+pip install janis-pipelines
 ```
-janis_bioinformatics/
-├── tool_producer/
-│   ├── tool1_name/
-│   │   ├── toolname_version1.py
-│   └── tool2_name/
-│   │   ├── toolname_version2.py
-│   └── toolbase.py
-│   ... other tools
-```
 
+#### Container
+
+> _Further information_: [Dockerizing your tools](https://janis.readthedocs.io/en/latest//tutorials/docker.html)
+
+For portability, we require that you specify a `Docker` (or other OCI compliant) container for your tool. Often they're will already be a container with some searching, however here's a guide on [preparing your tools as dockers](https://janis.readthedocs.io/en/latest//tutorials/docker.html) to ensure it works across all environments and workflow specifications.
+
+## Let's get started!
+
+### Preparation
+  First off, you need to decide where the tool should sit. If it's a unix tool, it should sit under the [`janis`](https://github.com/PMCC-BioinformaticsCore/janis) repository, if it's a bioinformatics tool: under the [`janis-bioinformatics`](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics) repo. If it's a new domain, raise a [Github issue](https://github.com/PMCC-BioinformaticsCore/janis/issues/new).
+  
+The general structure of the tools are:  
+```  
+janis_bioinformatics/  
+├── __init__.py
+├── tool_producer/  
+│   ├── __init__.py
+│   ├── tool1_name/  
+│   │   ├── toolname_version1.py  
+│   └── tool2_name/  
+│   │   ├── toolname_version2.py  
+│   ... other tools  
+```  
 
 So, place your file called: `$toolname_$version.py`in a subfolder of the tool name, in a subfolder of the manufacturer / producer of the tool.
 
-### Inheriting from tool
+> The `__init__.py` files are important to ensure that your tool files are correctly built and distributed, we'll also use them later to export our new tool.
 
-For the example, we'll 
+### Setting up the file:
 
+
+ 
 ## Resources (CPU / Memory)
 
-Resources are specified with the tools, but kept separate from the workflow specification. 
-This allows us to generate a `runtime.yml` or `runtime.json` inputs file that 
-specifies all the resources you need to run the workflow. 
+> Further information: [_Resource Overrides_](/resourceoverrides.md), and the `hints` section of this page
 
-This in theory allows the user to keep the same workflow, and generate a new runtime file 
-for a new environment with no other changes.
+Resources are an important part of optimising tools, and `janis` exposes a few ways to allow your tool to adapt with different inputs.
 
-In your tool, you can override the following method stubs:
+> Expressions are NOT supported yet.
 
-1. Memory: The memory must be specified in Gigabytes:
+There are 2 ways you might need to reference resources in your tool definition:
+
+1. Your tool requires the CPU or Memory runtime values as parameters
+2. To generate efficient resource files.
+
+### Runtime values as Parameters
+
+> Further information: [Runtime Parameters](
+
+If your tool requires the CPU or Memory runtime values (maybe as Java args or as a thread parameter), you can provide the `CpuSelector` or `MemorySelector` classes as defaults. You instantiate them with no parameters (or a default), and they get the value provided by the `runtime_cpu` or `runtime_memory` parameters.
+
+For example, in the [`bwa mem`](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/blob/master/janis_bioinformatics/tools/bwa/mem/base.py#L111) tool wrapper, the `thread` parameter has the following definition:
 
 ```python
-    def memory(self, hints: Dict[str, Any]) -> Optional[float]:
-        return None
-``` 
-
-2. CPUs: The number of CPUs must be specified in whole numbers
-
-```python
-    def cpus(self, hints: Dict[str, Any]) -> Optional[int]:
-        return None
+ToolInput("threads", Int(optional=True), default=CpuSelector(), prefix="-t", doc="Number of threads. (default = 1)")
 ```
 
-### Resource dependent tools
-
-To optimise some tools, you are required to specify some runtime conditions such as:
-
-#### Memory
-
-For example, in Java you have to specify the [maximum memory allocation pool](https://stackoverflow.com/a/14763095) 
-as a Java runtime parameter (`--xmx`). 
-
-You can use the `janis.types.MemorySelector` as a placeholder. This will return the `math.floor`
-of the memory value provided in the tool specification as a runtime attribute.
-
-For example, within the GATK application, 
-
-#### CPUs and Threads
-
-- Number of threads that the program has access to.
-
-You can specify the number of threads as a default value by using the `janis.types.CpuSelector` class as a placeholder.
-
-## Advanced versioning
-_The section is under construction_.
-
-## Piped and combining commands
-
-When you want two tools to pipe data between them, unfortunately there's not a great solution. CWL allows you to tag inputs and outputs as [`streamable`](https://www.commonwl.org/v1.0/CommandLineTool.html#CommandInputParameter), however there are no workflow engines that properly support this.
-
-For this reason, the current (less than impressive) suggestion is to manually pipe these together by adding a `|` (pipe) `ToolArgument` at certain positions, and ensure that the positions of the other `ToolInput`'s are explicit and sequential.
-
-You will also need to add a `shell_quote=False` to the input of every `ToolInput` / `ToolArgument`, to ensure that when the command is generated by the CWL / WDL generators, there are no shell quotes added.
-
-For example:
-```python
-# Piped tool command: 
-#    tool1_baseCommand -inp1 ${tl1_input} | tool2_baseCommand -inp2 ${tl2_input}
-
-class PipedTool(CommandTool):
-    def inputs(self):
-        return [
-            ToolInput("tl1_input", String(), position=2, prefix="-inp1" shell_quote=False),
-            ToolInput("tl2_input", String(), position=5, prefix="-inp2", shell_quote=False)
-        ]
-     
-    def arugments(self):
-        return [
-            ToolArgument("tool1_baseCommand", position=1, shell_quote=False),
-            ToolArgument("|", position=3, shell_quote=False),
-            ToolArgument("tool2_baseCommand", position=4, shell_quote=False)
-        ]
-    # outputs and other required commands here
+Which results in the following WDL:
+```wdl
+Int? threads = runtime_cpu
+```
+Or CWL:
+```cwl
+inputs:
+- doc: Number of threads. (default = 1)
+  id: threads
+  inputBinding:
+    prefix: -t
+    valueFrom: $(inputs.runtime_cpu)
+  label: threads
+  type:
+  - int
+  - 'null'
 ```
 
-## Building a workflow as a tool
+### Generating a runtime override file
+  
+Resources are specified with the tools, but kept separate from the workflow specification. This allows us to generate a `runtime.yml` or `runtime.json` inputs file that  specifies all the resources you need to run the workflow.  When you build the tool, you might know exactly how the tool should react to different `hints`, and for this reason you can override the following method stubs:  
+  
+1. Memory: The memory must be specified in Gigabytes:  
+  
+```python  
+def memory(self, hints: Dict[str, Any]) -> Optional[float]:  
+    return None
+ ```
+    
+2. CPUs: The number of CPUs must be specified in whole numbers  
+  
+```python  
+def cpus(self, hints: Dict[str, Any]) -> Optional[int]:  
+    return None
+ ```  
+  
+## Advanced versioning  
+_The section is under construction_.  
 
-To ensure the documentation generator will automatically pick up the tool, we'll subclass the `Workflow` class, and place our inputs, steps, outputs and connections within the `__init__` method. For example, we're going to wrap `Bwa.Mem` + `SamTools.Sort` + `Gatk4.SortSam` in one workflow (see `bioinformatics/tools/common/alignsortedbam.py` for the full tool wrapping). But for example:
+  
+## Piped and combining commands  
+  
+When you want two tools to pipe data between them, unfortunately there's not a great solution. CWL allows you to tag inputs and outputs as [`streamable`](https://www.commonwl.org/v1.0/CommandLineTool.html#CommandInputParameter), however there are [no workflow engines](https://github.com/broadinstitute/cromwell/issues/3454#issuecomment-455367417) that properly support this.  
+  
+For this reason, the current (less than impressive) suggestion is to manually pipe these together by adding a `|` (pipe) `ToolArgument` at certain positions, and ensure that the positions of the other `ToolInput`'s are explicit and sequential.  
+  
+You will also need to add a `shell_quote=False` to the input of every `ToolInput` / `ToolArgument`, to ensure that when the command is generated by the CWL / WDL generators, there are no shell quotes added.  
+  
+For example:  
 
-```python
-from janis import Step, String, Input, Directory, Output
-from janis_bioinformatics.data_types import Bam, BamBai, Fasta, Fastq, Sam  
-from janis_bioinformatics.tools import BioinformaticsWorkflow  
-from janis_bioinformatics.tools.bwa import BwaMemLatest  
-from janis_bioinformatics.tools.gatk4 import Gatk4SortSamLatest  
-from janis_bioinformatics.tools.samtools import SamToolsViewLatest  
+```python  
+ Piped tool command: #    tool1_baseCommand -inp1 ${tl1_input} | tool2_baseCommand -inp2 ${tl2_input}  
+  
+class PipedTool(CommandTool):  
+	def inputs(self):  
+		 return [
+			 ToolInput("tl1_input", String(), position=2, prefix="-inp1" shell_quote=False),  
+			 ToolInput("tl2_input", String(), position=5, prefix="-inp2", shell_quote=False)  
+		 ]
 
-class AlignSortedBam(BioinformaticsWorkflow):  
+	def arugments(self):  
+		return [
+			ToolArgument("tool1_baseCommand", position=1, shell_quote=False),  
+			ToolArgument("|", position=3, shell_quote=False),  
+			ToolArgument("tool2_baseCommand", position=4, shell_quote=False)  
+		 ] 
+	# outputs and other required commands here
+ ```  
+### Using an input more than once
+
+Sometimes you'll need to use an input more than one. An easy way to perform this is to declare a `ToolArgument` using a `InputSelector` as the value, selecting your input you want to redeclare. You are still able to declare a new position and prefix.
   
-    def __init__(self):  
-        super(AlignSortedBam, self).__init__("alignsortedbam", friendly_name="Align sorted BAM")  
-  
-        self._metadata.documentation = "Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam"  
-        self._metadata.creator = "Michael Franklin"  
-        self._metadata.dateCreated = "2018-12-24"  
-        self._metadata.version = "1.0.0"  
-  
-        s1_bwa = Step("s1_bwa", BwaMemLatest())  
-        s2_samtools = Step("s2_samtools", SamToolsViewLatest())  
-        s3_sortsam = Step("s3_sortsam", Gatk4SortSamLatest())  
-  
-        s1_inp_header = Input("read_group_header_line", String())  
-        s1_inp_reference = Input("reference", Fasta())  
-        s1_inp_fastq = Input("fastq", Fastq())  
-  
-        s3_inp_tmpdir = Input("tmpdir", Directory())  
-  
-        o1_bwa = Output("o1_bwa", Sam())  
-        o2_samtools = Output("o2_samtools", Bam())  
-        o3_sortsam = Output("o3_sortsam", BamBai())  
-  
-        # Fully connect step 1  
-        self.add_edges([  
-            (s1_inp_header, s1_bwa.readGroupHeaderLine),  
-            (s1_inp_fastq, s1_bwa.reads),  
-            (s1_inp_reference, s1_bwa.reference)  
-        ])    
-        # fully connect step 2  
-        self.add_edge(s1_bwa, s2_samtools.sam)   
-        # fully connect step 3  
-        self.add_edges([  
-            (s2_samtools.out, s3_sortsam.input),  
-            (s3_inp_tmpdir, s3_sortsam.tmpDir),  
-        ])
+## Building a workflow as a tool  
+
+Janis supports the embedding of subworkflows as tools. To ensure the documentation generator will automatically pick up the tool, we'll subclass the `Workflow` class, and place our inputs, steps, outputs and connections within the `__init__` method. And then all the other steps are the same in regards to exporting your workflow correctly.
+
+See the [Building a simple bioinformatics workflow](/tutorials/alignsortedbam) tutorial as an example of building a workflow as a reference-able tool.
  
-        # connect to output  
-        self.add_edge(s1_bwa, o1_bwa)  
-        self.add_edge(s2_samtools, o2_samtools)  
-        self.add_edge(s3_sortsam.output, o3_sortsam)
-```
-
-
 ## Regenerating documentation

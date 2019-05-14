@@ -91,5 +91,4 @@ This project is work-in-progress and is still in developments. Although we welco
 If you find an issue with the tool definitions, please see the relevant issue page:  
 - [Pipeline-bioinformatics](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/issues)  
   
-Information about the project structure and more on contributing can be found within   
-[the documentation](https://janis.readthedocs.io/en/latest/development/).
+Information about the project structure and more on contributing can be found within [the documentation](https://janis.readthedocs.io/en/latest/development/).

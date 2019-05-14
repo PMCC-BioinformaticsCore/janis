@@ -66,7 +66,7 @@ class CwlTranslator(TranslatorBase):
 
     @classmethod
     def translate_workflow(cls, wf, with_docker=True, with_resource_overrides=False, is_nested_tool=False) \
-            -> Tuple[any, dict, Dict[str, any]]:
+            -> Tuple[any, Dict[str, any]]:
         from janis.workflow.workflow import Workflow
 
         metadata = wf.metadata() if wf.metadata() else WorkflowMetadata()
@@ -106,7 +106,7 @@ class CwlTranslator(TranslatorBase):
         for t in tools_to_build:
             tool: Tool = tools_to_build[t]
             if isinstance(tool, Workflow):
-                wf_cwl, _, subtools = cls.translate_workflow(
+                wf_cwl, subtools = cls.translate_workflow(
                     tool,
                     is_nested_tool=True,
                     with_docker=with_docker,
@@ -120,10 +120,12 @@ class CwlTranslator(TranslatorBase):
             else:
                 raise Exception(f"Unknown tool type: '{type(tool)}'")
 
-        inp = {i.id(): i.input.cwl_input() for i in wf._inputs}
+        return w, tools
 
-        return w, inp, tools
-
+    @classmethod
+    def build_inputs_file(cls, workflow, recursive=False) -> Dict[str, any]:
+        return {i.id(): i.input.cwl_input() for i in workflow._inputs
+                if i.input.cwl_input() or i.input.include_in_inputs_if_none }
 
     @classmethod
     def translate_tool(cls, tool, with_docker, with_resource_overrides=False):

@@ -44,11 +44,12 @@ class TranslatorBase(ABC):
              export_path=ExportPathKeywords.default, write_inputs_file=False, should_validate=False,
              should_zip=True):
 
-        tr_wf, tr_inp, tr_tools = self.translate_workflow(
+        tr_wf, tr_tools = self.translate_workflow(
             workflow,
             with_docker=with_docker,
             with_resource_overrides=with_resource_overrides
         )
+        tr_inp = self.build_inputs_file(workflow, recursive=False)
 
         str_wf = self.stringify_translated_workflow(tr_wf)
         str_inp = self.stringify_translated_inputs(tr_inp)
@@ -124,12 +125,17 @@ class TranslatorBase(ABC):
     @classmethod
     @abstractmethod
     def translate_workflow(cls, workflow, with_docker=True, with_resource_overrides=False) \
-            -> Tuple[any, dict, Dict[str, any]]:
+            -> Tuple[any, Dict[str, any]]:
         pass
 
     @classmethod
     @abstractmethod
     def translate_tool(cls, tool, with_docker, with_resource_overrides=False):
+        pass
+
+    @classmethod
+    @abstractmethod
+    def build_inputs_file(cls, workflow, recursive=False) -> Dict[str, any]:
         pass
 
     @classmethod

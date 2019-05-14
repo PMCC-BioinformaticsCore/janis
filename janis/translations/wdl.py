@@ -58,7 +58,7 @@ class WdlTranslator(TranslatorBase):
 
     @classmethod
     def translate_workflow(cls, wf, with_docker=True, with_resource_overrides=False, is_nested_tool=False, ) \
-            -> Tuple[any, dict, Dict[str, any]]:
+            -> Tuple[any, Dict[str, any]]:
         """
         Translate the workflow into wdlgen classes!
 
@@ -75,7 +75,6 @@ class WdlTranslator(TranslatorBase):
         # Notes:
         #       All wdlgen classes have a .get_string(**kwargs) function
         #       The wdlgen Workflow class requires a
-
 
         # As of 2019-04-16: we use development (Biscayne) features
         # like Directories and wdlgen uses the new input {} syntax
@@ -144,34 +143,25 @@ class WdlTranslator(TranslatorBase):
             t = s.step.tool()
 
             if isinstance(t, Workflow):
-                wf_wdl, _, wf_tools = cls.translate_workflow(t, with_docker=with_docker, is_nested_tool=True,
-                                                         with_resource_overrides=with_resource_overrides)
+                wf_wdl, wf_tools = cls.translate_workflow(t, with_docker=with_docker, is_nested_tool=True,
+                                                          with_resource_overrides=with_resource_overrides)
                 wtools[t.id()] = wf_wdl
                 wtools.update(wf_tools)
 
             elif isinstance(t, CommandTool):
-                wtools[t.id()] = cls.translate_tool(t, with_docker=with_docker, with_resource_overrides=with_resource_overrides)
+                wtools[t.id()] = cls.translate_tool(t, with_docker=with_docker,
+                                                    with_resource_overrides=with_resource_overrides)
 
             resource_overrides = {}
             for r in resource_inputs:
-                if not r.name.startswith(s.id()): continue
+                if not r.name.startswith(s.id()): continueß
 
                 resource_overrides[r.name[(len(s.id()) + 1):]] = r.name
             call = translate_step_node(s, tool_aliases[t.id().lower()].upper() + "." + t.id(), s.id(), resource_overrides)
 
             w.calls.append(call)
 
-        inp = {}
-        for i in wf._inputs:
-            inp_key = f"{wf.id()}.{i.id()}"
-            inp_val = i.input.wdl_input()
-            inp[inp_key] = inp_val
-            if i.input.data_type.secondary_files():
-                for sec in i.input.data_type.secondary_files():
-                    inp[get_secondary_tag_from_original_tag(inp_key, sec)] = \
-                        apply_secondary_file_format_to_filename(inp_val, sec)
-
-        return w, inp, wtools
+        return w, wtools
 
     @classmethod
     def translate_tool(cls, tool: CommandTool, with_docker, with_resource_overrides=False):
@@ -241,6 +231,28 @@ class WdlTranslator(TranslatorBase):
             r.kwargs["disks"] = "runtime_disks" # wdl.IfThenElse("defined(runtime_disks)", "runtime_disks", '""')
 
         return wdl.Task(tool.id(), ins, outs, commands, r, version="development")
+
+    @classmethod
+    def build_inputs_file(cls, workflow, recursive=False) -> Dict[str, any]:
+        """
+        Recursive is currently unused, but eventually input overrides could be generated the whole way down
+        a call chain, including subworkflows: https://github.com/openwdl/wdl/issues/217
+        :param workflow:
+        :return:
+        """
+        inp = {}
+        for i in workflow._inputs:
+            inp_key = f"{workflow.id()}.{i.id()}"
+            inp_val = i.input.wdl_input()
+            if inp_val is None and not i.input.include_in_inputs_if_none:
+                continue
+            inp[inp_key] = inp_val
+            if i.input.data_type.secondary_files():
+                for sec in i.input.data_type.secondary_files():
+                    inp[get_secondary_tag_from_original_tag(inp_key, sec)] = \
+                        apply_secondary_file_format_to_filename(inp_val, sec)
+
+        return inp
 
     @classmethod
     def build_resources_input(cls, workflow, hints, prefix=None):

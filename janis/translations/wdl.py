@@ -154,7 +154,7 @@ class WdlTranslator(TranslatorBase):
 
             resource_overrides = {}
             for r in resource_inputs:
-                if not r.name.startswith(s.id()): continueß
+                if not r.name.startswith(s.id()): continue
 
                 resource_overrides[r.name[(len(s.id()) + 1):]] = r.name
             call = translate_step_node(s, tool_aliases[t.id().lower()].upper() + "." + t.id(), s.id(), resource_overrides)

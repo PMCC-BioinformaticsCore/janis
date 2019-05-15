@@ -54,7 +54,7 @@ class WdlTranslator(TranslatorBase):
 
     @staticmethod
     def validate_command_for(wfpath, inppath, tools_dir_path, tools_zip_path):
-        return ["java", "-jar", "$womtool", "--validate", wfpath]
+        return ["java", "-jar", "$womtool", "validate", wfpath]
 
     @classmethod
     def translate_workflow(cls, wf, with_docker=True, with_resource_overrides=False, is_nested_tool=False, ) \

@@ -114,7 +114,10 @@ class TranslatorBase(ABC):
 
                 Logger.info(f"Validating outputted {self.name}")
 
-                cwltool_result = subprocess.run(self.validate_command_for(fn_workflow, fn_inputs, "tools/", "tools.zip"))
+                enved_vcs = [(os.getenv(x[1:]) if x.startswith("$") else x)
+                                 for x in self.validate_command_for(fn_workflow, fn_inputs, "tools/", "tools.zip")]
+
+                cwltool_result = subprocess.run(enved_vcs)
                 if cwltool_result.returncode == 0:
                     Logger.info("Exported workflow is valid CWL.")
                 else:

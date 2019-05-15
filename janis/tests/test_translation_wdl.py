@@ -6,7 +6,7 @@ from janis.types import CpuSelector, MemorySelector
 
 import janis.translations.wdl as wdl
 
-from janis import ToolOutput, ToolInput, String, CommandTool, Stdout, InputSelector, Array, File, Filename, \
+from janis import Workflow, Input, ToolOutput, ToolInput, String, CommandTool, Stdout, InputSelector, Array, File, Filename, \
     WildcardSelector
 
 
@@ -174,3 +174,34 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
             value=NonCallableWdl(),
             tool_id=None
         )
+
+
+class TestWdlTranslateInputs(unittest.TestCase):
+
+    def test_input_in_input_value_includetrue(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(), value="1", include_in_inputs_file_if_none=True))
+        translator = wdl.WdlTranslator()
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, translator.build_inputs_file(wf))
+
+    def test_input_in_input_value_includefalse(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(), value="1", include_in_inputs_file_if_none=False))
+        translator = wdl.WdlTranslator()
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, translator.build_inputs_file(wf))
+
+    def test_input_in_input_with_novalue_includetrue(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(), value=None, include_in_inputs_file_if_none=True))
+        translator = wdl.WdlTranslator()
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": None}, translator.build_inputs_file(wf))
+
+    def test_input_in_input_with_novalue_includefalse(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(), value=None, include_in_inputs_file_if_none=False))
+        translator = wdl.WdlTranslator()
+
+        self.assertDictEqual({}, translator.build_inputs_file(wf))

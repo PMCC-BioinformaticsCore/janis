@@ -244,7 +244,7 @@ class WdlTranslator(TranslatorBase):
         for i in workflow._inputs:
             inp_key = f"{workflow.id()}.{i.id()}"
             inp_val = i.input.wdl_input()
-            if inp_val is None and not i.input.include_in_inputs_if_none:
+            if inp_val is None and not i.input.include_in_inputs_file_if_none:
                 continue
             inp[inp_key] = inp_val
             if i.input.data_type.secondary_files():

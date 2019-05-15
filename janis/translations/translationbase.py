@@ -4,6 +4,7 @@ from typing import Tuple, List, Dict
 
 from janis.translations.exportpath import ExportPathKeywords
 from janis.utils.logger import Logger
+from janis.workflow.input import Input
 
 
 class TranslatorBase(ABC):
@@ -145,6 +146,10 @@ class TranslatorBase(ABC):
     @abstractmethod
     def build_resources_input(cls, workflow, hints):
         pass
+
+    @staticmethod
+    def inp_can_be_skipped(inp: Input):
+        return inp.value is None and not inp.include_in_inputs_file_if_none and (inp.data_type.optional or inp.default is not None)
 
     # STRINGIFY
 

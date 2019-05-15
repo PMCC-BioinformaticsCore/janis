@@ -124,8 +124,8 @@ class CwlTranslator(TranslatorBase):
 
     @classmethod
     def build_inputs_file(cls, workflow, recursive=False) -> Dict[str, any]:
-        return {i.id(): i.input.cwl_input() for i in workflow._inputs
-                if i.input.cwl_input() or i.input.include_in_inputs_file_if_none }
+
+        return {i.id(): i.input.cwl_input() for i in workflow._inputs if not cls.inp_can_be_skipped(i.input)}
 
     @classmethod
     def translate_tool(cls, tool, with_docker, with_resource_overrides=False):

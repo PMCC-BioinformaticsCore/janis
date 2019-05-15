@@ -30,6 +30,7 @@ from janis.types.common_data_types import Stdout, Array, Boolean, Filename, File
 from janis.utils import first_value
 from janis.utils.logger import Logger
 from janis.utils.validators import Validators
+from janis.workflow.input import Input
 from janis.workflow.step import StepNode
 
 
@@ -244,7 +245,7 @@ class WdlTranslator(TranslatorBase):
         for i in workflow._inputs:
             inp_key = f"{workflow.id()}.{i.id()}"
             inp_val = i.input.wdl_input()
-            if inp_val is None and not i.input.include_in_inputs_file_if_none:
+            if cls.inp_can_be_skipped(i.input):
                 continue
             inp[inp_key] = inp_val
             if i.input.data_type.secondary_files():

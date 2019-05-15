@@ -176,32 +176,105 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
         )
 
 
-class TestWdlTranslateInputs(unittest.TestCase):
+class TestWdlGenerateInput(unittest.TestCase):
 
-    def test_input_in_input_value_includetrue(self):
+    def setUp(self):
+        self.translator = wdl.WdlTranslator()
+
+    def test_input_in_input_value_includetrue_nooptional_nodefault(self):
         wf = Workflow("test_input_in_inputfile")
         wf.add_items(Input("inpId", String(), value="1", include_in_inputs_file_if_none=True))
-        translator = wdl.WdlTranslator()
 
-        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, translator.build_inputs_file(wf))
+        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, self.translator.build_inputs_file(wf))
 
-    def test_input_in_input_value_includefalse(self):
+    def test_input_in_input_value_includetrue_nooptional_default(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(), value="1", default="2", include_in_inputs_file_if_none=True))
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_value_includetrue_optional_nodefault(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(optional=True), value="1", include_in_inputs_file_if_none=True))
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_value_includetrue_optional_default(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(optional=True), value="1", default="2", include_in_inputs_file_if_none=True))
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_value_includefalse_nooptional_nodefault(self):
         wf = Workflow("test_input_in_inputfile")
         wf.add_items(Input("inpId", String(), value="1", include_in_inputs_file_if_none=False))
-        translator = wdl.WdlTranslator()
 
-        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, translator.build_inputs_file(wf))
+        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, self.translator.build_inputs_file(wf))
 
-    def test_input_in_input_with_novalue_includetrue(self):
+    def test_input_in_input_value_includefalse_nooptional_default(self):
         wf = Workflow("test_input_in_inputfile")
-        wf.add_items(Input("inpId", String(), value=None, include_in_inputs_file_if_none=True))
-        translator = wdl.WdlTranslator()
+        wf.add_items(Input("inpId", String(), value="1", default="2", include_in_inputs_file_if_none=False))
 
-        self.assertDictEqual({"test_input_in_inputfile.inpId": None}, translator.build_inputs_file(wf))
+        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, self.translator.build_inputs_file(wf))
 
-    def test_input_in_input_with_novalue_includefalse(self):
+    def test_input_in_input_value_includefalse_optional_nodefault(self):
         wf = Workflow("test_input_in_inputfile")
-        wf.add_items(Input("inpId", String(), value=None, include_in_inputs_file_if_none=False))
-        translator = wdl.WdlTranslator()
+        wf.add_items(Input("inpId", String(optional=True), value="1", include_in_inputs_file_if_none=False))
 
-        self.assertDictEqual({}, translator.build_inputs_file(wf))
+        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_value_includefalse_optional_default(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(
+            Input("inpId", String(optional=True), value="1", default="2", include_in_inputs_file_if_none=False))
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": "1"}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_novalue_includetrue_nooptional_nodefault(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(), include_in_inputs_file_if_none=True))
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": None}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_novalue_includetrue_nooptional_default(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(), default="2", include_in_inputs_file_if_none=True))
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": None}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_novalue_includetrue_optional_nodefault(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(optional=True), include_in_inputs_file_if_none=True))
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": None}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_novalue_includetrue_optional_default(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(optional=True), default="2", include_in_inputs_file_if_none=True))
+
+        self.assertDictEqual({"test_input_in_inputfile.inpId": None}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_novalue_includefalse_nooptional_nodefault(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(), include_in_inputs_file_if_none=False))
+
+        # included because no value, no default, and not optional
+        self.assertDictEqual({"test_input_in_inputfile.inpId": None}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_novalue_includefalse_nooptional_default(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(), default="2", include_in_inputs_file_if_none=False))
+
+        self.assertDictEqual({}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_novalue_includefalse_optional_nodefault(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(optional=True), include_in_inputs_file_if_none=False))
+
+        self.assertDictEqual({}, self.translator.build_inputs_file(wf))
+
+    def test_input_in_input_novalue_includefalse_optional_default(self):
+        wf = Workflow("test_input_in_inputfile")
+        wf.add_items(Input("inpId", String(optional=True), default="2", include_in_inputs_file_if_none=False))
+
+        self.assertDictEqual({}, self.translator.build_inputs_file(wf))

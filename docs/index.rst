@@ -48,7 +48,7 @@ It can be installed through the Janis `project page <https://pypi.org/project/ja
 
 .. code-block:: bash
 
-   pip install janis-pipelines
+   pip3 install janis-pipelines
 
 You can import Janis into your project by:
 
@@ -71,7 +71,7 @@ installed with the ``bioinformatics`` install extra option.
 
 .. code-block:: bash
 
-   pip install janis-pipelines[bioinformatics]
+   pip3 install janis-pipelines[bioinformatics]
 
 These can be referenced by ``janis.bioinformatics`` or ``janis_bioinformatics``, the latter might be easier due to the way
 nested python imports work.
@@ -99,14 +99,14 @@ tool to log this to ``stdout``, and explicitly outputting this ``stdout`` to giv
    w.add_pipe(inp, step, outp)
 
    # Will print the CWL, input file and relevant tools to the console
-   w.dump_translation("cwl")
+   w.translate("cwl")
 
 
 The ``add_pipe`` method is aware of the inputs and outputs of the arguments you provide it, and automatically
 joins the relevant non-optional parts together. More information can be found on creating edges on the
 `Building Connections <tutorials/buildingconnections.html>`__ documentation.
 
-Now we can an in-memory workflow, we can export a CWL representation to the console using ``.dump_translation("cwl")``.
+Now we can an in-memory workflow, we can export a CWL representation to the console using ``.translate("cwl")``.
 
 More examples
 -------------

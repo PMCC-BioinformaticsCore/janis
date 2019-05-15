@@ -42,11 +42,11 @@ if __name__ == "__main__":
     stp = Step("stp", ToolThatAcceptsAndReturnsSecondary())
     w.add_pipe(inp, stp, Output("outp"))
 
-    w.dump_translation("wdl")
+    w.translate("wdl")
 
     w2 = Workflow("scattered_test_workflow")
     inp2 = Input("inp2", Array(DataTypeWithSecondary()))
     stp2 = Step("stp2", ToolThatAcceptsAndReturnsSecondary())
     w2.add_pipe(inp2, stp2, Output("outp2"))
-    w2.dump_translation("wdl")
+    w2.translate("wdl")
 

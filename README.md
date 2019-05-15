@@ -14,10 +14,13 @@ Documentation is hosted here: https://janis.readthedocs.io/
   
 ## Introduction  
   
-Janis is designed to assist in building computational workflows to generate a runnable workflow description (CWL | WDL).   It can be installed through PIP ([project page](https://pypi.org/project/janis-pipelines/)) by running:  
+Janis is designed to assist in building computational workflows to generate a runnable workflow description (CWL | WDL).  
+
+Janis requires a Python installation > 3.6, and can be installed through PIP ([project page](https://pypi.org/project/janis-pipelines/)) by running:  
   
 ```bash
-pip install janis-pipelines  
+# Install janis and the bioinformatics tools
+pip3 install janis-pipelines[bioinformatics]  
 ```  
   
 You can import Janis into your project with:  
@@ -32,7 +35,7 @@ import janis as j
 The Janis framework can be extended to include a suite of [Bioinformatics data types and tools](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics). These can be installed with the `bioinformatics` install extra option.   
   
 ```bash  
-pip install janis-pipelines[bioinformatics]  
+pip3 install janis-pipelines[bioinformatics]  
 ```  
 
 #### Unix

@@ -6,7 +6,7 @@ This guide will get you started using `janis`.
 ### Very quick start:
 You've already got Python (>= 3.6) installed, just run:
 ```bash
-pip install janis-pipelines
+pip3 install janis-pipelines
 ```
 Import `janis` in python as:
 ```python
@@ -34,12 +34,12 @@ Python is a powerful programming language that's very common within the scientif
 
 You can easily install `janis` through PIP (and PyPi) by running:
 ```bash
-pip install janis-pipelines
+pip3 install janis-pipelines
 ```
 
 If you want to install the bioinformatics tool suite as well, you should run:
 ```bash
-pip install janis-pipelines[bioinformatics]
+pip3 install janis-pipelines[bioinformatics]
 ```
 
 [//]: # (Conda has been proposed, and will be available after the repo has been configured)

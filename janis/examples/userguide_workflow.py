@@ -15,5 +15,4 @@ w.add_edge(tarball, untar.tarFile)
 w.add_edge(untar, compile_step)
 w.add_edge(compile_step, compiled_class)
 
-w.dump_translation("cwl", to_disk=False)
-w.dump_wdl(to_disk=True)
+w.translate("cwl", to_disk=False)

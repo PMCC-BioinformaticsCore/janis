@@ -16,7 +16,7 @@ At some point, you'll find a tool that you want to place in your workflow, but i
 
 To complete this tutorial, you'll need to have an installation of janis (see the [Getting Started](/tutorials/gettingstarted.html) guide for more info). You can install janis by running:
 ```bash
-pip install janis-pipelines
+pip3 install janis-pipelines
 ```
 
 #### Container

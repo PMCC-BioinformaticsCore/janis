@@ -18,7 +18,7 @@ As you get the choice of which workflow specification you can export to, there a
 
 To complete this tutorial, you'll need to have an installation of janis (see the [Getting Started](/tutorials/gettingstarted) guide for more info). You can install janis by running:
 ```bash
-pip install janis-pipelines
+pip3 install janis-pipelines
 ```
 
 You'll also need a `janis` workflow (you can use the [`examples/simple`](/tutorials/simple) workflow), a workflow execution engine and a container software installed.
@@ -30,7 +30,7 @@ You'll also need a `janis` workflow (you can use the [`examples/simple`](/tutori
 If you're using CWL, `cwltool` is a quick engine that is installable through `pip`. We'd recommend visiting the [install guide](https://github.com/common-workflow-language/cwltool#install), however you can install `cwltool` by running:
 
 ```bash
-pip install cwltool
+pip3 install cwltool
 ```
 
 #### WDL
@@ -70,13 +70,13 @@ w: janis.Workflow = MyWorkflow()
 
 Let's write a CWL representation of our workflow to the console, we can do this by running:
 ```python
-w.dump_translation("cwl")
+w.translate("cwl")
 ```
 
-Awesome, you should see the workflow, then the tools and finally a blank inputs file written to your console! We can take a look at the method signature for `dump_translation` to find out what else we can do:
+Awesome, you should see the workflow, then the tools and finally a blank inputs file written to your console! We can take a look at the method signature for `translate` to find out what else we can do:
 
 ```python
-janis.workflow.dump_translation(
+janis.workflow.translate(
     translation: SupportedTranslation,		# 'cwl' | 'wdl'
     to_console=True,						# Logs workflow to console
     to_disk=False,							# Write workflow + tools to disk
@@ -95,7 +95,7 @@ To export a workflow in CWL for running, we can use the following statement:
 
 > If you're using Cromwell or another engine that requires the tool dependencies as a zip, include the ` should_zip=True` argument.
 ```python
-w.dump_translation("cwl", to_disk=True, write_inputs_file=True)
+w.translate("cwl", to_disk=True, write_inputs_file=True)
 ```
 
 After this runs, we'll have a few files (and a directory) within the export path:
@@ -184,7 +184,7 @@ And in WDL:
 ### Overriding export location
 > Default: `export_path=~/Desktop/{name}/{language}/`
 
-You can override the export path to a more convenient location, by providing the ``parameter to `dump_translation`. Prefixing the path with `~` (_tilde_) will replace this per [`os.path.expanduser`](https://docs.python.org/3/library/os.path.html#os.path.expanduser). You can also use the following placeholders (see [`github/janis/translation/exportpath`](https://github.com/PMCC-BioinformaticsCore/janis/blob/master/janis/translations/exportpath.py) for more information):
+You can override the export path to a more convenient location, by providing the ``parameter to `translate`. Prefixing the path with `~` (_tilde_) will replace this per [`os.path.expanduser`](https://docs.python.org/3/library/os.path.html#os.path.expanduser). You can also use the following placeholders (see [`github/janis/translation/exportpath`](https://github.com/PMCC-BioinformaticsCore/janis/blob/master/janis/translations/exportpath.py) for more information):
 
 - `"{language}"` - 'cwl' or 'wdl'
 - `"{name}"` - Workflow identifier

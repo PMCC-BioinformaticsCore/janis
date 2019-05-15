@@ -43,10 +43,10 @@ entry_points={
 },
 ```
 
-We need to choose a base for our Docker container, and so given our application is compatible with Python 3.7, then we simply `pip install` our module on top. The following Dockerfile should be saved with the name: `Dockerfile`:
+We need to choose a base for our Docker container, and so given our application is compatible with Python 3.7, then we simply `pip3 install` our module on top. The following Dockerfile should be saved with the name: `Dockerfile`:
 ```docker
 FROM python:3.7
-RUN pip install package-name
+RUN pip3 install package-name
 ```
 
 We can then build this container with the following command which will

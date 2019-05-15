@@ -15,7 +15,7 @@ Let's start with something small, something simple!
 
 A basic installation of janis is required (see the [Getting Started](https://janis.readthedocs.io/en/latest/tutorials/gettingstarted.html) guide for more info). You can install janis by running:
 ```bash
-pip install janis-pipelines
+pip3 install janis-pipelines
 ```
 
 ## Let's get started!

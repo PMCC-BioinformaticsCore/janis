@@ -24,7 +24,7 @@ To build our simple bioinformatics workflow, we're going to:
   
 To complete this tutorial, you'll need to have an full installation of janis (see the [Getting Started](https://janis.readthedocs.io/en/latest/tutorials/gettingstarted.html) guide for more info). You can install janis with the bioinformatics tools by running:  
 ```bash  
-pip install janis-pipelines[bioinformatics]  
+pip3 install janis-pipelines[bioinformatics]  
 ```  
   
 ## Picking the tools  

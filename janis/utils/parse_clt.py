@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union, List
 
 from janis.tool.tool import ToolInput
 from janis.types.common_data_types import String
@@ -51,7 +51,7 @@ class {name}Base(CommandTool):
 """
 
 
-def from_docker(docker, basecommand, help_param:Optional[str]="--help"):
+def from_docker(docker: str, basecommand: Union[str, List[str]], help_param: Optional[str]="--help"):
     import subprocess, os
 
     bc = base_command if isinstance(basecommand, list) else [base_command]
@@ -66,11 +66,10 @@ def from_docker(docker, basecommand, help_param:Optional[str]="--help"):
     Logger.info("Starting docker process on pid=" + str(process.pid))
     help = process.communicate()[0].decode("utf-8").rstrip()
     print(help)
-    print("end-help")
     return help
 
 
-def parse_str(help):
+def parse_str(help, option_marker: str = "Options:"):
     doc = ""
     args = []
     lines = help.split("\n")
@@ -79,7 +78,7 @@ def parse_str(help):
         line = lines[il]
         if not line.lstrip(): continue
 
-        if line.startswith("Options:"):
+        if line.startswith(option_marker):
             options_idx = il
             break
 
@@ -148,7 +147,6 @@ def parse_str(help):
         else:
             last_line_was_blank_or_param = False
 
-
     return doc, args
 
 
@@ -176,17 +174,16 @@ def get_tag_and_cleanup_prefix(prefix):
     return el, tag, has_equals
 
 
-
 if __name__ == "__main__":
 
-    name = "SamToolsView" # str(input("Name: "))
-    friendly_name = "samtools view" # str(input(f"Friendly Name (default='{name}'): "))
-    base_command = ['samtools', 'view']   # str(input("BaseCommand (case sensitive): "))
-    tool_provider = "Samtools" # str(input("BaseCommand (case sensitive): "))
-    docker = "michaelfranklin/bwasamtools:0.7.17-1.9" # str(input("Docker: "))
+    name = str(input("Name: "))
+    friendly_name = str(input(f"Friendly Name (default='{name}'): "))
+    base_command = str(input("BaseCommand (case sensitive): "))
+    tool_provider = str(input("BaseCommand (case sensitive): "))
+    docker = str(input("Docker: "))
 
     help_str = from_docker(docker, base_command)
-    doc, args = parse_str(help_str)
+    doc, args = parse_str(help_str, option_marker="optional arguments:")
 
     ins = ['\t\t\tToolInput("{tag}", String(), prefix="{prefix}", doc="{doc}"),'.format(tag=t.tag, prefix=t.prefix, doc=t.doc) for t in args if t and t.tag]
 

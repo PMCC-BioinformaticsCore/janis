@@ -10,7 +10,7 @@ from janis.utils.logger import Logger
 class Step:
     def __init__(self, identifier: str, tool: Tool, meta: Optional[Any]=None,
                  label: str = None, doc: str = None):
-        self._identifier: str = identifier.lower()
+        self._identifier: str = identifier
         self.label = label
         self.doc = doc
 

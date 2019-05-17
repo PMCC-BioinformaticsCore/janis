@@ -17,7 +17,7 @@ class CommandTool(Tool, ABC):
     """
 
     def id(self):
-        return self.tool().lower()
+        return self.tool()
 
     @staticmethod
     @abstractmethod

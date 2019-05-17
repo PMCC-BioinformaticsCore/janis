@@ -222,7 +222,7 @@ class Workflow(Tool):
                 return s, None
             elif type(s) == tuple:
                 # should have format (tag, Optional[Node]), check 105:step.py
-                return s
+                return s[0], s[1]
             else:
                 # s is hopefully a node (either InputNode | OutputNode)
                 return s.id(), s

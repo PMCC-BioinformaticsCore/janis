@@ -312,12 +312,12 @@ cwl_testtool = """\
 baseCommand: echo
 class: CommandLineTool
 cwlVersion: v1.0
-id: testtranslation-tool
+id: TestTranslation-tool
 inputs:
 - id: testtool
   label: testtool
   type: string
-label: testtranslation-tool
+label: TestTranslation-tool
 outputs:
 - id: std
   label: std

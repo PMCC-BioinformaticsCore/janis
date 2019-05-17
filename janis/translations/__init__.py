@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Dict, Optional, Any
 
 from janis.translations.wdl import WdlTranslator
@@ -10,9 +11,15 @@ from .cwl import CwlTranslator
 SupportedTranslation = str
 
 
-class SupportedTranslations:
-    CWL: SupportedTranslation = "cwl"
-    WDL: SupportedTranslation = "wdl"
+class SupportedTranslations(Enum):
+    CWL = "cwl"
+    WDL = "wdl"
+
+    def __str__(self):
+        return self.value
+
+    def __eq__(self, other):
+        return str(self) == str(other)
 
 
 def get_translator(translation: SupportedTranslation) -> TranslatorBase:

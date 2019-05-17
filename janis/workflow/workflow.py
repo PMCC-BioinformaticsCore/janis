@@ -6,6 +6,7 @@ import janis.translations as translations
 from janis.graph.node import Node, NodeTypes, layout_nodes2
 from janis.graph.stepinput import StepInput
 from janis.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes, ToolType
+from janis.translations import ExportPathKeywords
 from janis.types.common_data_types import Array
 from janis.types.data_types import DataType
 from janis.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
@@ -686,7 +687,7 @@ class Workflow(Tool):
 
     def translate(self, translation: translations.SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
                          with_hints=False, with_resource_overrides=False, write_inputs_file=False,
-                         should_validate=False, should_zip=True):
+                         should_validate=False, should_zip=True, export_path=ExportPathKeywords.default):
         return translations.translate_workflow(self,
                                                translation=translation,
                                                to_console=to_console,
@@ -694,6 +695,7 @@ class Workflow(Tool):
                                                with_docker=with_docker,
                                                with_resource_overrides=with_resource_overrides,
                                                should_zip=should_zip,
+                                               export_path=export_path,
                                                write_inputs_file=write_inputs_file,
                                                should_validate=should_validate)
 

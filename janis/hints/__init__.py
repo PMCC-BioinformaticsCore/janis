@@ -27,20 +27,31 @@ class HintArray(Hint, ABC):
 
 class CaptureType(HintEnum):
 
-    KEY = "captureType"
     TARGETED = "targeted"
     EXOME = "exome"
     CHROMOSOME = "chromosome"
     THIRTYX = "30x"
     NINETYX = "90x"
     THREEHUNDREDX = "300x"
-    ALL = [TARGETED, EXOME, CHROMOSOME, THIRTYX, NINETYX, THREEHUNDREDX]
 
     @staticmethod
-    def key(): return CaptureType.KEY
+    def key(): return "captureType"
 
     @staticmethod
-    def symbols(): return CaptureType.ALL
+    def symbols():
+        return [CaptureType.TARGETED, CaptureType.EXOME, CaptureType.CHROMOSOME,
+                CaptureType.THIRTYX, CaptureType.NINETYX, CaptureType.THREEHUNDREDX]
 
 
-HINTS: List[Type[Hint]] = [CaptureType]
+class Engine(HintEnum):
+    CROMWELL = "cromwell"
+
+    @staticmethod
+    def key(): return "engine"
+
+    @staticmethod
+    def symbols():
+        return [Engine.CROMWELL]
+
+
+HINTS: List[Type[Hint]] = [CaptureType, Engine]

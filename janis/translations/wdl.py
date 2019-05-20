@@ -39,7 +39,7 @@ from janis.workflow.step import StepNode
 class WdlTranslator(TranslatorBase):
 
     def __init__(self):
-        super().__init__(name="wdl", workflow_extension="wdl", inputs_extension="json")
+        super().__init__(name="wdl")
 
     @staticmethod
     def stringify_translated_workflow(wf):
@@ -234,10 +234,12 @@ class WdlTranslator(TranslatorBase):
         return wdl.Task(tool.id(), ins, outs, commands, r, version="development")
 
     @classmethod
-    def build_inputs_file(cls, workflow, recursive=False) -> Dict[str, any]:
+    def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None) -> Dict[str, any]:
         """
         Recursive is currently unused, but eventually input overrides could be generated the whole way down
         a call chain, including subworkflows: https://github.com/openwdl/wdl/issues/217
+        :param merge_resources:
+        :param recursive:
         :param workflow:
         :return:
         """
@@ -252,6 +254,9 @@ class WdlTranslator(TranslatorBase):
                 for sec in i.input.data_type.secondary_files():
                     inp[get_secondary_tag_from_original_tag(inp_key, sec)] = \
                         apply_secondary_file_format_to_filename(inp_val, sec)
+
+        if merge_resources:
+            inp.update(cls.build_resources_input(workflow, hints))
 
         return inp
 
@@ -281,6 +286,22 @@ class WdlTranslator(TranslatorBase):
                 steps.update(cls.build_resources_input(tool, hints, prefix=tool_pre))
 
         return steps
+
+    @staticmethod
+    def workflow_output_path(workflow):
+        return workflow.id() + ".wdl"
+
+    @staticmethod
+    def output_inputs_path(workflow):
+        return workflow.id() + "-inp.json"
+
+    @staticmethod
+    def output_tool_path(toolname):
+        return toolname + ".wdl"
+
+    @staticmethod
+    def output_resources_path(workflow):
+        return workflow.id() + "-resources.json"
 
 
 def translate_command_input(tool_input: ToolInput):

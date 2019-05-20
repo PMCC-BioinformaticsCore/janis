@@ -686,8 +686,9 @@ class Workflow(Tool):
     # TRANSLATIONS
 
     def translate(self, translation: translations.SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
-                         with_hints=False, with_resource_overrides=False, write_inputs_file=False,
-                         should_validate=False, should_zip=True, export_path=ExportPathKeywords.default):
+                  with_hints=False, with_resource_overrides=False, write_inputs_file=False,
+                  should_validate=False, should_zip=True, export_path=ExportPathKeywords.default,
+                  merge_resources=False, hints=None):
         return translations.translate_workflow(self,
                                                translation=translation,
                                                to_console=to_console,
@@ -697,7 +698,9 @@ class Workflow(Tool):
                                                should_zip=should_zip,
                                                export_path=export_path,
                                                write_inputs_file=write_inputs_file,
-                                               should_validate=should_validate)
+                                               should_validate=should_validate,
+                                               merge_resources=merge_resources,
+                                               hints=hints)
 
     def generate_resources_file(self, translation: translations.SupportedTranslation, hints: Dict[str, Any]=None, to_console=True):
         tr = translations.build_resources_input(self, translation, hints)

@@ -36,28 +36,28 @@ class TranslatorBase(ABC):
     You can find these in /janis/tests/test_translation_*.py)
     """
 
-    def __init__(self, name, workflow_extension, inputs_extension):
+    def __init__(self, name):
         self.name = name
-        self.workflow_extension = workflow_extension
-        self.inputs_extension = inputs_extension
 
     def translate(self, workflow, to_console=True, with_docker=True, with_resource_overrides=False, to_disk=False,
              export_path=ExportPathKeywords.default, write_inputs_file=False, should_validate=False,
-             should_zip=True):
+             should_zip=True, merge_resources=False, hints=None):
 
         tr_wf, tr_tools = self.translate_workflow(
             workflow,
             with_docker=with_docker,
             with_resource_overrides=with_resource_overrides
         )
-        tr_inp = self.build_inputs_file(workflow, recursive=False)
+        tr_inp = self.build_inputs_file(workflow, recursive=False, merge_resources=merge_resources, hints=hints)
+        tr_res = self.build_resources_input(workflow, hints)
 
         str_wf = self.stringify_translated_workflow(tr_wf)
         str_inp = self.stringify_translated_inputs(tr_inp)
         str_tools = [
-            (f"tools/{t}.{self.workflow_extension}", self.stringify_translated_workflow(tr_tools[t]))
+            ("/tools/" + self.output_tool_path(t), self.stringify_translated_workflow(tr_tools[t]))
             for t in tr_tools
         ]
+        str_resources = self.stringify_translated_inputs(tr_res)
 
         if to_console:
             print("=== WORKFLOW ===")
@@ -66,11 +66,15 @@ class TranslatorBase(ABC):
             [print(f":: {t[0]} ::\n" + t[1]) for t in str_tools]
             print("\n=== INPUTS ===")
             print(str_inp)
+            if not merge_resources and with_resource_overrides:
+                print("\n=== RESOURCES ===")
+                print(str_resources)
 
         d = ExportPathKeywords.resolve(export_path, workflow_spec=self.name, workflow_name=workflow.id())
 
-        fn_workflow = workflow.id() + "." + self.workflow_extension
-        fn_inputs = workflow.id() + "-job." + self.inputs_extension
+        fn_workflow = self.workflow_output_path(workflow)
+        fn_inputs = self.output_inputs_path(workflow)
+        fn_resources = self.output_resources_path(workflow)
 
         if write_inputs_file:
             if not os.path.isdir(d):
@@ -89,15 +93,23 @@ class TranslatorBase(ABC):
                 os.makedirs(d + "tools/")
 
             with open(d + fn_workflow, "w+") as wf:
-                Logger.log(f"Writing {workflow.id()}.{self.workflow_extension} to disk")
+                Logger.log(f"Writing {fn_workflow} to disk")
                 wf.write(str_wf)
-                Logger.log(f"Wrote {workflow.id()}.{self.workflow_extension} to disk")
+                Logger.log(f"Wrote {fn_workflow}  to disk")
 
             for (fn_tool, str_tool) in str_tools:
                 with open(d + fn_tool, "w+") as cwl:
                     Logger.log(f"Writing {fn_tool} to disk")
                     cwl.write(str_tool)
                     Logger.log(f"Written {fn_tool} to disk")
+
+            if not merge_resources and with_resource_overrides:
+                print("\n=== RESOURCES ===")
+                with open(d + fn_resources, "w+") as wf:
+                    Logger.log(f"Writing {fn_resources} to disk")
+                    wf.write(str_wf)
+                    Logger.log(f"Wrote {fn_resources}  to disk")
+                print(str_resources)
 
             import subprocess
             if should_zip:
@@ -139,7 +151,7 @@ class TranslatorBase(ABC):
 
     @classmethod
     @abstractmethod
-    def build_inputs_file(cls, workflow, recursive=False) -> Dict[str, any]:
+    def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None) -> Dict[str, any]:
         pass
 
     @classmethod
@@ -168,7 +180,33 @@ class TranslatorBase(ABC):
     def stringify_translated_inputs(inputs):
         pass
 
-    ## VALIDATION
+    # OUTPUTS
+
+    @staticmethod
+    @abstractmethod
+    def workflow_output_path(self):
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def output_inputs_path(workflow):
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def output_tool_path(tool):
+        pass
+
+    @staticmethod
+    def output_dependencies_path(workflow):
+        return "tools.zip"
+
+    @staticmethod
+    @abstractmethod
+    def output_resources_path(workflow):
+        pass
+
+    # VALIDATION
 
     @staticmethod
     @abstractmethod

@@ -44,7 +44,7 @@ CWL_VERSION = "v1.0"
 class CwlTranslator(TranslatorBase):
 
     def __init__(self):
-        super().__init__(name="cwl", workflow_extension="cwl", inputs_extension="yml")
+        super().__init__(name="cwl")
         ruamel.yaml.add_representer(cwlgen.utils.literal, cwlgen.utils.literal_presenter)
 
 
@@ -123,9 +123,12 @@ class CwlTranslator(TranslatorBase):
         return w, tools
 
     @classmethod
-    def build_inputs_file(cls, workflow, recursive=False) -> Dict[str, any]:
+    def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None) -> Dict[str, any]:
 
-        return {i.id(): i.input.cwl_input() for i in workflow._inputs if not cls.inp_can_be_skipped(i.input)}
+        inp = {i.id(): i.input.cwl_input() for i in workflow._inputs if not cls.inp_can_be_skipped(i.input)}
+        if merge_resources:
+            inp.update(cls.build_resources_input(workflow, hints))
+        return inp
 
     @classmethod
     def translate_tool(cls, tool, with_docker, with_resource_overrides=False):
@@ -220,6 +223,22 @@ class CwlTranslator(TranslatorBase):
                 steps.update(cls.build_resources_input(tool, hints, tool_pre))
 
         return steps
+
+    @staticmethod
+    def workflow_output_path(workflow):
+        return workflow.id() + ".cwl"
+
+    @staticmethod
+    def output_inputs_path(workflow):
+        return workflow.id() + "-inp.yml"
+
+    @staticmethod
+    def output_tool_path(tool):
+        return tool.id() + ".cwl"
+
+    @staticmethod
+    def output_resources_path(workflow):
+        return workflow.id() + "-resources.yml"
 
 
 def translate_input(inp: Input):

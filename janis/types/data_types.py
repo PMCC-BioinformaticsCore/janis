@@ -157,9 +157,9 @@ class DataType(ABC):
             return f"Optional<{self.name()}>"
         return self.name()
 
+    @abstractmethod
     def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
-        if meta is None and allow_null_if_optional: return False
-        return True
+        pass
 
     def identify(self):
         print(self.id())

@@ -35,7 +35,8 @@ class String(DataType):
         return super().can_receive_from(other, source_has_default=source_has_default)
 
     def validate_value(self, meta: Any, allow_null_if_optional: bool):
-        if meta is None and allow_null_if_optional: return True
+        if meta is None:
+            return self.optional or allow_null_if_optional
         return isinstance(meta, str)
 
 
@@ -125,7 +126,8 @@ class Int(DataType):
         return next(iter(meta.values()))
 
     def validate_value(self, meta: Any, allow_null_if_optional: bool):
-        if meta is None and allow_null_if_optional: return True
+        if meta is None:
+            return self.optional or allow_null_if_optional
         return isinstance(meta, int)
 
 
@@ -150,7 +152,8 @@ class Float(DataType):
         return next(iter(meta.values()))
 
     def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
-        if meta is None and allow_null_if_optional: return True
+        if meta is None:
+            return self.optional or allow_null_if_optional
         return isinstance(meta, float) or isinstance(meta, int)
 
 
@@ -175,7 +178,8 @@ class Double(DataType):
         return next(iter(meta.values()))
 
     def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
-        if meta is None and allow_null_if_optional: return True
+        if meta is None:
+            return self.optional or allow_null_if_optional
         return isinstance(meta, float) or isinstance(meta, int)
 
 
@@ -200,7 +204,8 @@ class Boolean(DataType):
         return next(iter(meta.values()))
 
     def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
-        if meta is None and allow_null_if_optional: return True
+        if meta is None:
+            return self.optional or allow_null_if_optional
         return isinstance(meta, bool)
 
 
@@ -239,7 +244,8 @@ class File(DataType):
         }
 
     def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
-        if meta is None and allow_null_if_optional: return True
+        if meta is None:
+            return self.optional or allow_null_if_optional
         return isinstance(meta, str)
 
 
@@ -281,7 +287,8 @@ class Directory(DataType):
         }
 
     def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
-        if meta is None and allow_null_if_optional: return True
+        if meta is None:
+            return self.optional or allow_null_if_optional
         return isinstance(meta, str)
 
 
@@ -360,7 +367,8 @@ class Array(DataType):
         return next(iter(meta.values()))
 
     def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
-        if meta is None and allow_null_if_optional: return True
+        if meta is None:
+            return self.optional or allow_null_if_optional
         if not isinstance(meta, list):
             return False
         return all(self.subtype().validate_value(q) for q in meta)

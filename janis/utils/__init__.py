@@ -6,6 +6,7 @@ def first_value(d: Dict):
 
 
 def get_value_for_hints_and_ordered_resource_tuple(hints: Dict[str, Any], tuples: List[Tuple[str, Dict[str, int]]]):
+    if not hints: return None
     for k,d in tuples:
         if k not in hints: continue
         v = hints[k]

@@ -192,7 +192,7 @@ class TranslatorBase(ABC):
 
     @staticmethod
     @abstractmethod
-    def workflow_filename(self):
+    def workflow_filename(workflow):
         pass
 
     @staticmethod

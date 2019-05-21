@@ -41,7 +41,9 @@ class TranslatorBase(ABC):
 
     def translate(self, workflow, to_console=True, with_docker=True, with_resource_overrides=False, to_disk=False,
              export_path=ExportPathKeywords.default, write_inputs_file=False, should_validate=False,
-             should_zip=True, merge_resources=False, hints=None):
+             should_zip=True, merge_resources=False, hints=None, allow_null_if_not_optional=True):
+
+        self.validate_inputs(workflow._inputs, allow_null_if_not_optional)
 
         tr_wf, tr_tools = self.translate_workflow(
             workflow,
@@ -137,6 +139,12 @@ class TranslatorBase(ABC):
                     Logger.critical(cwltool_result.stderr)
 
         return str_wf, str_inp, str_tools
+
+    @classmethod
+    def validate_inputs(cls, inputs: List[Input], allow_null_if_optional):
+        invalid = [i for i in inputs if i.validate_value(allow_null_if_not_optional=allow_null_if_optional)]
+        if len(invalid) == 0: return True
+        raise TypeError("Couldn't validate inputs: ", ", ".join(i.id() for i in invalid))
 
     @classmethod
     @abstractmethod

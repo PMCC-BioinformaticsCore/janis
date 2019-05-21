@@ -35,13 +35,14 @@ def get_translator(translation: SupportedTranslation) -> TranslatorBase:
 def translate_workflow(workflow, translation: SupportedTranslation,
                        to_console=True, with_docker=True, with_resource_overrides=False, to_disk=False,
                        export_path=ExportPathKeywords.default, write_inputs_file=False, should_validate=False,
-                       should_zip=True, merge_resources=False, hints=None):
+                       should_zip=True, merge_resources=False, hints=None, allow_null_if_not_optional=True):
     translator = get_translator(translation)
     return translator.translate(
         workflow, to_console=to_console, with_docker=with_docker,
         with_resource_overrides=with_resource_overrides, to_disk=to_disk,
         export_path=export_path, write_inputs_file=write_inputs_file,
-        should_validate=should_validate, should_zip=should_zip, merge_resources=merge_resources, hints=hints
+        should_validate=should_validate, should_zip=should_zip, merge_resources=merge_resources, hints=hints,
+        allow_null_if_not_optional=allow_null_if_not_optional
     )
 
 

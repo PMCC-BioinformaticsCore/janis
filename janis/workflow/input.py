@@ -49,8 +49,8 @@ class Input:
     def wdl_input(self):
         return self.value
 
-    def validate_value(self, allow_null_if_optional: bool) -> bool:
-        return self.data_type.validate_value(self.value, allow_null_if_optional)
+    def validate_value(self, allow_null_if_not_optional: bool) -> bool:
+        return self.data_type.validate_value(self.value, allow_null_if_not_optional)
 
 
 class InputNode(Node):

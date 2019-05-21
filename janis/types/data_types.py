@@ -158,7 +158,7 @@ class DataType(ABC):
         return self.name()
 
     @abstractmethod
-    def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
+    def validate_value(self, meta: Any, allow_null_if_not_optional: bool) -> bool:
         pass
 
     def identify(self):

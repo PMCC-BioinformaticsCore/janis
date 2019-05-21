@@ -288,19 +288,19 @@ class WdlTranslator(TranslatorBase):
         return steps
 
     @staticmethod
-    def workflow_output_path(workflow):
+    def workflow_filename(workflow):
         return workflow.id() + ".wdl"
 
     @staticmethod
-    def output_inputs_path(workflow):
+    def inputs_filename(workflow):
         return workflow.id() + "-inp.json"
 
     @staticmethod
-    def output_tool_path(toolname):
+    def tool_filename(toolname):
         return toolname + ".wdl"
 
     @staticmethod
-    def output_resources_path(workflow):
+    def resources_filename(workflow):
         return workflow.id() + "-resources.json"
 
 

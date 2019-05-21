@@ -54,7 +54,7 @@ class TranslatorBase(ABC):
         str_wf = self.stringify_translated_workflow(tr_wf)
         str_inp = self.stringify_translated_inputs(tr_inp)
         str_tools = [
-            ("/tools/" + self.output_tool_path(t), self.stringify_translated_workflow(tr_tools[t]))
+            ("/tools/" + self.tool_filename(t), self.stringify_translated_workflow(tr_tools[t]))
             for t in tr_tools
         ]
         str_resources = self.stringify_translated_inputs(tr_res)
@@ -72,9 +72,9 @@ class TranslatorBase(ABC):
 
         d = ExportPathKeywords.resolve(export_path, workflow_spec=self.name, workflow_name=workflow.id())
 
-        fn_workflow = self.workflow_output_path(workflow)
-        fn_inputs = self.output_inputs_path(workflow)
-        fn_resources = self.output_resources_path(workflow)
+        fn_workflow = self.workflow_filename(workflow)
+        fn_inputs = self.inputs_filename(workflow)
+        fn_resources = self.resources_filename(workflow)
 
         if write_inputs_file:
             if not os.path.isdir(d):
@@ -184,26 +184,26 @@ class TranslatorBase(ABC):
 
     @staticmethod
     @abstractmethod
-    def workflow_output_path(self):
+    def workflow_filename(self):
         pass
 
     @staticmethod
     @abstractmethod
-    def output_inputs_path(workflow):
+    def inputs_filename(workflow):
         pass
 
     @staticmethod
     @abstractmethod
-    def output_tool_path(tool):
+    def tool_filename(tool):
         pass
 
     @staticmethod
-    def output_dependencies_path(workflow):
+    def dependencies_filename(workflow):
         return "tools.zip"
 
     @staticmethod
     @abstractmethod
-    def output_resources_path(workflow):
+    def resources_filename(workflow):
         pass
 
     # VALIDATION

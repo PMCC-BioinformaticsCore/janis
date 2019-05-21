@@ -225,19 +225,19 @@ class CwlTranslator(TranslatorBase):
         return steps
 
     @staticmethod
-    def workflow_output_path(workflow):
+    def workflow_filename(workflow):
         return workflow.id() + ".cwl"
 
     @staticmethod
-    def output_inputs_path(workflow):
+    def inputs_filename(workflow):
         return workflow.id() + "-inp.yml"
 
     @staticmethod
-    def output_tool_path(tool):
+    def tool_filename(tool):
         return tool.id() + ".cwl"
 
     @staticmethod
-    def output_resources_path(workflow):
+    def resources_filename(workflow):
         return workflow.id() + "-resources.yml"
 
 

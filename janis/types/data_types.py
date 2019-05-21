@@ -148,16 +148,7 @@ class DataType(ABC):
         """
         raise Exception("Subclass MUST override the 'doc' field")
 
-    @staticmethod
-    def validate(meta: Any) -> bool:
-        return True
 
-    @classmethod
-    def schema(cls) -> Dict:
-        raise Exception("Subclass MUST override the 'schema' method")
-
-    def get_value_from_meta(self, meta):
-        return meta
 
     # The following methods don't need to be overriden, but can be
 
@@ -165,6 +156,10 @@ class DataType(ABC):
         if self.optional:
             return f"Optional<{self.name()}>"
         return self.name()
+
+    def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
+        if meta is None and allow_null_if_optional: return False
+        return True
 
     def identify(self):
         print(self.id())

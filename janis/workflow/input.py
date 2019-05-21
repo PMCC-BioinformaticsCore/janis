@@ -28,7 +28,6 @@ class Input:
         self.label = label
         self.doc = doc
 
-        self.value = value
         self.default = default
         self.include_in_inputs_file_if_none = include_in_inputs_file_if_none
 
@@ -36,6 +35,10 @@ class Input:
             data_type.optional = True
 
         self.data_type: DataType = data_type
+
+        self.value = value
+        if not self.validate_value(True):
+            raise TypeError(f"Value '{str(value)}' for Input '{identifier}' was not valid for '{data_type.id()}' type")
 
     def id(self):
         return self._identifier
@@ -45,6 +48,9 @@ class Input:
 
     def wdl_input(self):
         return self.value
+
+    def validate_value(self, allow_null_if_optional: bool) -> bool:
+        return self.data_type.validate_value(self.value, allow_null_if_optional)
 
 
 class InputNode(Node):

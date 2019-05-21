@@ -34,6 +34,10 @@ class String(DataType):
             return True
         return super().can_receive_from(other, source_has_default=source_has_default)
 
+    def validate_value(self, meta: Any, allow_null_if_optional: bool):
+        if meta is None and allow_null_if_optional: return True
+        return isinstance(meta, str)
+
 
 class Filename(String):
 
@@ -120,6 +124,10 @@ class Int(DataType):
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
 
+    def validate_value(self, meta: Any, allow_null_if_optional: bool):
+        if meta is None and allow_null_if_optional: return True
+        return isinstance(meta, int)
+
 
 class Float(DataType):
 
@@ -140,6 +148,10 @@ class Float(DataType):
 
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
+
+    def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
+        if meta is None and allow_null_if_optional: return True
+        return isinstance(meta, float) or isinstance(meta, int)
 
 
 class Double(DataType):
@@ -162,6 +174,10 @@ class Double(DataType):
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
 
+    def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
+        if meta is None and allow_null_if_optional: return True
+        return isinstance(meta, float) or isinstance(meta, int)
+
 
 class Boolean(DataType):
 
@@ -182,6 +198,10 @@ class Boolean(DataType):
 
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
+
+    def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
+        if meta is None and allow_null_if_optional: return True
+        return isinstance(meta, bool)
 
 
 class File(DataType):
@@ -217,6 +237,11 @@ class File(DataType):
             "class": cwlgen.CwlTypes.FILE,
             "path": value
         }
+
+    def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
+        if meta is None and allow_null_if_optional: return True
+        return isinstance(meta, str)
+
 
 class Directory(DataType):
     def __init__(self, optional=False):
@@ -254,6 +279,10 @@ class Directory(DataType):
             "class": cwlgen.CwlTypes.DIRECTORY,
             "path": value
         }
+
+    def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
+        if meta is None and allow_null_if_optional: return True
+        return isinstance(meta, str)
 
 
 class Array(DataType):
@@ -330,6 +359,12 @@ class Array(DataType):
     def input_field_from_input(self, meta):
         return next(iter(meta.values()))
 
+    def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
+        if meta is None and allow_null_if_optional: return True
+        if not isinstance(meta, list):
+            return False
+        return all(self.subtype().validate_value(q) for q in meta)
+
 
 class Stdout(File):
 
@@ -348,6 +383,12 @@ class Stdout(File):
 
     def received_type(self):
         return self.subtype
+
+    def validate_value(self, meta: Any, allow_null_if_optional: bool) -> bool:
+        """
+        Will always toss away the value
+        """
+        return True
 
 
 all_types = [String, Filename, Int, Float, Double, Boolean, File, Directory, Stdout, Array]

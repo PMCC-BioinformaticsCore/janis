@@ -279,7 +279,7 @@ class WdlTranslator(TranslatorBase):
                 steps.update({
                     tool_pre + "runtime_memory": tool.memory(hints),
                     tool_pre + "runtime_cpu": tool.cpus(hints),
-                    tool_pre + "runtime_disks": None
+                    tool_pre + "runtime_disks": "local-disk 100 SSD"
                 })
             elif isinstance(tool, Workflow):
                 tool_pre = prefix + s.id()

@@ -32,7 +32,7 @@ class DebugEchoInputs(UnixTool):
     @staticmethod
     def hint_map():
         return {
-            hints.CaptureType.KEY: {
+            hints.CaptureType.key(): {
                 hints.CaptureType.TARGETED: {
                     "ramMin": 2000,
                     "coresMin": 3

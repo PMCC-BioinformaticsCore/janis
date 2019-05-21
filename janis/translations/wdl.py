@@ -30,7 +30,6 @@ from janis.types.common_data_types import Stdout, Array, Boolean, Filename, File
 from janis.utils import first_value
 from janis.utils.logger import Logger
 from janis.utils.validators import Validators
-from janis.workflow.input import Input
 from janis.workflow.step import StepNode
 
 

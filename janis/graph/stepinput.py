@@ -65,7 +65,7 @@ class Edge:
             self.scatter = False
             return
 
-        elif isinstance(stype.output_type, Array):
+        if isinstance(stype.output_type, Array):
             # Potential scattering event - non-scatter if s is compatible, scatter if s.subtype is compatible
 
             # Scattering event if ftype.input_type.canReceiveFrom(stype.output_type.subtype)
@@ -76,7 +76,7 @@ class Edge:
                 self.scatter = True
                 return
 
-        elif isinstance(ftype.input_type, Array):
+        if isinstance(ftype.input_type, Array):
             # This might be a merge
 
             # check if s has a scatter step, then we sweet

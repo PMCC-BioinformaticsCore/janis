@@ -47,7 +47,7 @@ class SimpleWorkflow(Workflow):
         self.add_edge(inp, step1.tarFile)
         self.add_edge(step1.files, step2.file)  # Auto scatter
         self.add_edge(step1.files, step3.files)
-        self.add_edge(step2.compiled, step3.files)
+        self.add_edge(step2.compiled, step3.files2)
         self.add_edge(step3.tarred, outp)
 
 

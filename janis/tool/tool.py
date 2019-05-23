@@ -64,7 +64,6 @@ class ToolInput(ToolArgument):
 
         self.tag: str = tag
         self.input_type: DataType = input_type
-        self.optional = self.input_type.optional
         self.default = default
         self.nest_input_binding_on_array = nest_input_binding_on_array
         self.separator = separator
@@ -164,8 +163,8 @@ class Tool(ABC, object):
 
         output_format = lambda t: f"\t\t{t.tag} ({t.output_type.id()}): {'' if t.doc is None else t.doc}"
 
-        requiredInputs = "\n".join(input_format(x) for x in ins if not x.optional)
-        optionalInputs = "\n".join(input_format(x) for x in ins if x.optional)
+        requiredInputs = "\n".join(input_format(x) for x in ins if not x.input_type.optional)
+        optionalInputs = "\n".join(input_format(x) for x in ins if x.input_type.optional)
         outputs = "\n".join(output_format(o) for o in self.outputs())
 
         meta = self.metadata() if self.metadata() else Metadata()

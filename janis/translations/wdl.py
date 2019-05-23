@@ -217,10 +217,14 @@ class WdlTranslator(TranslatorBase):
         if with_docker:
             r.add_docker(tool.docker())
 
+        # let's check if there are any non-optional params using a CPU selector, otherwise we'll allow CPU to be null
+        non_optional_cpus = any(i for i in tool.inputs() if not i.input_type.optional and isinstance(i.value, CpuSelector))
+        cpu_input = wdl.Input(wdl.WdlType.parse_type("Int"), "runtime_cpu", expression="1", requires_quotes=False) \
+            if non_optional_cpus else wdl.Input(wdl.WdlType.parse_type("Int?"), "runtime_cpu")
         # generate resource inputs, for memory, cpu and disk at the moment
         ins.extend([
-            wdl.Input(wdl.WdlType.parse_type("Int"), "runtime_cpu", expression="1", requires_quotes=False),
-            wdl.Input(wdl.WdlType.parse_type("String?"), "runtime_memory"),
+            cpu_input,
+            wdl.Input(wdl.WdlType.parse_type("Int?"), "runtime_memory"),
         ])
 
         r.kwargs["cpu"] = "runtime_cpu" # wdl.IfThenElse("defined(runtime_cpu)", "runtime_cpu", "1")

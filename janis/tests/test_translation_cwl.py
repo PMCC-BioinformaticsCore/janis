@@ -1,5 +1,8 @@
 import unittest
+import cwlgen
 from typing import List
+
+from janis.translations import CwlTranslator
 
 from janis.types import CpuSelector, MemorySelector
 
@@ -40,6 +43,48 @@ class TestCwlMisc(unittest.TestCase):
     def test_str_tool(self):
         t = TestTool()
         self.assertEqual(t.translate("cwl"), cwl_testtool)
+
+
+class TestCwlTranslatorOverrides(unittest.TestCase):
+
+    def setUp(self):
+        self.translator = CwlTranslator()
+
+    def test_stringify_workflow(self):
+        cwlobj = cwlgen.Workflow("wid")
+        self.assertEqual(
+            "class: Workflow\ncwlVersion: v1.0\nid: wid\ninputs: {}\noutputs: {}\nsteps: {}\n",
+            self.translator.stringify_translated_workflow(cwlobj)
+        )
+
+    def test_stringify_tool(self):
+        cwlobj = cwlgen.CommandLineTool("tid")
+        self.assertEqual(
+            "class: CommandLineTool\ncwlVersion: v1.0\nid: tid\n",
+            self.translator.stringify_translated_tool(cwlobj)
+        )
+
+    def test_stringify_inputs(self):
+        d = {"inp1": 1}
+        self.assertEqual(
+            "inp1: 1\n",
+            self.translator.stringify_translated_inputs(d)
+        )
+
+    def test_workflow_filename(self):
+        w = Workflow("wid")
+        self.assertEqual("wid.cwl", self.translator.workflow_filename(w))
+
+    def test_tools_filename(self):
+        self.assertEqual("TestTranslation-tool.cwl", self.translator.tool_filename(TestTool()))
+
+    def test_inputs_filename(self):
+        w = Workflow("wid")
+        self.assertEqual("wid-inp.yml", self.translator.inputs_filename(w))
+
+    def test_resources_filename(self):
+        w = Workflow("wid")
+        self.assertEqual("wid-resources.yml", self.translator.resources_filename(w))
 
 
 class TestCwlSelectorsAndGenerators(unittest.TestCase):

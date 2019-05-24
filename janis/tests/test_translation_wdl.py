@@ -2,6 +2,8 @@ import unittest
 import wdlgen
 from typing import List
 
+from janis.translations import WdlTranslator
+
 from janis.types import CpuSelector, MemorySelector
 
 import janis.translations.wdl as wdl
@@ -42,6 +44,52 @@ class TestWdl(unittest.TestCase):
         self.assertIsInstance(wdl, wdlgen.WdlType)
         self.assertTrue(wdl.optional)
         self.assertEqual("Array[File]?", wdl.get_string())
+
+
+class TestWdlTranslatorOverrides(unittest.TestCase):
+
+    def setUp(self):
+        self.translator = WdlTranslator()
+
+    def test_stringify_workflow(self):
+        wdlobj = wdlgen.Workflow("wid", version="development")
+        self.assertEqual(
+            "version development\n\n\n\nworkflow wid {\n\n\n\n}",
+            self.translator.stringify_translated_workflow(wdlobj)
+        )
+
+    def test_stringify_tool(self):
+        wdlobj = wdlgen.Task("tid", version="development")
+        self.assertEqual(
+            "version development\n\ntask tid {\n\n\n\n\n}",
+            self.translator.stringify_translated_tool(wdlobj)
+        )
+
+    def test_stringify_inputs(self):
+        d = {"wid.inp1": 1}
+        self.assertEqual(
+            "{\n    \"wid.inp1\": 1\n}",
+            self.translator.stringify_translated_inputs(d)
+        )
+
+    def test_workflow_filename(self):
+        w = Workflow("wid")
+        self.assertEqual("wid.wdl", self.translator.workflow_filename(w))
+
+    def test_tools_filename(self):
+        self.assertEqual("TestTranslation-tool.wdl", self.translator.tool_filename(TestTool().id()))
+
+    def test_inputs_filename(self):
+        w = Workflow("wid")
+        self.assertEqual("wid-inp.json", self.translator.inputs_filename(w))
+
+    def test_resources_filename(self):
+        w = Workflow("wid")
+        self.assertEqual("wid-resources.json", self.translator.resources_filename(w))
+
+
+class TestWdlTranslatorBuilders(unittest.TestCase):
+    pass
 
 
 class TestWdlSelectorsAndGenerators(unittest.TestCase):

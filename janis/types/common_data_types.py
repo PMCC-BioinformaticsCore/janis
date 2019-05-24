@@ -148,7 +148,7 @@ class Float(DataType):
     def schema(cls) -> Dict:
         return {"type": "number", "required": True}
 
-    def input_field_from_input(self, meta):
+    def input_field_from_input(self, meta: Dict):
         return next(iter(meta.values()))
 
     def validate_value(self, meta: Any, allow_null_if_not_optional: bool) -> bool:
@@ -371,7 +371,7 @@ class Array(DataType):
             return self.optional or allow_null_if_not_optional
         if not isinstance(meta, list):
             return False
-        return all(self.subtype().validate_value(q) for q in meta)
+        return all(self.subtype().validate_value(q, allow_null_if_not_optional) for q in meta)
 
 
 class Stdout(File):

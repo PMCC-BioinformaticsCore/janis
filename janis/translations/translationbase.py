@@ -4,7 +4,7 @@ from typing import Tuple, List, Dict
 
 from janis.translations.exportpath import ExportPathKeywords
 from janis.utils.logger import Logger
-from janis.workflow.input import Input
+from janis.workflow.input import Input, InputNode
 
 
 class TranslatorBase(ABC):
@@ -141,10 +141,10 @@ class TranslatorBase(ABC):
         return str_wf, str_inp, str_tools
 
     @classmethod
-    def validate_inputs(cls, inputs: List[Input], allow_null_if_optional):
-        invalid = [i for i in inputs if i.validate_value(allow_null_if_not_optional=allow_null_if_optional)]
+    def validate_inputs(cls, inputs: List[InputNode], allow_null_if_optional):
+        invalid = [i for i in inputs if not i.input.validate_value(allow_null_if_not_optional=allow_null_if_optional)]
         if len(invalid) == 0: return True
-        raise TypeError("Couldn't validate inputs: ", ", ".join(i.id() for i in invalid))
+        raise TypeError("Couldn't validate inputs: " + ", ".join(i.id() for i in invalid))
 
     @classmethod
     @abstractmethod

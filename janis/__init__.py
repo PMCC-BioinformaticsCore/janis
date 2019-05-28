@@ -16,6 +16,10 @@ Some terminology:
         - Every edge will have a source_map which is indexed by the tag of the input on the finish node
         - This source_map value is singular or a list, as you can connect multiple sources to one input
 
+
+
+_Proudly made on Planet Earth._
+
 """
 
 __version__ = "v0.2.16"

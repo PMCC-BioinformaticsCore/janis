@@ -7,36 +7,36 @@ class Metadata(object):
 
     DATE_FORMAT = "%Y-%m-%d"
 
-    def __init__(self, creator=None, maintainer=None, maintainer_email=None, date_created=None, date_updated=None,
-                 institution=None, doi=None, citation=None, keywords=None, documentation_url=None, documentation=None,
+    def __init__(self, creator=None, maintainer=None, maintainerEmail=None, dateCreated=None, dateUpdated=None,
+                 institution=None, doi=None, citation=None, keywords=None, documentationUrl=None, documentation=None,
                  version=None):
         """
 
         :param creator:
         :param maintainer:
-        :param maintainer_email:
-        :param date_created:
-        :param date_updated:
+        :param maintainerEmail:
+        :param dateCreated:
+        :param dateUpdated:
         :param institution:
         :param doi:
         :param citation:
         :type citation: str | list[str] | None
         :param keywords:
-        :param documentation_url:
+        :param documentationUrl:
         :param documentation:
         :param version:
         """
         self.creator = creator
         self.maintainer = maintainer
-        self.maintainerEmail = maintainer_email
-        self.dateCreated = date_created.strftime(self.DATE_FORMAT) if isinstance(date_created, date) else date_created
-        self.dateUpdated = date_created.strftime(self.DATE_FORMAT) if isinstance(date_updated, date) else date_updated
+        self.maintainerEmail = maintainerEmail
+        self.dateCreated = dateCreated.strftime(self.DATE_FORMAT) if isinstance(dateCreated, date) else dateCreated
+        self.dateUpdated = dateUpdated.strftime(self.DATE_FORMAT) if isinstance(dateUpdated, date) else dateUpdated
         self.institution = institution
         self.doi = doi
         self.citation = citation
         self.keywords = keywords
         self.documentation = documentation
-        self.documentationUrl = documentation_url
+        self.documentationUrl = documentationUrl
         self.version = version
 
     def update(self, **kwargs):

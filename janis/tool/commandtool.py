@@ -4,7 +4,7 @@ from typing import List, Dict, Optional, Any
 import cwlgen as cwl
 
 from janis.tool.tool import Tool, ToolArgument, ToolInput, ToolTypes
-from janis.utils.metadata import Metadata
+from janis.utils.metadata import ToolMetadata, Metadata
 
 
 class CommandTool(Tool, ABC):
@@ -15,6 +15,10 @@ class CommandTool(Tool, ABC):
         - You can subclass and override whichever fields you'd like, including the INPUTS / OUTPUTS!
         - Take note which options you can provide to the ToolInput and ToolOutput.
     """
+
+    def __init__(self):
+        super().__init__()
+        self._metadata = ToolMetadata()
 
     def id(self):
         return self.tool()
@@ -73,6 +77,9 @@ class CommandTool(Tool, ABC):
 
     def arguments(self) -> Optional[List[ToolArgument]]:
         return None
+
+    def metadata(self) -> ToolMetadata:
+        return self._metadata
 
     @classmethod
     def type(cls):

@@ -1,54 +1,13 @@
 from datetime import datetime
 from typing import Optional, Union, List
 
+from janis import ToolMetadata
+
 from janis.tool.tool import ToolInput
 from janis.types.common_data_types import String
+import janis.toolbuilder.cltconvert as clt
 
 from janis.utils.logger import Logger
-
-
-template = """
-from datetime import datetime
-from janis import CommandTool, ToolInput, ToolOutput, File, Boolean, String, Int, InputSelector, Filename
-
-class {name}Base(CommandTool):
-
-    def friendly_name(self) -> str:
-        return "{friendly_name}"
-
-    @staticmethod
-    def tool_provider():
-        return "{tool_provider}"
-
-    @staticmethod
-    def tool() -> str:
-        return "{name}"
-
-    @staticmethod
-    def base_command():
-        return "{base_command}"
-    
-    def inputs(self):
-        return [
-{inputs}
-        ]
-        
-    def outputs(self):
-        return [
-{outputs}
-        ]
-        
-    def metadata(self):
-        return ToolMetadata(
-            creator=None, 
-            maintainer=None, maintainer_email=None,
-            date_created=datetime({cy}, {cm}, {cd}), date_updated=datetime({cy}, {cm}, {cd}),
-            institution=None, doi=None,
-            citation=None,
-            keywords=["{name}"],
-            documentation_url="{url}",
-            documentation=\"""{doc}""\")
-"""
 
 
 def from_docker(docker: str, basecommand: Union[str, List[str]], help_param: Optional[str]="--help"):
@@ -69,7 +28,7 @@ def from_docker(docker: str, basecommand: Union[str, List[str]], help_param: Opt
     return help
 
 
-def parse_str(help, option_marker: str = "Options:"):
+def parse_str(help, option_marker: str = "Options:", requires_prev_line_blank_or_param=False):
     doc = ""
     args = []
     lines = help.split("\n")
@@ -109,7 +68,7 @@ def parse_str(help, option_marker: str = "Options:"):
 
         tool_doc = ""
 
-        if last_line_was_blank_or_param and line_args[0].startswith("-"):
+        if not requires_prev_line_blank_or_param or (last_line_was_blank_or_param and line_args[0].startswith("-")):
             # sometimes this section has two items
             tags = sorted(
                 [get_tag_and_cleanup_prefix(p) for p in line_args[0].split(",")],
@@ -179,24 +138,13 @@ if __name__ == "__main__":
     name = str(input("Name: "))
     friendly_name = str(input(f"Friendly Name (default='{name}'): "))
     base_command = str(input("BaseCommand (case sensitive): "))
-    tool_provider = str(input("BaseCommand (case sensitive): "))
+    tool_provider = str(input("Tool Provider: "))
     docker = str(input("Docker: "))
 
     help_str = from_docker(docker, base_command)
-    doc, args = parse_str(help_str, option_marker="optional arguments:")
+    doc, args = parse_str(help_str)
 
-    ins = ['\t\t\tToolInput("{tag}", String(), prefix="{prefix}", doc="{doc}"),'.format(tag=t.tag, prefix=t.prefix, doc=t.doc) for t in args if t and t.tag]
+    st = clt.convert_command_tool_fragments(name, base_command, friendly_name, tool_provider, args, [],
+                                             ToolMetadata(documentation=doc))
+    print(st)
 
-    print(template.format(
-        name=name.replace(" ", ""),
-        friendly_name=friendly_name if friendly_name else name,
-        tool_provider=tool_provider,
-        base_command=base_command,
-        inputs="\n".join(ins),
-        outputs="",
-        cy=datetime.now().year,
-        cm=datetime.now().month,
-        cd=datetime.now().day,
-        doc=doc,
-        url=""
-    ))

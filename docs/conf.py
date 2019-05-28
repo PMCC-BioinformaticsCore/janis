@@ -143,7 +143,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'WEHIPipelineDefinition.tex', 'WEHI janis Definition Documentation',
+    (master_doc, 'janis.tex', 'Janis',
      'Michael Franklin, Evan Thomas, Mohammad Bhuyan', 'manual'),
 ]
 
@@ -153,7 +153,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'wehipipelinedefinition', 'WEHI janis Definition Documentation',
+    (master_doc, 'janis', 'Janis',
      [author], 1)
 ]
 
@@ -164,8 +164,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'WEHIPipelineDefinition', 'WEHI janis Definition Documentation',
-     author, 'WEHIPipelineDefinition', 'One line description of project.',
+    (master_doc, 'Janis', 'Janis',
+     author, 'Janis', 'A framework creating specialised, simple workflow definitions that are then transpiled to Common Workflow Language or Workflow Definition Language.',
      'Miscellaneous'),
 ]
 

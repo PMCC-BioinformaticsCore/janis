@@ -299,8 +299,8 @@ class WdlTranslator(TranslatorBase):
         return workflow.id() + "-inp.json"
 
     @staticmethod
-    def tool_filename(toolname):
-        return toolname + ".wdl"
+    def tool_filename(tool):
+        return (tool.id() if isinstance(tool, Tool) else str(tool)) + ".cwl"
 
     @staticmethod
     def resources_filename(workflow):

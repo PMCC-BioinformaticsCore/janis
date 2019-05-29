@@ -234,7 +234,7 @@ class CwlTranslator(TranslatorBase):
 
     @staticmethod
     def tool_filename(tool):
-        return tool.id() + ".cwl"
+        return (tool.id() if isinstance(tool, Tool) else str(tool)) + ".cwl"
 
     @staticmethod
     def resources_filename(workflow):

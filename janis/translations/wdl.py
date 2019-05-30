@@ -300,7 +300,7 @@ class WdlTranslator(TranslatorBase):
 
     @staticmethod
     def tool_filename(tool):
-        return (tool.id() if isinstance(tool, Tool) else str(tool)) + ".cwl"
+        return (tool.id() if isinstance(tool, Tool) else str(tool)) + ".wdl"
 
     @staticmethod
     def resources_filename(workflow):

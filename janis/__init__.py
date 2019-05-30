@@ -22,10 +22,10 @@ _Proudly made on Planet Earth._
 
 """
 
-__version__ = "v0.2.16"
+__version__ = "v0.2.17"
 
 
-from janis.hints import CaptureType
+from janis.hints import CaptureType, Engine, HINTS, Hint, HintEnum, HintArray
 from janis.tool.commandtool import CommandTool
 from janis.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput
 from janis.translations import SupportedTranslations

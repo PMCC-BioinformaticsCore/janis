@@ -32,6 +32,6 @@ setup(
         'Topic :: Scientific/Engineering :: Bio-Informatics'
     ],
     extras_require={
-        'bioinformatics': ['janis-pipelines.bioinformatics']
+        'bioinformatics': ['janis-pipelines.bioinformatics>=0.0.7']
     }
 )

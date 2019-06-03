@@ -123,11 +123,18 @@ class CwlTranslator(TranslatorBase):
         return w, tools
 
     @classmethod
-    def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None) -> Dict[str, any]:
+    def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None,
+                          additional_inputs: Dict=None) -> Dict[str, any]:
 
         inp = {i.id(): i.input.cwl_input() for i in workflow._inputs if not cls.inp_can_be_skipped(i.input)}
+
         if merge_resources:
             inp.update(cls.build_resources_input(workflow, hints))
+
+        for k in inp:
+            if k in additional_inputs:
+                inp[k] = additional_inputs[k]
+
         return inp
 
     @classmethod

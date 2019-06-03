@@ -57,7 +57,7 @@ class WdlTranslator(TranslatorBase):
         return ["java", "-jar", "$womtool", "validate", wfpath]
 
     @classmethod
-    def translate_workflow(cls, wf, with_docker=True, with_resource_overrides=False, is_nested_tool=False, ) \
+    def translate_workflow(cls, wf, with_docker=True, with_resource_overrides=False, is_nested_tool=False) \
             -> Tuple[any, Dict[str, any]]:
         """
         Translate the workflow into wdlgen classes!
@@ -233,11 +233,13 @@ class WdlTranslator(TranslatorBase):
         if with_resource_overrides:
             ins.append(wdl.Input(wdl.WdlType.parse_type("String"), "runtime_disks"))
             r.kwargs["disks"] = "runtime_disks" # wdl.IfThenElse("defined(runtime_disks)", "runtime_disks", '""')
+            r.kwargs["zones"] = '"australia-southeast1-b"'
 
         return wdl.Task(tool.id(), ins, outs, commands, r, version="development")
 
     @classmethod
-    def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None) -> Dict[str, any]:
+    def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None,
+                          additional_inputs: Dict=None) -> Dict[str, any]:
         """
         Recursive is currently unused, but eventually input overrides could be generated the whole way down
         a call chain, including subworkflows: https://github.com/openwdl/wdl/issues/217
@@ -261,6 +263,13 @@ class WdlTranslator(TranslatorBase):
         if merge_resources:
             inp.update(cls.build_resources_input(workflow, hints))
 
+        if additional_inputs:
+            len_of_wfid_prefix = len(workflow.id()) + 1
+            for k in inp:
+                k_adjusted = k[len_of_wfid_prefix:]
+                if k_adjusted in additional_inputs:
+                    inp[k] = additional_inputs.get(k_adjusted)
+
         return inp
 
     @classmethod
@@ -279,9 +288,12 @@ class WdlTranslator(TranslatorBase):
 
             if isinstance(tool, CommandTool):
                 tool_pre = prefix + s.id() + "_"
+
+                cpus = tool.cpus(hints)
+
                 steps.update({
                     tool_pre + "runtime_memory": tool.memory(hints),
-                    tool_pre + "runtime_cpu": tool.cpus(hints),
+                    tool_pre + "runtime_cpu": cpus if cpus else 1,
                     tool_pre + "runtime_disks": "local-disk 100 SSD"
                 })
             elif isinstance(tool, Workflow):

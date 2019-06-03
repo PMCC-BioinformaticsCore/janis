@@ -41,7 +41,8 @@ class TranslatorBase(ABC):
 
     def translate(self, workflow, to_console=True, with_docker=True, with_resource_overrides=False, to_disk=False,
              export_path=ExportPathKeywords.default, write_inputs_file=False, should_validate=False,
-             should_zip=True, merge_resources=False, hints=None, allow_null_if_not_optional=True):
+             should_zip=True, merge_resources=False, hints=None, allow_null_if_not_optional=True,
+                  additional_inputs:Dict=None):
 
         self.validate_inputs(workflow._inputs, allow_null_if_not_optional)
 
@@ -50,7 +51,8 @@ class TranslatorBase(ABC):
             with_docker=with_docker,
             with_resource_overrides=with_resource_overrides
         )
-        tr_inp = self.build_inputs_file(workflow, recursive=False, merge_resources=merge_resources, hints=hints)
+        tr_inp = self.build_inputs_file(workflow, recursive=False, merge_resources=merge_resources, hints=hints,
+                                        additional_inputs=additional_inputs)
         tr_res = self.build_resources_input(workflow, hints)
 
         str_wf = self.stringify_translated_workflow(tr_wf)
@@ -159,7 +161,7 @@ class TranslatorBase(ABC):
 
     @classmethod
     @abstractmethod
-    def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None) -> Dict[str, any]:
+    def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None, additional_inputs: Dict=None) -> Dict[str, any]:
         pass
 
     @classmethod

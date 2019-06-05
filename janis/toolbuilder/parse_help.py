@@ -68,7 +68,7 @@ def parse_str(help, option_marker: str = "Options:", requires_prev_line_blank_or
 
         tool_doc = ""
 
-        if not requires_prev_line_blank_or_param or (last_line_was_blank_or_param and line_args[0].startswith("-")):
+        if (not requires_prev_line_blank_or_param or last_line_was_blank_or_param) and line_args[0].startswith("-"):
             # sometimes this section has two items
             tags = sorted(
                 [get_tag_and_cleanup_prefix(p) for p in line_args[0].split(",")],
@@ -135,13 +135,19 @@ def get_tag_and_cleanup_prefix(prefix):
 
 if __name__ == "__main__":
 
-    name = str(input("Name: "))
-    friendly_name = str(input(f"Friendly Name (default='{name}'): "))
-    base_command = str(input("BaseCommand (case sensitive): "))
-    tool_provider = str(input("Tool Provider: "))
-    docker = str(input("Docker: "))
+    # name = str(input("Name: "))
+    # friendly_name = str(input(f"Friendly Name (default='{name}'): "))
+    # base_command = str(input("BaseCommand (case sensitive): "))
+    # tool_provider = str(input("Tool Provider: "))
+    # docker = str(input("Docker: "))
 
-    help_str = from_docker(docker, base_command)
+    name = "StrelkaSomatic"
+    friendly_name = "StrelkaSomatic"
+    base_command = "configureStrelkaSomaticWorkflow.py"
+    tool_provider = "Illumina"
+    docker = "michaelfranklin/strelka:2.9.10"
+
+    help_str = from_docker(docker, base_command, help_param="--allHelp")
     doc, args = parse_str(help_str)
 
     st = clt.convert_command_tool_fragments(name, base_command, friendly_name, tool_provider, args, [],

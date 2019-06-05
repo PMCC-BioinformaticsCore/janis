@@ -102,9 +102,9 @@ class TranslatorBase(ABC):
                 Logger.log(f"Wrote {fn_workflow}  to disk")
 
             for (fn_tool, str_tool) in str_tools:
-                with open(d + fn_tool, "w+") as cwl:
+                with open(d + fn_tool, "w+") as toolfp:
                     Logger.log(f"Writing {fn_tool} to disk")
-                    cwl.write(str_tool)
+                    toolfp.write(str_tool)
                     Logger.log(f"Written {fn_tool} to disk")
 
             if not merge_resources and with_resource_overrides:
@@ -136,7 +136,7 @@ class TranslatorBase(ABC):
 
                 cwltool_result = subprocess.run(enved_vcs)
                 if cwltool_result.returncode == 0:
-                    Logger.info("Exported workflow is valid CWL.")
+                    Logger.info("Exported workflow was validated by: " + " ".join(enved_vcs))
                 else:
                     Logger.critical(cwltool_result.stderr)
 

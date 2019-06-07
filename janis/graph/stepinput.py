@@ -59,28 +59,19 @@ class Edge:
         self.compatible_types = False
         self.scatter = False
 
+        start_is_scattered = any(e.has_scatter() for e in self.start.connection_map.values())
+
+
         source_has_default = isinstance(self.start, InputNode) and self.start.input.default is not None
-        if ftype.input_type.can_receive_from(stype.output_type, source_has_default=source_has_default):
+        if not start_is_scattered and ftype.input_type.can_receive_from(stype.output_type, source_has_default=source_has_default):
             self.compatible_types = True
             self.scatter = False
             return
-
-        if isinstance(stype.output_type, Array):
-            # Potential scattering event - non-scatter if s is compatible, scatter if s.subtype is compatible
-
-            # Scattering event if ftype.input_type.canReceiveFrom(stype.output_type.subtype)
-            if ftype.input_type.can_receive_from(stype.output_type.subtype()):
-                Logger.info(f"Scatter the connection between '{full_dot(self.start, self.stag)}' → "
-                            f"'{full_dot(self.finish, self.ftag)}' ({stype.output_type.id()} → {ftype.input_type.id()})")
-                self.compatible_types = True
-                self.scatter = True
-                return
 
         if isinstance(ftype.input_type, Array):
             # This might be a merge
 
             # check if s has a scatter step, then we sweet
-            start_is_scattered = any(e.has_scatter() for e in self.start.connection_map.values())
             if start_is_scattered and self.finish.node_type != NodeTypes.OUTPUT:
                 Logger.log(f"This edge merges the inputs from '{full_dot(self.start, self.stag)}' for "
                            f"'{full_dot(self.finish, self.ftag)}'")
@@ -94,6 +85,28 @@ class Edge:
                 s = full_dot(self.start, self.stag)
                 f = full_dot(self.finish, self.ftag)
                 Logger.log(f"Safely provided '{s}' to the array input '{f}'")
+
+        if isinstance(stype.output_type, Array):
+            # Potential scattering event - non-scatter if s is compatible, scatter if s.subtype is compatible
+
+            # Scattering event if ftype.input_type.canReceiveFrom(stype.output_type.subtype)
+            if ftype.input_type.can_receive_from(stype.output_type.subtype()):
+                Logger.info(f"Scatter the connection between '{full_dot(self.start, self.stag)}' → "
+                            f"'{full_dot(self.finish, self.ftag)}' ({stype.output_type.id()} → {ftype.input_type.id()})")
+                self.compatible_types = True
+                self.scatter = True
+                return
+
+        if start_is_scattered:
+            # Potential rescattering event
+
+            # Scattering event if ftype.input_type.canReceiveFrom(stype.output_type.subtype)
+            if ftype.input_type.can_receive_from(stype.output_type):
+                Logger.info(f"Rescatter the connection between '{full_dot(self.start, self.stag)}' → "
+                            f"'{full_dot(self.finish, self.ftag)}' ({stype.output_type.id()} → {ftype.input_type.id()})")
+                self.compatible_types = True
+                self.scatter = True
+                return
 
         if not self.compatible_types:
             s = full_dot(self.start, self.stag)

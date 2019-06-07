@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from janis import File, Array, Logger, CommandTool, ToolInput, String, Input, Output, Step, Workflow
+from janis import File, Array, Logger, CommandTool, ToolInput, String, Input, Output, Step, Workflow, ToolOutput
 from janis.graph.stepinput import StepInput, first_value, Edge
 
 from janis.unix.data_types.tarfile import TarFile
@@ -29,7 +29,9 @@ class SingleTestTool(CommandTool):
         return None
 
     def outputs(self):
-        return []
+        return [
+            ToolOutput("out", String())
+        ]
 
     @staticmethod
     def docker():
@@ -55,7 +57,9 @@ class ArrayTestTool(CommandTool):
         ]
 
     def outputs(self):
-        return []
+        return [
+            ToolOutput("outs", Array(String()))
+        ]
 
     @staticmethod
     def docker():
@@ -275,3 +279,28 @@ class TestWorkflow(TestCase):
 
         e = w.add_edge(inp1, step)
         self.assertFalse(e.scatter)
+
+    def test_merge(self):
+        w = Workflow("scatterededge")
+
+        inp1 = Input("inp1", Array(String()))
+        step1 = Step("scatteredStp1", SingleTestTool())
+        step2 = Step("mergeStp2", ArrayTestTool())
+
+        e1 = w.add_edge(inp1, step1)
+        e2 = w.add_edge(step1.out, step2)
+
+        self.assertTrue(e1.scatter)
+        self.assertFalse(e2.scatter)
+
+    def test_add_rescatter_scattered(self):
+        w = Workflow("scatterededge")
+
+        inp1 = Input("inp1", Array(String()))
+        step1 = Step("stp1", SingleTestTool())
+        step2 = Step("stp2", SingleTestTool())
+        e1 = w.add_edge(inp1, step1)
+        e2 = w.add_edge(step1.out, step2)
+
+        self.assertTrue(e1.scatter)
+        self.assertTrue(e2.scatter)

@@ -205,7 +205,9 @@ class WdlTranslator(TranslatorBase):
         if args:
             for a in args:
                 val = get_input_value_from_potential_selector_or_generator(a.value, tool.id())
-                command_args.append(wdl.Task.Command.CommandArgument(a.prefix, val, a.position))
+                should_wrap_in_quotes = isinstance(val, str) and (a.shell_quote is None or a.shell_quote)
+                wrapped_val = f"'{val}'" if should_wrap_in_quotes else val
+                command_args.append(wdl.Task.Command.CommandArgument(a.prefix, wrapped_val, a.position))
 
         commands = [prepare_move_statement_for_input_to_localise(ti) for ti in tool.inputs() if ti.localise_file]
 
@@ -234,6 +236,8 @@ class WdlTranslator(TranslatorBase):
             ins.append(wdl.Input(wdl.WdlType.parse_type("String"), "runtime_disks"))
             r.kwargs["disks"] = "runtime_disks" # wdl.IfThenElse("defined(runtime_disks)", "runtime_disks", '""')
             r.kwargs["zones"] = '"australia-southeast1-b"'
+
+        r.kwargs["preemptible"] = 2
 
         return wdl.Task(tool.id(), ins, outs, commands, r, version="development")
 

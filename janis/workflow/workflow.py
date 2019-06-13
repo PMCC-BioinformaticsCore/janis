@@ -1,10 +1,12 @@
 from typing import Dict, List, Tuple, Optional, Any, Union, Iterable
 
+import os
 import networkx as nx
 
 import janis.translations as translations
 from janis.graph.node import Node, NodeTypes, layout_nodes2
 from janis.graph.stepinput import StepInput
+from janis.tool.commandtool import CommandTool
 from janis.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes, ToolType
 from janis.translations import ExportPathKeywords
 from janis.types.common_data_types import Array
@@ -710,3 +712,41 @@ class Workflow(Tool):
             print(tr)
         return tr
 
+    def get_tools(self) -> Dict[str, CommandTool]:
+        tools: Dict[str, CommandTool] = {}
+        for t in self._steps:
+            tl = t.step.tool()
+            if isinstance(tl, Workflow):
+                tools.update(tl.get_tools())
+            elif t.id() not in tools:
+                tools[tl.id()] = tl
+        return tools
+
+    def generate_resources_table(self, hints: Dict[str, Any], to_console=True, to_disk=False, output_type: str="tsv"):
+        delim = "\t" if output_type == "tsv" else ","
+
+        tools = self.get_tools()
+        header = ["name", "cpu", "memory (GB)"]
+        data = [header]
+
+        for t in sorted(tools.keys()):
+            tool = tools[t]
+            data.append([tool.id(), tool.cpus(hints), tool.memory(hints)])
+
+        if to_console:
+            print("\n".join("\t".join(str(tt) for tt in t) for t in data))
+        if to_disk:
+            import csv
+            d = ExportPathKeywords.resolve(ExportPathKeywords.default_no_spec, None, self.id())
+            path = d + f"resources.{output_type}"
+
+            if not os.path.isdir(d):
+                os.makedirs(d)
+
+            Logger.info(f"Writing resources {output_type} to '{path}'")
+            with open(path, "w+") as mf:
+                writer = csv.writer(mf, delimiter=delim)
+                for row in data:
+                    writer.writerow(row)
+
+        return data

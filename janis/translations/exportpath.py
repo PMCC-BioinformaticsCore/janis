@@ -3,6 +3,7 @@ class ExportPathKeywords:
     workflow_name = "{name}"
 
     default = f"~/Desktop/{workflow_name}/{workflow_spec}/"
+    default_no_spec = f"~/Desktop/{workflow_name}/"
 
     @staticmethod
     def resolve(path, workflow_spec, workflow_name):
@@ -17,5 +18,5 @@ class ExportPathKeywords:
                             "but caller of .resolve did not pass workflow name")
 
         return expanduser(path) \
-            .replace(ExportPathKeywords.workflow_spec, workflow_spec if workflow_spec else "") \
-            .replace(ExportPathKeywords.workflow_name, workflow_name if workflow_name else "")
+            .replace(ExportPathKeywords.workflow_spec, workflow_spec.lower() if workflow_spec else "") \
+            .replace(ExportPathKeywords.workflow_name, workflow_name.lower() if workflow_name else "")

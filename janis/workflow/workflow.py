@@ -727,14 +727,19 @@ class Workflow(Tool):
 
         tools = self.get_tools()
         header = ["name", "cpu", "memory (GB)"]
-        data = [header]
+        data = []
 
         for t in sorted(tools.keys()):
             tool = tools[t]
             data.append([tool.id(), tool.cpus(hints), tool.memory(hints)])
 
+        data.sort(key=lambda a: a[0].lower())
+
+        data.insert(0, header)
+
         if to_console:
-            print("\n".join("\t".join(str(tt) for tt in t) for t in data))
+            import tabulate
+            print(tabulate.tabulate(data, headers="firstrow"))
         if to_disk:
             import csv
             d = ExportPathKeywords.resolve(ExportPathKeywords.default_no_spec, None, self.id())

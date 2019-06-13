@@ -146,7 +146,19 @@ class TranslatorBase(ABC):
     def validate_inputs(cls, inputs: List[InputNode], allow_null_if_optional):
         invalid = [i for i in inputs if not i.input.validate_value(allow_null_if_not_optional=allow_null_if_optional)]
         if len(invalid) == 0: return True
-        raise TypeError("Couldn't validate inputs: " + ", ".join(i.id() for i in invalid))
+        raise TypeError("Couldn't validate inputs: " + ", ".join(f"{i.id()} (expected: {i.input.data_type.id()}, "
+                                                                 f"got: '{TranslatorBase.get_type(i.input.value)}')"
+                                                                 for i in invalid))
+
+    @staticmethod
+    def get_type(t):
+        if isinstance(t, list):
+            q = set(TranslatorBase.get_type(tt) for tt in t)
+            if len(q) == 0: return "empty array"
+            val = q.pop() if len(q) == 1 else "Union[" + ", ".join(q) + "]"
+            return f"Array<{val}>"
+
+        return type(t).__name__
 
     @classmethod
     @abstractmethod

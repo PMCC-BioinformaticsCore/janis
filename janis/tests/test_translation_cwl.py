@@ -7,7 +7,7 @@ from janis.translations import CwlTranslator
 from janis.types import CpuSelector, MemorySelector
 
 from janis import Workflow, ToolOutput, ToolInput, String, CommandTool, Stdout, InputSelector, Array, File, Filename, \
-    WildcardSelector, Input, Output
+    WildcardSelector, Input, Output, StringFormatter
 import janis.translations.cwl as cwl
 
 
@@ -27,6 +27,13 @@ class TestTool(CommandTool):
 
     @staticmethod
     def docker(): return "ubuntu:latest"
+
+
+class TestToolWithSecondaryOutput(TestTool):
+    def outputs(self):
+        return [
+            ToolOutput("out", TestTypeWithSecondary(), glob=InputSelector("testtool") + "/out")
+        ]
 
 
 class TestTypeWithSecondary(File):
@@ -92,14 +99,6 @@ class TestCwlSelectorsAndGenerators(unittest.TestCase):
     def test_input_selector_base(self):
         input_sel = InputSelector("random")
         self.assertEqual("$(inputs.random)", cwl.translate_input_selector(input_sel))
-
-    def test_input_selector_prefix(self):
-        input_sel = InputSelector("random", prefix="&& ")
-        self.assertEqual("&& $(inputs.random)", cwl.translate_input_selector(input_sel))
-
-    def test_base_input_selector(self):
-        input_sel = InputSelector("random", suffix=".cwl")
-        self.assertEqual("$(inputs.random).cwl", cwl.translate_input_selector(input_sel))
 
     def test_input_value_none_stringenv(self):
         self.assertEqual(None, cwl.get_input_value_from_potential_selector_or_generator(None, "tool_id", string_environment=True))
@@ -219,6 +218,28 @@ class TestCwlSelectorsAndGenerators(unittest.TestCase):
             value=NonCallableCwl(),
             tool_id=None
         )
+
+    def test_string_formatter(self):
+        b = StringFormatter("no format")
+        res = cwl.get_input_value_from_potential_selector_or_generator(b, "tool_id")
+        self.assertEqual("no format", res)
+
+    def test_string_formatter_one_string_param(self):
+        b = StringFormatter("there's {one} arg", one="a string")
+        res = cwl.get_input_value_from_potential_selector_or_generator(b, "tool_id")
+        self.assertEqual("there's a string arg", res)
+
+    def test_string_formatter_one_input_selector_param(self):
+        b = StringFormatter("an input {arg}", arg=InputSelector("random_input"))
+        res = cwl.get_input_value_from_potential_selector_or_generator(b, "tool_id")
+        self.assertEqual("an input $(inputs.random_input)", res)
+
+    def test_string_formatter_two_param(self):
+        # vardict input format
+        b = StringFormatter("{tumorName}:{normalName}",
+                            tumorName=InputSelector("tumorInputName"), normalName=InputSelector("normalInputName"))
+        res = cwl.get_input_value_from_potential_selector_or_generator(b, "tool_id")
+        self.assertEqual("$(inputs.tumorInputName):$(inputs.normalInputName)", res)
 
 
 class TestCwlTranslateInput(unittest.TestCase):
@@ -346,11 +367,6 @@ class TestCwlGenerateInput(unittest.TestCase):
         wf.add_items(Input("inpId", String(optional=True), default="2", include_in_inputs_file_if_none=False))
 
         self.assertDictEqual({}, self.translator.build_inputs_file(wf))
-
-
-
-
-
 
 
 cwl_testtool = """\

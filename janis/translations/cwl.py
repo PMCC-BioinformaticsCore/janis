@@ -28,7 +28,7 @@ import ruamel.yaml
 from janis.tool.commandtool import CommandTool
 from janis.tool.tool import Tool, ToolInput
 from janis.translations.translationbase import TranslatorBase
-from janis.types import InputSelector, Selector, WildcardSelector, MemorySelector, CpuSelector
+from janis.types import InputSelector, Selector, WildcardSelector, MemorySelector, CpuSelector, StringFormatter
 from janis.types.common_data_types import Stdout, Array, File, Filename
 from janis.utils.logger import Logger
 from janis.utils.metadata import WorkflowMetadata, ToolMetadata
@@ -418,7 +418,7 @@ def is_selector(selector):
     return issubclass(type(selector), Selector)
 
 
-def get_input_value_from_potential_selector_or_generator(value, tool_id, string_environment=True):
+def get_input_value_from_potential_selector_or_generator(value, string_environment=True, **debugkwargs):
     if value is None:
         return None
     if isinstance(value, str):
@@ -427,10 +427,12 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, string_
         return value
     elif isinstance(value, Filename):
         return value.generated_filename() if string_environment else '"%s"' % value.generated_filename()
+    elif isinstance(value, StringFormatter):
+        return translate_string_formatter(value, string_environment=string_environment, **debugkwargs)
     elif isinstance(value, InputSelector):
         return translate_input_selector(selector=value)
     elif isinstance(value, WildcardSelector):
-        raise Exception(f"A wildcard selector cannot be used as an argument value for '{tool_id}'")
+        raise Exception(f"A wildcard selector cannot be used as an argument value for '{debugkwargs}'")
     elif isinstance(value, CpuSelector):
         return translate_cpu_selector(value)
     elif isinstance(value, MemorySelector):
@@ -443,10 +445,18 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, string_
 
 def translate_input_selector(selector: InputSelector):
     if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
-    pre = selector.prefix if selector.prefix else ""
-    suf = selector.suffix if selector.suffix else ""
+
     basename_extra = ".basename" if selector.use_basename else ""
-    return f"{pre}$(inputs.{selector.input_to_select}{basename_extra}){suf}"
+    return f"$(inputs.{selector.input_to_select}{basename_extra})"
+
+
+def translate_string_formatter(selector: StringFormatter, string_environment=True, **debugkwargs):
+    value = selector.resolve_with_resolved_values(**{
+        k: get_input_value_from_potential_selector_or_generator(selector.kwargs[k], string_environment=True, **debugkwargs)
+        for k in selector.kwargs
+    })
+
+    return value if string_environment else f'"{value}"'
 
 
 def translate_to_cwl_glob(glob, **debugkwargs):
@@ -459,6 +469,9 @@ def translate_to_cwl_glob(glob, **debugkwargs):
 
     if isinstance(glob, InputSelector):
         return translate_input_selector(glob)
+
+    elif isinstance(glob, StringFormatter):
+        return translate_string_formatter(glob, )
 
     elif isinstance(glob, WildcardSelector):
         return glob.wildcard

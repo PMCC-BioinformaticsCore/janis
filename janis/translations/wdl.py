@@ -630,10 +630,7 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, string_
     elif isinstance(value, Filename):
         return value.generated_filename() if string_environment else f'"{value.generated_filename()}"'
     elif isinstance(value, StringFormatter):
-        return value.resolve_with_resolved_values(**{
-            k: get_input_value_from_potential_selector_or_generator(value.kwargs[k], tool_id, string_environment=True)
-            for k in value.kwargs
-        })
+        return translate_string_formatter(value, tool_id, string_environment)
     elif isinstance(value, InputSelector):
         return translate_input_selector(selector=value, string_environment=string_environment)
     elif isinstance(value, WildcardSelector):
@@ -646,6 +643,15 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, string_
         return value.wdl()
 
     raise Exception("Could not detect type %s to convert to input value" % type(value))
+
+
+def translate_string_formatter(selector: StringFormatter, tool_id: str, string_environment=False):
+    value = selector.resolve_with_resolved_values(**{
+        k: get_input_value_from_potential_selector_or_generator(selector.kwargs[k], tool_id, string_environment=True)
+        for k in selector.kwargs
+    })
+
+    return value if string_environment else f'"{value}"'
 
 
 def translate_input_selector(selector: InputSelector, string_environment=True):

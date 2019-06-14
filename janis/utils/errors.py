@@ -22,6 +22,18 @@ class InvalidInputsException(Exception): pass
 class InvalidStepsException(Exception): pass
 
 
+class TooManyArgsException(Exception): pass
+
+
+class IncorrectArgsException(Exception): pass
+
+
+class InvalidByProductException(Exception): pass
+
+
+class ConflictingArgumentsException(Exception): pass
+
+
 def deprecated(message):
     def deprecated_decorator(func):
         def deprecated_func(*args, **kwargs):

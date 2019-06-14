@@ -4,7 +4,7 @@ from typing import List
 
 from janis.translations import WdlTranslator
 
-from janis.types import CpuSelector, MemorySelector
+from janis.types import CpuSelector, MemorySelector, StringFormatter
 
 import janis.translations.wdl as wdl
 
@@ -222,6 +222,28 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
             value=NonCallableWdl(),
             tool_id=None
         )
+
+    def test_string_formatter(self):
+        b = StringFormatter("no format")
+        res = wdl.get_input_value_from_potential_selector_or_generator(b, "tool_id")
+        self.assertEqual("no format", res)
+
+    def test_string_formatter_one_string_param(self):
+        b = StringFormatter("there's {one} arg", one="a string")
+        res = wdl.get_input_value_from_potential_selector_or_generator(b, "tool_id")
+        self.assertEqual("there's a string arg", res)
+
+    def test_string_formatter_one_input_selector_param(self):
+        b = StringFormatter("an input {arg}", arg=InputSelector("random_input"))
+        res = wdl.get_input_value_from_potential_selector_or_generator(b, "tool_id")
+        self.assertEqual("an input ${random_input}", res)
+
+    def test_string_formatter_two_param(self):
+        # vardict input format
+        b = StringFormatter("{tumorName}:{normalName}",
+                            tumorName=InputSelector("tumorInputName"), normalName=InputSelector("normalInputName"))
+        res = wdl.get_input_value_from_potential_selector_or_generator(b, "tool_id")
+        self.assertEqual("${tumorInputName}:${normalInputName}", res)
 
 
 class TestWdlGenerateInput(unittest.TestCase):

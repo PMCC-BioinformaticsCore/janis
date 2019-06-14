@@ -747,23 +747,16 @@ def translate_string_formatter(selector: StringFormatter, inputsdict, tool_id: s
 
 
 def translate_input_selector(selector: InputSelector, inputsdict, toolid, string_environment=True):
+
     if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
+
     if inputsdict and selector.input_to_select not in inputsdict:
         raise Exception(f"Couldn't find input '{selector.input_to_select}' in tool '{toolid}'")
 
-    # if selector.prefix or selector.suffix:
-    #
-    #     return get_input_value_from_potential_selector_or_generator(selector.prefix )
-
-    pre = selector.prefix if selector.prefix else ""
-    suf = selector.suffix if selector.suffix else ""
-
     if string_environment:
-        return f"{pre}${{{selector.input_to_select}}}{suf}"
+        return f"${{{selector.input_to_select}}}"
     else:
-        pref = ('"%s" + ' % pre) if pre else ""
-        suff = (' + "%s"' % suf) if suf else ""
-        return pref + selector.input_to_select + suff
+        return selector.input_to_select
 
 
 def translate_cpu_selector(selector: CpuSelector, string_environment=True):

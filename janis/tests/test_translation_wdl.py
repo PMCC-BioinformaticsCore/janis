@@ -109,22 +109,6 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
         input_sel = InputSelector("random")
         self.assertEqual("random", wdl.translate_input_selector(input_sel, None, None, string_environment=False))
 
-    def test_input_selector_prefix_stringenv(self):
-        input_sel = InputSelector("random", prefix="&& ")
-        self.assertEqual("&& ${random}", wdl.translate_input_selector(input_sel, None, None, string_environment=True))
-
-    def test_input_selector_prefix_nostringenv(self):
-        input_sel = InputSelector("random", prefix="&& ")
-        self.assertEqual('"&& " + random', wdl.translate_input_selector(input_sel, None, None, string_environment=False))
-
-    def test_base_input_selector_stringenv(self):
-        input_sel = InputSelector("outputFilename", suffix=".wdl")
-        self.assertEqual("${outputFilename}.wdl", wdl.translate_input_selector(input_sel, None, None, string_environment=True))
-
-    def test_base_input_selector_nostringenv(self):
-        input_sel = InputSelector("outputFilename", suffix=".wdl")
-        self.assertEqual('outputFilename + ".wdl"', wdl.translate_input_selector(input_sel, None, None, string_environment=False))
-
     def test_input_value_none_stringenv(self):
         self.assertEqual(None, wdl.get_input_value_from_potential_selector_or_generator(None, "tool_id", None, string_environment=True))
 

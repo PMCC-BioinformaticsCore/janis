@@ -1,6 +1,8 @@
 import re
 import unittest
 
+from janis import InputSelector
+
 from janis.types import StringFormatter
 from janis.utils.bracketmatching import get_keywords_between_braces, variable_name_validator
 from janis.utils.errors import IncorrectArgsException, TooManyArgsException, ConflictingArgumentsException, \
@@ -190,3 +192,9 @@ class TestStringFormatterResolve(unittest.TestCase):
         self.assertEqual("S07E25 is the same as S07E25", resolved)
 
 
+class TestInputSelectorConversion(unittest.TestCase):
+    def test_input_selector_conversion(self):
+        inpsel = InputSelector("test")
+        formatter = inpsel.to_string_formatter()
+        self.assertEqual(1, len(formatter.kwargs))
+        self.assertEqual(inpsel, formatter.kwargs.get("test"))

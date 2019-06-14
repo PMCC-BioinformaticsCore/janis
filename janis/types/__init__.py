@@ -14,14 +14,15 @@ class Selector(ABC):
 class InputSelector(Selector):
 
     def __init__(self, input_to_select, suffix=None, prefix=None, use_basename=None):
+        # maybe worth validating the input_to_select identifier
         self.input_to_select = input_to_select
         self.prefix = prefix
         self.suffix = suffix
         self.use_basename = use_basename
 
     def to_string_formatter(self):
-        kwarg = {self.input_to_select: self.input_to_select}
-        return StringFormatter(f"{self.input_to_select}", **kwarg)
+        kwarg = {self.input_to_select: self}
+        return StringFormatter(f"{{{self.input_to_select}}}", **kwarg)
 
     def __add__(self, other):
         return self.to_string_formatter() + other

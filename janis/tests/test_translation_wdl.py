@@ -30,6 +30,13 @@ class TestTool(CommandTool):
     def docker(): return "ubuntu:latest"
 
 
+class TestToolWithSecondaryOutput(TestTool):
+    def outputs(self):
+        return [
+            ToolOutput("out", TestTypeWithSecondary(), glob=InputSelector("testtool") + "/out")
+        ]
+
+
 class TestTypeWithSecondary(File):
     @staticmethod
     def secondary_files():
@@ -348,3 +355,14 @@ class TestWdlGenerateInput(unittest.TestCase):
         wf.add_items(Input("inpId", String(optional=True), default="2", include_in_inputs_file_if_none=False))
 
         self.assertDictEqual({}, self.translator.build_inputs_file(wf))
+
+    def test_tool_output_with_input_selector(self):
+        tool = TestToolWithSecondaryOutput()
+        toolout = tool.outputs()[0]
+        os = wdl.translate_output_node_with_glob(toolout, toolout.glob, tool)
+
+        self.assertEqual("out", os[0].name)
+        self.assertEqual('"${testtool}/out"', os[0].expression)
+
+        self.assertEqual("out_txt", os[1].name)
+        self.assertEqual('"${testtool}/out.txt"', os[1].expression)

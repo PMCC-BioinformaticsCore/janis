@@ -748,7 +748,7 @@ def translate_string_formatter(selector: StringFormatter, inputsdict, tool_id: s
 
 def translate_input_selector(selector: InputSelector, inputsdict, toolid, string_environment=True):
     if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
-    if selector.input_to_select not in inputsdict:
+    if inputsdict and selector.input_to_select not in inputsdict:
         raise Exception(f"Couldn't find input '{selector.input_to_select}' in tool '{toolid}'")
 
     # if selector.prefix or selector.suffix:

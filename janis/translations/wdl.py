@@ -184,8 +184,8 @@ class WdlTranslator(TranslatorBase):
                 ins.extend(wdl.Input(w, i.id()) for w in wd)
             else:
                 indefault = i.input_type.generated_filename() if isinstance(i.input_type, Filename) else i.default
-                default = get_input_value_from_potential_selector_or_generator(indefault, tool.id(), inputsdict,
-                                                                               string_environment=False)
+                default = get_input_value_from_potential_selector_or_generator(
+                    indefault, inputsdict, string_environment=False, tool_id=tool.id())
 
                 ins.append(wdl.Input(wd, i.id(), default, requires_quotes=False))
 
@@ -208,7 +208,7 @@ class WdlTranslator(TranslatorBase):
         args = tool.arguments()
         if args:
             for a in args:
-                val = get_input_value_from_potential_selector_or_generator(a.value, tool.id(), inputsdict)
+                val = get_input_value_from_potential_selector_or_generator(a.value, inputsdict, tool_id=tool.id())
                 should_wrap_in_quotes = isinstance(val, str) and (a.shell_quote is None or a.shell_quote)
                 wrapped_val = f"'{val}'" if should_wrap_in_quotes else val
                 command_args.append(wdl.Task.Command.CommandArgument(a.prefix, wrapped_val, a.position))
@@ -399,7 +399,7 @@ def translate_output_node_with_glob(o, glob, tool) -> List[wdl.Output]:
 
 def translate_input_selector_for_output(out, selector: InputSelector, tool) -> List[wdl.Output]:
     inp_map = tool.inputs_map()
-    base_expression = translate_input_selector(selector, inp_map, toolid=tool.id(), string_environment=False)
+    base_expression = translate_input_selector(selector, inp_map, string_environment=False, toolid=tool.id())
 
     tool_in = inp_map.get(selector.input_to_select)
     if not tool_in:

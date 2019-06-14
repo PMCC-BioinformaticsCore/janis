@@ -103,40 +103,40 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
 
     def test_input_selector_base_stringenv(self):
         input_sel = InputSelector("random")
-        self.assertEqual("${random}", wdl.translate_input_selector(input_sel, None, None, string_environment=True))
+        self.assertEqual("${random}", wdl.translate_input_selector(input_sel, None, string_environment=True))
 
     def test_input_selector_base_nostringenv(self):
         input_sel = InputSelector("random")
-        self.assertEqual("random", wdl.translate_input_selector(input_sel, None, None, string_environment=False))
+        self.assertEqual("random", wdl.translate_input_selector(input_sel, None, string_environment=False))
 
     def test_input_value_none_stringenv(self):
-        self.assertEqual(None, wdl.get_input_value_from_potential_selector_or_generator(None, "tool_id", None, string_environment=True))
+        self.assertEqual(None, wdl.get_input_value_from_potential_selector_or_generator(None, None, string_environment=True))
 
     def test_input_value_none_nostringenv(self):
-        self.assertEqual(None, wdl.get_input_value_from_potential_selector_or_generator(None, "tool_id", None, string_environment=False))
+        self.assertEqual(None, wdl.get_input_value_from_potential_selector_or_generator(None, None, string_environment=False))
 
     def test_input_value_string_stringenv(self):
         self.assertEqual(
             "TestString",
-            wdl.get_input_value_from_potential_selector_or_generator("TestString", "tool_id", None, string_environment=True)
+            wdl.get_input_value_from_potential_selector_or_generator("TestString", None, string_environment=True)
         )
 
     def test_input_value_string_nostringenv(self):
         self.assertEqual(
             '"TestString"',
-            wdl.get_input_value_from_potential_selector_or_generator("TestString", "tool_id", None, string_environment=False)
+            wdl.get_input_value_from_potential_selector_or_generator("TestString", None, string_environment=False)
         )
 
     def test_input_value_int_stringenv(self):
         self.assertEqual(
             42,
-            wdl.get_input_value_from_potential_selector_or_generator(42, "tool_id", None, string_environment=True)
+            wdl.get_input_value_from_potential_selector_or_generator(42, None, string_environment=True)
         )
 
     def test_input_value_int_nostringenv(self):
         self.assertEqual(
             42,
-            wdl.get_input_value_from_potential_selector_or_generator(42, "tool_id", None, string_environment=False)
+            wdl.get_input_value_from_potential_selector_or_generator(42, None, string_environment=False)
         )
 
     def test_input_value_filename_stringenv(self):
@@ -144,7 +144,7 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
         fn = Filename(guid=str(uuid.uuid4()))
         self.assertEqual(
             fn.generated_filename(),
-            wdl.get_input_value_from_potential_selector_or_generator(fn, "tool_id", None, string_environment=True)
+            wdl.get_input_value_from_potential_selector_or_generator(fn, None, string_environment=True)
         )
 
     def test_input_value_filename_nostringenv(self):
@@ -152,7 +152,7 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
         fn = Filename(guid=str(uuid.uuid4()))
         self.assertEqual(
             '"%s"' % fn.generated_filename(),
-            wdl.get_input_value_from_potential_selector_or_generator(fn, "tool_id", None, string_environment=False)
+            wdl.get_input_value_from_potential_selector_or_generator(fn, None, string_environment=False)
         )
 
     def test_input_value_wildcard(self):
@@ -167,28 +167,28 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
         inp = CpuSelector()
         self.assertEqual(
             "${runtime_cpu}",
-            wdl.get_input_value_from_potential_selector_or_generator(inp, "tool_id", None, string_environment=True)
+            wdl.get_input_value_from_potential_selector_or_generator(inp, None, string_environment=True)
         )
 
     def test_input_value_cpuselect_nostringenv(self):
         inp = CpuSelector()
         self.assertEqual(
             "runtime_cpu",
-            wdl.get_input_value_from_potential_selector_or_generator(inp, "tool_id", None, string_environment=False)
+            wdl.get_input_value_from_potential_selector_or_generator(inp, None, string_environment=False)
         )
 
     # def test_input_value_memselect_stringenv(self):
     #     inp = MemorySelector()
     #     self.assertEqual(
     #         "${floor(runtime_memory)}",
-    #         wdl.get_input_value_from_potential_selector_or_generator(inp, "tool_id", string_environment=True)
+    #         wdl.get_input_value_from_potential_selector_or_generator(inp, string_environment=True)
     #     )
     #
     # def test_input_value_memselect_nostringenv(self):
     #     inp = MemorySelector()
     #     self.assertEqual(
     #         "floor(runtime_memory)",
-    #         wdl.get_input_value_from_potential_selector_or_generator(inp, "tool_id", string_environment=False)
+    #         wdl.get_input_value_from_potential_selector_or_generator(inp, string_environment=False)
     #     )
 
     def test_input_value_wdl_callable(self):
@@ -198,7 +198,7 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
 
         self.assertEqual(
             "unbelievable",
-            wdl.get_input_value_from_potential_selector_or_generator(CallableWdl(), "tool_id", None)
+            wdl.get_input_value_from_potential_selector_or_generator(CallableWdl(), None)
         )
 
     def test_input_value_wdl_noncallable(self):
@@ -216,24 +216,24 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
 
     def test_string_formatter(self):
         b = StringFormatter("no format")
-        res = wdl.get_input_value_from_potential_selector_or_generator(b, "tool_id", None)
+        res = wdl.get_input_value_from_potential_selector_or_generator(b, None)
         self.assertEqual("no format", res)
 
     def test_string_formatter_one_string_param(self):
         b = StringFormatter("there's {one} arg", one="a string")
-        res = wdl.get_input_value_from_potential_selector_or_generator(b, "tool_id", None)
+        res = wdl.get_input_value_from_potential_selector_or_generator(b, None)
         self.assertEqual("there's a string arg", res)
 
     def test_string_formatter_one_input_selector_param(self):
         b = StringFormatter("an input {arg}", arg=InputSelector("random_input"))
-        res = wdl.get_input_value_from_potential_selector_or_generator(b, "tool_id", None)
+        res = wdl.get_input_value_from_potential_selector_or_generator(b, None)
         self.assertEqual("an input ${random_input}", res)
 
     def test_string_formatter_two_param(self):
         # vardict input format
         b = StringFormatter("{tumorName}:{normalName}",
                             tumorName=InputSelector("tumorInputName"), normalName=InputSelector("normalInputName"))
-        res = wdl.get_input_value_from_potential_selector_or_generator(b, "tool_id", None)
+        res = wdl.get_input_value_from_potential_selector_or_generator(b, None)
         self.assertEqual("${tumorInputName}:${normalInputName}", res)
 
 

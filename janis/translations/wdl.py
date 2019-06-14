@@ -93,9 +93,9 @@ class WdlTranslator(TranslatorBase):
                 name=i.id(),
                 expression=get_input_value_from_potential_selector_or_generator(
                     i.input.default,
-                    tool_id=wf.id() + "." + i.id(),
                     inputsdict=None,
-                    string_environment=False
+                    string_environment=False,
+                    tool_id=wf.id() + "." + i.id(),
                 ),
                 requires_quotes=False)
             )
@@ -443,7 +443,7 @@ def translate_string_formatter_for_output(out, selector: StringFormatter, tool) 
         resolved_kwargs = {
             **selector.kwargs,
             **{k: get_input_value_from_potential_selector_or_generator(
-                v, inputsdict=inp_map, tool_id=tool.id(), string_environment=True) for k, v in
+                v, inputsdict=inp_map, string_environment=True, tool_id=tool.id()) for k, v in
             inputs_to_retranslate.items()}
         }
 
@@ -460,7 +460,7 @@ def translate_string_formatter_for_output(out, selector: StringFormatter, tool) 
             input_selectors_with_secondaries[k] = v
 
         translated_inputs[k] = get_input_value_from_potential_selector_or_generator(
-            v, inputsdict=inp_map, tool_id=tool.id(), string_environment=True)
+            v, inputsdict=inp_map, string_environment=True, tool_id=tool.id())
 
     tool_in = None
     if len(input_selectors_with_secondaries) > 1:
@@ -696,7 +696,7 @@ def translate_step_node(node: StepNode, step_identifier: str, step_alias: str, r
 ## SELECTOR HELPERS
 
 
-def get_input_value_from_potential_selector_or_generator(value, tool_id, inputsdict, string_environment=True):
+def get_input_value_from_potential_selector_or_generator(value, inputsdict, string_environment=True, **debugkwargs):
     """
     We have a value which could be anything, and we want to convert it to a expressionable value.
     If we have a string, it should be in quotes, etc. It should be "Type paramname = <expressionable>"
@@ -710,7 +710,12 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, inputsd
         return None
 
     if isinstance(value, list):
-        joined_values = ', '.join(str(get_input_value_from_potential_selector_or_generator(value[i], tool_id=tool_id + '.' + str(i), string_environment=False)) for i in range(len(value)))
+        toolid = value_or_default(debugkwargs.get("tool_id"), "get-value-list")
+        joined_values = ', '.join(str(
+            get_input_value_from_potential_selector_or_generator(
+                value[i], inputsdict, string_environment=False, tool_id=toolid + '.' + str(i)
+            )
+        ) for i in range(len(value)))
         return f"[{joined_values}]"
     elif isinstance(value, str):
         return value if string_environment else f'"{value}"'
@@ -719,13 +724,11 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, inputsd
     elif isinstance(value, Filename):
         return value.generated_filename() if string_environment else f'"{value.generated_filename()}"'
     elif isinstance(value, StringFormatter):
-        return translate_string_formatter(selector=value, inputsdict=inputsdict, tool_id=tool_id,
-                                          string_environment=string_environment)
+        return translate_string_formatter(selector=value, inputsdict=inputsdict, string_environment=string_environment, **debugkwargs)
     elif isinstance(value, InputSelector):
-        return translate_input_selector(selector=value, inputsdict=inputsdict, toolid=tool_id,
-                                        string_environment=string_environment)
+        return translate_input_selector(selector=value, inputsdict=inputsdict, string_environment=string_environment, **debugkwargs)
     elif isinstance(value, WildcardSelector):
-        raise Exception(f"A wildcard selector cannot be used as an argument value for '{tool_id}'")
+        raise Exception(f"A wildcard selector cannot be used as an argument value for '{debugkwargs}'")
     elif isinstance(value, CpuSelector):
         return translate_cpu_selector(value, string_environment=string_environment)
     elif isinstance(value, MemorySelector):
@@ -736,22 +739,22 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, inputsd
     raise Exception("Could not detect type %s to convert to input value" % type(value))
 
 
-def translate_string_formatter(selector: StringFormatter, inputsdict, tool_id: str, string_environment=False):
+def translate_string_formatter(selector: StringFormatter, inputsdict, string_environment=False, **debugkwargs):
     value = selector.resolve_with_resolved_values(**{
-        k: get_input_value_from_potential_selector_or_generator(selector.kwargs[k], tool_id=tool_id,
-                                                                inputsdict=inputsdict, string_environment=True)
-        for k in selector.kwargs
+        k: get_input_value_from_potential_selector_or_generator(
+            selector.kwargs[k], inputsdict=inputsdict, string_environment=True, **debugkwargs
+        ) for k in selector.kwargs
     })
 
     return value if string_environment else f'"{value}"'
 
 
-def translate_input_selector(selector: InputSelector, inputsdict, toolid, string_environment=True):
+def translate_input_selector(selector: InputSelector, inputsdict, string_environment=True, **debugkwargs):
 
     if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
 
     if inputsdict and selector.input_to_select not in inputsdict:
-        raise Exception(f"Couldn't find input '{selector.input_to_select}' in tool '{toolid}'")
+        raise Exception(f"Couldn't find input '{selector.input_to_select}' in tool '{debugkwargs}'")
 
     if string_environment:
         return f"${{{selector.input_to_select}}}"
@@ -764,8 +767,7 @@ def translate_cpu_selector(selector: CpuSelector, string_environment=True):
     if selector.default:
         value = wdl.IfThenElse(f"defined(runtime_cpu)", value,
                                get_input_value_from_potential_selector_or_generator(
-                                   selector.default, None, None,
-                                   string_environment=False)).get_string()
+                                   selector.default, None, string_environment=False)).get_string()
 
     return "${%s}" % value if string_environment else value
 
@@ -778,8 +780,7 @@ def translate_mem_selector(selector: MemorySelector, string_environment=True):
     if selector.default:
         val = wdl.IfThenElse("defined(runtime_memory)", val,
                              get_input_value_from_potential_selector_or_generator(
-                                 selector.default, None, None,
-                                 string_environment=False)).get_string()
+                                 selector.default, None, string_environment=False)).get_string()
 
     if string_environment:
         return f"{pre}${{{val}}}{suf}"

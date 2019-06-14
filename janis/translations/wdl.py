@@ -25,7 +25,7 @@ from janis.graph.stepinput import Edge, StepInput
 from janis.tool.commandtool import CommandTool
 from janis.tool.tool import Tool, ToolInput
 from janis.translations.translationbase import TranslatorBase
-from janis.types import InputSelector, WildcardSelector, CpuSelector, MemorySelector
+from janis.types import InputSelector, WildcardSelector, CpuSelector, MemorySelector, StringFormatter
 from janis.types.common_data_types import Stdout, Array, Boolean, Filename, File
 from janis.utils import first_value
 from janis.utils.logger import Logger
@@ -467,7 +467,7 @@ def translate_step_node(node: StepNode, step_identifier: str, step_alias: str, r
         old_to_new_identifier[s.dotted_source()] = new_var
         current_identifiers.add(new_var)
 
-    # Let's map the inputs, to the source. We're using a dictionary for the map atm, but WDL requires the format:
+    # Let's map the inputs, to the source. We're using a dictionary for the map atm, but WDL requires the _format:
     #       fieldName: sourceCall.Output
 
     inputs_map = {}
@@ -629,6 +629,11 @@ def get_input_value_from_potential_selector_or_generator(value, tool_id, string_
         return value
     elif isinstance(value, Filename):
         return value.generated_filename() if string_environment else f'"{value.generated_filename()}"'
+    elif isinstance(value, StringFormatter):
+        return value.resolve_with_resolved_values(**{
+            k: get_input_value_from_potential_selector_or_generator(value.kwargs[k], tool_id, string_environment=True)
+            for k in value.kwargs
+        })
     elif isinstance(value, InputSelector):
         return translate_input_selector(selector=value, string_environment=string_environment)
     elif isinstance(value, WildcardSelector):

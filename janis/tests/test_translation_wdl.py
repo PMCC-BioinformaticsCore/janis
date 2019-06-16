@@ -40,7 +40,7 @@ class TestToolWithSecondaryOutput(TestTool):
 class TestTypeWithSecondary(File):
     @staticmethod
     def secondary_files():
-        return [".txt"]
+        return ["^.txt"]
 
 
 class TestWdl(unittest.TestCase):
@@ -96,7 +96,20 @@ class TestWdlTranslatorOverrides(unittest.TestCase):
 
 
 class TestWdlTranslatorBuilders(unittest.TestCase):
-    pass
+
+    def test_inputs_generator_secondary_files(self):
+        w = Workflow("tst")
+        w._add_input(Input("wsec", TestTypeWithSecondary(), value="test.ext"))
+        inpsdict = WdlTranslator().build_inputs_file(w, merge_resources=False)
+        self.assertEqual("test.ext", inpsdict.get("tst.wsec"))
+        self.assertEqual("test.txt", inpsdict.get("tst.wsec_txt"))
+
+    def test_inputs_generator_array_of_secondary_files(self):
+        w = Workflow("tst")
+        w._add_input(Input("wsec", Array(TestTypeWithSecondary()), value=["test.ext"]))
+        inpsdict = WdlTranslator().build_inputs_file(w, merge_resources=False)
+        self.assertListEqual(["test.ext"], inpsdict.get("tst.wsec"))
+        self.assertListEqual(["test.txt"], inpsdict.get("tst.wsec_txt"))
 
 
 class TestWdlSelectorsAndGenerators(unittest.TestCase):

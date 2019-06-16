@@ -268,6 +268,11 @@ class WdlTranslator(TranslatorBase):
                 for sec in i.input.data_type.secondary_files():
                     inp[get_secondary_tag_from_original_tag(inp_key, sec)] = \
                         apply_secondary_file_format_to_filename(inp_val, sec)
+            elif isinstance(i.input.data_type, Array) and i.input.data_type.subtype().secondary_files():
+                # handle array of secondary files
+                for sec in i.input.data_type.subtype().secondary_files():
+                    inp[get_secondary_tag_from_original_tag(inp_key, sec)] = \
+                        [apply_secondary_file_format_to_filename(iinp_val, sec) for iinp_val in inp_val]
 
         if merge_resources:
             inp.update(cls.build_resources_input(workflow, hints))

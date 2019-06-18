@@ -33,7 +33,7 @@ class TestTool(CommandTool):
 class TestToolWithSecondaryOutput(TestTool):
     def outputs(self):
         return [
-            ToolOutput("out", TestTypeWithSecondary(), glob=InputSelector("testtool") + "/out")
+            ToolOutput("out", TestTypeWithNonEscapedSecondary(), glob=InputSelector("testtool") + "/out")
         ]
 
 
@@ -41,6 +41,12 @@ class TestTypeWithSecondary(File):
     @staticmethod
     def secondary_files():
         return ["^.txt"]
+
+
+class TestTypeWithNonEscapedSecondary(File):
+    @staticmethod
+    def secondary_files():
+        return [".txt"]
 
 
 class TestWdl(unittest.TestCase):

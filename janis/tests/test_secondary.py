@@ -34,3 +34,8 @@ class TestApplySecondaryFileFormat(unittest.TestCase):
         sec = "^^^^^^^^.tsv"
         self.assertEqual("filename.tsv", apply_secondary_file_format_to_filename(base, sec))
 
+    def test_beyond_filename(self):
+        base = "/path/with.dot/filename.ext"
+        sec = "^^.txt"
+        self.assertEqual("/path/with.dot/filename.txt", apply_secondary_file_format_to_filename(base, sec))
+

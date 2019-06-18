@@ -134,7 +134,7 @@ class TestCwlSelectorsAndGenerators(unittest.TestCase):
         import uuid
         fn = Filename(guid=str(uuid.uuid4()))
         self.assertEqual(
-            fn.generated_filename(),
+            "generated-$(Math.random().toString(16).substring(2, 8))",
             cwl.get_input_value_from_potential_selector_or_generator(fn, string_environment=True)
         )
 
@@ -142,7 +142,7 @@ class TestCwlSelectorsAndGenerators(unittest.TestCase):
         import uuid
         fn = Filename(guid=str(uuid.uuid4()))
         self.assertEqual(
-            '"%s"' % fn.generated_filename(),
+            '"generated-$(Math.random().toString(16).substring(2, 8))"',
             cwl.get_input_value_from_potential_selector_or_generator(fn, string_environment=False)
         )
 

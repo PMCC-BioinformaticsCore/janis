@@ -215,7 +215,8 @@ class WdlTranslator(TranslatorBase):
 
         commands = [prepare_move_statement_for_input_to_localise(ti) for ti in tool.inputs() if ti.localise_file]
 
-        bc = " ".join(tool.base_command()) if isinstance(tool.base_command(), list) else tool.base_command()
+        rbc = tool.base_command()
+        bc = " ".join(rbc) if isinstance(rbc, list) else rbc
 
         commands.append(wdl.Task.Command(bc, command_ins, command_args))
 
@@ -449,7 +450,7 @@ def translate_string_formatter_for_output(out, selector: StringFormatter, tool) 
             **selector.kwargs,
             **{k: get_input_value_from_potential_selector_or_generator(
                 v, inputsdict=inp_map, string_environment=True, tool_id=tool.id()) for k, v in
-            inputs_to_retranslate.items()}
+                inputs_to_retranslate.items()}
         }
 
         resolved_exp = selector.resolve_with_resolved_values(**resolved_kwargs)
@@ -467,11 +468,11 @@ def translate_string_formatter_for_output(out, selector: StringFormatter, tool) 
         translated_inputs[k] = get_input_value_from_potential_selector_or_generator(
             v, inputsdict=inp_map, string_environment=True, tool_id=tool.id())
 
-    tool_in = None
     if len(input_selectors_with_secondaries) > 1:
-        Logger.warn(f"There might be an error when building the string formatter for output '{out.id()}', the values "
-                    f"to replace for the keys ({', '.join(input_selectors_with_secondaries.keys())}) each which "
-                    f"had secondary files. This behaviour is currently undefined.")
+        invalid_keys = ', '.join(input_selectors_with_secondaries.keys())
+        raise Exception(f"There might be an error when building the string formatter for output '{out.id()}', the "
+                        f"values to replace for the keys ({invalid_keys}) each which "
+                        f"had secondary files. This behaviour is currently undefined.")
     else:
 
         inputsel_key = next(iter(input_selectors_with_secondaries.keys()))
@@ -489,16 +490,24 @@ def translate_string_formatter_for_output(out, selector: StringFormatter, tool) 
         sec_expression = None
         if "^" not in s:
             # do stuff here
-            sec_expression = expression + s.replace("^", "")
+            sec_expression = expression + s
 
-        elif tool_in and isinstance(tool_in.input_type, Filename) and tool_in.input_type.extension:
-            # use the wdl function: sub
-            sec_expression = '${sub({inp}, "\\\\{old_ext}$", "{new_ext}")}' \
-                .format(inp=expression, old_ext=tool_in.input_type.extension, new_ext=s.replace("^", ""))
+        elif tool_in:
+            if isinstance(tool_in.input_type, Filename) and tool_in.input_type.extension:
+                # use the wdl function: sub
+                sec_expression = '${sub({inp}, "\\\\{old_ext}$", "{new_ext}")}' \
+                    .format(inp=expression, old_ext=tool_in.input_type.extension, new_ext=s.replace("^", ""))
 
-        elif tool_in and File().can_receive_from(tool_in.input_type):
-            # use basename
-            sec_expression = f'basename({tool_in.id()}, \"{tool_in.input_type.extension}\") + "{s.replace("^", "")}"'
+            elif File().can_receive_from(tool_in.input_type):
+                # use basename
+                replaced_s = s.replace("^", "")
+                sec_expression = f'basename({tool_in.id()}, \"{tool_in.input_type.extension}\") + "{replaced_s}"'
+            else:
+                raise Exception(f"Unsure how to handle secondary file '{s}' as it uses the escape characater '^' but"
+                                f"Janis can't determine the extension of the input '{tool_in.id()} to replace in the "
+                                f"WDL translation. You will to annotate the input with an extension Filename(extension=)")
+        else:
+            sec_expression = apply_secondary_file_format_to_filename(expression, s)
 
         outputs.append(wdl.Output(
             out.output_type.wdl(),
@@ -729,9 +738,11 @@ def get_input_value_from_potential_selector_or_generator(value, inputsdict, stri
     elif isinstance(value, Filename):
         return value.generated_filename() if string_environment else f'"{value.generated_filename()}"'
     elif isinstance(value, StringFormatter):
-        return translate_string_formatter(selector=value, inputsdict=inputsdict, string_environment=string_environment, **debugkwargs)
+        return translate_string_formatter(selector=value, inputsdict=inputsdict, string_environment=string_environment,
+                                          **debugkwargs)
     elif isinstance(value, InputSelector):
-        return translate_input_selector(selector=value, inputsdict=inputsdict, string_environment=string_environment, **debugkwargs)
+        return translate_input_selector(selector=value, inputsdict=inputsdict, string_environment=string_environment,
+                                        **debugkwargs)
     elif isinstance(value, WildcardSelector):
         raise Exception(f"A wildcard selector cannot be used as an argument value for '{debugkwargs}'")
     elif isinstance(value, CpuSelector):
@@ -755,7 +766,6 @@ def translate_string_formatter(selector: StringFormatter, inputsdict, string_env
 
 
 def translate_input_selector(selector: InputSelector, inputsdict, string_environment=True, **debugkwargs):
-
     if not selector.input_to_select: raise Exception("No input was selected for input selector: " + str(selector))
 
     if inputsdict and selector.input_to_select not in inputsdict:
@@ -846,16 +856,28 @@ def get_secondary_tag_from_original_tag(original, secondary):
     return original + "_" + secondary_without_punctuation
 
 
-def apply_secondary_file_format_to_filename(filename: Optional[str], secondary_file: str):
-    if not filename: return None
+def apply_secondary_file_format_to_filename(filepath: Optional[str], secondary_file: str):
+    """
+    This is actually clever, you can probably trust this to do what you want.
+    :param filepath: Filename to base
+    :param secondary_file: CWL secondary format (Remove 1 extension for each leading ^.
+    """
+    if not filepath: return None
 
     fixed_sec = secondary_file.lstrip("^")
     leading = len(secondary_file) - len(fixed_sec)
     if leading <= 0:
-        return filename + fixed_sec
+        return filepath + fixed_sec
+
+    basepath = ""
+    filename = filepath
+    if "/" in filename:
+        idx = len(filepath) - filepath[::-1].index("/")
+        basepath = filepath[:idx]
+        filename = filepath[idx:]
 
     split = filename.split(".")
-    return ".".join(split[:-min(leading, len(split) - 1)]) + fixed_sec
+    return basepath + ".".join(split[:-min(leading, len(split) - 1)]) + fixed_sec
 
 
 def prepare_move_statement_for_input_to_localise(ti: ToolInput):

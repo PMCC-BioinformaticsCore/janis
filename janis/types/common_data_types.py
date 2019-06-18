@@ -83,7 +83,7 @@ concerned what the filename should be. The Filename DataType should NOT be used 
 
     def map_cwl_type(self, parameter: cwlgen.Parameter):
         super().map_cwl_type(parameter)
-        parameter.default = self.generated_filename()
+        parameter.default = self.generated_filenamecwl()
 
     def generated_filename(self) -> str:
         import uuid
@@ -94,6 +94,13 @@ concerned what the filename should be. The Filename DataType should NOT be used 
         ex = "" if self.extension is None else self.extension
 
         return pre + "generated-" + guid + suf + ex
+
+    def generated_filenamecwl(self) -> str:
+        code = "Math.random().toString(16).substring(2, 8)"
+        pf = self.prefix if self.prefix else ""
+        sf = self.suffix if self.suffix else ""
+        ext = self.extension if self.extension else ""
+        return pf + "generated-$(" + code + ")" + sf + ext
 
     def can_receive_from(self, other: DataType, source_has_default=False):
         # Specific override because Filename should be able to receive from string

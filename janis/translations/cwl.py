@@ -287,7 +287,7 @@ def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
     default, value_from = toolinput.default, None
 
     if isinstance(toolinput.input_type, Filename):
-        default = toolinput.input_type.generated_filename()
+        default = toolinput.input_type.generated_filenamecwl()
     elif is_selector(default):
         default = None
         value_from = get_input_value_from_potential_selector_or_generator(toolinput.default, toolinput.id())
@@ -426,7 +426,7 @@ def get_input_value_from_potential_selector_or_generator(value, string_environme
     elif isinstance(value, int) or isinstance(value, float):
         return value
     elif isinstance(value, Filename):
-        return value.generated_filename() if string_environment else '"%s"' % value.generated_filename()
+        return f'"{value.generated_filenamecwl()}"' if not string_environment else value.generated_filenamecwl()
     elif isinstance(value, StringFormatter):
         return translate_string_formatter(value, string_environment=string_environment, **debugkwargs)
     elif isinstance(value, InputSelector):

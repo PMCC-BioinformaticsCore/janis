@@ -97,10 +97,10 @@ concerned what the filename should be. The Filename DataType should NOT be used 
 
     def generated_filenamecwl(self) -> str:
         code = "Math.random().toString(16).substring(2, 8)"
-        pf = self.prefix if self.prefix else ""
+        pf = (self.prefix + "-") if self.prefix else ""
         sf = self.suffix if self.suffix else ""
         ext = self.extension if self.extension else ""
-        return pf + "generated-$(" + code + ")" + sf + ext
+        return f'"{pf}generated-" + {code} + "{sf + ext}"'
 
     def can_receive_from(self, other: DataType, source_has_default=False):
         # Specific override because Filename should be able to receive from string

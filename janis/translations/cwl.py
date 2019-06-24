@@ -127,7 +127,7 @@ class CwlTranslator(TranslatorBase):
     def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None,
                           additional_inputs: Dict=None) -> Dict[str, any]:
 
-        inp = {i.id(): i.input.cwl_input() for i in workflow._inputs if not cls.inp_can_be_skipped(i.input)}
+        inp = {i.id(): i.input.cwl_input() for i in workflow._inputs}
 
         if merge_resources:
             inp.update(cls.build_resources_input(workflow, hints))

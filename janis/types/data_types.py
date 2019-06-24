@@ -199,7 +199,7 @@ class DataType(ABC):
 
     def cwl_type(self, has_default=False):
         tp = NativeTypes.map_to_cwl(self.primitive())
-        return [tp, 'null'] if self.optional and not has_default else tp
+        return [tp, 'null'] if self.optional and not has_default else tp    # and not has_default
 
     def map_cwl_type(self, parameter: cwl.Parameter) -> cwl.Parameter:
         if not NativeTypes.is_valid(self.primitive()):

@@ -350,7 +350,7 @@ def translate_command_input(tool_input: ToolInput):
     if tool_input.localise_file:
         name = "basename(%s)" % name
 
-    separate_arrays = tool_input.nest_input_binding_on_array
+    separate_arrays = tool_input.prefix_applies_to_all_elements
     if separate_arrays is None and sep is None and isinstance(tool_input.input_type, Array):
         separate_arrays = True
 

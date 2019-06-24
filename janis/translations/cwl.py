@@ -158,6 +158,9 @@ class CwlTranslator(TranslatorBase):
             stdout=stdout
         )
 
+        if any(not i.shell_quote for i in tool.inputs()):
+            tool_cwl.requirements.append(cwlgen.ShellCommandRequirement())
+
         tool_cwl.requirements.extend([
             cwlgen.InlineJavascriptReq()
         ])

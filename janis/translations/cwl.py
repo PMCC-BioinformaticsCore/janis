@@ -312,7 +312,7 @@ def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
     # Binding array inputs onto the console
     # https://www.commonwl.org/user_guide/09-array-inputs/
     if isinstance(toolinput.input_type, Array) and isinstance(data_type, cwlgen.CommandInputArraySchema):
-        if toolinput.nest_input_binding_on_array:
+        if toolinput.prefix_applies_to_all_elements:
             input_binding.prefix = None
             input_binding.separate = None
             nested_binding = cwlgen.CommandLineBinding(

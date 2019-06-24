@@ -43,7 +43,7 @@ class ToolInput(ToolArgument):
 
     def __init__(self, tag: str, input_type: DataType, position: Optional[int] = None, prefix: Optional[str] = None,
                  separate_value_from_prefix: bool = None, default: Any = None, doc: Optional[str] = None,
-                 nest_input_binding_on_array: bool = None, shell_quote=None, separator=None, localise_file=None):
+                 prefix_applies_to_all_elements: bool = None, shell_quote=None, separator=None, localise_file=None):
         """
         :param tag: tag for input, what the yml will reference (eg: input1: path/to/file)
         :param input_type:
@@ -65,7 +65,7 @@ class ToolInput(ToolArgument):
         self.tag: str = tag
         self.input_type: DataType = input_type
         self.default = default
-        self.nest_input_binding_on_array = nest_input_binding_on_array
+        self.prefix_applies_to_all_elements = prefix_applies_to_all_elements
         self.separator = separator
         self.localise_file = localise_file
 

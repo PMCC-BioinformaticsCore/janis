@@ -94,6 +94,77 @@ class TestCwlTranslatorOverrides(unittest.TestCase):
         self.assertEqual("wid-resources.yml", self.translator.resources_filename(w))
 
 
+class TestCwlArraySeparators(unittest.TestCase):
+    # Based on https://www.commonwl.org/user_guide/09-array-inputs/index.html
+
+    def test_regular_input_bindingin(self):
+        t = ToolInput("filesA", Array(String()), prefix="-A", position=1)
+        cwltoolinput = cwl.translate_tool_input(t)
+        self.assertDictEqual({
+            'id': 'filesA',
+            'label': 'filesA',
+            'type': {'items': 'string', 'type': 'array'},
+            'inputBinding': {
+                'prefix': '-A',
+                'position': 1
+            }
+        }, cwltoolinput.get_dict())
+
+    def test_nested_input_binding(self):
+        t = ToolInput("filesB", Array(String()), prefix="-B=", separate_value_from_prefix=False,
+                      position=2, prefix_applies_to_all_elements=True)
+        cwltoolinput = cwl.translate_tool_input(t)
+        self.assertDictEqual({
+            'id': 'filesB',
+            'label': 'filesB',
+            'type': {
+                'items': 'string',
+                'type': 'array',
+                'inputBinding': {
+                    'prefix': '-B=',
+                    'separate': False
+                }
+            },
+            'inputBinding': {
+                'position': 2
+            }
+        }, cwltoolinput.get_dict())
+
+    def test_separated_input_bindingin(self):
+        t = ToolInput("filesC", Array(String()), prefix="-C=", separate_value_from_prefix=False,
+                      position=4, separator=",")
+        cwltoolinput = cwl.translate_tool_input(t)
+        self.assertDictEqual({
+            'id': 'filesC',
+            'label': 'filesC',
+            'type': {
+                'items': 'string',
+                'type': 'array'
+            },
+            'inputBinding': {
+                'prefix': '-C=',
+                'itemSeparator': ',',
+                'separate': False,
+                'position': 4,
+            }
+        }, cwltoolinput.get_dict())
+
+    def test_optional_array_prefixes(self):
+        t = ToolInput("filesD", Array(String(), optional=True), prefix="-D", prefix_applies_to_all_elements=True)
+        cwltoolinput = cwl.translate_tool_input(t)
+
+        self.assertDictEqual({
+            'id': 'filesD',
+            'label': 'filesD',
+            'type': [{
+                'inputBinding': { 'prefix': '-D' },
+                'items': 'string',
+                'type': 'array'
+            }, 'null'
+            ]
+        }, cwltoolinput.get_dict())
+
+
 class TestCwlSelectorsAndGenerators(unittest.TestCase):
 
     def test_input_selector_base(self):

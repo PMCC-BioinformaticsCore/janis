@@ -309,9 +309,11 @@ def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
         shell_quote=toolinput.shell_quote,
     )
 
+    non_optional_dt_component = [t for t in data_type if t != 'null'][0] if isinstance(data_type, list) else data_type
+
     # Binding array inputs onto the console
     # https://www.commonwl.org/user_guide/09-array-inputs/
-    if isinstance(toolinput.input_type, Array) and isinstance(data_type, cwlgen.CommandInputArraySchema):
+    if isinstance(toolinput.input_type, Array) and isinstance(non_optional_dt_component, cwlgen.CommandInputArraySchema):
         if toolinput.prefix_applies_to_all_elements:
             input_binding.prefix = None
             input_binding.separate = None
@@ -323,7 +325,7 @@ def translate_tool_input(toolinput: ToolInput) -> cwlgen.CommandInputParameter:
                 # value_from=toolinput.value_from,
                 shell_quote=toolinput.shell_quote,
             )
-            data_type.inputBinding = nested_binding
+            non_optional_dt_component.inputBinding = nested_binding
 
     return cwlgen.CommandInputParameter(
         param_id=toolinput.tag,

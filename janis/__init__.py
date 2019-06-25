@@ -22,7 +22,7 @@ _Proudly made on Planet Earth._
 
 """
 
-__version__ = "v0.2.17"
+__version__ = "v0.3.0"
 
 
 from janis.hints import CaptureType, Engine, HINTS, Hint, HintEnum, HintArray

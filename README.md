@@ -81,6 +81,14 @@ This project was produced as part of the Portable Pipelines Project in partnersh
 - [Melbourne Bioinformatics (University of Melbourne) ](https://www.melbournebioinformatics.org.au/)    
 - [Peter MacCallum Cancer Centre](https://www.petermac.org/)    
 - [Walter and Eliza Hall Institute of Medical Research (WEHI) ](https://www.wehi.edu.au/)    
+
+### References:
+
+Through conference or talks, this project has been referenced by the following titles:
+
+- Walter and Eliza Hall Institute Talk (WEHI) 2019: _Portable Pipelines Project: Developing reproducible bioinformatics pipelines with standardised workflow languages_
+- Bioinformatics Open Source Conference (BOSC) 2019: _Janis: an open source tool to machine generate type-safe CWL and WDL workflows_
+- Victorian Cancer Bioinformatics Symposium (VCBS) 2019: _Developing portable variant calling pipelines with Janis_
   
   
 ## Support  

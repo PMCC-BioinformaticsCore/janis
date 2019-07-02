@@ -7,9 +7,21 @@ class Metadata(object):
 
     DATE_FORMAT = "%Y-%m-%d"
 
-    def __init__(self, creator=None, maintainer=None, maintainerEmail=None, dateCreated=None, dateUpdated=None,
-                 institution=None, doi=None, citation=None, keywords=None, documentationUrl=None, documentation=None,
-                 version=None):
+    def __init__(
+        self,
+        creator=None,
+        maintainer=None,
+        maintainerEmail=None,
+        dateCreated=None,
+        dateUpdated=None,
+        institution=None,
+        doi=None,
+        citation=None,
+        keywords=None,
+        documentationUrl=None,
+        documentation=None,
+        version=None,
+    ):
         """
 
         :param creator:
@@ -29,8 +41,16 @@ class Metadata(object):
         self.creator = creator
         self.maintainer = maintainer
         self.maintainerEmail = maintainerEmail
-        self.dateCreated = dateCreated.strftime(self.DATE_FORMAT) if isinstance(dateCreated, date) else dateCreated
-        self.dateUpdated = dateUpdated.strftime(self.DATE_FORMAT) if isinstance(dateUpdated, date) else dateUpdated
+        self.dateCreated = (
+            dateCreated.strftime(self.DATE_FORMAT)
+            if isinstance(dateCreated, date)
+            else dateCreated
+        )
+        self.dateUpdated = (
+            dateUpdated.strftime(self.DATE_FORMAT)
+            if isinstance(dateUpdated, date)
+            else dateUpdated
+        )
         self.institution = institution
         self.doi = doi
         self.citation = citation
@@ -46,7 +66,9 @@ class Metadata(object):
 
     def get_dict(self, object_to_checksum):
 
-        checksum = sha1(json.dumps(object_to_checksum, sort_keys=True).encode('utf-8')).hexdigest()
+        checksum = sha1(
+            json.dumps(object_to_checksum, sort_keys=True).encode("utf-8")
+        ).hexdigest()
         # https://stackoverflow.com/q/5884066
 
         d = {k: v for k, v in vars(self).items() if v is not None}
@@ -72,4 +94,3 @@ class WorkflowMetadata(Metadata):
 
 class ToolMetadata(Metadata):
     pass
-

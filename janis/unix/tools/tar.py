@@ -6,7 +6,6 @@ from janis.unix.tools.unixtool import UnixTool
 
 
 class Tar(UnixTool):
-
     @staticmethod
     def tool():
         return "Tar"
@@ -22,13 +21,11 @@ class Tar(UnixTool):
         return [
             ToolInput("files", Array(File()), position=2),
             ToolInput("files2", Array(File(), optional=True), position=3),
-            ToolInput("tarName", Filename(extension=".tar"), position=1)
+            ToolInput("tarName", Filename(extension=".tar"), position=1),
         ]
 
     def outputs(self):
-        return [
-            ToolOutput("tarred", File(), glob=InputSelector("tarName"))
-        ]
+        return [ToolOutput("tarred", File(), glob=InputSelector("tarName"))]
 
     @staticmethod
     def docker():

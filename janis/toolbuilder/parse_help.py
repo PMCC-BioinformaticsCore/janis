@@ -1,16 +1,17 @@
-from datetime import datetime
 from typing import Optional, Union, List
 
+import janis.toolbuilder.cltconvert as clt
 from janis import ToolMetadata
-
 from janis.tool.tool import ToolInput
 from janis.types.common_data_types import String
-import janis.toolbuilder.cltconvert as clt
-
 from janis.utils.logger import Logger
 
 
-def from_docker(docker: str, basecommand: Union[str, List[str]], help_param: Optional[str]="--help"):
+def from_docker(
+    docker: str,
+    basecommand: Union[str, List[str]],
+    help_param: Optional[str] = "--help",
+):
     import subprocess, os
 
     bc = base_command if isinstance(basecommand, list) else [base_command]
@@ -21,21 +22,26 @@ def from_docker(docker: str, basecommand: Union[str, List[str]], help_param: Opt
 
     print("Running command: " + " ".join(f"'{x}'" for x in cmd))
 
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, preexec_fn=os.setsid, stderr=subprocess.STDOUT)
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, preexec_fn=os.setsid, stderr=subprocess.STDOUT
+    )
     Logger.info("Starting docker process on pid=" + str(process.pid))
     help = process.communicate()[0].decode("utf-8").rstrip()
     print(help)
     return help
 
 
-def parse_str(help, option_marker: str = "Options:", requires_prev_line_blank_or_param=False):
+def parse_str(
+    help, option_marker: str = "Options:", requires_prev_line_blank_or_param=False
+):
     doc = ""
     args = []
     lines = help.split("\n")
     options_idx = None
     for il in range(len(lines)):
         line = lines[il]
-        if not line.lstrip(): continue
+        if not line.lstrip():
+            continue
 
         if line.startswith(option_marker):
             options_idx = il
@@ -68,11 +74,14 @@ def parse_str(help, option_marker: str = "Options:", requires_prev_line_blank_or
 
         tool_doc = ""
 
-        if (not requires_prev_line_blank_or_param or last_line_was_blank_or_param) and line_args[0].startswith("-"):
+        if (
+            not requires_prev_line_blank_or_param or last_line_was_blank_or_param
+        ) and line_args[0].startswith("-"):
             # sometimes this section has two items
             tags = sorted(
                 [get_tag_and_cleanup_prefix(p) for p in line_args[0].split(",")],
-                key=lambda l: len(l[1]), reverse=True
+                key=lambda l: len(l[1]),
+                reverse=True,
             )
 
             if len(tags) > 1:
@@ -85,7 +94,9 @@ def parse_str(help, option_marker: str = "Options:", requires_prev_line_blank_or
             eqifrequired = "=" if has_equal else ""
 
             if len(tag) == 1:
-                print(f"The tag for '{prefix}' was too short, we need you to come up with a new identifier for:")
+                print(
+                    f"The tag for '{prefix}' was too short, we need you to come up with a new identifier for:"
+                )
                 print("\t" + tool_doc if tool_doc else line)
                 tag = str(input("New identifier: "))
             try:
@@ -94,7 +105,7 @@ def parse_str(help, option_marker: str = "Options:", requires_prev_line_blank_or
                     String(),
                     prefix=prefix + eqifrequired,
                     separate_value_from_prefix=not has_equal,
-                    doc=tool_doc
+                    doc=tool_doc,
                 )
             except:
                 print(f"Skipping '{tag}' as it wasn't validated correctly")
@@ -126,7 +137,9 @@ def get_tag_and_cleanup_prefix(prefix):
 
     titleComponents = [l.strip().title() for l in el.split("-") if l]
     if len(titleComponents) == 0:
-        raise Exception(f"Title components for tag '{prefix}' does not have a component")
+        raise Exception(
+            f"Title components for tag '{prefix}' does not have a component"
+        )
     titleComponents[0] = titleComponents[0].lower()
     tag = "".join(titleComponents)
 
@@ -150,7 +163,13 @@ if __name__ == "__main__":
     help_str = from_docker(docker, base_command, help_param="--allHelp")
     doc, args = parse_str(help_str)
 
-    st = clt.convert_command_tool_fragments(name, base_command, friendly_name, tool_provider, args, [],
-                                             ToolMetadata(documentation=doc))
+    st = clt.convert_command_tool_fragments(
+        name,
+        base_command,
+        friendly_name,
+        tool_provider,
+        args,
+        [],
+        ToolMetadata(documentation=doc),
+    )
     print(st)
-

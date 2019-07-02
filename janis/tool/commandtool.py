@@ -46,7 +46,9 @@ class CommandTool(Tool, ABC):
     @staticmethod
     @abstractmethod
     def base_command():
-        raise Exception("Subclass MUST implement the 'base_command' method with str or [str] return types")
+        raise Exception(
+            "Subclass MUST implement the 'base_command' method with str or [str] return types"
+        )
 
     def memory(self, hints: Dict[str, Any]) -> Optional[float]:
         """
@@ -97,40 +99,82 @@ class CommandTool(Tool, ABC):
     def hint_map() -> Optional[Dict[str, Any]]:
         return None
 
-    def translate(self, translation, to_console=True, to_disk=False, with_docker=True, with_resource_overrides=False):
+    def translate(
+        self,
+        translation,
+        to_console=True,
+        to_disk=False,
+        with_docker=True,
+        with_resource_overrides=False,
+    ):
         import janis.translations
-        return janis.translations.translate_tool(self, translation, to_console=to_console, with_docker=with_docker,
-                                                 with_resource_overrides=with_resource_overrides)
+
+        return janis.translations.translate_tool(
+            self,
+            translation,
+            to_console=to_console,
+            with_docker=with_docker,
+            with_resource_overrides=with_resource_overrides,
+        )
 
     def help(self):
         import inspect
+
         path = inspect.getfile(self.__class__)
 
-        ins = sorted(self.inputs(), key=lambda i: i.position if i.position is not None else 0)
+        ins = sorted(
+            self.inputs(), key=lambda i: i.position if i.position is not None else 0
+        )
         args = ""
         if self.arguments():
-            args = " " + " ".join(f"{(a.prefix if a.prefix is not None else '') + ' ' if (a.prefix is not None and a.separate_value_from_prefix) else ''}{a.value}" for a in self.arguments())
+            args = " " + " ".join(
+                f"{(a.prefix if a.prefix is not None else '') + ' ' if (a.prefix is not None and a.separate_value_from_prefix) else ''}{a.value}"
+                for a in self.arguments()
+            )
 
-        prefixes = " -" + "".join(i.prefix.replace("-", "").replace(" ", "") for i in ins if i.prefix is not None)
+        prefixes = " -" + "".join(
+            i.prefix.replace("-", "").replace(" ", "")
+            for i in ins
+            if i.prefix is not None
+        )
 
         metadata = self.metadata() if self.metadata() else Metadata()
         docker = self.docker()
 
-        base = (self.base_command() if isinstance(self.base_command(), str) else " ".join(self.base_command())) \
-            if self.base_command() else ''
+        base = (
+            (
+                self.base_command()
+                if isinstance(self.base_command(), str)
+                else " ".join(self.base_command())
+            )
+            if self.base_command()
+            else ""
+        )
         command = base + args + prefixes
 
         def input_format(t: ToolInput):
             prefix_with_space = ""
             if t.prefix is not None:
-                prefix_with_space = (t.prefix + ": ") if (t.separate_value_from_prefix is not False) else t.prefix
-            return f"\t\t{t.tag} ({prefix_with_space}{t.input_type.id()}{('=' + str(t.default)) if t.default is not None else ''})" \
+                prefix_with_space = (
+                    (t.prefix + ": ")
+                    if (t.separate_value_from_prefix is not False)
+                    else t.prefix
+                )
+            return (
+                f"\t\t{t.tag} ({prefix_with_space}{t.input_type.id()}{('=' + str(t.default)) if t.default is not None else ''})"
                 f": {'' if t.doc is None else t.doc}"
+            )
 
-        output_format = lambda t: f"\t\t{t.tag} ({t.output_type.id()}): {'' if t.doc is None else t.doc}"
+        output_format = (
+            lambda t: f"\t\t{t.tag} ({t.output_type.id()}): {'' if t.doc is None else t.doc}"
+        )
 
-        requiredInputs = "\n".join(input_format(x) for x in ins if not x.input_type.optional)
-        optionalInputs = "\n".join(input_format(x) for x in ins if x.input_type.optional)
+        requiredInputs = "\n".join(
+            input_format(x) for x in ins if not x.input_type.optional
+        )
+        optionalInputs = "\n".join(
+            input_format(x) for x in ins if x.input_type.optional
+        )
         outputs = "\n".join(output_format(o) for o in self.outputs())
 
         return f"""

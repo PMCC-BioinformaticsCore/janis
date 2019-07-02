@@ -9,7 +9,9 @@ def variable_name_validator(x: str):
     return x.isidentifier() and not iskeyword(x)
 
 
-def get_keywords_between_braces(text, argument_validator=variable_name_validator) -> Tuple[set, int]:
+def get_keywords_between_braces(
+    text, argument_validator=variable_name_validator
+) -> Tuple[set, int]:
     counter = 0
     highest_level = -1
     start_idx = None
@@ -27,7 +29,7 @@ def get_keywords_between_braces(text, argument_validator=variable_name_validator
             counter -= 1
 
             if start_idx is not None and counter == 0:
-                match = text[start_idx + 1:i]
+                match = text[start_idx + 1 : i]
                 if highest_level > 1:
                     Logger.log("Skipping match: " + match)
                 elif argument_validator is not None and not argument_validator(match):

@@ -19,16 +19,22 @@ class NodeTypes:
 
     @staticmethod
     def to_str(node_type: NodeType) -> str:
-        if node_type == NodeTypes.INPUT: return "Input"
-        if node_type == NodeTypes.OUTPUT: return "Output"
-        if node_type == NodeTypes.TASK: return "Task"
+        if node_type == NodeTypes.INPUT:
+            return "Input"
+        if node_type == NodeTypes.OUTPUT:
+            return "Output"
+        if node_type == NodeTypes.TASK:
+            return "Task"
         raise Exception(f"Unhandled task type: '{node_type}'")
 
     @staticmethod
     def to_col(node_type: NodeType) -> str:
-        if node_type == NodeTypes.INPUT: return "red"
-        if node_type == NodeTypes.OUTPUT: return "lightblue"
-        if node_type == NodeTypes.TASK: return "blue"
+        if node_type == NodeTypes.INPUT:
+            return "red"
+        if node_type == NodeTypes.OUTPUT:
+            return "lightblue"
+        if node_type == NodeTypes.TASK:
+            return "blue"
         raise Exception(f"Unhandled task type: '{node_type}'")
 
 
@@ -43,7 +49,7 @@ class Node(ABC):
         self._label: NodeLabel = label
         self.depth = depth
 
-        self.connection_map: Dict[str, Any] = {}    # actually an edge
+        self.connection_map: Dict[str, Any] = {}  # actually an edge
 
         # Update unique counter for hash
         self._nodeId = Node._N_counter
@@ -74,11 +80,15 @@ class Node(ABC):
 
     @abstractmethod
     def inputs(self) -> Dict[str, ToolInput]:
-        raise Exception(f"Subclass {type(self)} must implement inputs, return dict: key: ToolInput")
+        raise Exception(
+            f"Subclass {type(self)} must implement inputs, return dict: key: ToolInput"
+        )
 
     @abstractmethod
     def outputs(self) -> Dict[str, ToolOutput]:
-        raise Exception(f"Subclass {type(self)} must implement outputs, return dict: key: ToolOutput")
+        raise Exception(
+            f"Subclass {type(self)} must implement outputs, return dict: key: ToolOutput"
+        )
 
     def __setitem__(self, key, value):
         self.connection_map[key] = value
@@ -87,7 +97,7 @@ class Node(ABC):
 NodeAndTag = Tuple[str, Node]
 
 
-def layout_nodes(nodes: List[Node], n_inputs: int=0) -> Dict[Node, Tuple[int, int]]:
+def layout_nodes(nodes: List[Node], n_inputs: int = 0) -> Dict[Node, Tuple[int, int]]:
     """
     Stack on depth away from root, and scale smaller columns
     :param n_inputs:
@@ -133,7 +143,7 @@ def layout_nodes(nodes: List[Node], n_inputs: int=0) -> Dict[Node, Tuple[int, in
 
         for node in nodes:
             (x, y) = pos[node]
-            pos[node] = (x, (y + half_bias)*scale)
+            pos[node] = (x, (y + half_bias) * scale)
 
     return pos
 

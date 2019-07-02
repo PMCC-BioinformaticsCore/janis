@@ -44,8 +44,17 @@ class {name}Base(CommandTool):
 """
 
 
-generic_convertible = [DataType, ToolInput, ToolOutput, ToolArgument, InputSelector, WildcardSelector, MemorySelector,
-                       CpuSelector, Metadata]
+generic_convertible = [
+    DataType,
+    ToolInput,
+    ToolOutput,
+    ToolArgument,
+    InputSelector,
+    WildcardSelector,
+    MemorySelector,
+    CpuSelector,
+    Metadata,
+]
 
 
 def get_string_repr(obj):
@@ -70,11 +79,13 @@ def convert_generic_class(t, name, ignore_fields=None):
     #     else [f for f in dict(params).keys() if f not in ignore_fields]
 
     for fkey in params:
-        if fkey in ignore_fields: continue
+        if fkey in ignore_fields:
+            continue
         opts = params[fkey]
 
         v = t.__getattribute__(fkey)
-        if v is None and opts.default is None or v == opts.default: continue
+        if v is None and opts.default is None or v == opts.default:
+            continue
 
         options.append(fkey + "=" + get_string_repr(v))
 
@@ -83,13 +94,26 @@ def convert_generic_class(t, name, ignore_fields=None):
 
 def convert_commandtool(commandtool):
 
-    convert_command_tool_fragments(commandtool.id(), commandtool.base_command(), commandtool.friendly_name(),
-                                   commandtool.tool_provider(), commandtool.inputs(), commandtool.outputs(),
-                                   commandtool.metadata())
+    convert_command_tool_fragments(
+        commandtool.id(),
+        commandtool.base_command(),
+        commandtool.friendly_name(),
+        commandtool.tool_provider(),
+        commandtool.inputs(),
+        commandtool.outputs(),
+        commandtool.metadata(),
+    )
 
 
-def convert_command_tool_fragments(id: str, basecommand: Union[str, List[str]], friendly_name: str, toolprov: str,
-                                   ins: [ToolInput], outs: [ToolOutput], metadata: ToolMetadata):
+def convert_command_tool_fragments(
+    id: str,
+    basecommand: Union[str, List[str]],
+    friendly_name: str,
+    toolprov: str,
+    ins: [ToolInput],
+    outs: [ToolOutput],
+    metadata: ToolMetadata,
+):
     io_prefix = "            "
 
     if not metadata.dateCreated:
@@ -100,8 +124,10 @@ def convert_command_tool_fragments(id: str, basecommand: Union[str, List[str]], 
         name=id,
         friendly_name=friendly_name,
         tool_provider=toolprov,
-        base_command=f'"{basecommand}"' if isinstance(basecommand, str) else str(basecommand),
+        base_command=f'"{basecommand}"'
+        if isinstance(basecommand, str)
+        else str(basecommand),
         inputs=",\n".join((io_prefix + get_string_repr(i)) for i in ins),
         outputs=",\n".join((io_prefix + get_string_repr(o)) for o in outs),
-        metadata=get_string_repr(metadata)
+        metadata=get_string_repr(metadata),
     )

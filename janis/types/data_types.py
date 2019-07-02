@@ -12,12 +12,12 @@
 
 """
 from abc import ABC, abstractmethod
-from typing import Any, List, Dict, Optional
-
-from janis.utils.logger import Logger
-from wdlgen import WdlType
+from typing import Any, List, Optional
 
 import cwlgen as cwl
+from wdlgen import WdlType
+
+from janis.utils.logger import Logger
 
 NativeType = str
 
@@ -67,17 +67,24 @@ class NativeTypes:
             return cwl.CwlTypes.ARRAY
         elif t == NativeTypes.kStdout:
             return cwl.CwlTypes.STDOUT
-        raise Exception(f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}")
+        raise Exception(
+            f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}"
+        )
 
     @staticmethod
     def map_to_wdl(t: NativeType):
         import wdlgen as wdl
+
         if t == NativeTypes.kBool:
             return wdl.PrimitiveType.kBoolean
         elif t == NativeTypes.kInt:
             return wdl.PrimitiveType.kInt
 
-        elif t == NativeTypes.kLong or t == NativeTypes.kFloat or t == NativeTypes.kDouble:
+        elif (
+            t == NativeTypes.kLong
+            or t == NativeTypes.kFloat
+            or t == NativeTypes.kDouble
+        ):
             return wdl.PrimitiveType.kFloat
         elif t == NativeTypes.kStr:
             return wdl.PrimitiveType.kString
@@ -86,11 +93,15 @@ class NativeTypes:
         elif t == NativeTypes.kStdout:
             return wdl.PrimitiveType.kFile
         elif t == NativeTypes.kDirectory:
-            Logger.log("Using data_type 'Directory' for wdl, this requires cromwell>=37 and language=development")
+            Logger.log(
+                "Using data_type 'Directory' for wdl, this requires cromwell>=37 and language=development"
+            )
             return wdl.PrimitiveType.kDirectory
         elif t == NativeTypes.kArray:
             return wdl.ArrayType.kArray
-        raise Exception(f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}")
+        raise Exception(
+            f"Unhandled primitive type {t}, expected one of {', '.join(NativeTypes.all)}"
+        )
 
     @staticmethod
     def default_value(t: NativeType):
@@ -109,13 +120,12 @@ class NativeTypes:
         elif t == NativeTypes.kFile:
             return {"type": "File", "path": "path/to/file"}
         elif t == NativeTypes.kDirectory:
-            return { "type": "Directory", "path": "path/to/file"}
+            return {"type": "Directory", "path": "path/to/file"}
         elif t == NativeTypes.kArray:
             return []
 
 
 class DataType(ABC):
-
     def __init__(self, optional=False):
         self.optional = optional
         self.is_prim = NativeTypes.is_primitive(self.primitive())
@@ -147,8 +157,6 @@ class DataType(ABC):
         are compatible
         """
         raise Exception("Subclass MUST override the 'doc' field")
-
-
 
     # The following methods don't need to be overriden, but can be
 
@@ -199,15 +207,19 @@ class DataType(ABC):
 
     def cwl_type(self, has_default=False):
         tp = NativeTypes.map_to_cwl(self.primitive())
-        return [tp, 'null'] if self.optional and not has_default else tp    # and not has_default
+        return (
+            [tp, "null"] if self.optional and not has_default else tp
+        )  # and not has_default
 
     def map_cwl_type(self, parameter: cwl.Parameter) -> cwl.Parameter:
         if not NativeTypes.is_valid(self.primitive()):
-            raise Exception(f"{self.id()} must declare its primitive as one of the NativeTypes "
-                            f"({', '.join(NativeTypes.all)})")
+            raise Exception(
+                f"{self.id()} must declare its primitive as one of the NativeTypes "
+                f"({', '.join(NativeTypes.all)})"
+            )
 
         tp = NativeTypes.map_to_cwl(self.primitive())
-        parameter.type = [tp, 'null'] if self.optional else tp
+        parameter.type = [tp, "null"] if self.optional else tp
         parameter.secondaryFiles = self.secondary_files()
         return parameter
 
@@ -220,4 +232,3 @@ class DataType(ABC):
 
     # def default(self):
     #     return self.default_value
-

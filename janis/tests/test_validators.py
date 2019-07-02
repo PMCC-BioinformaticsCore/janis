@@ -4,7 +4,6 @@ from janis.utils.validators import Validators
 
 
 class TestValidators(unittest.TestCase):
-
     def test_valid_identifiers(self):
         self.assertTrue(Validators.validate_identifier("test_workflow"))
 

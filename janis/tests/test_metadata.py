@@ -5,7 +5,6 @@ from janis.utils.metadata import Metadata
 
 
 class TestMetadata(unittest.TestCase):
-
     def test_update(self):
 
         m = Metadata()
@@ -21,7 +20,8 @@ class TestMetadata(unittest.TestCase):
 
         # Check for all attributes that are none, and check they're not in the output
         for k, v in vars(m).items():
-            if v is not None: continue
+            if v is not None:
+                continue
             self.assertNotIn(k, d)
 
     def test_date_generated(self):

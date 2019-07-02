@@ -9,4 +9,3 @@ Resources:
     - https://stackoverflow.com/a/5859823/2860731
     - http://stevehanov.ca/blog/index.php?id=114
 """
-

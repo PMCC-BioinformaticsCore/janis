@@ -9,7 +9,6 @@ from janis.unix.tools.unixtool import UnixTool
 
 
 class Compile(UnixTool):
-
     @staticmethod
     def tool():
         return "javaCompiler"
@@ -26,16 +25,10 @@ class Compile(UnixTool):
         return "openjdk:8"
 
     def arguments(self) -> List[ToolArgument]:
-        return [ToolArgument(".", "-d")]    # CurrentWorkingDirectory()
+        return [ToolArgument(".", "-d")]  # CurrentWorkingDirectory()
 
     def inputs(self):
-        return [
-            ToolInput("file", File(), position=1)
-        ]
+        return [ToolInput("file", File(), position=1)]
 
     def outputs(self):
-        return [
-            ToolOutput("compiled", File(), glob=WildcardSelector("*.class"))
-        ]
-
-
+        return [ToolOutput("compiled", File(), glob=WildcardSelector("*.class"))]

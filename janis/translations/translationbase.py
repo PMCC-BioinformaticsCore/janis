@@ -39,26 +39,46 @@ class TranslatorBase(ABC):
     def __init__(self, name):
         self.name = name
 
-    def translate(self, workflow, to_console=True, with_docker=True, with_resource_overrides=False, to_disk=False,
-             export_path=ExportPathKeywords.default, write_inputs_file=False, should_validate=False,
-             should_zip=True, merge_resources=False, hints=None, allow_null_if_not_optional=True,
-                  additional_inputs:Dict=None):
+    def translate(
+        self,
+        workflow,
+        to_console=True,
+        with_docker=True,
+        with_resource_overrides=False,
+        to_disk=False,
+        export_path=ExportPathKeywords.default,
+        write_inputs_file=False,
+        should_validate=False,
+        should_zip=True,
+        merge_resources=False,
+        hints=None,
+        allow_null_if_not_optional=True,
+        additional_inputs: Dict = None,
+    ):
 
         self.validate_inputs(workflow._inputs, allow_null_if_not_optional)
 
         tr_wf, tr_tools = self.translate_workflow(
             workflow,
             with_docker=with_docker,
-            with_resource_overrides=with_resource_overrides
+            with_resource_overrides=with_resource_overrides,
         )
-        tr_inp = self.build_inputs_file(workflow, recursive=False, merge_resources=merge_resources, hints=hints,
-                                        additional_inputs=additional_inputs)
+        tr_inp = self.build_inputs_file(
+            workflow,
+            recursive=False,
+            merge_resources=merge_resources,
+            hints=hints,
+            additional_inputs=additional_inputs,
+        )
         tr_res = self.build_resources_input(workflow, hints)
 
         str_wf = self.stringify_translated_workflow(tr_wf)
         str_inp = self.stringify_translated_inputs(tr_inp)
         str_tools = [
-            ("/tools/" + self.tool_filename(t), self.stringify_translated_workflow(tr_tools[t]))
+            (
+                "/tools/" + self.tool_filename(t),
+                self.stringify_translated_workflow(tr_tools[t]),
+            )
             for t in tr_tools
         ]
         str_resources = self.stringify_translated_inputs(tr_res)
@@ -74,7 +94,9 @@ class TranslatorBase(ABC):
                 print("\n=== RESOURCES ===")
                 print(str_resources)
 
-        d = ExportPathKeywords.resolve(export_path, workflow_spec=self.name, workflow_name=workflow.id())
+        d = ExportPathKeywords.resolve(
+            export_path, workflow_spec=self.name, workflow_name=workflow.id()
+        )
 
         fn_workflow = self.workflow_filename(workflow)
         fn_inputs = self.inputs_filename(workflow)
@@ -116,6 +138,7 @@ class TranslatorBase(ABC):
                 print(str_resources)
 
             import subprocess
+
             if should_zip:
                 Logger.info("Zipping tools")
                 os.chdir(d)
@@ -131,12 +154,18 @@ class TranslatorBase(ABC):
 
                 Logger.info(f"Validating outputted {self.name}")
 
-                enved_vcs = [(os.getenv(x[1:]) if x.startswith("$") else x)
-                                 for x in self.validate_command_for(fn_workflow, fn_inputs, "tools/", "tools.zip")]
+                enved_vcs = [
+                    (os.getenv(x[1:]) if x.startswith("$") else x)
+                    for x in self.validate_command_for(
+                        fn_workflow, fn_inputs, "tools/", "tools.zip"
+                    )
+                ]
 
                 cwltool_result = subprocess.run(enved_vcs)
                 if cwltool_result.returncode == 0:
-                    Logger.info("Exported workflow was validated by: " + " ".join(enved_vcs))
+                    Logger.info(
+                        "Exported workflow was validated by: " + " ".join(enved_vcs)
+                    )
                 else:
                     Logger.critical(cwltool_result.stderr)
 
@@ -144,17 +173,30 @@ class TranslatorBase(ABC):
 
     @classmethod
     def validate_inputs(cls, inputs: List[InputNode], allow_null_if_optional):
-        invalid = [i for i in inputs if not i.input.validate_value(allow_null_if_not_optional=allow_null_if_optional)]
-        if len(invalid) == 0: return True
-        raise TypeError("Couldn't validate inputs: " + ", ".join(f"{i.id()} (expected: {i.input.data_type.id()}, "
-                                                                 f"got: '{TranslatorBase.get_type(i.input.value)}')"
-                                                                 for i in invalid))
+        invalid = [
+            i
+            for i in inputs
+            if not i.input.validate_value(
+                allow_null_if_not_optional=allow_null_if_optional
+            )
+        ]
+        if len(invalid) == 0:
+            return True
+        raise TypeError(
+            "Couldn't validate inputs: "
+            + ", ".join(
+                f"{i.id()} (expected: {i.input.data_type.id()}, "
+                f"got: '{TranslatorBase.get_type(i.input.value)}')"
+                for i in invalid
+            )
+        )
 
     @staticmethod
     def get_type(t):
         if isinstance(t, list):
             q = set(TranslatorBase.get_type(tt) for tt in t)
-            if len(q) == 0: return "empty array"
+            if len(q) == 0:
+                return "empty array"
             val = q.pop() if len(q) == 1 else "Union[" + ", ".join(q) + "]"
             return f"Array<{val}>"
 
@@ -162,8 +204,9 @@ class TranslatorBase(ABC):
 
     @classmethod
     @abstractmethod
-    def translate_workflow(cls, workflow, with_docker=True, with_resource_overrides=False) \
-            -> Tuple[any, Dict[str, any]]:
+    def translate_workflow(
+        cls, workflow, with_docker=True, with_resource_overrides=False
+    ) -> Tuple[any, Dict[str, any]]:
         pass
 
     @classmethod
@@ -173,7 +216,14 @@ class TranslatorBase(ABC):
 
     @classmethod
     @abstractmethod
-    def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None, additional_inputs: Dict=None) -> Dict[str, any]:
+    def build_inputs_file(
+        cls,
+        workflow,
+        recursive=False,
+        merge_resources=False,
+        hints=None,
+        additional_inputs: Dict = None,
+    ) -> Dict[str, any]:
         pass
 
     @classmethod
@@ -183,7 +233,11 @@ class TranslatorBase(ABC):
 
     @staticmethod
     def inp_can_be_skipped(inp: Input):
-        return inp.value is None and not inp.include_in_inputs_file_if_none and (inp.data_type.optional or inp.default is not None)
+        return (
+            inp.value is None
+            and not inp.include_in_inputs_file_if_none
+            and (inp.data_type.optional or inp.default is not None)
+        )
 
     # STRINGIFY
 
@@ -234,4 +288,3 @@ class TranslatorBase(ABC):
     @abstractmethod
     def validate_command_for(wfpath, inppath, tools_dir_path, tools_zip_path):
         pass
-

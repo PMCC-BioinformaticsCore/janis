@@ -11,8 +11,13 @@ from janis.tool.tool import Tool, ToolInput, ToolOutput, ToolTypes, ToolType
 from janis.translations import ExportPathKeywords
 from janis.types.common_data_types import Array
 from janis.types.data_types import DataType
-from janis.utils.errors import DuplicateLabelIdentifier, InvalidNodeIdentifier, NodeNotFound, InvalidStepsException, \
-    InvalidInputsException
+from janis.utils.errors import (
+    DuplicateLabelIdentifier,
+    InvalidNodeIdentifier,
+    NodeNotFound,
+    InvalidStepsException,
+    InvalidInputsException,
+)
 from janis.utils.logger import Logger, LogLevel
 from janis.utils.metadata import WorkflowMetadata
 from janis.utils.validators import Validators
@@ -34,7 +39,9 @@ class Workflow(Tool):
 
     """
 
-    def __init__(self, identifier: str, friendly_name: str = None, doc: Optional[str] = None):
+    def __init__(
+        self, identifier: str, friendly_name: str = None, doc: Optional[str] = None
+    ):
         """
         Initialise the workflow
         :param identifier: uniquely identifies the workflow
@@ -44,8 +51,10 @@ class Workflow(Tool):
         Logger.log(f"Creating workflow with identifier: '{identifier}'")
 
         if not Validators.validate_identifier(identifier):
-            raise Exception(f"The identifier '{identifier}' was not validated by '{Validators.identifier_regex}' "
-                            f"(must start with letters, and then only contain letters, numbers and an underscore)")
+            raise Exception(
+                f"The identifier '{identifier}' was not validated by '{Validators.identifier_regex}' "
+                f"(must start with letters, and then only contain letters, numbers and an underscore)"
+            )
 
         self.identifier = identifier
         self.name = friendly_name
@@ -101,8 +110,11 @@ class Workflow(Tool):
         """
         Similar to inputs, return a list of ToolOutputs of the workflow
         """
-        return [ToolOutput(o.id(), o.output.data_type, o.output.doc)
-                for o in self._outputs if o.output.data_type is not None]
+        return [
+            ToolOutput(o.id(), o.output.data_type, o.output.doc)
+            for o in self._outputs
+            if o.output.data_type is not None
+        ]
 
     # GRAPH CONSTRUCTION
 
@@ -113,19 +125,26 @@ class Workflow(Tool):
         """
         import matplotlib.pyplot as plt
 
-        default_color = 'black'
+        default_color = "black"
 
         G = self.graph
         edges_attributes = [G.edges[e] for e in G.edges]
-        edge_colors = [x["color"] if 'color' in x else default_color for x in edges_attributes]
+        edge_colors = [
+            x["color"] if "color" in x else default_color for x in edges_attributes
+        ]
         node_colors = [NodeTypes.to_col(x.node_type) for x in G.nodes]
 
-        pos = layout_nodes2(list(G.nodes))  # Manual layout engine of the graph, need to make this better
+        pos = layout_nodes2(
+            list(G.nodes)
+        )  # Manual layout engine of the graph, need to make this better
 
         for n in pos:
-            G.node[n]['pos'] = pos[n]
+            # noinspection PyUnresolvedReferences
+            G.node[n]["pos"] = pos[n]
 
-        nx.draw(G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=True)
+        nx.draw(
+            G, pos=pos, edge_color=edge_colors, node_color=node_colors, with_labels=True
+        )
         plt.show()
 
     # For the most part, Just add edges as this will automatically add nodes to the graph
@@ -192,7 +211,9 @@ class Workflow(Tool):
         Logger.log(f"Adding step '{step.id()}' to '{self.identifier}'")
         node: StepNode = StepNode(step)
 
-        self.has_subworkflow = self.has_subworkflow or step.tool().type() == ToolTypes.Workflow
+        self.has_subworkflow = (
+            self.has_subworkflow or step.tool().type() == ToolTypes.Workflow
+        )
         self._add_node(node)
         self._steps.append(node)
         return node
@@ -205,8 +226,10 @@ class Workflow(Tool):
         """
         if node.id() in self._nodes:
             existing = self._nodes[node.id()]
-            message = f"Attempted to add an input with the identifier '{node.id()}' but there was already " \
+            message = (
+                f"Attempted to add an input with the identifier '{node.id()}' but there was already "
                 f"an {existing.node_type} node with representation: {str(existing)}"
+            )
             Logger.log(message)
             raise DuplicateLabelIdentifier(message)
         self._nodes[node.id()] = node
@@ -277,13 +300,19 @@ class Workflow(Tool):
         :return:
         """
         if len(parts) == 0 or len(parts) > 2:
-            message = f"The {node_type} tag '{tag}' contained an invalid number of parts ({len(parts)}), " \
+            message = (
+                f"The {node_type} tag '{tag}' contained an invalid number of parts ({len(parts)}), "
                 f"it should follow the format: 'label/tag' (1 or 2 parts)"
+            )
             Logger.log(message, LogLevel.CRITICAL)
             raise InvalidNodeIdentifier(message)
 
-    def try_get_or_add_node(self, identifier: str, component: Optional[Union[Input, Step, Output]],
-                            node_type: str) -> Node:
+    def try_get_or_add_node(
+        self,
+        identifier: str,
+        component: Optional[Union[Input, Step, Output]],
+        node_type: str,
+    ) -> Node:
         """
         Given the label (and the component [Input \ Step | Output], get the node if it's in the graph
         (and check that it's referencing the correct component), else add it to the graph.
@@ -309,22 +338,37 @@ class Workflow(Tool):
                 node_comp = node.output
 
             if component is not None and (
-                    identifier != component.id() or
-                    (isinstance(component, Input) and not node.node_type == NodeTypes.INPUT) or
-                    (isinstance(component, Step) and not node.node_type == NodeTypes.TASK) or
-                    (isinstance(component, Output) and not node.node_type == NodeTypes.OUTPUT) or
-                    (node_comp != component)):
-                raise Exception(f"There already exists a node (and component) with id '{node.id()}'. The added "
-                                f"component ('{repr(component)}') clashes with '{repr(node_comp)}').")
+                identifier != component.id()
+                or (
+                    isinstance(component, Input)
+                    and not node.node_type == NodeTypes.INPUT
+                )
+                or (
+                    isinstance(component, Step) and not node.node_type == NodeTypes.TASK
+                )
+                or (
+                    isinstance(component, Output)
+                    and not node.node_type == NodeTypes.OUTPUT
+                )
+                or (node_comp != component)
+            ):
+                raise Exception(
+                    f"There already exists a node (and component) with id '{node.id()}'. The added "
+                    f"component ('{repr(component)}') clashes with '{repr(node_comp)}')."
+                )
             return node
 
-        Logger.log(f"Could't find a(n) {node_type} node with the identifier '{identifier}' in the workflow.")
+        Logger.log(
+            f"Could't find a(n) {node_type} node with the identifier '{identifier}' in the workflow."
+        )
         if component is not None:
             Logger.log(f"Adding '{component.id()}' to the workflow")
             return self._add_item(component)
         else:
-            message = f"There was no node or component referenced by '{identifier}' in the graph. When creating edges " \
+            message = (
+                f"There was no node or component referenced by '{identifier}' in the graph. When creating edges "
                 "by identifiers, you must add the component to the graph first"
+            )
             Logger.log(message, LogLevel.CRITICAL)
             raise NodeNotFound(message)
 
@@ -371,20 +415,29 @@ class Workflow(Tool):
 
         if s_node.node_type == NodeTypes.INPUT:
             # Can guarantee the data_type
-            s_parts, s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts, referenced_by=f_parts)
-            f_parts, f_type = self.get_tag_and_type_from_final_edge_node(f_node, f_parts, referenced_from=s_parts,
-                                                                         guess_type=s_type)
+            s_parts, s_type = self.get_tag_and_type_from_start_edge_node(
+                s_node, s_parts, referenced_by=f_parts
+            )
+            f_parts, f_type = self.get_tag_and_type_from_final_edge_node(
+                f_node, f_parts, referenced_from=s_parts, guess_type=s_type
+            )
             stag, ftag = None, f_parts[-1]
 
         elif f_node.node_type == NodeTypes.OUTPUT:
             # We'll need to determine the data_type and assign it to the output
-            s_parts, s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts, referenced_by=f_parts)
+            s_parts, s_type = self.get_tag_and_type_from_start_edge_node(
+                s_node, s_parts, referenced_by=f_parts
+            )
             if s_type is None:
                 keys = ", ".join(s_node.outputs().keys())
-                raise Exception(f"The step '{s_node.id()}' must be fully qualified to connect to output node"
-                                f" (expected one of: {keys})")
+                raise Exception(
+                    f"The step '{s_node.id()}' must be fully qualified to connect to output node"
+                    f" (expected one of: {keys})"
+                )
 
-            step_has_scatter = any(e.has_scatter() for e in s_node.connection_map.values())
+            step_has_scatter = any(
+                e.has_scatter() for e in s_node.connection_map.values()
+            )
 
             if step_has_scatter:
                 f_type = Array(s_type.received_type())
@@ -400,22 +453,25 @@ class Workflow(Tool):
 
             # We can't guarantee or enforce anything, so we'll see if we are fully qualified, and if not we can try
             # and guess by comparing types between the nodes, it doesn't matter which way we'll start though
-            s_parts, s_type = self.get_tag_and_type_from_start_edge_node(s_node, s_parts, referenced_by=f_parts)
-            f_parts, f_type = self.get_tag_and_type_from_final_edge_node(f_node, f_parts, referenced_from=s_parts,
-                                                                         guess_type=s_type)
+            s_parts, s_type = self.get_tag_and_type_from_start_edge_node(
+                s_node, s_parts, referenced_by=f_parts
+            )
+            f_parts, f_type = self.get_tag_and_type_from_final_edge_node(
+                f_node, f_parts, referenced_from=s_parts, guess_type=s_type
+            )
 
             if s_type is None and f_type is not None:
                 s_parts, s_type = self.get_tag_and_type_from_start_edge_node(
-                    s_node,
-                    s_parts,
-                    referenced_by=f_parts,
-                    guess_type=f_type
+                    s_node, s_parts, referenced_by=f_parts, guess_type=f_type
                 )
 
             if s_type is None and f_type is None:
                 # Try to guess both
-                Logger.log(f"Trying to guess connection based on mutual types between "
-                           f"'{s_node.id()}' and '{f_node.id()}'", LogLevel.WARNING)
+                Logger.log(
+                    f"Trying to guess connection based on mutual types between "
+                    f"'{s_node.id()}' and '{f_node.id()}'",
+                    LogLevel.WARNING,
+                )
                 c = self.guess_connection_between_nodes(s_node, f_node)
                 if c is not None:
                     (s_parts, s_type), (f_parts, f_type) = c
@@ -424,20 +480,30 @@ class Workflow(Tool):
 
         # We got one but not the other
         if s_type is not None and f_type is None:
-            possible_outp_tags = ", ".join(f"{o.tag} ({o.input_type.name()})" for o in f_node.inputs().values())
-            raise Exception(f"Couldn't definitively establish a connection from the start node '{s_node.id()}' "
-                            f"with type {s_type.name()} to the finish node with possibilities: {possible_outp_tags}")
+            possible_outp_tags = ", ".join(
+                f"{o.tag} ({o.input_type.name()})" for o in f_node.inputs().values()
+            )
+            raise Exception(
+                f"Couldn't definitively establish a connection from the start node '{s_node.id()}' "
+                f"with type {s_type.name()} to the finish node with possibilities: {possible_outp_tags}"
+            )
         if s_type is None and f_type is not None:
-            possible_inp_tags = ", ".join(f"{i.tag} ({i.output_type.name()})" for i in s_node.outputs().values())
-            raise Exception(f"Couldn't definitively establish a connection to the finish node '{f_node.id()}' "
-                            f"with type {f_type.name()} from the start node with possibilities: {possible_inp_tags}")
+            possible_inp_tags = ", ".join(
+                f"{i.tag} ({i.output_type.name()})" for i in s_node.outputs().values()
+            )
+            raise Exception(
+                f"Couldn't definitively establish a connection to the finish node '{f_node.id()}' "
+                f"with type {f_type.name()} from the start node with possibilities: {possible_inp_tags}"
+            )
 
         # We couldn't get either
         if s_type is None or f_type is None:
-            ss = '/'.join(s_parts)
-            ff = '/'.join(f_parts)
-            raise Exception(f"Couldn't connect '{s_node.id()}' to '{f_node.id()}', failed to get types from "
-                            f"tags (s: {ss} | f: {ff}) and couldn't uniquely isolate mutual types")
+            ss = "/".join(s_parts)
+            ff = "/".join(f_parts)
+            raise Exception(
+                f"Couldn't connect '{s_node.id()}' to '{f_node.id()}', failed to get types from "
+                f"tags (s: {ss} | f: {ff}) and couldn't uniquely isolate mutual types"
+            )
 
         # NOW: Let's build the connection (edge)
 
@@ -450,23 +516,31 @@ class Workflow(Tool):
         e = step_inputs.add_source(s_node, stag)
 
         self.has_scatter = self.has_scatter or e.scatter
-        self.has_multiple_inputs = self.has_multiple_inputs or step_inputs.multiple_inputs
+        self.has_multiple_inputs = (
+            self.has_multiple_inputs or step_inputs.multiple_inputs
+        )
 
-        col = 'black' if e.compatible_types else 'r'
+        col = "black" if e.compatible_types else "r"
         self.graph.add_edge(s_node, f_node, type_match=e.compatible_types, color=col)
         return e
 
-    def get_tag_and_type_from_start_edge_node(self, node: Node, input_parts: List[str], referenced_by: List[str],
-                                              guess_type: Optional[DataType] = None) \
-            -> Tuple[List[str], Optional[DataType]]:
+    def get_tag_and_type_from_start_edge_node(
+        self,
+        node: Node,
+        input_parts: List[str],
+        referenced_by: List[str],
+        guess_type: Optional[DataType] = None,
+    ) -> Tuple[List[str], Optional[DataType]]:
 
         if guess_type is not None:
             guess_type = guess_type.received_type()
 
         if node.node_type == NodeTypes.OUTPUT:
-            ref_by = '.'.join(referenced_by)
-            raise Exception(f"Joining an INPUT node ('{node.id()}') to an  OUTPUT node ('{ref_by}') "
-                            f"has been explicitly disabled")
+            ref_by = ".".join(referenced_by)
+            raise Exception(
+                f"Joining an INPUT node ('{node.id()}') to an  OUTPUT node ('{ref_by}') "
+                f"has been explicitly disabled"
+            )
 
         lbl = input_parts[0]
         if node.node_type == NodeTypes.INPUT:
@@ -483,29 +557,37 @@ class Workflow(Tool):
 
         # We are a step node now
         if not isinstance(node, StepNode):
-            raise Exception("An internal error has occurred in 'get_tag_and_type_from_start_edge_node'"
-                            " when converting Node to StepNode.")
+            raise Exception(
+                "An internal error has occurred in 'get_tag_and_type_from_start_edge_node'"
+                " when converting Node to StepNode."
+            )
         snode: StepNode = node
         outs: Dict[str, ToolOutput] = node.outputs()
 
         types = [(x, outs[x].output_type) for x in outs]
 
         if len(types) == 0:
-            raise InvalidStepsException(f"The step '{referenced_by}' referenced the step '{snode.id()}' with tool "
-                                        f"'{snode.step.tool().id()}' that has no outputs")
+            raise InvalidStepsException(
+                f"The step '{referenced_by}' referenced the step '{snode.id()}' with tool "
+                f"'{snode.step.tool().id()}' that has no outputs"
+            )
         elif len(types) == 1:
             tag = types[0][0]
             if len(input_parts) != 2:
                 s = "/".join(input_parts)
                 under_over = "under" if len(input_parts) < 2 else "over"
-                Logger.warn(f"The node '{'.'.join(referenced_by)}' {under_over}-referenced an output the step "
-                            f"'{node.id()}' (tool: '{snode.step.tool().id()}'), this was automatically corrected "
-                            f"({s} → {lbl}.{tag})")
+                Logger.warn(
+                    f"The node '{'.'.join(referenced_by)}' {under_over}-referenced an output the step "
+                    f"'{node.id()}' (tool: '{snode.step.tool().id()}'), this was automatically corrected "
+                    f"({s} → {lbl}.{tag})"
+                )
 
             elif input_parts[-1] != tag:
-                Logger.critical(f"The node '{node.id()}' did not correctly reference an output of the step "
-                                f"'{node.id()}' (tool: '{snode.step.tool().id()}'), this was automatically corrected "
-                                f"({'/'.join(input_parts)} → {lbl}/{tag})")
+                Logger.critical(
+                    f"The node '{node.id()}' did not correctly reference an output of the step "
+                    f"'{node.id()}' (tool: '{snode.step.tool().id()}'), this was automatically corrected "
+                    f"({'/'.join(input_parts)} → {lbl}/{tag})"
+                )
 
             input_parts = [lbl, tag]
             return input_parts, types[0][1]
@@ -515,75 +597,100 @@ class Workflow(Tool):
             if len(input_parts) < 2:
                 if guess_type is not None:
                     # try to guess it from the outputs
-                    compatible_types = [outs[x] for x in outs if
-                                        (not outs[x].output_type.optional) and guess_type.can_receive_from(
-                                            outs[x].output_type)]
+                    compatible_types = [
+                        outs[x]
+                        for x in outs
+                        if (not outs[x].output_type.optional)
+                        and guess_type.can_receive_from(outs[x].output_type)
+                    ]
                     if len(compatible_types) == 1:
                         out = compatible_types[0]
                         Logger.info(
                             f"Guessed the compatible match for '{node.id()}' with source type '{out.output_type.id()}'"
-                            f" → '{guess_type.id()}' ('{node.id()}/{out.tag}' → '{node.id()}')")
+                            f" → '{guess_type.id()}' ('{node.id()}/{out.tag}' → '{node.id()}')"
+                        )
                         return [lbl, out.tag], out.output_type
                     else:
                         # Should this step also take into consideration the _optional_ nature of the node,
                         # ie: should it favour required nodes if that's an option
-                        ultra_compatible = [outs[x] for x in outs if
-                                            (not outs[x].output_type.optional) and type(outs[x].output_type) == type(
-                                                guess_type)]
+                        ultra_compatible = [
+                            outs[x]
+                            for x in outs
+                            if (not outs[x].output_type.optional)
+                            and type(outs[x].output_type) == type(guess_type)
+                        ]
 
                         if len(ultra_compatible) == 1:
                             ultra = ultra_compatible[0]
-                            Logger.warn(f"There were {len(compatible_types)} matched types for the node '{node.id()}', "
-                                        f"the program has guessed an exact compatible match of "
-                                        f"type '{ultra.output_type.id()}' to tag '{ultra.tag}'")
+                            Logger.warn(
+                                f"There were {len(compatible_types)} matched types for the node '{node.id()}', "
+                                f"the program has guessed an exact compatible match of "
+                                f"type '{ultra.output_type.id()}' to tag '{ultra.tag}'"
+                            )
                             return [lbl, ultra.tag], ultra.output_type
                         else:
                             s = "/".join(input_parts)
-                            compat_str = ", ".join(f"{x.tag}: {x.output_type.id()}" for x in compatible_types)
+                            compat_str = ", ".join(
+                                f"{x.tag}: {x.output_type.id()}"
+                                for x in compatible_types
+                            )
                             raise Exception(
                                 f"The node '{node.id()}' did not specify an input tag, and used '{guess_type.id()}'"
                                 f" from the start node to guess the input by type, matching {len(compatible_types)}"
                                 f" compatible ({compat_str}) and {len(ultra_compatible)} exact types."
-                                f" You will need to provide more information to proceed.")
+                                f" You will need to provide more information to proceed."
+                            )
                 else:
                     possible_tags = ", ".join(f"'{x}'" for x in outs)
                     s = "/".join(input_parts)
                     Logger.critical(
                         f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the "
-                        f"one of the following tags: {possible_tags}")
+                        f"one of the following tags: {possible_tags}"
+                    )
                     return input_parts, None
 
             tag = input_parts[1]
             t = snode.step.tool().outputs_map().get(tag)
             if t:
                 if len(input_parts) != 2:
-                    Logger.log(f"The node '{node.id()}' did not correctly reference an output of the tool "
-                               f"'{snode.step.tool().id()}', this was automatically corrected "
-                               f"({'/'.join(input_parts)} → {lbl}/{tag})", LogLevel.WARNING)
+                    Logger.log(
+                        f"The node '{node.id()}' did not correctly reference an output of the tool "
+                        f"'{snode.step.tool().id()}', this was automatically corrected "
+                        f"({'/'.join(input_parts)} → {lbl}/{tag})",
+                        LogLevel.WARNING,
+                    )
                 input_parts = [lbl, tag]
                 return input_parts, t.output_type
 
             possible_tags = ", ".join(f"'{x}'" for x in outs)
-            raise Exception(f"Could not identify an output called '{tag}' on the node '{node.id()}' "
-                            f", possible tags: {possible_tags}")
-
-        return input_parts, None
+            raise Exception(
+                f"Could not identify an output called '{tag}' on the node '{node.id()}' "
+                f", possible tags: {possible_tags}"
+            )
 
     @staticmethod
-    def get_tag_and_type_from_final_edge_node(node: Node, input_parts: List[str], guess_type: Optional[DataType],
-                                              referenced_from: List[str]) -> Tuple[List[str], Optional[DataType]]:
+    def get_tag_and_type_from_final_edge_node(
+        node: Node,
+        input_parts: List[str],
+        guess_type: Optional[DataType],
+        referenced_from: List[str],
+    ) -> Tuple[List[str], Optional[DataType]]:
         if guess_type is not None:
             guess_type = guess_type.received_type()
 
         if node.node_type == NodeTypes.INPUT:
             raise Exception(f"Can't connect TO input node '{node.id()}'")
         if node.node_type == NodeTypes.OUTPUT:
-            raise Exception("An internal error has occurred: output nodes should be filtered from the "
-                            "function 'get_tag_and_type_from_final_edge_node'")
+            raise Exception(
+                "An internal error has occurred: output nodes should be filtered from the "
+                "function 'get_tag_and_type_from_final_edge_node'"
+            )
 
         if not isinstance(node, StepNode):
-            raise Exception("An internal error has occurred in 'get_tag_and_type_from_start_edge_node'"
-                            " when converting Node to StepNode.")
+            raise Exception(
+                "An internal error has occurred in 'get_tag_and_type_from_start_edge_node'"
+                " when converting Node to StepNode."
+            )
 
         snode: StepNode = node
         ins = snode.inputs()
@@ -591,53 +698,75 @@ class Workflow(Tool):
         lbl = input_parts[0]
 
         if len(types) == 0:
-            raise InvalidStepsException(f"The step '{snode.id()}' has no inputs, and cannot be added to this workflow")
+            raise InvalidStepsException(
+                f"The step '{snode.id()}' has no inputs, and cannot be added to this workflow"
+            )
 
         if len(types) == 1:
             t = types[0]
             if len(input_parts) != 2:
                 s = "/".join(input_parts)
-                Logger.log(f"The node '{snode.id()}' did not correctly reference an input of the tool "
-                           f"'{snode.step.tool().id()}', this was automatically corrected "
-                           f"({s} → {lbl}.{t[0]})", LogLevel.WARNING)
+                Logger.log(
+                    f"The node '{snode.id()}' did not correctly reference an input of the tool "
+                    f"'{snode.step.tool().id()}', this was automatically corrected "
+                    f"({s} → {lbl}.{t[0]})",
+                    LogLevel.WARNING,
+                )
             input_parts = [lbl, t[0]]
             return input_parts, t[1]
         elif len(input_parts) < 2:
             if guess_type is not None:
                 # try to guess it from the outputs
-                compatible_types = [ins[x] for x in ins if
-                                    (not ins[x].input_type.optional) and ins[x].input_type.can_receive_from(guess_type)]
+                compatible_types = [
+                    ins[x]
+                    for x in ins
+                    if (not ins[x].input_type.optional)
+                    and ins[x].input_type.can_receive_from(guess_type)
+                ]
                 if len(compatible_types) == 1:
                     inp = compatible_types[0]
-                    Logger.info(f"Guessed the compatible match between {'.'.join(referenced_from)} → {node.id()}.[unknown] with source type '{guess_type.id()}'"
-                                f" → '{inp.input_type.id()}' ('{node.id()}' → '{node.id()}.{inp.tag}')")
+                    Logger.info(
+                        f"Guessed the compatible match between {'.'.join(referenced_from)} → {node.id()}.[unknown] with source type '{guess_type.id()}'"
+                        f" → '{inp.input_type.id()}' ('{node.id()}' → '{node.id()}.{inp.tag}')"
+                    )
                     return [lbl, inp.tag], inp.input_type
                 else:
                     # Should this step also take into consideration the _optional_ nature of the node,
                     # ie: should it favour required nodes if that's an option
-                    ultra_compatible = [ins[x] for x in ins if
-                                        (not ins[x].input_type.optional) and type(ins[x].input_type) == type(
-                                            guess_type)]
+                    ultra_compatible = [
+                        ins[x]
+                        for x in ins
+                        if (not ins[x].input_type.optional)
+                        and type(ins[x].input_type) == type(guess_type)
+                    ]
 
                     if len(ultra_compatible) == 1:
                         ultra = ultra_compatible[0]
-                        Logger.warn(f"There were {len(compatible_types)} matched types for the node '{node.id()}', "
-                                    f"the program has guessed an exact compatible match of "
-                                    f"type '{ultra.input_type.id()}' to tag '{ultra.tag}'")
+                        Logger.warn(
+                            f"There were {len(compatible_types)} matched types for the node '{node.id()}', "
+                            f"the program has guessed an exact compatible match of "
+                            f"type '{ultra.input_type.id()}' to tag '{ultra.tag}'"
+                        )
                         return [lbl, ultra.tag], ultra.input_type
                     else:
                         s = ".".join(input_parts)
-                        compat_str = ", ".join(f"{x.tag}: {x.input_type.id()}" for x in compatible_types)
-                        raise Exception(f"An error occurred when connecting '{'.'.join(referenced_from)}' to "
-                                        f"'{'.'.join(input_parts)}'. There were {len(compatible_types)} compatible "
-                                        f"types ({compat_str}) and {len(ultra_compatible)} exact types."
-                                        f" You will need to provide more information to proceed.")
+                        compat_str = ", ".join(
+                            f"{x.tag}: {x.input_type.id()}" for x in compatible_types
+                        )
+                        raise Exception(
+                            f"An error occurred when connecting '{'.'.join(referenced_from)}' to "
+                            f"'{'.'.join(input_parts)}'. There were {len(compatible_types)} compatible "
+                            f"types ({compat_str}) and {len(ultra_compatible)} exact types."
+                            f" You will need to provide more information to proceed."
+                        )
             else:
 
                 possible_tags = ", ".join(f"'{x}'" for x in ins)
                 s = ".".join(input_parts)
-                Logger.critical(f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the "
-                                f"one of the following tags: {possible_tags}")
+                Logger.critical(
+                    f"The tag '{s}' could not uniquely identify an input of '{snode.id()}', requires the "
+                    f"one of the following tags: {possible_tags}"
+                )
                 return input_parts, None
 
         else:
@@ -646,38 +775,60 @@ class Workflow(Tool):
             if tool_input:
                 if len(input_parts) != 2:
                     s = "/".join(input_parts)
-                    Logger.log(f"The node '{snode.id()}' did not correctly reference an input of the tool "
-                               f"'{snode.step.tool().id()}', this was automatically corrected "
-                               f"({s} → {lbl}/{tag})", LogLevel.WARNING)
+                    Logger.log(
+                        f"The node '{snode.id()}' did not correctly reference an input of the tool "
+                        f"'{snode.step.tool().id()}', this was automatically corrected "
+                        f"({s} → {lbl}/{tag})",
+                        LogLevel.WARNING,
+                    )
                 input_parts = [lbl, tag]
                 return input_parts, tool_input.input_type
 
             possible_tags = ", ".join(f"'{x}'" for x in ins)
-            raise Exception(f"Could not identify an input called '{tag}' on the node '{snode.id()}' "
-                            f", possible tags: {possible_tags}")
+            raise Exception(
+                f"Could not identify an input called '{tag}' on the node '{snode.id()}' "
+                f", possible tags: {possible_tags}"
+            )
 
-        raise Exception("Unhandled pathway in 'get_tag_and_type_from_node'")
+        # raise Exception("Unhandled pathway in 'get_tag_and_type_from_node'")
 
     @staticmethod
-    def guess_connection_between_nodes(s_node: Node, f_node: Node) \
-            -> Optional[Tuple[Tuple[List[str], DataType], Tuple[List[str], DataType]]]:
+    def guess_connection_between_nodes(
+        s_node: Node, f_node: Node
+    ) -> Optional[Tuple[Tuple[List[str], DataType], Tuple[List[str], DataType]]]:
         outs, ins = s_node.outputs(), f_node.inputs()
 
-        s_types: List[Tuple[List[str], DataType]] = [([s_node.id(), x], outs[x].output_type) for x in outs]
-        f_types: List[Tuple[List[str], DataType]] = [([f_node.id(), x], ins[x].input_type) for x in ins]
+        s_types: List[Tuple[List[str], DataType]] = [
+            ([s_node.id(), x], outs[x].output_type) for x in outs
+        ]
+        f_types: List[Tuple[List[str], DataType]] = [
+            ([f_node.id(), x], ins[x].input_type) for x in ins
+        ]
 
         # O(n**2) for determining types
-        matching_types: List[Tuple[Tuple[List[str], DataType], Tuple[List[str], DataType]]] = []
+        matching_types: List[
+            Tuple[Tuple[List[str], DataType], Tuple[List[str], DataType]]
+        ] = []
         for s_type in s_types:
-            matching_types.extend([(s_type, f_type) for f_type in f_types if f_type[1].can_receive_from(s_type[1])])
+            matching_types.extend(
+                [
+                    (s_type, f_type)
+                    for f_type in f_types
+                    if f_type[1].can_receive_from(s_type[1])
+                ]
+            )
 
         if len(matching_types) == 0:
-            raise InvalidInputsException(f"Can't find a common type between '{s_node.id()}' and '{f_node.id()}'")
+            raise InvalidInputsException(
+                f"Can't find a common type between '{s_node.id()}' and '{f_node.id()}'"
+            )
 
         if len(matching_types) > 1:
             compat = [str(t) for t in matching_types]
-            message = f"Couldn't guess the single connection between '{s_node.id()}' and '{f_node.id()}', " \
+            message = (
+                f"Couldn't guess the single connection between '{s_node.id()}' and '{f_node.id()}', "
                 f"there was {len(compat)} compatible connections ({compat})"
+            )
             Logger.log(message, LogLevel.CRITICAL)
             return None
 
@@ -687,26 +838,46 @@ class Workflow(Tool):
 
     # TRANSLATIONS
 
-    def translate(self, translation: translations.SupportedTranslation, to_console=True, to_disk=False, with_docker=True,
-                  with_hints=False, with_resource_overrides=False, write_inputs_file=False,
-                  should_validate=False, should_zip=True, export_path=ExportPathKeywords.default,
-                  merge_resources=False, hints=None, allow_null_if_not_optional=True, additional_inputs:Dict=None):
-        return translations.translate_workflow(self,
-                                               translation=translation,
-                                               to_console=to_console,
-                                               to_disk=to_disk,
-                                               with_docker=with_docker,
-                                               with_resource_overrides=with_resource_overrides,
-                                               should_zip=should_zip,
-                                               export_path=export_path,
-                                               write_inputs_file=write_inputs_file,
-                                               should_validate=should_validate,
-                                               merge_resources=merge_resources,
-                                               hints=hints,
-                                               allow_null_if_not_optional=allow_null_if_not_optional,
-                                               additional_inputs=additional_inputs)
+    def translate(
+        self,
+        translation: translations.SupportedTranslation,
+        to_console=True,
+        to_disk=False,
+        with_docker=True,
+        with_hints=False,
+        with_resource_overrides=False,
+        write_inputs_file=False,
+        should_validate=False,
+        should_zip=True,
+        export_path=ExportPathKeywords.default,
+        merge_resources=False,
+        hints=None,
+        allow_null_if_not_optional=True,
+        additional_inputs: Dict = None,
+    ):
+        return translations.translate_workflow(
+            self,
+            translation=translation,
+            to_console=to_console,
+            to_disk=to_disk,
+            with_docker=with_docker,
+            with_resource_overrides=with_resource_overrides,
+            should_zip=should_zip,
+            export_path=export_path,
+            write_inputs_file=write_inputs_file,
+            should_validate=should_validate,
+            merge_resources=merge_resources,
+            hints=hints,
+            allow_null_if_not_optional=allow_null_if_not_optional,
+            additional_inputs=additional_inputs,
+        )
 
-    def generate_resources_file(self, translation: translations.SupportedTranslation, hints: Dict[str, Any]=None, to_console=True):
+    def generate_resources_file(
+        self,
+        translation: translations.SupportedTranslation,
+        hints: Dict[str, Any] = None,
+        to_console=True,
+    ):
         tr = translations.build_resources_input(self, translation, hints)
         if to_console:
             print(tr)
@@ -722,7 +893,13 @@ class Workflow(Tool):
                 tools[tl.id()] = tl
         return tools
 
-    def generate_resources_table(self, hints: Dict[str, Any], to_console=True, to_disk=False, output_type: str="tsv"):
+    def generate_resources_table(
+        self,
+        hints: Dict[str, Any],
+        to_console=True,
+        to_disk=False,
+        output_type: str = "tsv",
+    ):
         delim = "\t" if output_type == "tsv" else ","
 
         tools = self.get_tools()
@@ -739,10 +916,14 @@ class Workflow(Tool):
 
         if to_console:
             import tabulate
+
             print(tabulate.tabulate(data, headers="firstrow"))
         if to_disk:
             import csv
-            d = ExportPathKeywords.resolve(ExportPathKeywords.default_no_spec, None, self.id())
+
+            d = ExportPathKeywords.resolve(
+                ExportPathKeywords.default_no_spec, None, self.id()
+            )
             path = d + f"resources.{output_type}"
 
             if not os.path.isdir(d):

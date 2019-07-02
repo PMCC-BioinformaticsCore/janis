@@ -7,7 +7,6 @@ from janis.workflow.step import StepNode
 
 
 class ArrayTestTool(CommandTool):
-
     @staticmethod
     def tool():
         return "TestStepTool"
@@ -17,9 +16,7 @@ class ArrayTestTool(CommandTool):
         return "echo"
 
     def inputs(self):
-        return [
-            ToolInput("inputs", Array(String()))
-        ]
+        return [ToolInput("inputs", Array(String()))]
 
     def outputs(self):
         return []
@@ -28,11 +25,11 @@ class ArrayTestTool(CommandTool):
         return "'test_step' array of strings tool"
 
     @staticmethod
-    def docker(): return None
+    def docker():
+        return None
 
 
 class TestStep(TestCase):
-
     def setUp(self):
         Logger.mute()
 

@@ -4,7 +4,6 @@ from janis.unix.tools.unixtool import UnixTool
 
 
 class Cat(UnixTool):
-
     @staticmethod
     def tool():
         return "cat"
@@ -17,9 +16,7 @@ class Cat(UnixTool):
         return "cat"
 
     def inputs(self):
-        return [
-            ToolInput("files", Array(File()))
-        ]
+        return [ToolInput("files", Array(File()))]
 
     def outputs(self):
         return []

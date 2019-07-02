@@ -6,19 +6,14 @@ It's a bit of a random collection of things that should be refactored:
     - NestedDictionary (store values in nested structure (with root key))
     - RST Helpers
 """
-import traceback
 from inspect import isfunction, ismodule, isabstract, isclass
 
 from constants import PROJECT_ROOT_DIR
-
+from janis.types.common_data_types import all_types, Array
 from janis.types.data_types import DataType
 from janis.workflow.workflow import Workflow
-from janis.types.common_data_types import all_types, Array
-
 
 # Import modules here so that the tool registry knows about them
-import bioinformatics
-import janis.unix
 
 # Output settings
 docs_dir = PROJECT_ROOT_DIR + "/docs/"
@@ -33,7 +28,7 @@ from typing import List, Set, Type, Tuple
 import tabulate
 from datetime import date
 
-from janis import CommandTool, Logger, Metadata
+from janis import CommandTool, Logger
 from janis.tool.tool import Tool
 from janis.utils.metadata import Metadata
 
@@ -41,7 +36,9 @@ from janis.utils.metadata import Metadata
 class NestedDictionaryTypeException(Exception):
     def __init__(self, key, error_type, keys=None):
         keychain = (" for keys: " + ".".join(keys)) if keys else ""
-        super(NestedDictionaryTypeException, self).__init__(f"Incorrect type '{error_type}' for key '{key}'{keychain}")
+        super(NestedDictionaryTypeException, self).__init__(
+            f"Incorrect type '{error_type}' for key '{key}'{keychain}"
+        )
         self.keys = keys
         self.key = key
         self.error_type = error_type
@@ -71,18 +68,31 @@ def prepare_tool(tool: Tool):
     en = f" ({tool.id()})" if fn != tool.id() else ""
     tn = fn + en
 
-    formatted_url = format_rst_link(metadata.documentationUrl, metadata.documentationUrl) if metadata.documentationUrl \
+    formatted_url = (
+        format_rst_link(metadata.documentationUrl, metadata.documentationUrl)
+        if metadata.documentationUrl
         else "*No URL to the documentation was provided*"
+    )
 
     input_headers = ["name", "type", "prefix", "position", "documentation"]
 
-    required_input_tuples = [[i.id(), i.input_type.id(), i.prefix, i.position, i.doc] for i in tool.inputs() if
-                             not i.input_type.optional]
-    optional_input_tuples = [[i.id(), i.input_type.id(), i.prefix, i.position, i.doc] for i in tool.inputs() if
-                             i.input_type.optional]
+    required_input_tuples = [
+        [i.id(), i.input_type.id(), i.prefix, i.position, i.doc]
+        for i in tool.inputs()
+        if not i.input_type.optional
+    ]
+    optional_input_tuples = [
+        [i.id(), i.input_type.id(), i.prefix, i.position, i.doc]
+        for i in tool.inputs()
+        if i.input_type.optional
+    ]
 
-    formatted_required_inputs = tabulate.tabulate(required_input_tuples, input_headers, tablefmt="rst")
-    formatted_optional_inputs = tabulate.tabulate(optional_input_tuples, input_headers, tablefmt="rst")
+    formatted_required_inputs = tabulate.tabulate(
+        required_input_tuples, input_headers, tablefmt="rst"
+    )
+    formatted_optional_inputs = tabulate.tabulate(
+        optional_input_tuples, input_headers, tablefmt="rst"
+    )
 
     output_headers = ["name", "type", "documentation"]
     output_tuples = [[o.id(), o.output_type.id(), o.doc] for o in tool.outputs()]
@@ -153,7 +163,9 @@ def prepare_data_type(dt: DataType):
     secondary = ""
 
     if dt.secondary_files():
-        secondary = "Secondary files: " + ", ".join(f"``{s}``" for s in dt.secondary_files())
+        secondary = "Secondary files: " + ", ".join(
+            f"``{s}``" for s in dt.secondary_files()
+        )
 
     return f"""
 {dt_name}
@@ -181,13 +193,17 @@ def nested_keys_add(d, keys: List[str], value, root_key):
         key = keys[0]
         if key in d:
             if not isinstance(d[key], dict):
-                raise NestedDictionaryTypeException(key=key, error_type=type(d[key]), keys=keys)
+                raise NestedDictionaryTypeException(
+                    key=key, error_type=type(d[key]), keys=keys
+                )
             nested_keys_add(d[key], keys[1:], value, root_key=root_key)
             return d
         else:
             d[key] = nested_keys_add({}, keys[1:], value, root_key=root_key)
     except NestedDictionaryTypeException as de:
-        raise NestedDictionaryTypeException(key=de.key, error_type=de.error_type, keys=keys)
+        raise NestedDictionaryTypeException(
+            key=de.key, error_type=de.error_type, keys=keys
+        )
 
     return d
 
@@ -213,13 +229,16 @@ def get_toc(title, intro_text, subpages, caption="Contents", max_depth=1):
 
 def get_tools_and_datatypes():
     import janis.bioinformatics, janis.unix
+
     modules = [janis.bioinformatics, janis.unix]
 
     tools: Set[Type[Tool]] = set()
     data_types: Set[Type[DataType]] = set(all_types)
 
     for m in modules:
+        # noinspection PyTypeChecker
         tt, dt = get_tool_from_module(m.tools)
+        # noinspection PyTypeChecker
         tdt, ddt = get_tool_from_module(m.data_types)
 
         tools = tools.union(tt).union(tdt)
@@ -228,8 +247,14 @@ def get_tools_and_datatypes():
     return list(tools), list(data_types)
 
 
-def get_tool_from_module(module, seen_modules=None) -> Tuple[Set[Type[Tool]], Set[Type[DataType]]]:
-    q = {n: cls for n, cls in list(module.__dict__.items()) if not n.startswith("__") and type(cls) != type}
+def get_tool_from_module(
+    module, seen_modules=None
+) -> Tuple[Set[Type[Tool]], Set[Type[DataType]]]:
+    q = {
+        n: cls
+        for n, cls in list(module.__dict__.items())
+        if not n.startswith("__") and type(cls) != type
+    }
 
     tools: Set[Type[Tool]] = set()
     data_types: Set[Type[DataType]] = set()
@@ -241,16 +266,20 @@ def get_tool_from_module(module, seen_modules=None) -> Tuple[Set[Type[Tool]], Se
         cls = q[k]
         try:
             if hasattr(cls, "__name__"):
-                if cls.__name__ in seen_modules: continue
+                if cls.__name__ in seen_modules:
+                    continue
                 seen_modules.add(cls.__name__)
 
-            if isfunction(cls): continue
+            if isfunction(cls):
+                continue
             if ismodule(cls):
                 t, d = get_tool_from_module(cls, seen_modules)
                 tools = tools.union(t)
                 data_types = data_types.union(d)
-            elif isabstract(cls): continue
-            elif not isclass(cls): continue
+            elif isabstract(cls):
+                continue
+            elif not isclass(cls):
+                continue
             elif issubclass(cls, CommandTool):
                 print("Found commandtool: " + cls.tool())
                 tools.add(cls)
@@ -284,10 +313,9 @@ def prepare_all_tools():
         Logger.log("Preparing " + tool.id())
         output_str = prepare_tool(tool)
 
-        tool_path_components = list(filter(
-            lambda a: bool(a),
-            [tool.tool_module(), tool.tool_provider()]
-        ))
+        tool_path_components = list(
+            filter(lambda a: bool(a), [tool.tool_module(), tool.tool_provider()])
+        )
 
         path_components = "/".join(tool_path_components)
         output_dir = f"{tools_dir}/{path_components}/"
@@ -296,7 +324,9 @@ def prepare_all_tools():
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        nested_keys_add(tool_module_index, tool_path_components, tool.id(), root_key=ROOT_KEY)
+        nested_keys_add(
+            tool_module_index, tool_path_components, tool.id(), root_key=ROOT_KEY
+        )
 
         with open(output_filename, "w+") as tool_file:
             tool_file.write(output_str)
@@ -341,22 +371,24 @@ def prepare_all_tools():
         indexed_submodules_tools = [m + "/index" for m in submodule_keys]
 
         with open(module_filename, "w+") as module_file:
-            module_file.write(get_toc(
-                title=title,
-                intro_text="Automatically generated index page for {module} {title}",
-                subpages=indexed_submodules_tools + module_tools,
-                max_depth=max_depth
-            ))
+            module_file.write(
+                get_toc(
+                    title=title,
+                    intro_text="Automatically generated index page for {module} {title}",
+                    subpages=indexed_submodules_tools + module_tools,
+                    max_depth=max_depth,
+                )
+            )
 
         for submodule in submodule_keys:
             prepare_modules_in_index(
-                contents=contents[submodule],
-                title=submodule,
-                dir=f"{dir}/{submodule}/"
+                contents=contents[submodule], title=submodule, dir=f"{dir}/{submodule}/"
             )
 
     prepare_modules_in_index(tool_module_index, title="Tools", dir=tools_dir)
-    prepare_modules_in_index(dt_module_index, title="Data Types", dir=dt_dir, max_depth=1)
+    prepare_modules_in_index(
+        dt_module_index, title="Data Types", dir=dt_dir, max_depth=1
+    )
 
 
 prepare_all_tools()

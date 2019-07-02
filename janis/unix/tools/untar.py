@@ -4,7 +4,6 @@ from janis.unix.tools.unixtool import UnixTool
 
 
 class Untar(UnixTool):
-
     @staticmethod
     def base_command():
         return ["tar", "xf"]
@@ -17,18 +16,15 @@ class Untar(UnixTool):
         return "Untar"
 
     def inputs(self):
-        return [
-            ToolInput("tarFile", TarFile(), position=0)
-        ]
+        return [ToolInput("tarFile", TarFile(), position=0)]
 
     def outputs(self):
-        return [
-            ToolOutput("files", Array(File()), glob=WildcardSelector("*.java"))
-        ]
+        return [ToolOutput("files", Array(File()), glob=WildcardSelector("*.java"))]
 
     @staticmethod
     def docker():
         return "ubuntu:latest"
+
 
 """
 

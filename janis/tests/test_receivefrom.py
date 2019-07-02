@@ -10,7 +10,6 @@ class FileSubclass(File):
 
 
 class Test_ReceiveFrom(unittest.TestCase):
-
     def test_str_str(self):
         s1 = String()
         s2 = String()

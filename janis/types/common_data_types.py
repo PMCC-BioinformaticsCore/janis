@@ -9,7 +9,6 @@ from janis.types.data_types import DataType, NativeTypes, NativeType
 
 
 class String(DataType):
-
     @staticmethod
     def name():
         return "String"
@@ -41,8 +40,9 @@ class String(DataType):
 
 
 class Filename(String):
-
-    def __init__(self, prefix=None, suffix=None, extension: str=None, guid: str=None):
+    def __init__(
+        self, prefix=None, suffix=None, extension: str = None, guid: str = None
+    ):
         """
         :param suffix: suffix the guid
         :param extension: with no '.' (dot)
@@ -113,7 +113,6 @@ concerned what the filename should be. The Filename DataType should NOT be used 
 
 
 class Int(DataType):
-
     @staticmethod
     def name():
         return "Integer"
@@ -139,7 +138,6 @@ class Int(DataType):
 
 
 class Float(DataType):
-
     @staticmethod
     def name():
         return "Float"
@@ -165,7 +163,6 @@ class Float(DataType):
 
 
 class Double(DataType):
-
     @staticmethod
     def name():
         return "Double"
@@ -191,7 +188,6 @@ class Double(DataType):
 
 
 class Boolean(DataType):
-
     @staticmethod
     def name():
         return "Boolean"
@@ -217,7 +213,6 @@ class Boolean(DataType):
 
 
 class File(DataType):
-
     def __init__(self, optional=False):
         """
         Specifically exclude default
@@ -237,18 +232,13 @@ class File(DataType):
 
     @classmethod
     def schema(cls) -> Dict:
-        return {
-            "path": {"type": "string", "required": True}
-        }
+        return {"path": {"type": "string", "required": True}}
 
     def get_value_from_meta(self, meta):
         return meta.get("path")
 
     def cwl_input(self, value: Any):
-        return {
-            "class": cwlgen.CwlTypes.FILE,
-            "path": value
-        }
+        return {"class": cwlgen.CwlTypes.FILE, "path": value}
 
     def validate_value(self, meta: Any, allow_null_if_not_optional: bool) -> bool:
         if meta is None:
@@ -279,19 +269,14 @@ class Directory(DataType):
 
     @classmethod
     def schema(cls) -> Dict:
-        return {
-            "path": {"type": "string", "required": True}
-        }
+        return {"path": {"type": "string", "required": True}}
 
     def input_field_from_input(self, meta):
         return meta["path"]
 
     def cwl_input(self, value: Any):
         # WDL: "{workflowName}.label" = meta["path"}
-        return {
-            "class": cwlgen.CwlTypes.DIRECTORY,
-            "path": value
-        }
+        return {"class": cwlgen.CwlTypes.DIRECTORY, "path": value}
 
     def validate_value(self, meta: Any, allow_null_if_not_optional: bool) -> bool:
         if meta is None:
@@ -300,7 +285,6 @@ class Directory(DataType):
 
 
 class Array(DataType):
-
     def __init__(self, t: DataType, optional=False):
         if not isinstance(t, DataType):
             raise Exception(f"Type t ({type(t)}) must be an instance of 'DataType'")
@@ -345,9 +329,7 @@ class Array(DataType):
 
     def map_cwl_type(self, parameter: cwlgen.Parameter) -> cwlgen.Parameter:
         parameter.type = cwlgen.CommandInputArraySchema(
-            items=None,
-            label=None,
-            input_binding=None
+            items=None, label=None, input_binding=None
         )
         return parameter
 
@@ -378,11 +360,12 @@ class Array(DataType):
             return self.optional or allow_null_if_not_optional
         if not isinstance(meta, list):
             return False
-        return all(self.subtype().validate_value(q, allow_null_if_not_optional) for q in meta)
+        return all(
+            self.subtype().validate_value(q, allow_null_if_not_optional) for q in meta
+        )
 
 
 class Stdout(File):
-
     @staticmethod
     def name():
         return "Stdout"
@@ -406,4 +389,15 @@ class Stdout(File):
         return True
 
 
-all_types = [String, Filename, Int, Float, Double, Boolean, File, Directory, Stdout, Array]
+all_types = [
+    String,
+    Filename,
+    Int,
+    Float,
+    Double,
+    Boolean,
+    File,
+    Directory,
+    Stdout,
+    Array,
+]

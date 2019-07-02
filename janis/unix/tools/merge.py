@@ -3,7 +3,6 @@ from janis.unix.tools.unixtool import UnixTool
 
 
 class Merge(UnixTool):
-
     def friendly_name(self) -> str:
         return "Merge Files"
 
@@ -16,14 +15,11 @@ class Merge(UnixTool):
         return ["cat"]
 
     def inputs(self):
-        return [
-            ToolInput("files", Array(File()))
-        ]
+        return [ToolInput("files", Array(File()))]
 
     def outputs(self):
-        return [
-            ToolOutput("merged", Stdout())
-        ]
+        return [ToolOutput("merged", Stdout())]
+
     @staticmethod
     def docker():
         return "ubuntu:latest"

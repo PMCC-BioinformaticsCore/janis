@@ -61,4 +61,3 @@ class TarFile(File):
 #
 #   def is_subtype_of(self, other):
 #     return False
-

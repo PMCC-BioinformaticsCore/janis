@@ -1,17 +1,26 @@
 from unittest import TestCase
 
-from janis import File, Array, Logger, CommandTool, ToolInput, String, Input, Output, Step, Workflow, ToolOutput
+from janis import (
+    File,
+    Array,
+    Logger,
+    CommandTool,
+    ToolInput,
+    String,
+    Input,
+    Output,
+    Step,
+    Workflow,
+    ToolOutput,
+)
 from janis.graph.stepinput import StepInput, first_value, Edge
-
 from janis.unix.data_types.tarfile import TarFile
-from janis.unix.tools.echo import Echo
-from janis.unix.tools.tar import Tar
-from janis.unix.tools.untar import Untar
 from janis.unix.tools.cat import Cat
+from janis.unix.tools.echo import Echo
+from janis.unix.tools.untar import Untar
 
 
 class SingleTestTool(CommandTool):
-
     @staticmethod
     def tool():
         return "TestStepTool"
@@ -21,17 +30,13 @@ class SingleTestTool(CommandTool):
         return "echo"
 
     def inputs(self):
-        return [
-            ToolInput("inputs", String())
-        ]
+        return [ToolInput("inputs", String())]
 
     def friendly_name(self):
         return None
 
     def outputs(self):
-        return [
-            ToolOutput("out", String())
-        ]
+        return [ToolOutput("out", String())]
 
     @staticmethod
     def docker():
@@ -39,7 +44,6 @@ class SingleTestTool(CommandTool):
 
 
 class ArrayTestTool(CommandTool):
-
     @staticmethod
     def tool():
         return "ArrayStepTool"
@@ -52,14 +56,10 @@ class ArrayTestTool(CommandTool):
         return "echo"
 
     def inputs(self):
-        return [
-            ToolInput("inputs", Array(String()))
-        ]
+        return [ToolInput("inputs", Array(String()))]
 
     def outputs(self):
-        return [
-            ToolOutput("outs", Array(String()))
-        ]
+        return [ToolOutput("outs", Array(String()))]
 
     @staticmethod
     def docker():
@@ -67,7 +67,6 @@ class ArrayTestTool(CommandTool):
 
 
 class TestWorkflow(TestCase):
-
     def setUp(self):
         Logger.mute()
 
@@ -135,7 +134,7 @@ class TestWorkflow(TestCase):
     def test_add_edge(self):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
-        stp = Step("stp", Echo())       # Only has one input, with no output
+        stp = Step("stp", Echo())  # Only has one input, with no output
         w.add_items([inp, stp])
         e = w.add_edge(inp, stp)
 
@@ -147,7 +146,7 @@ class TestWorkflow(TestCase):
     def test_anonymous_add_edge(self):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
-        stp = Step("stp", Echo())       # Only has one input, with no output
+        stp = Step("stp", Echo())  # Only has one input, with no output
         # w.add_items([inp, stp])
         e = w.add_edge(inp, stp)
 
@@ -159,7 +158,7 @@ class TestWorkflow(TestCase):
     def test_anonymous_add_qualified_edge(self):
         w = Workflow("test_add_edge")
         inp = Input("inp", String())
-        stp = Step("stp", Echo())       # Only has one input, with no output
+        stp = Step("stp", Echo())  # Only has one input, with no output
         e = w.add_edge(inp, stp.inp)
 
         self.assertEqual(e.start.id(), inp.id())
@@ -190,9 +189,9 @@ class TestWorkflow(TestCase):
         e1 = first_value(s1.source_map)
         e2 = first_value(s2.source_map)
 
-        self.assertEqual(e1.start.id(),  inp.id())
+        self.assertEqual(e1.start.id(), inp.id())
         self.assertEqual(e1.finish.id(), stp.id())
-        self.assertEqual(e2.start.id(),  stp.id())
+        self.assertEqual(e2.start.id(), stp.id())
         self.assertEqual(e2.finish.id(), out.id())
 
     def test_qualified_pipe(self):
@@ -242,7 +241,6 @@ class TestWorkflow(TestCase):
         # w.dump_cwl(to_disk=True)
 
         self.assertTrue(True)
-
 
     def test_add_scatter(self):
         w = Workflow("scatterededge")

@@ -94,15 +94,19 @@ def parse_cwl_dict(d):
 
             if "[]" in typ:
                 opt = ", optional=True" if optional else ""
-                typ = "Array(" + typ.replace("[]", "").replace("?", "").title() + "()" + opt + ")"
+                typ = (
+                    "Array("
+                    + typ.replace("[]", "").replace("?", "").title()
+                    + "()"
+                    + opt
+                    + ")"
+                )
             else:
                 opt = "optional=True" if optional else ""
                 typ = typ.replace("?", "").title() + "(" + opt + ")"
 
             s = ToolInputFormat.format(
-                id=i,
-                typ=typ,
-                args="".join((", " + x) for x in args)
+                id=i, typ=typ, args="".join((", " + x) for x in args)
             )
             if optional:
                 optional_inputs.append(s)
@@ -122,7 +126,13 @@ def parse_cwl_dict(d):
 
             if "[]" in typ:
                 opt = ", optional=True" if optional else ""
-                typ = "Array(" + typ.replace("[]", "").replace("?", "").title() + "()" + opt + ")"
+                typ = (
+                    "Array("
+                    + typ.replace("[]", "").replace("?", "").title()
+                    + "()"
+                    + opt
+                    + ")"
+                )
             else:
                 opt = "optional=True" if optional else ""
                 typ = typ.replace("?", "").title() + "(" + opt + ")"
@@ -133,11 +143,11 @@ def parse_cwl_dict(d):
                 if "glob" in out["outputBinding"]:
                     args.append(f"glob='{out['outputBinding']['glob']}'")
 
-            outputs.append(ToolOutputFormat.format(
-                id=o,
-                typ=typ,
-                args="".join((", " + x) for x in args)
-            ))
+            outputs.append(
+                ToolOutputFormat.format(
+                    id=o, typ=typ, args="".join((", " + x) for x in args)
+                )
+            )
 
     if d_arguments is not None:
         for a in d_arguments:
@@ -148,21 +158,24 @@ def parse_cwl_dict(d):
             if "prefix" in a:
                 args.append(f'prefix="{a["prefix"]}"')
 
-            arguments.append(ToolArgumentFormat.format(
-                value=value,
-                args="".join((", " + x) for x in args)
-            ))
-    print(CommandToolFormat.format(
-        toolClass=tool.title(),
-        tool=tool,
-        baseCommand=base_command,
-        required_inputs="\n".join(("    " + i) for i in inputs),
-        optional_inputs="\n".join(("    " + i) for i in optional_inputs),
-        outputs="\n".join(("    " + o) for o in outputs),
-        arguments=", ".join(arguments),
-        docker=docker,
-        doc=f'"{doc}"'
-    ))
+            arguments.append(
+                ToolArgumentFormat.format(
+                    value=value, args="".join((", " + x) for x in args)
+                )
+            )
+    print(
+        CommandToolFormat.format(
+            toolClass=tool.title(),
+            tool=tool,
+            baseCommand=base_command,
+            required_inputs="\n".join(("    " + i) for i in inputs),
+            optional_inputs="\n".join(("    " + i) for i in optional_inputs),
+            outputs="\n".join(("    " + o) for o in outputs),
+            arguments=", ".join(arguments),
+            docker=docker,
+            doc=f'"{doc}"',
+        )
+    )
     # print("\n".join(("    " + i) for i in optional_inputs))
 
 

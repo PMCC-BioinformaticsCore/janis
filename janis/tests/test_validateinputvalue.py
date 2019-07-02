@@ -3,7 +3,6 @@ from janis import Input, String
 
 
 class TestValidateInputvalue(unittest.TestCase):
-
     def test_validate_string_optional_allowoptional_value(self):
         v = Input("aa", String(optional=True), "value")
         self.assertEqual(True, v.validate_value(True))
@@ -35,5 +34,3 @@ class TestValidateInputvalue(unittest.TestCase):
     def test_validate_string_nooptional_disallowoptional_novalue(self):
         v = Input("aa", String())
         self.assertEqual(False, v.validate_value(False))
-
-

@@ -1,12 +1,17 @@
-import re
 import unittest
 
 from janis import InputSelector
-
 from janis.types import StringFormatter
-from janis.utils.bracketmatching import get_keywords_between_braces, variable_name_validator
-from janis.utils.errors import IncorrectArgsException, TooManyArgsException, ConflictingArgumentsException, \
-    InvalidByProductException
+from janis.utils.bracketmatching import (
+    get_keywords_between_braces,
+    variable_name_validator,
+)
+from janis.utils.errors import (
+    IncorrectArgsException,
+    TooManyArgsException,
+    ConflictingArgumentsException,
+    InvalidByProductException,
+)
 
 
 class TestMatchValidator(unittest.TestCase):
@@ -29,7 +34,6 @@ class TestMatchValidator(unittest.TestCase):
 
 
 class TestBraceDetection(unittest.TestCase):
-
     def test_no_group(self):
         k = "there's no match here"
         res, _ = get_keywords_between_braces(k)
@@ -103,29 +107,42 @@ class TestMatchDetectionAndValidation(unittest.TestCase):
 
 
 class TestStringFormatterInit(unittest.TestCase):
-
     def test_no_format(self):
         b = StringFormatter("this _format has no arguments")
         self.assertDictEqual({}, b.kwargs)
 
     def test_one_correct_argument(self):
         b = StringFormatter("this {test} has one argument", test="My test _format")
-        self.assertDictEqual({'test': "My test _format"}, b.kwargs)
+        self.assertDictEqual({"test": "My test _format"}, b.kwargs)
 
     def test_one_incorrect_argument(self):
-        self.assertRaises(IncorrectArgsException, StringFormatter,
-                          format="this {other} has one argument", test="this will fail")
+        self.assertRaises(
+            IncorrectArgsException,
+            StringFormatter,
+            format="this {other} has one argument",
+            test="this will fail",
+        )
 
     def test_too_many_args(self):
-        self.assertRaises(TooManyArgsException, StringFormatter,
-                          format="this {other} has one argument", other="this will fail", extra="because", it="will")
+        self.assertRaises(
+            TooManyArgsException,
+            StringFormatter,
+            format="this {other} has one argument",
+            other="this will fail",
+            extra="because",
+            it="will",
+        )
 
     def test_too_many_args2(self):
-        self.assertRaises(TooManyArgsException, StringFormatter, format="this should fail", extra="will")
+        self.assertRaises(
+            TooManyArgsException,
+            StringFormatter,
+            format="this should fail",
+            extra="will",
+        )
 
 
 class TestStringFormatterConcat(unittest.TestCase):
-
     def test_formatter_and_string(self):
         b = StringFormatter("no args") + " here"
         self.assertEqual("no args here", b._format)
@@ -137,29 +154,39 @@ class TestStringFormatterConcat(unittest.TestCase):
         self.assertEqual(0, len(b.kwargs))
 
     def test_two_formatter_no_overlap(self):
-        b = StringFormatter("one {arg} ", arg="hi") + StringFormatter("a {different} arg", different="diff")
+        b = StringFormatter("one {arg} ", arg="hi") + StringFormatter(
+            "a {different} arg", different="diff"
+        )
         self.assertEqual("one {arg} a {different} arg", b._format)
         self.assertEqual(2, len(b.kwargs))
         self.assertEqual("hi", b.kwargs["arg"])
         self.assertEqual("diff", b.kwargs["different"])
 
     def test_two_formatters_equal_overlap(self):
-        b = StringFormatter("one {arg} ", arg="hi") + StringFormatter("and the same {arg}", arg="hi")
+        b = StringFormatter("one {arg} ", arg="hi") + StringFormatter(
+            "and the same {arg}", arg="hi"
+        )
         self.assertEqual("one {arg} and the same {arg}", b._format)
         self.assertEqual(1, len(b.kwargs))
         self.assertEqual("hi", b.kwargs["arg"])
 
     def test_two_formatters_nonequal_overlap(self):
         try:
-            b = StringFormatter("one {arg} ", arg="hi") + StringFormatter("and the same {arg}", arg="hi2")
-            self.fail("Test 'test_two_formatters_nonequal_overlap' should fail as the two args have different values")
+            b = StringFormatter("one {arg} ", arg="hi") + StringFormatter(
+                "and the same {arg}", arg="hi2"
+            )
+            self.fail(
+                "Test 'test_two_formatters_nonequal_overlap' should fail as the two args have different values"
+            )
         except ConflictingArgumentsException:
             self.assertTrue(True)
 
     def test_byproduct_by_concat_string(self):
         try:
             b = StringFormatter("one {") + "test}"
-            self.fail("Test 'test_byproduct_by_concat_string' should fail as concatting the string creates a new placeholder")
+            self.fail(
+                "Test 'test_byproduct_by_concat_string' should fail as concatting the string creates a new placeholder"
+            )
 
         except InvalidByProductException:
             self.assertTrue(True)
@@ -182,13 +209,17 @@ class TestStringFormatterResolve(unittest.TestCase):
         self.assertEqual("one value was resolved", resolved)
 
     def test_formatter_two_replacement(self):
-        b = StringFormatter("{howmany} argument(s) {wasORwere} resolved", howmany=None, wasORwere=None)
+        b = StringFormatter(
+            "{howmany} argument(s) {wasORwere} resolved", howmany=None, wasORwere=None
+        )
         resolved = b.resolve_with_resolved_values(howmany=1, wasORwere="was")
         self.assertEqual("1 argument(s) was resolved", resolved)
 
     def test_formatter_duplicate_replacement(self):
         b = StringFormatter("{arg} is the same as {arg}", arg=None)
-        resolved = b.resolve_with_resolved_values(arg="S07E25")     # ;) https://www.youtube.com/watch?v=7WCfTREZSdQ
+        resolved = b.resolve_with_resolved_values(
+            arg="S07E25"
+        )  # ;) https://www.youtube.com/watch?v=7WCfTREZSdQ
         self.assertEqual("S07E25 is the same as S07E25", resolved)
 
 

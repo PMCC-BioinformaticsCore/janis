@@ -1,6 +1,6 @@
 # process for adding new hints!
 from abc import ABC, abstractmethod
-from typing import Union, List, Type
+from typing import List, Type
 
 
 class Hint(ABC):
@@ -35,19 +35,27 @@ class CaptureType(HintEnum):
     THREEHUNDREDX = "300x"
 
     @staticmethod
-    def key(): return "captureType"
+    def key():
+        return "captureType"
 
     @staticmethod
     def symbols():
-        return [CaptureType.TARGETED, CaptureType.EXOME, CaptureType.CHROMOSOME,
-                CaptureType.THIRTYX, CaptureType.NINETYX, CaptureType.THREEHUNDREDX]
+        return [
+            CaptureType.TARGETED,
+            CaptureType.EXOME,
+            CaptureType.CHROMOSOME,
+            CaptureType.THIRTYX,
+            CaptureType.NINETYX,
+            CaptureType.THREEHUNDREDX,
+        ]
 
 
 class Engine(HintEnum):
     CROMWELL = "cromwell"
 
     @staticmethod
-    def key(): return "engine"
+    def key():
+        return "engine"
 
     @staticmethod
     def symbols():

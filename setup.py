@@ -18,21 +18,24 @@ setup(
     author="Michael Franklin, Evan Thomas, Mohammad Bhuyan",
     author_email="michael.franklin@petermac.org",
     license="GNU",
-    packages=["janis"] + ["janis." + p for p in sorted(find_packages('./janis'))],
-    install_requires=["networkx>=2.1", "ruamel.yaml >= 0.12.4, <= 0.15.77", "six", "tabulate",
-                      "illusional.wdlgen >=0.2.2",
-                      "illusional.cwlgen>=0.0.5"],
+    packages=["janis"] + ["janis." + p for p in sorted(find_packages("./janis"))],
+    install_requires=[
+        "networkx>=2.1",
+        "ruamel.yaml >= 0.12.4, <= 0.15.77",
+        "six",
+        "tabulate",
+        "illusional.wdlgen >=0.2.2",
+        "illusional.cwlgen>=0.0.5",
+    ],
     zip_safe=False,
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Developers',
-        'Intended Audience :: Science/Research',
-        'Topic :: Scientific/Engineering',
-        'Topic :: Scientific/Engineering :: Bio-Informatics'
+        "Development Status :: 2 - Pre-Alpha",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
-    extras_require={
-        'bioinformatics': ['janis-pipelines.bioinformatics>=0.0.7']
-    }
+    extras_require={"bioinformatics": ["janis-pipelines.bioinformatics>=0.0.7"]},
 )

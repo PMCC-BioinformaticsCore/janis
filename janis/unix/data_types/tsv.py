@@ -1,4 +1,4 @@
-from janis import DataType, File
+from janis import File
 
 
 class Tsv(File):

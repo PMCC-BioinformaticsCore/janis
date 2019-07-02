@@ -3,7 +3,6 @@ from janis.unix.tools.unixtool import UnixTool
 
 
 class Echo(UnixTool):
-
     @staticmethod
     def tool():
         return "Echo"
@@ -16,9 +15,7 @@ class Echo(UnixTool):
         return "echo"
 
     def inputs(self):
-        return [
-            ToolInput("inp", String(), position=0)
-        ]
+        return [ToolInput("inp", String(), position=0)]
 
     def outputs(self):
         return [ToolOutput("outp", Stdout())]

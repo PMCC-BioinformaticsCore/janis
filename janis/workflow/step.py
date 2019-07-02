@@ -1,15 +1,18 @@
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any, Optional
 
-# import cwlgen.cwlgen as cwl
 from janis.graph.node import Node, NodeTypes
-from janis.graph.stepinput import StepInput
 from janis.tool.tool import Tool, ToolInput, ToolOutput
-from janis.utils.logger import Logger
 
 
 class Step:
-    def __init__(self, identifier: str, tool: Tool, meta: Optional[Any]=None,
-                 label: str = None, doc: str = None):
+    def __init__(
+        self,
+        identifier: str,
+        tool: Tool,
+        meta: Optional[Any] = None,
+        label: str = None,
+        doc: str = None,
+    ):
         self._identifier: str = identifier
         self.label = label
         self.doc = doc
@@ -47,10 +50,14 @@ class Step:
         if item in self.tool().outputs_map():
             return f"{self.id()}/{self.tool().outputs_map()[item].tag}", self
 
-        tags = ", ".join([f"in.{i.tag}" for i in self.tool().inputs()]
-                         + [f"out.{o.tag}" for o in self.tool().outputs()])
+        tags = ", ".join(
+            [f"in.{i.tag}" for i in self.tool().inputs()]
+            + [f"out.{o.tag}" for o in self.tool().outputs()]
+        )
 
-        raise AttributeError(f"Step '{self.id()}' with tool '{self.tool().id()}' has no identifier '{item}' ({tags})")
+        raise AttributeError(
+            f"Step '{self.id()}' with tool '{self.tool().id()}' has no identifier '{item}' ({tags})"
+        )
 
 
 class StepNode(Node):

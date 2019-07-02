@@ -3,7 +3,6 @@ from janis.utils.logger import Logger, LogLevel, _bcolors
 
 
 class TestLogLevel(TestCase):
-
     def test_color_get_critical(self):
         self.assertEqual(_bcolors.FAIL, LogLevel.get_color(LogLevel.CRITICAL))
 
@@ -36,7 +35,6 @@ class TestLogLevel(TestCase):
 
 
 class TestLogger(TestCase):
-
     def test_mute_unmute(self):
         Logger.set_console_level(LogLevel.DEBUG)
         self.assertIsNotNone(Logger.CONSOLE_LEVEL)

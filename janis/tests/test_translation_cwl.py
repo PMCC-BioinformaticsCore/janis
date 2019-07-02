@@ -422,28 +422,29 @@ class TestCwlGenerateInput(unittest.TestCase):
         wf.add_items(Input("inpId", String(), include_in_inputs_file_if_none=False))
 
         # included because no value, no default, and not optional
-        self.assertDictEqual({"inpId": None}, self.translator.build_inputs_file(wf))
+        # self.assertDictEqual({"inpId": None}, self.translator.build_inputs_file(wf))
+        self.assertDictEqual({}, self.translator.build_inputs_file(wf))
 
     def test_input_in_input_novalue_includefalse_nooptional_default(self):
         wf = Workflow("test_cwl_input_in_input_novalue_includefalse_nooptional_default")
         wf.add_items(Input("inpId", String(), default="2", include_in_inputs_file_if_none=False))
 
-        self.assertDictEqual({"inpId": None}, self.translator.build_inputs_file(wf))
-        # self.assertDictEqual({}, self.translator.build_inputs_file(wf))
+        # self.assertDictEqual({"inpId": None}, self.translator.build_inputs_file(wf))
+        self.assertDictEqual({}, self.translator.build_inputs_file(wf))
 
     def test_input_in_input_novalue_includefalse_optional_nodefault(self):
         wf = Workflow("test_cwl_input_in_input_novalue_includefalse_optional_nodefault")
         wf.add_items(Input("inpId", String(optional=True), include_in_inputs_file_if_none=False))
 
-        self.assertDictEqual({'inpId': None}, self.translator.build_inputs_file(wf))
-        # self.assertDictEqual({}, self.translator.build_inputs_file(wf))
+        # self.assertDictEqual({'inpId': None}, self.translator.build_inputs_file(wf))
+        self.assertDictEqual({}, self.translator.build_inputs_file(wf))
 
     def test_input_in_input_novalue_includefalse_optional_default(self):
         wf = Workflow("test_cwl_input_in_input_novalue_includefalse_optional_default")
         wf.add_items(Input("inpId", String(optional=True), default="2", include_in_inputs_file_if_none=False))
 
-        # self.assertDictEqual({}, self.translator.build_inputs_file(wf))
-        self.assertDictEqual({'inpId': None}, self.translator.build_inputs_file(wf))
+        self.assertDictEqual({}, self.translator.build_inputs_file(wf))
+        # self.assertDictEqual({'inpId': None}, self.translator.build_inputs_file(wf))
 
 
 cwl_testtool = """\

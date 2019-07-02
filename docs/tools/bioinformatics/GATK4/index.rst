@@ -8,15 +8,15 @@ Automatically generated index page for {module} {title}
    :maxdepth: 1
    :caption: Contents:
 
-   gatk4applybqsr
-   gatk4baserecalibrator
-   gatk4gathervcfs
-   gatk4genotypeconcordance
-   gatk4markduplicates
-   gatk4mergesamfiles
-   gatk4printreads
+   GATK4ApplyBQSR
+   Gatk4BaseRecalibrator
+   Gatk4GatherVcfs
+   Gatk4GenotypeConcordance
+   Gatk4MarkDuplicates
+   Gatk4MergeSamFiles
+   Gatk4PrintReads
+   GatkHaplotypeCaller
    gatk4sortsam
-   gatkhaplotypecaller
    gatkmutect2
 
-*This page was auto-generated on 03/05/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 02/07/2019. Please do not directly alter the contents of this page.*

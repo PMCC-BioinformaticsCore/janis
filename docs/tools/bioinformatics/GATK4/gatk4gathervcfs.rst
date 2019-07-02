@@ -1,7 +1,7 @@
 
 GATK4: Gather VCFs
 ====================================
-Tool identifier: ``gatk4gathervcfs``
+Tool identifier: ``Gatk4GatherVcfs``
 
 Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4GatherVcfs_4_0``
 
@@ -73,5 +73,5 @@ Metadata
 Author: Michael Franklin
 
 
-*GATK4: Gather VCFs was last updated on 2018-05-01*.
-*This page was automatically generated on 2019-05-03*.
+*GATK4: Gather VCFs was last updated on 2019-05-01*.
+*This page was automatically generated on 2019-07-02*.

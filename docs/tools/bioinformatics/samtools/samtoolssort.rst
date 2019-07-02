@@ -1,7 +1,7 @@
 
 SamTools: Sort
 =============================
-Tool identifier: ``samtoolssort``
+Tool identifier: ``SamToolsSort``
 
 Tool path: ``from janis_bioinformatics.tools.samtools import SamToolsSortLatest``
 
@@ -112,5 +112,5 @@ Metadata
 Author: Michael Franklin
 
 
-*SamTools: Sort was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-05-03*.
+*SamTools: Sort was last updated on 2019-01-24*.
+*This page was automatically generated on 2019-07-02*.

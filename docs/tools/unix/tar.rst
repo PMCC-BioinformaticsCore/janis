@@ -1,7 +1,7 @@
 
 Tar archive
 =================
-Tool identifier: ``tar``
+Tool identifier: ``Tar``
 
 Tool path: ``from janis_bioinformatics.tools import Tar``
 
@@ -59,4 +59,4 @@ Author: **Unknown**
 
 
 *Tar archive was last updated on **Unknown***.
-*This page was automatically generated on 2019-05-03*.
+*This page was automatically generated on 2019-07-02*.

@@ -1,7 +1,7 @@
 
 Untar archive
 =====================
-Tool identifier: ``untar``
+Tool identifier: ``Untar``
 
 Tool path: ``from janis_bioinformatics.tools import Untar``
 
@@ -57,4 +57,4 @@ Author: **Unknown**
 
 
 *Untar archive was last updated on **Unknown***.
-*This page was automatically generated on 2019-05-03*.
+*This page was automatically generated on 2019-07-02*.

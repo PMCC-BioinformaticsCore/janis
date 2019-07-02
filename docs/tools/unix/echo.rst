@@ -1,7 +1,7 @@
 
 Echo - Print to console
 ==============================
-Tool identifier: ``echo``
+Tool identifier: ``Echo``
 
 Tool path: ``from janis_bioinformatics.tools import Echo``
 
@@ -25,7 +25,7 @@ Outputs
 ======  ======  ===============
 name    type    documentation
 ======  ======  ===============
-output  Stdout
+outp    Stdout
 ======  ======  ===============
 
 Inputs
@@ -36,9 +36,9 @@ Required inputs
 ***************
 
 ======  ======  ========  ==========  ===============
-name    type    prefix    position    documentation
+name    type    prefix      position  documentation
 ======  ======  ========  ==========  ===============
-input   String
+inp     String                     0
 ======  ======  ========  ==========  ===============
 
 Optional inputs
@@ -57,4 +57,4 @@ Author: **Unknown**
 
 
 *Echo - Print to console was last updated on **Unknown***.
-*This page was automatically generated on 2019-05-03*.
+*This page was automatically generated on 2019-07-02*.

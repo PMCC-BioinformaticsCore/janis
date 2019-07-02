@@ -3,14 +3,14 @@ Strelka (Germline)
 =====================================
 Tool identifier: ``strelka_germline``
 
-Tool path: ``from janis_bioinformatics.tools.illumina import Strelka_2_9_9``
+Tool path: ``from janis_bioinformatics.tools.illumina import StrelkaGermline_2_9_10``
 
 Documentation
 -------------
 
 Docker
 ******
-``michaelfranklin/strelka:2.9.9``
+``michaelfranklin/strelka:2.9.10``
 
 URL
 ******
@@ -83,7 +83,7 @@ rna                       Optional<Boolean>     --rna                        1  
 indelCandidates           Optional<vcf-gz-tbi>  --indelCandidates            1  Specify a VCF of candidate indel alleles. These alleles are always evaluated but only reported in the output when they are inferred to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left-shifted/normalized, any unnormalized alleles will be ignored. This option may be specified more than once, multiple input VCFs will be merged. (default: None)
 forcedGT                  Optional<vcf-gz-tbi>  --forcedGT                   1  Specify a VCF of candidate alleles. These alleles are always evaluated and reported even if they are unlikely to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left- shifted/normalized, any unnormalized allele will trigger a runtime error. This option may be specified more than once, multiple input VCFs will be merged. Note that for any SNVs provided in the VCF, the SNV site will be reported (and for gVCF, excluded from block compression), but the specific SNV alleles are ignored. (default: None)
 exome                     Optional<File>        --exome                      1  --targeted Set options for exome or other targeted input: note in particular that this flag turns off high-depth filters
-callRegions               Optional<File>        --callRegions                1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
+callRegions               Optional<BedTABIX>    --callRegions=               1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
 mode                      Optional<String>      --mode                       3  (-m MODE)  select run mode (local|sge)
 queue                     Optional<String>      --queue                      3  (-q QUEUE) specify scheduler queue name
 jobs                      Optional<Integer>     --jobs                       3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
@@ -99,5 +99,5 @@ Metadata
 Author: Michael Franklin
 
 
-*Strelka (Germline) was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-05-03*.
+*Strelka (Germline) was last updated on 2019-01-24*.
+*This page was automatically generated on 2019-07-02*.

@@ -1,7 +1,7 @@
 
 GATK4: Apply base quality score recalibration
 ==============================================================
-Tool identifier: ``gatk4applybqsr``
+Tool identifier: ``GATK4ApplyBQSR``
 
 Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4ApplyBqsrLatest``
 
@@ -78,5 +78,5 @@ Metadata
 Author: Michael Franklin
 
 
-*GATK4: Apply base quality score recalibration was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-05-03*.
+*GATK4: Apply base quality score recalibration was last updated on 2019-01-24*.
+*This page was automatically generated on 2019-07-02*.

@@ -74,4 +74,4 @@ Author: Simon Andrews
 
 
 *FastQC was last updated on 2019-03-25*.
-*This page was automatically generated on 2019-05-03*.
+*This page was automatically generated on 2019-07-02*.

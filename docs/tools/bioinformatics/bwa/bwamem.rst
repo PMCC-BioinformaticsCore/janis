@@ -1,9 +1,9 @@
 
 BWA-MEM
 ================
-Tool identifier: ``bwamem``
+Tool identifier: ``BwaMem``
 
-Tool path: ``from janis_bioinformatics.tools.bwa import BwaMem_0_7_15``
+Tool path: ``from janis_bioinformatics.tools.bwa import BwaMemLatest``
 
 Documentation
 -------------
@@ -93,5 +93,5 @@ Metadata
 Author: Michael Franklin
 
 
-*BWA-MEM was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-05-03*.
+*BWA-MEM was last updated on 2019-01-24*.
+*This page was automatically generated on 2019-07-02*.

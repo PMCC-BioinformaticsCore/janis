@@ -1,7 +1,7 @@
 
 SamTools: View
 =============================
-Tool identifier: ``samtoolsview``
+Tool identifier: ``SamToolsView``
 
 Tool path: ``from janis_bioinformatics.tools.samtools import SamToolsViewLatest``
 
@@ -70,9 +70,9 @@ outputAlignmentsInFileReadGroups       Optional<File>           -R              
 mapqThreshold                          Optional<Integer>        -q                 5  Skip alignments with MAPQ smaller than INT [0].
 outputAlignmentsInLibrary              Optional<String>         -l                 5  Only output alignments in library STR [null].
 outputAlignmentsMeetingCIGARThreshold  Optional<Integer>        -m                 5  Only output alignments with number of CIGAR bases consuming query sequence ≥ INT [0]
-outputAlignmentsWithBitsSet            Optional<Integer>        -f                 5  Only output alignments with all bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
-doNotOutputAlignmentsWithBitsSet       Optional<Integer>        -F                 5  Do not output alignments with any bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
-doNotOutputAlignmentsWithAllBitsSet    Optional<Integer>        -G                 5  Do not output alignments with all bits set in INT present in the FLAG field. This is the opposite of -f such that -f12 -G12 is the same as no filtering at all. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
+outputAlignmentsWithBitsSet            Optional<String>         -f                 5  Only output alignments with all bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
+doNotOutputAlignmentsWithBitsSet       Optional<String>         -F                 5  Do not output alignments with any bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
+doNotOutputAlignmentsWithAllBitsSet    Optional<String>         -G                 5  Do not output alignments with all bits set in INT present in the FLAG field. This is the opposite of -f such that -f12 -G12 is the same as no filtering at all. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
 readTagToExclude                       Optional<String>         -x                 5  Read tag to exclude from output (repeatable) [null]
 collapseBackwardCIGAR                  Optional<Boolean>        -B                 5  Collapse the backward CIGAR operation.
 subsamplingProportion                  Optional<Float>          -s                 5  Output only a proportion of the input alignments. This subsampling acts in the same way on all of the alignment records in the same template or read pair, so it never keeps a read but not its mate. The integer and fractional parts of the -s INT.FRAC option are used separately: the part after the decimal point sets the fraction of templates/pairs to be kept, while the integer part is used as a seed that influences which subset of reads is kept.
@@ -88,5 +88,5 @@ Metadata
 Author: Michael Franklin
 
 
-*SamTools: View was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-05-03*.
+*SamTools: View was last updated on 2019-01-24*.
+*This page was automatically generated on 2019-07-02*.

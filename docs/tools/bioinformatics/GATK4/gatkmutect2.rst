@@ -46,7 +46,7 @@ Required inputs
 ==========  =============  ========  ==========  ======================================================================================
 name        type           prefix      position  documentation
 ==========  =============  ========  ==========  ======================================================================================
-tumor       BamPair        -I                 5  BAM/SAM/CRAM file containing reads
+tumor       BamPair        -I                 6  BAM/SAM/CRAM file containing reads
 tumorName   String         -tumor             6  BAM sample name of tumor. May be URL-encoded as output by GetSampleName with -encode.
 normal      BamPair        -I                 5  BAM/SAM/CRAM file containing reads
 normalName  String         -normal            6  BAM sample name of normal. May be URL-encoded as output by GetSampleName with -encode.
@@ -73,5 +73,5 @@ Metadata
 Author: Michael Franklin
 
 
-*GATK4: MuTect2 was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-05-03*.
+*GATK4: MuTect2 was last updated on 2019-01-24*.
+*This page was automatically generated on 2019-07-02*.

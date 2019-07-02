@@ -3,7 +3,7 @@ GATK4: SortSAM
 =============================
 Tool identifier: ``gatk4sortsam``
 
-Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4SortSam_4_0``
+Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4SortSamLatest``
 
 Documentation
 -------------
@@ -70,5 +70,5 @@ Metadata
 Author: Michael Franklin
 
 
-*GATK4: SortSAM was last updated on 2018-12-24*.
-*This page was automatically generated on 2019-05-03*.
+*GATK4: SortSAM was last updated on 2019-01-24*.
+*This page was automatically generated on 2019-07-02*.

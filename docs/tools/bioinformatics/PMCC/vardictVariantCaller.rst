@@ -3,7 +3,7 @@ Vardict Variant Caller
 =============================================
 Tool identifier: ``vardictVariantCaller``
 
-Tool path: ``from janis_bioinformatics.tools.pmcc import VardictVariantCaller``
+Tool path: ``from janis_bioinformatics.tools.pmcc import VardictGermlineVariantCaller``
 
 Documentation
 -------------
@@ -22,7 +22,7 @@ Outputs
 ===============  ======  ===============
 name             type    documentation
 ===============  ======  ===============
-vardictVaraints  VCF
+vardictVariants  VCF
 out              VCF
 ===============  ======  ===============
 
@@ -36,7 +36,7 @@ Required inputs
 ==================  =============  ========  ==========  ===============
 name                type           prefix    position    documentation
 ==================  =============  ========  ==========  ===============
-bed                 bed
+intervals           bed
 bam                 BamPair
 reference           FastaWithDict
 sampleName          String
@@ -65,4 +65,4 @@ Author: **Unknown**
 
 
 *Vardict Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-05-03*.
+*This page was automatically generated on 2019-07-02*.

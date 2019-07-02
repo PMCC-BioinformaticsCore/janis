@@ -19,13 +19,12 @@ Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4S
 
 Outputs
 -------
-============  =======  ===============
-name          type     documentation
-============  =======  ===============
-out_bwa       SAM
-out_samtools  BAM
-out           BamPair
-============  =======  ===============
+=======  =======  ===============
+name     type     documentation
+=======  =======  ===============
+out_bwa  BAM
+out      BamPair
+=======  =======  ===============
 
 Inputs
 ------
@@ -34,13 +33,13 @@ Find the inputs below
 Required inputs
 ***************
 
-===================  =============  ========  ==========  ===============
-name                 type           prefix    position    documentation
-===================  =============  ========  ==========  ===============
-fastq                Fastq
-readGroupHeaderLine  String
-reference            FastaWithDict
-===================  =============  ========  ==========  ===============
+==========  =============  ========  ==========  ===============
+name        type           prefix    position    documentation
+==========  =============  ========  ==========  ===============
+fastq       Fastq
+sampleName  String
+reference   FastaWithDict
+==========  =============  ========  ==========  ===============
 
 Optional inputs
 ***************
@@ -68,4 +67,4 @@ Author: Michael Franklin
 
 
 *Align sorted BAM was last updated on **Unknown***.
-*This page was automatically generated on 2019-05-03*.
+*This page was automatically generated on 2019-07-02*.

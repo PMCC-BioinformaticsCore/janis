@@ -8,7 +8,7 @@ Automatically generated index page for {module} {title}
    :maxdepth: 1
    :caption: Contents:
 
-   samtoolssort
-   samtoolsview
+   SamToolsSort
+   SamToolsView
 
-*This page was auto-generated on 03/05/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 02/07/2019. Please do not directly alter the contents of this page.*

@@ -8,7 +8,6 @@ Automatically generated index page for {module} {title}
    :maxdepth: 1
    :caption: Contents:
 
-   manta_germline
-   strelka_germline
+   manta
 
-*This page was auto-generated on 03/05/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 02/07/2019. Please do not directly alter the contents of this page.*

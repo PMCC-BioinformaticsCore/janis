@@ -12,8 +12,10 @@ Automatically generated index page for {module} {title}
    bam
    bampair
    bed
+   bedtabix
    boolean
    compressed-vcf-gz
+   csv
    directory
    double
    fasta
@@ -24,6 +26,7 @@ Automatically generated index page for {module} {title}
    float
    gvcf
    integer
+   jsonfile
    sam
    stdout
    string
@@ -34,4 +37,4 @@ Automatically generated index page for {module} {title}
    vcfidx
    zip
 
-*This page was auto-generated on 03/05/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 02/07/2019. Please do not directly alter the contents of this page.*

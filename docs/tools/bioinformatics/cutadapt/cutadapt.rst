@@ -49,12 +49,11 @@ Find the inputs below
 Required inputs
 ***************
 
-=======  ======  ========  ==========  ===================================================================================================================================================================================================================================
-name     type    prefix      position  documentation
-=======  ======  ========  ==========  ===================================================================================================================================================================================================================================
-fastq    Fastq                      5
-adapter  String  -a                    Sequence of an adapter ligated to the 3' end (paired data: of the first read). The adapter and subsequent bases are trimmed. If a '$' character is appended ('anchoring'), the adapter is only found if it is a suffix of the read.
-=======  ======  ========  ==========  ===================================================================================================================================================================================================================================
+======  ======  ========  ==========  ===============
+name    type    prefix      position  documentation
+======  ======  ========  ==========  ===============
+fastq   Fastq                      5
+======  ======  ========  ==========  ===============
 
 Optional inputs
 ***************
@@ -62,6 +61,7 @@ Optional inputs
 ==========================  ==================  ==========================  ==========  =====================================================================================================================================================================================================================================================================================================================================================================================================
 name                        type                prefix                      position    documentation
 ==========================  ==================  ==========================  ==========  =====================================================================================================================================================================================================================================================================================================================================================================================================
+adapter                     Optional<String>    -a                                      Sequence of an adapter ligated to the 3' end (paired data: of the first read). The adapter and subsequent bases are trimmed. If a '$' character is appended ('anchoring'), the adapter is only found if it is a suffix of the read.
 outputFilename              Optional<Filename>  -o                                      Write trimmed reads to FILE. FASTQ or FASTA format is chosen depending on input. The summary report is sent to standard output. Use '{name}' in FILE to demultiplex reads into multiple files. Default: write to standard output
 secondReadFile              Optional<Filename>  -p                                      Write second read in a pair to FILE.
 debug                       Optional<Boolean>   --debug                                 Print debugging information.
@@ -125,5 +125,5 @@ Metadata
 Author: **Unknown**
 
 
-*Cutadapt was last updated on 2019-03-21*.
-*This page was automatically generated on 2019-05-03*.
+*Cutadapt was last updated on 2019-03-29*.
+*This page was automatically generated on 2019-07-02*.

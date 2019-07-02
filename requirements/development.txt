@@ -2,3 +2,5 @@
 -r tests.txt
 -r documentation.txt
 matplotlib
+black
+pre-commit

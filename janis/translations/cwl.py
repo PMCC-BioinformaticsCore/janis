@@ -127,7 +127,8 @@ class CwlTranslator(TranslatorBase):
     def build_inputs_file(cls, workflow, recursive=False, merge_resources=False, hints=None,
                           additional_inputs: Dict=None) -> Dict[str, any]:
 
-        inp = {i.id(): i.input.cwl_input() for i in workflow._inputs}
+        inp = {i.id(): i.input.cwl_input() for i in workflow._inputs
+               if i.input.include_in_inputs_file_if_none or i.input.value}
 
         if merge_resources:
             inp.update(cls.build_resources_input(workflow, hints))
@@ -138,6 +139,47 @@ class CwlTranslator(TranslatorBase):
                     inp[k] = additional_inputs[k]
 
         return inp
+
+    @classmethod
+    def translate_workflow_to_all_in_one(cls, wf, with_resource_overrides=False, is_nested_tool=False) \
+            -> cwlgen.Workflow:
+        from janis.workflow.workflow import Workflow
+
+        metadata = wf.metadata() if wf.metadata() else WorkflowMetadata()
+        w = cwlgen.Workflow(wf.identifier, wf.friendly_name(), metadata.documentation, cwl_version=CWL_VERSION)
+
+        w.inputs: List[cwlgen.InputParameter] = [translate_input(i.input) for i in wf._inputs]
+
+        resource_inputs = []
+        if with_resource_overrides:
+            resource_inputs = build_resource_override_maps_for_workflow(wf)
+            w.inputs.extend(resource_inputs)
+
+        w.steps: List[cwlgen.WorkflowStep] = []
+
+        for s in wf._steps:
+            resource_overrides = {}
+            for r in resource_inputs:
+                if not r.id.startswith(s.id()): continue
+
+                resource_overrides[r.id[(len(s.id()) + 1):]] = r.id
+
+            w.steps.append(translate_step(s, is_nested_tool=is_nested_tool, resource_overrides=resource_overrides,
+                                          use_run_ref=False))
+
+        w.outputs = [translate_output_node(o) for o in wf._outputs]
+
+        w.requirements.append(cwlgen.InlineJavascriptReq())
+        w.requirements.append(cwlgen.StepInputExpressionRequirement())
+
+        if wf.has_scatter:
+            w.requirements.append(cwlgen.ScatterFeatureRequirement())
+        if wf.has_subworkflow:
+            w.requirements.append(cwlgen.SubworkflowFeatureRequirement())
+        if wf.has_multiple_inputs:
+            w.requirements.append(cwlgen.MultipleInputFeatureRequirement())
+
+        return w
 
     @classmethod
     def translate_tool(cls, tool, with_docker, with_resource_overrides=False):
@@ -368,8 +410,19 @@ def translate_tool_output(output, **debugkwargs):
     )
 
 
-def translate_step(step: StepNode, is_nested_tool=False, resource_overrides=Dict[str, str]):
-    run_ref = ("{tool}.cwl" if is_nested_tool else "tools/{tool}.cwl").format(tool=step.step.tool().id())
+def translate_step(step: StepNode, is_nested_tool=False, resource_overrides=Dict[str, str], use_run_ref=True):
+
+    tool = step.step.tool()
+    if use_run_ref:
+        run_ref = ("{tool}.cwl" if is_nested_tool else "tools/{tool}.cwl").format(tool=step.step.tool().id())
+    else:
+        from janis.workflow.workflow import Workflow
+        has_resources_overrides = len(resource_overrides) > 0
+        if isinstance(tool, Workflow):
+            run_ref = CwlTranslator.translate_workflow_to_all_in_one(tool, with_resource_overrides=has_resources_overrides)
+        else:
+            run_ref = CwlTranslator.translate_tool(tool, True, with_resource_overrides=has_resources_overrides)
+
     cwlstep = cwlgen.WorkflowStep(
         step_id=step.id(),
         run=run_ref,

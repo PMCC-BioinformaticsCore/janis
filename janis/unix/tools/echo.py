@@ -18,7 +18,7 @@ class Echo(UnixTool):
         return [ToolInput("inp", String(), position=0)]
 
     def outputs(self):
-        return [ToolOutput("outp", Stdout())]
+        return [ToolOutput("out", Stdout())]
 
     @staticmethod
     def docker():

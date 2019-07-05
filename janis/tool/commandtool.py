@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional, Any
 
-import cwlgen as cwl
-
 from janis.tool.tool import Tool, ToolArgument, ToolInput, ToolTypes
 from janis.utils.metadata import ToolMetadata, Metadata
+
+import cwlgen
 
 
 class CommandTool(Tool, ABC):
@@ -92,7 +92,7 @@ class CommandTool(Tool, ABC):
         return None
 
     @staticmethod
-    def requirements() -> Optional[List[cwl.Requirement]]:
+    def requirements() -> Optional[List[cwlgen.Requirement]]:
         return None
 
     @staticmethod

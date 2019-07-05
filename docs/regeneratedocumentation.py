@@ -209,9 +209,11 @@ def nested_keys_add(d, keys: List[str], value, root_key):
 
 
 def get_toc(title, intro_text, subpages, caption="Contents", max_depth=1):
-    prepared_subpages = "\n".join("   " + m for m in subpages)
+    prepared_subpages = "\n".join(
+        "   " + m.lower() for m in sorted(subpages, key=lambda l: l.lower())
+    )
     return f"""
-{title}
+{title.replace('{title}', title)}
 {"=" * len(title)}
 
 {intro_text}
@@ -318,8 +320,8 @@ def prepare_all_tools():
         )
 
         path_components = "/".join(tool_path_components)
-        output_dir = f"{tools_dir}/{path_components}/"
-        output_filename = output_dir + tool.id() + ".rst"
+        output_dir = f"{tools_dir}/{path_components}/".lower()
+        output_filename = (output_dir + tool.id() + ".rst").lower()
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -368,13 +370,13 @@ def prepare_all_tools():
         module_filename = dir + "/index.rst"
         module_tools = sorted(set(contents[ROOT_KEY] if ROOT_KEY in contents else []))
         submodule_keys = sorted(m for m in contents.keys() if m != ROOT_KEY)
-        indexed_submodules_tools = [m + "/index" for m in submodule_keys]
+        indexed_submodules_tools = [m.lower() + "/index" for m in submodule_keys]
 
         with open(module_filename, "w+") as module_file:
             module_file.write(
                 get_toc(
                     title=title,
-                    intro_text="Automatically generated index page for {module} {title}",
+                    intro_text="Automatically generated index page for {title}",
                     subpages=indexed_submodules_tools + module_tools,
                     max_depth=max_depth,
                 )

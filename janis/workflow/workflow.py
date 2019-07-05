@@ -467,10 +467,9 @@ class Workflow(Tool):
 
             if s_type is None and f_type is None:
                 # Try to guess both
-                Logger.log(
+                Logger.info(
                     f"Trying to guess connection based on mutual types between "
-                    f"'{s_node.id()}' and '{f_node.id()}'",
-                    LogLevel.WARNING,
+                    f"'{s_node.id()}' and '{f_node.id()}'"
                 )
                 c = self.guess_connection_between_nodes(s_node, f_node)
                 if c is not None:
@@ -576,7 +575,7 @@ class Workflow(Tool):
             if len(input_parts) != 2:
                 s = "/".join(input_parts)
                 under_over = "under" if len(input_parts) < 2 else "over"
-                Logger.warn(
+                Logger.info(
                     f"The node '{'.'.join(referenced_by)}' {under_over}-referenced an output the step "
                     f"'{node.id()}' (tool: '{snode.step.tool().id()}'), this was automatically corrected "
                     f"({s} → {lbl}.{tag})"
@@ -706,11 +705,10 @@ class Workflow(Tool):
             t = types[0]
             if len(input_parts) != 2:
                 s = "/".join(input_parts)
-                Logger.log(
-                    f"The node '{snode.id()}' did not correctly reference an input of the tool "
+                Logger.info(
+                    f"The node '{snode.id()}' was not a fully qualified input of the tool "
                     f"'{snode.step.tool().id()}', this was automatically corrected "
-                    f"({s} → {lbl}.{t[0]})",
-                    LogLevel.WARNING,
+                    f"({s} → {lbl}.{t[0]})"
                 )
             input_parts = [lbl, t[0]]
             return input_parts, t[1]

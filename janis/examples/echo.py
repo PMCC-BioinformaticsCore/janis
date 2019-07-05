@@ -1,13 +1,18 @@
 import janis as j
 from janis.unix.tools.echo import Echo
 
-w = j.Workflow("echo")
+w = j.Workflow("workflowId")
 
-inp = j.Input("input_identifier", j.String(), "Hello, World!")
-step = j.Step("step_identifier", Echo())
-outp = j.Output("output_identifier")
+inp = j.Input("inputIdentifier", j.String(), value="HelloWorld")
+echo = j.Step("stepIdentifier", Echo())
+out = j.Output("outputIdentifier")
 
-w.add_pipe(inp, step, outp)
+w.add_edges(
+    [
+        (inp, echo.inp),  # Connect 'inp' to 'echostep'
+        (echo.out, out),  # Connect output of 'echostep' to 'out'
+    ]
+)
 
 # Will print the CWL, input file and relevant tools to the console
-# w.translate("wdl", to_disk=True, write_inputs_file=True)
+w.translate("cwl", to_disk=False)  # or "wdl"

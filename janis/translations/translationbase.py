@@ -47,7 +47,6 @@ class TranslatorBase(ABC):
         with_resource_overrides=False,
         to_disk=False,
         export_path=ExportPathKeywords.default,
-        write_inputs_file=False,
         should_validate=False,
         should_zip=True,
         merge_resources=False,
@@ -115,23 +114,24 @@ class TranslatorBase(ABC):
 
         if to_disk:
 
-            if not os.path.isdir(d + "tools/"):
-                os.makedirs(d + "tools/")
+            toolsdir = os.path.join(d, "tools")
+            if not os.path.isdir(toolsdir):
+                os.makedirs(toolsdir)
 
-            with open(d + fn_workflow, "w+") as wf:
+            with open(os.path.join(d, fn_workflow), "w+") as wf:
                 Logger.log(f"Writing {fn_workflow} to disk")
                 wf.write(str_wf)
                 Logger.log(f"Wrote {fn_workflow}  to disk")
 
             for (fn_tool, str_tool) in str_tools:
-                with open(d + fn_tool, "w+") as toolfp:
+                with open(os.path.join(d, fn_tool), "w+") as toolfp:
                     Logger.log(f"Writing {fn_tool} to disk")
                     toolfp.write(str_tool)
                     Logger.log(f"Written {fn_tool} to disk")
 
             if not merge_resources and with_resource_overrides:
                 print("\n=== RESOURCES ===")
-                with open(d + fn_resources, "w+") as wf:
+                with open(os.path.join(d, fn_resources), "w+") as wf:
                     Logger.log(f"Writing {fn_resources} to disk")
                     wf.write(str_wf)
                     Logger.log(f"Wrote {fn_resources}  to disk")

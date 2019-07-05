@@ -3,7 +3,7 @@ from typing import Dict
 
 from janis.translations.exportpath import ExportPathKeywords
 from janis.translations.wdl import WdlTranslator
-from janis.utils.janisconstants import GITHUB_URL
+from janis.__meta__ import GITHUB_URL
 from .cwl import CwlTranslator
 from .translationbase import TranslatorBase
 

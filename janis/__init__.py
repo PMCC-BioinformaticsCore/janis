@@ -22,8 +22,8 @@ _Proudly made on Planet Earth._
 
 """
 
-__version__ = "v0.3.0"
-
+# PEP396:  https://www.python.org/dev/peps/pep-0396/
+from janis.__meta__ import __version__
 
 from janis.hints import CaptureType, Engine, HINTS, Hint, HintEnum, HintArray
 from janis.tool.commandtool import CommandTool

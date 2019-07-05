@@ -17,6 +17,7 @@ from janis import (
     File,
     Filename,
     WildcardSelector,
+    ToolArgument,
 )
 from janis.translations import WdlTranslator
 from janis.types import CpuSelector, StringFormatter
@@ -25,7 +26,7 @@ from janis.types import CpuSelector, StringFormatter
 class TestTool(CommandTool):
     @staticmethod
     def tool():
-        return "TestTranslation-tool"
+        return "TestTranslationtool"
 
     @staticmethod
     def base_command():
@@ -33,6 +34,9 @@ class TestTool(CommandTool):
 
     def inputs(self) -> List[ToolInput]:
         return [ToolInput("testtool", String())]
+
+    def arguments(self) -> List[ToolArgument]:
+        return [ToolArgument(StringFormatter('test:\\t:escaped:\\n:characters"'))]
 
     def outputs(self) -> List[ToolOutput]:
         return [ToolOutput("std", Stdout())]
@@ -107,7 +111,7 @@ class TestWdlTranslatorOverrides(unittest.TestCase):
 
     def test_tools_filename(self):
         self.assertEqual(
-            "TestTranslation-tool.wdl", self.translator.tool_filename(TestTool().id())
+            "TestTranslationtool.wdl", self.translator.tool_filename(TestTool().id())
         )
 
     def test_inputs_filename(self):
@@ -308,6 +312,12 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
         )
         res = wdl.get_input_value_from_potential_selector_or_generator(b, None)
         self.assertEqual("${tumorInputName}:${normalInputName}", res)
+
+    def test_escaped_characters(self):
+        trans = wdl.WdlTranslator
+        translated = trans.translate_tool(TestTool())
+        arg = translated.command[0].arguments[0]
+        self.assertEqual("'test:\\t:escaped:\\n:characters\"'", arg.value)
 
 
 class TestWdlGenerateInput(unittest.TestCase):

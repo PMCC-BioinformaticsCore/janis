@@ -17,6 +17,7 @@ from janis import (
     WildcardSelector,
     Input,
     StringFormatter,
+    ToolArgument,
 )
 from janis.translations import CwlTranslator
 from janis.types import CpuSelector, MemorySelector
@@ -25,7 +26,7 @@ from janis.types import CpuSelector, MemorySelector
 class TestTool(CommandTool):
     @staticmethod
     def tool():
-        return "TestTranslation-tool"
+        return "TestTranslationtool"
 
     @staticmethod
     def base_command():
@@ -33,6 +34,9 @@ class TestTool(CommandTool):
 
     def inputs(self) -> List[ToolInput]:
         return [ToolInput("testtool", String())]
+
+    def arguments(self) -> List[ToolArgument]:
+        return [ToolArgument(StringFormatter('test:\\t:escaped:\\n:characters"'))]
 
     def outputs(self) -> List[ToolOutput]:
         return [ToolOutput("std", Stdout())]
@@ -67,7 +71,7 @@ class TestCwlTypesConversion(unittest.TestCase):
 class TestCwlMisc(unittest.TestCase):
     def test_str_tool(self):
         t = TestTool()
-        self.assertEqual(t.translate("cwl"), cwl_testtool)
+        self.assertEqual(cwl_testtool, t.translate("cwl", to_console=False))
 
 
 class TestCwlTranslatorOverrides(unittest.TestCase):
@@ -98,7 +102,7 @@ class TestCwlTranslatorOverrides(unittest.TestCase):
 
     def test_tools_filename(self):
         self.assertEqual(
-            "TestTranslation-tool.cwl", self.translator.tool_filename(TestTool())
+            "TestTranslationtool.cwl", self.translator.tool_filename(TestTool())
         )
 
     def test_inputs_filename(self):
@@ -395,6 +399,12 @@ class TestCwlSelectorsAndGenerators(unittest.TestCase):
             res,
         )
 
+    def test_escaped_characters(self):
+        trans = cwl.CwlTranslator
+        translated = trans.translate_tool(TestTool())
+        arg: cwlgen.CommandLineBinding = translated.arguments[0]
+        self.assertEqual('test:\\t:escaped:\\n:characters"', arg.valueFrom)
+
 
 class TestCwlTranslateInput(unittest.TestCase):
     def test_translate_input(self):
@@ -607,15 +617,18 @@ class TestCwlGenerateInput(unittest.TestCase):
 
 
 cwl_testtool = """\
+arguments:
+- position: 0
+  valueFrom: test:\\t:escaped:\\n:characters"
 baseCommand: echo
 class: CommandLineTool
 cwlVersion: v1.0
-id: TestTranslation-tool
+id: TestTranslationtool
 inputs:
 - id: testtool
   label: testtool
   type: string
-label: TestTranslation-tool
+label: TestTranslationtool
 outputs:
 - id: std
   label: std

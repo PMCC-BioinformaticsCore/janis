@@ -46,6 +46,7 @@ class TranslatorBase(ABC):
         with_docker=True,
         with_resource_overrides=False,
         to_disk=False,
+        write_inputs_file=True,
         export_path=ExportPathKeywords.default,
         should_validate=False,
         should_zip=True,
@@ -211,7 +212,7 @@ class TranslatorBase(ABC):
 
     @classmethod
     @abstractmethod
-    def translate_tool(cls, tool, with_docker, with_resource_overrides=False):
+    def translate_tool(cls, tool, with_docker=True, with_resource_overrides=False):
         pass
 
     @classmethod

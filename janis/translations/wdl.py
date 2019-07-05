@@ -215,7 +215,7 @@ class WdlTranslator(TranslatorBase):
 
     @classmethod
     def translate_tool(
-        cls, tool: CommandTool, with_docker, with_resource_overrides=False
+        cls, tool: CommandTool, with_docker=True, with_resource_overrides=False
     ):
 
         if not Validators.validate_identifier(tool.id()):

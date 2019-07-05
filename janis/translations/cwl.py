@@ -235,7 +235,7 @@ class CwlTranslator(TranslatorBase):
         return w
 
     @classmethod
-    def translate_tool(cls, tool, with_docker, with_resource_overrides=False):
+    def translate_tool(cls, tool, with_docker=True, with_resource_overrides=False):
         metadata = tool.metadata() if tool.metadata() else ToolMetadata()
         stdouts = [
             o.output_type

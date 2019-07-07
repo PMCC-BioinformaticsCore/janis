@@ -76,7 +76,7 @@ class TranslatorBase(ABC):
         str_inp = self.stringify_translated_inputs(tr_inp)
         str_tools = [
             (
-                "/tools/" + self.tool_filename(t),
+                "tools/" + self.tool_filename(t),
                 self.stringify_translated_workflow(tr_tools[t]),
             )
             for t in tr_tools

@@ -237,7 +237,7 @@ class TranslatorBase(ABC):
         return (
             inp.value is None
             and not inp.include_in_inputs_file_if_none
-            and (inp.data_type.optional or inp.default is not None)
+            and (inp.data_type.optional and inp.default is None)
         )
 
     # STRINGIFY

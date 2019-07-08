@@ -186,7 +186,9 @@ class TestCanSkipIncludeTrueImport(unittest.TestCase):
         can_skip = TranslatorBase.inp_can_be_skipped(
             Input("inpId", String(), default="2", include_in_inputs_file_if_none=False)
         )
-        self.assertEqual(True, can_skip)
+        # new interpretation: can't skip because default
+        self.assertEqual(False, can_skip)
+        # self.assertEqual(True, can_skip)
 
     def test_input_in_input_novalue_includefalse_optional_nodefault(self):
         can_skip = TranslatorBase.inp_can_be_skipped(
@@ -203,4 +205,6 @@ class TestCanSkipIncludeTrueImport(unittest.TestCase):
                 include_in_inputs_file_if_none=False,
             )
         )
-        self.assertEqual(True, can_skip)
+        # new interpretation: can't skip because default
+        self.assertEqual(False, can_skip)
+        # self.assertEqual(True, can_skip)

@@ -357,9 +357,12 @@ class WdlTranslator(TranslatorBase):
         inp = {}
         for i in workflow._inputs:
             inp_key = f"{workflow.id()}.{i.id()}"
-            inp_val = i.input.wdl_input()
             if cls.inp_can_be_skipped(i.input):
                 continue
+            inp_val = i.input.wdl_input()
+            if inp_val is None:
+                inp_val = i.input.default
+
             inp[inp_key] = inp_val
             if i.input.data_type.secondary_files():
                 for sec in i.input.data_type.secondary_files():

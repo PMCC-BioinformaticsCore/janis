@@ -461,8 +461,10 @@ class TestWdlGenerateInput(unittest.TestCase):
             Input("inpId", String(), default="2", include_in_inputs_file_if_none=True)
         )
 
+        # new interpretation: defaults appear in inputs
+
         self.assertDictEqual(
-            {"test_input_in_inputfile.inpId": None},
+            {"test_input_in_inputfile.inpId": "2"},
             self.translator.build_inputs_file(wf),
         )
 
@@ -487,9 +489,9 @@ class TestWdlGenerateInput(unittest.TestCase):
                 include_in_inputs_file_if_none=True,
             )
         )
-
+        # new interpretation: defaults appear in inputs
         self.assertDictEqual(
-            {"test_input_in_inputfile.inpId": None},
+            {"test_input_in_inputfile.inpId": "2"},
             self.translator.build_inputs_file(wf),
         )
 
@@ -509,7 +511,12 @@ class TestWdlGenerateInput(unittest.TestCase):
             Input("inpId", String(), default="2", include_in_inputs_file_if_none=False)
         )
 
-        self.assertDictEqual({}, self.translator.build_inputs_file(wf))
+        # new interpretation: defaults appear in inputs
+        self.assertDictEqual(
+            {"test_input_in_inputfile.inpId": "2"},
+            self.translator.build_inputs_file(wf),
+        )
+        # self.assertDictEqual({}, self.translator.build_inputs_file(wf))
 
     def test_input_in_input_novalue_includefalse_optional_nodefault(self):
         wf = Workflow("test_input_in_inputfile")
@@ -530,7 +537,12 @@ class TestWdlGenerateInput(unittest.TestCase):
             )
         )
 
-        self.assertDictEqual({}, self.translator.build_inputs_file(wf))
+        # new interpretation: defaults appear in inputs
+        self.assertDictEqual(
+            {"test_input_in_inputfile.inpId": "2"},
+            self.translator.build_inputs_file(wf),
+        )
+        # self.assertDictEqual({}, self.translator.build_inputs_file(wf))
 
     def test_tool_output_with_input_selector(self):
         tool = TestToolWithSecondaryOutput()

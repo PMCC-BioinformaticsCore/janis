@@ -26,13 +26,15 @@ class ToolThatAcceptsAndReturnsSecondary(CommandTool):
 
     @staticmethod
     def base_command():
-        return "echo" # non functional tool
+        return "echo"  # non functional tool
 
     def inputs(self) -> List[ToolInput]:
         return [ToolInput("input", DataTypeWithSecondary())]
 
     def outputs(self) -> List[ToolOutput]:
-        return [ToolOutput("output", DataTypeWithSecondary(), glob=InputSelector("input"))]
+        return [
+            ToolOutput("output", DataTypeWithSecondary(), glob=InputSelector("input"))
+        ]
 
 
 if __name__ == "__main__":
@@ -49,4 +51,3 @@ if __name__ == "__main__":
     stp2 = Step("stp2", ToolThatAcceptsAndReturnsSecondary())
     w2.add_pipe(inp2, stp2, Output("outp2"))
     w2.translate("wdl")
-

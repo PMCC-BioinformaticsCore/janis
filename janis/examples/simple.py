@@ -5,8 +5,10 @@ simple.py
     Author: Michael Franklin
 
 
-    This class represents a simple unix workflow, and was prepared as part of the
+    This file contains a simple unix workflow, and was prepared as part of the
     following tutorial: https://janis.readthedocs.io/en/latest/tutorials/simple.html
+
+    This version of the simple workflow is NOT wrapped in a subclass of Workflow.
 
     Workflow description:
         1. A file is untarred
@@ -31,24 +33,22 @@ from janis.unix.tools.tar import Tar
 from janis.unix.tools.untar import Untar
 
 
-class SimpleWorkflow(Workflow):
-    def __init__(self):
-        super().__init__("simpleWorkflow")
+w = Workflow("simple")
 
-        inp = Input("tarFile", TarFile(), value="/path/to/hello.tar")
+inp = Input("tarFile", TarFile(), value="/path/to/hello.tar")
 
-        untar = Step("untar", Untar())
-        compile = Step("compile", Compile())
-        retar = Step("tar", Tar())
+untar = Step("untar", Untar())
+compil = Step("compile", Compile())
+retar = Step("tar", Tar())
 
-        outp = Output("out")
+outp = Output("out")
 
-        self.add_edge(inp, untar.tarFiles)
-        self.add_edge(untar.files, compile.file)  # Auto scatter
-        self.add_edge(untar.files, retar.files)
-        self.add_edge(compile.compiled, retar.files2)
-        self.add_edge(retar.tarred, outp)
+w.add_edge(inp, untar.tarFile)
+w.add_edge(untar.files, compil.file)  # Auto scatter
+w.add_edge(untar.files, retar.files)
+w.add_edge(compil.compiled, retar.files2)
+w.add_edge(retar.tarred, outp)
 
 
 if __name__ == "__main__":
-    SimpleWorkflow().translate("wdl", to_disk=True, merge_resources=True)
+    w.translate("wdl", to_disk=True)

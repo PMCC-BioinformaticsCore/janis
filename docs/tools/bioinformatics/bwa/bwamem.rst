@@ -3,7 +3,7 @@ BWA-MEM
 ================
 Tool identifier: ``BwaMem``
 
-Tool path: ``from janis_bioinformatics.tools.bwa import BwaMemLatest``
+Tool path: ``from janis_bioinformatics.tools.bwa import BwaMem_0_7_15``
 
 Documentation
 -------------
@@ -94,4 +94,4 @@ Author: Michael Franklin
 
 
 *BWA-MEM was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-02*.
+*This page was automatically generated on 2019-07-09*.

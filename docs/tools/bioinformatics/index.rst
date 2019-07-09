@@ -2,29 +2,29 @@
 bioinformatics
 ==============
 
-Automatically generated index page for {module} {title}
+Automatically generated index page for {title}
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
-   Broad Institute/index
-   GATK4/index
-   Illumina/index
-   PMCC/index
-   PeterMac/index
+   bcftools/index
    bcftools/index
    bwa/index
+   bwa/index
+   common/index
    cutadapt/index
+   fastqc/index
+   gatk4/index
+   gridss
    htslib/index
    igvtools/index
    illumina/index
+   peter maccallum cancer centre/index
    samtools/index
-   BwaMemSamtoolsView
-   SplitMultiAllele
-   alignsortedbam
-   fastqc
-   vardictgermline
+   ucsf/index
+   vardict/index
    vardictsomatic
+   variant callers/index
 
-*This page was auto-generated on 02/07/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 09/07/2019. Please do not directly alter the contents of this page.*

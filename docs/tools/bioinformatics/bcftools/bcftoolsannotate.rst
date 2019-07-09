@@ -3,7 +3,7 @@ BCFTools: Annotate
 =====================================
 Tool identifier: ``bcftoolsAnnotate``
 
-Tool path: ``from janis_bioinformatics.tools.bcftools import BcfToolsAnnotate_1_5``
+Tool path: ``from janis_bioinformatics.tools.bcftools import BcfToolsAnnotateLatest``
 
 Documentation
 -------------
@@ -75,4 +75,4 @@ Author: **Unknown**
 
 
 *BCFTools: Annotate was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-02*.
+*This page was automatically generated on 2019-07-09*.

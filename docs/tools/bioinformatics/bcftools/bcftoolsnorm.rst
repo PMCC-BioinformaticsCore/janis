@@ -3,7 +3,7 @@ BCFTools: Normalize
 ==================================
 Tool identifier: ``bcftoolsNorm``
 
-Tool path: ``from janis_bioinformatics.tools.bcftools import BcfToolsNormLatest``
+Tool path: ``from janis_bioinformatics.tools.bcftools import BcfToolsNorm_1_5``
 
 Documentation
 -------------
@@ -73,4 +73,4 @@ Author: **Unknown**
 
 
 *BCFTools: Normalize was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-02*.
+*This page was automatically generated on 2019-07-09*.

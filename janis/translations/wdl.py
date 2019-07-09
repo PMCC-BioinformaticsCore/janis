@@ -317,9 +317,7 @@ class WdlTranslator(TranslatorBase):
             [cpu_input, wdl.Input(wdl.WdlType.parse_type("Int?"), "runtime_memory")]
         )
 
-        r.kwargs[
-            "cpu"
-        ] = "runtime_cpu"  # wdl.IfThenElse("defined(runtime_cpu)", "runtime_cpu", "1")
+        r.kwargs["cpu"] = wdl.IfThenElse("defined(runtime_cpu)", "runtime_cpu", "1")
         r.kwargs["memory"] = wdl.IfThenElse(
             "defined(runtime_memory)", '"${runtime_memory}G"', '"4G"'
         )

@@ -41,7 +41,7 @@ class MemorySelector(Selector):
 
 
 class CpuSelector(Selector):
-    def __init__(self, default=None):
+    def __init__(self, default=1):
         super().__init__()
         self.default = default
 

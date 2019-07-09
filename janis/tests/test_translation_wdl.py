@@ -235,7 +235,7 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
     def test_input_value_cpuselect_stringenv(self):
         inp = CpuSelector()
         self.assertEqual(
-            "${runtime_cpu}",
+            "${if defined(runtime_cpu) then runtime_cpu else 1}",
             wdl.get_input_value_from_potential_selector_or_generator(
                 inp, None, string_environment=True
             ),
@@ -244,7 +244,7 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
     def test_input_value_cpuselect_nostringenv(self):
         inp = CpuSelector()
         self.assertEqual(
-            "runtime_cpu",
+            "if defined(runtime_cpu) then runtime_cpu else 1",
             wdl.get_input_value_from_potential_selector_or_generator(
                 inp, None, string_environment=False
             ),

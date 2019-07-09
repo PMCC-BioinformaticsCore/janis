@@ -3,7 +3,7 @@ SamTools: Sort
 =============================
 Tool identifier: ``SamToolsSort``
 
-Tool path: ``from janis_bioinformatics.tools.samtools import SamToolsSortLatest``
+Tool path: ``from janis_bioinformatics.tools.samtools import SamToolsSort_1_7``
 
 Documentation
 -------------

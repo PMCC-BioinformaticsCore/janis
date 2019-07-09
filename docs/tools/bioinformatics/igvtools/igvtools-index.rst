@@ -3,7 +3,7 @@ IGVTools: Index
 ================================
 Tool identifier: ``igvtools-index``
 
-Tool path: ``from janis_bioinformatics.tools.igvtools import IgvToolsIndex_2_0``
+Tool path: ``from janis_bioinformatics.tools.igvtools import IgvToolsIndexLatest``
 
 Documentation
 -------------

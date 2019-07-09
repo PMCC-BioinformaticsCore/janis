@@ -3,7 +3,7 @@ GATK4: Haplotype Caller
 =============================================
 Tool identifier: ``GatkHaplotypeCaller``
 
-Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4HaplotypeCaller_4_0``
+Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4HaplotypeCallerLatest``
 
 Documentation
 -------------

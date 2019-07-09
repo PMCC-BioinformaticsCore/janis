@@ -3,7 +3,7 @@ GATK4: Mark Duplicates
 ============================================
 Tool identifier: ``Gatk4MarkDuplicates``
 
-Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4MarkDuplicatesLatest``
+Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4MarkDuplicates_4_0``
 
 Documentation
 -------------

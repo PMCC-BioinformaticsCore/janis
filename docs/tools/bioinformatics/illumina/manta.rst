@@ -3,14 +3,14 @@ Manta
 =============
 Tool identifier: ``manta``
 
-Tool path: ``from janis_bioinformatics.tools.illumina import Manta_1_5_0``
+Tool path: ``from janis_bioinformatics.tools.illumina import Manta_1_4_0``
 
 Documentation
 -------------
 
 Docker
 ******
-``michaelfranklin/manta:1.5.0``
+``michaelfranklin/manta:1.4.0``
 
 URL
 ******

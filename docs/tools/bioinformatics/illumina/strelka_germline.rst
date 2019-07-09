@@ -3,14 +3,14 @@ Strelka (Germline)
 =====================================
 Tool identifier: ``strelka_germline``
 
-Tool path: ``from janis_bioinformatics.tools.illumina import StrelkaGermline_2_9_10``
+Tool path: ``from janis_bioinformatics.tools.illumina import StrelkaGermline_2_9_9``
 
 Documentation
 -------------
 
 Docker
 ******
-``michaelfranklin/strelka:2.9.10``
+````
 
 URL
 ******

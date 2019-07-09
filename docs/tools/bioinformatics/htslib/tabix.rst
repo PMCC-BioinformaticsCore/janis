@@ -3,7 +3,7 @@ Tabix
 =============
 Tool identifier: ``tabix``
 
-Tool path: ``from janis_bioinformatics.tools.htslib import Tabix_1_2_1``
+Tool path: ``from janis_bioinformatics.tools.htslib import TabixLatest``
 
 Documentation
 -------------

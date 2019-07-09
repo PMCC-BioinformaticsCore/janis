@@ -3,7 +3,7 @@ GATK4: Print Reads
 ====================================
 Tool identifier: ``Gatk4PrintReads``
 
-Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4PrintReadsLatest``
+Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4PrintReads_4_0``
 
 Documentation
 -------------

@@ -3,7 +3,7 @@ GATK4: Apply base quality score recalibration
 ==============================================================
 Tool identifier: ``GATK4ApplyBQSR``
 
-Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4ApplyBqsrLatest``
+Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4ApplyBqsr_4_0``
 
 Documentation
 -------------

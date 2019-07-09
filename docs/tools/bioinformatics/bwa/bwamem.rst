@@ -3,7 +3,7 @@ BWA-MEM
 ================
 Tool identifier: ``BwaMem``
 
-Tool path: ``from janis_bioinformatics.tools.bwa import BwaMem_0_7_15``
+Tool path: ``from janis_bioinformatics.tools.bwa import BwaMemLatest``
 
 Documentation
 -------------

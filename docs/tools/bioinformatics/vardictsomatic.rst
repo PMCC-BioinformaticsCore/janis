@@ -3,14 +3,14 @@ Vardict - Somatic
 ==================================
 Tool identifier: ``vardictsomatic``
 
-Tool path: ``from janis_bioinformatics.tools import VarDictSomatic_1_5_7``
+Tool path: ``from janis_bioinformatics.tools import VarDictSomatic_1_5_6``
 
 Documentation
 -------------
 
 Docker
 ******
-``michaelfranklin/vardict:1.5.7``
+``michaelfranklin/vardict:1.5.6``
 
 URL
 ******

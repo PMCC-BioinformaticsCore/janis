@@ -3,7 +3,7 @@ GATK4: MuTect2
 ============================
 Tool identifier: ``gatkmutect2``
 
-Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4Mutect2Latest``
+Tool path: ``from janis_bioinformatics.tools.gatk4 import GatkMutect2_4_0``
 
 Documentation
 -------------

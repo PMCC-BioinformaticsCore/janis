@@ -3,7 +3,7 @@ GATK4: Genotype Concordance
 ======================================================
 Tool identifier: ``Gatk4GenotypeConcordance``
 
-Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4GenotypeConcordance_4_0``
+Tool path: ``from janis_bioinformatics.tools.gatk4 import Gatk4GenotypeConcordanceLatest``
 
 Documentation
 -------------

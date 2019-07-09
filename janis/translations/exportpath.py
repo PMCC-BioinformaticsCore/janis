@@ -1,13 +1,20 @@
+from janis.utils.logger import Logger
+from os import path as p, getcwd
+
+
 class ExportPathKeywords:
     workflow_spec = "{language}"
     workflow_name = "{name}"
 
-    default = f"~/Desktop/{workflow_name}/{workflow_spec}/"
-    default_no_spec = f"~/Desktop/{workflow_name}/"
+    default = "./{workflow_name}"  # f"~/Desktop/{workflow_name}/{workflow_spec}/"
+    default_no_spec = "./{workflow_name}"  # f"~/Desktop/{workflow_name}/"
 
     @staticmethod
     def resolve(path, workflow_spec, workflow_name):
-        from os.path import expanduser
+
+        if not path:
+            Logger.critical("Output path was invalid, changed to working directory")
+            path = "."
 
         if ExportPathKeywords.workflow_spec in path and workflow_spec is None:
             raise Exception(
@@ -21,8 +28,11 @@ class ExportPathKeywords:
                 "but caller of .resolve did not pass workflow name"
             )
 
+        if (len(path) == 1 and path == ".") or path[:2] == "./":
+            path = getcwd() + (path[1:] if len(path) > 1 else "")
+
         return (
-            expanduser(path)
+            p.expanduser(path)
             .replace(
                 ExportPathKeywords.workflow_spec,
                 workflow_spec.lower() if workflow_spec else "",

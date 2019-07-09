@@ -119,6 +119,8 @@ class TranslatorBase(ABC):
             if not os.path.isdir(toolsdir):
                 os.makedirs(toolsdir)
 
+            Logger.info(f"Exporting workflow files to '{d}'")
+
             with open(os.path.join(d, fn_workflow), "w+") as wf:
                 Logger.log(f"Writing {fn_workflow} to disk")
                 wf.write(str_wf)

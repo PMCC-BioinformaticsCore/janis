@@ -106,7 +106,7 @@ class TranslatorBase(ABC):
             if not os.path.isdir(d):
                 os.makedirs(d)
 
-            with open(d + fn_inputs, "w+") as f:
+            with open(os.path.join(d, fn_inputs), "w+") as f:
                 Logger.log(f"Writing {fn_inputs} to disk")
                 f.write(str_inp)
                 Logger.log(f"Written {fn_inputs} to disk")

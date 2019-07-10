@@ -29,8 +29,9 @@ class InputSelector(Selector):
 
 
 class WildcardSelector(Selector):
-    def __init__(self, wildcard):
+    def __init__(self, wildcard, first_element=None):
         self.wildcard = wildcard
+        self.first_element = first_element
 
 
 class MemorySelector(InputSelector):

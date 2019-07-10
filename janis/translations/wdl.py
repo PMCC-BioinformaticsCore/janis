@@ -361,10 +361,14 @@ class WdlTranslator(TranslatorBase):
             ):
                 # handle array of secondary files
                 for sec in i.input.data_type.subtype().secondary_files():
-                    inp[get_secondary_tag_from_original_tag(inp_key, sec)] = [
-                        apply_secondary_file_format_to_filename(iinp_val, sec)
-                        for iinp_val in inp_val
-                    ]
+                    inp[get_secondary_tag_from_original_tag(inp_key, sec)] = (
+                        [
+                            apply_secondary_file_format_to_filename(iinp_val, sec)
+                            for iinp_val in inp_val
+                        ]
+                        if inp_val
+                        else None
+                    )
 
         if merge_resources:
             inp.update(cls.build_resources_input(workflow, hints))
@@ -567,7 +571,11 @@ def translate_input_selector_for_output(
                 new_ext=s.replace("^", ""),
             )
 
-        elif File().can_receive_from(tool_in.input_type):
+        elif (
+            File().can_receive_from(tool_in.input_type)
+            and isinstance(tool_in.input_type, File)
+            and tool_in.input_type.extension
+        ):
             # use basename
             sec_expression = f'basename({expression}, "{tool_in.input_type.extension}") + "{s.replace("^", "")}"'
 
@@ -883,7 +891,7 @@ def translate_step_node(
             )
 
             identifier = old_to_new_identifier[ds]
-            inputs_map[k] = identifier + "[0]"
+            inputs_map[k] = identifier[0] + "[0]"
             for idx in range(len(secondary)):
                 sec = secondary[idx]
                 inputs_map[

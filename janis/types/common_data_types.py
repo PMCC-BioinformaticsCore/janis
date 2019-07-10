@@ -213,11 +213,13 @@ class Boolean(DataType):
 
 
 class File(DataType):
-    def __init__(self, optional=False):
+    def __init__(self, optional=False, extension=None):
         """
-        Specifically exclude default
+        :param optional:
+        :param common_extension: Used in CWL to try and guess the file extension where it's not available otherwise
         """
         super(File, self).__init__(optional=optional)
+        self.extension = extension
 
     @staticmethod
     def name():

@@ -200,7 +200,7 @@ class TestWorkflow(TestCase):
         stp = Step("stp", Untar())  # Only has one input, with no output
         out = Output("outp", Array(File()))
 
-        w.add_pipe(inp, stp.files, out)
+        w.add_pipe(inp, stp.tarFile, out)
 
         # the nodes are usually internal
         inp_node = w._nodes[inp.id()]

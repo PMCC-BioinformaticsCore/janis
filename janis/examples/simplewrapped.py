@@ -54,10 +54,10 @@ class SimpleWorkflow(Workflow):
         outp = Output("out")
 
         self.add_edge(inp, untar.tarFile)
-        self.add_edge(untar.files, compile.file)  # Auto scatter
-        self.add_edge(untar.files, retar.files)
-        self.add_edge(compile.compiled, retar.files2)
-        self.add_edge(retar.tarred, outp)
+        self.add_edge(untar.out, compile.file)  # Auto scatter
+        self.add_edge(untar.out, retar.files)
+        self.add_edge(compile.out, retar.files2)
+        self.add_edge(retar.out, outp)
 
 
 if __name__ == "__main__":

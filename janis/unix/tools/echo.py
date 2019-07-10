@@ -5,7 +5,7 @@ from janis.unix.tools.unixtool import UnixTool
 class Echo(UnixTool):
     @staticmethod
     def tool():
-        return "Echo"
+        return "echo"
 
     def friendly_name(self):
         return "Echo - Print to console"
@@ -19,7 +19,3 @@ class Echo(UnixTool):
 
     def outputs(self):
         return [ToolOutput("out", Stdout())]
-
-    @staticmethod
-    def docker():
-        return "ubuntu:latest"

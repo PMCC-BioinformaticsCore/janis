@@ -18,8 +18,4 @@ class Merge(UnixTool):
         return [ToolInput("files", Array(File()))]
 
     def outputs(self):
-        return [ToolOutput("merged", Stdout())]
-
-    @staticmethod
-    def docker():
-        return "ubuntu:latest"
+        return [ToolOutput("out", Stdout())]

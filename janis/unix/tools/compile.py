@@ -13,12 +13,12 @@ class Compile(UnixTool):
     def tool():
         return "javaCompiler"
 
+    def friendly_name(self):
+        return "Java compiler"
+
     @staticmethod
     def base_command():
         return "javac"
-
-    def friendly_name(self):
-        return "Java compiler"
 
     @staticmethod
     def docker():
@@ -31,4 +31,4 @@ class Compile(UnixTool):
         return [ToolInput("file", File(), position=1)]
 
     def outputs(self):
-        return [ToolOutput("compiled", File(), glob=WildcardSelector("*.class"))]
+        return [ToolOutput("out", File(), glob=WildcardSelector("*.class"))]

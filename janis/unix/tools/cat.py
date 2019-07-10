@@ -1,3 +1,5 @@
+from janis import ToolOutput, Stdout
+
 from janis.tool.commandtool import ToolInput
 from janis.types.common_data_types import Array, File
 from janis.unix.tools.unixtool import UnixTool
@@ -19,7 +21,7 @@ class Cat(UnixTool):
         return [ToolInput("files", Array(File()))]
 
     def outputs(self):
-        return []
+        return [ToolOutput("out", Stdout())]
 
     @staticmethod
     def docker():

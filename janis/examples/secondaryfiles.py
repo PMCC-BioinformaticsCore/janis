@@ -1,40 +1,40 @@
 from typing import List
 
-from janis.types import WildcardSelector, InputSelector
-
 from janis import ToolOutput, ToolInput, Workflow, Step, Input, Output, File, Array
-from janis.tool.commandtool import CommandTool
+from janis.types import InputSelector
+from janis.unix.tools.unixtool import UnixTool
 
 
 class DataTypeWithSecondary(File):
+    def __init__(self, optional=False):
+        super().__init__(optional, common_extension=".ext")
+
     @staticmethod
     def name():
         return "DataTypeWithSecondary"
 
     @staticmethod
     def secondary_files():
-        return [".txt"]
+        return ["^.txt"]
 
 
-class ToolThatAcceptsAndReturnsSecondary(CommandTool):
+class ToolThatAcceptsAndReturnsSecondary(UnixTool):
     @staticmethod
     def tool():
         return "ToolThatAcceptsAndReturnsSecondary"
 
     def friendly_name(self) -> str:
-        return "TestTool: Do not use"
+        return "Example tool only"
 
     @staticmethod
     def base_command():
         return "echo"  # non functional tool
 
     def inputs(self) -> List[ToolInput]:
-        return [ToolInput("input", DataTypeWithSecondary())]
+        return [ToolInput("inp", DataTypeWithSecondary())]
 
     def outputs(self) -> List[ToolOutput]:
-        return [
-            ToolOutput("output", DataTypeWithSecondary(), glob=InputSelector("input"))
-        ]
+        return [ToolOutput("out", DataTypeWithSecondary(), glob=InputSelector("inp"))]
 
 
 if __name__ == "__main__":
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     w.translate("wdl")
 
     w2 = Workflow("scattered_test_workflow")
-    inp2 = Input("inp2", Array(DataTypeWithSecondary()))
+    inp2 = Input("inp2", Array(DataTypeWithSecondary()), value=["path/to/file.ext"])
     stp2 = Step("stp2", ToolThatAcceptsAndReturnsSecondary())
     w2.add_pipe(inp2, stp2, Output("outp2"))
     w2.translate("wdl")

@@ -33,16 +33,14 @@ class WildcardSelector(Selector):
         self.wildcard = wildcard
 
 
-class MemorySelector(Selector):
-    def __init__(self, suffix=None, prefix=None, default=None):
-        self.suffix = suffix
-        self.prefix = prefix
-        self.default = default
+class MemorySelector(InputSelector):
+    def __init__(self):
+        super().__init__("runtime_memory")
 
 
-class CpuSelector(Selector):
+class CpuSelector(InputSelector):
     def __init__(self, default=1):
-        super().__init__()
+        super().__init__("runtime_cpu")
         self.default = default
 
 

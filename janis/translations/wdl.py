@@ -20,6 +20,7 @@ import json
 from typing import List, Dict, Optional, Any, Set, Tuple
 
 import wdlgen as wdl
+from janis.workflow.input import InputNode
 
 from janis.graph.stepinput import Edge, StepInput
 from janis.tool.commandtool import CommandTool
@@ -97,17 +98,13 @@ class WdlTranslator(TranslatorBase):
         for i in wf._inputs:
             wd = i.input.data_type.wdl(has_default=i.input.default is not None)
 
+            expr = None
+            if isinstance(i.input.data_type, Filename):
+                expr = f'"{i.input.data_type.generated_filename()}"'
+
             w.inputs.append(
                 wdl.Input(
-                    data_type=wd,
-                    name=i.id(),
-                    expression=get_input_value_from_potential_selector_or_generator(
-                        i.input.default,
-                        inputsdict=None,
-                        string_environment=False,
-                        tool_id=wf.id() + "." + i.id(),
-                    ),
-                    requires_quotes=False,
+                    data_type=wd, name=i.id(), expression=expr, requires_quotes=False
                 )
             )
 
@@ -230,20 +227,15 @@ class WdlTranslator(TranslatorBase):
         ins: List[wdl.Input] = []
         outs: List[wdl.Output] = []
         for i in tool.inputs():
-            wd = i.input_type.wdl()
+            wd = i.input_type.wdl(has_default=i.default is not None)
+            expr = None
+            if isinstance(i.input_type, Filename):
+                expr = f'"{i.input_type.generated_filename()}"'
             if isinstance(wd, list):
                 ins.extend(wdl.Input(w, i.id()) for w in wd)
             else:
-                indefault = (
-                    i.input_type.generated_filename()
-                    if isinstance(i.input_type, Filename)
-                    else i.default
-                )
-                default = get_input_value_from_potential_selector_or_generator(
-                    indefault, inputsdict, string_environment=False, tool_id=tool.id()
-                )
 
-                ins.append(wdl.Input(wd, i.id(), default, requires_quotes=False))
+                ins.append(wdl.Input(wd, i.id(), expr, requires_quotes=False))
 
                 sec = value_or_default(
                     i.input_type.subtype().secondary_files()
@@ -260,9 +252,10 @@ class WdlTranslator(TranslatorBase):
             outs.extend(translate_output_node_with_glob(o, o.glob, tool))
 
         command_ins = []
+        inmap = tool.inputs_map()
         if tool.inputs():
             for i in tool.inputs():
-                cmd = translate_command_input(i)
+                cmd = translate_command_input(i, inmap)
                 if cmd:
                     command_ins.append(cmd)
 
@@ -296,39 +289,34 @@ class WdlTranslator(TranslatorBase):
         if with_docker:
             r.add_docker(tool.docker())
 
-        # let's check if there are any non-optional params using a CPU selector, otherwise we'll allow CPU to be null
-        non_optional_cpus = any(
-            i
-            for i in tool.inputs()
-            if not i.input_type.optional and isinstance(i.value, CpuSelector)
-        )
-        cpu_input = (
+        # generate resource inputs, for memory, cpu and disk at the moment
+        # CPU input must always be non-optional
+        ins.insert(
+            0,
             wdl.Input(
                 wdl.WdlType.parse_type("Int"),
                 "runtime_cpu",
                 expression="1",
                 requires_quotes=False,
-            )
-            if non_optional_cpus
-            else wdl.Input(wdl.WdlType.parse_type("Int?"), "runtime_cpu")
+            ),
         )
-        # generate resource inputs, for memory, cpu and disk at the moment
-        ins.extend(
-            [cpu_input, wdl.Input(wdl.WdlType.parse_type("Int?"), "runtime_memory")]
+        ins.insert(
+            1,
+            wdl.Input(
+                wdl.WdlType.parse_type("Int"),
+                "runtime_memory",
+                expression="4",
+                requires_quotes=False,
+            ),
         )
 
-        r.kwargs["cpu"] = wdl.IfThenElse("defined(runtime_cpu)", "runtime_cpu", "1")
-        r.kwargs["memory"] = wdl.IfThenElse(
-            "defined(runtime_memory)", '"${runtime_memory}G"', '"4G"'
-        )
+        # These runtime kwargs cannot be optional, but we've enforced non-optionality when we create them
+        r.kwargs["cpu"] = "runtime_cpu"
+        r.kwargs["memory"] = "runtime_memory"
 
         if with_resource_overrides:
             ins.append(wdl.Input(wdl.WdlType.parse_type("String"), "runtime_disks"))
-            r.kwargs[
-                "disks"
-            ] = (
-                "runtime_disks"
-            )  # wdl.IfThenElse("defined(runtime_disks)", "runtime_disks", '""')
+            r.kwargs["disks"] = "runtime_disks"
             r.kwargs["zones"] = '"australia-southeast1-b"'
 
         r.kwargs["preemptible"] = 2
@@ -439,7 +427,7 @@ class WdlTranslator(TranslatorBase):
         return workflow.id() + "-resources.json"
 
 
-def translate_command_input(tool_input: ToolInput):
+def translate_command_input(tool_input: ToolInput, inputsdict, **debugkwargs):
     # make sure it has some essence of a command line binding, else we'll skip it
     # TODO: make a property on ToolInput (.bind_to_commandline) and set default to true
     if not (tool_input.position is not None or tool_input.prefix):
@@ -452,6 +440,25 @@ def translate_command_input(tool_input: ToolInput):
     prefix = tool_input.prefix
     true = None
     sep = tool_input.separator
+
+    indefault = (
+        None if isinstance(tool_input.input_type, Filename) else tool_input.default
+    )
+    if isinstance(indefault, CpuSelector):
+        indefault = indefault.default
+    elif isinstance(indefault, InputSelector):
+        Logger.critical(
+            f"WDL does not support command line level defaults that select a different input, this will remove the "
+            f"value: '{indefault}' for tool_input '{tool_input.tag}' for {debugkwargs}"
+        )
+        indefault = None
+
+    default = get_input_value_from_potential_selector_or_generator(
+        indefault, inputsdict, string_environment=False, **debugkwargs
+    )
+
+    if default:
+        name = f"if defined({name}) then {name} else {default}"
 
     if tool_input.localise_file:
         name = "basename(%s)" % name
@@ -476,6 +483,8 @@ def translate_command_input(tool_input: ToolInput):
         separate_value_from_prefix=separate_value_from_prefix
         if separate_value_from_prefix is not None
         else True,
+        # Instead of using default, we'll use the ${if defined($var) then val1 else val2}
+        # as it progress through the rest properly
         # default=default,
         true=true,
         separator=sep,
@@ -731,11 +740,11 @@ def translate_step_node(
         "zz",
     ]
     old_to_new_identifier = {
-        k.dotted_source(): k.dotted_source()
+        k.dotted_source(): (k.dotted_source(), k.source())
         for k in scatterable
         if not isinstance(k.dotted_source(), list)
     }
-    current_identifiers = set(old_to_new_identifier.values())
+    current_identifiers = set(v[0] for v in old_to_new_identifier.values())
 
     # We'll wrap everything in the scatter block later, but let's replace the fields we need to scatter
     # with the new scatter variable (we'll try to guess one based on the fieldname). We might need to eventually
@@ -749,7 +758,7 @@ def translate_step_node(
 
         while new_var in current_identifiers:
             new_var = ordered_variable_identifiers.pop(0)
-        old_to_new_identifier[s.dotted_source()] = new_var
+        old_to_new_identifier[s.dotted_source()] = (new_var, e.start)
         current_identifiers.add(new_var)
 
     # Let's map the inputs, to the source. We're using a dictionary for the map atm, but WDL requires the _format:
@@ -880,19 +889,46 @@ def translate_step_node(
                 inputs_map[
                     get_secondary_tag_from_original_tag(k, sec)
                 ] = f"{identifier}[{idx + 1}]"
+
         else:
             ds = source.dotted_source()
+            default = None
+            if source.start and isinstance(source.start, InputNode):
+                default = source.start.input.default
+
+            inpsourcevalue = None
             if ds in old_to_new_identifier and old_to_new_identifier[ds]:
                 # can't get here with secondary
-                inputs_map[k] = old_to_new_identifier[ds]
+
+                s = old_to_new_identifier[ds]
+                inpsourcevalue = s[0]
+                default = None
+
             else:
-                inputs_map[k] = ds
+                inpsourcevalue = ds
                 if secondary:
+                    if default:
+                        Logger.critical(
+                            f"The default '{default}' will not be applied to the map '{ds}' as there are secondary files"
+                        )
+                        default = None
                     for idx in range(len(secondary)):
                         sec = secondary[idx]
                         inputs_map[
                             get_secondary_tag_from_original_tag(k, sec)
                         ] = get_secondary_tag_from_original_tag(ds, sec)
+
+            if default:
+                defval = get_input_value_from_potential_selector_or_generator(
+                    default, inputsdict=None, string_environment=False, dottedsource=ds
+                )
+
+                if isinstance(defval, bool):
+                    defval = "true" if defval else "false"
+
+                inpsourcevalue = f"select_first([{inpsourcevalue}, {defval}])"
+
+            inputs_map[k] = inpsourcevalue
 
     inputs_map.update(resource_overrides)
 
@@ -929,13 +965,25 @@ def translate_step_node(
             )
             transformed = f"transform([{ds}, {joined_tags}])"
             call = wdl.WorkflowScatter(
-                old_to_new_identifier[s.dotted_source()], transformed, [call]
+                old_to_new_identifier[s.dotted_source()][0], transformed, [call]
             )
 
         else:
-            call = wdl.WorkflowScatter(
-                old_to_new_identifier[s.dotted_source()], s.dotted_source(), [call]
-            )
+            (newid, startnode) = old_to_new_identifier[s.dotted_source()]
+            insource = s.dotted_source()
+            if isinstance(startnode, InputNode) and startnode.input.default is not None:
+                resolved = get_input_value_from_potential_selector_or_generator(
+                    startnode.input.default,
+                    None,
+                    string_environment=False,
+                    scatterstep=insource,
+                )
+                if isinstance(resolved, bool):
+                    resolved = "true" if resolved else "false"
+
+                insource = f"select_first([{insource}, {resolved}])"
+
+            call = wdl.WorkflowScatter(newid, insource, [call])
 
     return call
 
@@ -974,6 +1022,8 @@ def get_input_value_from_potential_selector_or_generator(
         return f"[{joined_values}]"
     elif isinstance(value, str):
         return value if string_environment else f'"{value}"'
+    elif isinstance(value, bool):
+        return "true" if value else "false"
     elif isinstance(value, int) or isinstance(value, float):
         return value
     elif isinstance(value, Filename):
@@ -989,13 +1039,6 @@ def get_input_value_from_potential_selector_or_generator(
             string_environment=string_environment,
             **debugkwargs,
         )
-    elif isinstance(value, InputSelector):
-        return translate_input_selector(
-            selector=value,
-            inputsdict=inputsdict,
-            string_environment=string_environment,
-            **debugkwargs,
-        )
     elif isinstance(value, WildcardSelector):
         raise Exception(
             f"A wildcard selector cannot be used as an argument value for '{debugkwargs}'"
@@ -1004,6 +1047,13 @@ def get_input_value_from_potential_selector_or_generator(
         return translate_cpu_selector(value, string_environment=string_environment)
     elif isinstance(value, MemorySelector):
         return translate_mem_selector(value, string_environment=string_environment)
+    elif isinstance(value, InputSelector):
+        return translate_input_selector(
+            selector=value,
+            inputsdict=inputsdict,
+            string_environment=string_environment,
+            **debugkwargs,
+        )
     elif callable(getattr(value, "wdl", None)):
         return value.wdl()
 
@@ -1046,39 +1096,43 @@ def translate_input_selector(
 
 
 def translate_cpu_selector(selector: CpuSelector, string_environment=True):
-    value = "runtime_cpu"
-    if selector.default:
-        value = wdl.IfThenElse(
-            f"defined(runtime_cpu)",
-            value,
-            get_input_value_from_potential_selector_or_generator(
-                selector.default, None, string_environment=False
-            ),
-        ).get_string()
-
-    return "${%s}" % value if string_environment else value
+    return translate_input_selector(
+        selector, None, string_environment=string_environment
+    )
+    # if selector.default:
+    #     value = wdl.IfThenElse(
+    #         f"defined(runtime_cpu)",
+    #         value,
+    #         get_input_value_from_potential_selector_or_generator(
+    #             selector.default, None, string_environment=False
+    #         ),
+    #     ).get_string()
+    # return "${%s}" % value if string_environment else value
 
 
 def translate_mem_selector(selector: MemorySelector, string_environment=True):
-    pre = selector.prefix if selector.prefix else ""
-    suf = selector.suffix if selector.suffix else ""
-
-    val = "runtime_memory"  # remove floor as memory is now string
-    if selector.default:
-        val = wdl.IfThenElse(
-            "defined(runtime_memory)",
-            val,
-            get_input_value_from_potential_selector_or_generator(
-                selector.default, None, string_environment=False
-            ),
-        ).get_string()
-
-    if string_environment:
-        return f"{pre}${{{val}}}{suf}"
-    else:
-        pref = ('"%s" + ' % pre) if pre else ""
-        suff = (' + "%s"' % suf) if suf else ""
-        return pref + val + suff
+    return translate_input_selector(
+        selector, None, string_environment=string_environment
+    )
+    # pre = selector.prefix if selector.prefix else ""
+    # suf = selector.suffix if selector.suffix else ""
+    #
+    # val = "runtime_memory"  # remove floor as memory is now string
+    # if selector.default:
+    #     val = wdl.IfThenElse(
+    #         "defined(runtime_memory)",
+    #         val,
+    #         get_input_value_from_potential_selector_or_generator(
+    #             selector.default, None, string_environment=False
+    #         ),
+    #     ).get_string()
+    #
+    # if string_environment:
+    #     return f"{pre}${{{val}}}{suf}"
+    # else:
+    #     pref = ('"%s" + ' % pre) if pre else ""
+    #     suff = (' + "%s"' % suf) if suf else ""
+    #     return pref + val + suff
 
 
 def translate_wildcard_selector(selector: WildcardSelector):

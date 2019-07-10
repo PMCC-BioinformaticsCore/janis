@@ -18,6 +18,7 @@ from janis import (
     Filename,
     WildcardSelector,
     ToolArgument,
+    Boolean,
 )
 from janis.translations import WdlTranslator
 from janis.types import CpuSelector, StringFormatter
@@ -235,7 +236,7 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
     def test_input_value_cpuselect_stringenv(self):
         inp = CpuSelector()
         self.assertEqual(
-            "${if defined(runtime_cpu) then runtime_cpu else 1}",
+            "${runtime_cpu}",
             wdl.get_input_value_from_potential_selector_or_generator(
                 inp, None, string_environment=True
             ),
@@ -244,7 +245,16 @@ class TestWdlSelectorsAndGenerators(unittest.TestCase):
     def test_input_value_cpuselect_nostringenv(self):
         inp = CpuSelector()
         self.assertEqual(
-            "if defined(runtime_cpu) then runtime_cpu else 1",
+            "runtime_cpu",
+            wdl.get_input_value_from_potential_selector_or_generator(
+                inp, None, string_environment=False
+            ),
+        )
+
+    def test_input_value_cpuselectnone_nostringenv(self):
+        inp = CpuSelector()
+        self.assertEqual(
+            "runtime_cpu",
             wdl.get_input_value_from_potential_selector_or_generator(
                 inp, None, string_environment=False
             ),
@@ -554,3 +564,123 @@ class TestWdlGenerateInput(unittest.TestCase):
 
         self.assertEqual("out_txt", os[1].name)
         self.assertEqual('"${testtool}/out.txt"', os[1].expression)
+
+
+#
+class TestWdlToolInputGeneration(unittest.TestCase):
+    def test_nodefault_nooptional_position(self):
+        ti = ToolInput("tag", String(), position=0)
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual("${tag}", resp.get_string())
+
+    def test_nodefault_nooptional_prefix_sep(self):
+        ti = ToolInput("tag", String(), prefix="--amazing")
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual("--amazing ${tag}", resp.get_string())
+
+    def test_nodefault_nooptional_prefix_nosep(self):
+        ti = ToolInput(
+            "tag", String(), prefix="--amazing=", separate_value_from_prefix=False
+        )
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual("--amazing=${tag}", resp.get_string())
+
+    def test_nodefault_optional_position(self):
+        ti = ToolInput("tag", String(optional=True), position=0)
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual("${tag}", resp.get_string())
+
+    def test_nodefault_optional_prefix_sep(self):
+        ti = ToolInput("tag", String(optional=True), prefix="--amazing")
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual('${"--amazing " + tag}', resp.get_string())
+
+    def test_nodefault_optional_prefix_nosep(self):
+        ti = ToolInput(
+            "tag",
+            String(optional=True),
+            prefix="--amazing=",
+            separate_value_from_prefix=False,
+        )
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual('${"--amazing=" + tag}', resp.get_string())
+
+    def test_default_nooptional_position(self):
+        ti = ToolInput("tag", String(), position=0, default="defval")
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual('${if defined(tag) then tag else "defval"}', resp.get_string())
+
+    def test_default_nooptional_prefix_sep(self):
+        ti = ToolInput("tag", String(), prefix="--amazing", default="defval")
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual(
+            '--amazing ${if defined(tag) then tag else "defval"}', resp.get_string()
+        )
+
+    def test_default_nooptional_prefix_nosep(self):
+        ti = ToolInput(
+            "tag",
+            String(),
+            prefix="--amazing=",
+            separate_value_from_prefix=False,
+            default="defval",
+        )
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual(
+            '--amazing=${if defined(tag) then tag else "defval"}', resp.get_string()
+        )
+
+    def test_default_optional_position(self):
+        ti = ToolInput("tag", String(optional=True), position=0, default="defval")
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual('${if defined(tag) then tag else "defval"}', resp.get_string())
+
+    def test_default_optional_prefix_sep(self):
+        ti = ToolInput(
+            "tag", String(optional=True), prefix="--amazing", default="defval"
+        )
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual(
+            '${"--amazing " + if defined(tag) then tag else "defval"}',
+            resp.get_string(),
+        )
+
+    def test_default_optional_prefix_nosep(self):
+        ti = ToolInput(
+            "tag",
+            String(optional=True),
+            prefix="--amazing=",
+            separate_value_from_prefix=False,
+            default="defval",
+        )
+        resp = wdl.translate_command_input(ti, {"tag": ti})
+        self.assertEqual(
+            '${"--amazing=" + if defined(tag) then tag else "defval"}',
+            resp.get_string(),
+        )
+
+    def test_bind_boolean_as_default(self):
+        ti = ToolInput("tag", Boolean(optional=True), prefix="--amazing", default=True)
+        resp = wdl.translate_command_input(ti, None).get_string()
+        self.assertEqual(
+            '${true="--amazing" false="" if defined(tag) then tag else true}', resp
+        )
+
+
+class TestWdlInputTranslation(unittest.TestCase):
+    def test_string_nooptional_nodefault(self):
+        s = String()
+        self.assertEqual("String", s.wdl(has_default=False).get_string())
+
+    def test_string_nooptional_default(self):
+        s = String()
+        # As of 2019-07-10, the defaults are applied within the command input, so these can be null
+        self.assertEqual("String?", s.wdl(has_default=True).get_string())
+
+    def test_string_optional_nodefault(self):
+        s = String(optional=True)
+        self.assertEqual("String?", s.wdl(has_default=False).get_string())
+
+    def test_string_optional_default(self):
+        s = String(optional=True)
+        self.assertEqual("String?", s.wdl(has_default=True).get_string())

@@ -84,13 +84,13 @@ class ToolInput(ToolArgument):
             shell_quote=shell_quote,
         )
 
-        if default is not None:
-            input_type.optional = True
+        # if default is not None:
+        #     input_type.optional = True
 
         if not Validators.validate_identifier(tag):
             raise Exception(
                 f"The identifier '{tag}' was not validated by '{Validators.identifier_regex}' "
-                f"(must start with letters, and then only contain letters, numbers and an underscore)"
+                f"(must startpip instal with letters, and then only contain letters, numbers and an underscore)"
             )
 
         if tag in ToolInput.illegal_keywords:

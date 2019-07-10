@@ -343,7 +343,7 @@ class Array(DataType):
 
     def wdl(self, has_default=False) -> wdlgen.WdlType:
         ar = wdlgen.ArrayType(self._t.wdl(has_default=False), requires_multiple=False)
-        return wdlgen.WdlType(ar, optional=self.optional and not has_default)
+        return wdlgen.WdlType(ar, optional=self.optional or has_default)
 
     def can_receive_from(self, other, source_has_default=False):
         if isinstance(other, Array):

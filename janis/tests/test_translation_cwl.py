@@ -312,7 +312,7 @@ class TestCwlSelectorsAndGenerators(unittest.TestCase):
     def test_input_value_cpuselect_codeenv(self):
         inp = CpuSelector()
         self.assertEqual(
-            "$(inputs.runtime_cpu)",
+            "inputs.runtime_cpu" "",
             cwl.get_input_value_from_potential_selector_or_generator(
                 inp, code_environment=True
             ),
@@ -330,7 +330,7 @@ class TestCwlSelectorsAndGenerators(unittest.TestCase):
     def test_input_value_memselect_codeenv(self):
         inp = MemorySelector()
         self.assertEqual(
-            "$(Math.floor(inputs.runtime_memory))",
+            "inputs.runtime_memory",
             cwl.get_input_value_from_potential_selector_or_generator(
                 inp, code_environment=True
             ),
@@ -339,7 +339,7 @@ class TestCwlSelectorsAndGenerators(unittest.TestCase):
     def test_input_value_memselect_nocodeenv(self):
         inp = MemorySelector()
         self.assertEqual(
-            "$(Math.floor(inputs.runtime_memory))",
+            "$(inputs.runtime_memory)",
             cwl.get_input_value_from_potential_selector_or_generator(
                 inp, code_environment=False
             ),

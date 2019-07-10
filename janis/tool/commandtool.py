@@ -26,6 +26,12 @@ class CommandTool(Tool, ABC):
     @staticmethod
     @abstractmethod
     def tool() -> str:
+        """
+        This is the name of the tool. ALL versions of the same tool should share this common name.
+        As of 2019-07-11, there are no known restrictions on this identifier, but it MUST be unique,
+        succinct and should be self-evident.
+        :return: String identifier for the tool
+        """
         raise Exception(f"subclass MUST implement 'tool' method")
 
     @classmethod

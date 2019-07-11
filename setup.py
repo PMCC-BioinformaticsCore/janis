@@ -54,7 +54,7 @@ setup(
         "ruamel.yaml >= 0.12.4, <= 0.15.77",
         "six",
         "tabulate",
-        "illusional.wdlgen >= 0.2.2",
+        "illusional.wdlgen >= 0.2.3",
         "cwlgen",
     ],
     zip_safe=False,

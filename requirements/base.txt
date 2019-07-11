@@ -1,4 +1,4 @@
-illusional.cwlgen>=0.0.4
-illusional.wdlgen
+illusional.cwlgen>=0.0.5
+illusional.wdlgen>=0.2.3
 networkx>=2.1
 ruamel.yaml>=0.12.4,<=0.15.77

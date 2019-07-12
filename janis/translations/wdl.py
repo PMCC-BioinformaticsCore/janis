@@ -312,7 +312,9 @@ class WdlTranslator(TranslatorBase):
 
         # These runtime kwargs cannot be optional, but we've enforced non-optionality when we create them
         r.kwargs["cpu"] = "runtime_cpu"
-        r.kwargs["memory"] = "runtime_memory"
+        r.kwargs["memory"] = wdl.IfThenElse(
+            "defined(runtime_memory)", '"${runtime_memory}G"', '"4G"'
+        )
 
         if with_resource_overrides:
             ins.append(wdl.Input(wdl.WdlType.parse_type("String"), "runtime_disks"))

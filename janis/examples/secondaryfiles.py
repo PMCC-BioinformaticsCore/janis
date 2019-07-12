@@ -7,7 +7,7 @@ from janis.unix.tools.unixtool import UnixTool
 
 class DataTypeWithSecondary(File):
     def __init__(self, optional=False):
-        super().__init__(optional, common_extension=".ext")
+        super().__init__(optional, extension=".ext")
 
     @staticmethod
     def name():

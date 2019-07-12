@@ -116,6 +116,9 @@ class StringFormatter(Selector):
             retval = retval.replace(f"{{{k}}}", str(resolved_values[k]))
         return retval
 
+    def __radd__(self, other):
+        return StringFormatter(other) + self
+
     def __add__(self, other):
         if isinstance(other, str):
             # check if it has args in it

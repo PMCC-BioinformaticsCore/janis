@@ -196,6 +196,10 @@ class TestStringFormatterConcat(unittest.TestCase):
         self.assertEqual("one {arg} + another {arg}", b._format)
         self.assertEqual(1, len(b.kwargs))
 
+    def test_reverse_add(self):
+        b = "Hello, " + StringFormatter("world")
+        self.assertEqual("Hello, world", b._format)
+
 
 class TestStringFormatterResolve(unittest.TestCase):
     def test_formatter_no_replacement(self):

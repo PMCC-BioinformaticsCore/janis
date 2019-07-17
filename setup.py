@@ -55,7 +55,7 @@ setup(
         "six",
         "tabulate",
         "illusional.wdlgen >= 0.2.3",
-        "cwlgen",
+        "cwlgen >= 0.3.0",
     ],
     zip_safe=False,
     long_description=long_description,

@@ -35,6 +35,17 @@ You can import Janis into your project with:
 import janis as j  
 ```
 
+## Structure
+
+Janis is structured into components:
+
+- `core` - contains classes and functions to assist in the workflow building 
+    - `bioinformatics`
+    - `unix`
+- `runner` - An assistant to run Janis workflows using different workflow engines with common semantics.
+
+This repository manages the dependencies for installation and drives the documentation.
+
 ## Usage
 
 Janis has an API that mirrors the workflow concepts:
@@ -71,14 +82,15 @@ outp = j.Output("outputIdentifier")
 
 w.add_edges([
     (inp, echostep.inp),    # Connect 'inp' to 'echostep'
-    (echostep, outp.outp)    # Connect output of 'echostep' to 'out'
+    (echostep, outp)    # Connect output of 'echostep' to 'out'
 ])
   
 # Will print the CWL, input file and relevant tools to the console  
-w.translate("cwl")  # or "wdl"
+w.translate("cwl", to_disk=False)  # or "wdl"
 ```
 
-We can export a CWL representation to the console using `.translate("cwl")`.
+We can export a CWL representation to the console using `.translate("cwl")`. By including the 
+`to_disk=True` parameter, we can write this workflow to disk at the current location. 
 
 #### Named inputs and Outputs
 

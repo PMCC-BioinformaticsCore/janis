@@ -1,4 +1,0 @@
--r base.txt
-Sphinx==1.8.2
-sphinx-autobuild==0.7.1
-tabulate==0.8.2

@@ -22,37 +22,19 @@ _Proudly made on Planet Earth._
 
 """
 
-# PEP396:  https://www.python.org/dev/peps/pep-0396/
-from janis.__meta__ import __version__
+import sys, os
+import pkg_resources
 
-from janis.hints import CaptureType, Engine, HINTS, Hint, HintEnum, HintArray
-from janis.tool.commandtool import CommandTool
-from janis.tool.tool import Tool, ToolArgument, ToolInput, ToolOutput
-from janis.translations import SupportedTranslations
-from janis.types import (
-    InputSelector,
-    WildcardSelector,
-    MemorySelector,
-    CpuSelector,
-    StringFormatter,
-)
-from janis.types.common_data_types import (
-    Boolean,
-    String,
-    Int,
-    Float,
-    Double,
-    File,
-    Directory,
-    Array,
-    Filename,
-    Stdout,
-)
-from janis.types.data_types import DataType
-from janis.unix import *
-from janis.utils.logger import Logger, LogLevel
-from janis.utils.metadata import Metadata, WorkflowMetadata, ToolMetadata
-from janis.workflow.input import Input
-from janis.workflow.output import Output
-from janis.workflow.step import Step
-from janis.workflow.workflow import Workflow
+from janis_core import *
+
+runner = None
+
+for entrypoint in pkg_resources.iter_entry_points(group="janis.extension"):
+    try:
+        print(entrypoint.name)
+        m = entrypoint.load()
+        sys.modules["janis." + entrypoint.name] = m
+        globals()[entrypoint.name] = m
+    except ImportError as e:
+        Logger.critical(f"Couldn't import janis extension '{entrypoint.name}': {e}")
+        continue

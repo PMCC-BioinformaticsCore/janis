@@ -28,6 +28,15 @@ import pkg_resources
 
 from janis_core import *
 
+"""
+Get any entrypoints and bind them onto this class so you can use them directly from this class:
+    >> import janis
+    >> janis.myextensionmodule.my_function()
+ 
+We'll also add them to the sys.module path which allows us to directly import the module:
+    >> import janis.myextensionmodule as jm
+    >> jm.my_function()
+"""
 for entrypoint in pkg_resources.iter_entry_points(group="janis.extension"):
     try:
         print(entrypoint.name)

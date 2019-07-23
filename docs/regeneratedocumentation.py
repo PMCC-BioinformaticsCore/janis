@@ -6,12 +6,14 @@ It's a bit of a random collection of things that should be refactored:
     - NestedDictionary (store values in nested structure (with root key))
     - RST Helpers
 """
+from requests.utils import requote_uri
+from distutils.version import StrictVersion
 from inspect import isfunction, ismodule, isabstract, isclass
 
+import janis
 from constants import PROJECT_ROOT_DIR
-from janis.types.common_data_types import all_types, Array
-from janis.types.data_types import DataType
-from janis.workflow.workflow import Workflow
+from janis_core import Array, DataType, Workflow, CommandTool, Tool, Metadata, Logger
+from janis_core.types.common_data_types import all_types
 
 # Import modules here so that the tool registry knows about them
 
@@ -20,17 +22,15 @@ docs_dir = PROJECT_ROOT_DIR + "/docs/"
 tools_dir = docs_dir + "tools/"
 dt_dir = docs_dir + "datatypes/"
 
+modules = [janis.bioinformatics, janis.unix]
+
 ###### Shouldn't need to touch below this line #####
 
 import os
-from typing import List, Set, Type, Tuple
+from typing import List, Set, Type, Tuple, Dict
 
 import tabulate
 from datetime import date
-
-from janis import CommandTool, Logger
-from janis.tool.tool import Tool
-from janis.utils.metadata import Metadata
 
 
 class NestedDictionaryTypeException(Exception):
@@ -48,7 +48,11 @@ def format_rst_link(text, link):
     return f"`{text} <{link}>`_"
 
 
-def prepare_tool(tool: Tool):
+def get_tool_url(toolname, version):
+    return requote_uri(toolname + "_" + version).lower()
+
+
+def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
     # Stuff to list on the documentation page:
     #   - Versions of tools
     #   - Generated command
@@ -94,13 +98,34 @@ def prepare_tool(tool: Tool):
         optional_input_tuples, input_headers, tablefmt="rst"
     )
 
+    versiontext = ""
+
+    formatted_toolversions_array = []
+    formatted_toolincludes_array = []
+    for v in toolversions:
+        link = get_tool_url(tool.id(), v)
+        formatted_toolincludes_array.append(".. include:: " + link)
+        if v == tool.version():
+            formatted_toolversions_array.append(
+                f"- {v} (current)"
+            )  # + format_rst_link(v + " (current)", link))
+        else:
+            formatted_toolversions_array.append(
+                "- " + format_rst_link(v, link + ".html")
+            )
+
+    formatted_toolincludes = "\n".join(formatted_toolincludes_array)
+    if len(formatted_toolincludes_array) > 1:
+
+        versiontext = "Versions\n*********\n".join(formatted_toolversions_array)
+
     output_headers = ["name", "type", "documentation"]
     output_tuples = [[o.id(), o.output_type.id(), o.doc] for o in tool.outputs()]
     formatted_outputs = tabulate.tabulate(output_tuples, output_headers, tablefmt="rst")
 
     docker_tag = ""
     if isinstance(tool, CommandTool):
-        docker_tag = "Docker\n******\n``" + tool.docker() + "``\n"
+        docker_tag = f"Docker: ``{tool.docker()}``"
 
     tool_prov = ""
     if tool.tool_provider() is None:
@@ -108,22 +133,28 @@ def prepare_tool(tool: Tool):
     else:
         tool_prov = "." + tool.tool_provider().lower()
 
-    return f"""
+    return f"""\
+{':orphan:' if isorphan else ''}
+{formatted_toolincludes if not isorphan else ''}
+
 {fn}
 {"=" * len(tn)}
 Tool identifier: ``{tool.id()}``
+Tool path: ``{tool.__module__} import {tool.__class__.__name__}``
 
-Tool path: ``from janis_bioinformatics.tools{tool_prov} import {tool.__class__.__name__}``
+Version: {tool.version()}
+{docker_tag}
+{versiontext}
+
 
 Documentation
 -------------
 
-{docker_tag}
 URL
 ******
 {formatted_url}
 
-Docstring
+Description
 *********
 {metadata.documentation if metadata.documentation else "*No documentation was provided: " + format_rst_link(
         "contribute one", "https://github.com/illusional") + "*"}
@@ -182,7 +213,7 @@ Documentation
 """
 
 
-def nested_keys_add(d, keys: List[str], value, root_key):
+def nested_keys_append_with_root(d, keys: List[str], value, root_key):
     if len(keys) == 0:
         if root_key in d:
             d[root_key].append(value)
@@ -196,16 +227,43 @@ def nested_keys_add(d, keys: List[str], value, root_key):
                 raise NestedDictionaryTypeException(
                     key=key, error_type=type(d[key]), keys=keys
                 )
-            nested_keys_add(d[key], keys[1:], value, root_key=root_key)
+            nested_keys_append_with_root(d[key], keys[1:], value, root_key=root_key)
             return d
         else:
-            d[key] = nested_keys_add({}, keys[1:], value, root_key=root_key)
+            d[key] = nested_keys_append_with_root(
+                {}, keys[1:], value, root_key=root_key
+            )
     except NestedDictionaryTypeException as de:
         raise NestedDictionaryTypeException(
             key=de.key, error_type=de.error_type, keys=keys
         )
 
     return d
+
+
+def nested_keys_add(d, keys: List[str], value) -> bool:
+    if len(keys) == 0:
+        raise Exception(
+            f"Couldn't add {value} to nested dictionary as no keys were provided"
+        )
+    key = keys[0]
+    if len(keys) == 1:
+        if key in d:
+            return False
+        d[key] = value
+        return True
+    try:
+        if key not in d:
+            d[key] = {}
+        elif not isinstance(d[key], dict):
+            raise NestedDictionaryTypeException(
+                key=key, error_type=type(d[key]), keys=keys
+            )
+        return nested_keys_add(d[key], keys[1:], value)
+    except NestedDictionaryTypeException as de:
+        raise NestedDictionaryTypeException(
+            key=de.key, error_type=de.error_type, keys=keys
+        )
 
 
 def get_toc(title, intro_text, subpages, caption="Contents", max_depth=1):
@@ -230,11 +288,8 @@ def get_toc(title, intro_text, subpages, caption="Contents", max_depth=1):
 
 
 def get_tools_and_datatypes():
-    import janis.bioinformatics, janis.unix
 
-    modules = [janis.bioinformatics, janis.unix]
-
-    tools: Set[Type[Tool]] = set()
+    tools: Dict[str, Dict[str, Type[Tool]]] = {}
     data_types: Set[Type[DataType]] = set(all_types)
 
     for m in modules:
@@ -243,22 +298,33 @@ def get_tools_and_datatypes():
         # noinspection PyTypeChecker
         tdt, ddt = get_tool_from_module(m.data_types)
 
-        tools = tools.union(tt).union(tdt)
+        tools = merge_versioned_tools_dicts(tools, merge_versioned_tools_dicts(tt, tdt))
         data_types = data_types.union(dt).union(ddt)
 
-    return list(tools), list(data_types)
+    return tools, list(data_types)
+
+
+def merge_versioned_tools_dicts(d1: dict, d2: Dict[str, Dict[str, Type[Tool]]]):
+    d = {**d1}
+    for k, v in d2.items():
+        if k in d:
+            d[k] = {**d[k], **v}
+        else:
+            d[k] = v
+    return d
 
 
 def get_tool_from_module(
     module, seen_modules=None
-) -> Tuple[Set[Type[Tool]], Set[Type[DataType]]]:
+) -> Tuple[Dict[str, Dict[str, Type[Tool]]], Set[Type[DataType]]]:
     q = {
         n: cls
         for n, cls in list(module.__dict__.items())
         if not n.startswith("__") and type(cls) != type
     }
 
-    tools: Set[Type[Tool]] = set()
+    # name: version: Type[Tool]
+    tools: Dict[str, Dict[str, Type[Tool]]] = {}
     data_types: Set[Type[DataType]] = set()
 
     if seen_modules is None:
@@ -276,7 +342,7 @@ def get_tool_from_module(
                 continue
             if ismodule(cls):
                 t, d = get_tool_from_module(cls, seen_modules)
-                tools = tools.union(t)
+                tools = merge_versioned_tools_dicts(tools, t)
                 data_types = data_types.union(d)
             elif isabstract(cls):
                 continue
@@ -284,10 +350,14 @@ def get_tool_from_module(
                 continue
             elif issubclass(cls, CommandTool):
                 print("Found commandtool: " + cls.tool())
-                tools.add(cls)
+                v = cls.version() if cls.version() else "None"
+                nested_keys_add(tools, [cls.tool(), v], cls)
             elif issubclass(cls, Workflow):
-                print("Found workflow: " + cls().id())
-                tools.add(cls)
+                c = cls()
+                print("Found workflow: " + c.id())
+                v = c.version() if c.version() else "None"
+                nested_keys_add(tools, [cls().id(), v], cls)
+
             elif issubclass(cls, DataType):
                 print("Found datatype: " + cls().id())
                 data_types.add(cls)
@@ -297,6 +367,13 @@ def get_tool_from_module(
             continue
 
     return tools, data_types
+
+
+def sort_tool_versions(versions: List[str]) -> List[str]:
+    try:
+        return sorted(versions, key=StrictVersion, reverse=True)
+    except:
+        return sorted(versions, reverse=True)
 
 
 def prepare_all_tools():
@@ -309,31 +386,43 @@ def prepare_all_tools():
     dt_module_index = {}
     ROOT_KEY = "root"
 
-    for t in tools:
+    for toolname, toolsbyversion in tools.items():
         # tool = tool_vs[0][0]()
-        tool = t()
-        Logger.log("Preparing " + tool.id())
-        output_str = prepare_tool(tool)
-
-        tool_path_components = list(
-            filter(lambda a: bool(a), [tool.tool_module(), tool.tool_provider()])
+        tool_versions = sort_tool_versions(list(toolsbyversion.keys()))
+        default_version = tool_versions[0]
+        Logger.log(
+            f"Preparing {toolname}, found {len(tool_versions)} version[s] ({','.join(tool_versions)})"
         )
+
+        defaulttool = toolsbyversion[default_version]
+        tool_path_components = list(
+            filter(
+                lambda a: bool(a),
+                [defaulttool.tool_module(), defaulttool.tool_provider()],
+            )
+        )
+
+        # (toolURL, tool, isPrimary)
+        toolurl_to_tool = [(toolname.lower(), defaulttool, True)] + [
+            (get_tool_url(toolname, v), toolsbyversion[v], False) for v in tool_versions
+        ]
 
         path_components = "/".join(tool_path_components)
         output_dir = f"{tools_dir}/{path_components}/".lower()
-        output_filename = (output_dir + tool.id() + ".rst").lower()
-
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        nested_keys_add(
-            tool_module_index, tool_path_components, tool.id(), root_key=ROOT_KEY
+        for (toolurl, tool, isprimary) in toolurl_to_tool:
+            output_str = prepare_tool(tool(), tool_versions, not isprimary)
+            output_filename = output_dir + toolurl + ".rst"
+            with open(output_filename, "w+") as tool_file:
+                tool_file.write(output_str)
+
+        nested_keys_append_with_root(
+            tool_module_index, tool_path_components, toolname, root_key=ROOT_KEY
         )
 
-        with open(output_filename, "w+") as tool_file:
-            tool_file.write(output_str)
-
-        Logger.log("Prepared " + tool.id())
+        Logger.log("Prepared " + toolname)
 
     for d in data_types:
         # tool = tool_vs[0][0]()
@@ -359,7 +448,9 @@ def prepare_all_tools():
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        nested_keys_add(dt_module_index, dt_path_components, did, root_key=ROOT_KEY)
+        nested_keys_append_with_root(
+            dt_module_index, dt_path_components, did, root_key=ROOT_KEY
+        )
 
         with open(output_filename, "w+") as dt_file:
             dt_file.write(output_str)

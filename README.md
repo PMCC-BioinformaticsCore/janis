@@ -39,10 +39,13 @@ import janis as j
 
 Janis is structured into components:
 
-- `core` - contains classes and functions to assist in the workflow building 
-    - `bioinformatics`
-    - `unix`
-- `runner` - An assistant to run Janis workflows using different workflow engines with common semantics.
+- [`core`](https://github.com/PMCC-BioinformaticsCore/janis-core) - contains classes and functions to assist in the workflow building. 
+    - [`bioinformatics`](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics) - has bioinformatics tools and data types (`import janis.bioinformatics
+`)
+    - [`unix`](https://github.com/PMCC-BioinformaticsCore/janis-unix) - Installed by default (`import janis.unix`)
+- [`runner`](https://github.com/PMCC-BioinformaticsCore/janis-runner) - An assistant to run Janis workflows using different workflow engines with common semantics.
+
+
 
 This repository manages the dependencies for installation and drives the documentation.
 
@@ -70,63 +73,29 @@ Below we've constructed a simple example that takes a string input, calls the
 Echo tool's output as a workflow output.  
   
 ```python  
-import janis as j  
-from janis.unix.tools.echo import Echo   
+import janis as j
+from janis.unix.tools.echo import Echo
 
-w = j.Workflow("workflowId")  
-  
-inp = j.Input("inputIdentifier", j.String(), value="my value to print")  
-echostep = j.Step("stepIdentifier", Echo())  
-outp = j.Output("outputIdentifier")  
-  
+w = j.Workflow("workflowId")
+
+inp = j.Input("inputIdentifier", data_type=j.String(), value="Hello, World!")
+echo = j.Step("stepIdentifier", tool=Echo())
+out = j.Output("outputIdentifier")
 
 w.add_edges([
-    (inp, echostep.inp),    # Connect 'inp' to 'echostep'
-    (echostep, outp)    # Connect output of 'echostep' to 'out'
+    (inp, echo.inp),  # Connect 'inp' to 'echostep'
+    (echo.out, out),  # Connect output of 'echostep' to 'out'
 ])
-  
-# Will print the CWL, input file and relevant tools to the console  
+
+# Will print the CWL, input file and relevant tools to the console
 w.translate("cwl", to_disk=False)  # or "wdl"
+
 ```
 
 We can export a CWL representation to the console using `.translate("cwl")`. By including the 
 `to_disk=True` parameter, we can write this workflow to disk at the current location. 
 
-#### Named inputs and Outputs
-
-Every input and output of a tool is named. In this example, Janis knows that there is only one
-input and one output of `echostep`, so can automatically connect these together. You should see
-a statement in the console that indicates that Janis has automatically made this connection.
-
-```
-[INFO]: The node 'stepIdentifier' was not a fully qualified input of the tool 'Echo', this was automatically corrected (stepIdentifier → stepIdentifier.inp)
-[INFO]: The node 'outputIdentifier' under-referenced an output the step 'stepIdentifier' (tool: 'Echo'), this was automatically corrected (stepIdentifier → stepIdentifier.outp)
-```
-
-    
 ### Included tool definitions and types  
-  
-#### Bioinformatics  
-  
-The Janis framework can be extended to include a suite of 
-[Bioinformatics data types and tools](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics). 
-These can be installed with the `bioinformatics` install extra option.   
-  
-```bash  
-pip3 install janis-pipelines[bioinformatics]  
-```  
-
-#### Unix
-
-> Tool document: 
-
-Some basic unix tools have been wrapped and included as part of the base Janis module and 
-are the basis for the examples. You can reference these unix tools through 
-`janis.unix.tools`.  
-  
-These can be referenced by `janis.bioinformatics` or `janis_bioinformatics`, the latter might be easier due to the way  nested python imports work.  
-  
-   
   
 #### More examples  
 
@@ -160,8 +129,5 @@ Through conference or talks, this project has been referenced by the following t
 > _Further information_: [Development](https://janis.readthedocs.io/en/latest/development/)  
   
 This project is work-in-progress and is still in developments. Although we welcome contributions,  due to the immature state of this project we recommend raising issues through the [Github issues page](https://github.com/PMCC-BioinformaticsCore/janis/issues) for Pipeline related issues.  
-  
-If you find an issue with the tool definitions, please see the relevant issue page:  
-- [Pipeline-bioinformatics](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/issues)  
-  
+
 Information about the project structure and more on contributing can be found within [the documentation](https://janis.readthedocs.io/en/latest/development/).

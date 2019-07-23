@@ -39,7 +39,6 @@ We'll also add them to the sys.module path which allows us to directly import th
 """
 for entrypoint in pkg_resources.iter_entry_points(group="janis.extension"):
     try:
-        print(entrypoint.name)
         m = entrypoint.load()
         sys.modules["janis." + entrypoint.name] = m
         globals()[entrypoint.name] = m

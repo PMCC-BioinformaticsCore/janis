@@ -1,10 +1,10 @@
-import janis_core as j
-from janis_core.unix.tools.echo import Echo
+import janis as j
+from janis.unix.tools.echo import Echo
 
 w = j.Workflow("workflowId")
 
-inp = j.Input("inputIdentifier", j.String(), value="HelloWorld")
-echo = j.Step("stepIdentifier", Echo())
+inp = j.Input("inputIdentifier", data_type=j.String(), value="HelloWorld")
+echo = j.Step("stepIdentifier", tool=Echo())
 out = j.Output("outputIdentifier")
 
 w.add_edges(

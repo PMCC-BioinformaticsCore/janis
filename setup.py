@@ -24,12 +24,15 @@ setup(
     author_email="michael.franklin@petermac.org",
     license="GNU",
     keywords=["pipelines", "bioinformatics"],
-    packages=["janis"] + ["janis." + p for p in sorted(find_packages("./janis"))],
+    packages=["janis"]
+    + ["janis." + p for p in sorted(find_packages("./janis"))]
+    + ["toolbuilder"],
     install_requires=["janis-pipelines.core", "janis-pipelines.unix"],
     extras_require={
         "bioinformatics": "janis-pipelines.bioinformatics>=0.4.0",
         "runner": "janis-pipelines.runner>=0.4.0",
     },
+    entry_points={"console_scripts": ["janisbuilder=toolbuilder.main:process_args"]},
     zip_safe=False,
     long_description=long_description,
     long_description_content_type="text/markdown",

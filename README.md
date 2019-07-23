@@ -49,21 +49,6 @@ Janis is structured into components:
 
 This repository manages the dependencies for installation and drives the documentation.
 
-## Usage
-
-Janis has an API that mirrors the workflow concepts:
-
-- `j.Workflow`: A workflow represents the `Edge`s between `Input`, `Step`, `Output`
-  - `j.Input`: An input to a Workflow, has an identifier, a type and a value.
-  - `j.Step`: A step also has an identifier and a `Tool` (`CommandTool` or a nested `Workflow`).
-  - `j.Output`: An output to a workflow has an identifier and is connected to a step.
-  
-- `j.CommandTool`: A command line style tool that builds it's command through the inputs and arguments. 
-  - `j.ToolInput`: An input to a tool, has an identifier, a type and command line options like `position`, `prefix`
-  - `j.ToolArgument`: An argument to a tool that cannot be overridden. Has a value and command line options 
-        like `position` and  `prefix`. The value can be a derived type, like an `InputSelector` or `StringFormatter`. 
-  - `j.ToolOutput`: Output to a tool, has an identifier, a type and a glob.
-
 ### Example  
   
 _Further information_: [Simple Workflow](https://janis.readthedocs.io/en/latest/tutorials/echo.html)  
@@ -94,8 +79,6 @@ w.translate("cwl", to_disk=False)  # or "wdl"
 
 We can export a CWL representation to the console using `.translate("cwl")`. By including the 
 `to_disk=True` parameter, we can write this workflow to disk at the current location. 
-
-### Included tool definitions and types  
   
 #### More examples  
 
@@ -103,6 +86,21 @@ We can export a CWL representation to the console using `.translate("cwl")`. By 
 - Unix Toolset: in [`janis/examples`](https://github.com/PMCC-BioinformaticsCore/janis/tree/master/janis/examples).   
 
 - Whole genome germline pipeline: [janis-examplepipelines repository](https://github.com/PMCC-BioinformaticsCore/janis-examplepipelines).  
+
+## Usage
+
+Janis has an API that mirrors the workflow concepts:
+
+- `j.Workflow`: A workflow represents the `Edge`s between `Input`, `Step`, `Output`
+  - `j.Input`: An input to a Workflow, has an identifier, a type and a value.
+  - `j.Step`: A step also has an identifier and a `Tool` (`CommandTool` or a nested `Workflow`).
+  - `j.Output`: An output to a workflow has an identifier and is connected to a step.
+  
+- `j.CommandTool`: A command line style tool that builds it's command through the inputs and arguments. 
+  - `j.ToolInput`: An input to a tool, has an identifier, a type and command line options like `position`, `prefix`
+  - `j.ToolArgument`: An argument to a tool that cannot be overridden. Has a value and command line options 
+        like `position` and  `prefix`. The value can be a derived type, like an `InputSelector` or `StringFormatter`. 
+  - `j.ToolOutput`: Output to a tool, has an identifier, a type and a glob.
   
 ## About  
   

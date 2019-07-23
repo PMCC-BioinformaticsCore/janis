@@ -3,10 +3,16 @@
 
 Concatenate
 =================
+
+Description
+-------------
+
 Tool identifier: ``cat``
+
 Tool path: ``janis_unix.tools.cat import Cat``
 
 Version: latest
+
 Docker: ``ubuntu:latest``
 
 
@@ -59,4 +65,4 @@ Author: **Unknown**
 
 
 *Concatenate was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

@@ -3,15 +3,23 @@
 
 FastQC
 ===============
+
+Description
+-------------
+
 Tool identifier: ``fastqc``
+
 Tool path: ``janis_bioinformatics.tools.babrahambioinformatics.fastqc.fastqc_0_11_8 import FastQC_0_11_8``
 
 Version: v0.11.8
-Docker: ``quay.io/biocontainers/fastqc:0.11.8--1``
-- v0.11.8 (current)Versions
-*********
-- `v0.11.5 <fastqc_v0.11.5.html>`_
 
+Docker: ``quay.io/biocontainers/fastqc:0.11.8--1``
+
+Versions
+*********
+
+- v0.11.8 (current)
+- `v0.11.5 <fastqc_v0.11.5.html>`_
 
 Documentation
 -------------
@@ -78,4 +86,4 @@ Author: Simon Andrews
 
 
 *FastQC was last updated on 2019-03-25*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

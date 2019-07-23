@@ -117,7 +117,9 @@ def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
     formatted_toolincludes = "\n".join(formatted_toolincludes_array)
     if len(formatted_toolincludes_array) > 1:
 
-        versiontext = "Versions\n*********\n".join(formatted_toolversions_array)
+        versiontext = "Versions\n*********\n\n" + "\n".join(
+            formatted_toolversions_array
+        )
 
     output_headers = ["name", "type", "documentation"]
     output_tuples = [[o.id(), o.output_type.id(), o.doc] for o in tool.outputs()]
@@ -139,13 +141,19 @@ def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
 
 {fn}
 {"=" * len(tn)}
+
+Description
+-------------
+
 Tool identifier: ``{tool.id()}``
+
 Tool path: ``{tool.__module__} import {tool.__class__.__name__}``
 
 Version: {tool.version()}
-{docker_tag}
-{versiontext}
 
+{docker_tag}
+
+{versiontext}
 
 Documentation
 -------------

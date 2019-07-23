@@ -3,10 +3,16 @@
 
 GATK4: Mark Duplicates
 ============================================
+
+Description
+-------------
+
 Tool identifier: ``Gatk4MarkDuplicates``
+
 Tool path: ``janis_bioinformatics.tools.gatk4.markduplicates.latest import Gatk4MarkDuplicatesLatest``
 
 Version: 4.0.12.0
+
 Docker: ``broadinstitute/gatk:4.0.12.0``
 
 
@@ -118,4 +124,4 @@ Author: Michael Franklin
 
 
 *GATK4: Mark Duplicates was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

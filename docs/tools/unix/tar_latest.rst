@@ -3,10 +3,16 @@
 
 Tar archive
 =================
+
+Description
+-------------
+
 Tool identifier: ``Tar``
+
 Tool path: ``janis_unix.tools.tar import Tar``
 
 Version: latest
+
 Docker: ``ubuntu:latest``
 
 
@@ -61,4 +67,4 @@ Author: **Unknown**
 
 
 *Tar archive was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

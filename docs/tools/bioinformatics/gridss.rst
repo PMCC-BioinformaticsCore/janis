@@ -3,10 +3,16 @@
 
 Gridss
 ===============
+
+Description
+-------------
+
 Tool identifier: ``gridss``
+
 Tool path: ``janis_bioinformatics.tools.pappenfuss.gridss.versions import Gridss_2_2_3``
 
 Version: None
+
 Docker: ``gridss/gridss:v2.2.3``
 
 
@@ -72,4 +78,4 @@ Author: **Unknown**
 
 
 *Gridss was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

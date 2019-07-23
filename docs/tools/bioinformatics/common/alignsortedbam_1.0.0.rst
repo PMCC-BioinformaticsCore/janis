@@ -3,10 +3,16 @@
 
 Align sorted BAM
 =================================
+
+Description
+-------------
+
 Tool identifier: ``alignsortedbam``
+
 Tool path: ``janis_bioinformatics.tools.common.alignsortedbam import AlignSortedBam``
 
 Version: 1.0.0
+
 
 
 
@@ -73,4 +79,4 @@ Author: Michael Franklin
 
 
 *Align sorted BAM was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

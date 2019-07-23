@@ -4,15 +4,23 @@
 
 Manta
 =============
+
+Description
+-------------
+
 Tool identifier: ``manta``
+
 Tool path: ``janis_bioinformatics.tools.illumina.manta.manta import Manta_1_5_0``
 
 Version: 1.5.0
-Docker: ``michaelfranklin/manta:1.5.0``
-- 1.5.0 (current)Versions
-*********
-- `1.4.0 <manta_1.4.0.html>`_
 
+Docker: ``michaelfranklin/manta:1.5.0``
+
+Versions
+*********
+
+- 1.5.0 (current)
+- `1.4.0 <manta_1.4.0.html>`_
 
 Documentation
 -------------
@@ -97,4 +105,4 @@ Author: Michael Franklin
 
 
 *Manta was last updated on 2019-02-19*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

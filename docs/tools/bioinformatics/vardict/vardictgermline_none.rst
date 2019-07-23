@@ -3,10 +3,16 @@
 
 VarDict Germline
 ==================================
+
+Description
+-------------
+
 Tool identifier: ``vardictgermline``
+
 Tool path: ``janis_bioinformatics.tools.vardict.vardictgermline import VarDictGermline_1_5_6``
 
 Version: None
+
 Docker: ``michaelfranklin/vardict:1.5.6``
 
 
@@ -105,4 +111,4 @@ Author: **Unknown**
 
 
 *VarDict Germline was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

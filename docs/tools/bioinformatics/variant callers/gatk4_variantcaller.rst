@@ -3,10 +3,16 @@
 
 GATK4 Variant Caller
 ==========================================
+
+Description
+-------------
+
 Tool identifier: ``GATK4_VariantCaller``
+
 Tool path: ``janis_bioinformatics.tools.variantcallers.gatkgermline_variants import GatkGermlineVariantCaller``
 
 Version: None
+
 
 
 
@@ -72,4 +78,4 @@ Author: **Unknown**
 
 
 *GATK4 Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

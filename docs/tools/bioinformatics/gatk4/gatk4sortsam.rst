@@ -3,10 +3,16 @@
 
 GATK4: SortSAM
 =============================
+
+Description
+-------------
+
 Tool identifier: ``gatk4sortsam``
+
 Tool path: ``janis_bioinformatics.tools.gatk4.sortsam.latest import Gatk4SortSamLatest``
 
 Version: 4.0.12.0
+
 Docker: ``broadinstitute/gatk:4.0.12.0``
 
 
@@ -73,4 +79,4 @@ Author: Michael Franklin
 
 
 *GATK4: SortSAM was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

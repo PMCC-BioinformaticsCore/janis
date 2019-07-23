@@ -3,10 +3,16 @@
 
 Trim IUPAC Bases
 ============================
+
+Description
+-------------
+
 Tool identifier: ``trimIUPAC``
+
 Tool path: ``janis_bioinformatics.tools.pmac.trimiupac.trimiupac_0_0_4 import TrimIUPAC_0_0_4``
 
 Version: 0.0.4
+
 Docker: ``michaelfranklin/pmacutil:0.0.4``
 
 
@@ -60,4 +66,4 @@ Author: **Unknown**
 
 
 *Trim IUPAC Bases was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

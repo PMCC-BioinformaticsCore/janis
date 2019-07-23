@@ -3,10 +3,16 @@
 
 Bwa mem + Samtools View
 ============================================
+
+Description
+-------------
+
 Tool identifier: ``BwaMemSamtoolsView``
+
 Tool path: ``janis_bioinformatics.tools.common.bwamem_samtoolsview import BwaMem_SamToolsView``
 
 Version: 0.7.17|1.9
+
 Docker: ``michaelfranklin/bwasamtools:0.7.17-1.9``
 
 
@@ -97,4 +103,4 @@ Author: **Unknown**
 
 
 *Bwa mem + Samtools View was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

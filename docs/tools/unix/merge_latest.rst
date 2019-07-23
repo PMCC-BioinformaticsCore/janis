@@ -3,10 +3,16 @@
 
 Merge Files
 ===================
+
+Description
+-------------
+
 Tool identifier: ``merge``
+
 Tool path: ``janis_unix.tools.merge import Merge``
 
 Version: latest
+
 Docker: ``ubuntu:latest``
 
 
@@ -59,4 +65,4 @@ Author: **Unknown**
 
 
 *Merge Files was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

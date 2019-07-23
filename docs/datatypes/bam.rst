@@ -9,4 +9,4 @@ Documentation
 
 A binary version of a SAM file, http://software.broadinstitute.org/software/igv/bam
 
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

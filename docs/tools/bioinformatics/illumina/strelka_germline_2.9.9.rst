@@ -3,15 +3,23 @@
 
 Strelka (Germline)
 =====================================
+
+Description
+-------------
+
 Tool identifier: ``strelka_germline``
+
 Tool path: ``janis_bioinformatics.tools.illumina.strelkagermline.strelkagermline_2_9_9 import StrelkaGermline_2_9_9``
 
 Version: 2.9.9
-Docker: ````
-- `2.9.10 <strelka_germline_2.9.10.html>`_Versions
-*********
-- 2.9.9 (current)
 
+Docker: ````
+
+Versions
+*********
+
+- `2.9.10 <strelka_germline_2.9.10.html>`_
+- 2.9.9 (current)
 
 Documentation
 -------------
@@ -103,4 +111,4 @@ Author: Michael Franklin
 
 
 *Strelka (Germline) was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

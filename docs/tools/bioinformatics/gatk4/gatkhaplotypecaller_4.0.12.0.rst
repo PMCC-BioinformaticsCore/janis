@@ -3,10 +3,16 @@
 
 GATK4: Haplotype Caller
 =============================================
+
+Description
+-------------
+
 Tool identifier: ``GatkHaplotypeCaller``
+
 Tool path: ``janis_bioinformatics.tools.gatk4.haplotypecaller.latest import Gatk4HaplotypeCallerLatest``
 
 Version: 4.0.12.0
+
 Docker: ``broadinstitute/gatk:4.0.12.0``
 
 
@@ -117,4 +123,4 @@ Author: Michael Franklin
 
 
 *GATK4: Haplotype Caller was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

@@ -3,10 +3,16 @@
 
 Performance Validator
 ============================================
+
+Description
+-------------
+
 Tool identifier: ``performanceValidator``
+
 Tool path: ``janis_bioinformatics.tools.validation.performancevalidator import PerformanceValidator_1_2_1``
 
 Version: 1.2.1
+
 
 
 
@@ -64,4 +70,4 @@ Author: **Unknown**
 
 
 *Performance Validator was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

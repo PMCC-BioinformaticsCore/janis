@@ -3,10 +3,16 @@
 
 CNVKit
 ======
+
+Description
+-------------
+
 Tool identifier: ``CNVKit``
+
 Tool path: ``janis_bioinformatics.tools.ucsf.cnvkit.cnvkit_0_9_6 import CNVKit_0_9_6``
 
 Version: 0.9.6
+
 Docker: ``etal/cnvkit:0.9.6``
 
 
@@ -65,4 +71,4 @@ Author: **Unknown**
 
 
 *CNVKit was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

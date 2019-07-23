@@ -3,10 +3,16 @@
 
 BCFTools: Sort
 =============================
+
+Description
+-------------
+
 Tool identifier: ``bcftoolssort``
+
 Tool path: ``janis_bioinformatics.tools.bcftools.sort.sort_1_9 import BcfToolsSort_1_9``
 
 Version: v1.9
+
 Docker: ``michaelfranklin/bcftools:1.9``
 
 
@@ -63,4 +69,4 @@ Author: **Unknown**
 
 
 *BCFTools: Sort was last updated on 2019-07-11*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

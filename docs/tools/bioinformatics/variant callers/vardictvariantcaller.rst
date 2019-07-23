@@ -3,10 +3,16 @@
 
 Vardict Variant Caller
 =============================================
+
+Description
+-------------
+
 Tool identifier: ``vardictVariantCaller``
+
 Tool path: ``janis_bioinformatics.tools.variantcallers.vardictgermline_variants import VardictGermlineVariantCaller``
 
 Version: None
+
 
 
 
@@ -70,4 +76,4 @@ Author: **Unknown**
 
 
 *Vardict Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

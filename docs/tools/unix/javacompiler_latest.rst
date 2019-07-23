@@ -3,10 +3,16 @@
 
 Java compiler
 ============================
+
+Description
+-------------
+
 Tool identifier: ``javaCompiler``
+
 Tool path: ``janis_unix.tools.compile import Compile``
 
 Version: latest
+
 Docker: ``openjdk:8``
 
 
@@ -59,4 +65,4 @@ Author: **Unknown**
 
 
 *Java compiler was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

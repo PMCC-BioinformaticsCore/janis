@@ -3,10 +3,16 @@
 
 Combine Variants
 ==================================
+
+Description
+-------------
+
 Tool identifier: ``combinevariants``
+
 Tool path: ``janis_bioinformatics.tools.pmac.combinevariants.combinevariants_0_0_4 import CombineVariants_0_0_4``
 
 Version: 0.0.4
+
 Docker: ``michaelfranklin/pmacutil:0.0.4``
 
 
@@ -67,4 +73,4 @@ Author: **Unknown**
 
 
 *Combine Variants was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

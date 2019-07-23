@@ -3,10 +3,16 @@
 
 Vardict - Somatic
 ==================================
+
+Description
+-------------
+
 Tool identifier: ``vardictsomatic``
+
 Tool path: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_5_6``
 
 Version: None
+
 Docker: ``michaelfranklin/vardict:1.5.6``
 
 
@@ -105,4 +111,4 @@ Author: **Unknown**
 
 
 *Vardict - Somatic was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

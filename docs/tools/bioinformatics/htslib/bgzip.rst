@@ -4,15 +4,23 @@
 
 BGZip
 =============
+
+Description
+-------------
+
 Tool identifier: ``bgzip``
+
 Tool path: ``janis_bioinformatics.tools.htslib.bgzip.bgzip_1_9 import BGZip_1_9``
 
 Version: 1.9
-Docker: ``quay.io/biocontainers/htslib:1.9--ha228f0b_7``
-- 1.9 (current)Versions
-*********
-- `1.2.1 <bgzip_1.2.1.html>`_
 
+Docker: ``quay.io/biocontainers/htslib:1.9--ha228f0b_7``
+
+Versions
+*********
+
+- 1.9 (current)
+- `1.2.1 <bgzip_1.2.1.html>`_
 
 Documentation
 -------------
@@ -85,4 +93,4 @@ Author: Michael Franklin
 
 
 *BGZip was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

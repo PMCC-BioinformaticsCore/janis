@@ -4,15 +4,23 @@
 
 SamTools: Sort
 =============================
+
+Description
+-------------
+
 Tool identifier: ``SamToolsSort``
+
 Tool path: ``janis_bioinformatics.tools.samtools.sort.latest import SamToolsSortLatest``
 
 Version: v1.7.0
-Docker: ``biocontainers/samtools:v1.7.0_cv3``
-- v1.7.0 (current)Versions
-*********
-- `1.9 <samtoolssort_1.9.html>`_
 
+Docker: ``biocontainers/samtools:v1.7.0_cv3``
+
+Versions
+*********
+
+- v1.7.0 (current)
+- `1.9 <samtoolssort_1.9.html>`_
 
 Documentation
 -------------
@@ -118,4 +126,4 @@ Author: Michael Franklin
 
 
 *SamTools: Sort was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

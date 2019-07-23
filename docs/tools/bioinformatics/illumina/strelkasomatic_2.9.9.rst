@@ -3,15 +3,23 @@
 
 Strelka - Somatic Workflow
 ===========================================
+
+Description
+-------------
+
 Tool identifier: ``StrelkaSomatic``
+
 Tool path: ``janis_bioinformatics.tools.illumina.strelkasomatic.strelkasomatic_2_9_9 import StrelkaSomatic_2_9_9``
 
 Version: 2.9.9
-Docker: ````
-- `2.9.10 <strelkasomatic_2.9.10.html>`_Versions
-*********
-- 2.9.9 (current)
 
+Docker: ````
+
+Versions
+*********
+
+- `2.9.10 <strelkasomatic_2.9.10.html>`_
+- 2.9.9 (current)
 
 Documentation
 -------------
@@ -92,4 +100,4 @@ Author: **Unknown**
 
 
 *Strelka - Somatic Workflow was last updated on 2019-05-27*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

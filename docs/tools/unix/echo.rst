@@ -3,10 +3,16 @@
 
 Echo - Print to console
 ==============================
+
+Description
+-------------
+
 Tool identifier: ``echo``
+
 Tool path: ``janis_unix.tools.echo import Echo``
 
 Version: latest
+
 Docker: ``ubuntu:latest``
 
 
@@ -59,4 +65,4 @@ Author: **Unknown**
 
 
 *Echo - Print to console was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

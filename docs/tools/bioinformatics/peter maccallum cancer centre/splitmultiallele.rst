@@ -3,10 +3,16 @@
 
 Split Multiple Alleles
 =========================================
+
+Description
+-------------
+
 Tool identifier: ``SplitMultiAllele``
+
 Tool path: ``janis_bioinformatics.tools.common.splitmultiallele import SplitMultiAllele``
 
 Version: v0.5772
+
 Docker: ``heuermh/vt``
 
 
@@ -61,4 +67,4 @@ Author: **Unknown**
 
 
 *Split Multiple Alleles was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

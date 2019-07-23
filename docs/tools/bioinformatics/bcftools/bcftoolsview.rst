@@ -4,15 +4,23 @@
 
 BCFTools: View
 =============================
+
+Description
+-------------
+
 Tool identifier: ``bcftoolsview``
+
 Tool path: ``janis_bioinformatics.tools.bcftools.view.view_1_9 import BcfToolsView_1_9``
 
 Version: v1.9
-Docker: ``michaelfranklin/bcftools:1.9``
-- v1.9 (current)Versions
-*********
-- `v1.5 <bcftoolsview_v1.5.html>`_
 
+Docker: ``michaelfranklin/bcftools:1.9``
+
+Versions
+*********
+
+- v1.9 (current)
+- `v1.5 <bcftoolsview_v1.5.html>`_
 
 Documentation
 -------------
@@ -99,4 +107,4 @@ Author: **Unknown**
 
 
 *BCFTools: View was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

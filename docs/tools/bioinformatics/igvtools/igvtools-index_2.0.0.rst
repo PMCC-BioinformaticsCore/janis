@@ -3,10 +3,16 @@
 
 IGVTools: Index
 ================================
+
+Description
+-------------
+
 Tool identifier: ``igvtools-index``
+
 Tool path: ``janis_bioinformatics.tools.igvtools.index.latest import IgvToolsIndexLatest``
 
 Version: 2.0.0
+
 Docker: ``maxulysse/igvtools:2.0.0``
 
 
@@ -72,4 +78,4 @@ Author: Michael Franklin
 
 
 *IGVTools: Index was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

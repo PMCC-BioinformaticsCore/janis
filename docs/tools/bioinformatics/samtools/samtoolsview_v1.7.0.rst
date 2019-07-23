@@ -3,15 +3,23 @@
 
 SamTools: View
 =============================
+
+Description
+-------------
+
 Tool identifier: ``SamToolsView``
+
 Tool path: ``janis_bioinformatics.tools.samtools.view.latest import SamToolsViewLatest``
 
 Version: v1.7.0
-Docker: ``biocontainers/samtools:v1.7.0_cv3``
-- v1.7.0 (current)Versions
-*********
-- `1.9 <samtoolsview_1.9.html>`_
 
+Docker: ``biocontainers/samtools:v1.7.0_cv3``
+
+Versions
+*********
+
+- v1.7.0 (current)
+- `1.9 <samtoolsview_1.9.html>`_
 
 Documentation
 -------------
@@ -93,4 +101,4 @@ Author: Michael Franklin
 
 
 *SamTools: View was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

@@ -3,15 +3,23 @@
 
 BCFTools: Annotate
 =====================================
+
+Description
+-------------
+
 Tool identifier: ``bcftoolsAnnotate``
+
 Tool path: ``janis_bioinformatics.tools.bcftools.annotate.annotate_1_9 import BcfToolsAnnotate_1_9``
 
 Version: v1.9
-Docker: ``michaelfranklin/bcftools:1.9``
-- v1.9 (current)Versions
-*********
-- `v1.5 <bcftoolsannotate_v1.5.html>`_
 
+Docker: ``michaelfranklin/bcftools:1.9``
+
+Versions
+*********
+
+- v1.9 (current)
+- `v1.5 <bcftoolsannotate_v1.5.html>`_
 
 Documentation
 -------------
@@ -79,4 +87,4 @@ Author: **Unknown**
 
 
 *BCFTools: Annotate was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-23*.
+*This page was automatically generated on 2019-07-24*.

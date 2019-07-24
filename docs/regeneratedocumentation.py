@@ -162,8 +162,8 @@ URL
 ******
 {formatted_url}
 
-Description
-*********
+Tool documentation
+******************
 {metadata.documentation if metadata.documentation else "*No documentation was provided: " + format_rst_link(
         "contribute one", "https://github.com/illusional") + "*"}
 

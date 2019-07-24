@@ -24,8 +24,8 @@ URL
 ******
 `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_ApplyBQSR.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_ApplyBQSR.php>`_
 
-Description
-*********
+Tool documentation
+******************
 Apply base quality score recalibration: This tool performs the second pass in a two-stage 
 process called Base Quality Score Recalibration (BQSR). Specifically, it recalibrates the 
 base qualities of the input reads based on the recalibration table produced by the 

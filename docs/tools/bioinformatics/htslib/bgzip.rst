@@ -29,8 +29,8 @@ URL
 ******
 `http://www.htslib.org/doc/bgzip.html <http://www.htslib.org/doc/bgzip.html>`_
 
-Description
-*********
+Tool documentation
+******************
 bgzip – Block compression/decompression utility
 
 Bgzip compresses files in a similar manner to, and compatible with, gzip(1). The file is compressed 

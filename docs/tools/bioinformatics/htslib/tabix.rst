@@ -29,8 +29,8 @@ URL
 ******
 `http://www.htslib.org/doc/tabix.html <http://www.htslib.org/doc/tabix.html>`_
 
-Description
-*********
+Tool documentation
+******************
 tabix – Generic indexer for TAB-delimited genome position files
 
 Tabix indexes a TAB-delimited genome position file in.tab.bgz and creates an index file (in.tab.bgz.tbi or 

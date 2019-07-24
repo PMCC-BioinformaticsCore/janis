@@ -24,8 +24,8 @@ URL
 ******
 `https://software.broadinstitute.org/software/igv/igvtools_commandline#index <https://software.broadinstitute.org/software/igv/igvtools_commandline#index>`_
 
-Description
-*********
+Tool documentation
+******************
 
     TODO: ensure igvtools.index is inheriting the metadata from it's superclass
     

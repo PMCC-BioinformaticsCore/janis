@@ -29,8 +29,8 @@ URL
 ******
 `https://github.com/Illumina/strelka <https://github.com/Illumina/strelka>`_
 
-Description
-*********
+Tool documentation
+******************
 Strelka2 is a fast and accurate small variant caller optimized for analysis of germline variation 
 in small cohorts and somatic variation in tumor/normal sample pairs. The germline caller employs 
 an efficient tiered haplotype model to improve accuracy and provide read-backed phasing, adaptively 

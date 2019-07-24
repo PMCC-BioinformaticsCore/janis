@@ -24,8 +24,8 @@ URL
 ******
 `http://bio-bwa.sourceforge.net/bwa.shtml#3 <http://bio-bwa.sourceforge.net/bwa.shtml#3>`_
 
-Description
-*********
+Tool documentation
+******************
 bwa - Burrows-Wheeler Alignment Tool
 BWA is a software package for mapping low-divergent sequences against a large reference genome, such as the human 
 genome. It consists of three algorithms: BWA-backtrack, BWA-SW and BWA-MEM. The first algorithm is designed for 

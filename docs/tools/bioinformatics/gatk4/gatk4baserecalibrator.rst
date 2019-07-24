@@ -24,8 +24,8 @@ URL
 ******
 `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_BaseRecalibrator.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_BaseRecalibrator.php>`_
 
-Description
-*********
+Tool documentation
+******************
 First pass of the base quality score recalibration. Generates a recalibration table based on various covariates. 
 The default covariates are read group, reported quality score, machine cycle, and nucleotide context.
 

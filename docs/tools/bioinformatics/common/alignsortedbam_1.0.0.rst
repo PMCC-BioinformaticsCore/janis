@@ -24,8 +24,8 @@ URL
 ******
 *No URL to the documentation was provided*
 
-Description
-*********
+Tool documentation
+******************
 Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam
 
 Outputs

@@ -24,8 +24,8 @@ URL
 ******
 *No URL to the documentation was provided*
 
-Description
-*********
+Tool documentation
+******************
 About:   Sort VCF/BCF file.
 Usage:   bcftools sort [OPTIONS] <FILE.vcf>
 

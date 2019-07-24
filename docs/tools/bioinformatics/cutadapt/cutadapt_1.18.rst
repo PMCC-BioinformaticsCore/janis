@@ -24,8 +24,8 @@ URL
 ******
 `https://cutadapt.readthedocs.io/en/stable/ <https://cutadapt.readthedocs.io/en/stable/>`_
 
-Description
-*********
+Tool documentation
+******************
 
 Cutadapt finds and removes adapter sequences, primers, poly-A tails and other types of unwanted sequence 
 from your high-throughput sequencing reads.

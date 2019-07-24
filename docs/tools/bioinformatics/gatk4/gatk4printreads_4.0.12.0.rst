@@ -24,8 +24,8 @@ URL
 ******
 `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php>`_
 
-Description
-*********
+Tool documentation
+******************
 
 Write reads from SAM format file (SAM/BAM/CRAM) that pass criteria to a new file.
 A common use case is to subset reads by genomic interval using the -L argument. 

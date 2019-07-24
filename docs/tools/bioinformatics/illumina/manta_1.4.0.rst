@@ -28,8 +28,8 @@ URL
 ******
 `https://github.com/Illumina/manta <https://github.com/Illumina/manta>`_
 
-Description
-*********
+Tool documentation
+******************
 Manta calls structural variants (SVs) and indels from mapped paired-end sequencing reads. 
 It is optimized for analysis of germline variation in small sets of individuals and somatic 
 variation in tumor/normal sample pairs. Manta discovers, assembles and scores large-scale SVs, 

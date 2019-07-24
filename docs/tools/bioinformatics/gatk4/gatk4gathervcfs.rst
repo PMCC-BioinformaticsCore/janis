@@ -24,8 +24,8 @@ URL
 ******
 `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.12.0/picard_vcf_GatherVcfs.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.12.0/picard_vcf_GatherVcfs.php>`_
 
-Description
-*********
+Tool documentation
+******************
 GatherVcfs (Picard)
             
 Gathers multiple VCF files from a scatter operation into a single VCF file. 

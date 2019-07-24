@@ -29,8 +29,8 @@ URL
 ******
 *No URL to the documentation was provided*
 
-Description
-*********
+Tool documentation
+******************
 Usage: configureStrelkaSomaticWorkflow.py [options]
 Version: 2.9.10
 This script configures Strelka somatic small variant calling.

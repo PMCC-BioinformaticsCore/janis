@@ -24,8 +24,8 @@ URL
 ******
 `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.5.0/picard_vcf_GenotypeConcordance.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.5.0/picard_vcf_GenotypeConcordance.php>`_
 
-Description
-*********
+Tool documentation
+******************
 GenotypeConcordance (Picard)
             
 Calculates the concordance between genotype data of one samples in each of two VCFs - one being 

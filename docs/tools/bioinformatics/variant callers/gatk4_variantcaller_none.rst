@@ -24,8 +24,8 @@ URL
 ******
 *No URL to the documentation was provided*
 
-Description
-*********
+Tool documentation
+******************
 This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.0.12.0.
 
 It has the following steps:

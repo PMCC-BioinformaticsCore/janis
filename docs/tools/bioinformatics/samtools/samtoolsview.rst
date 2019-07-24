@@ -29,8 +29,8 @@ URL
 ******
 `http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS <http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS>`_
 
-Description
-*********
+Tool documentation
+******************
 Ensure SAMTOOLS.SORT is inheriting from parent metadata
         
 ---------------------------------------------------------------------------------------------------

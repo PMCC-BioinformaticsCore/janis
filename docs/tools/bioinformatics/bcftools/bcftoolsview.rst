@@ -29,8 +29,8 @@ URL
 ******
 *No URL to the documentation was provided*
 
-Description
-*********
+Tool documentation
+******************
 *No documentation was provided: `contribute one <https://github.com/illusional>`_*
 
 Outputs

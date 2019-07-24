@@ -24,8 +24,8 @@ URL
 ******
 `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php>`_
 
-Description
-*********
+Tool documentation
+******************
 MarkDuplicates (Picard): Identifies duplicate reads.
 
 This tool locates and tags duplicate reads in a BAM or SAM file, where duplicate reads are 

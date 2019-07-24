@@ -1,8 +1,8 @@
 :orphan:
 
 
-Tar archive
-=================
+Tar (archive)
+===================
 
 Description
 -------------
@@ -24,8 +24,8 @@ URL
 ******
 *No URL to the documentation was provided*
 
-Description
-*********
+Tool documentation
+******************
 *No documentation was provided: `contribute one <https://github.com/illusional>`_*
 
 Outputs
@@ -66,5 +66,5 @@ Metadata
 Author: **Unknown**
 
 
-*Tar archive was last updated on **Unknown***.
+*Tar (archive) was last updated on **Unknown***.
 *This page was automatically generated on 2019-07-24*.

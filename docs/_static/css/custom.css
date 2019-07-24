@@ -1,0 +1,44 @@
+@import url("css/theme.css");
+
+h1, h2, h3, h4, h5  {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica;
+}
+
+.wy-nav-content {
+    max-width: 100%;
+}
+
+.rst-content {
+    max-width: 760px;
+    // margin: auto;
+}
+.rst-content code.literal {
+    color: #24292e;
+    background-color: rgba(27,31,35,.05);
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+}
+
+code, pre, tt {
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+}
+
+body {
+    color: #333333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";;
+}
+
+.wy-nav-content-wrap {
+    background: clear;
+}
+
+.wy-nav-content-wrap {
+    background: white;
+}
+
+/*.wy-nav-side {
+    background: #efefef;
+}
+
+.wy-menu-vertical a {
+    color: gray;
+}*/

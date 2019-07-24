@@ -20,7 +20,7 @@ setup(
     version=__version__,
     description=DESCRIPTION,
     url=githuburl,
-    author="Michael Franklin, Evan Thomas, Mohammad Bhuyan",
+    author="Michael Franklin, Richard Lupat",
     author_email="michael.franklin@petermac.org",
     license="GNU",
     keywords=["pipelines", "bioinformatics"],

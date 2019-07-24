@@ -23,8 +23,8 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "Janis"
-copyright = "2019, Michael Franklin, Evan Thomas, Mohammad Bhuyan"
-author = "Michael Franklin, Evan Thomas, Mohammad Bhuyan"
+copyright = "2019, Michael Franklin, Richard Lupat"
+author = "Michael Franklin, Richard Lupat"
 
 # The short X.Y version
 version = ""
@@ -143,13 +143,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (
-        master_doc,
-        "janis.tex",
-        "Janis",
-        "Michael Franklin, Evan Thomas, Mohammad Bhuyan",
-        "manual",
-    )
+    (master_doc, "janis.tex", "Janis", "Michael Franklin, Richard Lupat", "manual")
 ]
 
 

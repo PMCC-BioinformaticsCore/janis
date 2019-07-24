@@ -1,6 +1,5 @@
+:orphan:
 
-.. include:: samtoolsview_1.9.0
-.. include:: samtoolsview_1.7.0
 
 SamTools: View
 =============================
@@ -10,17 +9,17 @@ Description
 
 Tool identifier: ``SamToolsView``
 
-Tool path: ``janis_bioinformatics.tools.samtools.view.view import SamToolsView_1_9``
+Tool path: ``janis_bioinformatics.tools.samtools.view.view import SamToolsView_1_7``
 
-Version: 1.9.0
+Version: 1.7.0
 
-Docker: ``quay.io/biocontainers/samtools:1.9--h8571acd_11``
+Docker: ``biocontainers/samtools:v1.7.0_cv3``
 
 Versions
 *********
 
-- 1.9.0 (current)
-- `1.7.0 <samtoolsview_1.7.0.html>`_
+- `1.9.0 <samtoolsview_1.9.0.html>`_
+- 1.7.0 (current)
 
 Documentation
 -------------

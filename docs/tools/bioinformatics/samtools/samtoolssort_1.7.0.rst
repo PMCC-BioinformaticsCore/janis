@@ -1,6 +1,5 @@
+:orphan:
 
-.. include:: samtoolssort_1.9.0
-.. include:: samtoolssort_1.7.0
 
 SamTools: Sort
 =============================
@@ -10,17 +9,17 @@ Description
 
 Tool identifier: ``SamToolsSort``
 
-Tool path: ``janis_bioinformatics.tools.samtools.sort.sort import SamToolsSort_1_9``
+Tool path: ``janis_bioinformatics.tools.samtools.sort.sort import SamToolsSort_1_7``
 
-Version: 1.9.0
+Version: 1.7.0
 
-Docker: ``quay.io/biocontainers/samtools:1.9--h8571acd_11``
+Docker: ``biocontainers/samtools:v1.7.0_cv3``
 
 Versions
 *********
 
-- 1.9.0 (current)
-- `1.7.0 <samtoolssort_1.7.0.html>`_
+- `1.9.0 <samtoolssort_1.9.0.html>`_
+- 1.7.0 (current)
 
 Documentation
 -------------

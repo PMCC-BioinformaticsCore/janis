@@ -14,10 +14,9 @@ Automatically generated index page for {title}
    cutadapt/index
    fastqc/index
    gatk4/index
-   gridss
    htslib/index
-   igvtools/index
    illumina/index
+   papenfuss labs/index
    peter maccallum cancer centre/index
    samtools/index
    ucsf/index

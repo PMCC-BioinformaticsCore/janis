@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``strelka_germline``
 
-Tool path: ``janis_bioinformatics.tools.illumina.strelkagermline.strelkagermline_2_9_9 import StrelkaGermline_2_9_9``
+Tool path: ``janis_bioinformatics.tools.illumina.strelkagermline.strelkagermline import StrelkaGermline_2_9_9``
 
 Version: 2.9.9
 

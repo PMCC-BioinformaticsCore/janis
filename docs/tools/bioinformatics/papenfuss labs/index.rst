@@ -1,6 +1,6 @@
 
-Samtools
-========
+Papenfuss Labs
+==============
 
 Automatically generated index page for {title}
 
@@ -8,7 +8,6 @@ Automatically generated index page for {title}
    :maxdepth: 1
    :caption: Contents:
 
-   samtoolssort
-   samtoolsview
+   gridss
 
 *This page was auto-generated on 24/07/2019. Please do not directly alter the contents of this page.*

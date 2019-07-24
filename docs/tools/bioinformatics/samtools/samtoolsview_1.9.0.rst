@@ -1,6 +1,5 @@
+:orphan:
 
-.. include:: samtoolsview_1.9.0
-.. include:: samtoolsview_1.7.0
 
 SamTools: View
 =============================

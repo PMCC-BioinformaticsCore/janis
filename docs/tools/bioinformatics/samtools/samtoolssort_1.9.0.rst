@@ -1,6 +1,5 @@
+:orphan:
 
-.. include:: samtoolssort_1.9.0
-.. include:: samtoolssort_1.7.0
 
 SamTools: Sort
 =============================

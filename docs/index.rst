@@ -186,13 +186,15 @@ Contents
 ========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :hidden:
 
    self
    about
    userguide
 
 .. toctree::
+   :hidden:
    :maxdepth: 1
    :caption: Tutorials
 
@@ -202,16 +204,18 @@ Contents
    tutorials/running
 
 .. toctree::
+   :hidden:
    :maxdepth: 1
    :caption: References
 
+   references/index
    tools/index
    datatypes/index
 
-   references/index
 
 .. toctree::
-   :maxdepth: 2
+   :hidden:
+   :maxdepth: 1
    :caption: Development
 
    development/index

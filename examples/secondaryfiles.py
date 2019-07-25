@@ -2,7 +2,7 @@ from typing import List
 
 from janis_core import ToolOutput, ToolInput, Workflow, Step, Input, Output, File, Array
 from janis_core.types import InputSelector
-from janis_core.unix.tools.unixtool import UnixTool
+from janis_unix.tools.unixtool import UnixTool
 
 
 class DataTypeWithSecondary(File):

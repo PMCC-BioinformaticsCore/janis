@@ -35,11 +35,12 @@ Tool documentation
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     VCF
-======  ======  ===============
+========  ======  ===============
+name      type    documentation
+========  ======  ===============
+out       VCF
+assembly  BAM
+========  ======  ===============
 
 Inputs
 ------
@@ -53,19 +54,19 @@ name       type           prefix         position  documentation
 =========  =============  ===========  ==========  ===============
 bams       Array<BAM>                           1
 reference  FastaWithDict  --reference
-assembly   BAM            --assembly
 =========  =============  ===========  ==========  ===============
 
 Optional inputs
 ***************
 
-==============  ==================  ===========  ==========  ===============
-name            type                prefix       position    documentation
-==============  ==================  ===========  ==========  ===============
-outputFilename  Optional<Filename>  --output
-threads         Optional<Integer>   --threads
-blacklist       Optional<bed>       --blacklist
-==============  ==================  ===========  ==========  ===============
+================  ==================  ===========  ==========  ===============
+name              type                prefix       position    documentation
+================  ==================  ===========  ==========  ===============
+outputFilename    Optional<Filename>  --output
+assemblyFilename  Optional<Filename>  --assembly
+threads           Optional<Integer>   --threads
+blacklist         Optional<bed>       --blacklist
+================  ==================  ===========  ==========  ===============
 
 
 Metadata
@@ -75,4 +76,4 @@ Author: **Unknown**
 
 
 *Gridss was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-24*.
+*This page was automatically generated on 2019-07-26*.

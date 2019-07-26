@@ -82,4 +82,4 @@ Author: Michael Franklin
 
 
 *GATK4: Gather VCFs was last updated on 2019-05-01*.
-*This page was automatically generated on 2019-07-24*.
+*This page was automatically generated on 2019-07-26*.

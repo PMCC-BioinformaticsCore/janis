@@ -1,5 +1,5 @@
 
-.. include:: vardictvariantcaller_none
+.. include:: vardictvariantcaller_0.1.0%22
 
 Vardict Variant Caller
 =============================================
@@ -11,7 +11,7 @@ Tool identifier: ``vardictVariantCaller``
 
 Tool path: ``janis_bioinformatics.tools.variantcallers.vardictgermline_variants import VardictGermlineVariantCaller``
 
-Version: None
+Version: 0.1.0"
 
 
 
@@ -76,4 +76,4 @@ Author: **Unknown**
 
 
 *Vardict Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-24*.
+*This page was automatically generated on 2019-07-26*.

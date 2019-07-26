@@ -12,7 +12,7 @@ Declaration
 Overview
 ########
 
-The ``Workflow`` class manages the connections between
+The :class:`janis.Workflow` class manages the connections between
 an :class:`janis.Input`, :class:`janis.Step` and an :class:`janis.Output`,
 called an :class:`janis.Edge`. These edges are automatically wrapped
 in a :class:`janis.Node` to become a :class:`janis.InputNode`,

@@ -1,5 +1,5 @@
 
-.. include:: strelkagermlinevariantcaller_none
+.. include:: strelkagermlinevariantcaller_0.1.0%22
 
 Strelka Germline Variant Caller
 ==============================================================
@@ -11,7 +11,7 @@ Tool identifier: ``strelkaGermlineVariantCaller``
 
 Tool path: ``janis_bioinformatics.tools.variantcallers.illuminagermline_strelka import IlluminaGermlineVariantCaller``
 
-Version: None
+Version: 0.1.0"
 
 
 
@@ -55,12 +55,12 @@ reference  FastaWithDict
 Optional inputs
 ***************
 
-==============  =======================  ========  ==========  ===============
-name            type                     prefix    position    documentation
-==============  =======================  ========  ==========  ===============
-strelkaRegions  Optional<BedTABIX>
-filters         Optional<Array<String>>
-==============  =======================  ========  ==========  ===============
+=========  =======================  ========  ==========  ===============
+name       type                     prefix    position    documentation
+=========  =======================  ========  ==========  ===============
+intervals  Optional<BedTABIX>
+filters    Optional<Array<String>>
+=========  =======================  ========  ==========  ===============
 
 
 Metadata
@@ -70,4 +70,4 @@ Author: **Unknown**
 
 
 *Strelka Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-24*.
+*This page was automatically generated on 2019-07-26*.

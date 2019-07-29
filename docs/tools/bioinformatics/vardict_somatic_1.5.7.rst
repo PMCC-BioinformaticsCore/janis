@@ -1,21 +1,26 @@
 :orphan:
 
 
-VarDict Germline
-==================================
+Vardict (Somatic)
+===================================
 
 Description
 -------------
 
-Tool identifier: ``vardictgermline``
+Tool identifier: ``vardict_somatic``
 
-Tool path: ``janis_bioinformatics.tools.vardict.vardictgermline import VarDictGermline_1_5_6``
+Tool path: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_5_7``
 
-Version: None
+Version: 1.5.7
 
-Docker: ``michaelfranklin/vardict:1.5.6``
+Docker: ``michaelfranklin/vardict:1.5.7``
 
+Versions
+*********
 
+- `1.5.8 <vardict_somatic_1.5.8.html>`_
+- 1.5.7 (current)
+- `1.5.6 <vardict_somatic_1.5.6.html>`_
 
 Documentation
 -------------
@@ -43,16 +48,16 @@ Find the inputs below
 Required inputs
 ***************
 
-==========================  ========  ========  ==========  =================================================================================================================
-name                        type      prefix      position  documentation
-==========================  ========  ========  ==========  =================================================================================================================
-intervals                   bed                          2
-bam                         BamPair   -b                 1  The indexed BAM file
-reference                   FastaFai  -G                 1  The reference fasta. Should be indexed (.fai). Defaults to: /ngs/reference_data/genomes/Hsapiens/hg19/seq/hg19.fa
-sampleName                  String    -N                 1  The sample name to be used directly.  Will overwrite -n option
-var2vcfSampleName           String    -N                 5
-var2vcfAlleleFreqThreshold  Float     -f                 5
-==========================  ========  ========  ==========  =================================================================================================================
+==========  ========  ========  ==========  =================================================================================================================
+name        type      prefix      position  documentation
+==========  ========  ========  ==========  =================================================================================================================
+tumorBam    BamPair                         The indexed BAM file
+normalBam   BamPair                         The indexed BAM file
+intervals   bed                          2
+reference   FastaFai  -G                 1  The reference fasta. Should be indexed (.fai). Defaults to: /ngs/reference_data/genomes/Hsapiens/hg19/seq/hg19.fa
+tumorName   String                          The sample name to be used directly.  Will overwrite -n option
+normalName  String                          The normal sample name to use with the -b option
+==========  ========  ========  ==========  =================================================================================================================
 
 Optional inputs
 ***************
@@ -60,6 +65,7 @@ Optional inputs
 =======================  ==================  ========  ==========  ==================================================================================================================================================================================================================================================================================
 name                     type                prefix      position  documentation
 =======================  ==================  ========  ==========  ==================================================================================================================================================================================================================================================================================
+alleleFreqThreshold      Optional<Float>                           The threshold for allele frequency, default: 0.05 or 5%
 outputFilename           Optional<Filename>  >                  6
 indels3prime             Optional<Boolean>   -3                 1  Indicate to move indels to 3-prime if alternative alignment can be achieved.
 amplicon                 Optional<Float>     -a                 1  Indicate it's amplicon based calling.  Reads that don't map to the amplicon will be skipped.  A read pair is considered belonging  to the amplicon if the edges are less than int bp to the amplicon, and overlap fraction is at least float.  Default: 10:0.95
@@ -71,7 +77,6 @@ splitDelimeter           Optional<String>    -d                 1  The delimiter
 geneEndCol               Optional<Integer>   -E                 1  The column for region end, e.g. gene end
 segEndCol                Optional<Integer>   -e                 1  The column for segment ends in the region, e.g. exon ends
 filter                   Optional<String>    -F                 1  The hexical to filter reads using samtools. Default: 0x500 (filter 2nd alignments and duplicates). Use -F 0 to turn it off.
-alleleFreqThreshold      Optional<Float>     -f                 1  The threshold for allele frequency, default: 0.05 or 5%
 geneNameCol              Optional<Integer>   -g                 1  The column for gene name, or segment annotation
 printHeaderRow           Optional<Boolean>   -h                 1  Print a header row describing columns
 indelSize                Optional<Integer>   -I                 1  The indel size.  Default: 120bp
@@ -110,5 +115,5 @@ Metadata
 Author: **Unknown**
 
 
-*VarDict Germline was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-24*.
+*Vardict (Somatic) was last updated on **Unknown***.
+*This page was automatically generated on 2019-07-29*.

@@ -1,21 +1,26 @@
 :orphan:
 
 
-Vardict - Somatic
-==================================
+Vardict (Somatic)
+===================================
 
 Description
 -------------
 
-Tool identifier: ``vardictsomatic``
+Tool identifier: ``vardict_somatic``
 
-Tool path: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_5_6``
+Tool path: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_5_8``
 
-Version: None
+Version: 1.5.8
 
-Docker: ``michaelfranklin/vardict:1.5.6``
+Docker: ``michaelfranklin/vardict:1.5.8``
 
+Versions
+*********
 
+- 1.5.8 (current)
+- `1.5.7 <vardict_somatic_1.5.7.html>`_
+- `1.5.6 <vardict_somatic_1.5.6.html>`_
 
 Documentation
 -------------
@@ -110,5 +115,5 @@ Metadata
 Author: **Unknown**
 
 
-*Vardict - Somatic was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-24*.
+*Vardict (Somatic) was last updated on **Unknown***.
+*This page was automatically generated on 2019-07-29*.

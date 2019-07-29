@@ -1,5 +1,5 @@
 
-.. include:: strelkagermlinevariantcaller_0.1.0%22
+.. include:: strelkagermlinevariantcaller_v0.1.0
 
 Strelka Germline Variant Caller
 ==============================================================
@@ -11,7 +11,7 @@ Tool identifier: ``strelkaGermlineVariantCaller``
 
 Tool path: ``janis_bioinformatics.tools.variantcallers.illuminagermline_strelka import IlluminaGermlineVariantCaller``
 
-Version: 0.1.0"
+Version: v0.1.0
 
 
 
@@ -70,4 +70,4 @@ Author: **Unknown**
 
 
 *Strelka Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-26*.
+*This page was automatically generated on 2019-07-29*.

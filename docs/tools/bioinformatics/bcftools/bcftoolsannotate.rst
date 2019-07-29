@@ -88,4 +88,4 @@ Author: **Unknown**
 
 
 *BCFTools: Annotate was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-26*.
+*This page was automatically generated on 2019-07-29*.

@@ -1,17 +1,17 @@
-:orphan:
 
+.. include:: gatk4_germlinevariantcaller_0.1.0%22
 
-GATK4 Variant Caller
-==========================================
+GATK4 Germline Variant Caller
+===========================================================
 
 Description
 -------------
 
-Tool identifier: ``GATK4_VariantCaller``
+Tool identifier: ``GATK4_GermlineVariantCaller``
 
 Tool path: ``janis_bioinformatics.tools.variantcallers.gatkgermline_variants import GatkGermlineVariantCaller``
 
-Version: None
+Version: 0.1.0"
 
 
 
@@ -77,5 +77,5 @@ Metadata
 Author: **Unknown**
 
 
-*GATK4 Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-24*.
+*GATK4 Germline Variant Caller was last updated on **Unknown***.
+*This page was automatically generated on 2019-07-29*.

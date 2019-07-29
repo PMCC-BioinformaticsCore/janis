@@ -12,4 +12,4 @@ Automatically generated index page for {title}
    strelka_germline
    strelka_somatic
 
-*This page was auto-generated on 26/07/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 29/07/2019. Please do not directly alter the contents of this page.*

@@ -3,8 +3,7 @@ Framework Documentation
 
 
 There are two major components to constructing workflows,
-building tools and assembling workflows. For this reason
-we split the reference documentation into two major components:
+building tools and assembling workflows.
 
 .. toctree::
    :maxdepth: 1
@@ -20,3 +19,11 @@ Supported translations:
 
    cwl
    wdl
+
+Extra features:
+
+.. toctree::
+   :maxdepth: 1
+
+   stringformatters
+   scattering

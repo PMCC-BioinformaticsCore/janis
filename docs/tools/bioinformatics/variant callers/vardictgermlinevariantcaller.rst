@@ -1,17 +1,17 @@
 
-.. include:: vardictvariantcaller_0.1.0%22
+.. include:: vardictgermlinevariantcaller_v0.1.0
 
-Vardict Variant Caller
-=============================================
+Vardict Germline Variant Caller
+==============================================================
 
 Description
 -------------
 
-Tool identifier: ``vardictVariantCaller``
+Tool identifier: ``vardictGermlineVariantCaller``
 
 Tool path: ``janis_bioinformatics.tools.variantcallers.vardictgermline_variants import VardictGermlineVariantCaller``
 
-Version: 0.1.0"
+Version: v0.1.0
 
 
 
@@ -75,5 +75,5 @@ Metadata
 Author: **Unknown**
 
 
-*Vardict Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-26*.
+*Vardict Germline Variant Caller was last updated on **Unknown***.
+*This page was automatically generated on 2019-07-29*.

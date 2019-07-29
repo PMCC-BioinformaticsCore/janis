@@ -1,21 +1,28 @@
 
-.. include:: vardictgermline_none
+.. include:: vardict_germline_1.5.8
+.. include:: vardict_germline_1.5.7
+.. include:: vardict_germline_1.5.6
 
-VarDict Germline
-==================================
+VarDict (Germline)
+=====================================
 
 Description
 -------------
 
-Tool identifier: ``vardictgermline``
+Tool identifier: ``vardict_germline``
 
-Tool path: ``janis_bioinformatics.tools.vardict.vardictgermline import VarDictGermline_1_5_6``
+Tool path: ``janis_bioinformatics.tools.vardict.vardictgermline import VarDictGermline_1_5_8``
 
-Version: None
+Version: 1.5.8
 
-Docker: ``michaelfranklin/vardict:1.5.6``
+Docker: ``michaelfranklin/vardict:1.5.8``
 
+Versions
+*********
 
+- 1.5.8 (current)
+- `1.5.7 <vardict_germline_1.5.7.html>`_
+- `1.5.6 <vardict_germline_1.5.6.html>`_
 
 Documentation
 -------------
@@ -110,5 +117,5 @@ Metadata
 Author: **Unknown**
 
 
-*VarDict Germline was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-24*.
+*VarDict (Germline) was last updated on **Unknown***.
+*This page was automatically generated on 2019-07-29*.

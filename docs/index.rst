@@ -221,6 +221,7 @@ Contents
    development/index
    development/testing
    development/releasing
+   development/faq
 
 Indices and tables
 ^^^^^^^^^^^^^^^^^^

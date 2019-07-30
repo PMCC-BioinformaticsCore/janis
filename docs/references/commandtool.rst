@@ -58,11 +58,11 @@ Template
             pass
 
         @staticmethod
-        def tool_module():
+        def tool_module() -> str:
             pass
 
         @staticmethod
-        def tool_provider():
+        def tool_provider() -> str:
             pass
 
 Structure
@@ -94,14 +94,14 @@ To better categorise your tool, you can additionally implement the following met
 
 
 Tool Input
-...........
+**********
 
 .. autoclass:: janis.ToolInput
    :members: __init__
 
 
 Tool Output
-...........
+***********
 
 .. autoclass:: janis.ToolOutput
    :members: __init__

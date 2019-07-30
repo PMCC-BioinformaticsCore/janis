@@ -27,6 +27,7 @@ import sys, os
 import pkg_resources
 
 from janis_core import *
+from janis_core import __version__
 
 """
 Get any entrypoints and bind them onto this class so you can use them directly from this class:

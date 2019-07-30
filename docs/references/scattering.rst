@@ -20,7 +20,7 @@ Calls in WDL are explicitly scattered with essentially a for-loop. This calls fo
 intermediary aliasing of the variable. It attempts to intelligently do this based
 on the field name to scatter on where possible.
 
-.. code-block::wdl
+.. code-block:: wdl
 
    scatter (b in bams) {
       call G.gatk4sortsam as sortsam {

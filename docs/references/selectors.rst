@@ -20,7 +20,7 @@ InputSelector
 Declaration
 -----------
 
-.. autoclass::janis.InputSelector
+.. autoclass:: janis.InputSelector
 
 Overview
 --------
@@ -43,7 +43,7 @@ in WDL janis will automatically construct a second output corresponding to the `
 secondary (called ``bamOutput_bai`` and modify the contents of the ``InputSelector``
 to correctly glob this index file.
 
-.. code-block::python
+.. code-block:: python
 
    def outputs(self):
        return [
@@ -57,7 +57,7 @@ WildcardSelector
 Declaration
 -----------
 
-.. autoclass::janis.WildcardSelector
+.. autoclass:: janis.WildcardSelector
 
 Overview
 --------
@@ -72,7 +72,7 @@ Example
 The following example will demonstrate how to get all the
 files ending on ``.csv`` within the execution directory.
 
-.. code-block::python
+.. code-block:: python
 
    def outputs(self):
        return [
@@ -86,7 +86,7 @@ StringFormatting
 Declaration
 -----------
 
-.. autoclass::janis.StringFormatter
+.. autoclass:: janis.StringFormatter
 
 Overview
 --------
@@ -95,7 +95,7 @@ A ``StringFormatter`` is used to allow inputs or other values to be inserted at 
 into a string template. A ``StringFormatter`` can be concatenated with Python strings,
 another ``StringFormatter`` or an ``InputSelector``.
 
-The string``"{placeholdername}"`` can be used within a string format, where ``placeholdername``
+The string ``"{placeholdername}"`` can be used within a string format, where ``placeholdername``
 is a ``kwarg`` passed to the StringFormatter with the intended selector or value.
 
 The placeholder names must be valid Python variable names (as they're passed as kwargs).

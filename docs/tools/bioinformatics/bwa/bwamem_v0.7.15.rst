@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.bwa.mem.mem_0_7_15 import BwaMem_0_7_15`
 
 Version: v0.7.15
 
-Docker: ``biocontainers/bwa:v0.7.15_cv3``
+Container: ``biocontainers/bwa:v0.7.15_cv3``
 
 
 
@@ -108,4 +108,4 @@ Author: Michael Franklin
 
 
 *BWA-MEM was last updated on 2019-07-23*.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

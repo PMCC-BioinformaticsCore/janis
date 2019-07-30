@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.pmac.combinevariants.combinevariants_0_0
 
 Version: 0.0.4
 
-Docker: ``michaelfranklin/pmacutil:0.0.4``
+Container: ``michaelfranklin/pmacutil:0.0.4``
 
 
 
@@ -73,4 +73,4 @@ Author: **Unknown**
 
 
 *Combine Variants was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

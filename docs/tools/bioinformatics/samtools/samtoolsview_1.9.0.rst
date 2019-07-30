@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.samtools.view.view import SamToolsView_1
 
 Version: 1.9.0
 
-Docker: ``quay.io/biocontainers/samtools:1.9--h8571acd_11``
+Container: ``quay.io/biocontainers/samtools:1.9--h8571acd_11``
 
 Versions
 *********
@@ -101,4 +101,4 @@ Author: Michael Franklin
 
 
 *SamTools: View was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

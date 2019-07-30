@@ -14,7 +14,7 @@ Tool path: ``janis_bioinformatics.tools.illumina.strelkasomatic.strelkasomatic i
 
 Version: 2.9.10
 
-Docker: ``michaelfranklin/strelka:2.9.10``
+Container: ``michaelfranklin/strelka:2.9.10``
 
 Versions
 *********
@@ -101,4 +101,4 @@ Author: **Unknown**
 
 
 *Strelka (Somatic) was last updated on 2019-05-27*.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

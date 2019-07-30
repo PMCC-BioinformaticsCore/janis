@@ -14,7 +14,7 @@ Tool path: ``janis_bioinformatics.tools.htslib.tabix.tabix_1_9 import Tabix_1_9`
 
 Version: 1.9
 
-Docker: ``quay.io/biocontainers/htslib:1.9--ha228f0b_7``
+Container: ``quay.io/biocontainers/htslib:1.9--ha228f0b_7``
 
 Versions
 *********
@@ -96,4 +96,4 @@ Author: Michael Franklin
 
 
 *Tabix was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

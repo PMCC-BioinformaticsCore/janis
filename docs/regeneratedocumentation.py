@@ -125,9 +125,9 @@ def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
     output_tuples = [[o.id(), o.output_type.id(), o.doc] for o in tool.outputs()]
     formatted_outputs = tabulate.tabulate(output_tuples, output_headers, tablefmt="rst")
 
-    docker_tag = ""
+    container_tag = ""
     if isinstance(tool, CommandTool):
-        docker_tag = f"Docker: ``{tool.docker()}``"
+        container_tag = f"Container: ``{tool.container()}``"
 
     tool_prov = ""
     if tool.tool_provider() is None:
@@ -151,7 +151,7 @@ Tool path: ``{tool.__module__} import {tool.__class__.__name__}``
 
 Version: {tool.version()}
 
-{docker_tag}
+{container_tag}
 
 {versiontext}
 

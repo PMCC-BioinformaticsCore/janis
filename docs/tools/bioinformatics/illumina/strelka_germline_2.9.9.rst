@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.illumina.strelkagermline.strelkagermline
 
 Version: 2.9.9
 
-Docker: ````
+Container: ````
 
 Versions
 *********
@@ -111,4 +111,4 @@ Author: Michael Franklin
 
 
 *Strelka (Germline) was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

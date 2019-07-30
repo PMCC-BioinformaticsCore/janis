@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.babrahambioinformatics.fastqc.fastqc_0_1
 
 Version: v0.11.8
 
-Docker: ``quay.io/biocontainers/fastqc:0.11.8--1``
+Container: ``quay.io/biocontainers/fastqc:0.11.8--1``
 
 Versions
 *********
@@ -86,4 +86,4 @@ Author: Simon Andrews
 
 
 *FastQC was last updated on 2019-03-25*.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

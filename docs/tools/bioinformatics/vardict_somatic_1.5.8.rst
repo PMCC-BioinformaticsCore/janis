@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSom
 
 Version: 1.5.8
 
-Docker: ``michaelfranklin/vardict:1.5.8``
+Container: ``michaelfranklin/vardict:1.5.8``
 
 Versions
 *********
@@ -116,4 +116,4 @@ Author: **Unknown**
 
 
 *Vardict (Somatic) was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

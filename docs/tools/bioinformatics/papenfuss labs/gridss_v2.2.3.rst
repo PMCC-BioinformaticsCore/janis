@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.pappenfuss.gridss.gridss import Gridss_2
 
 Version: v2.2.3
 
-Docker: ``gridss/gridss:v2.2.3``
+Container: ``gridss/gridss:v2.2.3``
 
 Versions
 *********
@@ -82,4 +82,4 @@ Author: **Unknown**
 
 
 *Gridss was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

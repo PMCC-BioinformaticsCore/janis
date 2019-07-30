@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.htslib.tabix.latest import TabixLatest``
 
 Version: 1.2.1
 
-Docker: ``biodckrdev/htslib:1.2.1``
+Container: ``biodckrdev/htslib:1.2.1``
 
 Versions
 *********
@@ -95,4 +95,4 @@ Author: Michael Franklin
 
 
 *Tabix was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

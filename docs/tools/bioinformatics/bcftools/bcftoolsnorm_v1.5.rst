@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.bcftools.norm.norm_1_5 import BcfToolsNo
 
 Version: v1.5
 
-Docker: ``biocontainers/bcftools:v1.5_cv2``
+Container: ``biocontainers/bcftools:v1.5_cv2``
 
 Versions
 *********
@@ -85,4 +85,4 @@ Author: **Unknown**
 
 
 *BCFTools: Normalize was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

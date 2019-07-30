@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.gatk4.gathervcfs.gathervcfs_4_0 import G
 
 Version: 4.0.12.0
 
-Docker: ``broadinstitute/gatk:4.0.12.0``
+Container: ``broadinstitute/gatk:4.0.12.0``
 
 
 
@@ -82,4 +82,4 @@ Author: Michael Franklin
 
 
 *GATK4: Gather VCFs was last updated on 2019-05-01*.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

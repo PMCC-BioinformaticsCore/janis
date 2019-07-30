@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.cutadapt.cutadapt_1_18 import CutAdapt_1
 
 Version: 1.18
 
-Docker: ``quay.io/biocontainers/cutadapt:1.18--py37h14c3975_1``
+Container: ``quay.io/biocontainers/cutadapt:1.18--py37h14c3975_1``
 
 
 
@@ -134,4 +134,4 @@ Author: **Unknown**
 
 
 *Cutadapt was last updated on 2019-03-29*.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

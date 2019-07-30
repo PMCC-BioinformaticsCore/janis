@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.gatk4.applybqsr.latest import Gatk4Apply
 
 Version: 4.0.12.0
 
-Docker: ``broadinstitute/gatk:4.0.12.0``
+Container: ``broadinstitute/gatk:4.0.12.0``
 
 
 
@@ -87,4 +87,4 @@ Author: Michael Franklin
 
 
 *GATK4: Apply base quality score recalibration was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

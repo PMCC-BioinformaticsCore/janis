@@ -13,7 +13,7 @@ Tool path: ``janis_bioinformatics.tools.common.bwamem_samtoolsview import BwaMem
 
 Version: 0.7.17|1.9
 
-Docker: ``michaelfranklin/bwasamtools:0.7.17-1.9``
+Container: ``michaelfranklin/bwasamtools:0.7.17-1.9``
 
 
 
@@ -103,4 +103,4 @@ Author: **Unknown**
 
 
 *Bwa mem + Samtools View was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-29*.
+*This page was automatically generated on 2019-07-30*.

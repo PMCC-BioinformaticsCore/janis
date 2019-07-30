@@ -25,5 +25,5 @@ Extra features:
 .. toctree::
    :maxdepth: 1
 
-   stringformatters
+   selectors
    scattering

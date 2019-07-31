@@ -68,6 +68,11 @@ def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
     if not tool.metadata():
         metadata = Metadata()
 
+    if not tool.friendly_name():
+        raise Exception(
+            f"Tool '{tool.__name__}' ({tool.id()}) did not provide the required 'friendly_name' for the docs"
+        )
+
     fn = tool.friendly_name() if tool.friendly_name() else tool.id()
     en = f" ({tool.id()})" if fn != tool.id() else ""
     tn = fn + en

@@ -23,35 +23,35 @@ Template
 
 .. code-block:: python
 
-    from typing import List, Optional, Union
-    from janis_core.tool.tool import CommandTool, ToolArgument, ToolInput, ToolTypes, ToolOutput
+   from typing import List, Optional, Union
+   import janis as j
 
-    class ToolName(CommandTool):
-        @staticmethod
-        def tool() -> str:
-            return "toolname"
+   class ToolName(j.CommandTool):
+       @staticmethod
+       def tool() -> str:
+           return "toolname"
 
-        @staticmethod
-        def base_command() -> Optional[Union[str, List[str]]]:
-            pass
+       @staticmethod
+       def base_command() -> Optional[Union[str, List[str]]]:
+           pass
 
-        def inputs(self) -> List[ToolInput]:
-            return []
+       def inputs(self) -> List[j.ToolInput]:
+           return []
 
-        def outputs(self) -> List[ToolOutput]:
-            return []
+       def outputs(self) -> List[j.ToolOutput]:
+           return []
 
-        @staticmethod
-        def container() -> str:
-            pass
+       @staticmethod
+       def container() -> str:
+           return ""
 
-        @staticmethod
-        def version() -> str:
-            pass
+       @staticmethod
+       def version() -> str:
+           pass
 
         # optional
 
-        def arguments(self) -> List[ToolArgument]:
+        def arguments(self) -> List[j.ToolArgument]:
             return []
 
         def friendly_name(self) -> str:
@@ -86,7 +86,7 @@ A new tool definition must subclass the `janis.CommandTool` class and implement 
 
 To better categorise your tool, you can additionally implement the following methods:
 
-- ``janis.Tool.friendly_name(self)``: A user friendly name of your tool.
+- ``janis.Tool.friendly_name(self)``: A user friendly name of your tool (must be implemented for generated docs)
 
 - ``@staticmethod janis.Tool.tool_module()``: Unix, bioinformatics, etc.
 

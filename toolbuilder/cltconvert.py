@@ -139,6 +139,9 @@ def convert_command_tool_fragments(
         metadata.dateCreated = datetime.now()
     metadata.dateUpdated = datetime.now()
 
+    if isinstance(toolid, list):
+        toolid = "".join(s.title() for s in toolid)
+
     return tool_template.format(
         toolname=toolid,
         name=toolid.title(),

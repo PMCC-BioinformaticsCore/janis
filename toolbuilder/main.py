@@ -30,10 +30,10 @@ def do_docker(args):
     )
 
     if args.printhelp:
-        sys.stderr(helpstr, end="\n")
+        print(helpstr, file=sys.stderr)
 
     if args.printtool:
-        sys.stderr(tool)
+        print(tool, file=sys.stderr)
 
     print(tool, file=sys.stdout)
 
@@ -45,13 +45,18 @@ def add_docker_args(parser):
     )
 
     parser.add_argument("container", help="container to run")
-    parser.add_argument("basecommand", help="The command of your tool")
+    parser.add_argument("basecommand", help="The command of your tool", nargs="+")
     parser.add_argument("--name", help="Name of tool, will default to name of command")
-    parser.add_argument("--printhelp", help="Print the output of -h to stderr")
-    parser.add_argument("--printtool", help="Print the tool to stderr")
+    parser.add_argument(
+        "--printhelp", help="Print the output of -h to stderr", action="store_true"
+    )
+    parser.add_argument(
+        "--printtool", help="Print the tool to stderr", action="store_true"
+    )
     parser.add_argument(
         "--version",
         help="Version of this tool, will try to get it from the container tag if not present",
+        action="store_true",
     )
     parser.add_argument("--container-tool", default="docker")
     parser.add_argument(

@@ -105,20 +105,3 @@ Tool Output
 
 .. autoclass:: janis.ToolOutput
    :members: __init__
-
-
-Frequently asked questions
-**************************
-
-- **Why is my input not being bound onto the command line?**
-
-    You need to provide a ``position`` or ``prefix`` to a :class:`janis.ToolInput` to be bound on the command line.
-
-- **How do I prefix each individual element in an array for my command line?**
-
-    Set ``prefix_applies_to_all_elements=True`` on the :class:`janis.ToolInput`.
-
-- **How do I make sure my file is in the execution directory?**
-
-    Set ``prefix_applies_to_all_elements=True`` on the :class:`janis.ToolInput`.
-

@@ -3,6 +3,21 @@
 This document contains some common FAQ that may not
 have a place outside this documentation.
 
+
+## Command tools and the command line
+
+- **Why is my input not being bound onto the command line?**
+
+    You need to provide a ``position`` or ``prefix`` to a :class:`janis.ToolInput` to be bound on the command line.
+
+- **How do I prefix each individual element in an array for my command line?**
+
+    Set ``prefix_applies_to_all_elements=True`` on the :class:`janis.ToolInput`.
+
+- **How do I make sure my file is in the execution directory? / How do I localise my file?**
+
+    Set ``prefix_applies_to_all_elements=True`` on the :class:`janis.ToolInput`.
+
 - **Can a `janis.ToolInput` be marked as streamable?**
 
     Currently there's no support to mark ToolInput's as `streamable`. Although the

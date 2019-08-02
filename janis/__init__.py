@@ -23,11 +23,14 @@ _Proudly made on Planet Earth._
 
 """
 
-import sys, os
+import sys
+import os
 import pkg_resources
 
 from janis_core import __version__
 from janis_core import *
+
+from janis.entrypoints import EXTENSIONS
 
 """
 Get any entrypoints and bind them onto this class so you can use them directly from this class:
@@ -38,7 +41,7 @@ We'll also add them to the sys.module path which allows us to directly import th
     >> import janis.myextensionmodule as jm
     >> jm.my_function()
 """
-for entrypoint in pkg_resources.iter_entry_points(group="janis.extension"):
+for entrypoint in pkg_resources.iter_entry_points(group=EXTENSIONS):
     try:
         m = entrypoint.load()
         sys.modules["janis." + entrypoint.name] = m

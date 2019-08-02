@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``gatkmutect2``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.mutect2.latest import Gatk4Mutect2Latest``
+Tool path: ``janis_bioinformatics.tools.gatk4.mutect2.mutect2_4_0 import GatkMutect2_4_0``
 
 Version: 4.0.12.0
 
@@ -82,4 +82,4 @@ Author: Michael Franklin
 
 
 *GATK4: MuTect2 was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

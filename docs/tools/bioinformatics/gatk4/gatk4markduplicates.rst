@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``Gatk4MarkDuplicates``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.markduplicates.latest import Gatk4MarkDuplicatesLatest``
+Tool path: ``janis_bioinformatics.tools.gatk4.markduplicates.markduplicates_4_0 import Gatk4MarkDuplicates_4_0``
 
 Version: 4.0.12.0
 
@@ -124,4 +124,4 @@ Author: Michael Franklin
 
 
 *GATK4: Mark Duplicates was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

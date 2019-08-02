@@ -9,17 +9,17 @@ Description
 
 Tool identifier: ``vardict_somatic``
 
-Tool path: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_5_8``
+Tool path: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_5_7``
 
-Version: 1.5.8
+Version: 1.5.7
 
-Container: ``michaelfranklin/vardict:1.5.8``
+Container: ``michaelfranklin/vardict:1.5.7``
 
 Versions
 *********
 
-- 1.5.8 (current)
-- `1.5.7 <vardict_somatic_1.5.7.html>`_
+- `1.5.8 <vardict_somatic_1.5.8.html>`_
+- 1.5.7 (current)
 - `1.5.6 <vardict_somatic_1.5.6.html>`_
 
 Documentation
@@ -116,4 +116,4 @@ Author: **Unknown**
 
 
 *Vardict (Somatic) was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

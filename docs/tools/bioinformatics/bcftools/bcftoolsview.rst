@@ -35,11 +35,11 @@ Tool documentation
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     Stdout
-======  ======  ===============
+======  ===========  ===============
+name    type         documentation
+======  ===========  ===============
+out     stdout<VCF>
+======  ===========  ===============
 
 Inputs
 ------
@@ -107,4 +107,4 @@ Author: **Unknown**
 
 
 *BCFTools: View was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

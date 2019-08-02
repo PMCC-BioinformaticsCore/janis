@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``Gatk4BaseRecalibrator``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.baserecalibrator.latest import Gatk4BaseRecalibratorLatest``
+Tool path: ``janis_bioinformatics.tools.gatk4.baserecalibrator.baserecalibrator_4_0 import Gatk4BaseRecalibrator_4_0``
 
 Version: 4.0.12.0
 
@@ -78,4 +78,4 @@ Author: Michael Franklin
 
 
 *GATK4: Base Recalibrator was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

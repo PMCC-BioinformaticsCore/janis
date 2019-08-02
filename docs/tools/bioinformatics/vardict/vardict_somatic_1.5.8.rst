@@ -1,7 +1,5 @@
+:orphan:
 
-.. include:: vardict_somatic_1.5.8
-.. include:: vardict_somatic_1.5.7
-.. include:: vardict_somatic_1.5.6
 
 Vardict (Somatic)
 ===================================
@@ -118,4 +116,4 @@ Author: **Unknown**
 
 
 *Vardict (Somatic) was last updated on **Unknown***.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

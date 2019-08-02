@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``tabix``
 
-Tool path: ``janis_bioinformatics.tools.htslib.tabix.latest import TabixLatest``
+Tool path: ``janis_bioinformatics.tools.htslib.tabix.tabix_1_2_1 import Tabix_1_2_1``
 
 Version: 1.2.1
 
@@ -95,4 +95,4 @@ Author: Michael Franklin
 
 
 *Tabix was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``bgzip``
 
-Tool path: ``janis_bioinformatics.tools.htslib.bgzip.latest import BGZipLatest``
+Tool path: ``janis_bioinformatics.tools.htslib.bgzip.bgzip_1_2_1 import BGZip_1_2_1``
 
 Version: 1.2.1
 
@@ -45,11 +45,11 @@ Again after decompression completes the input file will be removed.
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     Stdout
-======  ======  ===============
+======  =========================  ===============
+name    type                       documentation
+======  =========================  ===============
+out     stdout<compressed-vcf-gz>
+======  =========================  ===============
 
 Inputs
 ------
@@ -92,4 +92,4 @@ Author: Michael Franklin
 
 
 *BGZip was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

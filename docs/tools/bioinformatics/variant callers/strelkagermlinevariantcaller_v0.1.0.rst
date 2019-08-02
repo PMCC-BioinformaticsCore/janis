@@ -1,5 +1,5 @@
+:orphan:
 
-.. include:: strelkagermlinevariantcaller_v0.1.0
 
 Strelka Germline Variant Caller
 ==============================================================

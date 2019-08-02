@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``bwamem``
 
-Tool path: ``janis_bioinformatics.tools.bwa.mem.mem_0_7_15 import BwaMem_0_7_15``
+Tool path: ``janis_bioinformatics.tools.bwa.mem.latest import BwaMemLatest``
 
 Version: v0.7.15
 
@@ -49,11 +49,11 @@ does not work with split alignments. One may consider to use option -M to flag s
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     Stdout
-======  ======  ===============
+======  ===========  ===============
+name    type         documentation
+======  ===========  ===============
+out     stdout<SAM>
+======  ===========  ===============
 
 Inputs
 ------
@@ -108,4 +108,4 @@ Author: Michael Franklin
 
 
 *BWA-MEM was last updated on 2019-07-23*.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

@@ -1,5 +1,5 @@
+:orphan:
 
-.. include:: vardictgermlinevariantcaller_v0.1.0
 
 Vardict Germline Variant Caller
 ==============================================================

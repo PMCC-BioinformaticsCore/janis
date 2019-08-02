@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``Gatk4GenotypeConcordance``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.genotypeconcordance.latest import Gatk4GenotypeConcordanceLatest``
+Tool path: ``janis_bioinformatics.tools.gatk4.genotypeconcordance.genotypeconcordance_4_0 import Gatk4GenotypeConcordance_4_0``
 
 Version: 4.0.12.0
 
@@ -137,4 +137,4 @@ Author: Michael Franklin
 
 
 *GATK4: Genotype Concordance was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

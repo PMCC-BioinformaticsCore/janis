@@ -1,5 +1,5 @@
+:orphan:
 
-.. include:: gatk4_germlinevariantcaller_0.1.0
 
 GATK4 Germline Variant Caller
 ===========================================================

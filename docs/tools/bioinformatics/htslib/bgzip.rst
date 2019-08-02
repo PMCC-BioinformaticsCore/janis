@@ -46,11 +46,11 @@ Again after decompression completes the input file will be removed.
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     Stdout
-======  ======  ===============
+======  =========================  ===============
+name    type                       documentation
+======  =========================  ===============
+out     stdout<compressed-vcf-gz>
+======  =========================  ===============
 
 Inputs
 ------
@@ -93,4 +93,4 @@ Author: Michael Franklin
 
 
 *BGZip was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-07-30*.
+*This page was automatically generated on 2019-08-02*.

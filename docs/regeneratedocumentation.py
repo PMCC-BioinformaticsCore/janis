@@ -18,6 +18,8 @@ from janis_core.types.common_data_types import all_types
 # Import modules here so that the tool registry knows about them
 
 # Output settings
+from janis.shed import JanisShed
+
 docs_dir = PROJECT_ROOT_DIR + "/docs/"
 tools_dir = docs_dir + "tools/"
 dt_dir = docs_dir + "datatypes/"
@@ -300,88 +302,6 @@ def get_toc(title, intro_text, subpages, caption="Contents", max_depth=1):
 """
 
 
-def get_tools_and_datatypes():
-
-    tools: Dict[str, Dict[str, Type[Tool]]] = {}
-    data_types: Set[Type[DataType]] = set(all_types)
-
-    for m in modules:
-        # noinspection PyTypeChecker
-        tt, dt = get_tool_from_module(m.tools)
-        # noinspection PyTypeChecker
-        tdt, ddt = get_tool_from_module(m.data_types)
-
-        tools = merge_versioned_tools_dicts(tools, merge_versioned_tools_dicts(tt, tdt))
-        data_types = data_types.union(dt).union(ddt)
-
-    return tools, list(data_types)
-
-
-def merge_versioned_tools_dicts(d1: dict, d2: Dict[str, Dict[str, Type[Tool]]]):
-    d = {**d1}
-    for k, v in d2.items():
-        if k in d:
-            d[k] = {**d[k], **v}
-        else:
-            d[k] = v
-    return d
-
-
-def get_tool_from_module(
-    module, seen_modules=None
-) -> Tuple[Dict[str, Dict[str, Type[Tool]]], Set[Type[DataType]]]:
-    q = {
-        n: cls
-        for n, cls in list(module.__dict__.items())
-        if not n.startswith("__") and type(cls) != type
-    }
-
-    # name: version: Type[Tool]
-    tools: Dict[str, Dict[str, Type[Tool]]] = {}
-    data_types: Set[Type[DataType]] = set()
-
-    if seen_modules is None:
-        seen_modules = set()
-
-    for k in q:
-        cls = q[k]
-        try:
-            if hasattr(cls, "__name__"):
-                if cls.__name__ in seen_modules:
-                    continue
-                seen_modules.add(cls.__name__)
-
-            if isfunction(cls):
-                continue
-            if ismodule(cls):
-                t, d = get_tool_from_module(cls, seen_modules)
-                tools = merge_versioned_tools_dicts(tools, t)
-                data_types = data_types.union(d)
-            elif isabstract(cls):
-                continue
-            elif not isclass(cls):
-                continue
-            elif issubclass(cls, CommandTool):
-                print("Found commandtool: " + cls.tool())
-                v = cls.version() if cls.version() else "None"
-                nested_keys_add(tools, [cls.tool(), v], cls)
-            elif issubclass(cls, Workflow):
-                c = cls()
-                print("Found workflow: " + c.id())
-                v = c.version() if c.version() else "None"
-                nested_keys_add(tools, [cls().id(), v], cls)
-
-            elif issubclass(cls, DataType):
-                print("Found datatype: " + cls().id())
-                data_types.add(cls)
-        except Exception as e:
-            print(f"{str(e)} for type {type(cls)}")
-            # print(traceback.format_exc())
-            continue
-
-    return tools, data_types
-
-
 def sort_tool_versions(versions: List[str]) -> List[str]:
     try:
         return sorted(versions, key=StrictVersion, reverse=True)
@@ -390,7 +310,12 @@ def sort_tool_versions(versions: List[str]) -> List[str]:
 
 
 def prepare_all_tools():
-    tools, data_types = get_tools_and_datatypes()
+    JanisShed.hydrate(modules=[janis.bioinformatics, janis.unix])
+
+    data_types = JanisShed.get_all_datatypes()
+    tools = {
+        ts[0].id(): {t.version(): t for t in ts} for ts in JanisShed.get_all_tools()
+    }
 
     Logger.info(f"Preparing documentation for {len(tools)} tools")
     Logger.info(f"Preparing documentation for {len(data_types)} data_types")
@@ -426,7 +351,7 @@ def prepare_all_tools():
             os.makedirs(output_dir)
 
         for (toolurl, tool, isprimary) in toolurl_to_tool:
-            output_str = prepare_tool(tool(), tool_versions, not isprimary)
+            output_str = prepare_tool(tool, tool_versions, not isprimary)
             output_filename = output_dir + toolurl + ".rst"
             with open(output_filename, "w+") as tool_file:
                 tool_file.write(output_str)
@@ -442,8 +367,11 @@ def prepare_all_tools():
         if issubclass(d, Array):
             Logger.info("Skipping Array DataType")
             continue
-
-        dt = d()
+        try:
+            dt = d()
+        except:
+            print(d.__name__ + " failed to instantiate")
+            continue
         did = dt.name().lower()
         Logger.log("Preparing " + dt.name())
         output_str = prepare_data_type(dt)
@@ -497,4 +425,5 @@ def prepare_all_tools():
     )
 
 
-prepare_all_tools()
+if __name__ == "__main__":
+    prepare_all_tools()

@@ -12,14 +12,20 @@ from inspect import isfunction, ismodule, isabstract, isclass
 
 import janis
 from constants import PROJECT_ROOT_DIR
-from janis_core import Array, DataType, Workflow, CommandTool, Tool, Metadata, Logger
-from janis_core.types.common_data_types import all_types
+from janis_core import (
+    Array,
+    DataType,
+    Workflow,
+    CommandTool,
+    Tool,
+    Metadata,
+    Logger,
+    JanisShed,
+)
 
 # Import modules here so that the tool registry knows about them
 
 # Output settings
-from janis.shed import JanisShed
-
 docs_dir = PROJECT_ROOT_DIR + "/docs/"
 tools_dir = docs_dir + "tools/"
 dt_dir = docs_dir + "datatypes/"

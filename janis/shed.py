@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import List, Type, Optional
 import pkg_resources, sys
 from inspect import isfunction, ismodule, isabstract, isclass
 
@@ -9,7 +9,6 @@ from janis.registry import TaggedRegistry, Registry
 
 
 class JanisShed:
-
     _toolshed = TaggedRegistry("latest")
     _typeshed = Registry()
 
@@ -18,14 +17,16 @@ class JanisShed:
     # getters
 
     @staticmethod
-    def get_tool(tool: str, version=None):
+    def get_tool(tool: str, version: str = None):
         JanisShed.hydrate()
-        return JanisShed._toolshed.get(tool, version)
+        if version:
+            version = version.lower()
+        return JanisShed._toolshed.get(tool.lower(), version)
 
     @staticmethod
     def get_datatype(datatype: str):
         JanisShed.hydrate()
-        return JanisShed._typeshed.get(datatype)
+        return JanisShed._typeshed.get(datatype.lower())
 
     @staticmethod
     def get_all_tools() -> List[List[j.Tool]]:
@@ -33,7 +34,7 @@ class JanisShed:
         return JanisShed._toolshed.objects()
 
     @staticmethod
-    def get_all_datatypes() -> List[j.DataType]:
+    def get_all_datatypes() -> List[Type[j.DataType]]:
         JanisShed.hydrate()
         return JanisShed._typeshed.objects()
 
@@ -41,17 +42,17 @@ class JanisShed:
 
     @staticmethod
     def add_tool(tool: j.Tool) -> bool:
-        v = tool.version()
+        v: Optional[str] = tool.version()
         if not v:
             t = f"The tool {tool.id()} did not have a version and will not be registered"
             j.Logger.critical(t)
             return False
 
-        return JanisShed._toolshed.register(tool.id(), v, tool)
+        return JanisShed._toolshed.register(tool.id(), v.lower(), tool)
 
     @staticmethod
     def add_type(datatype: Type[j.DataType]) -> bool:
-        return JanisShed._typeshed.register(datatype.name(), datatype)
+        return JanisShed._typeshed.register(datatype.name().lower(), datatype)
 
     @staticmethod
     def hydrate(force=False, modules: list = None):
@@ -67,6 +68,7 @@ class JanisShed:
         seen_modules = set()
         for m in modules:
             JanisShed.traverse_module(m, seen_modules=seen_modules)
+        JanisShed._has_been_hydrated = True
 
     @staticmethod
     def _get_datatype_entrypoints():

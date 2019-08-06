@@ -27,10 +27,10 @@ setup(
     packages=["janis"]
     + ["janis." + p for p in sorted(find_packages("./janis"))]
     + ["toolbuilder"],
-    install_requires=["janis-pipelines.core>=0.5.2", "janis-pipelines.unix"],
+    install_requires=["janis-pipelines.core>=0.5.2", "janis-pipelines.unix>=0.5.1"],
     extras_require={
         "bioinformatics": "janis-pipelines.bioinformatics>=0.5.1",
-        "runner": "janis-pipelines.runner>=0.5.1",
+        "runner": "janis-pipelines.runner>=0.5.3",
     },
     entry_points={"console_scripts": ["janisbuilder=toolbuilder.main:process_args"]},
     zip_safe=False,

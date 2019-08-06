@@ -14,7 +14,9 @@ exclude = '''
     | _build
     | build
     | dist
-    | bioinformatics
+    | janis-bioinformatics
+    | janis-core
+    | janis-unix
   )/
 )
 '''

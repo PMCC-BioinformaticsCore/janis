@@ -71,7 +71,7 @@ summary             csv
 metrics             File
 vcf                 vcf-gz-tbi
 runinfo             jsonFile
-roc                 File
+rocOut              File
 indelLocations      File
 indelPassLocations  File
 snpLocations        File
@@ -158,4 +158,4 @@ Author: **Unknown**
 
 
 *Hap.py validation was last updated on 2019-05-15*.
-*This page was automatically generated on 2019-08-02*.
+*This page was automatically generated on 2019-08-12*.

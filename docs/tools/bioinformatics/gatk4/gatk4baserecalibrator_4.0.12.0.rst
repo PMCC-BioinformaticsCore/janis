@@ -78,4 +78,4 @@ Author: Michael Franklin
 
 
 *GATK4: Base Recalibrator was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-08-02*.
+*This page was automatically generated on 2019-08-12*.

@@ -86,4 +86,4 @@ Author: **Unknown**
 
 
 *BCFTools: Normalize was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-02*.
+*This page was automatically generated on 2019-08-12*.

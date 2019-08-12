@@ -69,4 +69,4 @@ Author: **Unknown**
 
 
 *BCFTools: Sort was last updated on 2019-07-11*.
-*This page was automatically generated on 2019-08-02*.
+*This page was automatically generated on 2019-08-12*.

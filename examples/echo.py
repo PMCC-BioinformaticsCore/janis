@@ -15,4 +15,5 @@ w.add_edges(
 )
 
 # Will print the CWL, input file and relevant tools to the console
-w.translate("cwl", to_disk=False)  # or "wdl"
+if __name__ == "__main__":
+    w.translate("cwl", to_disk=False)  # or "wdl"

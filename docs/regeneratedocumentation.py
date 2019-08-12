@@ -78,7 +78,7 @@ def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
 
     if not tool.friendly_name():
         raise Exception(
-            f"Tool '{tool.__name__}' ({tool.id()}) did not provide the required 'friendly_name' for the docs"
+            f"Tool '{type(tool).__name__}' ({tool.id()}) did not provide the required 'friendly_name' for the docs"
         )
 
     fn = tool.friendly_name() if tool.friendly_name() else tool.id()
@@ -316,7 +316,7 @@ def sort_tool_versions(versions: List[str]) -> List[str]:
 
 
 def prepare_all_tools():
-    JanisShed.hydrate(modules=[janis.bioinformatics, janis.unix])
+    JanisShed.hydrate(modules=[janis.unix, janis.bioinformatics])
 
     data_types = JanisShed.get_all_datatypes()
     tools = {

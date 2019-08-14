@@ -12,9 +12,9 @@ JANIS_BIOINFORMATICS_VERSION = "v0.5.2"
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########
 
 min_core_version = f"janis-pipelines.core>=" + JANIS_CORE_VERSION
-min_runner_version = f"janis-pipelines.runner>=" + JANIS_CORE_VERSION
-min_unix_version = f"janis-pipelines.unix>=" + JANIS_CORE_VERSION
-min_bioinf_version = f"janis-pipelines.bioinformatics>=" + JANIS_CORE_VERSION
+min_runner_version = f"janis-pipelines.runner>=" + JANIS_RUNNER_VERSION
+min_unix_version = f"janis-pipelines.unix>=" + JANIS_UNIX_VERSION
+min_bioinf_version = f"janis-pipelines.bioinformatics>=" + JANIS_BIOINFORMATICS_VERSION
 
 with open("./README.md") as readme:
     long_description = readme.read()

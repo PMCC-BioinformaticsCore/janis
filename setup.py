@@ -3,7 +3,18 @@ from setuptools import setup, find_packages
 # Version information is found in the __init__ file of `janis/`
 DESCRIPTION = "Contains classes and helpers to build a workflow, and provide options to convert to CWL / WDL"
 
+JANIS_CORE_VERSION = "v0.5.4"
+JANIS_RUNNER_VERSION = "v0.5.5"
+JANIS_UNIX_VERSION = "v0.5.1"
+JANIS_BIOINFORMATICS_VERSION = "v0.5.2"
+
+
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########
+
+min_core_version = f"janis-pipelines.core>=" + JANIS_CORE_VERSION
+min_runner_version = f"janis-pipelines.runner>=" + JANIS_CORE_VERSION
+min_unix_version = f"janis-pipelines.unix>=" + JANIS_CORE_VERSION
+min_bioinf_version = f"janis-pipelines.bioinformatics>=" + JANIS_CORE_VERSION
 
 with open("./README.md") as readme:
     long_description = readme.read()
@@ -27,11 +38,13 @@ setup(
     packages=["janis"]
     + ["janis." + p for p in sorted(find_packages("./janis"))]
     + ["toolbuilder"],
-    install_requires=["janis-pipelines.core>=0.5.3", "janis-pipelines.unix>=0.5.1"],
-    extras_require={
-        "bioinformatics": "janis-pipelines.bioinformatics>=0.5.2",
-        "runner": "janis-pipelines.runner>=0.5.4",
-    },
+    install_requires=[
+        min_core_version,
+        min_runner_version,
+        min_unix_version,
+        min_bioinf_version,
+    ],
+    extras_require={"bioinformatics": min_bioinf_version, "runner": min_runner_version},
     entry_points={"console_scripts": ["janisbuilder=toolbuilder.main:process_args"]},
     zip_safe=False,
     long_description=long_description,

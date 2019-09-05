@@ -87,23 +87,17 @@ tool to log this to ``stdout``, and explicitly outputting this ``stdout`` to giv
 
    w = j.Workflow("workflowId")
 
-   inp = j.Input("inputIdentifier", data_type=j.String(), value="Hello, World!")
-   echo = j.Step("stepIdentifier", tool=Echo())
-   out = j.Output("outputIdentifier")
-
-   w.add_edges([
-       (inp, echo.inp),  # Connect 'inp' to 'echostep'
-       (echo.out, out),  # Connect output of 'echostep' to 'out'
-   ])
+   w.input("inputIdentifier", j.String, default="Hello, World!")
+   w.step("stepIdentifier", Echo, inp=w.inputIdentifier)
+   w.output("outputIdentifier", source=w.stepIdentifier.out)
 
    # Will print the CWL, input file and relevant tools to the console
    w.translate("cwl", to_disk=False)  # or "wdl"
 
-The ``add_pipe`` method is aware of the inputs and outputs of the arguments you provide it, and automatically
-joins the relevant non-optional parts together. More information can be found on creating edges on the
+More information can be found on creating edges on the
 `Building Connections <tutorials/buildingconnections.html>`__ documentation.
 
-Now we can an in-memory workflow, we can export a CWL representation to the console using ``.translate("cwl")``.
+Now we've created our workflow, we can export a CWL representation to the console using ``.translate("cwl")``.
 
 More examples
 -------------
@@ -112,7 +106,7 @@ There are some simple example pipelines that use the unix toolset in
 `janis/examples <https://github.com/PMCC-BioinformaticsCore/janis/tree/master/janis/examples>`__.
 
 Additionally there are example bioinformatics workflows that use Janis and the bioinformatics tools in the
-`janis-examplepipelines repository <https://github.com/PMCC-BioinformaticsCore/janis-examplepipelines>`__.
+`janis-examplepipelines repository <https://github.com/PMCC-BioinformaticsCore/janis-pipelines>`__.
 
 
 Support

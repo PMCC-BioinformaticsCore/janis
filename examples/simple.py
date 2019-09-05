@@ -22,7 +22,7 @@ simple.py
 """
 
 # The classes we require to build a basic workflow
-from janis_core import Workflow, Input, Output, Step, Array
+from janis_core import Workflow, Array
 
 # Data types - These help us logically connect workflows
 from janis.unix.data_types.tarfile import TarFile
@@ -35,24 +35,17 @@ from janis.unix.tools.untar import Untar
 
 w = Workflow("simple")
 
-inp = Input(
+w.input(
     "tarFile",
-    TarFile(),
+    TarFile,
     default="/Users/franklinmichael/Desktop/workflows-for-testing/03-simple/inputs/hello.tar",
 )
 
-untar = Step("untar", Untar())
-compil = Step("compile", Compile())
-tar = Step("tar", Tar())
+w.step("untar", Untar, tarFile=w.tarFile)
+w.step("compile", Compile, scatter="file", file=w.untar.out)
+w.step("tar", Tar, files=w.untar.out, files2=w.compile.out)
 
-outp = Output("out")
-
-w.add_edge(inp, untar.tarFile)
-w.add_edge(untar.out, compil.file)  # Auto scatter
-w.add_edge(untar.out, tar.files)
-w.add_edge(compil.out, tar.files2)
-w.add_edge(tar.out, outp)
-
+w.output("outp", source=w.tar.out)
 
 if __name__ == "__main__":
-    w.translate("wdl", to_disk=True, should_validate=True)
+    w.translate("wdl", to_disk=True, validate=True)

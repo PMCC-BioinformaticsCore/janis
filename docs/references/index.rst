@@ -10,6 +10,7 @@ building tools and assembling workflows.
 
    workflow
    commandtool
+   types
 
 
 Supported translations:

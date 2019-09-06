@@ -131,6 +131,7 @@ Releasing is automatic! Simply increment the version number in `setup.py` (`SemV
 and tag that commit with the same version identifier:
 
 .. code-block:: bash
+
    git commit -m "Tag for v0.x.x release"
    git tag -a "v0.x.x" -m "Tag message"
    git push --follow-tags
@@ -194,7 +195,7 @@ Contents
    :maxdepth: 1
    :caption: Tutorials
 
-   tutorials/gettingstarted
+   tutorial1/index
    tutorials/simple
    tutorials/alignsortedbam
    tutorials/running
@@ -220,7 +221,8 @@ Contents
    development/faq
 
 Indices and tables
-^^^^^^^^^^^^^^^^^^
+===================
+
 
 * :ref:`genindex`
 * :ref:`search`

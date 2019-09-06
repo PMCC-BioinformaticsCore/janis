@@ -3,16 +3,26 @@ Scattering
 
 *Improving workflow performance with embarrassingly parallel tasks*
 
-*This page is under construction, please check for more details later*
+Janis support scattering by field when constructing a :class:`janis.Workflow.step()` through the `scatter=Union[str, `:class:`janis.ScatterDescription```]`` parameter.
 
-Basic information:
+For example, let's presume you have the tool ``MyTool`` which accepts a single string input on the ``myToolInput`` field.
 
-- Janis only officially supports scattering on one field.
 
-- Scattering implicitly occurs when an array of values is passed to an input that
-only accepts single values (of the same type). A merge always occurs in the proceeding
-step, though it may be *rescattered*.
+.. code-block:: python
 
+   w = Workflow("mywf")
+   w.input("arrayInp", Array(String))
+   w.step("stp", scatter="myToolinput", myToolInput=w.arrayInp)
+   # equivalent to
+   w.step("stp", scatter=ScatterDescription(fields=["myToolInput"]), myToolInput=w.arrayInp)
+
+
+Scattering by more than one field
+*********************************
+
+Janis only officially supports scattering by 1 field, however there is work being done to support ``dot`` and ``scatter`` methods in WDL through subworkflows.
+
+When it's supported, you will be able to include a ``method=ScatterMethods.{method}`` within the ``ScatterDescription`` constructor. If you scatter by more than field, you WILL need to
 
 WDL
 *******
@@ -30,11 +40,3 @@ on the field name to scatter on where possible.
    }
 
 
-Scattering by more than one field
-*********************************
-
-This is currently unsupported.
-
-In CWL this could be achieved natively, in WDL it would probably require creating
-nested sub workflows with this logic achieved through the `zip` and `cross` functions,
-then you could let the WDL engine do the implicit ordered gathering.

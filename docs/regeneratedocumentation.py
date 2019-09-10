@@ -72,9 +72,7 @@ def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
 
     # tool_modules = tool.__module__.split(".") # janis._bioinformatics_.tools.$toolproducer.$toolname.$version
 
-    metadata = tool.metadata()
-    if not tool.metadata():
-        metadata = Metadata()
+    metadata = tool.bind_metadata() or tool.metadata
 
     if not tool.friendly_name():
         raise Exception(

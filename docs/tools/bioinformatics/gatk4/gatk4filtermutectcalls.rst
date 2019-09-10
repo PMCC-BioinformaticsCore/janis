@@ -39,11 +39,11 @@ If given a --contamination-table file, e.g. results from CalculateContamination,
 
 Outputs
 -------
-======  ========  =============================
-name    type      documentation
-======  ========  =============================
-out     TextFile  vcf containing filtered calls
-======  ========  =============================
+======  ====================  =============================
+name    type                  documentation
+======  ====================  =============================
+out     CompressedIndexedVCF  vcf containing filtered calls
+======  ====================  =============================
 
 Inputs
 ------
@@ -52,12 +52,12 @@ Find the inputs below
 Required inputs
 ***************
 
-=========  =============  ========  ==========  =======================
-name       type           prefix    position    documentation
-=========  =============  ========  ==========  =======================
-vcf        vcf-gz-tbi     -V                    vcf to be filtered
-reference  FastaWithDict  -R                    Reference sequence file
-=========  =============  ========  ==========  =======================
+=========  ====================  ========  ==========  =======================
+name       type                  prefix    position    documentation
+=========  ====================  ========  ==========  =======================
+vcf        CompressedIndexedVCF  -V                    vcf to be filtered
+reference  FastaWithDict         -R                    Reference sequence file
+=========  ====================  ========  ==========  =======================
 
 Optional inputs
 ***************

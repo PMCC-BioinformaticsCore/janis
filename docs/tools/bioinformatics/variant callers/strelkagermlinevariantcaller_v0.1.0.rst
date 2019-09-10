@@ -30,13 +30,13 @@ Tool documentation
 
 Outputs
 -------
-========  ==========  ===============
-name      type        documentation
-========  ==========  ===============
-diploid   vcf-gz-tbi
-variants  vcf-gz-tbi
+========  ====================  ===============
+name      type                  documentation
+========  ====================  ===============
+diploid   CompressedIndexedVCF
+variants  CompressedIndexedVCF
 out       VCF
-========  ==========  ===============
+========  ====================  ===============
 
 Inputs
 ------

@@ -49,7 +49,7 @@ Required inputs
 name       type        prefix    position    documentation
 =========  ==========  ========  ==========  ===============
 vcf        VCF
-truth      VCFIDX
+truth      IndexedVCF
 intervals  Array<VCF>
 =========  ==========  ========  ==========  ===============
 

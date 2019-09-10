@@ -49,19 +49,19 @@ Find the inputs below
 Required inputs
 ***************
 
-===========  =============  ========  ==========  ===============
-name         type           prefix    position    documentation
-===========  =============  ========  ==========  ===============
+===========  ====================  ========  ==========  ===============
+name         type                  prefix    position    documentation
+===========  ====================  ========  ==========  ===============
 normalBam    BamPair
 tumorBam     BamPair
 normalName   String
 tumorName    String
 reference    FastaWithDict
-snps_dbsnp   vcf-gz-tbi
-snps_1000gp  vcf-gz-tbi
-knownIndels  vcf-gz-tbi
-millsIndels  vcf-gz-tbi
-===========  =============  ========  ==========  ===============
+snps_dbsnp   CompressedIndexedVCF
+snps_1000gp  CompressedIndexedVCF
+knownIndels  CompressedIndexedVCF
+millsIndels  CompressedIndexedVCF
+===========  ====================  ========  ==========  ===============
 
 Optional inputs
 ***************

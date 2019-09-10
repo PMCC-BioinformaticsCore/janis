@@ -31,11 +31,11 @@ Usage:   bcftools sort [OPTIONS] <FILE.vcf>
 
 Outputs
 -------
-======  =================  ===============
-name    type               documentation
-======  =================  ===============
-out     compressed-vcf-gz
-======  =================  ===============
+======  =============  ===============
+name    type           documentation
+======  =============  ===============
+out     CompressedVCF
+======  =============  ===============
 
 Inputs
 ------
@@ -44,11 +44,11 @@ Find the inputs below
 Required inputs
 ***************
 
-======  =================  ========  ==========  ====================
-name    type               prefix      position  documentation
-======  =================  ========  ==========  ====================
-vcf     compressed-vcf-gz                     1  The VCF file to sort
-======  =================  ========  ==========  ====================
+======  =============  ========  ==========  ====================
+name    type           prefix      position  documentation
+======  =============  ========  ==========  ====================
+vcf     CompressedVCF                     1  The VCF file to sort
+======  =============  ========  ==========  ====================
 
 Optional inputs
 ***************

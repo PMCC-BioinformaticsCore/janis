@@ -30,11 +30,11 @@ Index bgzip compressed VCF/BCF files for random access.
 
 Outputs
 -------
-======  ==========  ===============
-name    type        documentation
-======  ==========  ===============
-out     vcf-gz-tbi
-======  ==========  ===============
+======  ====================  ===============
+name    type                  documentation
+======  ====================  ===============
+out     CompressedIndexedVCF
+======  ====================  ===============
 
 Inputs
 ------
@@ -43,11 +43,11 @@ Find the inputs below
 Required inputs
 ***************
 
-======  =================  ========  ==========  ===============
-name    type               prefix      position  documentation
-======  =================  ========  ==========  ===============
-vcf     compressed-vcf-gz                     1
-======  =================  ========  ==========  ===============
+======  =============  ========  ==========  ===============
+name    type           prefix      position  documentation
+======  =============  ========  ==========  ===============
+vcf     CompressedVCF                     1
+======  =============  ========  ==========  ===============
 
 Optional inputs
 ***************

@@ -48,18 +48,18 @@ of capabilities and limitations.
 
 Outputs
 -------
-==========================  ==========  ===============
-name                        type        documentation
-==========================  ==========  ===============
+==========================  ====================  ===============
+name                        type                  documentation
+==========================  ====================  ===============
 python                      File
 pickle                      File
-candidateSV                 vcf-gz-tbi
-candidateSmallIndels        vcf-gz-tbi
-diploidSV                   vcf-gz-tbi
+candidateSV                 CompressedIndexedVCF
+candidateSmallIndels        CompressedIndexedVCF
+diploidSV                   CompressedIndexedVCF
 alignmentStatsSummary       File
 svCandidateGenerationStats  tsv
 svLocusGraphStats           tsv
-==========================  ==========  ===============
+==========================  ====================  ===============
 
 Inputs
 ------

@@ -14,8 +14,9 @@ Automatically generated index page for {title}
    bed
    bedtabix
    boolean
-   compressed tarfile
-   compressed-vcf-gz
+   compressedindexedvcf
+   compressedtarfile
+   compressedvcf
    csv
    directory
    double
@@ -25,7 +26,7 @@ Automatically generated index page for {title}
    file
    filename
    float
-   gvcf
+   indexedvcf
    integer
    jsonfile
    sam
@@ -35,8 +36,6 @@ Automatically generated index page for {title}
    textfile
    tsv
    vcf
-   vcf-gz-tbi
-   vcfidx
    zip
 
 *This page was auto-generated on 10/09/2019. Please do not directly alter the contents of this page.*

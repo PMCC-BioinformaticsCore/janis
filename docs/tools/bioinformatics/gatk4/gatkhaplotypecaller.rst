@@ -58,11 +58,11 @@ to our recommendations as documented (https://software.broadinstitute.org/gatk/d
 
 Outputs
 -------
-======  ======  ===================================================================================================
-name    type    documentation
-======  ======  ===================================================================================================
-out     VCFIDX  A raw, unfiltered, highly sensitive callset in VCF format. File to which variants should be written
-======  ======  ===================================================================================================
+======  ==========  ===================================================================================================
+name    type        documentation
+======  ==========  ===================================================================================================
+out     IndexedVCF  A raw, unfiltered, highly sensitive callset in VCF format. File to which variants should be written
+======  ==========  ===================================================================================================
 
 Inputs
 ------
@@ -71,13 +71,13 @@ Find the inputs below
 Required inputs
 ***************
 
-=========  =============  ===========  ==========  ==================================
-name       type           prefix         position  documentation
-=========  =============  ===========  ==========  ==================================
-inputRead  BamPair        --input                  BAM/SAM/CRAM file containing reads
-reference  FastaWithDict  --reference           5  Reference sequence file
-dbsnp      vcf-gz-tbi     --dbsnp               7  (Also: -D) A dbSNP VCF file.
-=========  =============  ===========  ==========  ==================================
+=========  ====================  ===========  ==========  ==================================
+name       type                  prefix         position  documentation
+=========  ====================  ===========  ==========  ==================================
+inputRead  BamPair               --input                  BAM/SAM/CRAM file containing reads
+reference  FastaWithDict         --reference           5  Reference sequence file
+dbsnp      CompressedIndexedVCF  --dbsnp               7  (Also: -D) A dbSNP VCF file.
+=========  ====================  ===========  ==========  ==================================
 
 Optional inputs
 ***************

@@ -63,20 +63,20 @@ positional arguments:
 
 Outputs
 -------
-==================  ==========  ===============
-name                type        documentation
-==================  ==========  ===============
+==================  ====================  ===============
+name                type                  documentation
+==================  ====================  ===============
 extended            csv
 summary             csv
 metrics             File
-vcf                 vcf-gz-tbi
+vcf                 CompressedIndexedVCF
 runinfo             jsonFile
 rocOut              File
 indelLocations      File
 indelPassLocations  File
 snpLocations        File
 snpPassLocations    File
-==================  ==========  ===============
+==================  ====================  ===============
 
 Inputs
 ------

@@ -46,11 +46,11 @@ Again after decompression completes the input file will be removed.
 
 Outputs
 -------
-======  =========================  ===============
-name    type                       documentation
-======  =========================  ===============
-out     stdout<compressed-vcf-gz>
-======  =========================  ===============
+======  =====================  ===============
+name    type                   documentation
+======  =====================  ===============
+out     stdout<CompressedVCF>
+======  =====================  ===============
 
 Inputs
 ------

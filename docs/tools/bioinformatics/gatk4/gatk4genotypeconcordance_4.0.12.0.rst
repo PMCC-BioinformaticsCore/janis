@@ -94,12 +94,12 @@ Find the inputs below
 Required inputs
 ***************
 
-========  ==========  ===========  ==========  ===================================
-name      type        prefix       position    documentation
-========  ==========  ===========  ==========  ===================================
-callVCF   vcf-gz-tbi  --CALL_VCF               The VCF containing the call sample
-truthVCF  VCFIDX      --TRUTH_VCF              The VCF containing the truth sample
-========  ==========  ===========  ==========  ===================================
+========  ====================  ===========  ==========  ===================================
+name      type                  prefix       position    documentation
+========  ====================  ===========  ==========  ===================================
+callVCF   CompressedIndexedVCF  --CALL_VCF               The VCF containing the call sample
+truthVCF  IndexedVCF            --TRUTH_VCF              The VCF containing the truth sample
+========  ====================  ===========  ==========  ===================================
 
 Optional inputs
 ***************

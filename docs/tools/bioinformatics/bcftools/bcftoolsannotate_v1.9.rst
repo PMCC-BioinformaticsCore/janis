@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``bcftoolsAnnotate``
 
-Tool path: ``janis_bioinformatics.tools.bcftools.annotate.annotate_1_9 import BcfToolsAnnotate_1_9``
+Tool path: ``janis_bioinformatics.tools.bcftools.annotate.versions import BcfToolsAnnotate_1_9``
 
 Version: v1.9
 
@@ -26,19 +26,21 @@ Documentation
 
 URL
 ******
-*No URL to the documentation was provided*
+`https://samtools.github.io/bcftools/bcftools.html#annotate <https://samtools.github.io/bcftools/bcftools.html#annotate>`_
 
 Tool documentation
 ******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+------------------------------------
+
+Add or remove annotations.
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     VCF
-======  ======  ===============
+======  =================  ===============
+name    type               documentation
+======  =================  ===============
+out     compressed-vcf-gz
+======  =================  ===============
 
 Inputs
 ------
@@ -47,11 +49,11 @@ Find the inputs below
 Required inputs
 ***************
 
-======  ======  ========  ==========  ===============
-name    type    prefix      position  documentation
-======  ======  ========  ==========  ===============
-file    VCF                      100
-======  ======  ========  ==========  ===============
+======  =================  ========  ==========  ===============
+name    type               prefix      position  documentation
+======  =================  ========  ==========  ===============
+file    compressed-vcf-gz                   100
+======  =================  ========  ==========  ===============
 
 Optional inputs
 ***************
@@ -86,5 +88,5 @@ Metadata
 Author: **Unknown**
 
 
-*BCFTools: Annotate was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*BCFTools: Annotate was last updated on 2019-01-24*.
+*This page was automatically generated on 2019-09-10*.

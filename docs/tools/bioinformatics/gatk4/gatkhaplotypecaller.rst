@@ -1,4 +1,6 @@
 
+.. include:: gatkhaplotypecaller_4.1.3.0
+.. include:: gatkhaplotypecaller_4.1.2.0
 .. include:: gatkhaplotypecaller_4.0.12.0
 
 GATK4: Haplotype Caller
@@ -9,13 +11,18 @@ Description
 
 Tool identifier: ``GatkHaplotypeCaller``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.haplotypecaller.haplotypecaller_4_0 import Gatk4HaplotypeCaller_4_0``
+Tool path: ``janis_bioinformatics.tools.gatk4.haplotypecaller.versions import Gatk4HaplotypeCaller_4_1_3``
 
-Version: 4.0.12.0
+Version: 4.1.3.0
 
-Container: ``broadinstitute/gatk:4.0.12.0``
+Container: ``broadinstitute/gatk:4.1.3.0``
 
+Versions
+*********
 
+- 4.1.3.0 (current)
+- `4.1.2.0 <gatkhaplotypecaller_4.1.2.0.html>`_
+- `4.0.12.0 <gatkhaplotypecaller_4.0.12.0.html>`_
 
 Documentation
 -------------
@@ -123,4 +130,4 @@ Author: Michael Franklin
 
 
 *GATK4: Haplotype Caller was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-10*.

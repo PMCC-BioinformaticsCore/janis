@@ -18,6 +18,7 @@ Container: ``gridss/gridss:v2.2.3``
 Versions
 *********
 
+- `v2.5.1-dev <gridss_v2.5.1-dev.html>`_
 - `v2.4.0 <gridss_v2.4.0.html>`_
 - v2.2.3 (current)
 
@@ -26,11 +27,25 @@ Documentation
 
 URL
 ******
-*No URL to the documentation was provided*
+`https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation <https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation>`_
 
 Tool documentation
 ******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+GRIDSS: the Genomic Rearrangement IDentification Software Suite
+
+GRIDSS is a module software suite containing tools useful for the detection of genomic rearrangements. 
+GRIDSS includes a genome-wide break-end assembler, as well as a structural variation caller for Illumina 
+sequencing data. GRIDSS calls variants based on alignment-guided positional de Bruijn graph genome-wide 
+break-end assembly, split read, and read pair evidence.
+
+GRIDSS makes extensive use of the standard tags defined by SAM specifications. Due to the modular design, 
+any step (such as split read identification) can be replaced by another implementation that also outputs 
+using the standard tags. It is hoped that GRIDSS can serve as an exemplar modular structural variant 
+pipeline designed for interoperability with other tools.
+
+If you have any trouble running GRIDSS, please raise an issue using the Issues tab above. Based on feedback 
+from users, a user guide will be produced outlining common workflows, pitfalls, and use cases.
+
 
 Outputs
 -------
@@ -81,5 +96,5 @@ Metadata
 Author: **Unknown**
 
 
-*Gridss was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*Gridss was last updated on 2019-07-03*.
+*This page was automatically generated on 2019-09-10*.

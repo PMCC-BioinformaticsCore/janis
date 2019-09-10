@@ -9,13 +9,18 @@ Description
 
 Tool identifier: ``Gatk4MergeSamFiles``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.mergesamfiles.mergesamfiles_4_0 import Gatk4MergeSamFiles_4_0``
+Tool path: ``janis_bioinformatics.tools.gatk4.mergesamfiles.versions import Gatk4MergeSamFiles_4_0``
 
 Version: 4.0.12.0
 
 Container: ``broadinstitute/gatk:4.0.12.0``
 
+Versions
+*********
 
+- `4.1.3.0 <gatk4mergesamfiles_4.1.3.0.html>`_
+- `4.1.2.0 <gatk4mergesamfiles_4.1.2.0.html>`_
+- 4.0.12.0 (current)
 
 Documentation
 -------------
@@ -83,4 +88,4 @@ Author: Michael Franklin
 
 
 *GATK4: Merge SAM Files was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-10*.

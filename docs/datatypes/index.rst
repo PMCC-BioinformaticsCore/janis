@@ -14,6 +14,7 @@ Automatically generated index page for {title}
    bed
    bedtabix
    boolean
+   compressed tarfile
    compressed-vcf-gz
    csv
    directory
@@ -31,10 +32,11 @@ Automatically generated index page for {title}
    stdout
    string
    tarfile
+   textfile
    tsv
    vcf
    vcf-gz-tbi
    vcfidx
    zip
 
-*This page was auto-generated on 12/08/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 10/09/2019. Please do not directly alter the contents of this page.*

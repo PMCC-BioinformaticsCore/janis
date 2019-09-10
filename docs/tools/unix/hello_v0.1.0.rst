@@ -11,7 +11,7 @@ Tool identifier: ``hello``
 
 Tool path: ``janis_unix.tools.hello import HelloWorkflow``
 
-Version: 0.1.0
+Version: v0.1.0
 
 
 
@@ -36,11 +36,11 @@ This is designed to be the first example that you can run with janis, ie:
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     File
-======  ======  ===============
+======  ============  ===============
+name    type          documentation
+======  ============  ===============
+out     stdout<File>
+======  ============  ===============
 
 Inputs
 ------
@@ -71,4 +71,4 @@ Author: **Unknown**
 
 
 *Hello, World! was last updated on 2019-08-12*.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-10*.

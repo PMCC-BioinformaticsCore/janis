@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``bcftoolssort``
 
-Tool path: ``janis_bioinformatics.tools.bcftools.sort.sort_1_9 import BcfToolsSort_1_9``
+Tool path: ``janis_bioinformatics.tools.bcftools.sort.versions import BcfToolsSort_1_9``
 
 Version: v1.9
 
@@ -31,11 +31,11 @@ Usage:   bcftools sort [OPTIONS] <FILE.vcf>
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     VCF
-======  ======  ===============
+======  =================  ===============
+name    type               documentation
+======  =================  ===============
+out     compressed-vcf-gz
+======  =================  ===============
 
 Inputs
 ------
@@ -44,11 +44,11 @@ Find the inputs below
 Required inputs
 ***************
 
-======  ======  ========  ==========  ====================
-name    type    prefix      position  documentation
-======  ======  ========  ==========  ====================
-vcf     VCF                        1  The VCF file to sort
-======  ======  ========  ==========  ====================
+======  =================  ========  ==========  ====================
+name    type               prefix      position  documentation
+======  =================  ========  ==========  ====================
+vcf     compressed-vcf-gz                     1  The VCF file to sort
+======  =================  ========  ==========  ====================
 
 Optional inputs
 ***************
@@ -69,4 +69,4 @@ Author: **Unknown**
 
 
 *BCFTools: Sort was last updated on 2019-07-11*.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-10*.

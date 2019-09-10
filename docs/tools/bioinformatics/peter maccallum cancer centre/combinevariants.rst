@@ -22,11 +22,38 @@ Documentation
 
 URL
 ******
-*No URL to the documentation was provided*
+`https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils <https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils>`_
 
 Tool documentation
 ******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+
+usage: combine_vcf.py [-h] -i I --columns COLUMNS -o O --type
+                      {germline,somatic} [--regions REGIONS] [--normal NORMAL]
+                      [--tumor TUMOR] [--priority PRIORITY [PRIORITY ...]]
+
+Extracts and combines the information from germline / somatic vcfs into one
+
+required arguments:
+  -i I                  input vcfs, the priority of the vcfs will be based on
+                        the order of the input. This parameter can be
+                        specified more than once
+  --columns COLUMNS     Columns to keep. This parameter can be specified more
+                        than once
+  -o O                  output vcf (unsorted)
+  --type {germline,somatic}
+                        must be either germline or somatic
+  --regions REGIONS     Region file containing all the variants, used as
+                        samtools mpileup
+  --normal NORMAL       Sample id of germline vcf, or normal sample id of
+                        somatic vcf
+  --tumor TUMOR         tumor sample ID, required if inputs are somatic vcfs
+  --priority PRIORITY [PRIORITY ...]
+                        The priority of the callers, must match with the
+                        callers in the source header
+
+optional arguments:
+  -h, --help            show this help message and exit
+
 
 Outputs
 -------
@@ -69,8 +96,8 @@ priority        Optional<Integer>        --priority              The priority of
 Metadata
 ********
 
-Author: **Unknown**
+Author: Jiaan Yu
 
 
-*Combine Variants was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*Combine Variants was last updated on 2019-07-04 00:00:00*.
+*This page was automatically generated on 2019-09-10*.

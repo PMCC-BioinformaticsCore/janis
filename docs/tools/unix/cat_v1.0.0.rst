@@ -26,7 +26,7 @@ URL
 
 Tool documentation
 ******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+The cat utility reads files sequentially, writing them to the standard output. The file operands are processed in command-line order. If file is a single dash (`-') or absent,cat reads from the standard input. If file is a UNIX domain socket, cat connects to it and then reads it until EOF. This complements the UNIX domain binding capability available in inetd(8).
 
 Outputs
 -------
@@ -72,5 +72,5 @@ Metadata
 Author: **Unknown**
 
 
-*Concatenate was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*Concatenate was last updated on 2019-07-26 00:00:00*.
+*This page was automatically generated on 2019-09-10*.

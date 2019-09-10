@@ -9,7 +9,7 @@ Description
 
 Tool identifier: ``bcftoolsview``
 
-Tool path: ``janis_bioinformatics.tools.bcftools.view.view_1_9 import BcfToolsView_1_9``
+Tool path: ``janis_bioinformatics.tools.bcftools.view.versions import BcfToolsView_1_9``
 
 Version: v1.9
 
@@ -26,19 +26,22 @@ Documentation
 
 URL
 ******
-*No URL to the documentation was provided*
+`https://samtools.github.io/bcftools/bcftools.html#view <https://samtools.github.io/bcftools/bcftools.html#view>`_
 
 Tool documentation
 ******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+________________________________
+ 
+        View, subset and filter VCF or BCF files by position and filtering expression
+        Convert between VCF and BCF. Former bcftools subset.
 
 Outputs
 -------
-======  ===========  ===============
-name    type         documentation
-======  ===========  ===============
-out     stdout<VCF>
-======  ===========  ===============
+======  =========================  ===============
+name    type                       documentation
+======  =========================  ===============
+out     stdout<compressed-vcf-gz>
+======  =========================  ===============
 
 Inputs
 ------
@@ -47,11 +50,11 @@ Find the inputs below
 Required inputs
 ***************
 
-======  ======  ========  ==========  ===============
-name    type    prefix      position  documentation
-======  ======  ========  ==========  ===============
-file    VCF                        2
-======  ======  ========  ==========  ===============
+======  =================  ========  ==========  ===============
+name    type               prefix      position  documentation
+======  =================  ========  ==========  ===============
+file    compressed-vcf-gz                     2
+======  =================  ========  ==========  ===============
 
 Optional inputs
 ***************
@@ -64,7 +67,7 @@ headerOnly        Optional<Boolean>        --header-only                 1  (-h)
 noHeader          Optional<Boolean>        --no-header                   1  (-H) suppress the header in VCF output
 compressionLevel  Optional<Integer>        --compression-level           1  (-l) compression level: 0 uncompressed, 1 best speed, 9 best compression [-1]
 noVersion         Optional<Boolean>        --no-version                  1  do not append version and command line to the header
-outputFile        Optional<File>           --output-file                 1  (-o) output file name [stdout]
+outputFilename    Optional<File>           --output-file                 1  (-o) output file name [stdout]
 outputType        Optional<String>         --output-type                 1  (-O) [<b|u|z|v>] b: compressed BCF, u: uncompressed BCF, z: compressed VCF, v: uncompressed VCF [v]
 regions           Optional<String>         --regions                     1  (-r) restrict to comma-separated list of regions
 regionsFile       Optional<File>           --regions-file                1  (-R) restrict to regions listed in a file
@@ -105,5 +108,5 @@ Metadata
 Author: **Unknown**
 
 
-*BCFTools: View was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*BCFTools: View was last updated on 2019-01-24*.
+*This page was automatically generated on 2019-09-10*.

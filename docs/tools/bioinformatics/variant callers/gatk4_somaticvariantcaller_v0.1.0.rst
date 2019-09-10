@@ -1,17 +1,17 @@
 :orphan:
 
 
-GATK4 Germline Variant Caller
-===========================================================
+GATK4 Somatic Variant Caller
+=========================================================
 
 Description
 -------------
 
-Tool identifier: ``GATK4_GermlineVariantCaller``
+Tool identifier: ``GATK4_SomaticVariantCaller``
 
-Tool path: ``janis_bioinformatics.tools.variantcallers.gatkgermline_variants import GatkGermlineVariantCaller``
+Tool path: ``janis_bioinformatics.tools.variantcallers.gatk.gatksomatic_variants_4_0_12 import GatkSomaticVariantCaller_4_0_12``
 
-Version: 0.1.0
+Version: v0.1.0
 
 
 
@@ -30,9 +30,8 @@ This is a VariantCaller based on the GATK Best Practice pipelines. It uses the G
 
 It has the following steps:
 
-1. BaseRecalibrator
-2. ApplyBQSR
-3. HaplotypeCaller
+1. Base Recalibrator x 2
+3. Mutect2
 4. SplitMultiAllele
 
 Outputs
@@ -53,7 +52,10 @@ Required inputs
 ===========  =============  ========  ==========  ===============
 name         type           prefix    position    documentation
 ===========  =============  ========  ==========  ===============
-bam          BamPair
+normalBam    BamPair
+tumorBam     BamPair
+normalName   String
+tumorName    String
 reference    FastaWithDict
 snps_dbsnp   vcf-gz-tbi
 snps_1000gp  vcf-gz-tbi
@@ -77,5 +79,5 @@ Metadata
 Author: **Unknown**
 
 
-*GATK4 Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*GATK4 Somatic Variant Caller was last updated on **Unknown***.
+*This page was automatically generated on 2019-09-10*.

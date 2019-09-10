@@ -44,29 +44,29 @@ Find the inputs below
 Required inputs
 ***************
 
-==================  =============  ========  ==========  ===============
-name                type           prefix    position    documentation
-==================  =============  ========  ==========  ===============
-intervals           bed
-bam                 BamPair
-reference           FastaWithDict
-sampleName          String
-allelFreqThreshold  Float
-headerLines         File
-==================  =============  ========  ==========  ===============
+===========  =============  ========  ==========  ===============
+name         type           prefix    position    documentation
+===========  =============  ========  ==========  ===============
+bam          BamPair
+intervals    bed
+sampleName   String
+headerLines  File
+reference    FastaWithDict
+===========  =============  ========  ==========  ===============
 
 Optional inputs
 ***************
 
-====================  =================  ========  ==========  ===============
-name                  type               prefix    position    documentation
-====================  =================  ========  ==========  ===============
-chromNamesAreNumbers  Optional<Boolean>
-vcfFormat             Optional<Boolean>
-chromColumn           Optional<Integer>
-regStartCol           Optional<Integer>
-geneEndCol            Optional<Integer>
-====================  =================  ========  ==========  ===============
+============================  =================  ========  ==========  ===============
+name                          type               prefix    position    documentation
+============================  =================  ========  ==========  ===============
+alleleFreqThreshold           Optional<Float>
+vardict_chromNamesAreNumbers  Optional<Boolean>
+vardict_vcfFormat             Optional<Boolean>
+vardict_chromColumn           Optional<Integer>
+vardict_regStartCol           Optional<Integer>
+vardict_geneEndCol            Optional<Integer>
+============================  =================  ========  ==========  ===============
 
 
 Metadata
@@ -76,4 +76,4 @@ Author: **Unknown**
 
 
 *Vardict Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-10*.

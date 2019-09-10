@@ -158,4 +158,4 @@ Author: **Unknown**
 
 
 *Hap.py validation was last updated on 2019-05-15*.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-10*.

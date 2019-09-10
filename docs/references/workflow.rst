@@ -65,6 +65,12 @@ The input node is returned from this function, and is also available as a proper
     myInput = w.input("myInput", String)
     myInput == w.myInput == w["myInput"] # True
 
+
+.. note::
+
+   **Default vs Value**: The input
+
+
 Creating a step
 *********************
 

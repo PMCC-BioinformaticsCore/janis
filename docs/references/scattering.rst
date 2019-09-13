@@ -12,9 +12,9 @@ For example, let's presume you have the tool ``MyTool`` which accepts a single s
 
    w = Workflow("mywf")
    w.input("arrayInp", Array(String))
-   w.step("stp", scatter="myToolinput", myToolInput=w.arrayInp)
+   w.step("stp", MyTool(myToolInput=w.arrayInp), scatter="myToolinput", )
    # equivalent to
-   w.step("stp", scatter=ScatterDescription(fields=["myToolInput"]), myToolInput=w.arrayInp)
+   w.step("stp", MyTool(myToolInput=w.arrayInp), scatter=ScatterDescription(fields=["myToolInput"]))
 
 
 Scattering by more than one field

@@ -30,34 +30,28 @@ simple.py
 """
 
 # The classes we require to build a basic workflow
-from janis_core import Workflow, Input, Output, Step
+from janis_core import Workflow
 
 # Data types - These help us logically connect workflows
 from janis.unix.data_types.tarfile import TarFile
 
 # Tools - The command line tools we're going to call
 from janis.unix.tools.compile import Compile
-from janis.unix.tools.tar import Tar
 from janis.unix.tools.untar import Untar
 
 
 class SimpleWorkflow(Workflow):
-    def __init__(self):
-        super().__init__("simpleWorkflow")
+    def id(self) -> str:
+        return "simple"
 
-        inp = Input("tarFile", TarFile(), value="/path/to/hello.tar")
+    def friendly_name(self):
+        return "Simple workflow: Untar, Compile, Tar"
 
-        untar = Step("untar", Untar())
-        compile = Step("compile", Compile())
-        retar = Step("tar", Tar())
-
-        outp = Output("out")
-
-        self.add_edge(inp, untar.tarFile)
-        self.add_edge(untar.out, compile.file)  # Auto scatter
-        self.add_edge(untar.out, retar.files)
-        self.add_edge(compile.out, retar.files2)
-        self.add_edge(retar.out, outp)
+    def constructor(self):
+        self.input("tarfile", TarFile)
+        self.step("untar", Untar(tarfile=self.tarfile))
+        self.step("compile", Compile(file=self.untar.out), scatter="file")
+        self.output("out", source=self.compile)
 
 
 if __name__ == "__main__":

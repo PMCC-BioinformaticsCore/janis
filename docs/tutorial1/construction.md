@@ -25,7 +25,7 @@ Python requires that you import the tools and types that you use, these import s
 We have three inputs we want to expose on this workflow:
 
 1. Sample name (`String`)
-2. Sequencing Reads (`FASTQ` pair)
+2. Sequencing Reads (`FastqGzPair` - paired end sequence)
 3. Reference files (`Fasta` + index files)
 
 
@@ -35,18 +35,18 @@ We can use the `janis.String` datatype (imported with Janis) for the first, and 
 from janis_bioinformatics.tools.bwa.mem.latest import BwaMemLatest
 from janis_bioinformatics.tools.samtools.view.view import SamToolsView_1_9
 from janis_bioinformatics.tools.gatk4 import Gatk4SortSam_4_1_2
-from janis_bioinformatics.data_types import Fastq, FastaWithDict
+from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 ```
 
 ## Declaring our workflow and exposing inputs
 
-We'll create an instance of the [`janis.Workflow`](https://janis.readthedocs.io/en/latest/references/workflow.html#janis.Workflow) class, this requires a workflow identifier. We discussed which imports we want in the previous section which we can expose on this workflow with the `janis.Workflow.input` method:
+We'll create an instance of the [`janis.WorkflowBuilder`](https://janis.readthedocs.io/en/latest/references/workflow.html#janis.Workflow) class, this requires a workflow identifier. We discussed which imports we want in the previous section which we can expose on this workflow with the `janis.Workflow.input` method:
 
 ```python
-w = janis.Workflow("alignmentWorkflow")
+w = janis.WorkflowBuilder("alignmentWorkflow")
 
 w.input("readGroup", janis.String)
-w.input("fastq", Fastq)
+w.input("fastq", FastqGzPair)
 w.input("reference", FastaWithDict)
 ```
 
@@ -56,15 +56,18 @@ Steps are easy to create, however you may need to refer to the documentation whe
 
 We can refer to any node on the workflow graph (such as an input) by accessing the property of the same name (dot-notation). Eg, to access the `sampleName` on our workflow, we can use `w.sampleName`.
 
+We instantiate our tool with the named parameters we want to provide and pass that as the second parameter to the `janis.Workflow.step` method:
+
 ### BWA MEM
 
 ```python
 w.step(
     "bwamem", 
-    BwaMemLatest, 
-    reads=w.fastq, 
-    sampleName=w.sampleName, 
-    reference=w.reference
+    BwaMemLatest( 
+        reads=w.fastq, 
+        sampleName=w.sampleName, 
+        reference=w.reference
+    )
 )
 ```
 
@@ -73,7 +76,7 @@ w.step(
 When creating the connection between `bwamem` and `samtoolsview`, we'll access the `out` output of `BwaMemLatest`. This will create a dependency of `"bwamem"` for `samtoolsview`.
 
 ```python
-w.step("samtoolsview", SamToolsView_1_9, sam=w.bwamem.out)
+w.step("samtoolsview", SamToolsView_1_9(sam=w.bwamem.out))
 ```
 
 ### SortSam
@@ -83,12 +86,13 @@ SortSam requires a number of values we want to set
 ```python
 w.step(
     "sortsam",
-    Gatk4SortSam_4_1_2,
-    bam=w.samtoolsview.out,
-    sortOrder="coordinate",
-    createIndex=True,
-    validationStringency="SILENT",
-    maxRecordsInRam=5000000,
+    Gatk4SortSam_4_1_2(
+        bam=w.samtoolsview.out,
+        sortOrder="coordinate",
+        createIndex=True,
+        validationStringency="SILENT",
+        maxRecordsInRam=5000000
+    )
 )
 ```
 
@@ -109,33 +113,35 @@ import janis
 
 from janis_bioinformatics.tools.bwa.mem.latest import BwaMemLatest
 from janis_bioinformatics.tools.samtools.view.view import SamToolsView_1_9
-from janis_bioinformatics.tools.gatk4.sortsam.sortsam_4_0 import Gatk4SortSam_4_0
-from janis_bioinformatics.data_types import Fastq, FastaWithDict
+from janis_bioinformatics.tools.gatk4 import Gatk4SortSam_4_1_2
+from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 
-w = janis.Workflow("alignmentWorkflow")
+w = janis.WorkflowBuilder("alignmentWorkflow")
 
 # Inputs
-w.input("readGroup", janis.String, value="")
-w.input("fastq", Fastq, value="/path/to/reads.fastq")
+w.input("sampleName", janis.String, value="sampleName")
+w.input("fastq", FastqGzPair, value="/path/to/reads.fastq")
 w.input("reference", FastaWithDict, value="/path/to/reference.fasta")
 
 # Steps
 w.step(
     "bwamem", 
-    BwaMemLatest, 
-    reads=w.fastq, 
-    sampleName=w.sampleName, 
-    reference=w.reference
+    BwaMemLatest( 
+        reads=w.fastq, 
+        sampleName=w.sampleName, 
+        reference=w.reference
+    )
 )
-w.step("samtoolsview", SamToolsView_1_9, sam=w.bwamem.out)
+w.step("samtoolsview", SamToolsView_1_9(sam=w.bwamem.out))
 w.step(
     "sortsam",
-    Gatk4SortSam_4_0,
-    bam=w.samtoolsview.out,
-    sortOrder="coordinate",
-    createIndex=True,
-    validationStringency="SILENT",
-    maxRecordsInRam=5000000,
+    Gatk4SortSam_4_1_2(
+        bam=w.samtoolsview.out,
+        sortOrder="coordinate",
+        createIndex=True,
+        validationStringency="SILENT",
+        maxRecordsInRam=5000000
+    )
 )
 
 # Outputs

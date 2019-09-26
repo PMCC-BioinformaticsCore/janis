@@ -8,7 +8,18 @@ Common Workflow Language or Workflow Definition Language._
   
 Documentation is hosted here: https://janis.readthedocs.io/  
 
-**NOTE: Version 0.6.0 brings large changes to simplify the API.**
+## v0.6.0 Backwards Compatability
+**NOTE: Version 0.6.0 brings large changes to simplify the workflow API.**
+
+See the [example](#example) below to see how this new syntax works. Instead of creating input nodes and adding them to the graph, you add an input / output / step to the graph, and map the connections within the Step.
+
+Inline workflows are now creating with the `WorkflowBuilder` class.
+
+```python
+w.step("step_tag", Echo(inp=w.input_tag))
+```
+
+
   
 ## Introduction  
 
@@ -46,7 +57,7 @@ Echo tool's output as a workflow output.
 import janis as j
 from janis.unix.tools.echo import Echo
 
-w = j.Workflow("workflowId")
+w = j.WorkflowBuilder("workflowId")
 
 w.input("inputIdentifier", j.String, default="Hello, World!")
 w.step("stepIdentifier", Echo(inp=w.inputIdentifier))

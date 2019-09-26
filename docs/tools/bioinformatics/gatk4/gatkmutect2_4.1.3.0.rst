@@ -53,14 +53,14 @@ Find the inputs below
 Required inputs
 ***************
 
-============  ==============  ===========  ==========  ===========================================================================================================
-name          type            prefix       position    documentation
-============  ==============  ===========  ==========  ===========================================================================================================
-tumorBams     Array<BamPair>  -I                       (--input) BAM/SAM/CRAM file containing reads This argument must be specified at least once. Required.
-normalBams    Array<BamPair>  -I                       (--input) Extra BAM/SAM/CRAM file containing reads This argument must be specified at least once. Required.
-normalSample  String          -normalBAM               (--normal-sample, if) May be URL-encoded as output by GetSampleName with
-reference     FastaWithDict   --reference              (-R) Reference sequence file Required.
-============  ==============  ===========  ==========  ===========================================================================================================
+============  ==============  ===============  ==========  ===========================================================================================================
+name          type            prefix           position    documentation
+============  ==============  ===============  ==========  ===========================================================================================================
+tumorBams     Array<BamPair>  -I                           (--input) BAM/SAM/CRAM file containing reads This argument must be specified at least once. Required.
+normalBams    Array<BamPair>  -I                           (--input) Extra BAM/SAM/CRAM file containing reads This argument must be specified at least once. Required.
+normalSample  String          --normal-sample              (--normal-sample, if) May be URL-encoded as output by GetSampleName with
+reference     FastaWithDict   --reference                  (-R) Reference sequence file Required.
+============  ==============  ===============  ==========  ===========================================================================================================
 
 Optional inputs
 ***************
@@ -111,7 +111,7 @@ intervalExclusionPadding             Optional<String>                --interval-
 imr                                  Optional<String>                --interval-merging-rule                                 (--interval-merging-rule)  Interval merging rule for abutting intervals  Default value: ALL. Possible values: {ALL, OVERLAPPING_ONLY}
 ip                                   Optional<String>                -ipAmount                                               (--interval-padding) Default value: 0.
 isr                                  Optional<String>                --interval-set-rule                                     (--interval-set-rule)  Set merging approach to use for combining interval inputs  Default value: UNION. Possible values: {UNION, INTERSECTION}
-intervals                            Optional<String>                --intervals                                             (-L) One or more genomic intervals over which to operate This argument may be specified 0 or more times. Default value: null.
+intervals                            Optional<bed>                   --intervals                                             (-L) One or more genomic intervals over which to operate This argument may be specified 0 or more times. Default value: null.
 le                                   Optional<Boolean>               -LE                                                     (--lenient) Lenient processing of VCF files Default value: false. Possible values: {true, false}
 maxPopulationAf                      Optional<String>                --max-population-af                                     (-max-af)  Maximum population allele frequency in tumor-only mode.  Default value: 0.01.
 maxReadsPerAlignmentStart            Optional<Integer>               --max-reads-per-alignment-start                         Maximum number of reads to retain per alignment start position. Reads above this threshold will be downsampled. Set to 0 to disable.  Default value: 50.
@@ -156,7 +156,6 @@ erc                                  Optional<String>                -ERC       
 enableAllAnnotations                 Optional<Boolean>               --enable-all-annotations                                Use all possible annotations (not for the faint of heart)  Default value: false. Possible values: {true, false}
 forceActive                          Optional<Boolean>               --force-active                                          If provided, all regions will be marked as active Default value: false. Possible values: {true, false}
 genotypeFilteredAlleles              Optional<Boolean>               --genotype-filtered-alleles                             Whether to force genotype even filtered alleles  Default value: false. Possible values: {true, false}
-gvcfLodBand                          Optional<String>                --gvcf-lod-band                                         (-LODB) Exclusive upper bounds for reference confidence LOD bands (must be specified in increasing order)  This argument may be specified 0 or more times. Default value: [-2.5, -2.0, -1.5,
 gvcfLodBand                          Optional<String>                --gvcf-lod-band                                         (-LODB) Exclusive upper bounds for reference confidence LOD bands (must be specified in increasing order)  This argument may be specified 0 or more times. Default value: [-2.5, -2.0, -1.5,
 kmerSize                             Optional<Integer>               --kmer-size                                             Kmer size to use in the read threading assembler This argument may be specified 0 or more times. Default value: [10, 25].
 maxAssemblyRegionSize                Optional<Integer>               --max-assembly-region-size                              Maximum size of an assembly region  Default value: 300.
@@ -207,4 +206,4 @@ Author: Michael Franklin
 
 
 *GatkMutect2 was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

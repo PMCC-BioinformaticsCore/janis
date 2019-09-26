@@ -49,11 +49,11 @@ Find the inputs below
 Required inputs
 ***************
 
-======  ======  ========  ==========  ===============
-name    type    prefix      position  documentation
-======  ======  ========  ==========  ===============
-reads   Fastq                      5
-======  ======  ========  ==========  ===============
+======  ===========  ========  ==========  ===============
+name    type         prefix      position  documentation
+======  ===========  ========  ==========  ===============
+reads   FastqGzPair                     5
+======  ===========  ========  ==========  ===============
 
 Optional inputs
 ***************
@@ -87,4 +87,4 @@ Author: Simon Andrews
 
 
 *FastQC was last updated on 2019-03-25*.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

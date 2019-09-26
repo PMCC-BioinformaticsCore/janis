@@ -58,11 +58,11 @@ to our recommendations as documented (https://software.broadinstitute.org/gatk/d
 
 Outputs
 -------
-======  ==========  ===================================================================================================
-name    type        documentation
-======  ==========  ===================================================================================================
-out     IndexedVCF  A raw, unfiltered, highly sensitive callset in VCF format. File to which variants should be written
-======  ==========  ===================================================================================================
+======  =============  ===================================================================================================
+name    type           documentation
+======  =============  ===================================================================================================
+out     CompressedVCF  A raw, unfiltered, highly sensitive callset in VCF format. File to which variants should be written
+======  =============  ===================================================================================================
 
 Inputs
 ------
@@ -130,4 +130,4 @@ Author: Michael Franklin
 
 
 *GATK4: Haplotype Caller was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

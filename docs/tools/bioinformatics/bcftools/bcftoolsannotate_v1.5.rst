@@ -32,6 +32,8 @@ Tool documentation
 ******************
 ------------------------------------
 
+Add or remove annotations.------------------------------------
+
 Add or remove annotations.
 
 Outputs
@@ -89,4 +91,4 @@ Author: **Unknown**
 
 
 *BCFTools: Annotate was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

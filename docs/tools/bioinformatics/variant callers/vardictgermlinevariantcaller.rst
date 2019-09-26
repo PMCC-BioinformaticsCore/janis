@@ -30,12 +30,12 @@ Tool documentation
 
 Outputs
 -------
-===============  ======  ===============
-name             type    documentation
-===============  ======  ===============
-vardictVariants  VCF
+===============  =============  ===============
+name             type           documentation
+===============  =============  ===============
+vardictVariants  CompressedVCF
 out              VCF
-===============  ======  ===============
+===============  =============  ===============
 
 Inputs
 ------
@@ -76,4 +76,4 @@ Author: **Unknown**
 
 
 *Vardict Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

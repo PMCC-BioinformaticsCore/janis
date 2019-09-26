@@ -18,6 +18,7 @@ Container: ``michaelfranklin/vardict:1.5.7``
 Versions
 *********
 
+- `1.6.0 <vardict_germline_1.6.0.html>`_
 - `1.5.8 <vardict_germline_1.5.8.html>`_
 - 1.5.7 (current)
 - `1.5.6 <vardict_germline_1.5.6.html>`_
@@ -116,4 +117,4 @@ Author: **Unknown**
 
 
 *VarDict (Germline) was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

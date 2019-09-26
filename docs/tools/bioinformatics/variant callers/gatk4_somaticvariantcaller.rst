@@ -28,11 +28,11 @@ Tool documentation
 ******************
 This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.0.12.0.
 
-It has the following steps:
+        It has the following steps:
 
-1. Base Recalibrator x 2
-3. Mutect2
-4. SplitMultiAllele
+        1. Base Recalibrator x 2
+        3. Mutect2
+        4. SplitMultiAllele
 
 Outputs
 -------
@@ -79,5 +79,5 @@ Metadata
 Author: **Unknown**
 
 
-*GATK4 Somatic Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-10*.
+*GATK4 Somatic Variant Caller was last updated on 2019-09-13*.
+*This page was automatically generated on 2019-09-26*.

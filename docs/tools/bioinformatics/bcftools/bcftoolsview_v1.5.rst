@@ -109,4 +109,4 @@ Author: **Unknown**
 
 
 *BCFTools: View was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

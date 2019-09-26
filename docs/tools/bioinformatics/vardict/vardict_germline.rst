@@ -1,4 +1,5 @@
 
+.. include:: vardict_germline_1.6.0
 .. include:: vardict_germline_1.5.8
 .. include:: vardict_germline_1.5.7
 .. include:: vardict_germline_1.5.6
@@ -11,16 +12,17 @@ Description
 
 Tool identifier: ``vardict_germline``
 
-Tool path: ``janis_bioinformatics.tools.vardict.vardictgermline import VarDictGermline_1_5_8``
+Tool path: ``janis_bioinformatics.tools.vardict.vardictgermline_compressed import VarDictGermline_1_6_0``
 
-Version: 1.5.8
+Version: 1.6.0
 
-Container: ``michaelfranklin/vardict:1.5.8``
+Container: ``michaelfranklin/vardict:1.6.0``
 
 Versions
 *********
 
-- 1.5.8 (current)
+- 1.6.0 (current)
+- `1.5.8 <vardict_germline_1.5.8.html>`_
 - `1.5.7 <vardict_germline_1.5.7.html>`_
 - `1.5.6 <vardict_germline_1.5.6.html>`_
 
@@ -37,11 +39,11 @@ Tool documentation
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     VCF
-======  ======  ===============
+======  =============  ===============
+name    type           documentation
+======  =============  ===============
+out     CompressedVCF
+======  =============  ===============
 
 Inputs
 ------
@@ -67,7 +69,7 @@ Optional inputs
 =======================  ==================  ========  ==========  ==================================================================================================================================================================================================================================================================================
 name                     type                prefix      position  documentation
 =======================  ==================  ========  ==========  ==================================================================================================================================================================================================================================================================================
-outputFilename           Optional<Filename>  >                  6
+outputFilename           Optional<Filename>  >                 10
 indels3prime             Optional<Boolean>   -3                 1  Indicate to move indels to 3-prime if alternative alignment can be achieved.
 amplicon                 Optional<Float>     -a                 1  Indicate it's amplicon based calling.  Reads that don't map to the amplicon will be skipped.  A read pair is considered belonging  to the amplicon if the edges are less than int bp to the amplicon, and overlap fraction is at least float.  Default: 10:0.95
 minReads                 Optional<Integer>   -B                 1  The minimum # of reads to determine strand bias, default 2
@@ -118,4 +120,4 @@ Author: **Unknown**
 
 
 *VarDict (Germline) was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

@@ -48,7 +48,7 @@ name       type           prefix    position    documentation
 =========  =============  ========  ==========  ===============
 name       String
 reference  FastaWithDict
-fastq      Fastq
+fastq      FastqGzPair
 =========  =============  ========  ==========  ===============
 
 Optional inputs
@@ -63,6 +63,7 @@ cutadapt_removeMiddle5Adapter  Optional<String>
 cutadapt_removeMiddle3Adapter  Optional<String>
 cutadapt_qualityCutoff         Optional<Integer>
 cutadapt_minReadLength         Optional<Integer>
+bwamem_markShorterSplits       Optional<Boolean>
 sortsam_sortOrder              Optional<String>
 sortsam_createIndex            Optional<Boolean>
 sortsam_validationStringency   Optional<String>
@@ -78,4 +79,4 @@ Author: Michael Franklin
 
 
 *Align and sort reads was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

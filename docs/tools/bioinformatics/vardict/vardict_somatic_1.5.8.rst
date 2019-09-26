@@ -18,6 +18,7 @@ Container: ``michaelfranklin/vardict:1.5.8``
 Versions
 *********
 
+- `1.6.0 <vardict_somatic_1.6.0.html>`_
 - 1.5.8 (current)
 - `1.5.7 <vardict_somatic_1.5.7.html>`_
 - `1.5.6 <vardict_somatic_1.5.6.html>`_
@@ -116,4 +117,4 @@ Author: **Unknown**
 
 
 *Vardict (Somatic) was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

@@ -23,6 +23,8 @@ Automatically generated index page for {title}
    fasta
    fastafai
    fastawithdict
+   fastq
+   fastqgz
    file
    filename
    float
@@ -38,4 +40,4 @@ Automatically generated index page for {title}
    vcf
    zip
 
-*This page was auto-generated on 10/09/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 26/09/2019. Please do not directly alter the contents of this page.*

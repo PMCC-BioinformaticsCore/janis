@@ -47,7 +47,7 @@ Required inputs
 name        type           prefix      position  documentation
 ==========  =============  ========  ==========  ==========================================================================================================
 reference   FastaWithDict                     2
-reads       Fastq                             3
+reads       FastqGzPair                       3
 sampleName  String                               Used to construct the readGroupHeaderLine with format: '@RG\tID:{name}\tSM:{name}\tLB:{name}\tPL:ILLUMINA'
 ==========  =============  ========  ==========  ==========================================================================================================
 
@@ -57,8 +57,9 @@ Optional inputs
 ===========================  ========================  ============  ==========  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 name                         type                      prefix          position  documentation
 ===========================  ========================  ============  ==========  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-mates                        Optional<Fastq>                                  4
+mates                        Optional<FastqGzPair>                            4
 outputFilename               Optional<Filename>        -o                     8  output file name [stdout]
+platformTechnology           Optional<String>                                    (ReadGroup: PL) Used to construct the readGroupHeaderLine, defaults: ILLUMINA
 minimumSeedLength            Optional<Integer>         -k                     2  Matches shorter than INT will be missed. The alignment speed is usually insensitive to this value unless it significantly deviates 20. (Default: 19)
 bandwidth                    Optional<Integer>         -w                     2  Essentially, gaps longer than ${bandWidth} will not be found. Note that the maximum gap length is also affected by the scoring matrix and the hit length, not solely determined by this option. (Default: 100)
 offDiagonalXDropoff          Optional<Integer>         -d                     2  (Z-dropoff): Stop extension when the difference between the best and the current extension score is above |i-j|*A+INT, where i and j are the current positions of the query and reference, respectively, and A is the matching score. Z-dropoff is similar to BLAST’s X-dropoff except that it doesn’t penalize gaps in one of the sequences in the alignment. Z-dropoff not only avoids unnecessary extension, but also reduces poor alignments inside a long good alignment. (Default: 100)
@@ -103,4 +104,4 @@ Author: **Unknown**
 
 
 *Bwa mem + Samtools View was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

@@ -28,12 +28,12 @@ Tool documentation
 ******************
 This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.0.12.0.
 
-It has the following steps:
+        It has the following steps:
 
-1. BaseRecalibrator
-2. ApplyBQSR
-3. HaplotypeCaller
-4. SplitMultiAllele
+        1. BaseRecalibrator
+        2. ApplyBQSR
+        3. HaplotypeCaller
+        4. SplitMultiAllele
 
 Outputs
 -------
@@ -78,4 +78,4 @@ Author: **Unknown**
 
 
 *GATK4 Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

@@ -44,11 +44,11 @@ If you use Cutadapt, please cite DOI:10.14806/ej.17.1.200 .
 
 Outputs
 -------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     Fastq
-======  ======  ===============
+======  ===========  ===============
+name    type         documentation
+======  ===========  ===============
+out     FastqGzPair
+======  ===========  ===============
 
 Inputs
 ------
@@ -57,11 +57,11 @@ Find the inputs below
 Required inputs
 ***************
 
-======  ======  ========  ==========  ===============
-name    type    prefix      position  documentation
-======  ======  ========  ==========  ===============
-fastq   Fastq                      5
-======  ======  ========  ==========  ===============
+======  ===========  ========  ==========  ===============
+name    type         prefix      position  documentation
+======  ===========  ========  ==========  ===============
+fastq   FastqGzPair                     5
+======  ===========  ========  ==========  ===============
 
 Optional inputs
 ***************
@@ -134,4 +134,4 @@ Author: **Unknown**
 
 
 *Cutadapt was last updated on 2019-03-29*.
-*This page was automatically generated on 2019-09-10*.
+*This page was automatically generated on 2019-09-26*.

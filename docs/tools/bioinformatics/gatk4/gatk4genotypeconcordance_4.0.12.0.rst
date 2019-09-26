@@ -9,13 +9,18 @@ Description
 
 Tool identifier: ``Gatk4GenotypeConcordance``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.genotypeconcordance.genotypeconcordance_4_0 import Gatk4GenotypeConcordance_4_0``
+Tool path: ``janis_bioinformatics.tools.gatk4.genotypeconcordance.versions import Gatk4GenotypeConcordance_4_0``
 
 Version: 4.0.12.0
 
 Container: ``broadinstitute/gatk:4.0.12.0``
 
+Versions
+*********
 
+- `4.1.3.0 <gatk4genotypeconcordance_4.1.3.0.html>`_
+- `4.1.2.0 <gatk4genotypeconcordance_4.1.2.0.html>`_
+- 4.0.12.0 (current)
 
 Documentation
 -------------
@@ -89,12 +94,12 @@ Find the inputs below
 Required inputs
 ***************
 
-========  ==========  ===========  ==========  ===================================
-name      type        prefix       position    documentation
-========  ==========  ===========  ==========  ===================================
-callVCF   vcf-gz-tbi  --CALL_VCF               The VCF containing the call sample
-truthVCF  VCFIDX      --TRUTH_VCF              The VCF containing the truth sample
-========  ==========  ===========  ==========  ===================================
+========  ====================  ===========  ==========  ===================================
+name      type                  prefix       position    documentation
+========  ====================  ===========  ==========  ===================================
+callVCF   CompressedIndexedVCF  --CALL_VCF               The VCF containing the call sample
+truthVCF  IndexedVCF            --TRUTH_VCF              The VCF containing the truth sample
+========  ====================  ===========  ==========  ===================================
 
 Optional inputs
 ***************
@@ -121,7 +126,7 @@ createIndex                 Optional<Boolean>      --CREATE_INDEX               
 createMd5File               Optional<Boolean>      --CREATE_MD5_FILE                11  Whether to create an MD5 digest for any BAM or FASTQ files created.
 maxRecordsInRam             Optional<Integer>      --MAX_RECORDS_IN_RAM             11  When writing SAM files that need to be sorted, this will specify the number of records stored in RAM before spilling to disk. Increasing this number reduces the number of file handles needed to sort a SAM file, and increases the amount of RAM needed.
 quiet                       Optional<Boolean>      --QUIET                          11  Whether to suppress job-summary info on System.err.
-reference                   Optional<File>         --REFERENCE=SEQUENCE             11  Reference sequence file.
+reference                   Optional<File>         --REFERENCE_SEQUENCE             11  Reference sequence file.
 tmpDir                      Optional<String>       --TMP_DIR                        11  Undocumented option
 useJdkDeflater              Optional<Boolean>      --use_jdk_deflater               11  Whether to use the JdkDeflater (as opposed to IntelDeflater)
 useJdkInflater              Optional<Boolean>      --use_jdk_inflater               11  Whether to use the JdkInflater (as opposed to IntelInflater)
@@ -137,4 +142,4 @@ Author: Michael Franklin
 
 
 *GATK4: Genotype Concordance was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-26*.

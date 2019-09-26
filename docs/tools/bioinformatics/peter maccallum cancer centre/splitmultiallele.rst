@@ -46,8 +46,8 @@ Required inputs
 =========  =============  ========  ==========  ===============
 name       type           prefix      position  documentation
 =========  =============  ========  ==========  ===============
-vcf        VCF                               2
-reference  FastaWithDict  -r                 7
+vcf        CompressedVCF                     3
+reference  FastaWithDict  -r                 8
 =========  =============  ========  ==========  ===============
 
 Optional inputs
@@ -67,4 +67,4 @@ Author: **Unknown**
 
 
 *Split Multiple Alleles was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-26*.

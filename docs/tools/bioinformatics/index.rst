@@ -11,7 +11,6 @@ Automatically generated index page for {title}
    bcftools/index
    bwa/index
    common/index
-   common/index
    cutadapt/index
    fastqc/index
    gatk4/index
@@ -24,4 +23,4 @@ Automatically generated index page for {title}
    vardict/index
    variant callers/index
 
-*This page was auto-generated on 12/08/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 26/09/2019. Please do not directly alter the contents of this page.*

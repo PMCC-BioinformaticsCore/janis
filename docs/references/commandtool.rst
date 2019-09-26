@@ -99,6 +99,14 @@ Tool Input
 .. autoclass:: janis.ToolInput
    :members: __init__
 
+.. note::
+
+   A ToolInput (and ``ToolArgument``) must have either a ``position`` AND / OR ``prefix`` to be bound onto the command line.
+
+- The ``prefix`` is a string that precedes the inputted value. By default the prefix is separated by a space, however this can be removed with ``separate_value_from_prefix=False``.
+- The ``position`` represents the order of how arguments are bound onto the command line. Lower numbers get a higher priority, not providing a number will default to 0.
+- ``prefix_applies_to_all_elements`` applies the prefix to each element in an array (only applicable for array inputs).
+
 
 Tool Output
 ***********

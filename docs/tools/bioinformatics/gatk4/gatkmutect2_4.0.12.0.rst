@@ -9,13 +9,18 @@ Description
 
 Tool identifier: ``gatkmutect2``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.mutect2.mutect2_4_0 import GatkMutect2_4_0``
+Tool path: ``janis_bioinformatics.tools.gatk4.mutect2.versions import GatkMutect2_4_0``
 
 Version: 4.0.12.0
 
 Container: ``broadinstitute/gatk:4.0.12.0``
 
+Versions
+*********
 
+- `4.1.3.0 <gatkmutect2_4.1.3.0.html>`_
+- `4.1.2.0 <gatkmutect2_4.1.2.0.html>`_
+- 4.0.12.0 (current)
 
 Documentation
 -------------
@@ -38,11 +43,11 @@ such as mitochondrial variant calling.
 
 Outputs
 -------
-======  ==========  =================
-name    type        documentation
-======  ==========  =================
-out     vcf-gz-tbi  To determine type
-======  ==========  =================
+======  ====================  =================
+name    type                  documentation
+======  ====================  =================
+out     CompressedIndexedVCF  To determine type
+======  ====================  =================
 
 Inputs
 ------
@@ -64,15 +69,15 @@ reference   FastaWithDict  -R                 8  Reference sequence file
 Optional inputs
 ***************
 
-========================  ==================  ===============================  ==========  ==============================================================================================================================================================
-name                      type                prefix                             position  documentation
-========================  ==================  ===============================  ==========  ==============================================================================================================================================================
-intervals                 Optional<bed>       -L                                        7  One or more genomic intervals over which to operate
-outputFilename            Optional<Filename>  -O                                       20
-germlineResource          Optional<VCFIDX>    --germline-resource                      10
-afOfAllelesNotInResource  Optional<Float>     --af-of-alleles-not-in-resource          11  Population allele fraction assigned to alleles not found in germline resource. Please see docs/mutect/mutect2.pdf fora derivation of the default value.
-panelOfNormals            Optional<VCFIDX>    --panel-of-normals                       10  A panel of normals can be a useful (optional) input to help filter out commonly seen sequencing noise that may appear as low allele-fraction somatic variants.
-========================  ==================  ===============================  ==========  ==============================================================================================================================================================
+========================  ====================  ===============================  ==========  ==============================================================================================================================================================
+name                      type                  prefix                             position  documentation
+========================  ====================  ===============================  ==========  ==============================================================================================================================================================
+intervals                 Optional<bed>         -L                                        7  One or more genomic intervals over which to operate
+outputFilename            Optional<Filename>    -O                                       20
+germlineResource          Optional<IndexedVCF>  --germline-resource                      10
+afOfAllelesNotInResource  Optional<Float>       --af-of-alleles-not-in-resource          11  Population allele fraction assigned to alleles not found in germline resource. Please see docs/mutect/mutect2.pdf fora derivation of the default value.
+panelOfNormals            Optional<IndexedVCF>  --panel-of-normals                       10  A panel of normals can be a useful (optional) input to help filter out commonly seen sequencing noise that may appear as low allele-fraction somatic variants.
+========================  ====================  ===============================  ==========  ==============================================================================================================================================================
 
 
 Metadata
@@ -82,4 +87,4 @@ Author: Michael Franklin
 
 
 *GATK4: MuTect2 was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-26*.

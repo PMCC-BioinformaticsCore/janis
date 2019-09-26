@@ -7,7 +7,7 @@ Java compiler
 Description
 -------------
 
-Tool identifier: ``javaCompiler``
+Tool identifier: ``javacompiler``
 
 Tool path: ``janis_unix.tools.compile import Compile``
 
@@ -65,4 +65,4 @@ Author: **Unknown**
 
 
 *Java compiler was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-26*.

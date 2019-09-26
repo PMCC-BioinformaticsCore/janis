@@ -21,6 +21,10 @@ Welcome to Janis!
     :target: https://codecov.io/gh/PMCC-BioinformaticsCore/janis
     :alt: Code Coverage
 
+.. image:: https://badges.gitter.im/janis-pipelines.png
+    :target: https://gitter.im/janis-pipelines/community
+    :alt: Gitter chat
+
 .. note::
 	This project is *work-in-progress* and is provided as-is without warranty of any kind. There may be breaking changes
 	committed to this repository without notice.
@@ -87,23 +91,17 @@ tool to log this to ``stdout``, and explicitly outputting this ``stdout`` to giv
 
    w = j.Workflow("workflowId")
 
-   inp = j.Input("inputIdentifier", data_type=j.String(), value="Hello, World!")
-   echo = j.Step("stepIdentifier", tool=Echo())
-   out = j.Output("outputIdentifier")
-
-   w.add_edges([
-       (inp, echo.inp),  # Connect 'inp' to 'echostep'
-       (echo.out, out),  # Connect output of 'echostep' to 'out'
-   ])
+   w.input("inputIdentifier", j.String, default="Hello, World!")
+   w.step("stepIdentifier", Echo(inp=w.inputIdentifier))
+   w.output("outputIdentifier", source=w.stepIdentifier.out)
 
    # Will print the CWL, input file and relevant tools to the console
    w.translate("cwl", to_disk=False)  # or "wdl"
 
-The ``add_pipe`` method is aware of the inputs and outputs of the arguments you provide it, and automatically
-joins the relevant non-optional parts together. More information can be found on creating edges on the
+More information can be found on creating edges on the
 `Building Connections <tutorials/buildingconnections.html>`__ documentation.
 
-Now we can an in-memory workflow, we can export a CWL representation to the console using ``.translate("cwl")``.
+Now we've created our workflow, we can export a CWL representation to the console using ``.translate("cwl")``.
 
 More examples
 -------------
@@ -112,7 +110,7 @@ There are some simple example pipelines that use the unix toolset in
 `janis/examples <https://github.com/PMCC-BioinformaticsCore/janis/tree/master/janis/examples>`__.
 
 Additionally there are example bioinformatics workflows that use Janis and the bioinformatics tools in the
-`janis-examplepipelines repository <https://github.com/PMCC-BioinformaticsCore/janis-examplepipelines>`__.
+`janis-pipelines repository <https://github.com/PMCC-BioinformaticsCore/janis-pipelines>`__.
 
 
 Support
@@ -126,62 +124,7 @@ If you find an issue with the tool definitions, please see the relevant issue pa
 
 * `Pipeline-bioinformatics <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/issues>`__
 
-Information about the project structure and more on [contributing]() can be found within the documentation.
-
-Releasing Janis
----------------
-
-   *Further Information*: `Releasing <development/releasing.html>`__
-
-Releasing is automatic! Simply increment the version number in `setup.py` (`SemVer <https://semver.org>`__),
-and tag that commit with the same version identifier:
-
-.. code-block:: bash
-   git commit -m "Tag for v0.x.x release"
-   git tag -a "v0.x.x" -m "Tag message"
-   git push --follow-tags
-
-
-Dependencies and Resources
-==========================
-
-Janis includes a number of dependencies
-
-============== ==================== ====================== ==================== ===============
-\              build                docs                   pypi                 codecov
-============== ==================== ====================== ==================== ===============
-`Janis`_       |Build Status janis| |Documentation Status| |PyPI version janis| |codecov janis|
-Bioinformatics |Build Status bio|   See Janis              |PyPI version bio|   \
-Shepherd       \                    \                      \                    \
-CWL-Gen        |Build Status cwl|   \                      |PyPI version cwl|   |codecov cwl|
-WDL-Gen        |Build Status wdl|   \                      |PyPI version wdl|   \
-============== ==================== ====================== ==================== ===============
-
-.. _Janis: https://github.com/PMCC-BioinformaticsCore/janis
-.. _JanisPIP: https://pypi.org/project/janis-pipelines/
-
-.. |Build Status janis| image:: https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master
-   :target: https://travis-ci.org/PMCC-BioinformaticsCore/janis
-.. |Documentation Status| image:: https://readthedocs.org/projects/janis/badge/?version=latest
-   :target: https://janis.readthedocs.io/en/latest/?badge=latest
-.. |PyPI version janis| image:: https://badge.fury.io/py/janis-pipelines.svg
-   :target: https://badge.fury.io/py/janis-pipelines
-.. |codecov janis| image:: https://codecov.io/gh/PMCC-BioinformaticsCore/janis/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/PMCC-BioinformaticsCore/janis
-.. |Build Status bio| image:: https://travis-ci.org/PMCC-BioinformaticsCore/janis-bioinformatics.svg?branch=master
-   :target: https://travis-ci.org/PMCC-BioinformaticsCore/janis-bioinformatics
-.. |PyPI version bio| image:: https://badge.fury.io/py/janis-pipelines.bioinformatics.svg
-   :target: https://badge.fury.io/py/janis-pipelines.bioinformatics
-.. |Build Status cwl| image:: https://travis-ci.org/illusional/python-cwlgen.svg?branch=master
-   :target: https://travis-ci.org/common-workflow-language/python-cwlgen
-.. |PyPI version cwl| image:: https://badge.fury.io/py/illusional.cwlgen.svg
-   :target: https://badge.fury.io/py/illusional.cwlgen
-.. |codecov cwl| image:: https://codecov.io/gh/illusional/python-cwlgen/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/illusional/python-cwlgen
-.. |Build Status wdl| image:: https://travis-ci.org/illusional/python-wdlgen.svg?branch=master
-   :target: https://travis-ci.org/illusional/python-wdlgen
-.. |PyPI version wdl| image:: https://badge.fury.io/py/illusional.wdlgen.svg
-   :target: https://badge.fury.io/py/illusional.wdlgen
+Information about the project structure and more on contributing can be found within the documentation.
 
 
 Contents
@@ -200,7 +143,7 @@ Contents
    :maxdepth: 1
    :caption: Tutorials
 
-   tutorials/gettingstarted
+   tutorial1/index
    tutorials/simple
    tutorials/alignsortedbam
    tutorials/running
@@ -226,7 +169,8 @@ Contents
    development/faq
 
 Indices and tables
-^^^^^^^^^^^^^^^^^^
+===================
+
 
 * :ref:`genindex`
 * :ref:`search`

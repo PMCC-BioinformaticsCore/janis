@@ -47,7 +47,7 @@ to correctly glob this index file.
 
    def outputs(self):
        return [
-           ToolOutput("bamOutput", BamBai(), glob=InputSelector("outputFilename"))
+           ToolOutput("bamOutput", BamBai, glob=InputSelector("outputFilename"))
        ]
 
 
@@ -76,7 +76,7 @@ files ending on ``.csv`` within the execution directory.
 
    def outputs(self):
        return [
-           ToolOutput("metrics", Array(Csv()), glob=WildcardSelector("*.csv"))
+           ToolOutput("metrics", Array(Csv), glob=WildcardSelector("*.csv"))
        ]
 
 

@@ -30,13 +30,13 @@ Tool documentation
 
 Outputs
 -------
-========  ==========  ===============
-name      type        documentation
-========  ==========  ===============
-diploid   vcf-gz-tbi
-variants  vcf-gz-tbi
+========  ====================  ===============
+name      type                  documentation
+========  ====================  ===============
+diploid   CompressedIndexedVCF
+variants  CompressedIndexedVCF
 out       VCF
-========  ==========  ===============
+========  ====================  ===============
 
 Inputs
 ------
@@ -55,12 +55,12 @@ reference  FastaWithDict
 Optional inputs
 ***************
 
-=========  =======================  ========  ==========  ===============
-name       type                     prefix    position    documentation
-=========  =======================  ========  ==========  ===============
-intervals  Optional<BedTABIX>
-filters    Optional<Array<String>>
-=========  =======================  ========  ==========  ===============
+====================  =======================  ========  ==========  ===============
+name                  type                     prefix    position    documentation
+====================  =======================  ========  ==========  ===============
+intervals             Optional<BedTABIX>
+bcfview_applyFilters  Optional<Array<String>>
+====================  =======================  ========  ==========  ===============
 
 
 Metadata
@@ -70,4 +70,4 @@ Author: **Unknown**
 
 
 *Strelka Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-26*.

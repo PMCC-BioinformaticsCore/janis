@@ -14,27 +14,30 @@ Automatically generated index page for {title}
    bed
    bedtabix
    boolean
-   compressed-vcf-gz
+   compressedindexedvcf
+   compressedtarfile
+   compressedvcf
    csv
    directory
    double
    fasta
    fastafai
    fastawithdict
+   fastq
+   fastqgz
    file
    filename
    float
-   gvcf
+   indexedvcf
    integer
    jsonfile
    sam
    stdout
    string
    tarfile
+   textfile
    tsv
    vcf
-   vcf-gz-tbi
-   vcfidx
    zip
 
-*This page was auto-generated on 12/08/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 26/09/2019. Please do not directly alter the contents of this page.*

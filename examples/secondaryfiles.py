@@ -1,6 +1,6 @@
 from typing import List
 
-from janis_core import ToolOutput, ToolInput, Workflow, Step, Input, Output, File, Array
+from janis_core import ToolOutput, ToolInput, WorkflowBuilder, File, Array
 from janis_core.types import InputSelector
 from janis_unix.tools.unixtool import UnixTool
 
@@ -38,16 +38,15 @@ class ToolThatAcceptsAndReturnsSecondary(UnixTool):
 
 
 if __name__ == "__main__":
-    w = Workflow("test_workflow")
+    w = WorkflowBuilder("test_workflow")
 
-    inp = Input("inp", DataTypeWithSecondary())
-    stp = Step("stp", ToolThatAcceptsAndReturnsSecondary())
-    w.add_pipe(inp, stp, Output("outp"))
-
+    w.input("inp", DataTypeWithSecondary)
+    w.step("stp", ToolThatAcceptsAndReturnsSecondary(inp=w.inp))
+    w.output("out", source=w.stp)
     w.translate("wdl")
 
-    w2 = Workflow("scattered_test_workflow")
-    inp2 = Input("inp2", Array(DataTypeWithSecondary()), value=["path/to/file.ext"])
-    stp2 = Step("stp2", ToolThatAcceptsAndReturnsSecondary())
-    w2.add_pipe(inp2, stp2, Output("outp2"))
+    w2 = WorkflowBuilder("scattered_test_workflow")
+    w2.input("inp", Array(DataTypeWithSecondary), default=["path/to/file.ext"])
+    w2.step("stp", ToolThatAcceptsAndReturnsSecondary(inp=w2.inp), scatter="inp")
+    w2.output("out", source=w2.stp)
     w2.translate("wdl")

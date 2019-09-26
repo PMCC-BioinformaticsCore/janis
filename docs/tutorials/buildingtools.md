@@ -3,54 +3,173 @@
 
 _This page is under construction_  
 
-Welcome to this tutorial on building a a tool. Prior to starting this, we recommend completing these tutorials:
+Welcome to this tutorial on building a a tool. Prior to starting this, we recommend completing:
 
-- [Getting started with Janis](/tutorials/gettingstarted)
-- [Constructing your first workflow](/tutorials/simple)
+- [Janis Tutorial](/tutorial1/)
 
-## Overview  
+We also recommend reading the following documentation page on Command Tools: 
 
-At some point, you'll find a tool that you want to place in your workflow, but it won't be in our toolshed. In this tutorial we're going to analyse a tool to determine its inputs and outputs to build a tool wrapper that everyone can use.
+- [Command Tool API reference](../references/commandtool.html)
+
+## Overview
+
+Janis was designed to be backed by a strongly typed tool registry that is made easily available. This set of documentation includes [automatically generated tool pages](/tools/). 
+
+As you're writing workflows, you'll find a tool that you want to place in your workflow, but it won't be in our toolshed. In this tutorial we're going to analyse a tool to determine its inputs and outputs to build a tool wrapper that everyone can use.
+
+The tools in Janis take a bit of effort to build, but they're designed to be built once and reused as much as possible.
 
 ### What you'll need
 
-To complete this tutorial, you'll need to have an installation of janis (see the [Getting Started](/tutorials/gettingstarted.html) guide for more info). You can install janis by running:
-```bash
-pip3 install janis-pipelines
-```
+You'll need a workfing knowledge of the tool and a container. 
 
 #### Container
 
 > _Further information_: [Dockerizing your tools](https://janis.readthedocs.io/en/latest//tutorials/docker.html)
 
-For portability, we require that you specify a `Docker` (or other OCI compliant) container for your tool. Often they're will already be a container with some searching, however here's a guide on [preparing your tools as dockers](https://janis.readthedocs.io/en/latest//tutorials/docker.html) to ensure it works across all environments and workflow specifications.
+For portability, we require that you specify a `Docker` (or other OCI compliant) container for your tool. Often they're will already be a container with some searching, however here's a guide on [preparing your tools as dockers](https://janis.readthedocs.io/en/latest/tutorials/docker.html) to ensure it works across all environments and workflow specifications.
+
+Your container must be available to your execution engine and as such we'd recommend hosting your container on public repository such as Dockerhub / quay.io. 
 
 ## Let's get started!
 
+Janis is built with extensibility in mind. We currently have two registries of prebuilt tools: 
+
+- [`janis-bioinformatics`](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics)
+- [`janis-unix`](https://github.com/PMCC-BioinformaticsCore/janis-unix)
+
+It's great to contribute your tool into these repositories to avoid repetitive rebuilding of tools, however this isn't required. Your tool only has to be available to your workflow (through imports or in the same file).
+ 
 ### Preparation
-  First off, you need to decide where the tool should sit. If it's a unix tool, it should sit under the [`janis`](https://github.com/PMCC-BioinformaticsCore/janis) repository, if it's a bioinformatics tool: under the [`janis-bioinformatics`](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics) repo. If it's a new domain, raise a [Github issue](https://github.com/PMCC-BioinformaticsCore/janis/issues/new).
   
-The general structure of the tools are:  
+The recommended structure of a tool is the following:  
 ```  
-janis_bioinformatics/  
+tool_repo/  
 ├── __init__.py
 ├── tool_producer/  
 │   ├── __init__.py
 │   ├── tool1_name/  
-│   │   ├── toolname_version1.py  
+│   │   ├── base.py  
+│   │   ├── versions.py
 │   └── tool2_name/  
-│   │   ├── toolname_version2.py  
+│   │   ├── base.py  
+│   │   ├── versions.py
 │   ... other tools  
 ```  
-
-So, place your file called: `$toolname_$version.py`in a subfolder of the tool name, in a subfolder of the manufacturer / producer of the tool.
 
 > The `__init__.py` files are important to ensure that your tool files are correctly built and distributed, we'll also use them later to export our new tool.
 
 ### Setting up the file:
 
+A new tool definition must subclass the janis.CommandTool class and implement the required abstract methods:
 
- 
+> Based on [this template](../references/commandtool.html#template)
+
+```python
+from abc import ABC
+from typing import List, Optional, Union
+import janis as j
+
+class ToolNameBase(j.CommandTool, ABC):
+    @staticmethod
+    def tool() -> str:
+        return "toolname"
+
+    @staticmethod
+    def base_command() -> Optional[Union[str, List[str]]]:
+        pass
+
+    def inputs(self) -> List[j.ToolInput]:
+        return []
+
+    def outputs(self) -> List[j.ToolOutput]:
+        return []
+
+
+class ToolName_Version(ToolNameBase):
+
+    @staticmethod
+    def container() -> str:
+        return ""
+
+    @staticmethod
+    def version() -> str:
+        pass
+```
+
+In addition, we can include the following metadata:
+
+```python
+    # within class 
+    def arguments(self) -> List[j.ToolArgument]:
+        # parameters that are not overridable
+        return []
+
+    def friendly_name(self) -> str:
+        pass
+
+    @staticmethod
+    def tool_module() -> str:
+        pass
+
+    @staticmethod
+    def tool_provider() -> str:
+        pass
+        
+    def bind_metadata(self) -> j.ToolMetadata:
+       pass
+```
+
+### Tool inputs
+
+A tool input is a named input to a tool that has four primary attributes:
+- `tag: str` – The identifier of the input (unique to inputs and outputs)
+- `input_type: ParseableType` - The data type that this input accepts
+- `position: int` - The position of the input to be applied. (Default = 0)
+- `prefix: string` - The prefix to be appended before the element. (By default, a space will also be applied, see separate_value_from_prefix for more information)
+
+_You must provide a position or prefix for an input to be bound onto the command line._
+
+There are ways to customise how a `ToolInput` is bound onto the command line:
+- `separate_value_from_prefix` (default: `True`) - eg: set to false when you expect the command line to look like `--prefix=myvalue`. 
+- `prefix_applies_to_all_elements` – Applies the prefix to each element of the array (Array inputs only)
+- `shell_quote` – Stops shell quotes from being applied in all circumstances, useful when joining multiple commands together.
+- `separator` – The separator between each element of an array (defaults to `' '`)
+- `localise_file` – Ensures that the file(s) are localised into the execution directory.
+- `default` – The default value to be applied if the input is not defined.
+- `doc` - Documentation string used for  
+
+Example:
+```python
+ToolInput(
+    tag="tumorBams",
+    input_type=Array(BamBai),
+    prefix="-I",
+    prefix_applies_to_all_elements=True,
+)
+```
+
+### Tool outputs
+
+A tool output is a named output of a tool. The ToolOutput object instructs how the engine should collect an output and how it may be referenced in a workflow.
+
+- `tag: str` – The identifier of a output, must be unique in the inputs and outputs.
+- `output_type: ParseableType` – The type of output that is being collected.
+- `glob: Selector` – How to collect this output, can accept any janis.Selector.
+
+Example:
+
+```python
+ToolOutput(
+    "stats",
+    TextFile(extension=".stats"),
+    glob=InputSelector("outputFilename") + ".stats",
+    doc="To determine type",
+),
+
+
+```
+
 ## Resources (CPU / Memory)
 
 > Further information: [_Resource Overrides_](/resourceoverrides.md), and the `hints` section of this page
@@ -151,7 +270,4 @@ Sometimes you'll need to use an input more than one. An easy way to perform this
 ## Building a workflow as a tool  
 
 Janis supports the embedding of subworkflows as tools. To ensure the documentation generator will automatically pick up the tool, we'll subclass the `Workflow` class, and place our inputs, steps, outputs and connections within the `__init__` method. And then all the other steps are the same in regards to exporting your workflow correctly.
-
-See the [Building a simple bioinformatics workflow](/tutorials/alignsortedbam) tutorial as an example of building a workflow as a reference-able tool.
  
-## Regenerating documentation

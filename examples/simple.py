@@ -22,37 +22,17 @@ simple.py
 """
 
 # The classes we require to build a basic workflow
-from janis_core import Workflow, Input, Output, Step, Array
-
-# Data types - These help us logically connect workflows
+from janis import WorkflowBuilder
 from janis.unix.data_types.tarfile import TarFile
-
-# Tools - The command line tools we're going to call
 from janis.unix.tools.compile import Compile
-from janis.unix.tools.tar import Tar
 from janis.unix.tools.untar import Untar
 
+w = WorkflowBuilder("user_guide")
 
-w = Workflow("simple")
-
-inp = Input(
-    "tarFile",
-    TarFile(),
-    default="/Users/franklinmichael/Desktop/workflows-for-testing/03-simple/inputs/hello.tar",
-)
-
-untar = Step("untar", Untar())
-compil = Step("compile", Compile())
-tar = Step("tar", Tar())
-
-outp = Output("out")
-
-w.add_edge(inp, untar.tarFile)
-w.add_edge(untar.out, compil.file)  # Auto scatter
-w.add_edge(untar.out, tar.files)
-w.add_edge(compil.out, tar.files2)
-w.add_edge(tar.out, outp)
-
+w.input("tarfile", TarFile, value="/path/to/file.tar")
+w.step("untar", Untar(tarfile=w.tarfile))
+w.step("compile", Compile(file=w.untar), scatter="file")
+w.output("compiled", source=w.compile.out)
 
 if __name__ == "__main__":
-    w.translate("wdl", to_disk=True, should_validate=True)
+    w.translate("cwl", to_disk=True, validate=True)

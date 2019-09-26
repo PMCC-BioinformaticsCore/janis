@@ -37,7 +37,7 @@ import janis
 
  # tool and data_type imports go here
 
-class AlignSortedBam(janis.Workflow):
+class Simple(janis.Workflow):
 	def __init__(self):
 		super().__init__(self, "simpleWorkflowIdentifier")
 		# assemble our workflow here

@@ -22,11 +22,13 @@ Documentation
 
 URL
 ******
-*No URL to the documentation was provided*
+`https://github.com/etal/cnvkit <https://github.com/etal/cnvkit>`_
 
 Tool documentation
 ******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+
+        A command-line toolkit and Python library for detecting copy number variants 
+        and alterations genome-wide from high-throughput sequencing.
 
 Outputs
 -------
@@ -70,5 +72,5 @@ Metadata
 Author: **Unknown**
 
 
-*CNVKit was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*CNVKit was last updated on 2019-07-03 00:00:00*.
+*This page was automatically generated on 2019-09-26*.

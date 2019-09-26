@@ -9,13 +9,18 @@ Description
 
 Tool identifier: ``GatkHaplotypeCaller``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.haplotypecaller.haplotypecaller_4_0 import Gatk4HaplotypeCaller_4_0``
+Tool path: ``janis_bioinformatics.tools.gatk4.haplotypecaller.versions import Gatk4HaplotypeCaller_4_0``
 
 Version: 4.0.12.0
 
 Container: ``broadinstitute/gatk:4.0.12.0``
 
+Versions
+*********
 
+- `4.1.3.0 <gatkhaplotypecaller_4.1.3.0.html>`_
+- `4.1.2.0 <gatkhaplotypecaller_4.1.2.0.html>`_
+- 4.0.12.0 (current)
 
 Documentation
 -------------
@@ -51,11 +56,11 @@ to our recommendations as documented (https://software.broadinstitute.org/gatk/d
 
 Outputs
 -------
-======  ======  ===================================================================================================
-name    type    documentation
-======  ======  ===================================================================================================
-out     VCFIDX  A raw, unfiltered, highly sensitive callset in VCF format. File to which variants should be written
-======  ======  ===================================================================================================
+======  =============  ===================================================================================================
+name    type           documentation
+======  =============  ===================================================================================================
+out     CompressedVCF  A raw, unfiltered, highly sensitive callset in VCF format. File to which variants should be written
+======  =============  ===================================================================================================
 
 Inputs
 ------
@@ -64,13 +69,13 @@ Find the inputs below
 Required inputs
 ***************
 
-=========  =============  ===========  ==========  ==================================
-name       type           prefix         position  documentation
-=========  =============  ===========  ==========  ==================================
-inputRead  BamPair        --input                  BAM/SAM/CRAM file containing reads
-reference  FastaWithDict  --reference           5  Reference sequence file
-dbsnp      vcf-gz-tbi     --dbsnp               7  (Also: -D) A dbSNP VCF file.
-=========  =============  ===========  ==========  ==================================
+=========  ====================  ===========  ==========  ==================================
+name       type                  prefix         position  documentation
+=========  ====================  ===========  ==========  ==================================
+inputRead  BamPair               --input                  BAM/SAM/CRAM file containing reads
+reference  FastaWithDict         --reference           5  Reference sequence file
+dbsnp      CompressedIndexedVCF  --dbsnp               7  (Also: -D) A dbSNP VCF file.
+=========  ====================  ===========  ==========  ==================================
 
 Optional inputs
 ***************
@@ -123,4 +128,4 @@ Author: Michael Franklin
 
 
 *GATK4: Haplotype Caller was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-26*.

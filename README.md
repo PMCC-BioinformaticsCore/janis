@@ -1,13 +1,25 @@
 # Janis  (Pre-alpha)
 
 
-![GitHub stars](https://img.shields.io/github/stars/PMCC-BioinformaticsCore/janis.svg?style=social)  [![Build Status](https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master)](https://travis-ci.org/PMCC-BioinformaticsCore/janis)  [![Documentation Status](https://readthedocs.org/projects/janis/badge/?version=latest)](https://janis.readthedocs.io/en/latest/?badge=latest)  [![PyPI version](https://badge.fury.io/py/janis-pipelines.svg)](https://badge.fury.io/py/janis-pipelines)  [![codecov](https://codecov.io/gh/PMCC-BioinformaticsCore/janis/branch/master/graph/badge.svg)](https://codecov.io/gh/PMCC-BioinformaticsCore/janis) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
-  
+[![GitHub stars](https://img.shields.io/github/stars/PMCC-BioinformaticsCore/janis.svg?style=social)](https://github.com/PMCC-BioinformaticsCore/janis) [![Build Status](https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master)](https://travis-ci.org/PMCC-BioinformaticsCore/janis)  [![Documentation Status](https://readthedocs.org/projects/janis/badge/?version=latest)](https://janis.readthedocs.io/en/latest/?badge=latest)  [![PyPI version](https://badge.fury.io/py/janis-pipelines.svg)](https://badge.fury.io/py/janis-pipelines)  [![codecov](https://codecov.io/gh/PMCC-BioinformaticsCore/janis/branch/master/graph/badge.svg)](https://codecov.io/gh/PMCC-BioinformaticsCore/janis) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) [![Gitter chat](https://badges.gitter.im/janis-pipelines.png)](https://gitter.im/janis-pipelines/community)
   
 _Janis is a framework creating specialised, simple workflow definitions that are then transpiled to   
 Common Workflow Language or Workflow Definition Language._  
   
 Documentation is hosted here: https://janis.readthedocs.io/  
+
+## v0.6.0 Backwards Compatability
+**NOTE: Version 0.6.0 brings large changes to simplify the workflow API.**
+
+See the [example](#example) below to see how this new syntax works. Instead of creating input nodes and adding them to the graph, you add an input / output / step to the graph, and map the connections within the Step.
+
+Inline workflows are now creating with the `WorkflowBuilder` class.
+
+```python
+w.step("step_tag", Echo(inp=w.input_tag))
+```
+
+
   
 ## Introduction  
 
@@ -33,20 +45,6 @@ You can import Janis into your project with:
 import janis as j  
 ```
 
-## Structure
-
-Janis is structured into components:
-
-- [`core`](https://github.com/PMCC-BioinformaticsCore/janis-core) - contains classes and functions to assist in the workflow building. 
-    - [`bioinformatics`](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics) - has bioinformatics tools and data types (`import janis.bioinformatics
-`)
-    - [`unix`](https://github.com/PMCC-BioinformaticsCore/janis-unix) - Installed by default (`import janis.unix`)
-- [`runner`](https://github.com/PMCC-BioinformaticsCore/janis-runner) - An assistant to run Janis workflows using different workflow engines with common semantics.
-
-
-
-This repository manages the dependencies for installation and drives the documentation.
-
 ### Example  
   
 _Further information_: [Simple Workflow](https://janis.readthedocs.io/en/latest/tutorials/echo.html)  
@@ -59,20 +57,14 @@ Echo tool's output as a workflow output.
 import janis as j
 from janis.unix.tools.echo import Echo
 
-w = j.Workflow("workflowId")
+w = j.WorkflowBuilder("workflowId")
 
-inp = j.Input("inputIdentifier", data_type=j.String(), value="Hello, World!")
-echo = j.Step("stepIdentifier", tool=Echo())
-out = j.Output("outputIdentifier")
-
-w.add_edges([
-    (inp, echo.inp),  # Connect 'inp' to 'echostep'
-    (echo.out, out),  # Connect output of 'echostep' to 'out'
-])
+w.input("inputIdentifier", j.String, default="Hello, World!")
+w.step("stepIdentifier", Echo(inp=w.inputIdentifier))
+w.output("outputIdentifier", source=w.stepIdentifier.out)
 
 # Will print the CWL, input file and relevant tools to the console
 w.translate("cwl", to_disk=False)  # or "wdl"
-
 ```
 
 We can export a CWL representation to the console using `.translate("cwl")`. By including the 
@@ -81,25 +73,10 @@ We can export a CWL representation to the console using `.translate("cwl")`. By 
 #### More examples  
 
 - Bioinformatics workflow tutorial: [AlignSortedBam](https://janis.readthedocs.io/en/latest/tutorials/alignsortedbam.html)
-- Unix Toolset: in [`janis/examples`](https://github.com/PMCC-BioinformaticsCore/janis/tree/master/janis/examples).   
+- Simple unix examples: in [`janis/examples`](https://github.com/PMCC-BioinformaticsCore/janis/tree/master/janis/examples).   
 
-- Whole genome germline pipeline: [janis-examplepipelines repository](https://github.com/PMCC-BioinformaticsCore/janis-examplepipelines).  
+- Whole genome germline pipelines: [janis-pipelines repository](https://github.com/PMCC-BioinformaticsCore/janis-pipelines).  
 
-## Usage
-
-Janis has an API that mirrors the workflow concepts:
-
-- `j.Workflow`: A workflow represents the `Edge`s between `Input`, `Step`, `Output`
-  - `j.Input`: An input to a Workflow, has an identifier, a type and a value.
-  - `j.Step`: A step also has an identifier and a `Tool` (`CommandTool` or a nested `Workflow`).
-  - `j.Output`: An output to a workflow has an identifier and is connected to a step.
-  
-- `j.CommandTool`: A command line style tool that builds it's command through the inputs and arguments. 
-  - `j.ToolInput`: An input to a tool, has an identifier, a type and command line options like `position`, `prefix`
-  - `j.ToolArgument`: An argument to a tool that cannot be overridden. Has a value and command line options 
-        like `position` and  `prefix`. The value can be a derived type, like an `InputSelector` or `StringFormatter`. 
-  - `j.ToolOutput`: Output to a tool, has an identifier, a type and a glob.
-  
 ## About  
   
 > _Further information_: [About](https://janis.readthedocs.io/en/latest/about.html)   
@@ -120,7 +97,7 @@ Through conference or talks, this project has been referenced by the following t
   
 ## Support  
   
-### Contributions  
+### Contributions
   
 > _Further information_: [Development](https://janis.readthedocs.io/en/latest/development/)  
   

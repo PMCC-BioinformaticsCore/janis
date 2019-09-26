@@ -1,4 +1,6 @@
 
+.. include:: gatk4printreads_4.1.3.0
+.. include:: gatk4printreads_4.1.2.0
 .. include:: gatk4printreads_4.0.12.0
 
 GATK4: Print Reads
@@ -9,13 +11,18 @@ Description
 
 Tool identifier: ``Gatk4PrintReads``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.printreads.printreads_4_0 import Gatk4PrintReads_4_0``
+Tool path: ``janis_bioinformatics.tools.gatk4.printreads.versions import Gatk4PrintReads_4_1_3``
 
-Version: 4.0.12.0
+Version: 4.1.3.0
 
-Container: ``broadinstitute/gatk:4.0.12.0``
+Container: ``broadinstitute/gatk:4.1.3.0``
 
+Versions
+*********
 
+- 4.1.3.0 (current)
+- `4.1.2.0 <gatk4printreads_4.1.2.0.html>`_
+- `4.0.12.0 <gatk4printreads_4.0.12.0.html>`_
 
 Documentation
 -------------
@@ -82,4 +89,4 @@ Author: Michael Franklin
 
 
 *GATK4: Print Reads was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-26*.

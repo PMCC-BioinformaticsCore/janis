@@ -49,18 +49,18 @@ of capabilities and limitations.
 
 Outputs
 -------
-==========================  ==========  ===============
-name                        type        documentation
-==========================  ==========  ===============
+==========================  ====================  ===============
+name                        type                  documentation
+==========================  ====================  ===============
 python                      File
 pickle                      File
-candidateSV                 vcf-gz-tbi
-candidateSmallIndels        vcf-gz-tbi
-diploidSV                   vcf-gz-tbi
+candidateSV                 CompressedIndexedVCF
+candidateSmallIndels        CompressedIndexedVCF
+diploidSV                   CompressedIndexedVCF
 alignmentStatsSummary       File
 svCandidateGenerationStats  tsv
 svLocusGraphStats           tsv
-==========================  ==========  ===============
+==========================  ====================  ===============
 
 Inputs
 ------
@@ -105,4 +105,4 @@ Author: Michael Franklin
 
 
 *Manta was last updated on 2019-02-19*.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-26*.

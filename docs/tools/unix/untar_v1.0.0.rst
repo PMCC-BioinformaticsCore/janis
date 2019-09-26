@@ -46,7 +46,7 @@ Required inputs
 =======  =======  ========  ==========  ===============
 name     type     prefix      position  documentation
 =======  =======  ========  ==========  ===============
-tarFile  TarFile                     0
+tarfile  TarFile                     0
 =======  =======  ========  ==========  ===============
 
 Optional inputs
@@ -65,4 +65,4 @@ Author: **Unknown**
 
 
 *Tar (unarchive) was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-26*.

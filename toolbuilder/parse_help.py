@@ -1,7 +1,7 @@
 from typing import Optional, Union, List
 
 from .cltconvert import convert_command_tool_fragments
-from janis_core import ToolMetadata, ToolInput, String, Logger
+from janis_core import ToolMetadata, ToolInput, String, Logger, JanisShed
 
 container_exec = {
     "docker": ["docker", "run"],
@@ -117,6 +117,17 @@ def parse_str(
             prefix, tag, has_equal = tags[0]
             eqifrequired = "=" if has_equal else ""
 
+            datatype = String(optional=True)
+
+            if ":" in tag:
+                parts = tag.split(":")
+                tag = parts[0]
+                potentialtypestr = "".join(parts[1:])
+                potentialtype = JanisShed.get_datatype(potentialtypestr)
+                if potentialtype:
+                    Logger.log(f"Found type {potentialtype.__name__} from tag: {tag}")
+                    datatype = potentialtype(optional=True)
+
             if len(tag) == 1:
                 print(
                     f"The tag for '{prefix}' was too short, we need you to come up with a new identifier for:"
@@ -126,7 +137,7 @@ def parse_str(
             try:
                 prev_arg = ToolInput(
                     tag,
-                    String(optional=True),
+                    datatype,
                     prefix=prefix + eqifrequired,
                     separate_value_from_prefix=not has_equal,
                     doc=tool_doc,

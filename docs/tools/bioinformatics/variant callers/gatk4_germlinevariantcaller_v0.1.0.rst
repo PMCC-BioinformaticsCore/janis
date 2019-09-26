@@ -9,9 +9,9 @@ Description
 
 Tool identifier: ``GATK4_GermlineVariantCaller``
 
-Tool path: ``janis_bioinformatics.tools.variantcallers.gatkgermline_variants import GatkGermlineVariantCaller``
+Tool path: ``janis_bioinformatics.tools.variantcallers.gatk.gatkgermline_variants_4_0_12 import GatkGermlineVariantCaller_4_0_12``
 
-Version: 0.1.0
+Version: v0.1.0
 
 
 
@@ -28,12 +28,12 @@ Tool documentation
 ******************
 This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.0.12.0.
 
-It has the following steps:
+        It has the following steps:
 
-1. BaseRecalibrator
-2. ApplyBQSR
-3. HaplotypeCaller
-4. SplitMultiAllele
+        1. BaseRecalibrator
+        2. ApplyBQSR
+        3. HaplotypeCaller
+        4. SplitMultiAllele
 
 Outputs
 -------
@@ -50,16 +50,16 @@ Find the inputs below
 Required inputs
 ***************
 
-===========  =============  ========  ==========  ===============
-name         type           prefix    position    documentation
-===========  =============  ========  ==========  ===============
+===========  ====================  ========  ==========  ===============
+name         type                  prefix    position    documentation
+===========  ====================  ========  ==========  ===============
 bam          BamPair
 reference    FastaWithDict
-snps_dbsnp   vcf-gz-tbi
-snps_1000gp  vcf-gz-tbi
-knownIndels  vcf-gz-tbi
-millsIndels  vcf-gz-tbi
-===========  =============  ========  ==========  ===============
+snps_dbsnp   CompressedIndexedVCF
+snps_1000gp  CompressedIndexedVCF
+knownIndels  CompressedIndexedVCF
+millsIndels  CompressedIndexedVCF
+===========  ====================  ========  ==========  ===============
 
 Optional inputs
 ***************
@@ -78,4 +78,4 @@ Author: **Unknown**
 
 
 *GATK4 Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-08-12*.
+*This page was automatically generated on 2019-09-26*.

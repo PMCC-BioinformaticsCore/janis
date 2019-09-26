@@ -1,6 +1,10 @@
 Janis Tutorial - Introduction
 #############################
 
+.. note::
+
+   This page is being updated to include reference materials.
+
 Welcome to the tutorial for Janis! This tutorial takes the workshop material and presents it in a step-by-step process to learn Janis, and get your workflows running.
 
 Janis is workflow framework that uses Python to construct a declarative workflow. It exposes a workflow API you use within Python to declare your workflow. Janis supports converting your pipeline to the Common Workflow Language (CWL) and Workflow Description Language (WDL) for execution and archival.

@@ -9,6 +9,11 @@ It's a bit of a random collection of things that should be refactored:
 from requests.utils import requote_uri
 from distutils.version import StrictVersion
 from inspect import isfunction, ismodule, isabstract, isclass
+from janis_runner.templates import (
+    templates,
+    get_schema_for_template,
+    EnvironmentTemplate,
+)
 
 import janis
 from constants import PROJECT_ROOT_DIR
@@ -21,6 +26,8 @@ from janis_core import (
     Metadata,
     Logger,
     JanisShed,
+    WorkflowMetadata,
+    ToolTypes,
 )
 
 # Import modules here so that the tool registry knows about them
@@ -29,6 +36,8 @@ from janis_core import (
 docs_dir = PROJECT_ROOT_DIR + "/docs/"
 tools_dir = docs_dir + "tools/"
 dt_dir = docs_dir + "datatypes/"
+templates_dir = docs_dir + "templates/"
+pipelines_dir = docs_dir + "pipelines/"
 
 modules = [janis.bioinformatics, janis.unix]
 
@@ -38,7 +47,7 @@ import os
 from typing import List, Set, Type, Tuple, Dict
 
 import tabulate
-from datetime import date
+from datetime import date, datetime
 
 
 class NestedDictionaryTypeException(Exception):
@@ -171,12 +180,14 @@ Documentation
 
 URL
 ******
+
 {formatted_url}
 
 Tool documentation
 ******************
+
 {metadata.documentation if metadata.documentation else "*No documentation was provided: " + format_rst_link(
-        "contribute one", "https://github.com/illusional") + "*"}
+        "contribute one", f"https://github.com/PMCC-BioinformaticsCore/janis-{tool.tool_module()}") + "*"}
 
 Outputs
 -------
@@ -184,7 +195,7 @@ Outputs
 
 Inputs
 ------
-Find the inputs below
+
 
 Required inputs
 ***************
@@ -200,12 +211,185 @@ Optional inputs
 Metadata
 ********
 
-Author: {metadata.creator if metadata.creator else "**Unknown**"}
+Contributors: {", ".join(metadata.contributors) if metadata.contributors else "**Unknown**"}
 
 
 *{fn} was last updated on {metadata.dateUpdated if metadata.dateUpdated else "**Unknown**"}*.
 *This page was automatically generated on {date.today().strftime("%Y-%m-%d")}*.
 """
+
+
+def prepare_workflow_page(workflow: Workflow, versions: List[str]):
+    if not workflow:
+        return None
+
+    # tool_modules = tool.__module__.split(".") # janis._bioinformatics_.tools.$toolproducer.$toolname.$version
+
+    metadata: WorkflowMetadata = workflow.bind_metadata() or workflow.metadata
+
+    if not workflow.friendly_name():
+        raise Exception(
+            f"Tool '{type(workflow).__name__}' ({workflow.id()}) did not provide the required 'friendly_name' for the docs"
+        )
+
+    fn = workflow.friendly_name() if workflow.friendly_name() else workflow.id()
+    en = f" ({workflow.id()})" if fn != workflow.id() else ""
+    tn = fn + en
+
+    onelinedescription = prepare_byline(
+        metadata.short_documentation, metadata.contributors, versions
+    )
+
+    citation = "\n\n".join([el for el in [metadata.citation, metadata.doi] if el])
+
+    toolmetadata = [
+        ("ID", f"``{workflow.id()}``"),
+        ("Python", f"``{workflow.__module__} import {workflow.__class__.__name__}``"),
+        ("Versions", "\n".join(versions)),
+        ("Contributors", "\n".join(metadata.contributors)),
+        ("Citations", citation),
+        ("Created", str(metadata.dateCreated)),
+        ("Updated", str(metadata.dateUpdated)),
+    ]
+
+    formatted_url = (
+        format_rst_link(metadata.documentationUrl, metadata.documentationUrl)
+        if metadata.documentationUrl
+        else "*No URL to the documentation was provided*"
+    )
+
+    embeddedtoolsraw = {
+        f"{s.tool.id()}/{s.tool.version()}": s.tool
+        for s in workflow.step_nodes.values()
+    }
+    embeddedtools = tabulate.tabulate(
+        [
+            [tool.friendly_name(), f"``{key}``"]
+            for key, tool in embeddedtoolsraw.items()
+        ],
+        tablefmt="rst",
+    )
+
+    input_headers = ["name", "type", "documentation"]
+
+    required_input_tuples = [
+        [i.id(), i.input_type.id(), i.doc]
+        for i in workflow.inputs()
+        if not i.input_type.optional
+    ]
+    optional_input_tuples = [
+        [i.id(), i.input_type.id(), i.doc]
+        for i in workflow.inputs()
+        if i.input_type.optional
+    ]
+
+    formatted_inputs = tabulate.tabulate(
+        required_input_tuples + optional_input_tuples, input_headers, tablefmt="rst"
+    )
+
+    formatted_toolversions_array = []
+    formatted_toolincludes_array = []
+    for v in versions:
+        link = get_tool_url(workflow.id(), v)
+        formatted_toolincludes_array.append(".. include:: " + link)
+        if v == workflow.version():
+            formatted_toolversions_array.append(
+                f"- {v} (current)"
+            )  # + format_rst_link(v + " (current)", link))
+        else:
+            formatted_toolversions_array.append(
+                "- " + format_rst_link(v, link + ".html")
+            )
+
+    output_headers = ["name", "type", "documentation"]
+    output_tuples = [[o.id(), o.output_type.id(), o.doc] for o in workflow.outputs()]
+    formatted_outputs = tabulate.tabulate(output_tuples, output_headers, tablefmt="rst")
+
+    tool_prov = ""
+    if workflow.tool_provider() is None:
+        print("Tool :" + workflow.id() + " has no company")
+    else:
+        tool_prov = "." + workflow.tool_provider().lower()
+
+    workflow_image = (
+        "."
+        or """
+Workflow
+--------
+
+.. raw:: html
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+   <script src="https://unpkg.com/vue-cwl/dist/index.js"></script>
+   <div id="vue" style="width: 800px; height: 500px; border-radius: 5px; overflow: hidden;">
+          <cwl cwl-url="https://unpkg.com/cwl-svg@2.1.5/cwl-samples/fastqc.json"></cwl>
+   </div>
+   <script>
+   new Vue({{
+       el: '#vue',
+       components: {{
+           cwl: vueCwl.default
+       }}
+   }});
+   </script>
+    """
+    )
+
+    nl = "\n"
+
+    return f"""\
+:orphan:
+
+{fn}
+{"=" * len(tn)}
+
+{onelinedescription}
+
+{nl.join(f":{key}: {value}" for key, value in toolmetadata)}
+:Required inputs:
+{(2 * nl).join(f"   - ``{ins.id()}: {ins.datatype.id()}``" for ins in workflow.input_nodes.values() if (not ins.datatype.optional and ins.default is None))}
+:Outputs: 
+{(2 * nl).join(f"   - ``{out.id()}: {out.datatype.id()}``" for out in workflow.output_nodes.values())}
+
+Documentation
+-------------
+
+URL: {formatted_url}
+
+{metadata.documentation if metadata.documentation else "No documentation was provided: " + format_rst_link(
+    "contribute one", f"https://github.com/PMCC-BioinformaticsCore/janis-{workflow.tool_module()}")}
+
+Embedded Tools
+***************
+
+{embeddedtools}
+
+------
+
+Inputs
+------
+
+{formatted_inputs}
+
+{workflow_image}
+"""
+
+
+def prepare_byline(
+    shortdocumentation: str, contributors: List[str], versions: List[str]
+):
+    short_prepared = (
+        shortdocumentation[:-1]
+        if shortdocumentation and shortdocumentation[-1] == "."
+        else shortdocumentation
+    )
+
+    contributors, versions = contributors or [], versions or []
+    contributorstr = (
+        f"{len(contributors)} contributor{'s' if len(contributors) != 1 else ''}"
+    )
+    versionstr = f"{len(versions)} version{'s' if len(versions) != 1 else ''}"
+    return f"{short_prepared} · {contributorstr} · {versionstr}"
 
 
 def prepare_data_type(dt: DataType):
@@ -429,5 +613,151 @@ def prepare_all_tools():
     )
 
 
+def prepare_runner_templates():
+    """
+    Templates can probably 
+    :return:
+    """
+
+    os.makedirs(templates_dir, exist_ok=True)
+
+    for tkey, template in templates.items():
+        with open(os.path.join(templates_dir, tkey + ".rst"), "w+") as f:
+            f.write(prepare_template(tkey, template))
+
+    with open(os.path.join(templates_dir, "index.rst"), "w+") as f:
+        f.write(
+            get_toc(
+                "Templates",
+                intro_text="List of templates for ``janis-runner``",
+                subpages=list(templates.keys()),
+            )
+        )
+
+
+def prepare_template(name: str, template: EnvironmentTemplate):
+
+    schema = get_schema_for_template(template)
+
+    tname = name.title()
+
+    required = [(s.id(), s.type) for s in schema if not s.optional]
+    optional = [(s.id(), s.type, s.default) for s in schema if s.optional]
+
+    # mapped
+
+    requiredf = tabulate.tabulate(required, ["ID", "Type"], tablefmt="rst")
+
+    optionalf = tabulate.tabulate(optional, ["ID", "Type", "Default"], tablefmt="rst")
+
+    nl = "\n"
+
+    return f"""\
+{tname}
+{"=" * len(tname)}
+
+Fields
+-------
+
+**Required**
+
+{requiredf}
+
+**Optional**
+
+{optionalf}
+    
+"""
+
+
+def generate_pipelines_page():
+    print("Generating pipelines page...")
+
+    modules = [janis.pipelines]
+    workflows: List[Workflow] = []
+
+    for module in modules:
+
+        workflows.extend(
+            cls()
+            for n, cls in list(module.__dict__.items())
+            if not n.startswith("__")
+            and type(cls) != type
+            and isclass(cls)
+            and hasattr(cls, "type")
+            and cls.type() == ToolTypes.Workflow
+        )
+
+    wf_strings = "\n".join(
+        generate_pipeline_box(w, leading_space=" " * 8) for w in workflows
+    )
+
+    page = f"""\
+Pipelines
+=========
+
+.. raw:: html
+
+    <div id="box" style="display: flex; flex-flow: wrap;">
+{wf_strings}
+    </div>
+"""
+
+    os.makedirs(pipelines_dir, exist_ok=True)
+
+    with open(os.path.join(pipelines_dir, "index.rst"), "w+") as f:
+        f.write(page)
+
+    # Write all the pages
+    for w in workflows:
+        toolstr = prepare_workflow_page(w, [w.version()])
+        with open(os.path.join(pipelines_dir, w.id().lower() + ".rst"), "w+") as f:
+            f.write(toolstr)
+
+
+def generate_pipeline_box(workflow: Workflow, leading_space=""):
+
+    meta: WorkflowMetadata = workflow.bind_metadata() or workflow.metadata
+
+    tag_component = lambda tag: f'<span class="no-select tagelement">{tag}</span>'
+    href = f"{workflow.id().lower()}.html"
+
+    version_component = (
+        lambda version: f'<p style="margin-bottom: 10px"><a class="version-button" href="{href}">'
+        f'    Version <b>{version[1:] if (version and version.startswith("v")) else version}</b>'
+        f"</a></p>"
+    )
+
+    tags = "".join(tag_component(t) for t in (meta.keywords or []))
+    date: datetime = meta.dateUpdated or meta.dateCreated
+
+    contributors = meta.contributors or []
+    max_display_conts = 5
+    if len(contributors) < max_display_conts:
+        contributorstr = ", ".join(meta.contributors or ["None"])
+    else:
+        nothers = len(contributors) - max_display_conts + 2
+        contributorstr = (
+            ", ".join(meta.contributors[: max_display_conts - 2])
+            + f" and {nothers} others"
+        )
+
+    return "\n".join(
+        leading_space + l
+        for l in f"""
+<div class="col-6" style="margin: 10px; padding: 20px; border: 1px solid #e3e3e3; border-radius: 5px;">
+    <h4 style="margin-bottom: 10px"><a href="{href}">{workflow.friendly_name()}</a></h4>
+    {f'<p>{tags}</p>' if tags else ""}
+    <p>{meta.short_documentation or "<em>Short documentation required</em>"}</p>
+    {version_component(workflow.version() or meta.version)}
+    <p style="margin-bottom: 0px; font-size: 12px">Contributors: {contributorstr}</p>
+</div>""".split(
+            "\n"
+        )
+    )
+
+
 if __name__ == "__main__":
-    prepare_all_tools()
+    # prepare_all_tools()
+    # prepare_runner_templates()
+    generate_pipelines_page()

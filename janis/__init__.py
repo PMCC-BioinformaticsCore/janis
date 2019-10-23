@@ -39,6 +39,8 @@ We'll also add them to the sys.module path which allows us to directly import th
     >> import janis.myextensionmodule as jm
     >> jm.my_function()
 """
+level = Logger.CONSOLE_LEVEL
+Logger.set_console_level(None)
 for entrypoint in pkg_resources.iter_entry_points(group="janis.extension"):
     try:
         m = entrypoint.load()
@@ -47,3 +49,4 @@ for entrypoint in pkg_resources.iter_entry_points(group="janis.extension"):
     except ImportError as e:
         Logger.critical(f"Couldn't import janis extension '{entrypoint.name}': {e}")
         continue
+Logger.set_console_level(level)

@@ -54,7 +54,7 @@ class {name}_{escapedversion}({name}Base):
         return "{version}"
     
     @staticmethod
-    def docker():
+    def container():
         return "{container}"
 """
 

@@ -23,9 +23,9 @@ simple.py
 
 # The classes we require to build a basic workflow
 from janis import WorkflowBuilder
-from janis.unix.data_types.tarfile import TarFile
-from janis.unix.tools.compile import Compile
-from janis.unix.tools.untar import Untar
+from janis.data_types import TarFile
+from janis.tools import Compile
+from janis.tools import Untar
 
 w = WorkflowBuilder("user_guide")
 

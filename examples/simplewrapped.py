@@ -33,11 +33,10 @@ simple.py
 from janis_core import Workflow
 
 # Data types - These help us logically connect workflows
-from janis.unix.data_types.tarfile import TarFile
+from janis.data_types import TarFile
 
 # Tools - The command line tools we're going to call
-from janis.unix.tools.compile import Compile
-from janis.unix.tools.untar import Untar
+from janis.tools import Compile, Untar
 
 
 class SimpleWorkflow(Workflow):

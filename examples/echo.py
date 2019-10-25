@@ -1,5 +1,5 @@
 import janis_core as j
-from janis.unix.tools.echo import Echo
+from janis.tools import Echo
 
 w = j.WorkflowBuilder("workflowId")
 

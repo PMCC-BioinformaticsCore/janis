@@ -23,30 +23,5 @@ _Proudly made on Planet Earth._
 
 """
 
-import sys
-import os
-import pkg_resources
-
-from janis_core import __version__
+from janis_core.__meta__ import __version__
 from janis_core import *
-
-"""
-Get any entrypoints and bind them onto this class so you can use them directly from this class:
-    >> import janis
-    >> janis.myextensionmodule.my_function()
- 
-We'll also add them to the sys.module path which allows us to directly import the module:
-    >> import janis.myextensionmodule as jm
-    >> jm.my_function()
-"""
-level = Logger.CONSOLE_LEVEL
-Logger.set_console_level(None)
-for entrypoint in pkg_resources.iter_entry_points(group="janis.extension"):
-    try:
-        m = entrypoint.load()
-        sys.modules["janis." + entrypoint.name] = m
-        globals()[entrypoint.name] = m
-    except ImportError as e:
-        Logger.critical(f"Couldn't import janis extension '{entrypoint.name}': {e}")
-        continue
-Logger.set_console_level(level)

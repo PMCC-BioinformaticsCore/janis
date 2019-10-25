@@ -1,7 +1,7 @@
 """
 simple.py
 
-    Date: 2019-05-03
+    Date: 2019-10-03
     Author: Michael Franklin
 
 
@@ -35,4 +35,4 @@ w.step("compile", Compile(file=w.untar), scatter="file")
 w.output("compiled", source=w.compile.out)
 
 if __name__ == "__main__":
-    w.translate("cwl", to_disk=True, validate=True)
+    w.translate("wdl", to_disk=True, validate=True)

@@ -1,36 +1,28 @@
 :orphan:
 
-
 GATK4: Print Reads
 ====================================
 
-Description
--------------
+1 contributor · 4 versions
 
-Tool identifier: ``Gatk4PrintReads``
-
-Tool path: ``janis_bioinformatics.tools.gatk4.printreads.versions import Gatk4PrintReads_4_1_3``
-
-Version: 4.1.3.0
-
-Container: ``broadinstitute/gatk:4.1.3.0``
-
-Versions
-*********
-
-- 4.1.3.0 (current)
-- `4.1.2.0 <gatk4printreads_4.1.2.0.html>`_
-- `4.0.12.0 <gatk4printreads_4.0.12.0.html>`_
+:ID: ``Gatk4PrintReads``
+:Python: ``janis_bioinformatics.tools.gatk4.printreads.versions import Gatk4PrintReads_4_1_3``
+:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
+:Container: broadinstitute/gatk:4.1.3.0
+:Authors: Michael Franklin
+:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
+:Created: 2018-12-24
+:Updated: 2019-01-24
+:Required inputs:
+   - ``bam: BAM``
+:Outputs: 
+   - ``out: BamPair``
 
 Documentation
 -------------
 
-URL
-******
-`https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php>`_
+URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php>`_
 
-Tool documentation
-******************
 
 Write reads from SAM format file (SAM/BAM/CRAM) that pass criteria to a new file.
 A common use case is to subset reads by genomic interval using the -L argument. 
@@ -49,42 +41,15 @@ with the --read-filter argument. See documentation category 'Read Filters' for a
 
 The reference is strictly required when handling CRAM files.
 
-Outputs
--------
-======  =======  ===============
-name    type     documentation
-======  =======  ===============
-out     BamPair
-======  =======  ===============
-
-Inputs
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-======  ======  ========  ==========  ===============
-name    type    prefix    position    documentation
-======  ======  ========  ==========  ===============
-bam     BAM
-======  ======  ========  ==========  ===============
-
-Optional inputs
-***************
-
-==============  ==================  ========  ==========  ===============
-name            type                prefix    position    documentation
-==============  ==================  ========  ==========  ===============
+==============  ==================  ===============
+name            type                documentation
+==============  ==================  ===============
+bam             BAM
 outputFilename  Optional<Filename>
-==============  ==================  ========  ==========  ===============
+==============  ==================  ===============
 
-
-Metadata
-********
-
-Author: Michael Franklin
-
-
-*GATK4: Print Reads was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-09-26*.

@@ -24,7 +24,7 @@ Template
 .. code-block:: python
 
    from typing import List, Optional, Union
-   import janis as j
+   import janis_core as j
 
    class ToolName(j.CommandTool):
        @staticmethod

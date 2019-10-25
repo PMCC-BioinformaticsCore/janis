@@ -1,79 +1,68 @@
-
-.. include:: vardictgermlinevariantcaller_v0.1.0
+:orphan:
 
 Vardict Germline Variant Caller
 ==============================================================
 
-Description
--------------
+0 contributors · 1 version
 
-Tool identifier: ``vardictGermlineVariantCaller``
+:ID: ``vardictGermlineVariantCaller``
+:Python: ``janis_bioinformatics.tools.variantcallers.vardictgermline_variants import VardictGermlineVariantCaller``
+:Versions: v0.1.0
+:Authors: 
+:Citations: 
+:Created: None
+:Updated: None
+:Required inputs:
+   - ``bam: BamPair``
 
-Tool path: ``janis_bioinformatics.tools.variantcallers.vardictgermline_variants import VardictGermlineVariantCaller``
+   - ``intervals: bed``
 
-Version: v0.1.0
+   - ``sampleName: String``
 
+   - ``headerLines: File``
 
+   - ``reference: FastaWithDict``
+:Outputs: 
+   - ``vardictVariants: CompressedVCF``
 
-
+   - ``out: VCF``
 
 Documentation
 -------------
 
-URL
-******
-*No URL to the documentation was provided*
+URL: *No URL to the documentation was provided*
 
-Tool documentation
-******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
-Outputs
--------
-===============  =============  ===============
-name             type           documentation
-===============  =============  ===============
-vardictVariants  CompressedVCF
-out              VCF
-===============  =============  ===============
+Embedded Tools
+***************
 
-Inputs
+======================  ============================
+VarDict (Germline)      ``vardict_germline/1.6.0``
+BCFTools: Annotate      ``bcftoolsAnnotate/v1.5``
+Split Multiple Alleles  ``SplitMultiAllele/v0.5772``
+Trim IUPAC Bases        ``trimIUPAC/0.0.4``
+======================  ============================
+
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-===========  =============  ========  ==========  ===============
-name         type           prefix    position    documentation
-===========  =============  ========  ==========  ===============
-bam          BamPair
-intervals    bed
-sampleName   String
-headerLines  File
-reference    FastaWithDict
-===========  =============  ========  ==========  ===============
-
-Optional inputs
-***************
-
-============================  =================  ========  ==========  ===============
-name                          type               prefix    position    documentation
-============================  =================  ========  ==========  ===============
+============================  =================  ===============
+name                          type               documentation
+============================  =================  ===============
+bam                           BamPair
+intervals                     bed
+sampleName                    String
+headerLines                   File
+reference                     FastaWithDict
 alleleFreqThreshold           Optional<Float>
 vardict_chromNamesAreNumbers  Optional<Boolean>
 vardict_vcfFormat             Optional<Boolean>
 vardict_chromColumn           Optional<Integer>
 vardict_regStartCol           Optional<Integer>
 vardict_geneEndCol            Optional<Integer>
-============================  =================  ========  ==========  ===============
+============================  =================  ===============
 
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*Vardict Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-26*.
+.

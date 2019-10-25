@@ -153,10 +153,10 @@ Contents
    :maxdepth: 1
    :caption: References
 
-   references/index
+   pipelines/index
    tools/index
    datatypes/index
-
+   references/index
 
 .. toctree::
    :hidden:
@@ -174,4 +174,4 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`search`
-.. * :ref:`modindex`
+* :ref:`modindex`

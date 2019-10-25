@@ -1,36 +1,30 @@
 :orphan:
 
-
 GATK4: Mark Duplicates
 ============================================
 
-Description
--------------
+1 contributor · 4 versions
 
-Tool identifier: ``Gatk4MarkDuplicates``
+:ID: ``Gatk4MarkDuplicates``
+:Python: ``janis_bioinformatics.tools.gatk4.markduplicates.versions import Gatk4MarkDuplicates_4_1_3``
+:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
+:Container: broadinstitute/gatk:4.1.3.0
+:Authors: Michael Franklin
+:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
+:Created: 2018-12-24
+:Updated: 2019-01-24
+:Required inputs:
+   - ``bam: BamPair``
+:Outputs: 
+   - ``out: BamPair``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.markduplicates.versions import Gatk4MarkDuplicates_4_1_3``
-
-Version: 4.1.3.0
-
-Container: ``broadinstitute/gatk:4.1.3.0``
-
-Versions
-*********
-
-- 4.1.3.0 (current)
-- `4.1.2.0 <gatk4markduplicates_4.1.2.0.html>`_
-- `4.0.12.0 <gatk4markduplicates_4.0.12.0.html>`_
+   - ``metrics: tsv``
 
 Documentation
 -------------
 
-URL
-******
-`https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php>`_
+URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php>`_
 
-Tool documentation
-******************
 MarkDuplicates (Picard): Identifies duplicate reads.
 
 This tool locates and tags duplicate reads in a BAM or SAM file, where duplicate reads are 
@@ -75,58 +69,30 @@ reads are not excluded from the duplication test and can be marked as duplicate 
 
 If desired, duplicates can be removed using the REMOVE_DUPLICATE and REMOVE_SEQUENCING_DUPLICATES options.
 
-Outputs
--------
-=======  =======  ===============
-name     type     documentation
-=======  =======  ===============
-out      BamPair
-metrics  tsv
-=======  =======  ===============
-
-Inputs
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-======  =======  ========  ==========  =========================================================================
-name    type     prefix      position  documentation
-======  =======  ========  ==========  =========================================================================
-bam     BamPair  -I                10  One or more input SAM or BAM files to analyze. Must be coordinate sorted.
-======  =======  ========  ==========  =========================================================================
+====================  =======================  ================================================================================================================================================================================================================================================================================================================================================================================================
+name                  type                     documentation
+====================  =======================  ================================================================================================================================================================================================================================================================================================================================================================================================
+bam                   BamPair                  One or more input SAM or BAM files to analyze. Must be coordinate sorted.
+outputFilename        Optional<Filename>       File to write duplication metrics to
+metricsFilename       Optional<Filename>       The output file to write marked records to.
+argumentsFile         Optional<Array<File>>    read one or more arguments files and add them to the command line
+assumeSortOrder       Optional<String>         If not null, assume that the input file has this order even if the header says otherwise. Exclusion: This argument cannot be used at the same time as ASSUME_SORTED. The --ASSUME_SORT_ORDER argument is an enumerated type (SortOrder), which can have one of the following values: [unsorted, queryname, coordinate, duplicate, unknown]
+barcodeTag            Optional<String>         Barcode SAM tag (ex. BC for 10X Genomics)
+comment               Optional<Array<String>>  Comment(s) to include in the output file's header.
+compressionLevel      Optional<Integer>        Compression level for all compressed files created (e.g. BAM and GELI).
+createIndex           Optional<Boolean>        Whether to create a BAM index when writing a coordinate-sorted BAM file.
+createMd5File         Optional<Boolean>        Whether to create an MD5 digest for any BAM or FASTQ files created.
+maxRecordsInRam       Optional<Integer>        When writing SAM files that need to be sorted, this will specify the number of records stored in RAM before spilling to disk. Increasing this number reduces the number of file handles needed to sort a SAM file, and increases the amount of RAM needed.
+quiet                 Optional<Boolean>        Whether to suppress job-summary info on System.err.
+tmpDir                Optional<String>         Undocumented option
+useJdkDeflater        Optional<Boolean>        Whether to use the JdkDeflater (as opposed to IntelDeflater)
+useJdkInflater        Optional<Boolean>        Whether to use the JdkInflater (as opposed to IntelInflater)
+validationStringency  Optional<String>         Validation stringency for all SAM files read by this program. Setting stringency to SILENT can improve performance when processing a BAM file in which variable-length data (read, qualities, tags) do not otherwise need to be decoded.The --VALIDATION_STRINGENCY argument is an enumerated type (ValidationStringency), which can have one of the following values: [STRICT, LENIENT, SILENT]
+verbosity             Optional<String>         The --verbosity argument is an enumerated type (LogLevel), which can have one of the following values: [ERROR, WARNING, INFO, DEBUG]
+====================  =======================  ================================================================================================================================================================================================================================================================================================================================================================================================
 
-Optional inputs
-***************
-
-====================  =======================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
-name                  type                     prefix                     position  documentation
-====================  =======================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
-outputFilename        Optional<Filename>       -O                               10  File to write duplication metrics to
-metricsFilename       Optional<Filename>       -M                               10  The output file to write marked records to.
-argumentsFile         Optional<Array<File>>    --arguments_file                 10  read one or more arguments files and add them to the command line
-assumeSortOrder       Optional<String>         -ASO                                 If not null, assume that the input file has this order even if the header says otherwise. Exclusion: This argument cannot be used at the same time as ASSUME_SORTED. The --ASSUME_SORT_ORDER argument is an enumerated type (SortOrder), which can have one of the following values: [unsorted, queryname, coordinate, duplicate, unknown]
-barcodeTag            Optional<String>         --BARCODE_TAG                        Barcode SAM tag (ex. BC for 10X Genomics)
-comment               Optional<Array<String>>  -CO                                  Comment(s) to include in the output file's header.
-compressionLevel      Optional<Integer>        --COMPRESSION_LEVEL              11  Compression level for all compressed files created (e.g. BAM and GELI).
-createIndex           Optional<Boolean>        --CREATE_INDEX                   11  Whether to create a BAM index when writing a coordinate-sorted BAM file.
-createMd5File         Optional<Boolean>        --CREATE_MD5_FILE                11  Whether to create an MD5 digest for any BAM or FASTQ files created.
-maxRecordsInRam       Optional<Integer>        --MAX_RECORDS_IN_RAM             11  When writing SAM files that need to be sorted, this will specify the number of records stored in RAM before spilling to disk. Increasing this number reduces the number of file handles needed to sort a SAM file, and increases the amount of RAM needed.
-quiet                 Optional<Boolean>        --QUIET                          11  Whether to suppress job-summary info on System.err.
-tmpDir                Optional<String>         --TMP_DIR                        11  Undocumented option
-useJdkDeflater        Optional<Boolean>        --use_jdk_deflater               11  Whether to use the JdkDeflater (as opposed to IntelDeflater)
-useJdkInflater        Optional<Boolean>        --use_jdk_inflater               11  Whether to use the JdkInflater (as opposed to IntelInflater)
-validationStringency  Optional<String>         --VALIDATION_STRINGENCY          11  Validation stringency for all SAM files read by this program. Setting stringency to SILENT can improve performance when processing a BAM file in which variable-length data (read, qualities, tags) do not otherwise need to be decoded.The --VALIDATION_STRINGENCY argument is an enumerated type (ValidationStringency), which can have one of the following values: [STRICT, LENIENT, SILENT]
-verbosity             Optional<String>         --verbosity                      11  The --verbosity argument is an enumerated type (LogLevel), which can have one of the following values: [ERROR, WARNING, INFO, DEBUG]
-====================  =======================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
-
-
-Metadata
-********
-
-Author: Michael Franklin
-
-
-*GATK4: Mark Duplicates was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-09-26*.

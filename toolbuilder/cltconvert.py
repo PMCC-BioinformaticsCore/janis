@@ -16,7 +16,7 @@ from janis_core.utils.metadata import Metadata, ToolMetadata
 
 tool_template = """
 from datetime import datetime
-from janis import CommandTool, ToolInput, ToolOutput, File, Boolean, String, Int, InputSelector, Filename, ToolMetadata
+from janis_core import CommandTool, ToolInput, ToolOutput, File, Boolean, String, Int, InputSelector, Filename, ToolMetadata
 
 class {name}Base(CommandTool):
 
@@ -54,7 +54,7 @@ class {name}_{escapedversion}({name}Base):
         return "{version}"
     
     @staticmethod
-    def docker():
+    def container():
         return "{container}"
 """
 

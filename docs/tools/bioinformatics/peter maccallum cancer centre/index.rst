@@ -1,16 +1,50 @@
 
+:orphan:
+
 Peter MacCallum Cancer Centre
 =============================
 
-Automatically generated index page for {title}
+Automatically generated index page for Peter MacCallum Cancer Centre:
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+.. raw:: html
 
-   combinevariants
-   performancevalidator
-   splitmultiallele
-   trimiupac
+   <ul>
 
-*This page was auto-generated on 26/09/2019. Please do not directly alter the contents of this page.*
+   </ul>
+     <a href="SplitMultiAllele.html">
+       <p style="margin-bottom: 5px"><b>Split Multiple Alleles</b> <span style="margin-left: 10px; color: darkgray">SplitMultiAllele</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="SplitMultiAllele.html" style="margin-bottom: 10px">
+       v<b>0.5772</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="combinevariants.html">
+       <p style="margin-bottom: 5px"><b>Combine Variants</b> <span style="margin-left: 10px; color: darkgray">combinevariants</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="combinevariants.html" style="margin-bottom: 10px">
+       v<b>0.0.4</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="performanceValidator.html">
+       <p style="margin-bottom: 5px"><b>Performance Validator</b> <span style="margin-left: 10px; color: darkgray">performanceValidator</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="performanceValidator.html" style="margin-bottom: 10px">
+       v<b>1.2.1</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="trimIUPAC.html">
+       <p style="margin-bottom: 5px"><b>Trim IUPAC Bases</b> <span style="margin-left: 10px; color: darkgray">trimIUPAC</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="trimIUPAC.html" style="margin-bottom: 10px">
+       v<b>0.0.4</b>
+     </a></p>
+     </a>
+     <hr />
+         
+

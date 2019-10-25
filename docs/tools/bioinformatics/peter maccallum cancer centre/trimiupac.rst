@@ -1,69 +1,39 @@
-
-.. include:: trimiupac_0.0.4
+:orphan:
 
 Trim IUPAC Bases
 ============================
 
-Description
--------------
+0 contributors · 1 version
 
-Tool identifier: ``trimIUPAC``
-
-Tool path: ``janis_bioinformatics.tools.pmac.trimiupac.trimiupac_0_0_4 import TrimIUPAC_0_0_4``
-
-Version: 0.0.4
-
-Container: ``michaelfranklin/pmacutil:0.0.4``
-
-
+:ID: ``trimIUPAC``
+:Python: ``janis_bioinformatics.tools.pmac.trimiupac.trimiupac_0_0_4 import TrimIUPAC_0_0_4``
+:Versions: 0.0.4
+:Container: michaelfranklin/pmacutil:0.0.4
+:Authors: 
+:Citations: None
+:Created: None
+:Updated: None
+:Required inputs:
+   - ``vcf: VCF``
+:Outputs: 
+   - ``out: VCF``
 
 Documentation
 -------------
 
-URL
-******
-*No URL to the documentation was provided*
+URL: *No URL to the documentation was provided*
 
-Tool documentation
-******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
-Outputs
--------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     VCF
-======  ======  ===============
-
-Inputs
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-======  ======  ========  ==========  ======================================
-name    type    prefix      position  documentation
-======  ======  ========  ==========  ======================================
-vcf     VCF                        0  The VCF to remove the IUPAC bases from
-======  ======  ========  ==========  ======================================
+==============  ==================  ======================================
+name            type                documentation
+==============  ==================  ======================================
+vcf             VCF                 The VCF to remove the IUPAC bases from
+outputFilename  Optional<Filename>
+==============  ==================  ======================================
 
-Optional inputs
-***************
-
-==============  ==================  ========  ==========  ===============
-name            type                prefix      position  documentation
-==============  ==================  ========  ==========  ===============
-outputFilename  Optional<Filename>                     2
-==============  ==================  ========  ==========  ===============
-
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*Trim IUPAC Bases was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-26*.

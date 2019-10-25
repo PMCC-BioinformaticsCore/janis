@@ -42,3 +42,63 @@ body {
 .wy-menu-vertical a {
     color: gray;
 }*/
+
+.version-button, .version-button:visited {
+    border: solid 1px #2980B9;
+    color: #2980B9;
+    padding: 5px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.version-button:visited {
+    border: solid 1px #2980B9;
+    color: #2980B9;
+}
+
+.version-button:hover {
+    border: solid 1px white;
+    color: white;
+    background: #2980B9;
+}
+
+.tagelement {
+    background: #edeff791;
+    color: #2980B9;
+    border-radius: 5px;
+    padding: 3px;
+    margin-right: 8px;
+    font-size: 12px
+}
+
+/* https://www.w3schools.com/css/css_rwd_mediaqueries.asp */
+
+.col-1 {width: 8.33%;}
+.col-2 {width: 16.66%;}
+.col-3 {width: 25%;}
+.col-4 {width: 33.33%;}
+.col-5 {width: 41.66%;}
+.col-6 {width: calc(48% - 10px);}
+.col-7 {width: 58.33%;}
+.col-8 {width: 66.66%;}
+.col-9 {width: 75%;}
+.col-10 {width: 83.33%;}
+.col-11 {width: 91.66%;}
+.col-12 {width: 100%;}
+
+@media only screen and (max-width: 900px) {
+  /* For mobile phones: */
+  [class*="col-"] {
+    width: 100%;
+  }
+}
+
+.no-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+}

@@ -1,73 +1,58 @@
 :orphan:
 
-
 Strelka Germline Variant Caller
 ==============================================================
 
-Description
--------------
+0 contributors · 1 version
 
-Tool identifier: ``strelkaGermlineVariantCaller``
+:ID: ``strelkaGermlineVariantCaller``
+:Python: ``janis_bioinformatics.tools.variantcallers.illuminagermline_strelka import IlluminaGermlineVariantCaller``
+:Versions: v0.1.0
+:Authors: 
+:Citations: 
+:Created: None
+:Updated: None
+:Required inputs:
+   - ``bam: BamPair``
 
-Tool path: ``janis_bioinformatics.tools.variantcallers.illuminagermline_strelka import IlluminaGermlineVariantCaller``
+   - ``reference: FastaWithDict``
+:Outputs: 
+   - ``diploid: CompressedIndexedVCF``
 
-Version: v0.1.0
+   - ``variants: CompressedIndexedVCF``
 
-
-
-
+   - ``out: VCF``
 
 Documentation
 -------------
 
-URL
-******
-*No URL to the documentation was provided*
+URL: *No URL to the documentation was provided*
 
-Tool documentation
-******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
-Outputs
--------
-========  ====================  ===============
-name      type                  documentation
-========  ====================  ===============
-diploid   CompressedIndexedVCF
-variants  CompressedIndexedVCF
-out       VCF
-========  ====================  ===============
+Embedded Tools
+***************
 
-Inputs
+======================  ============================
+Manta                   ``manta/1.5.0``
+Strelka (Germline)      ``strelka_germline/2.9.10``
+BCFTools: View          ``bcftoolsview/v1.5``
+Split Multiple Alleles  ``SplitMultiAllele/v0.5772``
+======================  ============================
+
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-=========  =============  ========  ==========  ===============
-name       type           prefix    position    documentation
-=========  =============  ========  ==========  ===============
-bam        BamPair
-reference  FastaWithDict
-=========  =============  ========  ==========  ===============
-
-Optional inputs
-***************
-
-====================  =======================  ========  ==========  ===============
-name                  type                     prefix    position    documentation
-====================  =======================  ========  ==========  ===============
+====================  =======================  ===============
+name                  type                     documentation
+====================  =======================  ===============
+bam                   BamPair
+reference             FastaWithDict
 intervals             Optional<BedTABIX>
+isExome               Optional<Boolean>
 bcfview_applyFilters  Optional<Array<String>>
-====================  =======================  ========  ==========  ===============
+====================  =======================  ===============
 
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*Strelka Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-26*.
+.

@@ -1,13 +1,23 @@
 
+:orphan:
+
 Papenfuss Labs
 ==============
 
-Automatically generated index page for {title}
+Automatically generated index page for Papenfuss Labs:
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+.. raw:: html
 
-   gridss
+   <ul>
 
-*This page was auto-generated on 26/09/2019. Please do not directly alter the contents of this page.*
+   </ul>
+     <a href="gridss.html">
+       <p style="margin-bottom: 5px"><b>Gridss</b> <span style="margin-left: 10px; color: darkgray">gridss</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gridss.html" style="margin-bottom: 10px">
+       v<b>2.5.1-dev</b>
+     </a></p>
+     </a>
+     <hr />
+         
+

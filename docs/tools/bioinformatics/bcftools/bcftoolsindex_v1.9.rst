@@ -1,75 +1,46 @@
 :orphan:
 
-
 BCFTools: Index
 ===============================
 
-Description
--------------
+0 contributors · 1 version
 
-Tool identifier: ``bcftoolsIndex``
-
-Tool path: ``janis_bioinformatics.tools.bcftools.index.versions import BcfToolsIndex_1_9``
-
-Version: v1.9
-
-Container: ``michaelfranklin/bcftools:1.9``
-
-
+:ID: ``bcftoolsIndex``
+:Python: ``janis_bioinformatics.tools.bcftools.index.versions import BcfToolsIndex_1_9``
+:Versions: v1.9
+:Container: michaelfranklin/bcftools:1.9
+:Authors: 
+:Citations: Li H, Handsaker B, Wysoker A, Fennell T, Ruan J, Homer N, Marth G, Abecasis G, Durbin R, and 1000 Genome Project Data Processing Subgroup, The Sequence alignment/map (SAM) format and SAMtools, Bioinformatics (2009) 25(16) 2078-9
+:DOI: http://www.ncbi.nlm.nih.gov/pubmed/19505943
+:Created: 2019-01-24
+:Updated: None
+:Required inputs:
+   - ``vcf: CompressedVCF``
+:Outputs: 
+   - ``out: CompressedIndexedVCF``
 
 Documentation
 -------------
 
-URL
-******
-`https://samtools.github.io/bcftools/bcftools.html#norm <https://samtools.github.io/bcftools/bcftools.html#norm>`_
+URL: `https://samtools.github.io/bcftools/bcftools.html#norm <https://samtools.github.io/bcftools/bcftools.html#norm>`_
 
-Tool documentation
-******************
 Index bgzip compressed VCF/BCF files for random access.
 
-Outputs
--------
-======  ====================  ===============
-name    type                  documentation
-======  ====================  ===============
-out     CompressedIndexedVCF
-======  ====================  ===============
-
-Inputs
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-======  =============  ========  ==========  ===============
-name    type           prefix      position  documentation
-======  =============  ========  ==========  ===============
-vcf     CompressedVCF                     1
-======  =============  ========  ==========  ===============
+========  =================  ============================================================
+name      type               documentation
+========  =================  ============================================================
+vcf       CompressedVCF
+csi       Optional<Boolean>  (-c) generate CSI-format index for VCF/BCF files [default]
+force     Optional<Boolean>  (-f) overwrite index if it already exists
+minShift  Optional<Integer>  (-m) set minimal interval size for CSI indices to 2^INT [14]
+tbi       Optional<Boolean>  (-t) generate TBI-format index for VCF files
+threads   Optional<Integer>  sets the number of threads [0]
+nrecords  Optional<Boolean>  (-n) print number of records based on existing index file
+stats     Optional<Boolean>  (-s) print per contig stats based on existing index file
+========  =================  ============================================================
 
-Optional inputs
-***************
-
-========  =================  ===========  ==========  ============================================================
-name      type               prefix       position    documentation
-========  =================  ===========  ==========  ============================================================
-csi       Optional<Boolean>  --csi                    (-c) generate CSI-format index for VCF/BCF files [default]
-force     Optional<Boolean>  --force                  (-f) overwrite index if it already exists
-minShift  Optional<Integer>  --min-shift              (-m) set minimal interval size for CSI indices to 2^INT [14]
-tbi       Optional<Boolean>  --tbi                    (-t) generate TBI-format index for VCF files
-threads   Optional<Integer>  --threads                sets the number of threads [0]
-nrecords  Optional<Boolean>  --nrecords               (-n) print number of records based on existing index file
-stats     Optional<Boolean>  --stats                  (-s) print per contig stats based on existing index file
-========  =================  ===========  ==========  ============================================================
-
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*BCFTools: Index was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-26*.

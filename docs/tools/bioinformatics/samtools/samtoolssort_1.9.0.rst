@@ -1,35 +1,30 @@
 :orphan:
 
-
 SamTools: Sort
 =============================
 
-Description
--------------
+1 contributor · 2 versions
 
-Tool identifier: ``SamToolsSort``
+:ID: ``SamToolsSort``
+:Python: ``janis_bioinformatics.tools.samtools.sort.sort import SamToolsSort_1_9``
+:Versions: 1.9.0, 1.7.0
+:Container: quay.io/biocontainers/samtools:1.9--h8571acd_11
+:Authors: Michael Franklin
+:Citations: None
+:Created: 2018-12-24
+:Updated: 2019-01-24
+:Required inputs:
+   - ``bam: BAM``
+:Outputs: 
+   - ``out: BAM``
 
-Tool path: ``janis_bioinformatics.tools.samtools.sort.sort import SamToolsSort_1_9``
-
-Version: 1.9.0
-
-Container: ``quay.io/biocontainers/samtools:1.9--h8571acd_11``
-
-Versions
-*********
-
-- 1.9.0 (current)
-- `1.7.0 <samtoolssort_1.7.0.html>`_
+   - ``temporaryOutputs: Optional<Array<BAM>>``
 
 Documentation
 -------------
 
-URL
-******
-`http://www.htslib.org/doc/samtools.html#DESCRIPTION <http://www.htslib.org/doc/samtools.html#DESCRIPTION>`_
+URL: `http://www.htslib.org/doc/samtools.html#DESCRIPTION <http://www.htslib.org/doc/samtools.html#DESCRIPTION>`_
 
-Tool documentation
-******************
 Ensure SAMTOOLS.SORT is inheriting from parent metadata
     
 ---------------------------------------------------------------------------------------------------
@@ -78,51 +73,23 @@ When the -n option is not present, reads are sorted by reference (according to t
     should be changed to an appropriate combination of -T PREFIX and -o FILE. The previous -o 
     option should be removed, as output defaults to standard output.
 
-Outputs
--------
-================  ====================  ==============================================================================================================================================================================================
-name              type                  documentation
-================  ====================  ==============================================================================================================================================================================================
-out               BAM
-temporaryOutputs  Optional<Array<BAM>>  By default, any temporary files are written alongside the output file, as out.bam.tmp.nnnn.bam, or if output is to standard output, in the current directory as samtools.mmm.mmm.tmp.nnnn.bam.
-================  ====================  ==============================================================================================================================================================================================
-
-Inputs
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-======  ======  ========  ==========  ===============
-name    type    prefix      position  documentation
-======  ======  ========  ==========  ===============
-bam     BAM                       10
-======  ======  ========  ==========  ===============
+====================  ==================  ===========================================================================================================================================================================================================================================
+name                  type                documentation
+====================  ==================  ===========================================================================================================================================================================================================================================
+bam                   BAM
+compression           Optional<Integer>   Set the desired compression level for the final output file, ranging from 0 (uncompressed) or 1 (fastest but minimal compression) to 9 (best compression but slowest to write), similarly to gzip(1)'s compression level setting.
+                                          If -l is not used, the default compression level will apply.
+maximumMemory         Optional<String>    Approximately the maximum required memory per thread, specified  either in bytes or with a K, M, or G suffix [768 MiB]. To prevent sort from creating a huge number of temporary files, it enforces a minimum value of 1M for this setting.
+sortByReadNames       Optional<Boolean>   Sort by read names (i.e., the QNAME field) rather than by chromosomal coordinates.
+outputType            Optional<String>    Write the final output as sam, bam, or cram. By default, samtools tries to select a format based on the -o filename extension; if output is to standard output or no format can be deduced, bam is selected.
+temporaryFilesPrefix  Optional<String>    Write temporary files to PREFIX.nnnn.bam, or if the specified PREFIX is an existing directory, to PREFIX/samtools.mmm.mmm.tmp.nnnn.bam, where mmm is unique to this invocation of the sort command.
+                                          By default, any temporary files are written alongside the output file, as out.bam.tmp.nnnn.bam, or if output is to standard output, in the current directory as samtools.mmm.mmm.tmp.nnnn.bam.
+threads               Optional<Integer>   Set number of sorting and compression threads. By default, operation is single-threaded.
+outputFilename        Optional<Filename>  Output to FILE [stdout].
+====================  ==================  ===========================================================================================================================================================================================================================================
 
-Optional inputs
-***************
-
-====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
-name                  type                prefix      position  documentation
-====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
-compression           Optional<Integer>   -l                    Set the desired compression level for the final output file, ranging from 0 (uncompressed) or 1 (fastest but minimal compression) to 9 (best compression but slowest to write), similarly to gzip(1)'s compression level setting.
-                                                                If -l is not used, the default compression level will apply.
-maximumMemory         Optional<String>    -m                    Approximately the maximum required memory per thread, specified  either in bytes or with a K, M, or G suffix [768 MiB]. To prevent sort from creating a huge number of temporary files, it enforces a minimum value of 1M for this setting.
-sortByReadNames       Optional<Boolean>   -n                    Sort by read names (i.e., the QNAME field) rather than by chromosomal coordinates.
-outputType            Optional<String>    -O                    Write the final output as sam, bam, or cram. By default, samtools tries to select a format based on the -o filename extension; if output is to standard output or no format can be deduced, bam is selected.
-temporaryFilesPrefix  Optional<String>    -T                    Write temporary files to PREFIX.nnnn.bam, or if the specified PREFIX is an existing directory, to PREFIX/samtools.mmm.mmm.tmp.nnnn.bam, where mmm is unique to this invocation of the sort command.
-                                                                By default, any temporary files are written alongside the output file, as out.bam.tmp.nnnn.bam, or if output is to standard output, in the current directory as samtools.mmm.mmm.tmp.nnnn.bam.
-threads               Optional<Integer>   -@                    Set number of sorting and compression threads. By default, operation is single-threaded.
-outputFilename        Optional<Filename>  -o                 5  Output to FILE [stdout].
-====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
-
-
-Metadata
-********
-
-Author: Michael Franklin
-
-
-*SamTools: Sort was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-09-26*.

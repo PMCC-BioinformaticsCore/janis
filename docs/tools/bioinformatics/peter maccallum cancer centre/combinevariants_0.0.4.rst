@@ -1,31 +1,32 @@
 :orphan:
 
-
 Combine Variants
 ==================================
 
-Description
--------------
+1 contributor · 1 version
 
-Tool identifier: ``combinevariants``
+:ID: ``combinevariants``
+:Python: ``janis_bioinformatics.tools.pmac.combinevariants.combinevariants_0_0_4 import CombineVariants_0_0_4``
+:Versions: 0.0.4
+:Container: michaelfranklin/pmacutil:0.0.4
+:Authors: Michael Franklin
+:Citations: None
+:Created: None
+:Updated: 2019-07-04 00:00:00
+:Required inputs:
+   - ``vcfs: Array<VCF>``
 
-Tool path: ``janis_bioinformatics.tools.pmac.combinevariants.combinevariants_0_0_4 import CombineVariants_0_0_4``
+   - ``type: String``
+:Outputs: 
+   - ``vcf: VCF``
 
-Version: 0.0.4
-
-Container: ``michaelfranklin/pmacutil:0.0.4``
-
-
+   - ``tsv: tsv``
 
 Documentation
 -------------
 
-URL
-******
-`https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils <https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils>`_
+URL: `https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils <https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils>`_
 
-Tool documentation
-******************
 
 usage: combine_vcf.py [-h] -i I --columns COLUMNS -o O --type
                       {germline,somatic} [--regions REGIONS] [--normal NORMAL]
@@ -55,49 +56,21 @@ optional arguments:
   -h, --help            show this help message and exit
 
 
-Outputs
--------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-vcf     VCF
-tsv     tsv
-======  ======  ===============
-
-Inputs
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-======  ==========  ========  ==========  ============================================================================
-name    type        prefix    position    documentation
-======  ==========  ========  ==========  ============================================================================
-vcfs    Array<VCF>  -i                    input vcfs, the priority of the vcfs will be based on the order of the input
-type    String      --type                germline | somatic
-======  ==========  ========  ==========  ============================================================================
+==============  =======================  =============================================================================
+name            type                     documentation
+==============  =======================  =============================================================================
+vcfs            Array<VCF>               input vcfs, the priority of the vcfs will be based on the order of the input
+type            String                   germline | somatic
+outputFilename  Optional<Filename>
+regions         Optional<Filename>       Region file containing all the variants, used as samtools mpileup
+columns         Optional<Array<String>>  Columns to keep, seperated by space output vcf (unsorted)
+normal          Optional<String>         Sample id of germline vcf, or normal sample id of somatic vcf
+tumor           Optional<String>         tumor sample ID, required if inputs are somatic vcfs
+priority        Optional<Integer>        The priority of the callers, must match with the callers in the source header
+==============  =======================  =============================================================================
 
-Optional inputs
-***************
-
-==============  =======================  ==========  ==========  =============================================================================
-name            type                     prefix      position    documentation
-==============  =======================  ==========  ==========  =============================================================================
-outputFilename  Optional<Filename>       -o
-regions         Optional<Filename>       --regions               Region file containing all the variants, used as samtools mpileup
-columns         Optional<Array<String>>  --columns               Columns to keep, seperated by space output vcf (unsorted)
-normal          Optional<String>         --normal                Sample id of germline vcf, or normal sample id of somatic vcf
-tumor           Optional<String>         --tumor                 tumor sample ID, required if inputs are somatic vcfs
-priority        Optional<Integer>        --priority              The priority of the callers, must match with the callers in the source header
-==============  =======================  ==========  ==========  =============================================================================
-
-
-Metadata
-********
-
-Author: Jiaan Yu
-
-
-*Combine Variants was last updated on 2019-07-04 00:00:00*.
-*This page was automatically generated on 2019-09-26*.

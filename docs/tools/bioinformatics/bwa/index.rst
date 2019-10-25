@@ -1,13 +1,23 @@
 
+:orphan:
+
 BWA
 ===
 
-Automatically generated index page for {title}
+Automatically generated index page for BWA:
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+.. raw:: html
 
-   bwamem
+   <ul>
 
-*This page was auto-generated on 26/09/2019. Please do not directly alter the contents of this page.*
+   </ul>
+     <a href="bwamem.html">
+       <p style="margin-bottom: 5px"><b>BWA-MEM</b> <span style="margin-left: 10px; color: darkgray">bwamem</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="bwamem.html" style="margin-bottom: 10px">
+       v<b>0.7.15</b>
+     </a></p>
+     </a>
+     <hr />
+         
+

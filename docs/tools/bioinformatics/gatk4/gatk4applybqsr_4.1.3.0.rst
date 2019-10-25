@@ -1,36 +1,30 @@
 :orphan:
 
-
 GATK4: Apply base quality score recalibration
 ==============================================================
 
-Description
--------------
+1 contributor · 4 versions
 
-Tool identifier: ``GATK4ApplyBQSR``
+:ID: ``GATK4ApplyBQSR``
+:Python: ``janis_bioinformatics.tools.gatk4.applybqsr.versions import Gatk4ApplyBqsr_4_1_3``
+:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
+:Container: broadinstitute/gatk:4.1.3.0
+:Authors: Michael Franklin
+:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
+:Created: 2018-12-24
+:Updated: 2019-01-24
+:Required inputs:
+   - ``bam: BamPair``
 
-Tool path: ``janis_bioinformatics.tools.gatk4.applybqsr.versions import Gatk4ApplyBqsr_4_1_3``
-
-Version: 4.1.3.0
-
-Container: ``broadinstitute/gatk:4.1.3.0``
-
-Versions
-*********
-
-- 4.1.3.0 (current)
-- `4.1.2.0 <gatk4applybqsr_4.1.2.0.html>`_
-- `4.0.12.0 <gatk4applybqsr_4.0.12.0.html>`_
+   - ``reference: FastaWithDict``
+:Outputs: 
+   - ``out: BamPair``
 
 Documentation
 -------------
 
-URL
-******
-`https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_ApplyBQSR.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_ApplyBQSR.php>`_
+URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_ApplyBQSR.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_bqsr_ApplyBQSR.php>`_
 
-Tool documentation
-******************
 Apply base quality score recalibration: This tool performs the second pass in a two-stage 
 process called Base Quality Score Recalibration (BQSR). Specifically, it recalibrates the 
 base qualities of the input reads based on the recalibration table produced by the 
@@ -50,46 +44,19 @@ and write out the recalibrated data to a new BAM or CRAM file.
 - Original qualities can be retained in the output file under the "OQ" tag if desired. 
     See the `--emit-original-quals` argument for details.
 
-Outputs
--------
-======  =======  ===============
-name    type     documentation
-======  =======  ===============
-out     BamPair
-======  =======  ===============
-
-Inputs
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-=========  =============  ========  ==========  =======================================
-name       type           prefix      position  documentation
-=========  =============  ========  ==========  =======================================
-bam        BamPair        -I                10  The SAM/BAM/CRAM file containing reads.
-reference  FastaWithDict  -R                    Reference sequence
-=========  =============  ========  ==========  =======================================
+==============  ==================  =============================================================
+name            type                documentation
+==============  ==================  =============================================================
+bam             BamPair             The SAM/BAM/CRAM file containing reads.
+reference       FastaWithDict       Reference sequence
+outputFilename  Optional<Filename>  Write output to this file
+recalFile       Optional<tsv>       Input recalibration table for BQSR
+intervals       Optional<bed>       -L (BASE) One or more genomic intervals over which to operate
+tmpDir          Optional<String>    Temp directory to use.
+==============  ==================  =============================================================
 
-Optional inputs
-***************
-
-==============  ==================  =================  ==========  =============================================================
-name            type                prefix               position  documentation
-==============  ==================  =================  ==========  =============================================================
-outputFilename  Optional<Filename>  -O                             Write output to this file
-recalFile       Optional<tsv>       --bqsr-recal-file              Input recalibration table for BQSR
-intervals       Optional<bed>       --intervals                    -L (BASE) One or more genomic intervals over which to operate
-tmpDir          Optional<String>    --tmp-dir                  11  Temp directory to use.
-==============  ==================  =================  ==========  =============================================================
-
-
-Metadata
-********
-
-Author: Michael Franklin
-
-
-*GATK4: Apply base quality score recalibration was last updated on 2019-01-24*.
-*This page was automatically generated on 2019-09-26*.

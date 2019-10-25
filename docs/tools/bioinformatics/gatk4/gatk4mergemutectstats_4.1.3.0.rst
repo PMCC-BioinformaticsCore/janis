@@ -1,73 +1,39 @@
 :orphan:
 
-
 GATK4: MergeMutectStats
 ===============================================
 
-Description
--------------
+1 contributor · 3 versions
 
-Tool identifier: ``GATK4MergeMutectStats``
-
-Tool path: ``janis_bioinformatics.tools.gatk4.mergemutectstats.versions import Gatk4MergeMutectStats_4_1_3``
-
-Version: 4.1.3.0
-
-Container: ``broadinstitute/gatk:4.1.3.0``
-
-Versions
-*********
-
-- 4.1.3.0 (current)
-- `4.1.2.0 <gatk4mergemutectstats_4.1.2.0.html>`_
+:ID: ``GATK4MergeMutectStats``
+:Python: ``janis_bioinformatics.tools.gatk4.mergemutectstats.versions import Gatk4MergeMutectStats_4_1_3``
+:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
+:Container: broadinstitute/gatk:4.1.3.0
+:Authors: Hollizeck Sebastian
+:Citations: TBD
+:Created: 2019-09-09
+:Updated: 2019-09-09
+:Required inputs:
+   - ``statsFiles: Array<TextFile>``
+:Outputs: 
+   - ``out: TextFile``
 
 Documentation
 -------------
 
-URL
-******
-`TBD <TBD>`_
+URL: `TBD <TBD>`_
 
-Tool documentation
-******************
 TBD
 
-Outputs
--------
-======  ========  ========================
-name    type      documentation
-======  ========  ========================
-out     TextFile  Merged callability stats
-======  ========  ========================
-
-Inputs
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-==========  ===============  ========  ==========  =================
-name        type             prefix      position  documentation
-==========  ===============  ========  ==========  =================
-statsFiles  Array<TextFile>  --stats            0  Callability stats
-==========  ===============  ========  ==========  =================
+==============  ==================  =================
+name            type                documentation
+==============  ==================  =================
+statsFiles      Array<TextFile>     Callability stats
+mergedStatsOut  Optional<Filename>
+==============  ==================  =================
 
-Optional inputs
-***************
-
-==============  ==================  ========  ==========  ===============
-name            type                prefix      position  documentation
-==============  ==================  ========  ==========  ===============
-mergedStatsOut  Optional<Filename>  -O                 1
-==============  ==================  ========  ==========  ===============
-
-
-Metadata
-********
-
-Author: Hollizeck Sebastian
-
-
-*GATK4: MergeMutectStats was last updated on 2019-09-09*.
-*This page was automatically generated on 2019-09-26*.

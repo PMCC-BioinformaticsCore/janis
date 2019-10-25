@@ -1,36 +1,33 @@
 :orphan:
 
-
 Gridss
 ===============
 
-Description
--------------
+1 contributor · 3 versions
 
-Tool identifier: ``gridss``
+:ID: ``gridss``
+:Python: ``janis_bioinformatics.tools.pappenfuss.gridss.gridss import Gridss_2_5_1``
+:Versions: v2.5.1-dev, v2.4.0, v2.2.3
+:Container: michaelfranklin/gridss:2.5.1-dev2
+:Authors: Michael Franklin
+:Citations: Daniel L. Cameron, Jan Schröder, Jocelyn Sietsma Penington, Hongdo Do, Ramyar Molania, Alexander Dobrovic, Terence P. Speed and Anthony T. Papenfuss. GRIDSS: sensitive and specific genomic rearrangement detection using positional de Bruijn graph assembly. Genome Research, 2017 doi: 10.1101/gr.222109.117
+:DOI: 10.1101/gr.222109.117
+:Created: 2019-06-19
+:Updated: 2019-08-20
+:Required inputs:
+   - ``bams: Array<BAM>``
 
-Tool path: ``janis_bioinformatics.tools.pappenfuss.gridss.gridss import Gridss_2_5_1``
+   - ``reference: FastaWithDict``
+:Outputs: 
+   - ``out: VCF``
 
-Version: v2.5.1-dev
-
-Container: ``michaelfranklin/gridss:2.5.1-dev2``
-
-Versions
-*********
-
-- v2.5.1-dev (current)
-- `v2.4.0 <gridss_v2.4.0.html>`_
-- `v2.2.3 <gridss_v2.2.3.html>`_
+   - ``assembly: BAM``
 
 Documentation
 -------------
 
-URL
-******
-`https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation <https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation>`_
+URL: `https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation <https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation>`_
 
-Tool documentation
-******************
 GRIDSS: the Genomic Rearrangement IDentification Software Suite
 
 GRIDSS is a module software suite containing tools useful for the detection of genomic rearrangements.
@@ -47,47 +44,19 @@ If you have any trouble running GRIDSS, please raise an issue using the Issues t
 from users, a user guide will be produced outlining common workflows, pitfalls, and use cases.
 
 
-Outputs
--------
-========  ======  ===============
-name      type    documentation
-========  ======  ===============
-out       VCF
-assembly  BAM
-========  ======  ===============
-
-Inputs
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-=========  =============  ===========  ==========  ===============
-name       type           prefix         position  documentation
-=========  =============  ===========  ==========  ===============
-bams       Array<BAM>                          10
-reference  FastaWithDict  --reference           1
-=========  =============  ===========  ==========  ===============
+================  ==================  ===============
+name              type                documentation
+================  ==================  ===============
+bams              Array<BAM>
+reference         FastaWithDict
+outputFilename    Optional<Filename>
+assemblyFilename  Optional<Filename>
+threads           Optional<Integer>
+blacklist         Optional<bed>
+================  ==================  ===============
 
-Optional inputs
-***************
-
-================  ==================  ===========  ==========  ===============
-name              type                prefix         position  documentation
-================  ==================  ===========  ==========  ===============
-outputFilename    Optional<Filename>  --output              2
-assemblyFilename  Optional<Filename>  --assembly            3
-threads           Optional<Integer>   --threads
-blacklist         Optional<bed>       --blacklist           4
-================  ==================  ===========  ==========  ===============
-
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*Gridss was last updated on 2019-08-20*.
-*This page was automatically generated on 2019-09-26*.

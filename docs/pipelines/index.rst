@@ -9,7 +9,9 @@ Pipelines
             <h4 style="margin-bottom: 10px"><a href="wgsgermlinemulticallers.html">WGS Germline (Multi callers)</a></h4>
             <p><span class="no-select tagelement">wgs</span><span class="no-select tagelement">cancer</span><span class="no-select tagelement">germline</span><span class="no-select tagelement">variants</span><span class="no-select tagelement">gatk</span><span class="no-select tagelement">vardict</span><span class="no-select tagelement">strelka</span></p>
             <p>A variant-calling WGS pipeline using GATK, VarDict and Strelka2.</p>
-            <p style="margin-bottom: 10px"><a class="version-button" href="wgsgermlinemulticallers.html">    Version <b>1.0.0</b></a></p>
+            <a class="version-button"  style="margin-bottom: 10px">
+          v<b>1.0.0</b>
+        </a>
             <p style="margin-bottom: 0px; font-size: 12px">Contributors: Michael Franklin</p>
         </div>
         
@@ -17,7 +19,9 @@ Pipelines
             <h4 style="margin-bottom: 10px"><a href="wgsgermlinegatk.html">WGS Germline (GATK only)</a></h4>
             <p><span class="no-select tagelement">wgs</span><span class="no-select tagelement">cancer</span><span class="no-select tagelement">germline</span><span class="no-select tagelement">variants</span><span class="no-select tagelement">gatk</span></p>
             <p>A variant-calling WGS pipeline using only the GATK Haplotype variant caller.</p>
-            <p style="margin-bottom: 10px"><a class="version-button" href="wgsgermlinegatk.html">    Version <b>1.0.0</b></a></p>
+            <a class="version-button"  style="margin-bottom: 10px">
+          v<b>1.0.0</b>
+        </a>
             <p style="margin-bottom: 0px; font-size: 12px">Contributors: Michael Franklin</p>
         </div>
         
@@ -25,7 +29,9 @@ Pipelines
             <h4 style="margin-bottom: 10px"><a href="wgssomaticmulticallers.html">WGS Somatic (Multi callers)</a></h4>
             <p><span class="no-select tagelement">wgs</span><span class="no-select tagelement">cancer</span><span class="no-select tagelement">somatic</span><span class="no-select tagelement">variants</span><span class="no-select tagelement">gatk</span><span class="no-select tagelement">vardict</span><span class="no-select tagelement">strelka</span></p>
             <p>A somatic tumor-normal variant-calling WGS pipeline using GATK, VarDict and Strelka2.</p>
-            <p style="margin-bottom: 10px"><a class="version-button" href="wgssomaticmulticallers.html">    Version <b>0.1.0</b></a></p>
+            <a class="version-button"  style="margin-bottom: 10px">
+          v<b>0.1.0</b>
+        </a>
             <p style="margin-bottom: 0px; font-size: 12px">Contributors: Michael Franklin</p>
         </div>
         
@@ -33,7 +39,9 @@ Pipelines
             <h4 style="margin-bottom: 10px"><a href="wgssomaticgatk.html">WGS Somatic (GATK only)</a></h4>
             <p><span class="no-select tagelement">wgs</span><span class="no-select tagelement">cancer</span><span class="no-select tagelement">somatic</span><span class="no-select tagelement">variants</span><span class="no-select tagelement">gatk</span></p>
             <p>A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2</p>
-            <p style="margin-bottom: 10px"><a class="version-button" href="wgssomaticgatk.html">    Version <b>0.1.0</b></a></p>
+            <a class="version-button"  style="margin-bottom: 10px">
+          v<b>0.1.0</b>
+        </a>
             <p style="margin-bottom: 0px; font-size: 12px">Contributors: Michael Franklin</p>
         </div>
     </div>

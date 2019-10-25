@@ -8,7 +8,7 @@ A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2 · 1
 :ID: ``WGSSomaticGATK``
 :Python: ``janis_pipelines.wgs_somatic_gatk.wgssomaticgatk import WGSSomaticGATK``
 :Versions: v0.1.0
-:Contributors: Michael Franklin
+:Authors: Michael Franklin
 :Citations: 
 :Created: None
 :Updated: 2019-10-16
@@ -58,8 +58,8 @@ BCFTools: Sort                ``bcftoolssort/v1.9``
 
 ------
 
-Inputs
-------
+Additional configuration (inputs)
+---------------------------------
 
 =============  ====================  ===============
 name           type                  documentation

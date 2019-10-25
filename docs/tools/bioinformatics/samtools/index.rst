@@ -1,14 +1,32 @@
 
+:orphan:
+
 Samtools
 ========
 
-Automatically generated index page for {title}
+Automatically generated index page for Samtools:
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+.. raw:: html
 
-   samtoolssort
-   samtoolsview
+   <ul>
 
-*This page was auto-generated on 26/09/2019. Please do not directly alter the contents of this page.*
+   </ul>
+     <a href="SamToolsSort.html">
+       <p style="margin-bottom: 5px"><b>SamTools: Sort</b> <span style="margin-left: 10px; color: darkgray">SamToolsSort</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="SamToolsSort.html" style="margin-bottom: 10px">
+       v<b>1.9.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="SamToolsView.html">
+       <p style="margin-bottom: 5px"><b>SamTools: View</b> <span style="margin-left: 10px; color: darkgray">SamToolsView</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="SamToolsView.html" style="margin-bottom: 10px">
+       v<b>1.9.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+

@@ -1,68 +1,38 @@
 :orphan:
 
-
 Java compiler
 ============================
 
-Description
--------------
+0 contributors · 1 version
 
-Tool identifier: ``javacompiler``
-
-Tool path: ``janis_unix.tools.compile import Compile``
-
-Version: v1.0.0
-
-Container: ``openjdk:8``
-
-
+:ID: ``javacompiler``
+:Python: ``janis_unix.tools.compile import Compile``
+:Versions: v1.0.0
+:Container: openjdk:8
+:Authors: 
+:Citations: None
+:Created: None
+:Updated: None
+:Required inputs:
+   - ``file: File``
+:Outputs: 
+   - ``out: File``
 
 Documentation
 -------------
 
-URL
-******
-*No URL to the documentation was provided*
+URL: *No URL to the documentation was provided*
 
-Tool documentation
-******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-unix>`_
 
-Outputs
--------
+------
+
+Additional configuration (inputs)
+---------------------------------
+
 ======  ======  ===============
 name    type    documentation
 ======  ======  ===============
-out     File
+file    File
 ======  ======  ===============
 
-Inputs
-------
-Find the inputs below
-
-Required inputs
-***************
-
-======  ======  ========  ==========  ===============
-name    type    prefix      position  documentation
-======  ======  ========  ==========  ===============
-file    File                       1
-======  ======  ========  ==========  ===============
-
-Optional inputs
-***************
-
-======  ======  ========  ==========  ===============
-name    type    prefix    position    documentation
-======  ======  ========  ==========  ===============
-======  ======  ========  ==========  ===============
-
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*Java compiler was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-26*.

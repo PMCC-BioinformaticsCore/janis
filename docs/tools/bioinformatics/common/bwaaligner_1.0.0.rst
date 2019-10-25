@@ -1,62 +1,53 @@
 :orphan:
 
-
 Align and sort reads
 =================================
 
-Description
--------------
+0 contributors · 1 version
 
-Tool identifier: ``BwaAligner``
+:ID: ``BwaAligner``
+:Python: ``janis_bioinformatics.tools.common.bwaaligner import BwaAligner``
+:Versions: 1.0.0
+:Authors: 
+:Citations: 
+:Created: 2018-12-24
+:Updated: None
+:Required inputs:
+   - ``sampleName: String``
 
-Tool path: ``janis_bioinformatics.tools.common.bwaaligner import BwaAligner``
+   - ``reference: FastaWithDict``
 
-Version: 1.0.0
-
-
-
-
+   - ``fastq: FastqGzPair``
+:Outputs: 
+   - ``out: BamPair``
 
 Documentation
 -------------
 
-URL
-******
-*No URL to the documentation was provided*
+URL: *No URL to the documentation was provided*
 
-Tool documentation
-******************
 Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam
 
-Outputs
--------
-======  =======  ===============
-name    type     documentation
-======  =======  ===============
-out     BamPair
-======  =======  ===============
+Embedded Tools
+***************
 
-Inputs
+=======================  =================================
+Cutadapt                 ``cutadapt/1.18``
+Bwa mem + Samtools View  ``BwaMemSamtoolsView/0.7.17|1.9``
+GATK4: SortSAM           ``gatk4sortsam/4.1.3.0``
+=======================  =================================
+
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-=========  =============  ========  ==========  ===============
-name       type           prefix    position    documentation
-=========  =============  ========  ==========  ===============
-name       String
-reference  FastaWithDict
-fastq      FastqGzPair
-=========  =============  ========  ==========  ===============
-
-Optional inputs
-***************
-
-=============================  =================  ========  ==========  ===============
-name                           type               prefix    position    documentation
-=============================  =================  ========  ==========  ===============
+=============================  =================  ===============
+name                           type               documentation
+=============================  =================  ===============
+sampleName                     String
+reference                      FastaWithDict
+fastq                          FastqGzPair
 cutadapt_adapter               Optional<String>
 cutadapt_adapter_g             Optional<String>
 cutadapt_removeMiddle5Adapter  Optional<String>
@@ -69,14 +60,6 @@ sortsam_createIndex            Optional<Boolean>
 sortsam_validationStringency   Optional<String>
 sortsam_maxRecordsInRam        Optional<Integer>
 sortsam_tmpDir                 Optional<String>
-=============================  =================  ========  ==========  ===============
+=============================  =================  ===============
 
-
-Metadata
-********
-
-Author: Michael Franklin
-
-
-*Align and sort reads was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-26*.
+.

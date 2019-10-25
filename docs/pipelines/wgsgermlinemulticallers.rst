@@ -8,7 +8,7 @@ A variant-calling WGS pipeline using GATK, VarDict and Strelka2 · 1 contributor
 :ID: ``WGSGermlineMultiCallers``
 :Python: ``janis_pipelines.wgs_germline.wgsgermline import WGSGermlineMultiCallers``
 :Versions: 1.0.0
-:Contributors: Michael Franklin
+:Authors: Michael Franklin
 :Citations: 
 :Created: None
 :Updated: 2019-10-16
@@ -73,8 +73,8 @@ BCFTools: Sort                   ``bcftoolssort/v1.9``
 
 ------
 
-Inputs
-------
+Additional configuration (inputs)
+---------------------------------
 
 =============================  =======================  ===============
 name                           type                     documentation

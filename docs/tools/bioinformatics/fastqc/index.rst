@@ -1,13 +1,23 @@
 
+:orphan:
+
 FastQC
 ======
 
-Automatically generated index page for {title}
+Automatically generated index page for FastQC:
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+.. raw:: html
 
-   fastqc
+   <ul>
 
-*This page was auto-generated on 26/09/2019. Please do not directly alter the contents of this page.*
+   </ul>
+     <a href="fastqc.html">
+       <p style="margin-bottom: 5px"><b>FastQC</b> <span style="margin-left: 10px; color: darkgray">fastqc</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="fastqc.html" style="margin-bottom: 10px">
+       v<b>0.11.8</b>
+     </a></p>
+     </a>
+     <hr />
+         
+

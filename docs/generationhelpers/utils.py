@@ -168,7 +168,7 @@ def get_tool_row(tools: Dict[str, Tool]):
 
     tool = distincted[latestversion]
     meta: Metadata = tool.bind_metadata() or tool.metadata
-    sd = meta.short_documentation or "This is a test description"
+    sd = meta.short_documentation
     sdstr = f'<p style="color: black; margin-bottom: 10px">{sd}' if sd else ""
 
     href = tool.id() + ".html"

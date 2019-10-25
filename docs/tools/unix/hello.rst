@@ -1,31 +1,27 @@
-
-.. include:: hello_v0.1.0
+:orphan:
 
 Hello, World!
 =====================
 
-Description
--------------
+1 contributor · 1 version
 
-Tool identifier: ``hello``
+:ID: ``hello``
+:Python: ``janis_unix.tools.hello import HelloWorkflow``
+:Versions: v0.1.0
+:Authors: Michael Franklin
+:Citations: 
+:Created: None
+:Updated: 2019-08-12
+:Required inputs:
 
-Tool path: ``janis_unix.tools.hello import HelloWorkflow``
-
-Version: v0.1.0
-
-
-
-
+:Outputs: 
+   - ``out: File``
 
 Documentation
 -------------
 
-URL
-******
-*No URL to the documentation was provided*
+URL: *No URL to the documentation was provided*
 
-Tool documentation
-******************
 This is the 'Hello, world' equivalent workflow that uses the Echo unix
 tool to log "Hello, World!" to the console, and collects the result.
 
@@ -34,41 +30,22 @@ This is designed to be the first example that you can run with janis, ie:
 ``janis run hello``
 
 
-Outputs
--------
-======  ============  ===============
-name    type          documentation
-======  ============  ===============
-out     stdout<File>
-======  ============  ===============
+Embedded Tools
+***************
 
-Inputs
+====  ===============
+Echo  ``echo/v1.0.0``
+====  ===============
+
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-======  ======  ========  ==========  ===============
-name    type    prefix    position    documentation
-======  ======  ========  ==========  ===============
-======  ======  ========  ==========  ===============
-
-Optional inputs
-***************
-
-======  ================  ========  ==========  ===============
-name    type              prefix    position    documentation
-======  ================  ========  ==========  ===============
+======  ================  ===============
+name    type              documentation
+======  ================  ===============
 inp     Optional<String>
-======  ================  ========  ==========  ===============
+======  ================  ===============
 
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*Hello, World! was last updated on 2019-08-12*.
-*This page was automatically generated on 2019-09-26*.
+.

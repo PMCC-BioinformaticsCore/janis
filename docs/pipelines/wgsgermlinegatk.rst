@@ -8,7 +8,7 @@ A variant-calling WGS pipeline using only the GATK Haplotype variant caller · 1
 :ID: ``WGSGermlineGATK``
 :Python: ``janis_pipelines.wgs_germline_gatk.wgsgermlinegatk import WGSGermlineGATK``
 :Versions: 1.0.0
-:Contributors: Michael Franklin
+:Authors: Michael Franklin
 :Citations: 
 :Created: None
 :Updated: 2019-10-16
@@ -56,8 +56,8 @@ BCFTools: Sort                 ``bcftoolssort/v1.9``
 
 ------
 
-Inputs
-------
+Additional configuration (inputs)
+---------------------------------
 
 =============================  ====================  ===============
 name                           type                  documentation

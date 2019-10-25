@@ -1,13 +1,23 @@
 
+:orphan:
+
 UCSF
 ====
 
-Automatically generated index page for {title}
+Automatically generated index page for UCSF:
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+.. raw:: html
 
-   cnvkit
+   <ul>
 
-*This page was auto-generated on 26/09/2019. Please do not directly alter the contents of this page.*
+   </ul>
+     <a href="CNVKit.html">
+       <p style="margin-bottom: 5px"><b>CNVKit</b> <span style="margin-left: 10px; color: darkgray">CNVKit</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="CNVKit.html" style="margin-bottom: 10px">
+       v<b>0.9.6</b>
+     </a></p>
+     </a>
+     <hr />
+         
+

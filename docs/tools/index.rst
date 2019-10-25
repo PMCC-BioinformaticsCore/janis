@@ -1,14 +1,17 @@
 
+:orphan:
+
 Tools
 =====
 
-Automatically generated index page for {title}
+Automatically generated index page for Tools:
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+.. raw:: html
 
-   bioinformatics/index
-   unix/index
+   <ul>
+     <li><a href="bioinformatics/index.html">bioinformatics</a></li>
 
-*This page was auto-generated on 26/09/2019. Please do not directly alter the contents of this page.*
+     <li><a href="unix/index.html">unix</a></li>
+   </ul>
+
+

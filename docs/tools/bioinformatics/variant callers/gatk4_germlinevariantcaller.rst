@@ -1,31 +1,37 @@
-
-.. include:: gatk4_germlinevariantcaller_v0.1.0
+:orphan:
 
 GATK4 Germline Variant Caller
 ===========================================================
 
-Description
--------------
+1 contributor · 1 version
 
-Tool identifier: ``GATK4_GermlineVariantCaller``
+:ID: ``GATK4_GermlineVariantCaller``
+:Python: ``janis_bioinformatics.tools.variantcallers.gatk.gatkgermline_variants_4_0_12 import GatkGermlineVariantCaller_4_0_12``
+:Versions: v0.1.0
+:Authors: Michael Franklin
+:Citations: 
+:Created: 2019-02-01
+:Updated: None
+:Required inputs:
+   - ``bam: BamPair``
 
-Tool path: ``janis_bioinformatics.tools.variantcallers.gatk.gatkgermline_variants_4_0_12 import GatkGermlineVariantCaller_4_0_12``
+   - ``reference: FastaWithDict``
 
-Version: v0.1.0
+   - ``snps_dbsnp: CompressedIndexedVCF``
 
+   - ``snps_1000gp: CompressedIndexedVCF``
 
+   - ``knownIndels: CompressedIndexedVCF``
 
-
+   - ``millsIndels: CompressedIndexedVCF``
+:Outputs: 
+   - ``out: VCF``
 
 Documentation
 -------------
 
-URL
-******
-*No URL to the documentation was provided*
+URL: *No URL to the documentation was provided*
 
-Tool documentation
-******************
 This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.0.12.0.
 
         It has the following steps:
@@ -35,47 +41,31 @@ This is a VariantCaller based on the GATK Best Practice pipelines. It uses the G
         3. HaplotypeCaller
         4. SplitMultiAllele
 
-Outputs
--------
-======  ======  ===============
-name    type    documentation
-======  ======  ===============
-out     VCF
-======  ======  ===============
-
-Inputs
-------
-Find the inputs below
-
-Required inputs
+Embedded Tools
 ***************
 
-===========  ====================  ========  ==========  ===============
-name         type                  prefix    position    documentation
-===========  ====================  ========  ==========  ===============
+=============================================  ==================================
+GATK4: Base Recalibrator                       ``Gatk4BaseRecalibrator/4.0.12.0``
+GATK4: Apply base quality score recalibration  ``GATK4ApplyBQSR/4.0.12.0``
+GATK4: Haplotype Caller                        ``GatkHaplotypeCaller/4.0.12.0``
+Split Multiple Alleles                         ``SplitMultiAllele/v0.5772``
+=============================================  ==================================
+
+------
+
+Additional configuration (inputs)
+---------------------------------
+
+===========  ====================  ===============
+name         type                  documentation
+===========  ====================  ===============
 bam          BamPair
 reference    FastaWithDict
 snps_dbsnp   CompressedIndexedVCF
 snps_1000gp  CompressedIndexedVCF
 knownIndels  CompressedIndexedVCF
 millsIndels  CompressedIndexedVCF
-===========  ====================  ========  ==========  ===============
+intervals    Optional<bed>
+===========  ====================  ===============
 
-Optional inputs
-***************
-
-=========  =============  ========  ==========  ===============
-name       type           prefix    position    documentation
-=========  =============  ========  ==========  ===============
-intervals  Optional<bed>
-=========  =============  ========  ==========  ===============
-
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*GATK4 Germline Variant Caller was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-26*.
+.

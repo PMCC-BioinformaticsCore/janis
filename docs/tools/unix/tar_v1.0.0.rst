@@ -1,70 +1,40 @@
 :orphan:
 
-
 Tar (archive)
 ===================
 
-Description
--------------
+0 contributors · 1 version
 
-Tool identifier: ``Tar``
-
-Tool path: ``janis_unix.tools.tar import Tar``
-
-Version: v1.0.0
-
-Container: ``ubuntu:latest``
-
-
+:ID: ``Tar``
+:Python: ``janis_unix.tools.tar import Tar``
+:Versions: v1.0.0
+:Container: ubuntu:latest
+:Authors: 
+:Citations: None
+:Created: None
+:Updated: None
+:Required inputs:
+   - ``files: Array<File>``
+:Outputs: 
+   - ``out: TarFile``
 
 Documentation
 -------------
 
-URL
-******
-*No URL to the documentation was provided*
+URL: *No URL to the documentation was provided*
 
-Tool documentation
-******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-unix>`_
 
-Outputs
--------
-======  =======  ===============
-name    type     documentation
-======  =======  ===============
-out     TarFile
-======  =======  ===============
-
-Inputs
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-======  ===========  ========  ==========  ===============
-name    type         prefix      position  documentation
-======  ===========  ========  ==========  ===============
-files   Array<File>                     2
-======  ===========  ========  ==========  ===============
+==============  =====================  ===============
+name            type                   documentation
+==============  =====================  ===============
+files           Array<File>
+files2          Optional<Array<File>>
+outputFilename  Optional<Filename>
+==============  =====================  ===============
 
-Optional inputs
-***************
-
-==============  =====================  ========  ==========  ===============
-name            type                   prefix      position  documentation
-==============  =====================  ========  ==========  ===============
-files2          Optional<Array<File>>                     3
-outputFilename  Optional<Filename>                        1
-==============  =====================  ========  ==========  ===============
-
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*Tar (archive) was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-26*.

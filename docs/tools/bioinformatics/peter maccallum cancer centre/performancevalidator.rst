@@ -1,73 +1,58 @@
-
-.. include:: performancevalidator_1.2.1
+:orphan:
 
 Performance Validator
 ============================================
 
-Description
--------------
+0 contributors · 1 version
 
-Tool identifier: ``performanceValidator``
+:ID: ``performanceValidator``
+:Python: ``janis_bioinformatics.tools.validation.performancevalidator import PerformanceValidator_1_2_1``
+:Versions: 1.2.1
+:Authors: 
+:Citations: 
+:Created: None
+:Updated: None
+:Required inputs:
+   - ``vcf: VCF``
 
-Tool path: ``janis_bioinformatics.tools.validation.performancevalidator import PerformanceValidator_1_2_1``
+   - ``truth: IndexedVCF``
 
-Version: 1.2.1
+   - ``intervals: Array<VCF>``
+:Outputs: 
+   - ``summaryMetrics: File``
 
+   - ``detailMetrics: File``
 
-
-
+   - ``contingencyMetrics: File``
 
 Documentation
 -------------
 
-URL
-******
-*No URL to the documentation was provided*
+URL: *No URL to the documentation was provided*
 
-Tool documentation
-******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
-Outputs
--------
-==================  ======  ===============
-name                type    documentation
-==================  ======  ===============
-summaryMetrics      File
-detailMetrics       File
-contingencyMetrics  File
-==================  ======  ===============
+Embedded Tools
+***************
 
-Inputs
+===========================  ====================================
+BGZip                        ``bgzip/1.2.1``
+Tabix                        ``tabix/1.2.1``
+GATK4: Genotype Concordance  ``Gatk4GenotypeConcordance/4.1.4.0``
+===========================  ====================================
+
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-=========  ==========  ========  ==========  ===============
-name       type        prefix    position    documentation
-=========  ==========  ========  ==========  ===============
-vcf        VCF
-truth      IndexedVCF
-intervals  Array<VCF>
-=========  ==========  ========  ==========  ===============
-
-Optional inputs
-***************
-
-==========================================  =================  ========  ==========  ===============
-name                                        type               prefix    position    documentation
-==========================================  =================  ========  ==========  ===============
+==========================================  =================  ===============
+name                                        type               documentation
+==========================================  =================  ===============
+vcf                                         VCF
+truth                                       IndexedVCF
+intervals                                   Array<VCF>
 genotypeConcord_treatMissingSitesAsHomeRef  Optional<Boolean>
-==========================================  =================  ========  ==========  ===============
+==========================================  =================  ===============
 
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*Performance Validator was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-26*.
+.

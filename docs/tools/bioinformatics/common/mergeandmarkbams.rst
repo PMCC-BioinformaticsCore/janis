@@ -1,77 +1,50 @@
-
-.. include:: mergeandmarkbams_4.1.3
-.. include:: mergeandmarkbams_4.0.12
+:orphan:
 
 Merge and Mark Duplicates
 ============================================
 
-Description
--------------
+0 contributors · 2 versions
 
-Tool identifier: ``mergeAndMarkBams``
-
-Tool path: ``janis_bioinformatics.tools.common.mergeandmark.mergeandmark_4_1_3 import MergeAndMarkBams_4_1_3``
-
-Version: 4.1.3
-
-
-
-Versions
-*********
-
-- 4.1.3 (current)
-- `4.0.12 <mergeandmarkbams_4.0.12.html>`_
+:ID: ``mergeAndMarkBams``
+:Python: ``janis_bioinformatics.tools.common.mergeandmark.mergeandmark_4_1_3 import MergeAndMarkBams_4_1_3``
+:Versions: 4.0.12, 4.1.3
+:Authors: 
+:Citations: 
+:Created: None
+:Updated: None
+:Required inputs:
+   - ``bams: Array<BamPair>``
+:Outputs: 
+   - ``out: BamPair``
 
 Documentation
 -------------
 
-URL
-******
-*No URL to the documentation was provided*
+URL: *No URL to the documentation was provided*
 
-Tool documentation
-******************
-*No documentation was provided: `contribute one <https://github.com/illusional>`_*
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
-Outputs
--------
-======  =======  ===============
-name    type     documentation
-======  =======  ===============
-out     BamPair
-======  =======  ===============
+Embedded Tools
+***************
 
-Inputs
+======================  ===============================
+GATK4: Merge SAM Files  ``Gatk4MergeSamFiles/4.1.3.0``
+GATK4: Mark Duplicates  ``Gatk4MarkDuplicates/4.1.3.0``
+======================  ===============================
+
 ------
-Find the inputs below
 
-Required inputs
-***************
+Additional configuration (inputs)
+---------------------------------
 
-======  ==============  ========  ==========  ===============
-name    type            prefix    position    documentation
-======  ==============  ========  ==========  ===============
-bams    Array<BamPair>
-======  ==============  ========  ==========  ===============
-
-Optional inputs
-***************
-
-==================================  =================  ========  ==========  ===============
-name                                type               prefix    position    documentation
-==================================  =================  ========  ==========  ===============
+==================================  =================  ===============
+name                                type               documentation
+==================================  =================  ===============
+bams                                Array<BamPair>
 createIndex                         Optional<Boolean>
 maxRecordsInRam                     Optional<Integer>
 mergeSamFiles_useThreading          Optional<Boolean>
 mergeSamFiles_validationStringency  Optional<String>
-==================================  =================  ========  ==========  ===============
+==================================  =================  ===============
 
-
-Metadata
-********
-
-Author: **Unknown**
-
-
-*Merge and Mark Duplicates was last updated on **Unknown***.
-*This page was automatically generated on 2019-09-26*.
+.

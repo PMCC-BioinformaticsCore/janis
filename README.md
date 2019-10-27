@@ -55,7 +55,7 @@ Echo tool's output as a workflow output.
   
 ```python  
 import janis as j
-from janis.unix.tools.echo import Echo
+from janis.tools import Echo
 
 w = j.WorkflowBuilder("workflowId")
 

@@ -28,6 +28,8 @@ from janis_core import (
     ToolTypes,
 )
 
+import janis_unix, janis_bioinformatics
+
 # Import modules here so that the tool registry knows about them
 
 # Output settings
@@ -50,7 +52,7 @@ dt_dir = docs_dir + "datatypes/"
 templates_dir = docs_dir + "templates/"
 pipelines_dir = docs_dir + "pipelines/"
 
-modules = [janis.bioinformatics, janis.unix]
+modules = [janis_bioinformatics, janis_unix]
 
 
 tool_module_information = {
@@ -90,7 +92,7 @@ def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
 
 
 def prepare_all_tools():
-    JanisShed.hydrate(modules=[janis.unix, janis.bioinformatics])
+    JanisShed.hydrate(modules=[janis_unix, janis_bioinformatics])
 
     data_types = JanisShed.get_all_datatypes()
     tools = {
@@ -251,9 +253,11 @@ def prepare_runner_templates():
 
 
 def generate_pipelines_page():
+    import janis_pipelines
+
     print("Generating pipelines page...")
 
-    modules = [janis.pipelines]
+    modules = [janis_pipelines]
     workflows: List[Workflow] = []
 
     for module in modules:

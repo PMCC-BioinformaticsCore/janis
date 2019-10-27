@@ -11,118 +11,118 @@ Automatically generated index page for GATK4:
    <ul>
 
    </ul>
-     <a href="GATK4ApplyBQSR.html">
+     <a href="gatk4applybqsr.html">
        <p style="margin-bottom: 5px"><b>GATK4: Apply base quality score recalibration</b> <span style="margin-left: 10px; color: darkgray">GATK4ApplyBQSR</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="GATK4ApplyBQSR.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4applybqsr.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="GATK4CalculateContamination.html">
+     <a href="gatk4calculatecontamination.html">
        <p style="margin-bottom: 5px"><b>GATK4: CalculateContamination</b> <span style="margin-left: 10px; color: darkgray">GATK4CalculateContamination</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="GATK4CalculateContamination.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4calculatecontamination.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="GATK4FilterMutectCalls.html">
+     <a href="gatk4filtermutectcalls.html">
        <p style="margin-bottom: 5px"><b>GATK4: GetFilterMutectCalls</b> <span style="margin-left: 10px; color: darkgray">GATK4FilterMutectCalls</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="GATK4FilterMutectCalls.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4filtermutectcalls.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="GATK4GetPileupSummaries.html">
+     <a href="gatk4getpileupsummaries.html">
        <p style="margin-bottom: 5px"><b>GATK4: GetPileupSummaries</b> <span style="margin-left: 10px; color: darkgray">GATK4GetPileupSummaries</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="GATK4GetPileupSummaries.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4getpileupsummaries.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="GATK4LearnReadOrientationModel.html">
+     <a href="gatk4learnreadorientationmodel.html">
        <p style="margin-bottom: 5px"><b>GATK4: LearnReadOrientationModel</b> <span style="margin-left: 10px; color: darkgray">GATK4LearnReadOrientationModel</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="GATK4LearnReadOrientationModel.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4learnreadorientationmodel.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="GATK4MergeMutectStats.html">
+     <a href="gatk4mergemutectstats.html">
        <p style="margin-bottom: 5px"><b>GATK4: MergeMutectStats</b> <span style="margin-left: 10px; color: darkgray">GATK4MergeMutectStats</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="GATK4MergeMutectStats.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4mergemutectstats.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="Gatk4BaseRecalibrator.html">
+     <a href="gatk4baserecalibrator.html">
        <p style="margin-bottom: 5px"><b>GATK4: Base Recalibrator</b> <span style="margin-left: 10px; color: darkgray">Gatk4BaseRecalibrator</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="Gatk4BaseRecalibrator.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4baserecalibrator.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="Gatk4GatherVcfs.html">
+     <a href="gatk4gathervcfs.html">
        <p style="margin-bottom: 5px"><b>GATK4: Gather VCFs</b> <span style="margin-left: 10px; color: darkgray">Gatk4GatherVcfs</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="Gatk4GatherVcfs.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4gathervcfs.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="Gatk4GenotypeConcordance.html">
+     <a href="gatk4genotypeconcordance.html">
        <p style="margin-bottom: 5px"><b>GATK4: Genotype Concordance</b> <span style="margin-left: 10px; color: darkgray">Gatk4GenotypeConcordance</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="Gatk4GenotypeConcordance.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4genotypeconcordance.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="Gatk4MarkDuplicates.html">
+     <a href="gatk4markduplicates.html">
        <p style="margin-bottom: 5px"><b>GATK4: Mark Duplicates</b> <span style="margin-left: 10px; color: darkgray">Gatk4MarkDuplicates</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="Gatk4MarkDuplicates.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4markduplicates.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="Gatk4MergeSamFiles.html">
+     <a href="gatk4mergesamfiles.html">
        <p style="margin-bottom: 5px"><b>GATK4: Merge SAM Files</b> <span style="margin-left: 10px; color: darkgray">Gatk4MergeSamFiles</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="Gatk4MergeSamFiles.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4mergesamfiles.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="Gatk4PrintReads.html">
+     <a href="gatk4printreads.html">
        <p style="margin-bottom: 5px"><b>GATK4: Print Reads</b> <span style="margin-left: 10px; color: darkgray">Gatk4PrintReads</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="Gatk4PrintReads.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4printreads.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="GatkHaplotypeCaller.html">
+     <a href="gatkhaplotypecaller.html">
        <p style="margin-bottom: 5px"><b>GATK4: Haplotype Caller</b> <span style="margin-left: 10px; color: darkgray">GatkHaplotypeCaller</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="GatkHaplotypeCaller.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatkhaplotypecaller.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>

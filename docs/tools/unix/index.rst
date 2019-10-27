@@ -11,10 +11,10 @@ Automatically generated index page for unix:
    <ul>
 
    </ul>
-     <a href="Tar.html">
+     <a href="tar.html">
        <p style="margin-bottom: 5px"><b>Tar (archive)</b> <span style="margin-left: 10px; color: darkgray">Tar</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="Tar.html" style="margin-bottom: 10px">
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="tar.html" style="margin-bottom: 10px">
        v<b>1.0.0</b>
      </a></p>
      </a>

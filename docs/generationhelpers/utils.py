@@ -140,7 +140,8 @@ def get_tool_toc(
     )
 
     mappedmodules = "\n\n".join(
-        f'     <li><a href="{m}/index.html">{m}</a></li>' for m in subpages
+        f'     <li><a href="{m.lower()}/index.html">{m}</a></li>'
+        for m in sorted(subpages)
     )
 
     return f"""
@@ -171,7 +172,7 @@ def get_tool_row(tools: Dict[str, Tool]):
     sd = meta.short_documentation
     sdstr = f'<p style="color: black; margin-bottom: 10px">{sd}' if sd else ""
 
-    href = tool.id() + ".html"
+    href = tool.id().lower() + ".html"
     return f"""\
 <a href="{href}">
   <p style="margin-bottom: 5px"><b>{tool.friendly_name()}</b> <span style="margin-left: 10px; color: darkgray">{tool.id()}</span></p>

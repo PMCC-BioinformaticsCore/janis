@@ -54,6 +54,9 @@ Template
         def arguments(self) -> List[j.ToolArgument]:
             return []
 
+        def env_vars(self) -> Optional[Dict[str, Union[str, Selector]]]:
+            return {}
+
         def friendly_name(self) -> str:
             pass
 
@@ -83,6 +86,8 @@ A new tool definition must subclass the `janis.CommandTool` class and implement 
 - ``@staticmethod janis.CommandTool.container()``: A link to an OCI compliant container accessible by the engine. Previously, ``docker()``.
 
 - ``@staticmethod janis.CommandTool.version()``: Version of the tool.
+
+- ``janis.CommandTool.env_vars(self) -> Optional[Dict[str, Union[str, Selector]]]``: A dictionary of environment variables that should be defined within the container.
 
 To better categorise your tool, you can additionally implement the following methods:
 

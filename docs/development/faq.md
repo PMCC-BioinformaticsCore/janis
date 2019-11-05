@@ -17,6 +17,10 @@ have a place outside this documentation.
 - **How do I make sure my file is in the execution directory? / How do I localise my file?**
 
     Set ``prefix_applies_to_all_elements=True`` on the :class:`janis.ToolInput`.
+    
+- **How do I include environment variables within my execution environment?**
+
+    These are only available from within a CommandTool, and available by overriding the ``env_vars(self)`` method to return a dictionary of string to ``Union[str, Selector]`` key-value pairs.
 
 - **Can a `janis.ToolInput` be marked as streamable?**
 

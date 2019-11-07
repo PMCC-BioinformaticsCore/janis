@@ -59,7 +59,7 @@ Included tool definitions and types
 ===================================
 
 Some basic unix tools have been wrapped and included as part of the base Janis module and are the basis for the examples.
-You can reference these unix tools through `janis.unix.tools`.
+You can reference these unix tools through `janis.tools`.
 
 Bioinformatics
 --------------
@@ -87,9 +87,9 @@ tool to log this to ``stdout``, and explicitly outputting this ``stdout`` to giv
 .. code-block:: python
 
    import janis as j
-   from janis.unix.tools.echo import Echo
+   from janis.tools import Echo
 
-   w = j.Workflow("workflowId")
+   w = j.WorkflowBuilder("workflowId")
 
    w.input("inputIdentifier", j.String, default="Hello, World!")
    w.step("stepIdentifier", Echo(inp=w.inputIdentifier))

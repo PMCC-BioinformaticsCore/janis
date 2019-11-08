@@ -58,30 +58,22 @@ You can import Janis into your project by:
 Included tool definitions and types
 ===================================
 
-Some basic unix tools have been wrapped and included as part of the base Janis module and are the basis for the examples.
-You can reference these unix tools through `janis.tools`.
+A handful of unix and bioinformatics tools have been included in your installation with Janis.
 
 Bioinformatics
 --------------
 
 The Janis framework can be extended to include a suite of
-`Bioinformatics data types and tools <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`__. These can be
-installed with the ``bioinformatics`` install extra option.
+`Bioinformatics data types and tools <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`__. These are installed by default.
 
-.. code-block:: bash
-
-   pip3 install janis-pipelines[bioinformatics]
-
-These can be referenced by ``janis.bioinformatics`` or ``janis_bioinformatics``, the latter might be easier due to the way
-nested python imports work.
-
+This can be referenced through ``janis_bioinformatics``, the tool documentation suggests how this may be imported.
 
 Example
 ========
 
 *Further information*: `Simple Workflow </tutorials/simple.html>`__
 
-Below we've constructed a simple example that takes a string input, uses the `echo <tools/unix/echo.html>`__)
+Below we've constructed a simple example that takes a string input, uses the `echo <tools/unix/echo.html>`_
 tool to log this to ``stdout``, and explicitly outputting this ``stdout`` to give you a basic idea of how to construct a pipeline.
 
 .. code-block:: python
@@ -98,8 +90,6 @@ tool to log this to ``stdout``, and explicitly outputting this ``stdout`` to giv
    # Will print the CWL, input file and relevant tools to the console
    w.translate("cwl", to_disk=False)  # or "wdl"
 
-More information can be found on creating edges on the
-`Building Connections <tutorials/buildingconnections.html>`__ documentation.
 
 Now we've created our workflow, we can export a CWL representation to the console using ``.translate("cwl")``.
 
@@ -157,6 +147,7 @@ Contents
    tools/index
    datatypes/index
    references/index
+   references/engines
 
 .. toctree::
    :hidden:

@@ -16,7 +16,7 @@ have a place outside this documentation.
 
 - **How do I make sure my file is in the execution directory? / How do I localise my file?**
 
-    Set ``prefix_applies_to_all_elements=True`` on the :class:`janis.ToolInput`.
+    Set ``localise_file=True`` on the :class:`janis.ToolInput`. Although the ``localise_file`` attribute is allowed for Array data types, the WDL translation will become disabled as this behaviour is not well defined.
     
 - **How do I include environment variables within my execution environment?**
 
@@ -29,4 +29,17 @@ have a place outside this documentation.
     does support marking inputs as streamable, WDL does not and, there is 
     [no engine support](https://github.com/broadinstitute/cromwell/issues/3454#issuecomment-455367417). 
       
-    
+- **How do I ensure environment variables are set within my execution environment?**
+
+    You can include the following block within your CommandTool:
+
+    ```python
+    # Within CommandTool
+  
+    def env_vars(self):
+       return {
+           "myvar1": InputSelector("myInput"),
+           "myvar2": "constantvalue"
+       }
+    ```
+   

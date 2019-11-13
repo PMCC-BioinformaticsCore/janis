@@ -71,8 +71,6 @@ This can be referenced through ``janis_bioinformatics``, the tool documentation 
 Example
 ========
 
-*Further information*: `Simple Workflow </tutorials/simple.html>`__
-
 Below we've constructed a simple example that takes a string input, uses the `echo <tools/unix/echo.html>`_
 tool to log this to ``stdout``, and explicitly outputting this ``stdout`` to give you a basic idea of how to construct a pipeline.
 

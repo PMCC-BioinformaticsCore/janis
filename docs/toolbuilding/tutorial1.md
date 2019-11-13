@@ -1,5 +1,5 @@
 
-# Tutorial - Wrapping a new tool
+# Tool Tutorial 1 - Wrapping a new tool
 
 ## Introduction
 
@@ -30,9 +30,11 @@ janis-bioinformatics  v0.7.1
 
 ### Container
 
-> _Further information_: [Containerising your tools](https://janis.readthedocs.io/en/latest/tutorials/container.html)
+> _Further information_: [Containerising your tools](https://janis.readthedocs.io/en/latest/tutorials/containers.html)
 
-For portability, we require that you specify an OCI compliant  `container` (eg: Docker) for your tool. Often they're will already be a container with some searching, however here's a guide on [preparing your tools as dockers](https://janis.readthedocs.io/en/latest//tutorials/docker.html) to ensure it works across all environments.
+> Guide on using containers
+
+For portability, we require that you specify an OCI compliant  `container` (eg: Docker) for your tool. Often they're will already be a container with some searching, however here's a guide on [preparing your tools in containers](https://janis.readthedocs.io/en/latest/tutorials/containers.html) to ensure it works across all environments. 
 
 
 ## Samtools flagstat
@@ -64,12 +66,6 @@ class ToolName(j.CommandTool):
     @staticmethod
     def base_command() -> Optional[Union[str, List[str]]]:
         pass
-
-    def inputs(self) -> List[j.ToolInput]:
-        return []
-
-    def outputs(self) -> List[j.ToolOutput]:
-        return []
         
     @staticmethod
     def container() -> str:
@@ -78,17 +74,30 @@ class ToolName(j.CommandTool):
     @staticmethod
     def version() -> str:
         pass
+
+    def inputs(self) -> List[j.ToolInput]:
+        return []
+
+    def outputs(self) -> List[j.ToolOutput]:
+        return []
 ```
 
 ### Basic information
 
+Let's start by creating a file with this template:
+
+```bash
+vim samtoolsflagstat.py
+```
+
 We can start by filling in the basic information:
 
-- Tool name
-- Tool identifier (must be unique within tools)
-- Container
-- Version
+- Rename the class to be `SamtoolsFlagstat`,
+- Add the tool identifier in the `tool()` method,
+- Add the container `"quay.io/biocontainers/samtools:1.9--h8571acd_11"`,
+- Add the version: `"1.9.0"`.
 
+You'll have a class definition like the following
 ```python
 class SamtoolsFlagstat(j.CommandTool):
     @staticmethod
@@ -98,8 +107,6 @@ class SamtoolsFlagstat(j.CommandTool):
     @staticmethod
     def base_command() -> Optional[Union[str, List[str]]]:
         return ["samtools", "flagstat"]
-
-    # Inputs and outputs
     
     @staticmethod
     def container() -> str:
@@ -108,24 +115,18 @@ class SamtoolsFlagstat(j.CommandTool):
     @staticmethod
     def version() -> str:
         return "1.9.0"
+	
+	# inputs and outputs
 ```
 
 ### Inputs
 
-#### Inspecting inputs with Docker
+#### Inspecting inputs
 
-Although we can check `samtool`'s [documentation], it's often easier to check the help text to find the appropriate tool inputs. We can do that by running the Docker container, and then calling `samtools flagstat` to observe the usage text.
-
-To run the docker container, we can use the following command:
+Although we can check `samtools`' [documentation](http://www.htslib.org/doc/samtools.html), it's often easier to check the help text to find the appropriate tool inputs.  To view the help guide, we can run:
 
 ```bash
-docker run -it quay.io/biocontainers/samtools:1.9--h8571acd_11
-```
-
-To view the help guide, inside our container we can run:
-
-```
-# samtools flagstat
+samtools flagstat # no -h / --help required
 ```
 Output:
 ```
@@ -137,50 +138,58 @@ Usage: samtools flagstat [options] <in.bam>
             Number of additional threads to use [0]
 ```
 
+We're going to add:
+
+- The positional `<in.bam>` input
+- The configuration `--threads` input
 
 #### Positional Bam input
 
-Our first input we'll focus on is the Bam input. For this we'll need to import the Bam type from `janis.bioinformatics` with the following line:
+Our positional input is a Bam, so we'll import the Bam type from `janis` with the following line:
 
 ```python
-from janis.bioinformatics.data_types import Bam
+from janis.data_types import Bam
 ```
 
-Our input is required, it has _no prefix_ and we want to place it after our other configuration inputs, so we'll use the following `ToolInput` definition:
+Then we can declare our two inputs:
+
+1. Positional bam input
+2. Threads configuration input with the prefix `--threads`
 
 ```python
-j.ToolInput(
-	 tag="bam", 
-	 input_type=Bam(), 
-	 position=1, 
-	 doc="Input bam to generate statistics for"
-)
+	# in the class
+	def inputs(self):
+	return [
+		# 1. Positional bam input
+		j.ToolInput(
+			 tag="bam", 
+			 input_type=Bam, 
+			 position=1, 
+			 doc="Input bam to generate statistics for"
+		),
+		# 2. `threads` inputs
+		j.ToolInput(
+		    "threads", 
+		    j.Int(optional=True), 
+		    prefix="--threads", 
+		    doc="(-@)  Number of additional threads to use [0] "
+		)
+	]
 ```
 
-#### Configuration inputs
-
-Next we'll construct the configuration inputs.
-
-1. `inputFmtOption` is an optional flag (`Boolean`) and has the prefix `--input-fmt-option`, we can use the following `ToolInput` to represent this information:
-
-```python
-j.ToolInput("inputFmtOption", j.Boolean(optional=True), prefix="--input-fmt-option", doc="Specify a single input file format option in the form of OPTION or OPTION=VALUE")
-```
-2. `threads` is an optional integer with the prefix `--threads`:
-
-```python
-j.ToolInput("threads", j.Int(optional=True), prefix="--threads", doc="(-@)  Number of additional threads to use [0] ")
-```
 
 ### Outputs
 
 The only output of `samtools flagstat` is the statistics that are written to `stdout`. We can collect this with the `Stdout` data type. We'll give this the output tag `stats` which will give the following `ToolOutput`:
 
 ```python
-ToolOutput(tag="stats", output_type=Stdout())
+	# in the class
+	def outputs(self):
+		return [
+			ToolOutput("stats", Stdout)
+		]
 ```
 
-### Naming our Stdout
 
 ### Tool definition
 
@@ -200,18 +209,6 @@ class SamtoolsFlagstat(j.CommandTool):
     def base_command() -> Optional[Union[str, List[str]]]:
         return ["samtools", "flagstat"]
 
-    def inputs(self) -> List[j.ToolInput]:
-        return [
-            j.ToolInput("bam", Bam(), position=1, doc="Input bam to generate statistics for"),
-            j.ToolInput("inputFmtOption", j.Boolean(optional=True), prefix="--input-fmt-option", doc="Specify a single input file format option in the form of OPTION or OPTION=VALUE"),
-            j.ToolInput("threads", j.Int(optional=True), prefix="--threads", doc="(-@)  Number of additional threads to use [0] "),
-            j.ToolInput("outputFilename", j.Filename(extension=".txt"))
-
-        ]
-
-    def outputs(self) -> List[j.ToolOutput]:
-        return [j.ToolOutput("out", j.Stdout(stdoutname=j.InputSelector("outputFilename")))]
-
     @staticmethod
     def container() -> str:
         return "quay.io/biocontainers/samtools:1.9--h8571acd_11"
@@ -219,37 +216,46 @@ class SamtoolsFlagstat(j.CommandTool):
     @staticmethod
     def version() -> str:
         return "1.9.0"
+
+    def inputs(self) -> List[j.ToolInput]:
+        return [
+		j.ToolInput(
+			 tag="bam", 
+			 input_type=Bam, 
+			 position=1, 
+			 doc="Input bam to generate statistics for"
+		),
+		# 2. `threads` inputs
+		j.ToolInput(
+		    "threads", 
+		    j.Int(optional=True), 
+		    prefix="--threads", 
+		    doc="(-@)  Number of additional threads to use [0] "
+		)
+
+        ]
+
+    def outputs(self) -> List[j.ToolOutput]:
+        return [j.ToolOutput("out", Stdout)]
 ```
 
 ## Testing the tool
 
-We can test the translation to janis in two different ways:
+We can test the translation to janis from the CLI:
 
-1. In python:
-```python
-SamtoolsFlagstat().translate("cwl") # or "wdl"
-```
+> If you have multiple command tools or workflows declared in the same file, you will need to provide the `--name` parameter with the name of your workflow.
 
-2. Command line
 ```bash
 janis translate samtoolsflagstat.py cwl
 ```
 
-> If you have multiple command tools or workflows declared in the same file, you can provide a `--name` parameter.
 
 ### Running the workflow
 
-We can test the workflow using Janis by first creating an inputs file:
-
-**`inp-job.yml`**
-```yaml
-bam: /Users/franklinmichael/source/janis-workshops/workshop3/data/brca1.bam
-```
-
-Then calling the `janis run` functionality (default CWLTool):
+We can call the `janis run` functionality (default CWLTool) with our bam input:
 
 ```bash
-janis run samtoolsflagstat.py --inputs inp-job.yml
+janis run samtoolsflagstat.py --bam /data/brca1.bam
 ```
 
 OUTPUT:

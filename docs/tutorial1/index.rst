@@ -1,4 +1,4 @@
-Janis Tutorial - Introduction
+Tutorial - Introduction
 #############################
 
 .. note::

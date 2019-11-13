@@ -134,9 +134,9 @@ Contents
    :caption: Tutorials
 
    tutorial1/index
-   tutorials/simple
-   tutorials/alignsortedbam
+   toolbuilding/tutorial1
    tutorials/running
+   tutorials/container
 
 .. toctree::
    :hidden:

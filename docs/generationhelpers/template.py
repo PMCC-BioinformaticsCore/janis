@@ -1,6 +1,6 @@
 from tabulate import tabulate
 
-from janis_runner.templates import EnvironmentTemplate, get_schema_for_template
+from janis_assistant.templates import EnvironmentTemplate, get_schema_for_template
 
 
 def prepare_template(name: str, template: EnvironmentTemplate):

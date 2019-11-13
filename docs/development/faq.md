@@ -29,6 +29,42 @@ have a place outside this documentation.
     does support marking inputs as streamable, WDL does not and, there is 
     [no engine support](https://github.com/broadinstitute/cromwell/issues/3454#issuecomment-455367417). 
       
+- **How can I manipulate an input value?**
+
+    Janis only provides a limited way of manipulating input values, internally using a [`StringFormatter`](https://janis.readthedocs.io/en/latest/references/selectors.html#stringformatting).
+    
+    Eg:
+    
+    - Initialisation
+        - ``StringFormatter("Hello, {name}", name=InputSelector("username"))``
+
+    - Concatenation
+
+        - ``"Hello, " + InputSelector("username")``
+        - ``InputSelector("greeting") + StringFormatter(", {name}", name=InputSelector("username"))``      
+      
+      
+- **How do I specify an input multiple times on the command line?**
+
+    - Create a `ToolInput` for the input you want to create.
+        - Omit any binding options, ie NO `position` and NO `prefix`. 
+    - Create a `ToolArgument` with the value `InputSelector("nameofyourinput") and the binding options:
+    
+    For example:
+    
+    ```python
+    class MyTool(CommandTool):
+        def inputs(self):
+            return [ToolInput("myInput", String)]
+      
+        def arguments(selfs):
+            return [
+                ToolArgument(InputSelector("myInput"), posiion=1),
+                ToolArgument("transformed-" + InputSelector("myInput"), position=2, prefix="--name")
+            ]
+    ```
+
+      
 - **How do I ensure environment variables are set within my execution environment?**
 
     You can include the following block within your CommandTool:
@@ -43,3 +79,13 @@ have a place outside this documentation.
        }
     ```
    
+- **How do I make my generated filenames unique for a scatter or from different runs betweens tools?**
+
+    Long story short, you can't. 
+    
+    But there are a fun few reasons why that's currently the case:
+    
+    - The filenames are generated at transpile time for a tool wrapper. This means that tasks that use this tool will get the same filename, including if your workflow scatters over this task.
+    - WDL doesn't really have a mechanism for achieving dynamic or generated components like this, and CWL was flaky at best.
+    - Call caching in Cromwell relies on the command line being constructed, so the generated filenames currently break this, and a purely randomly generated filename would breat this further.
+    - We have cascaded filename components on the roadmap, so your filename can be built from a collection of inputs (sort of possible anyway).

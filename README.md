@@ -37,7 +37,7 @@ Janis requires a Python installation > 3.6, and can be installed through PIP
   
 ```bash
 # Install janis and the bioinformatics tools
-pip3 install janis-pipelines[bioinformatics]  
+pip3 install janis-pipelines 
 ```  
   
 You can import Janis into your project with:  
@@ -46,8 +46,6 @@ import janis as j
 ```
 
 ### Example  
-  
-_Further information_: [Simple Workflow](https://janis.readthedocs.io/en/latest/tutorials/echo.html)  
   
 Below we've constructed a simple example that takes a string input, calls the 
 [echo](https://janis.readthedocs.io/en/latest/tools/unix/echo.html) tool and exposes the 
@@ -93,6 +91,7 @@ Through conference or talks, this project has been referenced by the following t
 - Walter and Eliza Hall Institute Talk (WEHI) 2019: _Portable Pipelines Project: Developing reproducible bioinformatics pipelines with standardised workflow languages_
 - Bioinformatics Open Source Conference (BOSC) 2019: _Janis: an open source tool to machine generate type-safe CWL and WDL workflows_
 - Victorian Cancer Bioinformatics Symposium (VCBS) 2019: _Developing portable variant calling pipelines with Janis_
+- GIW / ABACBS 2019: _Janis: A Python framework for Portable Pipelines_  
   
   
 ## Support  
@@ -101,6 +100,6 @@ Through conference or talks, this project has been referenced by the following t
   
 > _Further information_: [Development](https://janis.readthedocs.io/en/latest/development/)  
   
-This project is work-in-progress and is still in developments. Although we welcome contributions,  due to the immature state of this project we recommend raising issues through the [Github issues page](https://github.com/PMCC-BioinformaticsCore/janis/issues) for Pipeline related issues.  
+This project is work-in-progress and is still in development. Although we welcome contributions, due to the immature state of this project we recommend raising issues through the [Github issues page](https://github.com/PMCC-BioinformaticsCore/janis/issues) for Pipeline related issues. Note that any contributions made to Janis   
 
 Information about the project structure and more on contributing can be found within [the documentation](https://janis.readthedocs.io/en/latest/development/).

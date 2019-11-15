@@ -1,5 +1,5 @@
 
-# Tool Tutorial 1 - Wrapping a new tool
+# Tutorial 2 - Wrapping a new tool
 
 ## Introduction
 
@@ -331,9 +331,12 @@ cat $HOME/janis/execution/samtoolsflagstatWf/20191114_155159_f9e89f/output/out
 691 + 0 with mate mapped to a different chr (mapQ>=5)
 ```
 
-## Outcomes
+## Summary
 
 - Learn about the structure of a CommandTool,
 - Use an existing docker container,
 - Wrapped the inputs, outputs and tool information in a Janis CommandTool wrapper,
 
+### Next steps
+
+- [Containerising a tool](https://janis.readthedocs.io/en/latest/tutorials/container.html) 

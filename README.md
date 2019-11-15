@@ -100,6 +100,15 @@ Through conference or talks, this project has been referenced by the following t
   
 > _Further information_: [Development](https://janis.readthedocs.io/en/latest/development/)  
   
-This project is work-in-progress and is still in development. Although we welcome contributions, due to the immature state of this project we recommend raising issues through the [Github issues page](https://github.com/PMCC-BioinformaticsCore/janis/issues) for Pipeline related issues. Note that any contributions made to Janis   
+To get help with Janis, please ask a question on [Gitter](ttps://gitter.im/janis-pipelines/community) or 
+[raise an issue](https://github.com/PMCC-BioinformaticsCore/janis/issues) on GitHub.
 
-Information about the project structure and more on contributing can be found within [the documentation](https://janis.readthedocs.io/en/latest/development/).
+If you find an issue with the tool definitions, please see the relevant issue page:
+
+- [Pipeline-bioinformatics](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/issues)
+
+This project is work-in-progress and is still in developments. Although we welcome contributions,
+due to the immature state of this project we recommend raising issues through the
+[Github issues page](https://github.com/PMCC-BioinformaticsCore/janis/issues) for Pipeline related issues.
+
+Information about the project structure and more on contributing can be found within the documentation.

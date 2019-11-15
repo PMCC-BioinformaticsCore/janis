@@ -12,16 +12,7 @@ building tools and assembling workflows.
    commandtool
    types
 
-
-Supported translations:
-
-.. toctree::
-   :maxdepth: 1
-
-   cwl
-   wdl
-
-Extra features:
+Features:
 
 .. toctree::
    :maxdepth: 1

@@ -104,13 +104,16 @@ Additionally there are example bioinformatics workflows that use Janis and the b
 Support
 =======
 
-This project is work-in-progress and is still in developments. Although we welcome contributions,
-due to the immature state of this project we recommend raising issues through the
-`Github issues page <https://github.com/PMCC-BioinformaticsCore/janis/issues>`__ for Pipeline related issues.
+To get help with Janis, please ask a question on `Gitter <https://gitter.im/janis-pipelines/community>`__ or 
+`raise an issue <https://github.com/PMCC-BioinformaticsCore/janis/issues>`__ on GitHub.
 
 If you find an issue with the tool definitions, please see the relevant issue page:
 
 * `Pipeline-bioinformatics <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/issues>`__
+
+This project is work-in-progress and is still in developments. Although we welcome contributions,
+due to the immature state of this project we recommend raising issues through the
+`Github issues page <https://github.com/PMCC-BioinformaticsCore/janis/issues>`__ for Pipeline related issues.
 
 Information about the project structure and more on contributing can be found within the documentation.
 
@@ -139,13 +142,23 @@ Contents
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: References
+   :caption: Registry
 
    pipelines/index
    tools/index
    datatypes/index
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: References
+
    references/index
    references/engines
+   references/cwl
+   references/wdl
+   references/faq
+   references/errors
 
 .. toctree::
    :hidden:
@@ -155,7 +168,6 @@ Contents
    development/index
    development/testing
    development/releasing
-   development/faq
 
 Indices and tables
 ===================

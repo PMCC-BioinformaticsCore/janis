@@ -7,7 +7,7 @@ It's a bit of a random collection of things that should be refactored:
     - RST Helpers
 """
 from inspect import isfunction, ismodule, isabstract, isclass
-from janis_runner.templates import (
+from janis_assistant.templates import (
     templates,
     get_schema_for_template,
     EnvironmentTemplate,

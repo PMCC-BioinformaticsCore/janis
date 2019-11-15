@@ -1,4 +1,4 @@
-Tutorial - Introduction
+Tutorial 1 - Introduction
 #############################
 
 .. note::

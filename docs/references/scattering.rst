@@ -3,40 +3,50 @@ Scattering
 
 *Improving workflow performance with embarrassingly parallel tasks*
 
-Janis support scattering by field when constructing a :class:`janis.Workflow.step()` through the `scatter=Union[str, `:class:`janis.ScatterDescription```]`` parameter.
+Janis support scattering by field when constructing a :class:`janis.Workflow.step()` through the ``scatter=Union[str,`` :class:`janis.ScatterDescription` ``]`` parameter.
+
+
+.. autoclass:: janis.ScatterDescription
+   :members: __init__
+
+.. autoclass:: janis.ScatterMethods
+   :members: dot, cross
+   :undoc-members:
+
+Simple scatter
+****************
+
+To simply scatter by a single field, you can simple provide the ``scatter="fieldname"`` parameter to the ``janis.Workflow.step()``  method.
 
 For example, let's presume you have the tool ``MyTool`` which accepts a single string input on the ``myToolInput`` field.
-
 
 .. code-block:: python
 
    w = Workflow("mywf")
    w.input("arrayInp", Array(String))
-   w.step("stp", MyTool(myToolInput=w.arrayInp), scatter="myToolinput", )
+   w.step("stp", MyTool(inp1=w.arrayInp), scatter="inp1")
    # equivalent to
-   w.step("stp", MyTool(myToolInput=w.arrayInp), scatter=ScatterDescription(fields=["myToolInput"]))
+   w.step("stp", MyTool(inp1=w.arrayInp), scatter=ScatterDescription(fields=["inp1"]))
 
 
 Scattering by more than one field
 *********************************
 
-Janis only officially supports scattering by 1 field, however there is work being done to support ``dot`` and ``scatter`` methods in WDL through subworkflows.
+Janis supports scattering by multiple fields by the ``dot`` and ``scatter`` methods, you will need to use a :class:`janis.ScatterDescription` and :class:`janis.ScatterMethods`:
 
-When it's supported, you will be able to include a ``method=ScatterMethods.{method}`` within the ``ScatterDescription`` constructor. If you scatter by more than field, you WILL need to
+Example:
 
-WDL
-*******
-Calls in WDL are explicitly scattered with essentially a for-loop. This calls for
-intermediary aliasing of the variable. It attempts to intelligently do this based
-on the field name to scatter on where possible.
+.. code-block:: python
 
-.. code-block:: wdl
+   from janis import ScatterDescription, ScatterMethods
+   # OR
+   from janis_core import ScatterDescription, ScatterMethods
 
-   scatter (b in bams) {
-      call G.gatk4sortsam as sortsam {
-       input:
-         bam=b,
-     }
-   }
-
-
+   w = Workflow("mywf")
+   w.input("arrayInp1", Array(String))
+   w.input("arrayInp2", Array(String))
+   w.step(
+     "stp", 
+     MyTool(inp1=w.arrayInp1, inp2=w.arrayInp2), 
+     scatter=ScatterDescription(fields=["inp1", "inp2"], method=ScatterMethods.dot)
+   )

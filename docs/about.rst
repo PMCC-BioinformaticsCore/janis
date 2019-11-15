@@ -18,10 +18,10 @@ That's a great question, and it's a little complicated. Our project goals are to
 Some additional benefits we get by writing a generic framework is we sanity check connections and also add types that  exist within certain domains. For example within the bioinformatics tools, there's a `BamBai` type that represents an  indexed `.bam` (+ `.bai`) file. With this framework, we don't need to worry about pesky secondary files, or the complications that come when passing them around in WDL either, this framework can take care of that.  
 
 
-Runner
-=======
+Assistant
+=========
 
-As part of the Portable Pipelines Project, we produced an execution assistant called ``Janis-runner``. Its purpose is
+As part of the Portable Pipelines Project, we produced an execution assistant called ``janis-assistant``. Its purpose is
 to run workflows written in Janis, track the progress and report the results back in a robust way.
 
 
@@ -36,14 +36,14 @@ Related project links:
 `Janis core`_           |Build Status core|    See Janis              |PyPI version core|  |codecov core|
 `Janis bioinformatics`_ |Build Status bio|     See Janis              |PyPI version bio|   \
 `Janis unix`_           |Build Status unix|    See Janis              |PyPI version unix|  \
-`Janis runner`_         |Build Status runner|  See Janis              |PyPI version unix|  \
+`Janis assistant`_      |Build Status asst|    See Janis              |PyPI version asst|  \
 ======================= ====================== ====================== ==================== ===============
 
 .. _Janis: https://github.com/PMCC-BioinformaticsCore/janis
 .. _Janis core: https://github.com/PMCC-BioinformaticsCore/janis-core
 .. _Janis bioinformatics: https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics
 .. _Janis unix: https://github.com/PMCC-BioinformaticsCore/janis-unix
-.. _Janis runner: https://github.com/PMCC-BioinformaticsCore/janis-runner
+.. _Janis assistant: https://github.com/PMCC-BioinformaticsCore/janis-assistant
 
 .. _JanisPIP: https://pypi.org/project/janis-pipelines/
 
@@ -58,7 +58,7 @@ Related project links:
    :target: https://travis-ci.org/PMCC-BioinformaticsCore/janis-bioinformatics
 .. |Build Status unix| image:: https://travis-ci.org/PMCC-BioinformaticsCore/janis-unix.svg?branch=master
    :target: https://travis-ci.org/PMCC-BioinformaticsCore/janis-unix
-.. |Build Status runner| image:: https://travis-ci.org/PMCC-BioinformaticsCore/janis-runner.svg?branch=master
+.. |Build Status asst| image:: https://travis-ci.org/PMCC-BioinformaticsCore/janis-runner.svg?branch=master
    :target: https://travis-ci.org/PMCC-BioinformaticsCore/janis-runner
 
 
@@ -70,7 +70,7 @@ Related project links:
    :target: https://badge.fury.io/py/janis-pipelines.unix
 .. |PyPI version bio| image:: https://badge.fury.io/py/janis-pipelines.bioinformatics.svg
    :target: https://badge.fury.io/py/janis-pipelines.bioinformatics
-.. |PyPI version runner| image:: https://badge.fury.io/py/janis-pipelines.runner.svg
+.. |PyPI version asst| image:: https://badge.fury.io/py/janis-pipelines.runner.svg
    :target: https://badge.fury.io/py/janis-pipelines.runner
 
 

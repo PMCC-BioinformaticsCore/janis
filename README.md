@@ -70,7 +70,7 @@ We can export a CWL representation to the console using `.translate("cwl")`. By 
   
 #### More examples  
 
-- Bioinformatics workflow tutorial: [AlignSortedBam](https://janis.readthedocs.io/en/latest/tutorials/alignsortedbam.html)
+- Bioinformatics workflow tutorial: [Aligment](https://janis.readthedocs.io/en/latest/tutorial1/construction.html)
 - Simple unix examples: in [`janis/examples`](https://github.com/PMCC-BioinformaticsCore/janis/tree/master/janis/examples).   
 
 - Whole genome germline pipelines: [janis-pipelines repository](https://github.com/PMCC-BioinformaticsCore/janis-pipelines).  

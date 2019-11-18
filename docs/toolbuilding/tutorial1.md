@@ -5,7 +5,7 @@
 
 A CommandTool is the interface between Janis and a program to be executed. Simply put, a CommandTool has a name, a command, inputs, outputs and a container to run in. Inputs and arguments can have a prefix and / or position, and this is used to construct the command line.
 
-The Janis documentation for the [CommandTool](https://janis.readthedocs.io/en/latest/references/commandtool.html) gives an introduction to the tool structure and a template for constructing your own tool. A tool wrapper must provide all of the information to configure and run the specified tool, this includes the `base_command`, [`janis.ToolInput`](https://janis.readthedocs.io/en/latest/references/commandtool.html#tool-input), [`janis.ToolOutput`](https://janis.readthedocs.io/en/latest/references/commandtool.html#tool-output),  a `container` and its version.
+The Janis documentation for the [CommandTool](https://janis.readthedocs.io/en/latest/references/commandtool.html) gives an introduction to the tool structure and a template for constructing your own tool. A tool wrapper must provide all of the information to configure and run the specified tool, this includes the `base_command`, [janis.ToolInput](https://janis.readthedocs.io/en/latest/references/commandtool.html#tool-input), [janis.ToolOutput](https://janis.readthedocs.io/en/latest/references/commandtool.html#tool-output), a `container` and its version.
 
 ## Requirements
 
@@ -34,12 +34,12 @@ janis-bioinformatics  v0.7.1
 
 > Guide on using containers
 
-For portability, we require that you specify an OCI compliant  `container` (eg: Docker) for your tool. Often they're will already be a container with some searching, however here's a guide on [preparing your tools in containers](https://janis.readthedocs.io/en/latest/tutorials/container.html) to ensure it works across all environments. 
+For portability, we require that you specify an OCI compliant `container` (eg: Docker) for your tool. Often they're will already be a container with some searching, however here's a guide on [preparing your tools in containers](https://janis.readthedocs.io/en/latest/tutorials/container.html) to ensure it works across all environments. 
 
 
 ## Samtools flagstat
 
-In this workshop we're going to wrap `samtools flagstat`. 
+In this workshop we're going to wrap the `samtools flagstat` tool. 
 
 ### Samtools project links
 
@@ -50,9 +50,24 @@ In this workshop we're going to wrap `samtools flagstat`.
 	- Latest tag: `1.9--h8571acd_11`
 
 
+### Command to build
+
+We want to replicate the following command for `Samtools Flagstat` in Janis:
+
+```bash
+samtools flagstat [--threads n] <in.bam>
+```
+
+Hence, we can isolate the following information:
+
+- Base commands: `"samtools"`, `"flagstat"`
+- The positional `<in.bam>` input
+- The configuration `--threads` input
+
+
 ### Command tool template
 
-The following template is the minimum amount of information required to wrap a tool. For more information, it's worth having a look at the [CommandTool documentation](https://janis.readthedocs.io/en/latest/references/commandtool.html).
+The following template is the minimum amount of information required to wrap a tool. For more information, see the [CommandTool documentation](https://janis.readthedocs.io/en/latest/references/commandtool.html).
 
 ```python
 from typing import List, Optional, Union
@@ -93,7 +108,7 @@ vim samtoolsflagstat.py
 We can start by filling in the basic information:
 
 - Rename the class to be `SamtoolsFlagstat`
-- Add the tool identifier in the `tool()` method
+- Add a unqiue tool identifier in the `tool()` method
 - Fill in the `base_command` to be `["samtools", "flagstat"]`
 - Add the container `"quay.io/biocontainers/samtools:1.9--h8571acd_11"`
 - Add the version: `"1.9.0"`
@@ -122,29 +137,8 @@ class SamtoolsFlagstat(j.CommandTool):
 
 ### Inputs
 
-#### Inspecting inputs
 
-Although we can check `samtools`' [documentation](http://www.htslib.org/doc/samtools.html), it's often easier to check the help text to find the appropriate tool inputs.  To view the help guide, we can run:
-
-```bash
-samtools flagstat # no -h / --help required
-```
-Output:
-```
-Usage: samtools flagstat [options] <in.bam>
-    --input-fmt-option OPT[=VAL]
-            Specify a single input file format option in the form of OPTION or OPTION=VALUE
-
-    -@, --threads INT
-            Number of additional threads to use [0]
-```
-
-We're going to add:
-
-- The positional `<in.bam>` input
-- The configuration `--threads` input
-
-#### Representing these inputs in Janis
+We'll use the [ToolInput](https://janis.readthedocs.io/en/latest/references/commandtool.html#tool-input) class to represent these inputs. A `ToolInput` provides a mechanism for binding this input onto the command line (eg: prefix, position, transformations). See the documentation for more ways to configure a ToolInput.
 
 Our positional input is a Bam, so we'll import the Bam type from `janis` with the following line:
 
@@ -157,35 +151,38 @@ Then we can declare our two inputs:
 1. Positional bam input
 2. Threads configuration input with the prefix `--threads`
 
+
 ```python
 	# in the class
-	def inputs(self):
-	return [
-		# 1. Positional bam input
-		j.ToolInput(
-			 tag="bam", 
-			 input_type=Bam, 
-			 position=1, 
-			 doc="Input bam to generate statistics for"
-		),
-		# 2. `threads` inputs
-		j.ToolInput(
-		    "threads", 
-		    j.Int(optional=True), 
-		    prefix="--threads", 
-		    doc="(-@)  Number of additional threads to use [0] "
-		)
-	]
+    def inputs(self) -> List[j.ToolInput]:
+        return [
+            # 1. Positional bam input
+            j.ToolInput(
+                "bam", 
+                Bam, 
+                position=1, 
+                doc="Input bam to generate statistics for"
+            ),
+            # 2. `threads` inputs
+            j.ToolInput(
+                "threads", 
+                j.Int(optional=True), 
+                prefix="--threads", 
+                doc="(-@)  Number of additional threads to use [0] "
+            )
+        ]
 ```
 
 
 ### Outputs
 
-The only output of `samtools flagstat` is the statistics that are written to `stdout`. We can collect this with the `j.Stdout` data type and give it the output tag `stats` which will give the following `j.ToolOutput`:
+We'll use the [ToolOutput](https://janis.readthedocs.io/en/latest/references/commandtool.html#tool-output) class to collect and represent these outputs. A `ToolOutput` has a type, and if not using `stdout` we can provide a `glob` parameter.
+
+The only output of `samtools flagstat` is the statistics that are written to `stdout`. We give this the name `"stats"`, and collect this with the `j.Stdout` data type:
 
 ```python
 	# in the class
-	def outputs(self):
+    def outputs(self) -> List[j.ToolOutput]:
 		return [
 			ToolOutput("stats", j.Stdout)
 		]
@@ -221,8 +218,8 @@ class SamtoolsFlagstat(j.CommandTool):
     def inputs(self) -> List[j.ToolInput]:
         return [
 		j.ToolInput(
-			 tag="bam", 
-			 input_type=Bam, 
+			 "bam", 
+			 Bam, 
 			 position=1, 
 			 doc="Input bam to generate statistics for"
 		),

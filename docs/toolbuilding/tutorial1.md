@@ -184,7 +184,7 @@ The only output of `samtools flagstat` is the statistics that are written to `st
     # in the class
     def outputs(self) -> List[j.ToolOutput]:
         return [
-            ToolOutput("stats", j.Stdout)
+            j.ToolOutput("stats", j.Stdout)
         ]
 ```
 

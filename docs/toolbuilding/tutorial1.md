@@ -1,4 +1,3 @@
-
 # Tutorial 2 - Wrapping a new tool
 
 ## Introduction
@@ -26,6 +25,24 @@ janis-unix            v0.7.0
 janis-bioinformatics  v0.7.1
 --------------------  ------
 ```
+
+### Setup
+
+This tutorial is on checked in on GitHub with sample data. You can download this sample data and template files with the following:
+
+```bash
+git clone https://github.com/PMCC-BioinformaticsCore/janis-workshops.git
+cd janis-workshops/workshop3
+ls -lGh *   # ls with extra options
+```
+
+You'll see a list of files within this repository:
+
+- `README.md` - *This file*
+- `samtoolsflagstat.py` - The template for this tutorial
+- `samtoolsflagstat-final.py` - The final command tool (also at the bottom of this file)
+- `data/brca1.bam` - A Bam file that this tool can be run with
+- `data/README.md` - Information about the data file
 
 
 ### Container
@@ -151,6 +168,7 @@ Then we can declare our two inputs:
 1. Positional bam input
 2. Threads configuration input with the prefix `--threads`
 
+We're going to give our inputs a name through which we can reference them by. This allows us to specify a value from the command line, or connect the result of a previous step [within a workflow](https://janis.readthedocs.io/en/latest/tutorial1/construction.html#bwa-mem).
 
 ```python
     # in the class
@@ -158,14 +176,14 @@ Then we can declare our two inputs:
         return [
             # 1. Positional bam input
             j.ToolInput(
-                "bam", 
+                "bam",      # name of our input
                 Bam, 
                 position=1, 
                 doc="Input bam to generate statistics for"
             ),
             # 2. `threads` inputs
             j.ToolInput(
-                "threads", 
+                "threads",  # name of our input
                 j.Int(optional=True), 
                 prefix="--threads", 
                 doc="(-@)  Number of additional threads to use [0] "
@@ -276,10 +294,10 @@ task samtoolsflagstat {
 
 ### Running the workflow
 
-We can call the `janis run` functionality (default CWLTool) with our bam input:
+We can call the `janis run` functionality (default CWLTool), and provide the data file to the input called `bam` with the following line:
 
 ```bash
-janis run samtoolsflagstat.py --bam /data/brca1.bam
+janis run samtoolsflagstat.py --bam data/brca1.bam
 ```
 
 OUTPUT:
@@ -307,7 +325,7 @@ Outputs:
 
 ```
 
-We can test this by looking at our output file: 
+Janis (and CWLTool) said the tool executed correctly, let's check the output file: 
 
 ```bash
 cat $HOME/janis/execution/samtoolsflagstatWf/20191114_155159_f9e89f/output/out

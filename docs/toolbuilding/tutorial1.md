@@ -47,7 +47,7 @@ In this workshop we're going to wrap the `samtools flagstat` tool.
 - Project page: [http://www.htslib.org/doc/samtools.html](http://www.htslib.org/doc/samtools.html)
 - Github: [samtools/samtools](https://github.com/samtools/samtools)
 - Docker containers: [quay.io/biocontainers/samtools](https://quay.io/repository/biocontainers/samtools?tag=latest&tab=tags) (automatically / community generated)
-	- Latest tag: `1.9--h8571acd_11`
+    - Latest tag: `1.9--h8571acd_11`
 
 
 ### Command to build
@@ -131,8 +131,8 @@ class SamtoolsFlagstat(j.CommandTool):
     @staticmethod
     def version() -> str:
         return "1.9.0"
-	
-	# inputs and outputs
+    
+    # inputs and outputs
 ```
 
 ### Inputs
@@ -153,7 +153,7 @@ Then we can declare our two inputs:
 
 
 ```python
-	# in the class
+    # in the class
     def inputs(self) -> List[j.ToolInput]:
         return [
             # 1. Positional bam input
@@ -181,11 +181,11 @@ We'll use the [ToolOutput](https://janis.readthedocs.io/en/latest/references/com
 The only output of `samtools flagstat` is the statistics that are written to `stdout`. We give this the name `"stats"`, and collect this with the `j.Stdout` data type:
 
 ```python
-	# in the class
+    # in the class
     def outputs(self) -> List[j.ToolOutput]:
-		return [
-			ToolOutput("stats", j.Stdout)
-		]
+        return [
+            ToolOutput("stats", j.Stdout)
+        ]
 ```
 
 
@@ -217,19 +217,19 @@ class SamtoolsFlagstat(j.CommandTool):
 
     def inputs(self) -> List[j.ToolInput]:
         return [
-		j.ToolInput(
-			 "bam", 
-			 Bam, 
-			 position=1, 
-			 doc="Input bam to generate statistics for"
-		),
-		# 2. `threads` inputs
-		j.ToolInput(
-		    "threads", 
-		    j.Int(optional=True), 
-		    prefix="--threads", 
-		    doc="(-@)  Number of additional threads to use [0] "
-		)
+        j.ToolInput(
+             "bam", 
+             Bam, 
+             position=1, 
+             doc="Input bam to generate statistics for"
+        ),
+        # 2. `threads` inputs
+        j.ToolInput(
+            "threads", 
+            j.Int(optional=True), 
+            prefix="--threads", 
+            doc="(-@)  Number of additional threads to use [0] "
+        )
     ]
 
     def outputs(self) -> List[j.ToolOutput]:

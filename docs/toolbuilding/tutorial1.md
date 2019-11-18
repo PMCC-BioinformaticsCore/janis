@@ -92,11 +92,11 @@ vim samtoolsflagstat.py
 
 We can start by filling in the basic information:
 
-- Rename the class to be `SamtoolsFlagstat`,
-- Add the tool identifier in the `tool()` method,
-- Fill in the `base_command` to be `["samtools", "flagstat"]`,
-- Add the container `"quay.io/biocontainers/samtools:1.9--h8571acd_11"`,
-- Add the version: `"1.9.0"`.
+- Rename the class to be `SamtoolsFlagstat`
+- Add the tool identifier in the `tool()` method
+- Fill in the `base_command` to be `["samtools", "flagstat"]`
+- Add the container `"quay.io/biocontainers/samtools:1.9--h8571acd_11"`
+- Add the version: `"1.9.0"`
 
 You'll have a class definition like the following
 ```python

@@ -86,3 +86,6 @@ Errors:
 
     You need to specify the `--name` parameter with one of these ids (`HelloWorkflow`, `HelloWorkflow2` or `w`) to run / translate / etc.
     
+- **ValueError: There were errors in 2 inputs: {'field1': 'value was null', 'field2': 'other reason'}**
+
+    One or more of your inputs when running were invalid. The dictionary gives the field that was invalid (key) and the reason Janis thinks your value was invalid (value).

@@ -8,18 +8,6 @@ Common Workflow Language or Workflow Definition Language._
   
 Documentation is hosted here: https://janis.readthedocs.io/  
 
-## v0.6.0 Backwards Compatability
-**NOTE: Version 0.6.0 brings large changes to simplify the workflow API.**
-
-See the [example](#example) below to see how this new syntax works. Instead of creating input nodes and adding them to the graph, you add an input / output / step to the graph, and map the connections within the Step.
-
-Inline workflows are now creating with the `WorkflowBuilder` class.
-
-```python
-w.step("step_tag", Echo(inp=w.input_tag))
-```
-
-
   
 ## Introduction  
 

@@ -6,9 +6,9 @@ Cutadapt
 1 contributor · 4 versions
 
 :ID: ``cutadapt``
-:Python: ``janis_bioinformatics.tools.cutadapt.versions import CutAdapt_2_6``
+:Python: ``janis_bioinformatics.tools.cutadapt.versions import CutAdapt_2_5``
 :Versions: 2.6, 2.5, 2.4, 1.18
-:Container: quay.io/biocontainers/cutadapt:2.6--py36h516909a_0
+:Container: quay.io/biocontainers/cutadapt:2.5--py37h516909a_0
 :Authors: Michael Franklin
 :Citations: Martin, Marcel. “Cutadapt Removes Adapter Sequences from High-Throughput Sequencing Reads.” EMBnet.journal, vol. 17, no. 1, EMBnet Stichting, May 2011, p. 10. Crossref, doi:10.14806/ej.17.1.200.
 :DOI: DOI:10.14806/ej.17.1.200

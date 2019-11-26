@@ -54,14 +54,12 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
     input_headers = ["name", "type", "documentation"]
 
     required_input_tuples = [
-        [i.id(), i.input_type.id(), i.doc]
-        for i in tool.inputs()
-        if not i.input_type.optional
+        [i.id(), i.intype.id(), i.doc]
+        for i in tool.tool_inputs()
+        if not i.intype.optional
     ]
     optional_input_tuples = [
-        [i.id(), i.input_type.id(), i.doc]
-        for i in tool.inputs()
-        if i.input_type.optional
+        [i.id(), i.intype.id(), i.doc] for i in tool.tool_inputs() if i.intype.optional
     ]
 
     formatted_inputs = tabulate(
@@ -83,7 +81,7 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
             )
 
     output_headers = ["name", "type", "documentation"]
-    output_tuples = [[o.id(), o.output_type.id(), o.doc] for o in tool.outputs()]
+    output_tuples = [[o.id(), o.outtype.id(), o.doc] for o in tool.tool_outputs()]
 
     tool_prov = ""
     if tool.tool_provider() is None:

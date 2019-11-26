@@ -13,7 +13,6 @@ from janis_assistant.templates import (
     EnvironmentTemplate,
 )
 
-import janis
 from constants import PROJECT_ROOT_DIR
 from janis_core import (
     Array,

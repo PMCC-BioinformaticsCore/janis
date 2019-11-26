@@ -62,14 +62,14 @@ def prepare_workflow_page(workflow: Workflow, versions: List[str]):
     input_headers = ["name", "type", "documentation"]
 
     required_input_tuples = [
-        [i.id(), i.input_type.id(), i.doc]
-        for i in workflow.inputs()
-        if not i.input_type.optional
+        [i.id(), i.intype.id(), i.doc]
+        for i in workflow.tool_inputs()
+        if not i.intype.optional
     ]
     optional_input_tuples = [
-        [i.id(), i.input_type.id(), i.doc]
-        for i in workflow.inputs()
-        if i.input_type.optional
+        [i.id(), i.intype.id(), i.doc]
+        for i in workflow.tool_inputs()
+        if i.intype.optional
     ]
 
     formatted_inputs = tabulate(
@@ -91,7 +91,7 @@ def prepare_workflow_page(workflow: Workflow, versions: List[str]):
             )
 
     output_headers = ["name", "type", "documentation"]
-    output_tuples = [[o.id(), o.output_type.id(), o.doc] for o in workflow.outputs()]
+    output_tuples = [[o.id(), o.outtype.id(), o.doc] for o in workflow.tool_outputs()]
     formatted_outputs = tabulate(output_tuples, output_headers, tablefmt="rst")
 
     tool_prov = ""

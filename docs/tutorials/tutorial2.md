@@ -168,7 +168,7 @@ Then we can declare our two inputs:
 1. Positional bam input
 2. Threads configuration input with the prefix `--threads`
 
-We're going to give our inputs a name through which we can reference them by. This allows us to specify a value from the command line, or connect the result of a previous step [within a workflow](https://janis.readthedocs.io/en/latest/tutorial1/construction.html#bwa-mem).
+We're going to give our inputs a name through which we can reference them by. This allows us to specify a value from the command line, or connect the result of a previous step [within a workflow](https://janis.readthedocs.io/en/latest/tutorials/tutorial1.html#bwa-mem).
 
 ```python
     # in the class

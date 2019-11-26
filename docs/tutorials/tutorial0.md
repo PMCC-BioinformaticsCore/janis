@@ -1,6 +1,17 @@
-# Setup
+# Tutorial 0 - Introduction to Janis
 
-In this step we'll install Janis on a local computer, setup a workflow engine and run a test workflow. 
+Welcome to the introduction for Janis! This tutorial introduces Janis and installs it on your local computer, ready for building your first workflow.
+
+Janis is workflow framework that uses Python to construct a declarative workflow. It has a simple workflow API within Python that you use to declare your workflow. Janis can convert your pipeline to the Common Workflow Language (CWL) and Workflow Description Language (WDL) for execution, but it's also great for publishing and archiving.
+
+Janis was designed with a few priorities:
+
+- Workflows should be easy to build/
+- Workflows and tools must be easily shared (portable).
+- Execution must be able to occur on HPCs and cloud environments.
+- Workflows should be reproducible and re-runnable.
+
+Janis uses an *abstracted execution environment*, which removes the shared file system in favour of you specifiying all the files you need up front and passing them around as a File object. This allows the same workflow to be executable on your local machine, HPCs and cloud, and we let the `execution engine` handle moving our files. This also means that we can use file systems like ``S3``, ``GCS``, ``FTP`` and more without any code changes.
 
 > Instructions for setting up Janis on a compute cluster are under construction. 
 
@@ -118,5 +129,5 @@ janis run --engine cwltool hello --inp "Hello, yourname"
 
 ### Next steps
 
-- [Workflow construction tutorial](https://janis.readthedocs.io/en/latest/tutorial1/construction.html)
+- [Workflow construction tutorial](https://janis.readthedocs.io/en/latest/tutorials/tutorial1.html)
 

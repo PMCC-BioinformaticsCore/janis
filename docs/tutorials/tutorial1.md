@@ -1,4 +1,4 @@
-# Workflow construction
+# Tutorial 1 - Building a Workflow
 
 In this stage, we have an installation of Janis, CWLTool, our data and now we're going to construct our workflow. In [Next Generation Sequencing (NGS)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3841808/), short reads of DNA are sequenced in parallel to speed up sequencing time, one of the consequences of many short reads is the need for [alignment](https://en.wikibooks.org/wiki/Next_Generation_Sequencing_(NGS)/Alignment).
 

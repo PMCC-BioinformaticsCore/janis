@@ -134,8 +134,9 @@ Contents
    :maxdepth: 1
    :caption: Tutorials
 
-   tutorial1/index
-   toolbuilding/tutorial1
+   tutorials/tutorial0
+   tutorials/tutorial1
+   tutorials/tutorial2
    tutorials/running
    tutorials/container
 

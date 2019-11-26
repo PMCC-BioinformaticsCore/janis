@@ -11,7 +11,7 @@ Let's start with something small, something simple!
 
 ### You will need
 
-A basic installation of janis is required (see the [Getting Started](https://janis.readthedocs.io/en/latest/tutorial1/setup.html) guide for more info). You can install janis by running:
+A basic installation of janis is required (see the [Getting Started](https://janis.readthedocs.io/en/latest/tutorials/tutorial0.html) guide for more info). You can install janis by running:
 
 ```bash
 pip3 install janis-pipelines
@@ -181,5 +181,5 @@ janis translate simple.py wdl -o .
 
 Congratulations on constructing and exporting your first workflow, and i You can now get more advanced with the following tutorials:
 
-- [Building a simple bioinformatics workflow](https://janis.readthedocs.io/en/latest/tutorial1/construction.html)
+- [Building a simple bioinformatics workflow](https://janis.readthedocs.io/en/latest/tutorials/tutorial1.html)
 - [Running workflows](https://janis.readthedocs.io/en/latest/tutorials/running.html)

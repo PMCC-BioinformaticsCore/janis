@@ -4,14 +4,14 @@ from toolbuilder.parse_help import from_container
 
 
 def process_args():
-    cmds = {"container": do_docker}
+    cmds = {"fromcontainer": do_docker}
 
     parser = argparse.ArgumentParser(description="Execute a workflow")
     subparsers = parser.add_subparsers(help="subcommand help", dest="command")
     parser.add_argument("-d", "--debug", action="store_true")
 
     subparsers.add_parser("version")
-    add_docker_args(subparsers.add_parser("container"))
+    add_fromcontainer_args(subparsers.add_parser("fromcontainer"))
     # add_workflow_args(subparsers.add_parser("run-workflow"))
 
     args = parser.parse_args()
@@ -38,7 +38,7 @@ def do_docker(args):
     print(tool, file=sys.stdout)
 
 
-def add_docker_args(parser):
+def add_fromcontainer_args(parser):
     parser.description = (
         "Attempts to parse the help (-h) guide of a tool and convert it into a "
         "CommandTool representation of Janis. The output of the tool is returned to stdout."

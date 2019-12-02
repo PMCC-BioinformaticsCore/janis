@@ -1,7 +1,8 @@
 from typing import Optional, Union, List
 
 from .cltconvert import convert_command_tool_fragments
-from janis_core import ToolMetadata, ToolInput, String, Logger, JanisShed
+from janis_core import ToolMetadata, String, Logger, JanisShed
+from janis_core.tool.commandtool import ToolInput
 
 container_exec = {
     "docker": ["docker", "run"],
@@ -140,7 +141,7 @@ def parse_str(
                     datatype,
                     prefix=prefix + eqifrequired,
                     separate_value_from_prefix=not has_equal,
-                    doc=tool_doc,
+                    doc=tool_doc.replace('"', "'"),
                 )
             except:
                 print(f"Skipping '{tag}' as it wasn't validated correctly")

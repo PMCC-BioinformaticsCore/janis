@@ -3,7 +3,7 @@ import inspect
 from datetime import datetime
 from typing import Union, List
 
-from janis_core.tool.tool import ToolInput, ToolArgument, ToolOutput
+from janis_core.tool.commandtool import ToolInput, ToolArgument, ToolOutput
 from janis_core.types import (
     InputSelector,
     WildcardSelector,
@@ -155,5 +155,5 @@ def convert_command_tool_fragments(
         metadata=get_string_repr(metadata),
         container=container,
         version=version,
-        escapedversion=re.sub("[\W]", "_", version),
+        escapedversion=re.sub("[\W]", "_", str(version)) if version else str(None),
     )

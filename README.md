@@ -91,7 +91,8 @@ Through conference or talks, this project has been referenced by the following t
 - Walter and Eliza Hall Institute Talk (WEHI) 2019: _Portable Pipelines Project: Developing reproducible bioinformatics pipelines with standardised workflow languages_
 - Bioinformatics Open Source Conference (BOSC) 2019: _Janis: an open source tool to machine generate type-safe CWL and WDL workflows_
 - Victorian Cancer Bioinformatics Symposium (VCBS) 2019: _Developing portable variant calling pipelines with Janis_
-- GIW / ABACBS 2019: _Janis: A Python framework for Portable Pipelines_  
+- GIW / ABACBS 2019: _Janis: A Python framework for Portable Pipelines_
+- Australian BioCommons, December 2019: _Portable pipelines: build once and run everywhere with Janis_
   
   
 ## Support  

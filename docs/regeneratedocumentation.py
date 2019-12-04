@@ -8,7 +8,7 @@ It's a bit of a random collection of things that should be refactored:
 """
 from inspect import isfunction, ismodule, isabstract, isclass
 from janis_assistant.templates import (
-    templates,
+    get_all_templates,
     get_schema_for_template,
     EnvironmentTemplate,
 )
@@ -237,15 +237,34 @@ def prepare_runner_templates():
 
     os.makedirs(templates_dir, exist_ok=True)
 
+    templates = get_all_templates()
+
     for tkey, template in templates.items():
         with open(os.path.join(templates_dir, tkey + ".rst"), "w+") as f:
             f.write(prepare_template(tkey, template))
 
+    introtext = """\
+
+Templates
+###########
+    
+This document containers the templates available to Janis by default. These are used
+to configure Cromwell to execute across a number of compute environments.
+
+Janis can be configured to submit to an existing Cromwell instance (including on GCP) with:
+
+.. code-block:: bash
+
+   urlwithport="127.0.0.1:8000"
+   janis run --engine cromwell --cromwell-url $urlwithport hello
+"""
+
     with open(os.path.join(templates_dir, "index.rst"), "w+") as f:
         f.write(
-            get_toc(
-                "Templates",
-                intro_text="List of templates for ``janis-runner``",
+            introtext
+            + get_toc(
+                title="",
+                intro_text="List of templates for ``janis-assistant``:",
                 subpages=list(templates.keys()),
             )
         )
@@ -300,5 +319,5 @@ Pipelines
 
 if __name__ == "__main__":
     prepare_all_tools()
-    # prepare_runner_templates()
+    prepare_runner_templates()
     generate_pipelines_page()

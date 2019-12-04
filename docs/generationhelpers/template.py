@@ -8,20 +8,24 @@ def prepare_template(name: str, template: EnvironmentTemplate):
 
     tname = name.title()
 
-    required = [(s.id(), s.type) for s in schema if not s.optional]
-    optional = [(s.id(), s.type, s.default) for s in schema if s.optional]
+    required = [(s.id(), s.type, s.doc or "") for s in schema if not s.optional]
+    optional = [(s.id(), s.type, s.default, s.doc or "") for s in schema if s.optional]
 
     # mapped
 
-    requiredf = tabulate(required, ["ID", "Type"], tablefmt="rst")
+    requiredf = tabulate(required, ["ID", "Type", "Documentation"], tablefmt="rst")
 
-    optionalf = tabulate(optional, ["ID", "Type", "Default"], tablefmt="rst")
+    optionalf = tabulate(
+        optional, ["ID", "Type", "Default", "Documentation"], tablefmt="rst"
+    )
 
     nl = "\n"
 
     return f"""\
 {tname}
 {"=" * len(tname)}
+
+Template ID ``{name}``
 
 Fields
 -------

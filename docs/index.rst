@@ -148,6 +148,7 @@ Contents
    pipelines/index
    tools/index
    datatypes/index
+   templates/index
 
 .. toctree::
    :hidden:

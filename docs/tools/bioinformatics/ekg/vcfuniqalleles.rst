@@ -28,12 +28,14 @@ For each record, remove any duplicate alternate alleles that may have resulted f
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-======  =============  ===============
-name    type           documentation
-======  =============  ===============
-vcf     CompressedVCF
-======  =============  ===============
+======  =============  ========  ==========  ===============
+name    type           prefix      position  documentation
+======  =============  ========  ==========  ===============
+vcf     CompressedVCF                     3
+======  =============  ========  ==========  ===============
 

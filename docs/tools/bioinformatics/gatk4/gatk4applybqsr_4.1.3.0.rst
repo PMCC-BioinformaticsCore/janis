@@ -46,17 +46,19 @@ and write out the recalibrated data to a new BAM or CRAM file.
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ==================  =============================================================
-name            type                documentation
-==============  ==================  =============================================================
-bam             BamPair             The SAM/BAM/CRAM file containing reads.
-reference       FastaWithDict       Reference sequence
-outputFilename  Optional<Filename>  Write output to this file
-recalFile       Optional<tsv>       Input recalibration table for BQSR
-intervals       Optional<bed>       -L (BASE) One or more genomic intervals over which to operate
-tmpDir          Optional<String>    Temp directory to use.
-==============  ==================  =============================================================
+==============  ==================  =================  ==========  =============================================================
+name            type                prefix               position  documentation
+==============  ==================  =================  ==========  =============================================================
+bam             BamPair             -I                         10  The SAM/BAM/CRAM file containing reads.
+reference       FastaWithDict       -R                             Reference sequence
+outputFilename  Optional<Filename>  -O                             Write output to this file
+recalFile       Optional<tsv>       --bqsr-recal-file              Input recalibration table for BQSR
+intervals       Optional<bed>       --intervals                    -L (BASE) One or more genomic intervals over which to operate
+tmpDir          Optional<String>    --tmp-dir                  11  Temp directory to use.
+==============  ==================  =================  ==========  =============================================================
 

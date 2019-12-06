@@ -114,12 +114,18 @@ def prepare_all_tools():
         )
 
         defaulttool = toolsbyversion[default_version]
-        tool_path_components = list(
-            filter(
-                lambda a: bool(a),
-                [defaulttool.tool_module(), defaulttool.tool_provider()],
+        if isclass(defaulttool):
+            defaulttool = defaulttool()
+        try:
+            tool_path_components = list(
+                filter(
+                    lambda a: bool(a),
+                    [defaulttool.tool_module(), defaulttool.tool_provider()],
+                )
             )
-        )
+        except Exception as e:
+            Logger.critical(f"Failed to generate docs for {toolname}: {e}")
+            continue
 
         # (toolURL, tool, isPrimary)
         toolurl_to_tool = [(toolname.lower(), defaulttool, True)] + [

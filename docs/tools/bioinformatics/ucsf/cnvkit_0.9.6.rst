@@ -30,19 +30,21 @@ URL: `https://github.com/etal/cnvkit <https://github.com/etal/cnvkit>`_
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-===============  ==================  =====================================================================================================================================================================================================================================
-name             type                documentation
-===============  ==================  =====================================================================================================================================================================================================================================
-reference        File                REFERENCE Copy number reference file (.cnn).
-outputDirectory  Optional<Filename>  DIRECTORY Output directory.
-method           Optional<String>    (-m) {hybrid,amplicon,wgs} Sequencing protocol: hybridization capture ('hybrid'), targeted amplicon sequencing ('amplicon'), or whole genome sequencing ('wgs'). Determines whether and how to use antitarget bins. [Default: hybrid]
-maleReference    Optional<String>    (-y, --haploid-x-reference) Use or assume a male reference (i.e. female samples will have +1 log-CNR of chrX; otherwise male samples would have -1 chrX).
-countReads       Optional<String>    (-c) Get read depths by counting read midpoints within each bin. (An alternative algorithm).
-dropLowCoverage  Optional<String>    Drop very-low-coverage bins before segmentation to avoid false-positive deletions in poor-quality tumor samples.
-processes        Optional<String>    (-p) [PROCESSES] Number of subprocesses used to running each of the BAM files in parallel. Without an argument, use the maximum number of available CPUs. [Default: process each BAM in serial]
-rscriptPath      Optional<String>    Path to the Rscript excecutable to use for running R code. Use this option to specify a non-default R installation. [Default: Rscript]
-===============  ==================  =====================================================================================================================================================================================================================================
+===============  ==================  ===================  ==========  =====================================================================================================================================================================================================================================
+name             type                prefix               position    documentation
+===============  ==================  ===================  ==========  =====================================================================================================================================================================================================================================
+reference        File                --reference                      REFERENCE Copy number reference file (.cnn).
+outputDirectory  Optional<Filename>  --output-dir                     DIRECTORY Output directory.
+method           Optional<String>    --method                         (-m) {hybrid,amplicon,wgs} Sequencing protocol: hybridization capture ('hybrid'), targeted amplicon sequencing ('amplicon'), or whole genome sequencing ('wgs'). Determines whether and how to use antitarget bins. [Default: hybrid]
+maleReference    Optional<String>    --male-reference                 (-y, --haploid-x-reference) Use or assume a male reference (i.e. female samples will have +1 log-CNR of chrX; otherwise male samples would have -1 chrX).
+countReads       Optional<String>    --count-reads                    (-c) Get read depths by counting read midpoints within each bin. (An alternative algorithm).
+dropLowCoverage  Optional<String>    --drop-low-coverage              Drop very-low-coverage bins before segmentation to avoid false-positive deletions in poor-quality tumor samples.
+processes        Optional<String>    --processes                      (-p) [PROCESSES] Number of subprocesses used to running each of the BAM files in parallel. Without an argument, use the maximum number of available CPUs. [Default: process each BAM in serial]
+rscriptPath      Optional<String>    --rscript-path                   Path to the Rscript excecutable to use for running R code. Use this option to specify a non-default R installation. [Default: Rscript]
+===============  ==================  ===================  ==========  =====================================================================================================================================================================================================================================
 

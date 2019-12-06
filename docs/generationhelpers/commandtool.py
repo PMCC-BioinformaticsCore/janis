@@ -51,16 +51,28 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
         else "*No URL to the documentation was provided*"
     )
 
-    input_headers = ["name", "type", "documentation"]
+    input_headers = ["name", "type", "prefix", "position", "documentation"]
+    argument_headers = ["value", "prefix", "position", "documentation"]
 
     required_input_tuples = [
-        [i.id(), i.intype.id(), i.doc]
-        for i in tool.tool_inputs()
-        if not i.intype.optional
+        [i.id(), i.input_type.id(), i.prefix, i.position, i.doc]
+        for i in tool.inputs()
+        if not i.input_type.optional
     ]
     optional_input_tuples = [
-        [i.id(), i.intype.id(), i.doc] for i in tool.tool_inputs() if i.intype.optional
+        [i.id(), i.input_type.id(), i.prefix, i.position, i.doc]
+        for i in tool.inputs()
+        if i.input_type.optional
     ]
+
+    formatted_args = None
+    args = tool.arguments()
+    if args:
+        argument_tuples = [
+            [str(a.value), a.prefix, a.position, a.doc] for a in tool.arguments()
+        ]
+        fargs = tabulate(argument_tuples, headers=argument_headers, tablefmt="rst")
+        formatted_args = "Arguments\n----------\n\n" + fargs
 
     formatted_inputs = tabulate(
         required_input_tuples + optional_input_tuples, input_headers, tablefmt="rst"
@@ -114,6 +126,8 @@ URL: {formatted_url}
     "contribute one", f"https://github.com/PMCC-BioinformaticsCore/janis-{tool.tool_module()}")}
 
 ------
+
+{formatted_args}
 
 Additional configuration (inputs)
 ---------------------------------

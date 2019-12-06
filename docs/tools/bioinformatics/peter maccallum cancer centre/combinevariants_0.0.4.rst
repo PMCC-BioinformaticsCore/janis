@@ -58,19 +58,21 @@ optional arguments:
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-==============  =======================  =============================================================================
-name            type                     documentation
-==============  =======================  =============================================================================
-vcfs            Array<VCF>               input vcfs, the priority of the vcfs will be based on the order of the input
-type            String                   germline | somatic
-outputFilename  Optional<Filename>
-regions         Optional<Filename>       Region file containing all the variants, used as samtools mpileup
-columns         Optional<Array<String>>  Columns to keep, seperated by space output vcf (unsorted)
-normal          Optional<String>         Sample id of germline vcf, or normal sample id of somatic vcf
-tumor           Optional<String>         tumor sample ID, required if inputs are somatic vcfs
-priority        Optional<Integer>        The priority of the callers, must match with the callers in the source header
-==============  =======================  =============================================================================
+==============  =======================  ==========  ==========  =============================================================================
+name            type                     prefix      position    documentation
+==============  =======================  ==========  ==========  =============================================================================
+vcfs            Array<VCF>               -i                      input vcfs, the priority of the vcfs will be based on the order of the input
+type            String                   --type                  germline | somatic
+outputFilename  Optional<Filename>       -o
+regions         Optional<Filename>       --regions               Region file containing all the variants, used as samtools mpileup
+columns         Optional<Array<String>>  --columns               Columns to keep, seperated by space output vcf (unsorted)
+normal          Optional<String>         --normal                Sample id of germline vcf, or normal sample id of somatic vcf
+tumor           Optional<String>         --tumor                 tumor sample ID, required if inputs are somatic vcfs
+priority        Optional<Integer>        --priority              The priority of the callers, must match with the callers in the source header
+==============  =======================  ==========  ==========  =============================================================================
 

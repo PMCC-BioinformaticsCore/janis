@@ -29,14 +29,31 @@ No documentation was provided: `contribute one <https://github.com/PMCC-Bioinfor
 
 ------
 
+Arguments
+----------
+
+========================================  ========  ==========  ===============
+value                                     prefix      position  documentation
+========================================  ========  ==========  ===============
+zcat                                                         0
+|                                                            1
+sed 's/ID=AD,Number=./ID=AD,Number=R/' <                     2
+|                                                            4
+vt decompose -s - -o -                                       5
+|                                                            6
+vt normalize -n -q - -o -                                    7
+|                                                            9
+sed 's/ID=AD,Number=./ID=AD,Number=1/'                      10
+========================================  ========  ==========  ===============
+
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ==================  ===============
-name            type                documentation
-==============  ==================  ===============
-vcf             CompressedVCF
-reference       FastaWithDict
-outputFilename  Optional<Filename>
-==============  ==================  ===============
+==============  ==================  ========  ==========  ===============
+name            type                prefix      position  documentation
+==============  ==================  ========  ==========  ===============
+vcf             CompressedVCF                          3
+reference       FastaWithDict       -r                 8
+outputFilename  Optional<Filename>  >                 10
+==============  ==================  ========  ==========  ===============
 

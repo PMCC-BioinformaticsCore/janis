@@ -36,15 +36,17 @@ options:
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-==========  =================  ====================================================
-name        type               documentation
-==========  =================  ====================================================
-vcf         CompressedVCF
-truth       CompressedVCF      use this VCF as ground truth for ROC generation
-reference   FastaWithDict      FASTA reference file
-windowSize  Optional<Integer>  compare records up to this many bp away (default 30)
-==========  =================  ====================================================
+==========  =================  ========  ==========  ====================================================
+name        type               prefix      position  documentation
+==========  =================  ========  ==========  ====================================================
+vcf         CompressedVCF                         3
+truth       CompressedVCF      -t                    use this VCF as ground truth for ROC generation
+reference   FastaWithDict      -r                    FASTA reference file
+windowSize  Optional<Integer>  -w                    compare records up to this many bp away (default 30)
+==========  =================  ========  ==========  ====================================================
 

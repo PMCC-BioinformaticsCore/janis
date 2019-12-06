@@ -46,17 +46,19 @@ from users, a user guide will be produced outlining common workflows, pitfalls, 
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-================  ==================  ===============
-name              type                documentation
-================  ==================  ===============
-bams              Array<BAM>
-reference         FastaWithDict
-outputFilename    Optional<Filename>
-assemblyFilename  Optional<Filename>
-threads           Optional<Integer>
-blacklist         Optional<bed>
-================  ==================  ===============
+================  ==================  ===========  ==========  ===============
+name              type                prefix         position  documentation
+================  ==================  ===========  ==========  ===============
+bams              Array<BAM>                               10
+reference         FastaWithDict       --reference           1
+outputFilename    Optional<Filename>  --output              2
+assemblyFilename  Optional<Filename>  --assembly            3
+threads           Optional<Integer>   --threads
+blacklist         Optional<bed>       --blacklist           4
+================  ==================  ===========  ==========  ===============
 

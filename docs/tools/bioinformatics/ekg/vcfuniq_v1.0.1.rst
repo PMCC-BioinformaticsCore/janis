@@ -28,12 +28,14 @@ Like GNU uniq, but for VCF records. Remove records which have the same positon, 
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-======  =============  ===============
-name    type           documentation
-======  =============  ===============
-vcf     CompressedVCF
-======  =============  ===============
+======  =============  ========  ==========  ===============
+name    type           prefix      position  documentation
+======  =============  ========  ==========  ===============
+vcf     CompressedVCF                     3
+======  =============  ========  ==========  ===============
 

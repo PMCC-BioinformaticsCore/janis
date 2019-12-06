@@ -37,28 +37,30 @@ index file will be downloaded if it is not present locally.
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-===========  =================  ==============================================================================================================================================================================================================================================================================================================
-name         type               documentation
-===========  =================  ==============================================================================================================================================================================================================================================================================================================
-file         CompressedVCF      File from which to create the index. The input data file must be position sorted and compressed by bgzip which has a gzip(1) like interface.
-preset       Optional<String>   -p: Input format for indexing. Valid values are: gff, bed, sam, vcf. This option should not be applied together with any of -s, -b, -e, -c and -0; it is not used for data retrieval because this setting is stored in the index file. [gff]
-zeroBased    Optional<Boolean>  -0: Specify that the position in the data file is 0-based (e.g. UCSC files) rather than 1-based.
-begin        Optional<Integer>  -b: Column of start chromosomal position. [4]
-comment      Optional<String>   -c: Skip lines started with character CHAR. [#]
-csi          Optional<Boolean>  -C: Produce CSI format index instead of classical tabix or BAI style indices.
-end          Optional<Integer>  -e: Column of end chromosomal position. The end column can be the same as the start column. [5]
-force        Optional<Boolean>  -f: Force to overwrite the index file if it is present.
-minShift     Optional<Integer>  -m: set minimal interval size for CSI indices to 2^INT [14]
-sequence     Optional<Integer>  -s: Column of sequence name. Option -s, -b, -e, -S, -c and -0 are all stored in the index file and thus not used in data retrieval. [1]
-skipLines    Optional<Integer>  -S: Skip first INT lines in the data file. [0]
-printHeader  Optional<Boolean>  -h: Print also the header/meta lines.
-onlyHeader   Optional<Boolean>  -H: Print only the header/meta lines.
-listChroms   Optional<Boolean>  -l: List the sequence names stored in the index file.
-reheader     Optional<File>     -r: Replace the header with the content of FILE
-regions      Optional<File>     -R: Restrict to regions listed in the FILE. The FILE can be BED file (requires .bed, .bed.gz, .bed.bgz file name extension) or a TAB-delimited file with CHROM, POS, and, optionally, POS_TO columns, where positions are 1-based and inclusive. When this option is in use, the input file may not be sorted.
-targets      Optional<File>     -T: Similar to -R but the entire input will be read sequentially and regions not listed in FILE will be skipped
-===========  =================  ==============================================================================================================================================================================================================================================================================================================
+===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
+name         type               prefix            position  documentation
+===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
+file         CompressedVCF                               8  File from which to create the index. The input data file must be position sorted and compressed by bgzip which has a gzip(1) like interface.
+preset       Optional<String>   --preset                 2  -p: Input format for indexing. Valid values are: gff, bed, sam, vcf. This option should not be applied together with any of -s, -b, -e, -c and -0; it is not used for data retrieval because this setting is stored in the index file. [gff]
+zeroBased    Optional<Boolean>  --zero-based             1  -0: Specify that the position in the data file is 0-based (e.g. UCSC files) rather than 1-based.
+begin        Optional<Integer>  --begin                  4  -b: Column of start chromosomal position. [4]
+comment      Optional<String>   --comment                7  -c: Skip lines started with character CHAR. [#]
+csi          Optional<Boolean>  --csi                    1  -C: Produce CSI format index instead of classical tabix or BAI style indices.
+end          Optional<Integer>  --end                    5  -e: Column of end chromosomal position. The end column can be the same as the start column. [5]
+force        Optional<Boolean>  --force                  1  -f: Force to overwrite the index file if it is present.
+minShift     Optional<Integer>  --min-shift              1  -m: set minimal interval size for CSI indices to 2^INT [14]
+sequence     Optional<Integer>  --sequence               3  -s: Column of sequence name. Option -s, -b, -e, -S, -c and -0 are all stored in the index file and thus not used in data retrieval. [1]
+skipLines    Optional<Integer>  --skip-lines             6  -S: Skip first INT lines in the data file. [0]
+printHeader  Optional<Boolean>  --print-header           1  -h: Print also the header/meta lines.
+onlyHeader   Optional<Boolean>  --only-header            1  -H: Print only the header/meta lines.
+listChroms   Optional<Boolean>  --list-chroms            1  -l: List the sequence names stored in the index file.
+reheader     Optional<File>     --reheader               1  -r: Replace the header with the content of FILE
+regions      Optional<File>     --regions               11  -R: Restrict to regions listed in the FILE. The FILE can be BED file (requires .bed, .bed.gz, .bed.bgz file name extension) or a TAB-delimited file with CHROM, POS, and, optionally, POS_TO columns, where positions are 1-based and inclusive. When this option is in use, the input file may not be sorted.
+targets      Optional<File>     --targets               11  -T: Similar to -R but the entire input will be read sequentially and regions not listed in FILE will be skipped
+===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
 

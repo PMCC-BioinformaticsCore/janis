@@ -27,13 +27,15 @@ No documentation was provided: `contribute one <https://github.com/PMCC-Bioinfor
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ==================  ======================================
-name            type                documentation
-==============  ==================  ======================================
-vcf             VCF                 The VCF to remove the IUPAC bases from
-outputFilename  Optional<Filename>
-==============  ==================  ======================================
+==============  ==================  ========  ==========  ======================================
+name            type                prefix      position  documentation
+==============  ==================  ========  ==========  ======================================
+vcf             VCF                                    0  The VCF to remove the IUPAC bases from
+outputFilename  Optional<Filename>                     2
+==============  ==================  ========  ==========  ======================================
 

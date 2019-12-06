@@ -33,18 +33,20 @@ If given a --contamination-table file, e.g. results from CalculateContamination,
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-====================  ====================  =============================================================================================================================================
-name                  type                  documentation
-====================  ====================  =============================================================================================================================================
-vcf                   CompressedIndexedVCF  vcf to be filtered
-reference             FastaWithDict         Reference sequence file
-contaminationTable    Optional<File>        Tables containing contamination information.
-segmentationFile      Optional<File>        Tables containing tumor segments' minor allele fractions for germline hets emitted by CalculateContamination
-statsFile             Optional<File>        The Mutect stats file output by Mutect2
-readOrientationModel  Optional<File>        One or more .tar.gz files containing tables of prior artifact probabilities for the read orientation filter model, one table per tumor sample
-outputFilename        Optional<Filename>
-====================  ====================  =============================================================================================================================================
+====================  ====================  ==================================  ==========  =============================================================================================================================================
+name                  type                  prefix                                position  documentation
+====================  ====================  ==================================  ==========  =============================================================================================================================================
+vcf                   CompressedIndexedVCF  -V                                              vcf to be filtered
+reference             FastaWithDict         -R                                              Reference sequence file
+contaminationTable    Optional<File>        --contamination-table                           Tables containing contamination information.
+segmentationFile      Optional<File>        --tumor-segmentation                            Tables containing tumor segments' minor allele fractions for germline hets emitted by CalculateContamination
+statsFile             Optional<File>        --stats                                         The Mutect stats file output by Mutect2
+readOrientationModel  Optional<File>        --orientation-bias-artifact-priors              One or more .tar.gz files containing tables of prior artifact probabilities for the read orientation filter model, one table per tumor sample
+outputFilename        Optional<Filename>    -O                                           2
+====================  ====================  ==================================  ==========  =============================================================================================================================================
 

@@ -31,12 +31,14 @@ Uses genotypes from the VCF file to correct AC (alternate allele count), AF (alt
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-======  =============  ===============
-name    type           documentation
-======  =============  ===============
-vcf     CompressedVCF
-======  =============  ===============
+======  =============  ========  ==========  ===============
+name    type           prefix      position  documentation
+======  =============  ========  ==========  ===============
+vcf     CompressedVCF                     3
+======  =============  ========  ==========  ===============
 

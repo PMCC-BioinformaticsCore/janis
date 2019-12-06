@@ -27,14 +27,16 @@ TBD
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-===============  ========================  =======================================================
-name             type                      documentation
-===============  ========================  =======================================================
-f1r2CountsFiles  Array<CompressedTarFile>  Counts for the read orientation of fragments
-numEmIterations  Optional<Integer>         Amount of iterations for the em process before it bails
-modelFileOut     Optional<Filename>
-===============  ========================  =======================================================
+===============  ========================  ===================  ==========  =======================================================
+name             type                      prefix                 position  documentation
+===============  ========================  ===================  ==========  =======================================================
+f1r2CountsFiles  Array<CompressedTarFile>  -I                            0  Counts for the read orientation of fragments
+numEmIterations  Optional<Integer>         --num-em-iterations           1  Amount of iterations for the em process before it bails
+modelFileOut     Optional<Filename>        -O                            3
+===============  ========================  ===================  ==========  =======================================================
 

@@ -30,15 +30,17 @@ The tool requires a common germline variant sites VCF, e.g. the gnomAD resource,
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ==============================  =============================================================
-name            type                            documentation
-==============  ==============================  =============================================================
-bam             Array<BamPair>                  The SAM/BAM/CRAM file containing reads.
-sites           CompressedIndexedVCF            sites of common biallelic variants
-intervals       Optional<CompressedIndexedVCF>  -L (BASE) One or more genomic intervals over which to operate
-pileupTableOut  Optional<Filename>
-==============  ==============================  =============================================================
+==============  ==============================  ===========  ==========  =============================================================
+name            type                            prefix         position  documentation
+==============  ==============================  ===========  ==========  =============================================================
+bam             Array<BamPair>                  -I                    0  The SAM/BAM/CRAM file containing reads.
+sites           CompressedIndexedVCF            -V                       sites of common biallelic variants
+intervals       Optional<CompressedIndexedVCF>  --intervals              -L (BASE) One or more genomic intervals over which to operate
+pileupTableOut  Optional<Filename>              -O                    1
+==============  ==============================  ===========  ==========  =============================================================
 

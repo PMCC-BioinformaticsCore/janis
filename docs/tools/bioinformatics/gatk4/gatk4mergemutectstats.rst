@@ -27,13 +27,15 @@ TBD
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ==================  =================
-name            type                documentation
-==============  ==================  =================
-statsFiles      Array<TextFile>     Callability stats
-mergedStatsOut  Optional<Filename>
-==============  ==================  =================
+==============  ==================  ========  ==========  =================
+name            type                prefix      position  documentation
+==============  ==================  ========  ==========  =================
+statsFiles      Array<TextFile>     --stats            0  Callability stats
+mergedStatsOut  Optional<Filename>  -O                 1
+==============  ==================  ========  ==========  =================
 

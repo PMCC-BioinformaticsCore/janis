@@ -31,14 +31,16 @@ options:
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-===========  =================  ====================================================================
-name         type               documentation
-===========  =================  ====================================================================
-vcf          CompressedVCF
-useMnpsFlag  Optional<Boolean>  Retain MNPs as separate events (default: false)
-tagParsed    Optional<String>   Tag records which are split apart of a complex allele with this flag
-===========  =================  ====================================================================
+===========  =================  ========  ==========  ====================================================================
+name         type               prefix      position  documentation
+===========  =================  ========  ==========  ====================================================================
+vcf          CompressedVCF                         3
+useMnpsFlag  Optional<Boolean>  -m                    Retain MNPs as separate events (default: false)
+tagParsed    Optional<String>   -t                    Tag records which are split apart of a complex allele with this flag
+===========  =================  ========  ==========  ====================================================================
 

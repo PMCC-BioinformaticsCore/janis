@@ -27,20 +27,22 @@ The cat utility reads files sequentially, writing them to the standard output. T
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-======================  =====================  ==================================================================================================================================================================================================================================================================================
-name                    type                   documentation
-======================  =====================  ==================================================================================================================================================================================================================================================================================
+======================  =====================  ========  ==========  ==================================================================================================================================================================================================================================================================================
+name                    type                   prefix      position  documentation
+======================  =====================  ========  ==========  ==================================================================================================================================================================================================================================================================================
 file                    Optional<File>
-files                   Optional<Array<File>>
-number_output           Optional<Boolean>      Number the output lines, starting at 1.
-number_non_blank        Optional<Boolean>      Number the non-blank output lines, starting at 1.
-disable_output_buffer   Optional<Boolean>      Disable output buffering.
-squeeze                 Optional<Boolean>      Squeeze multiple adjacent empty lines, causing the output to be single spaced.
-display_nonprint_chars  Optional<Boolean>      Display non-printing characters (see the -v option), and display a dollar sign (`$') at the end of each line.
-display_non             Optional<Boolean>      Display non-printing characters (see the -v option), and display tab characters as `^I'.
-number_non_blank        Optional<Boolean>      Display non-printing characters so they are visible.  Control characters print as `^X' for control-X; the delete character (octal 0177) prints as `^?'.  Non-ASCII characters (with the high bit set) are printed as `M-' (for meta) followed by the character for the low 7 bits.
-======================  =====================  ==================================================================================================================================================================================================================================================================================
+files                   Optional<Array<File>>                     1
+number_output           Optional<Boolean>      -n                    Number the output lines, starting at 1.
+number_non_blank        Optional<Boolean>      -b                    Number the non-blank output lines, starting at 1.
+disable_output_buffer   Optional<Boolean>      -u                    Disable output buffering.
+squeeze                 Optional<Boolean>      -s                    Squeeze multiple adjacent empty lines, causing the output to be single spaced.
+display_nonprint_chars  Optional<Boolean>      -e                    Display non-printing characters (see the -v option), and display a dollar sign (`$') at the end of each line.
+display_non             Optional<Boolean>      -t                    Display non-printing characters (see the -v option), and display tab characters as `^I'.
+number_non_blank        Optional<Boolean>      -v                    Display non-printing characters so they are visible.  Control characters print as `^X' for control-X; the delete character (octal 0177) prints as `^?'.  Non-ASCII characters (with the high bit set) are printed as `M-' (for meta) followed by the character for the low 7 bits.
+======================  =====================  ========  ==========  ==================================================================================================================================================================================================================================================================================
 

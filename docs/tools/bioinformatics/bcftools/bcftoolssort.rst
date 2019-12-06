@@ -28,15 +28,17 @@ Usage:   bcftools sort [OPTIONS] <FILE.vcf>
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ==================  =======================================================================================
-name            type                documentation
-==============  ==================  =======================================================================================
-vcf             CompressedVCF       The VCF file to sort
-outputFilename  Optional<Filename>  (-o) output file name [stdout]
-outputType      Optional<String>    (-O) b: compressed BCF, u: uncompressed BCF, z: compressed VCF, v: uncompressed VCF [v]
-tempDir         Optional<String>    (-T) temporary files [/tmp/bcftools-sort.XXXXXX/]
-==============  ==================  =======================================================================================
+==============  ==================  =============  ==========  =======================================================================================
+name            type                prefix           position  documentation
+==============  ==================  =============  ==========  =======================================================================================
+vcf             CompressedVCF                               1  The VCF file to sort
+outputFilename  Optional<Filename>  --output-file              (-o) output file name [stdout]
+outputType      Optional<String>    --output-type              (-O) b: compressed BCF, u: uncompressed BCF, z: compressed VCF, v: uncompressed VCF [v]
+tempDir         Optional<String>    --temp-dir                 (-T) temporary files [/tmp/bcftools-sort.XXXXXX/]
+==============  ==================  =============  ==========  =======================================================================================
 

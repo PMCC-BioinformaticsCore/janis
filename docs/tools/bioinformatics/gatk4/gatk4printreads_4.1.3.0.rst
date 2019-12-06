@@ -43,13 +43,15 @@ The reference is strictly required when handling CRAM files.
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ==================  ===============
-name            type                documentation
-==============  ==================  ===============
+==============  ==================  ========  ==========  ===============
+name            type                prefix    position    documentation
+==============  ==================  ========  ==========  ===============
 bam             BAM
 outputFilename  Optional<Filename>
-==============  ==================  ===============
+==============  ==================  ========  ==========  ===============
 

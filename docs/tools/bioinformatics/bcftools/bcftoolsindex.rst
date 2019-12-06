@@ -28,19 +28,21 @@ Index bgzip compressed VCF/BCF files for random access.
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-========  =================  ============================================================
-name      type               documentation
-========  =================  ============================================================
-vcf       CompressedVCF
-csi       Optional<Boolean>  (-c) generate CSI-format index for VCF/BCF files [default]
-force     Optional<Boolean>  (-f) overwrite index if it already exists
-minShift  Optional<Integer>  (-m) set minimal interval size for CSI indices to 2^INT [14]
-tbi       Optional<Boolean>  (-t) generate TBI-format index for VCF files
-threads   Optional<Integer>  sets the number of threads [0]
-nrecords  Optional<Boolean>  (-n) print number of records based on existing index file
-stats     Optional<Boolean>  (-s) print per contig stats based on existing index file
-========  =================  ============================================================
+========  =================  ===========  ==========  ============================================================
+name      type               prefix         position  documentation
+========  =================  ===========  ==========  ============================================================
+vcf       CompressedVCF                            1
+csi       Optional<Boolean>  --csi                    (-c) generate CSI-format index for VCF/BCF files [default]
+force     Optional<Boolean>  --force                  (-f) overwrite index if it already exists
+minShift  Optional<Integer>  --min-shift              (-m) set minimal interval size for CSI indices to 2^INT [14]
+tbi       Optional<Boolean>  --tbi                    (-t) generate TBI-format index for VCF files
+threads   Optional<Integer>  --threads                sets the number of threads [0]
+nrecords  Optional<Boolean>  --nrecords               (-n) print number of records based on existing index file
+stats     Optional<Boolean>  --stats                  (-s) print per contig stats based on existing index file
+========  =================  ===========  ==========  ============================================================
 

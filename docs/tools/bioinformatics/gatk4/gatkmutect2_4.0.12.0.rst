@@ -43,21 +43,23 @@ such as mitochondrial variant calling.
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-========================  ====================  ==============================================================================================================================================================
-name                      type                  documentation
-========================  ====================  ==============================================================================================================================================================
-tumor                     BamPair               BAM/SAM/CRAM file containing reads
-tumorName                 String                BAM sample name of tumor. May be URL-encoded as output by GetSampleName with -encode.
-normal                    BamPair               BAM/SAM/CRAM file containing reads
-normalName                String                BAM sample name of normal. May be URL-encoded as output by GetSampleName with -encode.
-reference                 FastaWithDict         Reference sequence file
-intervals                 Optional<bed>         One or more genomic intervals over which to operate
-outputFilename            Optional<Filename>
-germlineResource          Optional<IndexedVCF>
-afOfAllelesNotInResource  Optional<Float>       Population allele fraction assigned to alleles not found in germline resource. Please see docs/mutect/mutect2.pdf fora derivation of the default value.
-panelOfNormals            Optional<IndexedVCF>  A panel of normals can be a useful (optional) input to help filter out commonly seen sequencing noise that may appear as low allele-fraction somatic variants.
-========================  ====================  ==============================================================================================================================================================
+========================  ====================  ===============================  ==========  ==============================================================================================================================================================
+name                      type                  prefix                             position  documentation
+========================  ====================  ===============================  ==========  ==============================================================================================================================================================
+tumor                     BamPair               -I                                        6  BAM/SAM/CRAM file containing reads
+tumorName                 String                -tumor                                    6  BAM sample name of tumor. May be URL-encoded as output by GetSampleName with -encode.
+normal                    BamPair               -I                                        5  BAM/SAM/CRAM file containing reads
+normalName                String                -normal                                   6  BAM sample name of normal. May be URL-encoded as output by GetSampleName with -encode.
+reference                 FastaWithDict         -R                                        8  Reference sequence file
+intervals                 Optional<bed>         -L                                        7  One or more genomic intervals over which to operate
+outputFilename            Optional<Filename>    -O                                       20
+germlineResource          Optional<IndexedVCF>  --germline-resource                      10
+afOfAllelesNotInResource  Optional<Float>       --af-of-alleles-not-in-resource          11  Population allele fraction assigned to alleles not found in germline resource. Please see docs/mutect/mutect2.pdf fora derivation of the default value.
+panelOfNormals            Optional<IndexedVCF>  --panel-of-normals                       10  A panel of normals can be a useful (optional) input to help filter out commonly seen sequencing noise that may appear as low allele-fraction somatic variants.
+========================  ====================  ===============================  ==========  ==============================================================================================================================================================
 

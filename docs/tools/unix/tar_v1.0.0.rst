@@ -27,14 +27,16 @@ No documentation was provided: `contribute one <https://github.com/PMCC-Bioinfor
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-==============  =====================  ===============
-name            type                   documentation
-==============  =====================  ===============
-files           Array<File>
-files2          Optional<Array<File>>
-outputFilename  Optional<Filename>
-==============  =====================  ===============
+==============  =====================  ========  ==========  ===============
+name            type                   prefix      position  documentation
+==============  =====================  ========  ==========  ===============
+files           Array<File>                               2
+files2          Optional<Array<File>>                     3
+outputFilename  Optional<Filename>                        1
+==============  =====================  ========  ==========  ===============
 

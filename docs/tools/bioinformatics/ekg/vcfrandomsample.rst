@@ -36,15 +36,17 @@ options:
 
 ------
 
+None
+
 Additional configuration (inputs)
 ---------------------------------
 
-=======  ================  ==================================================
-name     type              documentation
-=======  ================  ==================================================
-vcf      CompressedVCF
-rate     Float             base sampling probability per locus
-seed     Integer           use this random seed
-scaleBy  Optional<String>  scale sampling likelihood by this Float info field
-=======  ================  ==================================================
+=======  ================  ========  ==========  ==================================================
+name     type              prefix      position  documentation
+=======  ================  ========  ==========  ==================================================
+vcf      CompressedVCF                        3
+rate     Float             -t                    base sampling probability per locus
+seed     Integer           -p                    use this random seed
+scaleBy  Optional<String>  -s                    scale sampling likelihood by this Float info field
+=======  ================  ========  ==========  ==================================================
 

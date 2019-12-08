@@ -54,7 +54,7 @@ w.input("reference", FastaWithDict)
 
 Steps are easy to create, however you may need to refer to the documentation when writing your own workflows to know which named parameters a tool takes (and their types). Similar to exposing inputs, we create steps with the `janis.Workflow.step` method.
 
-We can refer to any node on the workflow graph (such as an input) by accessing the property of the same name (dot-notation). Eg, to access the `sampleName` on our workflow, we can use `w.sampleName`.
+We can refer to any node on the workflow graph (such as an input) by accessing the property of the same name (dot-notation). Eg, to access the `readGroup` on our workflow, we can use `w.readGroup`.
 
 We instantiate our tool with the named parameters we want to provide and pass that as the second parameter to the `janis.Workflow.step` method:
 
@@ -65,7 +65,7 @@ w.step(
     "bwamem", 
     BwaMemLatest( 
         reads=w.fastq, 
-        sampleName=w.sampleName, 
+        readGroupHeaderLine=w.readGroup, 
         reference=w.reference
     )
 )
@@ -119,7 +119,7 @@ from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 w = janis.WorkflowBuilder("alignmentWorkflow")
 
 # Inputs
-w.input("sampleName", janis.String, value="sampleName")
+w.input("readGroup", janis.String, value="@RG\\tID:NA12878\\tSM:NA12878\\tLB:NA12878\\tPL:ILLUMINA")
 w.input("fastq", FastqGzPair, value="/path/to/reads.fastq")
 w.input("reference", FastaWithDict, value="/path/to/reference.fasta")
 
@@ -128,7 +128,7 @@ w.step(
     "bwamem", 
     BwaMemLatest( 
         reads=w.fastq, 
-        sampleName=w.sampleName, 
+        readGroupHeaderLine=w.readGroup, 
         reference=w.reference
     )
 )

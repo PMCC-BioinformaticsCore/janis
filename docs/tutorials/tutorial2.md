@@ -84,34 +84,24 @@ Hence, we can isolate the following information:
 
 ### Command tool template
 
-The following template is the minimum amount of information required to wrap a tool. For more information, see the [CommandTool documentation](https://janis.readthedocs.io/en/latest/references/commandtool.html).
+The following template is the minimum amount of information required to wrap a tool. For more information, see the [CommandToolBuilder documentation](https://janis.readthedocs.io/en/latest/references/commandtool.html).
+
+> We've removed the optional fields: tool_module, tool_provider, metadata, cpu, memory from the following template.
 
 ```python
 from typing import List, Optional, Union
 import janis as j
 
-class ToolName(j.CommandTool):
-    @staticmethod
-    def tool() -> str:
-        return "toolname"
-        
-    @staticmethod
-    def base_command() -> Optional[Union[str, List[str]]]:
-        pass
-        
-    @staticmethod
-    def container() -> str:
-        return ""
+import janis_core as j
 
-    @staticmethod
-    def version() -> str:
-        pass
-
-    def inputs(self) -> List[j.ToolInput]:
-        return []
-
-    def outputs(self) -> List[j.ToolOutput]:
-        return []
+ToolName = j.CommandToolBuilder(
+    tool: str="toolname",
+    base_command=["base", "command"],
+    inputs: List[j.ToolInput]=[],
+    outputs: List[j.ToolOutput]=[],
+    container="container/name:version",
+    version="version"
+)
 ```
 
 ### Tool information
@@ -124,32 +114,24 @@ vim samtoolsflagstat.py
 
 We can start by filling in the basic information:
 
-- Rename the class to be `SamtoolsFlagstat`
-- Add a unqiue tool identifier in the `tool()` method
-- Fill in the `base_command` to be `["samtools", "flagstat"]`
-- Add the container `"quay.io/biocontainers/samtools:1.9--h8571acd_11"`
-- Add the version: `"1.9.0"`
+- Rename the variable (ToolName) to be `SamtoolsFlagstat`
+- Fill the parameters:
+    - `tool`: A unqiue tool identifier in the `tool()` method
+    - `base_command` to be `["samtools", "flagstat"]`
+    - `container` to be `"quay.io/biocontainers/samtools:1.9--h8571acd_11"`
+    - `version` to be `"v1.9.0"`
 
 You'll have a class definition like the following
 ```python
-class SamtoolsFlagstat(j.CommandTool):
-    @staticmethod
-    def tool() -> str:
-        return "samtoolsflagstat"
-
-    @staticmethod
-    def base_command() -> Optional[Union[str, List[str]]]:
-        return ["samtools", "flagstat"]
+SamtoolsFlagstat = j.CommandToolBuilder(
+    tool: str="samtoolsflagstat",
+    base_command=["samtools", "flagstat"],
+    container="quay.io/biocontainers/samtools:1.9--h8571acd_11",
+    version="1.9.0",
     
-    @staticmethod
-    def container() -> str:
-        return "quay.io/biocontainers/samtools:1.9--h8571acd_11"
-
-    @staticmethod
-    def version() -> str:
-        return "1.9.0"
-    
-    # inputs and outputs
+    inputs: List[j.ToolInput]=[],
+    outputs: List[j.ToolOutput]=[],
+)
 ```
 
 ### Inputs
@@ -171,24 +153,25 @@ Then we can declare our two inputs:
 We're going to give our inputs a name through which we can reference them by. This allows us to specify a value from the command line, or connect the result of a previous step [within a workflow](https://janis.readthedocs.io/en/latest/tutorials/tutorial1.html#bwa-mem).
 
 ```python
-    # in the class
-    def inputs(self) -> List[j.ToolInput]:
-        return [
-            # 1. Positional bam input
-            j.ToolInput(
-                "bam",      # name of our input
-                Bam, 
-                position=1, 
-                doc="Input bam to generate statistics for"
-            ),
-            # 2. `threads` inputs
-            j.ToolInput(
-                "threads",  # name of our input
-                j.Int(optional=True), 
-                prefix="--threads", 
-                doc="(-@)  Number of additional threads to use [0] "
-            )
-        ]
+SamtoolsFlagstat = j.CommandToolBuilder(
+    # tool information
+    inputs=[
+        # 1. Positional bam input
+        j.ToolInput(
+            "bam",      # name of our input
+            Bam, 
+            position=1, 
+            doc="Input bam to generate statistics for"
+        ),
+        # 2. `threads` inputs
+        j.ToolInput(
+            "threads",  # name of our input
+            j.Int(optional=True), 
+            prefix="--threads", 
+            doc="(-@)  Number of additional threads to use [0] "
+        )
+    ],
+    # outputs
 ```
 
 
@@ -199,11 +182,12 @@ We'll use the [ToolOutput](https://janis.readthedocs.io/en/latest/references/com
 The only output of `samtools flagstat` is the statistics that are written to `stdout`. We give this the name `"stats"`, and collect this with the `j.Stdout` data type:
 
 ```python
-    # in the class
-    def outputs(self) -> List[j.ToolOutput]:
-        return [
-            j.ToolOutput("stats", j.Stdout)
-        ]
+SamtoolsFlagstat = j.CommandToolBuilder(
+    # tool information + inputs
+    outputs=[
+        j.ToolOutput("stats", j.Stdout)
+    ]
+)
 ```
 
 
@@ -216,49 +200,26 @@ from typing import List, Optional, Union
 import janis as j
 from janis.data_types import Bam
 
-class SamtoolsFlagstat(j.CommandTool):
-    @staticmethod
-    def tool() -> str:
-        return "samtoolsflagstat"
-
-    @staticmethod
-    def base_command() -> Optional[Union[str, List[str]]]:
-        return ["samtools", "flagstat"]
-
-    @staticmethod
-    def container() -> str:
-        return "quay.io/biocontainers/samtools:1.9--h8571acd_11"
-
-    @staticmethod
-    def version() -> str:
-        return "1.9.0"
-
-    def inputs(self) -> List[j.ToolInput]:
-        return [
-        j.ToolInput(
-             "bam", 
-             Bam, 
-             position=1, 
-             doc="Input bam to generate statistics for"
-        ),
+SamToolsFlagstat_1_9 = j.CommandToolBuilder(
+    tool="samtoolsflagstat",
+    base_command=["samtools", "flagstat"],
+    container="quay.io/biocontainers/samtools:1.9--h8571acd_11",
+    version="v1.9.0",
+    inputs=[
+        # 1. Positional bam input
+        j.ToolInput("bam", Bam, position=1),
         # 2. `threads` inputs
-        j.ToolInput(
-            "threads", 
-            j.Int(optional=True), 
-            prefix="--threads", 
-            doc="(-@)  Number of additional threads to use [0] "
-        )
-    ]
-
-    def outputs(self) -> List[j.ToolOutput]:
-        return [j.ToolOutput("out", j.Stdout)]
+        j.ToolInput("threads", j.Int(optional=True), prefix="--threads"),
+    ],
+    outputs=[j.ToolOutput("stats", j.Stdout)],
+)
 ```
 
 ## Testing the tool
 
 We can test the translation of this from the CLI:
 
-> If you have multiple command tools or workflows declared in the same file, you will need to provide the `--name` parameter with the name of your workflow.
+> If you have multiple command tools or workflows declared in the same file, you will need to provide the `--name` parameter with the name of your tool.
 
 ```bash
 janis translate samtoolsflagstat.py wdl # or cwl

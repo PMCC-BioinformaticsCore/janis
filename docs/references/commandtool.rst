@@ -8,6 +8,10 @@ Declaration
 
 .. autoclass:: janis.CommandTool
 
+.. autoclass:: janis.CommandToolBuilder
+   :members: __init__
+
+
 Overview
 *********
 
@@ -17,9 +21,40 @@ tool, and how to collect the outputs. It would be rare that you should
 directly instantiate ``CommandTool``, instead you should subclass and
 and override the methods you need as declared below.
 
+Like a workflow, there are two methods to declare a command tool:
+
+- Use the ``CommandToolBuilder`` class
+- Inherit from the ``CommandTool`` class,
+
 
 Template
 .........
+
+CommandToolBuilder:
+
+.. code-block:: python
+
+   import janis_core as j
+
+   ToolName = j.CommandToolBuilder(
+       tool: str="toolname",
+       base_command=["base", "command"],
+       inputs: List[j.ToolInput]=[],
+       outputs: List[j.ToolOutput]=[],
+       container="container/name:version",
+       version="version",
+       friendly_name=None,
+       arguments=None,
+       env_vars=None,
+       tool_module=None,
+       tool_provider=None,
+       metadata: ToolMetadata=j.ToolMetadata(),
+       cpu: Union[int, Callable[[Dict[str, Any]], int]]=None,
+       memory: Union[int, Callable[[Dict[str, Any]], int]]=None,
+   )
+
+
+This is equivalent to the inherited template:
 
 .. code-block:: python
 
@@ -27,12 +62,10 @@ Template
    import janis_core as j
 
    class ToolName(j.CommandTool):
-       @staticmethod
-       def tool() -> str:
+       def tool(self) -> str:
            return "toolname"
 
-       @staticmethod
-       def base_command() -> Optional[Union[str, List[str]]]:
+       def base_command(self) -> Optional[Union[str, List[str]]]:
            pass
 
        def inputs(self) -> List[j.ToolInput]:
@@ -41,12 +74,10 @@ Template
        def outputs(self) -> List[j.ToolOutput]:
            return []
 
-       @staticmethod
-       def container() -> str:
+       def container(self) -> str:
            return ""
 
-       @staticmethod
-       def version() -> str:
+       def version(self) -> str:
            pass
 
         # optional
@@ -60,12 +91,19 @@ Template
         def friendly_name(self) -> str:
             pass
 
-        @staticmethod
-        def tool_module() -> str:
+        def tool_module(self) -> str:
             pass
 
-        @staticmethod
-        def tool_provider() -> str:
+        def tool_provider(self) -> str:
+            pass
+
+        def cpu(self, hints: Dict) -> int:
+            pass
+
+        def memory(self, hints: Dict) -> int:
+            pass
+
+        def bind_metadata(self) -> j.ToolMetadata:
             pass
 
 Structure
@@ -73,9 +111,9 @@ Structure
 
 A new tool definition must subclass the `janis.CommandTool` class and implement the required abstract methods:
 
-- ``@staticmethod janis.CommandTool.tool() -> str``: Unique identifier of the tool
+- ``janis.CommandTool.tool(self) -> str``: Unique identifier of the tool
 
-- ``@staticmethod janis.CommandTool.base_command() -> str``: The command of the tool to execute, usually the tool name or path and not related to any inputs.
+- ``janis.CommandTool.base_command(self) -> str``: The command of the tool to execute, usually the tool name or path and not related to any inputs.
 
 - ``janis.CommandTool.inputs(self) -> List[``:class:`janis.ToolInput` ``]``: A list of named tool inputs that will be used to create the command line.
 
@@ -83,9 +121,9 @@ A new tool definition must subclass the `janis.CommandTool` class and implement 
 
 - ``janis.CommandTool.outputs(self) -> List[``:class:`janis.ToolOutput` ``]``: A list of named outputs of the tool; a ``ToolOutput`` declares how the output is captured.
 
-- ``@staticmethod janis.CommandTool.container()``: A link to an OCI compliant container accessible by the engine. Previously, ``docker()``.
+- ``janis.CommandTool.container(self)``: A link to an OCI compliant container accessible by the engine. Previously, ``docker()``.
 
-- ``@staticmethod janis.CommandTool.version()``: Version of the tool.
+- ``janis.CommandTool.version(self)``: Version of the tool.
 
 - ``janis.CommandTool.env_vars(self) -> Optional[Dict[str, Union[str, Selector]]]``: A dictionary of environment variables that should be defined within the container.
 
@@ -93,9 +131,9 @@ To better categorise your tool, you can additionally implement the following met
 
 - ``janis.Tool.friendly_name(self)``: A user friendly name of your tool (must be implemented for generated docs)
 
-- ``@staticmethod janis.Tool.tool_module()``: Unix, bioinformatics, etc.
+- ``janis.Tool.tool_module(self)``: Unix, bioinformatics, etc.
 
-- ``@staticmethod janis.Tool.tool_provider()``: The manafacturer of the tool, eg: Illumina, Samtools
+- ``janis.Tool.tool_provider(self)``: The manafacturer of the tool, eg: Illumina, Samtools
 
 
 Tool Input

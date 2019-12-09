@@ -21,6 +21,8 @@ Janis uses an *abstracted execution environment*, which removes the shared file 
 - Python 3.6+
 - Docker
 
+> **NB**: This tutorial requires Docker to be installed and available.
+
 ## Installing Janis
 
 We'll install Janis in a virtual environment as it preserves versioning of Janis in a reproducible way.
@@ -45,13 +47,13 @@ We'll install Janis in a virtual environment as it preserves versioning of Janis
     ```bash
 	janis -v
 	# --------------------  -------
-    # janis-core            v0.7.3
-    # janis-assistant       v0.7.10
-    # janis-unix            v0.7.0
-    # janis-bioinformatics  v0.7.1
+    # janis-core            v0.8.0
+    # janis-assistant       v0.8.0
+    # janis-unix            v0.8.0
+    # janis-bioinformatics  v0.8.0
     # --------------------  -------
 	```
-	
+	å
 ### Installing CWLTool
 
 [CWLTool](https://github.com/common-workflow-language/cwltool) is a reference workflow engine for the Common Workflow Language. Janis can run your workflow using CWLTool and collect the results. For more information about which engines Janis supports, visit the [Engine Support](https://janis.readthedocs.io/en/latest/references/engines.html) page.
@@ -73,10 +75,12 @@ cwltool --version
 You can test run an example workflow with Janis and CWLTool with the following command:
 
 ```bash
-janis run --engine cwltool hello
+janis run --engine cwltool --stay-connected hello
 ```
 
-You'll be presented with the progress screen as your workflow completes. Some things to note:
+Usually Janis starts a separate process to run and manage the workflow. By including the `--stay-connected` parameter, Janis and the engine are connected, so you'll see any errors that occur. When you exit the Janis process, this will also exit the engine.
+
+If this works successfully, you can omit the `--stay-connected` param and you'll be presented with the progress screen as your workflow completes. Some things to note:
 
 - `WID` - the janis identifier of your workflow.
 - `Task Dir` - Where your workflow, output files and logs are.

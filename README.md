@@ -8,18 +8,6 @@ Common Workflow Language or Workflow Definition Language._
   
 Documentation is hosted here: https://janis.readthedocs.io/  
 
-## v0.6.0 Backwards Compatability
-**NOTE: Version 0.6.0 brings large changes to simplify the workflow API.**
-
-See the [example](#example) below to see how this new syntax works. Instead of creating input nodes and adding them to the graph, you add an input / output / step to the graph, and map the connections within the Step.
-
-Inline workflows are now creating with the `WorkflowBuilder` class.
-
-```python
-w.step("step_tag", Echo(inp=w.input_tag))
-```
-
-
   
 ## Introduction  
 
@@ -96,6 +84,32 @@ Through conference or talks, this project has been referenced by the following t
   
   
 ## Support  
+
+## v0.8.0 Backwards Compatability
+**NOTE: Version 0.8.0 brings minor to simplify the CommandTool API.**
+
+Remove `@staticmethod` and add (`self`) as a parameter to the following methods on a tool: `tool()`, `base_command()` `container()`, `version()`, `tool_module()`, `tool_provider()` (eg to become `container(self)`).
+
+This now supports the new `CommandToolBuilder` syntax:
+
+```python
+ToolName = j.CommandToolBuilder(
+    tool: str="toolname",
+    base_command=["base", "command"],
+    inputs: List[j.ToolInput]=[],
+    outputs: List[j.ToolOutput]=[],
+    container="container/name:version",
+    version="version",
+    friendly_name=None,
+    arguments=None,
+    env_vars=None,
+    tool_module=None,
+    tool_provider=None,
+    metadata: ToolMetadata=j.ToolMetadata(),
+    cpu: Union[int, Callable[[Dict[str, Any]], int]]=None,
+    memory: Union[int, Callable[[Dict[str, Any]], int]]=None,
+)
+```
   
 ### Contributions
   

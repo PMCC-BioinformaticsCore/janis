@@ -10,6 +10,8 @@ building tools and assembling workflows.
 
    workflow
    commandtool
+   tools/pythontool
+   tools/codetool
    types
 
 Features:

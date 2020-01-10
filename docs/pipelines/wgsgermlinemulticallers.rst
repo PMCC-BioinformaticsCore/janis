@@ -17,6 +17,8 @@ A variant-calling WGS pipeline using GATK, VarDict and Strelka2 · 1 contributor
 
    - ``reference: FastaWithDict``
 
+   - ``cutadapt_adapters: File``
+
    - ``gatkIntervals: Array<bed>``
 
    - ``vardictIntervals: Array<bed>``
@@ -60,10 +62,11 @@ Embedded Tools
 ***************
 
 ===============================  =======================================
-Align and sort reads             ``BwaAligner/1.0.0``
 FastQC                           ``fastqc/v0.11.5``
+Parse FastQC Adaptors            ``ParseFastqcAdaptors/v0.1.0``
+Align and sort reads             ``BwaAligner/1.0.0``
 Merge and Mark Duplicates        ``mergeAndMarkBams/4.1.3``
-GATK4 Germline Variant Caller    ``GATK4_GermlineVariantCaller/v0.1.0``
+GATK4 Germline Variant Caller    ``GATK4_GermlineVariantCaller/4.1.3.0``
 GATK4: Gather VCFs               ``Gatk4GatherVcfs/4.1.3.0``
 Strelka Germline Variant Caller  ``strelkaGermlineVariantCaller/v0.1.0``
 Vardict Germline Variant Caller  ``vardictGermlineVariantCaller/v0.1.0``
@@ -81,6 +84,7 @@ name                           type                     documentation
 =============================  =======================  ===============
 fastqs                         Array<FastqGzPair>
 reference                      FastaWithDict
+cutadapt_adapters              File
 gatkIntervals                  Array<bed>
 vardictIntervals               Array<bed>
 strelkaIntervals               BedTABIX

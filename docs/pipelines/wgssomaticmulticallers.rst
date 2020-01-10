@@ -7,7 +7,7 @@ A somatic tumor-normal variant-calling WGS pipeline using GATK, VarDict and Stre
 
 :ID: ``WGSSomaticMultiCallers``
 :Python: ``janis_pipelines.wgs_somatic.wgssomatic import WGSSomaticMultiCallers``
-:Versions: v0.1.0
+:Versions: None
 :Authors: Michael Franklin
 :Citations: 
 :Created: None
@@ -16,6 +16,8 @@ A somatic tumor-normal variant-calling WGS pipeline using GATK, VarDict and Stre
    - ``normalInputs: Array<FastqGzPair>``
 
    - ``tumorInputs: Array<FastqGzPair>``
+
+   - ``cutadapt_adapters: File``
 
    - ``gatkIntervals: Array<bed>``
 
@@ -59,15 +61,16 @@ No documentation was provided: `contribute one <https://github.com/PMCC-Bioinfor
 Embedded Tools
 ***************
 
-==============================  ======================================
-                                ``somatic_subpipeline/v0.1.0``
-GATK4 Somatic Variant Caller    ``GATK4_SomaticVariantCaller/v0.1.0``
+==============================  ======================================================================================================================================
+                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x1039f20f0>>``
+                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x103a01160>>``
+GATK4 Somatic Variant Caller    ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs              ``Gatk4GatherVcfs/4.1.3.0``
 Strelka Somatic Variant Caller  ``strelkaSomaticVariantCaller/v0.1.0``
 Vardict Somatic Variant Caller  ``vardictSomaticVariantCaller/v0.1.0``
 Combine Variants                ``combinevariants/0.0.4``
 BCFTools: Sort                  ``bcftoolssort/v1.9``
-==============================  ======================================
+==============================  ======================================================================================================================================
 
 ------
 
@@ -79,6 +82,7 @@ name                     type                     documentation
 =======================  =======================  ===============
 normalInputs             Array<FastqGzPair>
 tumorInputs              Array<FastqGzPair>
+cutadapt_adapters        File
 gatkIntervals            Array<bed>
 vardictIntervals         Array<bed>
 vardictHeaderLines       File

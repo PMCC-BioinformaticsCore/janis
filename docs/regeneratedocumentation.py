@@ -33,6 +33,7 @@ import janis_unix, janis_bioinformatics
 
 # Output settings
 from docs.generationhelpers.commandtool import prepare_commandtool_page
+from docs.generationhelpers.codetool import prepare_code_tool_page
 from docs.generationhelpers.datatype import prepare_data_type
 from docs.generationhelpers.pipelines import generate_pipeline_box
 from docs.generationhelpers.template import prepare_template
@@ -83,11 +84,17 @@ def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
 
     if not tool:
         return None
-
-    if tool.type() == ToolTypes.CommandTool:
-        return prepare_commandtool_page(tool, toolversions)
-    elif tool.type() == ToolTypes.Workflow:
-        return prepare_workflow_page(tool, toolversions)
+    try:
+        if tool.type() == ToolTypes.CommandTool:
+            return prepare_commandtool_page(tool, toolversions)
+        elif tool.type() == ToolTypes.Workflow:
+            return prepare_workflow_page(tool, toolversions)
+        elif tool.type() == ToolTypes.CodeTool:
+            return prepare_code_tool_page(tool, toolversions)
+    except Exception as e:
+        Logger.critical(
+            "Couldn't generate documentation for " + tool.id() + " " + str(e)
+        )
 
 
 def prepare_all_tools():

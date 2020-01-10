@@ -5,7 +5,7 @@ GATK4: CalculateContamination
 
 1 contributor · 3 versions
 
-:ID: ``GATK4CalculateContamination``
+:ID: ``Gatk4CalculateContamination``
 :Python: ``janis_bioinformatics.tools.gatk4.calculatecontaminations.versions import Gatk4CalculateContamination_4_1_3``
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
 :Container: broadinstitute/gatk:4.1.3.0

@@ -19,7 +19,6 @@ Automatically generated index page for Data Types:
    compressedvcf
    csv
    directory
-   double
    fasta
    fastafai
    fastawithdict
@@ -40,4 +39,4 @@ Automatically generated index page for Data Types:
    vcf
    zip
 
-*This page was auto-generated on 08/12/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 10/01/2020. Please do not directly alter the contents of this page.*

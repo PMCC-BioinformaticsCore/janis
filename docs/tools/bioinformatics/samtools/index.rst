@@ -11,6 +11,15 @@ Automatically generated index page for Samtools:
    <ul>
 
    </ul>
+     <a href="samtoolsindex.html">
+       <p style="margin-bottom: 5px"><b>SamTools: Index</b> <span style="margin-left: 10px; color: darkgray">SamToolsIndex</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="samtoolsindex.html" style="margin-bottom: 10px">
+       v<b>1.9.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="samtoolssort.html">
        <p style="margin-bottom: 5px"><b>SamTools: Sort</b> <span style="margin-left: 10px; color: darkgray">SamToolsSort</span></p>
        

@@ -23,14 +23,14 @@ List of templates for ``janis-assistant``:
 
    local
    pawsey
-   pawsey-disconnected
+   pawsey_disconnected
    pbs_singularity
    pmac
-   pmac-disconnected
+   pmac_disconnected
    singularity
    slurm_singularity
    spartan
-   spartan-disconnected
+   spartan_disconnected
    wehi
 
-*This page was auto-generated on 08/12/2019. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 10/01/2020. Please do not directly alter the contents of this page.*

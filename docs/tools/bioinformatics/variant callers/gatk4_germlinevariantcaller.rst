@@ -3,15 +3,15 @@
 GATK4 Germline Variant Caller
 ===========================================================
 
-1 contributor · 1 version
+1 contributor · 2 versions
 
 :ID: ``GATK4_GermlineVariantCaller``
-:Python: ``janis_bioinformatics.tools.variantcallers.gatk.gatkgermline_variants_4_0_12 import GatkGermlineVariantCaller_4_0_12``
-:Versions: v0.1.0
+:Python: ``janis_bioinformatics.tools.variantcallers.gatk.gatkgermline_variants_4_1_3 import GatkGermlineVariantCaller_4_1_3``
+:Versions: 4.0.12.0, 4.1.3.0
 :Authors: Michael Franklin
 :Citations: 
-:Created: 2019-02-01
-:Updated: None
+:Created: 2019-09-01
+:Updated: 2019-09-13
 :Required inputs:
    - ``bam: BamPair``
 
@@ -44,12 +44,13 @@ This is a VariantCaller based on the GATK Best Practice pipelines. It uses the G
 Embedded Tools
 ***************
 
-=============================================  ==================================
-GATK4: Base Recalibrator                       ``Gatk4BaseRecalibrator/4.0.12.0``
-GATK4: Apply base quality score recalibration  ``GATK4ApplyBQSR/4.0.12.0``
-GATK4: Haplotype Caller                        ``GatkHaplotypeCaller/4.0.12.0``
+=============================================  =================================
+GATK4: SplitReads                              ``Gatk4SplitReads/4.1.3.0``
+GATK4: Base Recalibrator                       ``Gatk4BaseRecalibrator/4.1.3.0``
+GATK4: Apply base quality score recalibration  ``Gatk4ApplyBQSR/4.1.3.0``
+GATK4: Haplotype Caller                        ``Gatk4HaplotypeCaller/4.1.3.0``
 Split Multiple Alleles                         ``SplitMultiAllele/v0.5772``
-=============================================  ==================================
+=============================================  =================================
 
 ------
 

@@ -8,17 +8,17 @@ Fields
 
 **Required**
 
-============  =============  ===================
-ID            Type           Documentation
-============  =============  ===================
-executionDir  <class 'str'>  Execution directory
-============  =============  ===================
+====  ======  ===============
+ID    Type    Documentation
+====  ======  ===============
+====  ======  ===============
 
 **Optional**
 
 ============================  ===================================  ====================================================  ======================================================================
 ID                            Type                                 Default                                               Documentation
 ============================  ===================================  ====================================================  ======================================================================
+executionDir                  <class 'str'>                                                                              Execution directory
 queues                        typing.Union[str, typing.List[str]]  prod_med,prod                                         The queue to submit jobs to
 containerDir                  <class 'str'>                        /config/binaries/singularity/containers_devel/janis/  [OPTIONAL] Override the directory singularity containers are stored in
 singularityVersion            <class 'str'>                        3.4.0                                                 The version of Singularity to use on the cluster

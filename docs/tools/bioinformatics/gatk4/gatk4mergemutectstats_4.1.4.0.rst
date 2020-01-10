@@ -5,7 +5,7 @@ GATK4: MergeMutectStats
 
 1 contributor · 3 versions
 
-:ID: ``GATK4MergeMutectStats``
+:ID: ``Gatk4MergeMutectStats``
 :Python: ``janis_bioinformatics.tools.gatk4.mergemutectstats.versions import Gatk4MergeMutectStats_4_1_4``
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
 :Container: broadinstitute/gatk:4.1.4.0

@@ -34,7 +34,7 @@ def prepare_workflow_page(workflow: Workflow, versions: List[str]):
     toolmetadata = [
         ("ID", f"``{workflow.id()}``"),
         ("Python", f"``{workflow.__module__} import {workflow.__class__.__name__}``"),
-        ("Versions", ", ".join(versions[::-1])),
+        ("Versions", ", ".join(str(s) for s in versions[::-1]) if versions else ""),
         ("Authors", ", ".join(metadata.contributors)),
         ("Citations", citation),
         ("Created", str(metadata.dateCreated)),

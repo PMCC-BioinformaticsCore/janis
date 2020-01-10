@@ -5,7 +5,7 @@ GATK4: GetFilterMutectCalls
 
 1 contributor · 3 versions
 
-:ID: ``GATK4FilterMutectCalls``
+:ID: ``Gatk4FilterMutectCalls``
 :Python: ``janis_bioinformatics.tools.gatk4.filtermutectcalls.versions import Gatk4FilterMutectCalls_4_1_2``
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
 :Container: broadinstitute/gatk:4.1.2.0

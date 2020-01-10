@@ -14,8 +14,8 @@ Automatically generated index page for Variant Callers:
      <a href="gatk4_germlinevariantcaller.html">
        <p style="margin-bottom: 5px"><b>GATK4 Germline Variant Caller</b> <span style="margin-left: 10px; color: darkgray">GATK4_GermlineVariantCaller</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="gatk4_germlinevariantcaller.html" style="margin-bottom: 10px">
-       v<b>0.1.0</b>
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="gatk4_germlinevariantcaller.html" style="margin-bottom: 10px">
+       v<b>4.1.3.0</b>
      </a></p>
      </a>
      <hr />
@@ -23,8 +23,8 @@ Automatically generated index page for Variant Callers:
      <a href="gatk4_somaticvariantcaller.html">
        <p style="margin-bottom: 5px"><b>GATK4 Somatic Variant Caller</b> <span style="margin-left: 10px; color: darkgray">GATK4_SomaticVariantCaller</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="gatk4_somaticvariantcaller.html" style="margin-bottom: 10px">
-       v<b>0.1.0</b>
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="gatk4_somaticvariantcaller.html" style="margin-bottom: 10px">
+       v<b>4.1.3.0</b>
      </a></p>
      </a>
      <hr />

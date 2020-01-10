@@ -11,7 +11,6 @@ Fields
 ============  =============  ==================================================
 ID            Type           Documentation
 ============  =============  ==================================================
-executionDir  <class 'str'>
 containerDir  <class 'str'>  Location where to save and execute containers from
 ============  =============  ==================================================
 
@@ -20,6 +19,7 @@ containerDir  <class 'str'>  Location where to save and execute containers from
 ============================  ===================================  ==========================================  ==========================================================================================
 ID                            Type                                 Default                                     Documentation
 ============================  ===================================  ==========================================  ==========================================================================================
+executionDir                  <class 'str'>
 queues                        typing.Union[str, typing.List[str]]  workq                                       A single or list of queues that woork should be submitted to
 singularityVersion            <class 'str'>                        3.3.0                                       Version of singularity to load
 catchSlurmErrors              <class 'bool'>                       True                                        Catch Slurm errors (like OOM or walltime)

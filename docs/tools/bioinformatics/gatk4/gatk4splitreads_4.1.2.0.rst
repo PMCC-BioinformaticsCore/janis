@@ -5,7 +5,7 @@ GATK4: SplitReads
 
 0 contributors · 3 versions
 
-:ID: ``gatk4splitreads``
+:ID: ``Gatk4SplitReads``
 :Python: ``janis_bioinformatics.tools.gatk4.splitreads.versions import Gatk4SplitReads_4_1_2``
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
 :Container: broadinstitute/gatk:4.1.2.0

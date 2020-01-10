@@ -29,7 +29,9 @@ def format_rst_link(text, link):
 
 
 def get_tool_url(toolname, version):
-    return requote_uri(toolname + "_" + version).lower()
+    if not (toolname and version):
+        return ""
+    return requote_uri(toolname + "_" + str(version)).lower()
 
 
 def prepare_byline(

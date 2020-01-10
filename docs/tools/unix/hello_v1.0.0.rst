@@ -7,7 +7,7 @@ Hello, World!
 
 :ID: ``hello``
 :Python: ``janis_unix.tools.hello import HelloWorkflow``
-:Versions: v0.1.0
+:Versions: v1.0.0
 :Authors: Michael Franklin
 :Citations: 
 :Created: None

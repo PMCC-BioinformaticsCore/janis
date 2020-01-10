@@ -7,7 +7,7 @@ A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2 · 1
 
 :ID: ``WGSSomaticGATK``
 :Python: ``janis_pipelines.wgs_somatic_gatk.wgssomaticgatk import WGSSomaticGATK``
-:Versions: v0.1.0
+:Versions: None
 :Authors: Michael Franklin
 :Citations: 
 :Created: None
@@ -18,6 +18,8 @@ A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2 · 1
    - ``tumorInputs: Array<FastqGzPair>``
 
    - ``gatkIntervals: Array<bed>``
+
+   - ``cutadapt_adapters: File``
 
    - ``reference: FastaWithDict``
 
@@ -49,31 +51,33 @@ No documentation was provided: `contribute one <https://github.com/PMCC-Bioinfor
 Embedded Tools
 ***************
 
-============================  =====================================
-                              ``somatic_subpipeline/v0.1.0``
-GATK4 Somatic Variant Caller  ``GATK4_SomaticVariantCaller/v0.1.0``
+============================  ======================================================================================================================================
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x103a28320>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x103a3ae80>>``
+GATK4 Somatic Variant Caller  ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs            ``Gatk4GatherVcfs/4.1.3.0``
 BCFTools: Sort                ``bcftoolssort/v1.9``
-============================  =====================================
+============================  ======================================================================================================================================
 
 ------
 
 Additional configuration (inputs)
 ---------------------------------
 
-=============  ====================  ===============
-name           type                  documentation
-=============  ====================  ===============
-normalInputs   Array<FastqGzPair>
-tumorInputs    Array<FastqGzPair>
-gatkIntervals  Array<bed>
-reference      FastaWithDict
-snps_dbsnp     CompressedIndexedVCF
-snps_1000gp    CompressedIndexedVCF
-known_indels   CompressedIndexedVCF
-mills_indels   CompressedIndexedVCF
-normalName     Optional<String>
-tumorName      Optional<String>
-=============  ====================  ===============
+=================  ====================  ===============
+name               type                  documentation
+=================  ====================  ===============
+normalInputs       Array<FastqGzPair>
+tumorInputs        Array<FastqGzPair>
+gatkIntervals      Array<bed>
+cutadapt_adapters  File
+reference          FastaWithDict
+snps_dbsnp         CompressedIndexedVCF
+snps_1000gp        CompressedIndexedVCF
+known_indels       CompressedIndexedVCF
+mills_indels       CompressedIndexedVCF
+normalName         Optional<String>
+tumorName          Optional<String>
+=================  ====================  ===============
 
 .

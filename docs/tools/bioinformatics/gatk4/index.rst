@@ -12,54 +12,9 @@ Automatically generated index page for GATK4:
 
    </ul>
      <a href="gatk4applybqsr.html">
-       <p style="margin-bottom: 5px"><b>GATK4: Apply base quality score recalibration</b> <span style="margin-left: 10px; color: darkgray">GATK4ApplyBQSR</span></p>
+       <p style="margin-bottom: 5px"><b>GATK4: Apply base quality score recalibration</b> <span style="margin-left: 10px; color: darkgray">Gatk4ApplyBQSR</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4applybqsr.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
-     </a></p>
-     </a>
-     <hr />
-         
-     <a href="gatk4calculatecontamination.html">
-       <p style="margin-bottom: 5px"><b>GATK4: CalculateContamination</b> <span style="margin-left: 10px; color: darkgray">GATK4CalculateContamination</span></p>
-       
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4calculatecontamination.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
-     </a></p>
-     </a>
-     <hr />
-         
-     <a href="gatk4filtermutectcalls.html">
-       <p style="margin-bottom: 5px"><b>GATK4: GetFilterMutectCalls</b> <span style="margin-left: 10px; color: darkgray">GATK4FilterMutectCalls</span></p>
-       
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4filtermutectcalls.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
-     </a></p>
-     </a>
-     <hr />
-         
-     <a href="gatk4getpileupsummaries.html">
-       <p style="margin-bottom: 5px"><b>GATK4: GetPileupSummaries</b> <span style="margin-left: 10px; color: darkgray">GATK4GetPileupSummaries</span></p>
-       
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4getpileupsummaries.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
-     </a></p>
-     </a>
-     <hr />
-         
-     <a href="gatk4learnreadorientationmodel.html">
-       <p style="margin-bottom: 5px"><b>GATK4: LearnReadOrientationModel</b> <span style="margin-left: 10px; color: darkgray">GATK4LearnReadOrientationModel</span></p>
-       
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4learnreadorientationmodel.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
-     </a></p>
-     </a>
-     <hr />
-         
-     <a href="gatk4mergemutectstats.html">
-       <p style="margin-bottom: 5px"><b>GATK4: MergeMutectStats</b> <span style="margin-left: 10px; color: darkgray">GATK4MergeMutectStats</span></p>
-       
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4mergemutectstats.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
@@ -69,6 +24,24 @@ Automatically generated index page for GATK4:
        <p style="margin-bottom: 5px"><b>GATK4: Base Recalibrator</b> <span style="margin-left: 10px; color: darkgray">Gatk4BaseRecalibrator</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4baserecalibrator.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatk4calculatecontamination.html">
+       <p style="margin-bottom: 5px"><b>GATK4: CalculateContamination</b> <span style="margin-left: 10px; color: darkgray">Gatk4CalculateContamination</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4calculatecontamination.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatk4filtermutectcalls.html">
+       <p style="margin-bottom: 5px"><b>GATK4: GetFilterMutectCalls</b> <span style="margin-left: 10px; color: darkgray">Gatk4FilterMutectCalls</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4filtermutectcalls.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
@@ -92,10 +65,46 @@ Automatically generated index page for GATK4:
      </a>
      <hr />
          
+     <a href="gatk4getpileupsummaries.html">
+       <p style="margin-bottom: 5px"><b>GATK4: GetPileupSummaries</b> <span style="margin-left: 10px; color: darkgray">Gatk4GetPileupSummaries</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4getpileupsummaries.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatk4haplotypecaller.html">
+       <p style="margin-bottom: 5px"><b>GATK4: Haplotype Caller</b> <span style="margin-left: 10px; color: darkgray">Gatk4HaplotypeCaller</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4haplotypecaller.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatk4learnreadorientationmodel.html">
+       <p style="margin-bottom: 5px"><b>GATK4: LearnReadOrientationModel</b> <span style="margin-left: 10px; color: darkgray">Gatk4LearnReadOrientationModel</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4learnreadorientationmodel.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="gatk4markduplicates.html">
        <p style="margin-bottom: 5px"><b>GATK4: Mark Duplicates</b> <span style="margin-left: 10px; color: darkgray">Gatk4MarkDuplicates</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4markduplicates.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatk4mergemutectstats.html">
+       <p style="margin-bottom: 5px"><b>GATK4: MergeMutectStats</b> <span style="margin-left: 10px; color: darkgray">Gatk4MergeMutectStats</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4mergemutectstats.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>
@@ -110,6 +119,15 @@ Automatically generated index page for GATK4:
      </a>
      <hr />
          
+     <a href="gatk4mutect2.html">
+       <p style="margin-bottom: 5px"><b>GatkMutect2</b> <span style="margin-left: 10px; color: darkgray">Gatk4Mutect2</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4mutect2.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="gatk4printreads.html">
        <p style="margin-bottom: 5px"><b>GATK4: Print Reads</b> <span style="margin-left: 10px; color: darkgray">Gatk4PrintReads</span></p>
        
@@ -119,17 +137,8 @@ Automatically generated index page for GATK4:
      </a>
      <hr />
          
-     <a href="gatkhaplotypecaller.html">
-       <p style="margin-bottom: 5px"><b>GATK4: Haplotype Caller</b> <span style="margin-left: 10px; color: darkgray">GatkHaplotypeCaller</span></p>
-       
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatkhaplotypecaller.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
-     </a></p>
-     </a>
-     <hr />
-         
      <a href="gatk4sortsam.html">
-       <p style="margin-bottom: 5px"><b>GATK4: SortSAM</b> <span style="margin-left: 10px; color: darkgray">gatk4sortsam</span></p>
+       <p style="margin-bottom: 5px"><b>GATK4: SortSAM</b> <span style="margin-left: 10px; color: darkgray">Gatk4SortSam</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4sortsam.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
@@ -138,18 +147,9 @@ Automatically generated index page for GATK4:
      <hr />
          
      <a href="gatk4splitreads.html">
-       <p style="margin-bottom: 5px"><b>GATK4: SplitReads</b> <span style="margin-left: 10px; color: darkgray">gatk4splitreads</span></p>
+       <p style="margin-bottom: 5px"><b>GATK4: SplitReads</b> <span style="margin-left: 10px; color: darkgray">Gatk4SplitReads</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4splitreads.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
-     </a></p>
-     </a>
-     <hr />
-         
-     <a href="gatkmutect2.html">
-       <p style="margin-bottom: 5px"><b>GatkMutect2</b> <span style="margin-left: 10px; color: darkgray">gatkmutect2</span></p>
-       
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatkmutect2.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>

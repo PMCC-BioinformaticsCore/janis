@@ -5,7 +5,7 @@ GATK4: GetPileupSummaries
 
 1 contributor · 3 versions
 
-:ID: ``GATK4GetPileupSummaries``
+:ID: ``Gatk4GetPileupSummaries``
 :Python: ``janis_bioinformatics.tools.gatk4.getpileupsummaries.versions import Gatk4GetPileUpSummaries_4_1_3``
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
 :Container: broadinstitute/gatk:4.1.3.0

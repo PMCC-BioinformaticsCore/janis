@@ -17,6 +17,8 @@ A variant-calling WGS pipeline using only the GATK Haplotype variant caller · 1
 
    - ``reference: FastaWithDict``
 
+   - ``cutadapt_adapters: File``
+
    - ``gatkIntervals: Array<bed>``
 
    - ``snps_dbsnp: CompressedIndexedVCF``
@@ -45,14 +47,15 @@ No documentation was provided: `contribute one <https://github.com/PMCC-Bioinfor
 Embedded Tools
 ***************
 
-=============================  ======================================
+=============================  =======================================
 FastQC                         ``fastqc/v0.11.5``
+Parse FastQC Adaptors          ``ParseFastqcAdaptors/v0.1.0``
 Align and sort reads           ``BwaAligner/1.0.0``
 Merge and Mark Duplicates      ``mergeAndMarkBams/4.1.3``
-GATK4 Germline Variant Caller  ``GATK4_GermlineVariantCaller/v0.1.0``
+GATK4 Germline Variant Caller  ``GATK4_GermlineVariantCaller/4.1.3.0``
 GATK4: Gather VCFs             ``Gatk4GatherVcfs/4.0.12.0``
 BCFTools: Sort                 ``bcftoolssort/v1.9``
-=============================  ======================================
+=============================  =======================================
 
 ------
 
@@ -64,6 +67,7 @@ name                           type                  documentation
 =============================  ====================  ===============
 fastqs                         Array<FastqGzPair>
 reference                      FastaWithDict
+cutadapt_adapters              File
 gatkIntervals                  Array<bed>
 snps_dbsnp                     CompressedIndexedVCF
 snps_1000gp                    CompressedIndexedVCF

@@ -11,7 +11,6 @@ Fields
 ============  =============  ==================================================
 ID            Type           Documentation
 ============  =============  ==================================================
-executionDir  <class 'str'>
 containerDir  <class 'str'>  Location where to save and execute containers from
 ============  =============  ==================================================
 
@@ -20,6 +19,7 @@ containerDir  <class 'str'>  Location where to save and execute containers from
 ===========================  ===================================  ==========================================  ==========================================================================================
 ID                           Type                                 Default                                     Documentation
 ===========================  ===================================  ==========================================  ==========================================================================================
+executionDir                 <class 'str'>
 queues                       typing.Union[str, typing.List[str]]                                              A single or list of queues that work should be submitted to
 mail_program                                                                                                  Mail program to pipe email to, eg: 'sendmail -t'
 sendSlurmEmails              <class 'bool'>                       True                                        (requires JanisConfiguration.notifications.email to be set) Send emails for mail types END

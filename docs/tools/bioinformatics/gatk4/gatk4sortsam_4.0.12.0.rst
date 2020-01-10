@@ -5,7 +5,7 @@ GATK4: SortSAM
 
 1 contributor · 4 versions
 
-:ID: ``gatk4sortsam``
+:ID: ``Gatk4SortSam``
 :Python: ``janis_bioinformatics.tools.gatk4.sortsam.versions import Gatk4SortSam_4_0``
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.0.12.0

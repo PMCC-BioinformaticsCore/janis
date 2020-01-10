@@ -5,7 +5,7 @@ GATK4: Apply base quality score recalibration
 
 1 contributor · 4 versions
 
-:ID: ``GATK4ApplyBQSR``
+:ID: ``Gatk4ApplyBQSR``
 :Python: ``janis_bioinformatics.tools.gatk4.applybqsr.versions import Gatk4ApplyBqsr_4_1_4``
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.1.4.0

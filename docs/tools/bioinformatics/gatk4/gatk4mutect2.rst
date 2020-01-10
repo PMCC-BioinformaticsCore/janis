@@ -1,11 +1,11 @@
 :orphan:
 
 GatkMutect2
-=========================
+==========================
 
 1 contributor · 4 versions
 
-:ID: ``gatkmutect2``
+:ID: ``Gatk4Mutect2``
 :Python: ``janis_bioinformatics.tools.gatk4.mutect2.versions import GatkMutect2_4_1_4``
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.1.4.0

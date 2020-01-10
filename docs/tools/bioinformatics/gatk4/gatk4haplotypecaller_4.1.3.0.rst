@@ -1,11 +1,11 @@
 :orphan:
 
 GATK4: Haplotype Caller
-=============================================
+==============================================
 
 1 contributor · 4 versions
 
-:ID: ``GatkHaplotypeCaller``
+:ID: ``Gatk4HaplotypeCaller``
 :Python: ``janis_bioinformatics.tools.gatk4.haplotypecaller.versions import Gatk4HaplotypeCaller_4_1_3``
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.1.3.0

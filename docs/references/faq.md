@@ -4,6 +4,28 @@ This document contains some common FAQ that may not
 have a place outside this documentation.
 
 
+## Janis Registry
+
+- **Exception: Couldn't find tool: 'MyTool'**
+
+To ensure your tool is correctly found by the registry (`JanisShed`), you must ensure that:
+
+- The tool implements all abstract methods (can be initialised)
+- Available within two levels of the janis-pipelines.tool extension root. This means that it needs to be within one additional import from the base `__init__`.
+
+For example:
+
+```
+.
+|-- __init__.py     # imports my_directory
+|-- my_directory/
+|   |-- __init__.py # imports tool from mytool.py
+|   |-- mytool.py
+```
+
+If you're still having trouble, use `janis spider --trace mytool` to give you an indication of why your tool might be missing.
+
+
 ## Command tools and the command line
 
 - **Why is my input not being bound onto the command line?**
@@ -89,3 +111,4 @@ have a place outside this documentation.
     - WDL doesn't really have a mechanism for achieving dynamic or generated components like this, and CWL was flaky at best.
     - Call caching in Cromwell relies on the command line being constructed, so the generated filenames currently break this, and a purely randomly generated filename would breat this further.
     - We have cascaded filename components on the roadmap, so your filename can be built from a collection of inputs (sort of possible anyway).
+

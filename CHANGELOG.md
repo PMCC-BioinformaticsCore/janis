@@ -1,5 +1,91 @@
 # Change-log
 
+## v0.9.0
+
+### Upgrade notes
+
+Please read this (incompatible changes) section carefully:
+
+> v0.9.0 brings the following backwards incompatible changes:
+> - Workflows:
+>   - `Workflow.output` param `output_tag` renamed to `output_folder`
+>   - `Workflow.output` param `output_prefix` renamed to `output_tag`
+> - Bioinformatics:
+>   - Bam index pattern `^.bai` refactored to `.bai`
+>     - ie: `filename.bai` → `filename.bam.bai`
+>     - see `secondaries_present_as` to fall back to old method
+>     - GATK tools have been fixed to present secondary index as `^.bai`.
+>     - Most HTSLib should be fine.
+> - Assistant
+>   - Require an output folder to be specified
+>     - Ability to specify output folder multiple times
+>     - Execution directory falls under this 
+>   - Respect changes to `output_name` + `output_folder` required minor schema change
+>  - Templates
+>    - Refactor of all templates to use [camel case](https://en.wikipedia.org/wiki/Camel_case). 
+
+### Janis-core changelog
+
+- New: [**PythonTool**](https://janis.readthedocs.io/en/latest/references/tools/pythontool.html)
+	- Allow arbitrary, self-contained Python scripts to be executed inside a container.
+	- Includes base for other CodeTools.
+- Workflows:
+  - `Workflow.output` param `output_tag` renamed to `output_folder`
+  - `Workflow.output` param `output_prefix` renamed to `output_tag`
+ - New: `presents_as` to allow an input to be localised as a specific filename.
+- New `secondaries_present_as`, to allow a secondary / accessory file to be presented as a different pattern
+	- Requires [common-workflow-language/cwltool/issues/1232](https://github.com/common-workflow-language/cwltool/issues/1232) to be resolved to work correctly.
+- Fix `mv` statements in WDL to use `-n` instead of `-t`
+- Add new LogLevel verbose, and change default to DEBUG
+- Removes dynamic filename generation preparing for better call-caching
+- WDL to use `~{}` instead of `~{}` with `command <<< ~{} >>>` syntax. WDLGen: [`92470d7`](https://github.com/PMCC-BioinformaticsCore/python-wdlgen/commit/92470d7acd0ef870210d4891bfc14c9d570e6f07)
+- Add better ability to trace JanisShed / registry
+
+### Janis-assistant changelog
+
+#### Big changes
+
+- Engines by default run in the foreground
+- Allow ability to specify output directory multiple times
+	- Existing functionality where new output directories are created for each run can be restored by adding `output_dir` into your janis config (default: `~/.janis/janis.conf`)
+- `janis watch $wid`:
+	- Doesn't clear your current history (opens curses display with `blessed`)
+	- Ability to specify the output directory
+- Change default execution directory to be inside the output directory
+- Rename template names to respect camel case
+- CLI changes:
+	- `--should-disconnect` renamed to `--background / -B`
+	- `--use-mysql` renamed to `--mysql`
+	- `--no-watch` is default, `--progress` to show progress by default.
+	- Added `--development` flag:
+		-  sets `--mysql` and `--keep-intermediate-files` to true
+- Allow saving of literal output values on a local filesystem
+
+#### Other bug fixes
+- Fully qualify output directory when specified on the CLI.
+- Check if container is available before run is issued
+- Allow CodeTool to be passed in via CLI
+- Ensure `janis init --stdout` actually logs to stdout
+- More camel-case refactor
+- 
+
+
+#### Engines
+
+- Engines callback the progress by default, rather than Janis polling at some arbitrary interval,
+- Cromwell polling logic exists inside the engine now
+- This is to remove workflow job state from engine, but also prepare for other engines that have the better ability to callback.
+- Added ability to configure CWLTool
+	- Add singularity support for CWLTool for all Singularity based templates
+- Add better support for catching Cromwell + CWLTool exit errors
+- Cromwell uses the localization strategy `[hard-link, cached-copy]` ([source](https://github.com/broadinstitute/cromwell/pull/4900#issuecomment-571456289)) 
+
+Notes about Cromwell call-caching:
+- More effort has been added to support Cromwell's call-caching, however the following issues require resolving:
+  - [broadinstitute/cromwell/#5348](https://github.com/broadinstitute/cromwell/issues/5348) [[BA-6172](https://broadworkbench.atlassian.net/browse/BA-6172)]
+  - [broadinstitute/cromwell/#5346](https://github.com/broadinstitute/cromwell/issues/5346)
+
+
 ## v0.8.x
 
 ### Upgrade notes:

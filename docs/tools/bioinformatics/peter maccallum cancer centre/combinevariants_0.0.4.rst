@@ -3,11 +3,11 @@
 Combine Variants
 ==================================
 
-1 contributor · 1 version
+1 contributor · 2 versions
 
 :ID: ``combinevariants``
-:Python: ``janis_bioinformatics.tools.pmac.combinevariants.combinevariants_0_0_4 import CombineVariants_0_0_4``
-:Versions: 0.0.4
+:Python: ``janis_bioinformatics.tools.pmac.combinevariants.versions import CombineVariants_0_0_4``
+:Versions: 0.0.5, 0.0.4
 :Container: michaelfranklin/pmacutil:0.0.4
 :Authors: Michael Franklin
 :Citations: None

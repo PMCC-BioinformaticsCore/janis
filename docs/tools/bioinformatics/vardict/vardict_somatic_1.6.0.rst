@@ -3,11 +3,11 @@
 Vardict (Somatic)
 ===================================
 
-0 contributors · 4 versions
+0 contributors · 5 versions
 
 :ID: ``vardict_somatic``
-:Python: ``janis_bioinformatics.tools.vardict.vardictsomatic_compressed import VarDictSomatic_1_6_0``
-:Versions: 1.7.0, 1.6.0, 1.5.8, 1.5.6
+:Python: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_6_0``
+:Versions: 1.7.0, 1.6.0, 1.5.8, 1.5.7, 1.5.6
 :Container: michaelfranklin/vardict:1.6.0
 :Authors: 
 :Citations: None
@@ -26,7 +26,7 @@ Vardict (Somatic)
 
    - ``normalName: String``
 :Outputs: 
-   - ``out: CompressedVCF``
+   - ``out: VCF``
 
 Documentation
 -------------
@@ -45,12 +45,11 @@ value                                                               prefix      
 ==================================================================  ========  ==========  ===============
 | testsomatic.R |                                                                      3
 var2vcf_paired.pl                                                                      4
-<janis_core.types.selectors.StringFormatter object at 0x1038800b8>  -b                 1
-<janis_core.types.selectors.InputSelector object at 0x103880048>    -N                 1
-<janis_core.types.selectors.StringFormatter object at 0x103880208>  -N                 5
-<janis_core.types.selectors.InputSelector object at 0x103880160>    -f                 5
-<janis_core.types.selectors.InputSelector object at 0x103880278>    -f                 1
-| bcftools view -O z                                                                   6
+<janis_core.types.selectors.StringFormatter object at 0x10d38b6d8>  -b                 1
+<janis_core.types.selectors.InputSelector object at 0x10d38be10>    -N                 1
+<janis_core.types.selectors.StringFormatter object at 0x10d38b4a8>  -N                 5
+<janis_core.types.selectors.InputSelector object at 0x10d38bc88>    -f                 5
+<janis_core.types.selectors.InputSelector object at 0x10d38b048>    -f                 1
 ==================================================================  ========  ==========  ===============
 
 Additional configuration (inputs)
@@ -66,7 +65,7 @@ reference                FastaFai            -G                 1  The reference
 tumorName                String                                    The sample name to be used directly.  Will overwrite -n option
 normalName               String                                    The normal sample name to use with the -b option
 alleleFreqThreshold      Optional<Float>                           The threshold for allele frequency, default: 0.05 or 5%
-outputFilename           Optional<Filename>  >                 10
+outputFilename           Optional<Filename>  >                  6
 indels3prime             Optional<Boolean>   -3                 1  Indicate to move indels to 3-prime if alternative alignment can be achieved.
 amplicon                 Optional<Float>     -a                 1  Indicate it's amplicon based calling.  Reads that don't map to the amplicon will be skipped.  A read pair is considered belonging  to the amplicon if the edges are less than int bp to the amplicon, and overlap fraction is at least float.  Default: 10:0.95
 minReads                 Optional<Integer>   -B                 1  The minimum # of reads to determine strand bias, default 2

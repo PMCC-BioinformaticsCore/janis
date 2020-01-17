@@ -6,7 +6,7 @@ VarDict (Germline)
 0 contributors · 5 versions
 
 :ID: ``vardict_germline``
-:Python: ``janis_bioinformatics.tools.vardict.vardictgermline_compressed import VarDictGermline_1_6_0``
+:Python: ``janis_bioinformatics.tools.vardict.vardictgermline import VarDictGermline_1_6_0``
 :Versions: 1.7.0, 1.6.0, 1.5.8, 1.5.7, 1.5.6
 :Container: michaelfranklin/vardict:1.6.0
 :Authors: 
@@ -26,7 +26,7 @@ VarDict (Germline)
 
    - ``var2vcfAlleleFreqThreshold: Float``
 :Outputs: 
-   - ``out: CompressedVCF``
+   - ``out: VCF``
 
 Documentation
 -------------
@@ -45,7 +45,6 @@ value                 prefix      position  documentation
 ====================  ========  ==========  ===============
 | teststrandbias.R |                     3
 var2vcf_valid.pl                         4
-| bcftools view -O z                     6
 ====================  ========  ==========  ===============
 
 Additional configuration (inputs)
@@ -60,7 +59,7 @@ reference                   FastaFai            -G                 1  The refere
 sampleName                  String              -N                 1  The sample name to be used directly.  Will overwrite -n option
 var2vcfSampleName           String              -N                 5
 var2vcfAlleleFreqThreshold  Float               -f                 5
-outputFilename              Optional<Filename>  >                 10
+outputFilename              Optional<Filename>  >                  6
 indels3prime                Optional<Boolean>   -3                 1  Indicate to move indels to 3-prime if alternative alignment can be achieved.
 amplicon                    Optional<Float>     -a                 1  Indicate it's amplicon based calling.  Reads that don't map to the amplicon will be skipped.  A read pair is considered belonging  to the amplicon if the edges are less than int bp to the amplicon, and overlap fraction is at least float.  Default: 10:0.95
 minReads                    Optional<Integer>   -B                 1  The minimum # of reads to determine strand bias, default 2

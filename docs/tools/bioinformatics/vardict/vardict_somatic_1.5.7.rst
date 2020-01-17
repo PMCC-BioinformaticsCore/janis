@@ -6,9 +6,9 @@ Vardict (Somatic)
 0 contributors · 5 versions
 
 :ID: ``vardict_somatic``
-:Python: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_7_0``
+:Python: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_5_7``
 :Versions: 1.7.0, 1.6.0, 1.5.8, 1.5.7, 1.5.6
-:Container: michaelfranklin/vardict:1.7.0
+:Container: michaelfranklin/vardict:1.5.7
 :Authors: 
 :Citations: None
 :Created: None
@@ -45,11 +45,11 @@ value                                                               prefix      
 ==================================================================  ========  ==========  ===============
 | testsomatic.R |                                                                      3
 var2vcf_paired.pl                                                                      4
-<janis_core.types.selectors.StringFormatter object at 0x10d38b9e8>  -b                 1
-<janis_core.types.selectors.InputSelector object at 0x10d38b908>    -N                 1
-<janis_core.types.selectors.StringFormatter object at 0x10d38b518>  -N                 5
-<janis_core.types.selectors.InputSelector object at 0x10d38b748>    -f                 5
-<janis_core.types.selectors.InputSelector object at 0x10d38bc18>    -f                 1
+<janis_core.types.selectors.StringFormatter object at 0x10d38bf98>  -b                 1
+<janis_core.types.selectors.InputSelector object at 0x10d38bb70>    -N                 1
+<janis_core.types.selectors.StringFormatter object at 0x10d38b0b8>  -N                 5
+<janis_core.types.selectors.InputSelector object at 0x10d38ba58>    -f                 5
+<janis_core.types.selectors.InputSelector object at 0x10d38bf28>    -f                 1
 ==================================================================  ========  ==========  ===============
 
 Additional configuration (inputs)

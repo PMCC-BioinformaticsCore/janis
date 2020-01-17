@@ -7,7 +7,7 @@ A variant-calling WGS pipeline using GATK, VarDict and Strelka2 · 1 contributor
 
 :ID: ``WGSGermlineMultiCallers``
 :Python: ``janis_pipelines.wgs_germline.wgsgermline import WGSGermlineMultiCallers``
-:Versions: 1.0.1
+:Versions: 1.1.0
 :Authors: Michael Franklin
 :Citations: 
 :Created: None

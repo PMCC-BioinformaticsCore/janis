@@ -7,7 +7,7 @@ A somatic tumor-normal variant-calling WGS pipeline using GATK, VarDict and Stre
 
 :ID: ``WGSSomaticMultiCallers``
 :Python: ``janis_pipelines.wgs_somatic.wgssomatic import WGSSomaticMultiCallers``
-:Versions: None
+:Versions: 1.1.0
 :Authors: Michael Franklin
 :Citations: 
 :Created: None
@@ -62,8 +62,8 @@ Embedded Tools
 ***************
 
 ==============================  ======================================================================================================================================
-                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x1039f20f0>>``
-                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x103a01160>>``
+                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d551f60>>``
+                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d560c50>>``
 GATK4 Somatic Variant Caller    ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs              ``Gatk4GatherVcfs/4.1.3.0``
 Strelka Somatic Variant Caller  ``strelkaSomaticVariantCaller/v0.1.0``

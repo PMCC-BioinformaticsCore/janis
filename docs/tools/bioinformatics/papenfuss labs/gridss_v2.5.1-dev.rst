@@ -6,7 +6,7 @@ Gridss
 1 contributor · 3 versions
 
 :ID: ``gridss``
-:Python: ``janis_bioinformatics.tools.pappenfuss.gridss.gridss import Gridss_2_5_1``
+:Python: ``janis_bioinformatics.tools.papenfuss.gridss.gridss import Gridss_2_5_1``
 :Versions: v2.5.1-dev, v2.4.0, v2.2.3
 :Container: michaelfranklin/gridss:2.5.1-dev2
 :Authors: Michael Franklin

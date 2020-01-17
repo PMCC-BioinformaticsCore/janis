@@ -7,7 +7,7 @@ A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2 · 1
 
 :ID: ``WGSSomaticGATK``
 :Python: ``janis_pipelines.wgs_somatic_gatk.wgssomaticgatk import WGSSomaticGATK``
-:Versions: None
+:Versions: 1.1.0
 :Authors: Michael Franklin
 :Citations: 
 :Created: None
@@ -52,8 +52,8 @@ Embedded Tools
 ***************
 
 ============================  ======================================================================================================================================
-                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x103a28320>>``
-                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x103a3ae80>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d597128>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d5a0198>>``
 GATK4 Somatic Variant Caller  ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs            ``Gatk4GatherVcfs/4.1.3.0``
 BCFTools: Sort                ``bcftoolssort/v1.9``

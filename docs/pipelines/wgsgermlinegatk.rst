@@ -7,7 +7,7 @@ A variant-calling WGS pipeline using only the GATK Haplotype variant caller · 1
 
 :ID: ``WGSGermlineGATK``
 :Python: ``janis_pipelines.wgs_germline_gatk.wgsgermlinegatk import WGSGermlineGATK``
-:Versions: 1.0.0
+:Versions: 1.1.0
 :Authors: Michael Franklin
 :Citations: 
 :Created: None

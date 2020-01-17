@@ -6,7 +6,7 @@ Parse FastQC Adaptors
 0 contributors · 1 version
 
 :ID: ``ParseFastqcAdaptors``
-:Python: ``janis_bioinformatics.tools.pmac.parsefastqc.base import ParseFastqcAdaptors``
+:Python: ``janis_bioinformatics.tools.pmac.parsefastqc.v0_1_0 import ParseFastqcAdaptors``
 :Versions: v0.1.0
 :Container: python:3.8.1
 :Authors: 

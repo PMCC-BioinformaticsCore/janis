@@ -3,11 +3,11 @@
 Trim IUPAC Bases
 ============================
 
-0 contributors · 1 version
+0 contributors · 2 versions
 
 :ID: ``trimIUPAC``
-:Python: ``janis_bioinformatics.tools.pmac.trimiupac.trimiupac_0_0_4 import TrimIUPAC_0_0_4``
-:Versions: 0.0.4
+:Python: ``janis_bioinformatics.tools.pmac.trimiupac.versions import TrimIUPAC_0_0_4``
+:Versions: 0.0.5, 0.0.4
 :Container: michaelfranklin/pmacutil:0.0.4
 :Authors: 
 :Citations: None

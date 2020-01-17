@@ -4,10 +4,11 @@ from setuptools import setup, find_packages
 DESCRIPTION = "Contains classes and helpers to build a workflow, and provide options to convert to CWL / WDL"
 
 JANIS_CORE_VERSION = "v0.9.0"
-JANIS_ASSISTANT_VERSION = "v0.9.0"
+JANIS_ASSISTANT_VERSION = "v0.9.1"
 JANIS_UNIX_VERSION = "v0.9.0"
 JANIS_BIOINFORMATICS_VERSION = "v0.9.0"
 JANIS_PIPELINES_VERSION = "v0.9.0"
+JANIS_TEMPLATES_VERSION = "v0.9.0"
 
 
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########
@@ -17,6 +18,7 @@ min_assistant_version = f"janis-pipelines.runner>=" + JANIS_ASSISTANT_VERSION
 min_unix_version = f"janis-pipelines.unix>=" + JANIS_UNIX_VERSION
 min_bioinf_version = f"janis-pipelines.bioinformatics>=" + JANIS_BIOINFORMATICS_VERSION
 min_pipes_version = f"janis-pipelines.pipelines>=" + JANIS_PIPELINES_VERSION
+min_templs_version = f"janis-pipelines.templates>=" + JANIS_TEMPLATES_VERSION
 
 with open("./README.md") as readme:
     long_description = readme.read()
@@ -46,6 +48,7 @@ setup(
         min_unix_version,
         min_bioinf_version,
         min_pipes_version,
+        min_templs_version,
     ],
     extras_require={"bioinformatics": [min_bioinf_version, min_pipes_version]},
     entry_points={"console_scripts": ["janisbuilder=toolbuilder.main:process_args"]},

@@ -47,10 +47,7 @@ setup(
         min_bioinf_version,
         min_pipes_version,
     ],
-    extras_require={
-        "bioinformatics": min_bioinf_version,
-        "runner": min_assistant_version,
-    },
+    extras_require={"bioinformatics": [min_bioinf_version, min_pipes_version]},
     entry_points={"console_scripts": ["janisbuilder=toolbuilder.main:process_args"]},
     zip_safe=False,
     long_description=long_description,

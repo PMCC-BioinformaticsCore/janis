@@ -1,4 +1,4 @@
-# Janis (janis-pipelines) (Pre-alpha)
+# Janis (janis-pipelines) (Alpha)
 
 
 [![GitHub stars](https://img.shields.io/github/stars/PMCC-BioinformaticsCore/janis.svg?style=social)](https://github.com/PMCC-BioinformaticsCore/janis) [![Build Status](https://travis-ci.org/PMCC-BioinformaticsCore/janis.svg?branch=master)](https://travis-ci.org/PMCC-BioinformaticsCore/janis)  [![Documentation Status](https://readthedocs.org/projects/janis/badge/?version=latest)](https://janis.readthedocs.io/en/latest/?badge=latest)  [![PyPI version](https://badge.fury.io/py/janis-pipelines.svg)](https://badge.fury.io/py/janis-pipelines)  [![codecov](https://codecov.io/gh/PMCC-BioinformaticsCore/janis/branch/master/graph/badge.svg)](https://codecov.io/gh/PMCC-BioinformaticsCore/janis) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) [![Gitter chat](https://badges.gitter.im/janis-pipelines.png)](https://gitter.im/janis-pipelines/community)
@@ -6,7 +6,13 @@
 _Janis is a framework creating specialised, simple workflow definitions that are then transpiled to   
 Common Workflow Language or Workflow Definition Language._  
   
-Documentation is hosted here: https://janis.readthedocs.io/  
+Documentation is hosted here: https://janis.readthedocs.io/
+
+
+## v0.9.0 release
+
+> v0.9.0 includes backwards incompatible changes, see the [CHANGELOG](https://github.com/PMCC-BioinformaticsCore/janis/blob/master/CHANGELOG.md)
+for more information.
 
   
 ## Introduction  
@@ -85,32 +91,19 @@ Through conference or talks, this project has been referenced by the following t
   
 ## Support  
 
-## v0.8.0 Backwards Compatability
-**NOTE: Version 0.8.0 brings minor to simplify the CommandTool API.**
+## v0.9.0 Backwards Compatability
 
-Remove `@staticmethod` and add (`self`) as a parameter to the following methods on a tool: `tool()`, `base_command()` `container()`, `version()`, `tool_module()`, `tool_provider()` (eg to become `container(self)`).
+**NOTE: Version 0.9.0 brings changes to output directories and camel case changes**
 
-This now supports the new `CommandToolBuilder` syntax:
+- Janis watch will be incompatible with previously run workflows
+- Your configs might break, as previous versions of janis were not cautious about camel case.
+- Your templates might not work with unrecognised keys (try changing them to camel case instead)
+- Changes to BamBai indexes, format is now `.bam.bai`
 
-```python
-ToolName = j.CommandToolBuilder(
-    tool: str="toolname",
-    base_command=["base", "command"],
-    inputs: List[j.ToolInput]=[],
-    outputs: List[j.ToolOutput]=[],
-    container="container/name:version",
-    version="version",
-    friendly_name=None,
-    arguments=None,
-    env_vars=None,
-    tool_module=None,
-    tool_provider=None,
-    metadata: ToolMetadata=j.ToolMetadata(),
-    cpu: Union[int, Callable[[Dict[str, Any]], int]]=None,
-    memory: Union[int, Callable[[Dict[str, Any]], int]]=None,
-)
-```
-  
+See the [CHANGELOG](https://github.com/PMCC-BioinformaticsCore/janis/blob/master/CHANGELOG.md)
+for more information.
+
+
 ### Contributions
   
 > _Further information_: [Development](https://janis.readthedocs.io/en/latest/development/)  

@@ -1,9 +1,9 @@
-import sys
 from janis_core.utils.logger import Logger
-import pkg_resources
+from janis_core.registry.entrypoints import DATATYPES
+import importlib_metadata
 
-
-for entrypoint in pkg_resources.iter_entry_points(group="janis.types"):
+eps = importlib_metadata.entry_points().get(DATATYPES, [])
+for entrypoint in eps:
     try:
         m = entrypoint.load()
         for k, v in m.__dict__.items():

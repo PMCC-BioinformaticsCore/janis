@@ -1,9 +1,10 @@
-import sys
+import importlib_metadata
 from janis_core.utils.logger import Logger
-import pkg_resources
+from janis_core.registry.entrypoints import TOOLS
 
+eps = importlib_metadata.entry_points().get(TOOLS, [])
 
-for entrypoint in pkg_resources.iter_entry_points(group="janis.tools"):
+for entrypoint in eps:
     try:
         m = entrypoint.load()
         for k, v in m.__dict__.items():

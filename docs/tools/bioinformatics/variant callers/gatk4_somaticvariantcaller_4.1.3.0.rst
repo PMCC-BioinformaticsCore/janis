@@ -13,13 +13,13 @@ GATK4 Somatic Variant Caller
 :Created: 2019-02-01
 :Updated: 2019-09-13
 :Required inputs:
-   - ``normalBam: BamPair``
+   - ``normal_bam: BamPair``
 
-   - ``tumorBam: BamPair``
+   - ``tumor_bam: BamPair``
 
-   - ``normalName: String``
+   - ``normal_name: String``
 
-   - ``tumorName: String``
+   - ``tumor_name: String``
 
    - ``reference: FastaWithDict``
 
@@ -27,9 +27,9 @@ GATK4 Somatic Variant Caller
 
    - ``snps_1000gp: CompressedIndexedVCF``
 
-   - ``knownIndels: CompressedIndexedVCF``
+   - ``known_indels: CompressedIndexedVCF``
 
-   - ``millsIndels: CompressedIndexedVCF``
+   - ``mills_indels: CompressedIndexedVCF``
 :Outputs: 
    - ``out: VCF``
 
@@ -61,19 +61,19 @@ Split Multiple Alleles                         ``SplitMultiAllele/v0.5772``
 Additional configuration (inputs)
 ---------------------------------
 
-===========  ====================  ========================================================================================================================================================
-name         type                  documentation
-===========  ====================  ========================================================================================================================================================
-normalBam    BamPair
-tumorBam     BamPair
-normalName   String
-tumorName    String
-reference    FastaWithDict
-snps_dbsnp   CompressedIndexedVCF
-snps_1000gp  CompressedIndexedVCF
-knownIndels  CompressedIndexedVCF
-millsIndels  CompressedIndexedVCF
-intervals    Optional<bed>         This optional intervals file supports processing by regions. If this file resolves to null, then GATK will process the whole genome per each tool's spec
-===========  ====================  ========================================================================================================================================================
+============  ====================  ========================================================================================================================================================
+name          type                  documentation
+============  ====================  ========================================================================================================================================================
+normal_bam    BamPair
+tumor_bam     BamPair
+normal_name   String
+tumor_name    String
+reference     FastaWithDict
+snps_dbsnp    CompressedIndexedVCF
+snps_1000gp   CompressedIndexedVCF
+known_indels  CompressedIndexedVCF
+mills_indels  CompressedIndexedVCF
+intervals     Optional<bed>         This optional intervals file supports processing by regions. If this file resolves to null, then GATK will process the whole genome per each tool's spec
+============  ====================  ========================================================================================================================================================
 
 .

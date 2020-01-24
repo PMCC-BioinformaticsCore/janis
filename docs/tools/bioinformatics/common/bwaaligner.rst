@@ -13,7 +13,7 @@ Align and sort reads
 :Created: 2018-12-24
 :Updated: None
 :Required inputs:
-   - ``sampleName: String``
+   - ``sample_name: String``
 
    - ``reference: FastaWithDict``
 
@@ -45,7 +45,7 @@ Additional configuration (inputs)
 =============================  =======================  ===============
 name                           type                     documentation
 =============================  =======================  ===============
-sampleName                     String
+sample_name                    String
 reference                      FastaWithDict
 fastq                          FastqGzPair
 cutadapt_adapter               Optional<Array<String>>

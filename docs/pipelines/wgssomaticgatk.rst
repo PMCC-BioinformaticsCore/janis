@@ -7,17 +7,17 @@ A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2 · 1
 
 :ID: ``WGSSomaticGATK``
 :Python: ``janis_pipelines.wgs_somatic_gatk.wgssomaticgatk import WGSSomaticGATK``
-:Versions: 1.1.0
+:Versions: 1.2.0
 :Authors: Michael Franklin
 :Citations: 
 :Created: None
 :Updated: 2019-10-16
 :Required inputs:
-   - ``normalInputs: Array<FastqGzPair>``
+   - ``normal_inputs: Array<FastqGzPair>``
 
-   - ``tumorInputs: Array<FastqGzPair>``
+   - ``tumor_inputs: Array<FastqGzPair>``
 
-   - ``gatkIntervals: Array<bed>``
+   - ``gatk_intervals: Array<bed>``
 
    - ``cutadapt_adapters: File``
 
@@ -31,13 +31,13 @@ A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2 · 1
 
    - ``mills_indels: CompressedIndexedVCF``
 :Outputs: 
-   - ``normalBam: BamPair``
+   - ``normal_bam: BamPair``
 
-   - ``tumorBam: BamPair``
+   - ``tumor_bam: BamPair``
 
-   - ``normalReport: Array<Array<Zip>>``
+   - ``normal_report: Array<Array<Zip>>``
 
-   - ``tumorReport: Array<Array<Zip>>``
+   - ``tumor_report: Array<Array<Zip>>``
 
    - ``variants_gatk: CompressedVCF``
 
@@ -52,8 +52,8 @@ Embedded Tools
 ***************
 
 ============================  ======================================================================================================================================
-                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d597128>>``
-                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d5a0198>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d2829b0>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d293518>>``
 GATK4 Somatic Variant Caller  ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs            ``Gatk4GatherVcfs/4.1.3.0``
 BCFTools: Sort                ``bcftoolssort/v1.9``
@@ -67,17 +67,17 @@ Additional configuration (inputs)
 =================  ====================  ===============
 name               type                  documentation
 =================  ====================  ===============
-normalInputs       Array<FastqGzPair>
-tumorInputs        Array<FastqGzPair>
-gatkIntervals      Array<bed>
+normal_inputs      Array<FastqGzPair>
+tumor_inputs       Array<FastqGzPair>
+gatk_intervals     Array<bed>
 cutadapt_adapters  File
 reference          FastaWithDict
 snps_dbsnp         CompressedIndexedVCF
 snps_1000gp        CompressedIndexedVCF
 known_indels       CompressedIndexedVCF
 mills_indels       CompressedIndexedVCF
-normalName         Optional<String>
-tumorName          Optional<String>
+normal_name        Optional<String>
+tumor_name         Optional<String>
 =================  ====================  ===============
 
 .

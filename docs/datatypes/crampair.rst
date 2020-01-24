@@ -1,12 +1,12 @@
 
-Float
-=====
+CramPair
+========
 
-
+Secondary files: ``.crai``
 
 Documentation
 -------------
 
-A float
+A Cram and Crai as the secondary
 
 *This page was automatically generated on 2020-01-24*.

@@ -45,11 +45,11 @@ value                                                               prefix      
 ==================================================================  ========  ==========  ===============
 | testsomatic.R |                                                                      3
 var2vcf_paired.pl                                                                      4
-<janis_core.types.selectors.StringFormatter object at 0x10d38bf98>  -b                 1
-<janis_core.types.selectors.InputSelector object at 0x10d38bb70>    -N                 1
-<janis_core.types.selectors.StringFormatter object at 0x10d38b0b8>  -N                 5
-<janis_core.types.selectors.InputSelector object at 0x10d38ba58>    -f                 5
-<janis_core.types.selectors.InputSelector object at 0x10d38bf28>    -f                 1
+<janis_core.types.selectors.StringFormatter object at 0x10d14def0>  -b                 1
+<janis_core.types.selectors.InputSelector object at 0x10d14dd68>    -N                 1
+<janis_core.types.selectors.StringFormatter object at 0x10d14df60>  -N                 5
+<janis_core.types.selectors.InputSelector object at 0x10d14d0f0>    -f                 5
+<janis_core.types.selectors.InputSelector object at 0x10d14dcf8>    -f                 1
 ==================================================================  ========  ==========  ===============
 
 Additional configuration (inputs)

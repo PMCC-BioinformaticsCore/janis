@@ -67,8 +67,8 @@ Arguments
 value                                                               prefix      position  documentation
 ==================================================================  ========  ==========  ==========================================================================================================================================
 configureStrelkaGermlineWorkflow.py                                                    0
-<janis_core.types.selectors.StringFormatter object at 0x10d38b208>                     2
-<janis_core.types.selectors.CpuSelector object at 0x10d38b358>      --jobs             3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
+<janis_core.types.selectors.StringFormatter object at 0x10d14d320>                     2
+<janis_core.types.selectors.CpuSelector object at 0x10d14dba8>      --jobs             3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
 ==================================================================  ========  ==========  ==========================================================================================================================================
 
 Additional configuration (inputs)

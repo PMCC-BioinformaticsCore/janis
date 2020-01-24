@@ -7,7 +7,7 @@ A variant-calling WGS pipeline using GATK, VarDict and Strelka2 · 1 contributor
 
 :ID: ``WGSGermlineMultiCallers``
 :Python: ``janis_pipelines.wgs_germline.wgsgermline import WGSGermlineMultiCallers``
-:Versions: 1.1.0
+:Versions: 1.2.0
 :Authors: Michael Franklin
 :Citations: 
 :Created: None
@@ -19,13 +19,13 @@ A variant-calling WGS pipeline using GATK, VarDict and Strelka2 · 1 contributor
 
    - ``cutadapt_adapters: File``
 
-   - ``gatkIntervals: Array<bed>``
+   - ``gatk_intervals: Array<bed>``
 
-   - ``vardictIntervals: Array<bed>``
+   - ``vardict_intervals: Array<bed>``
 
    - ``strelkaIntervals: BedTABIX``
 
-   - ``vardictHeaderLines: File``
+   - ``header_lines: File``
 
    - ``snps_dbsnp: CompressedIndexedVCF``
 
@@ -35,11 +35,11 @@ A variant-calling WGS pipeline using GATK, VarDict and Strelka2 · 1 contributor
 
    - ``mills_indels: CompressedIndexedVCF``
 :Outputs: 
-   - ``bam: BamPair``
-
    - ``reports: Array<Array<Zip>>``
 
-   - ``combinedVariants: CompressedVCF``
+   - ``bam: BamPair``
+
+   - ``variants_combined: CompressedVCF``
 
    - ``variants_gatk: VCF``
 
@@ -85,19 +85,19 @@ name                           type                     documentation
 fastqs                         Array<FastqGzPair>
 reference                      FastaWithDict
 cutadapt_adapters              File
-gatkIntervals                  Array<bed>
-vardictIntervals               Array<bed>
+gatk_intervals                 Array<bed>
+vardict_intervals              Array<bed>
 strelkaIntervals               BedTABIX
-vardictHeaderLines             File
+header_lines                   File
 snps_dbsnp                     CompressedIndexedVCF
 snps_1000gp                    CompressedIndexedVCF
 known_indels                   CompressedIndexedVCF
 mills_indels                   CompressedIndexedVCF
-sampleName                     Optional<String>
-alleleFreqThreshold            Optional<Float>
-alignSortedBam_sortsam_tmpDir  Optional<String>
-combineVariants_type           Optional<String>
-combineVariants_columns        Optional<Array<String>>
+sample_name                    Optional<String>
+allele_freq_threshold          Optional<Float>
+align_and_sort_sortsam_tmpDir  Optional<String>
+combine_variants_type          Optional<String>
+combine_variants_columns       Optional<Array<String>>
 =============================  =======================  ===============
 
 .

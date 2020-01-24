@@ -42,12 +42,12 @@ mem                                                                             
 |                                                                                       5
 samtools                                                                                6
 view                                                                                    7
-<janis_core.types.selectors.InputSelector object at 0x10d38bd30>    -T                  8
-<janis_core.types.selectors.CpuSelector object at 0x10d38beb8>      --threads           8  (-@)  Number of additional threads to use [0]
+<janis_core.types.selectors.InputSelector object at 0x10d14dfd0>    -T                  8
+<janis_core.types.selectors.CpuSelector object at 0x10d14d7b8>      --threads           8  (-@)  Number of additional threads to use [0]
 -h                                                                                      8  Include the header in the output.
 -b                                                                                      8  Output in the BAM format.
-<janis_core.types.selectors.StringFormatter object at 0x10d38b358>  -R                  2  Complete read group header line. ’\t’ can be used in STR and will be converted to a TABin the output SAM. The read group ID will be attached to every read in the output. An example is ’@RG\tID:foo\tSM:bar’. (Default=null) https://gatkforums.broadinstitute.org/gatk/discussion/6472/read-groups
-<janis_core.types.selectors.CpuSelector object at 0x10d38b240>      -t                  2  Number of threads. (default = 1)
+<janis_core.types.selectors.StringFormatter object at 0x10d14d080>  -R                  2  Complete read group header line. ’\t’ can be used in STR and will be converted to a TABin the output SAM. The read group ID will be attached to every read in the output. An example is ’@RG\tID:foo\tSM:bar’. (Default=null) https://gatkforums.broadinstitute.org/gatk/discussion/6472/read-groups
+<janis_core.types.selectors.CpuSelector object at 0x10d14dc50>      -t                  2  Number of threads. (default = 1)
 ==================================================================  =========  ==========  ====================================================================================================================================================================================================================================================================================================
 
 Additional configuration (inputs)

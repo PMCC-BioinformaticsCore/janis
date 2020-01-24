@@ -27,5 +27,7 @@ send_job_emails                 <class 'bool'>                       True       
 singularity_build_instructions  <class 'str'>                        singularity pull $image docker://${docker}  Instructions for building singularity, it's recommended to not touch this setting.
 max_cores                       <class 'int'>                        28                                          Maximum number of cores a task can request
 max_ram                         <class 'int'>                        128                                         Maximum amount of ram (GB) that a task can request
+submission_queue                <class 'str'>                        longq                                       Queue to submit the janis 'brain' to
+max_workflow_time               <class 'int'>                        5700
 ==============================  ===================================  ==========================================  ==========================================================================================
 

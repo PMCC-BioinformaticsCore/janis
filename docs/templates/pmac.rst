@@ -27,5 +27,6 @@ catch_slurm_errors              <class 'bool'>                       True       
 singularity_build_instructions                                                                                             Sensible default for PeterMac template
 max_cores                       <class 'int'>                        40                                                    Override maximum number of cores (default: 32)
 max_ram                         <class 'int'>                        256                                                   Override maximum ram (default 508 [GB])
+max_workflow_time               <class 'int'>                        20100                                                 The walltime of the submitted workflow "brain"
 ==============================  ===================================  ====================================================  ======================================================================
 

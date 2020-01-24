@@ -65,8 +65,8 @@ Arguments
 value                                                               prefix      position  documentation
 ==================================================================  ========  ==========  ====================================================================================================================================
 configManta.py                                                                         0
-<janis_core.types.selectors.StringFormatter object at 0x10d38ba90>                     2
-<janis_core.types.selectors.CpuSelector object at 0x10d38b6d8>      -j                 3  (-j) number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
+<janis_core.types.selectors.StringFormatter object at 0x10d14deb8>                     2
+<janis_core.types.selectors.CpuSelector object at 0x10d14d128>      -j                 3  (-j) number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
 ==================================================================  ========  ==========  ====================================================================================================================================
 
 Additional configuration (inputs)

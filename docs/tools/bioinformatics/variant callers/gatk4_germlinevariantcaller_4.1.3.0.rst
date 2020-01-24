@@ -21,9 +21,9 @@ GATK4 Germline Variant Caller
 
    - ``snps_1000gp: CompressedIndexedVCF``
 
-   - ``knownIndels: CompressedIndexedVCF``
+   - ``known_indels: CompressedIndexedVCF``
 
-   - ``millsIndels: CompressedIndexedVCF``
+   - ``mills_indels: CompressedIndexedVCF``
 :Outputs: 
    - ``out: VCF``
 
@@ -57,16 +57,16 @@ Split Multiple Alleles                         ``SplitMultiAllele/v0.5772``
 Additional configuration (inputs)
 ---------------------------------
 
-===========  ====================  ===================================================================================================================================================
-name         type                  documentation
-===========  ====================  ===================================================================================================================================================
-bam          BamPair
-reference    FastaWithDict
-snps_dbsnp   CompressedIndexedVCF
-snps_1000gp  CompressedIndexedVCF
-knownIndels  CompressedIndexedVCF
-millsIndels  CompressedIndexedVCF
-intervals    Optional<bed>         This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
-===========  ====================  ===================================================================================================================================================
+============  ====================  ===================================================================================================================================================
+name          type                  documentation
+============  ====================  ===================================================================================================================================================
+bam           BamPair
+reference     FastaWithDict
+snps_dbsnp    CompressedIndexedVCF
+snps_1000gp   CompressedIndexedVCF
+known_indels  CompressedIndexedVCF
+mills_indels  CompressedIndexedVCF
+intervals     Optional<bed>         This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
+============  ====================  ===================================================================================================================================================
 
 .

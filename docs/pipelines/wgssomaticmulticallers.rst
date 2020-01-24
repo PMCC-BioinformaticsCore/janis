@@ -7,23 +7,25 @@ A somatic tumor-normal variant-calling WGS pipeline using GATK, VarDict and Stre
 
 :ID: ``WGSSomaticMultiCallers``
 :Python: ``janis_pipelines.wgs_somatic.wgssomatic import WGSSomaticMultiCallers``
-:Versions: 1.1.0
+:Versions: 1.2.0
 :Authors: Michael Franklin
 :Citations: 
 :Created: None
 :Updated: 2019-10-16
 :Required inputs:
-   - ``normalInputs: Array<FastqGzPair>``
+   - ``normal_inputs: Array<FastqGzPair>``
 
-   - ``tumorInputs: Array<FastqGzPair>``
+   - ``tumor_inputs: Array<FastqGzPair>``
 
    - ``cutadapt_adapters: File``
 
-   - ``gatkIntervals: Array<bed>``
+   - ``gridss_blacklist: bed``
 
-   - ``vardictIntervals: Array<bed>``
+   - ``gatk_intervals: Array<bed>``
 
-   - ``vardictHeaderLines: File``
+   - ``vardict_intervals: Array<bed>``
+
+   - ``vardict_header_lines: File``
 
    - ``reference: FastaWithDict``
 
@@ -35,19 +37,23 @@ A somatic tumor-normal variant-calling WGS pipeline using GATK, VarDict and Stre
 
    - ``mills_indels: CompressedIndexedVCF``
 :Outputs: 
-   - ``normalBam: BamPair``
+   - ``normal_report: Array<Array<Zip>>``
 
-   - ``tumorBam: BamPair``
+   - ``tumor_report: Array<Array<Zip>>``
 
-   - ``normalReport: Array<Array<Zip>>``
+   - ``normal_bam: BamPair``
 
-   - ``tumorReport: Array<Array<Zip>>``
+   - ``tumor_bam: BamPair``
+
+   - ``gridss_assembly: VCF``
 
    - ``variants_gatk: VCF``
 
    - ``variants_strelka: VCF``
 
    - ``variants_vardict: VCF``
+
+   - ``variants_gridss: VCF``
 
    - ``variants_combined: VCF``
 
@@ -62,11 +68,12 @@ Embedded Tools
 ***************
 
 ==============================  ======================================================================================================================================
-                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d551f60>>``
-                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d560c50>>``
+                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d24a2b0>>``
+                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10d25b128>>``
 GATK4 Somatic Variant Caller    ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs              ``Gatk4GatherVcfs/4.1.3.0``
 Strelka Somatic Variant Caller  ``strelkaSomaticVariantCaller/v0.1.0``
+Gridss                          ``gridss/v2.5.1-dev``
 Vardict Somatic Variant Caller  ``vardictSomaticVariantCaller/v0.1.0``
 Combine Variants                ``combinevariants/0.0.4``
 BCFTools: Sort                  ``bcftoolssort/v1.9``
@@ -77,26 +84,27 @@ BCFTools: Sort                  ``bcftoolssort/v1.9``
 Additional configuration (inputs)
 ---------------------------------
 
-=======================  =======================  ===============
-name                     type                     documentation
-=======================  =======================  ===============
-normalInputs             Array<FastqGzPair>
-tumorInputs              Array<FastqGzPair>
-cutadapt_adapters        File
-gatkIntervals            Array<bed>
-vardictIntervals         Array<bed>
-vardictHeaderLines       File
-reference                FastaWithDict
-snps_dbsnp               CompressedIndexedVCF
-snps_1000gp              CompressedIndexedVCF
-known_indels             CompressedIndexedVCF
-mills_indels             CompressedIndexedVCF
-normalName               Optional<String>
-tumorName                Optional<String>
-strelkaIntervals         Optional<BedTABIX>
-alleleFreqThreshold      Optional<Float>
-combineVariants_type     Optional<String>
-combineVariants_columns  Optional<Array<String>>
-=======================  =======================  ===============
+========================  =======================  ===============
+name                      type                     documentation
+========================  =======================  ===============
+normal_inputs             Array<FastqGzPair>
+tumor_inputs              Array<FastqGzPair>
+cutadapt_adapters         File
+gridss_blacklist          bed
+gatk_intervals            Array<bed>
+vardict_intervals         Array<bed>
+vardict_header_lines      File
+reference                 FastaWithDict
+snps_dbsnp                CompressedIndexedVCF
+snps_1000gp               CompressedIndexedVCF
+known_indels              CompressedIndexedVCF
+mills_indels              CompressedIndexedVCF
+normal_name               Optional<String>
+tumor_name                Optional<String>
+strelka_intervals         Optional<BedTABIX>
+allele_freq_threshold     Optional<Float>
+combine_variants_type     Optional<String>
+combine_variants_columns  Optional<Array<String>>
+========================  =======================  ===============
 
 .

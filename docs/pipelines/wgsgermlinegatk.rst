@@ -7,7 +7,7 @@ A variant-calling WGS pipeline using only the GATK Haplotype variant caller · 1
 
 :ID: ``WGSGermlineGATK``
 :Python: ``janis_pipelines.wgs_germline_gatk.wgsgermlinegatk import WGSGermlineGATK``
-:Versions: 1.1.0
+:Versions: 1.2.0
 :Authors: Michael Franklin
 :Citations: 
 :Created: None
@@ -19,7 +19,7 @@ A variant-calling WGS pipeline using only the GATK Haplotype variant caller · 1
 
    - ``cutadapt_adapters: File``
 
-   - ``gatkIntervals: Array<bed>``
+   - ``gatk_intervals: Array<bed>``
 
    - ``snps_dbsnp: CompressedIndexedVCF``
 
@@ -68,13 +68,13 @@ name                           type                  documentation
 fastqs                         Array<FastqGzPair>
 reference                      FastaWithDict
 cutadapt_adapters              File
-gatkIntervals                  Array<bed>
+gatk_intervals                 Array<bed>
 snps_dbsnp                     CompressedIndexedVCF
 snps_1000gp                    CompressedIndexedVCF
 known_indels                   CompressedIndexedVCF
 mills_indels                   CompressedIndexedVCF
-sampleName                     Optional<String>
-alignSortedBam_sortsam_tmpDir  Optional<String>
+sample_name                    Optional<String>
+align_and_sort_sortsam_tmpDir  Optional<String>
 =============================  ====================  ===============
 
 .

@@ -17,13 +17,13 @@ Vardict Germline Variant Caller
 
    - ``intervals: bed``
 
-   - ``sampleName: String``
+   - ``sample_name: String``
 
-   - ``headerLines: File``
+   - ``header_lines: File``
 
    - ``reference: FastaWithDict``
 :Outputs: 
-   - ``vardictVariants: CompressedVCF``
+   - ``vardict_variants: CompressedVCF``
 
    - ``out: VCF``
 
@@ -41,7 +41,7 @@ Embedded Tools
 VarDict (Germline)      ``vardict_germline/1.6.0``
 BCFTools: Annotate      ``bcftoolsAnnotate/v1.5``
 Split Multiple Alleles  ``SplitMultiAllele/v0.5772``
-Trim IUPAC Bases        ``trimIUPAC/0.0.4``
+Trim IUPAC Bases        ``trimIUPAC/0.0.5``
 ======================  ============================
 
 ------
@@ -54,10 +54,10 @@ name                          type               documentation
 ============================  =================  ===============
 bam                           BamPair
 intervals                     bed
-sampleName                    String
-headerLines                   File
+sample_name                   String
+header_lines                  File
 reference                     FastaWithDict
-alleleFreqThreshold           Optional<Float>
+allele_freq_threshold         Optional<Float>
 vardict_chromNamesAreNumbers  Optional<Boolean>
 vardict_vcfFormat             Optional<Boolean>
 vardict_chromColumn           Optional<Integer>

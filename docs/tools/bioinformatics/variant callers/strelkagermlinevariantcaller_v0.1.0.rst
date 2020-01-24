@@ -51,7 +51,7 @@ name                  type                     documentation
 bam                   BamPair
 reference             FastaWithDict
 intervals             Optional<BedTABIX>
-isExome               Optional<Boolean>
+is_exome              Optional<Boolean>
 bcfview_applyFilters  Optional<Array<String>>
 ====================  =======================  ===============
 

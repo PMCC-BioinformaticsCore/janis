@@ -150,6 +150,8 @@ Tool Input
 - The ``position`` represents the order of how arguments are bound onto the command line. Lower numbers get a higher priority, not providing a number will default to 0.
 - ``prefix_applies_to_all_elements`` applies the prefix to each element in an array (only applicable for array inputs).
 - The ``localise_file`` attribute places the file input within the execution directory.
+- ``presents_as`` is a mechanism for overriding the name to localise to. The ``localise_file`` parameter MUST be set to `True` for ``presents_as``
+- ``secondaries_present_as`` is a mechanism for overriding the format of secondary files. ``localise_file`` does NOT need to be set for this functionality to work. In CWL, this relies on https://github.com/common-workflow-language/cwltool/pull/1233
 
 Tool Output
 ***********

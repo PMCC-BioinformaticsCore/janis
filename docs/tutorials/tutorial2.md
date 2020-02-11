@@ -51,7 +51,7 @@ You'll see a list of files within this repository:
 
 > Guide on using containers
 
-For portability, we require that you specify an OCI compliant `container` (eg: Docker) for your tool. Often they're will already be a container with some searching, however here's a guide on [preparing your tools in containers](https://janis.readthedocs.io/en/latest/tutorials/container.html) to ensure it works across all environments. 
+For portability, we require that you specify an OCI compliant `container` (eg: Docker) for your tool. Often there will already be a container with some searching, however here's a guide on [preparing your tools in containers](https://janis.readthedocs.io/en/latest/tutorials/container.html) to ensure it works across all environments. 
 
 
 ## Samtools flagstat
@@ -116,7 +116,7 @@ We can start by filling in the basic information:
 
 - Rename the variable (ToolName) to be `SamtoolsFlagstat`
 - Fill the parameters:
-    - `tool`: A unqiue tool identifier in the `tool()` method
+    - `tool`: A unqiue tool identifier, eg: `"SamtoolsFlagStat"`.
     - `base_command` to be `["samtools", "flagstat"]`
     - `container` to be `"quay.io/biocontainers/samtools:1.9--h8571acd_11"`
     - `version` to be `"v1.9.0"`

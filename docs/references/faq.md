@@ -112,3 +112,23 @@ If you're still having trouble, use `janis spider --trace mytool` to give you an
     - Call caching in Cromwell relies on the command line being constructed, so the generated filenames currently break this, and a purely randomly generated filename would breat this further.
     - We have cascaded filename components on the roadmap, so your filename can be built from a collection of inputs (sort of possible anyway).
 
+
+## Running workflows
+
+- **How do I detect a workflow's status from the command line?**
+
+    You can request metadata for a workflow You can use the following bash command to detect the status. 
+
+    ```bash
+    janis metadata <dir / wid> |grep status|tr -s ' '|cut -d ' ' -f 2
+    ```
+
+    Note that if Janis is killed suddenly, it might not have enough time to mark the workflow as failed or terminated. It's worth checking the last_updated_time, if a workflow hasn't been updated in a couple of hours, it's likely Janis has been killed.
+
+    The metadata will have the following keys:
+
+    - https://github.com/PMCC-BioinformaticsCore/janis-assistant/blob/master/janis_assistant/data/enums/workflowmetadatakeys.py
+
+    And the workflow status can have the following states:
+
+    - https://github.com/PMCC-BioinformaticsCore/janis-assistant/blob/master/janis_assistant/data/enums/taskstatus.py

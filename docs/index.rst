@@ -168,6 +168,7 @@ Contents
    :caption: Development
 
    development/index
+   development/contributing
    development/testing
    development/releasing
 

@@ -135,5 +135,16 @@ We'd recommend configuring Black to run on save within your editor with the foll
 
 - [PyCharm / IntelliJ IDEA](https://github.com/psf/black#pycharmintellij-idea)
 - [Vim](https://github.com/psf/black#vim)
-- [VSCode](https://code.visualstudio.com/docs/python/editing#_formatting) + [Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python).
+- [VSCode](https://code.visualstudio.com/docs/python/editing#_formatting) + [Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python), simplified instructions:
+    > - Install the [extension]
+    > - Within VSCode, go to your settings.json
+    >   - Command + Shift + P
+    >   - (type) Preferences: Open Settings (JSON)
+    > - Add the following lines:
+    >   ```
+    >       "python.formatting.provider": "black",
+    >       "editor.formatOnSave": true
+    >   ```
+
+
 

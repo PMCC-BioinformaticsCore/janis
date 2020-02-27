@@ -153,6 +153,13 @@ Tool Input
 - ``presents_as`` is a mechanism for overriding the name to localise to. The ``localise_file`` parameter MUST be set to `True` for ``presents_as``
 - ``secondaries_present_as`` is a mechanism for overriding the format of secondary files. ``localise_file`` does NOT need to be set for this functionality to work. In CWL, this relies on https://github.com/common-workflow-language/cwltool/pull/1233
 
+Tool Argument
+**************
+
+.. autoclass:: janis.ToolArgument
+   :members: __init__
+
+
 Tool Output
 ***********
 

@@ -91,7 +91,9 @@ def prepare_workflow_page(workflow: Workflow, versions: List[str]):
             )
 
     output_headers = ["name", "type", "documentation"]
-    output_tuples = [[o.id(), o.outtype.id(), o.doc] for o in workflow.tool_outputs()]
+    output_tuples = [
+        [o.id(), o.outtype.id(), o.doc.doc] for o in workflow.tool_outputs()
+    ]
     formatted_outputs = tabulate(output_tuples, output_headers, tablefmt="rst")
 
     tool_prov = ""

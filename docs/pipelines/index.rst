@@ -42,7 +42,7 @@ Pipelines
             <h4 style="margin-bottom: 10px"><a href="wgssomaticgatk.html">WGS Somatic (GATK only)</a></h4>
             <p style="overflow-x: scroll;"><span class="no-select tagelement">wgs</span><span class="no-select tagelement">cancer</span><span class="no-select tagelement">somatic</span><span class="no-select tagelement">variants</span><span class="no-select tagelement">gatk</span></p>
             <p>A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2</p>
-            <p style="margin-bottom: 10px; font-size: 12px; margin-top: 0px;">Contributors: Michael Franklin</p>
+            <p style="margin-bottom: 10px; font-size: 12px; margin-top: 0px;">Contributors: Michael Franklin, Richard Lupat, Jiaan Yu</p>
             <a class="version-button"  style="margin-bottom: 10px">
           v<b>1.2.0</b>
         </a>

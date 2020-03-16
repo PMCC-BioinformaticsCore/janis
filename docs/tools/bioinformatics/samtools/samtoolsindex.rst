@@ -3,7 +3,7 @@
 SamTools: Index
 ===============================
 
-1 contributor · 2 versions
+*1 contributor · 2 versions*
 
 :ID: ``SamToolsIndex``
 :Python: ``janis_bioinformatics.tools.samtools.index.versions import SamToolsIndex_1_9``
@@ -16,7 +16,7 @@ SamTools: Index
 :Required inputs:
    - ``bam: BAM``
 :Outputs: 
-   - ``out: BamPair``
+   - ``out: IndexedBam``
 
 Documentation
 -------------

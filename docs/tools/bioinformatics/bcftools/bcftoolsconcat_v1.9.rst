@@ -3,7 +3,7 @@
 BCFTools: Concat
 =================================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``bcftoolsConcat``
 :Python: ``janis_bioinformatics.tools.bcftools.concat.versions import BcfToolsConcat_1_9``

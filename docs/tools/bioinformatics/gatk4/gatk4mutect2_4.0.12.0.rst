@@ -3,7 +3,7 @@
 GATK4: MuTect2
 =============================
 
-1 contributor · 4 versions
+*1 contributor · 4 versions*
 
 :ID: ``Gatk4Mutect2``
 :Python: ``janis_bioinformatics.tools.gatk4.mutect2.versions import GatkMutect2_4_0``
@@ -14,15 +14,15 @@ GATK4: MuTect2
 :Created: 2018-12-24
 :Updated: 2019-01-24
 :Required inputs:
-   - ``tumor: BamPair``
+   - ``tumor: IndexedBam``
 
    - ``tumorName: String``
 
-   - ``normal: BamPair``
+   - ``normal: IndexedBam``
 
    - ``normalName: String``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``out: CompressedIndexedVCF``
 
@@ -51,11 +51,11 @@ Additional configuration (inputs)
 ========================  ====================  ===============================  ==========  ==============================================================================================================================================================
 name                      type                  prefix                             position  documentation
 ========================  ====================  ===============================  ==========  ==============================================================================================================================================================
-tumor                     BamPair               -I                                        6  BAM/SAM/CRAM file containing reads
+tumor                     IndexedBam            -I                                        6  BAM/SAM/CRAM file containing reads
 tumorName                 String                -tumor                                    6  BAM sample name of tumor. May be URL-encoded as output by GetSampleName with -encode.
-normal                    BamPair               -I                                        5  BAM/SAM/CRAM file containing reads
+normal                    IndexedBam            -I                                        5  BAM/SAM/CRAM file containing reads
 normalName                String                -normal                                   6  BAM sample name of normal. May be URL-encoded as output by GetSampleName with -encode.
-reference                 FastaWithDict         -R                                        8  Reference sequence file
+reference                 FastaWithIndexes      -R                                        8  Reference sequence file
 intervals                 Optional<bed>         -L                                        7  One or more genomic intervals over which to operate
 outputFilename            Optional<Filename>    -O                                       20
 germlineResource          Optional<IndexedVCF>  --germline-resource                      10

@@ -3,7 +3,7 @@
 Multiqc
 =================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``MultiQC``
 :Python: ``janis_bioinformatics.tools.multiqc.versions import Multiqc_v1_7``

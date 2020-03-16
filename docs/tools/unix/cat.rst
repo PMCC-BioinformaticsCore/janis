@@ -3,7 +3,7 @@
 Concatenate
 =================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``cat``
 :Python: ``janis_unix.tools.cat import Cat``

@@ -26,8 +26,9 @@ send_job_emails                <class 'bool'>                       True        
 catch_slurm_errors             <class 'bool'>                       False                                       Catch Slurm errors (like OOM or walltime)
 build_instructions             <class 'str'>                        singularity pull $image docker://${docker}  Instructions for building singularity, it's recommended to not touch this setting.
 singularity_load_instructions                                                                                   Ensure singularity with this command executed in shell
-limit_resources                <class 'bool'>                       False                                       Limit resources with singularity using cgroups (REQUIRES ROOT)
 max_cores                                                                                                       Maximum number of cores a task can request
 max_ram                                                                                                         Maximum amount of ram (GB) that a task can request
+can_run_in_foreground          <class 'bool'>                       True
+run_in_background              <class 'bool'>                       False
 =============================  ===================================  ==========================================  ==========================================================================================
 

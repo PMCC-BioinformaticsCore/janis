@@ -3,7 +3,7 @@
 VcfLib: VcfUniq
 =========================
 
-1 contributor · 1 version
+*1 contributor · 1 version*
 
 :ID: ``vcfuniq``
 :Python: ``janis_bioinformatics.tools.vcflib.vcfuniq.versions import VcfUniq_1_0_1``

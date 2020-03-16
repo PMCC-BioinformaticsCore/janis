@@ -3,7 +3,7 @@
 Tar (archive)
 ===================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``Tar``
 :Python: ``janis_unix.tools.tar import Tar``

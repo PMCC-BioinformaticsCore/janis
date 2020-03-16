@@ -3,7 +3,7 @@
 Tabix
 =============
 
-1 contributor · 2 versions
+*1 contributor · 2 versions*
 
 :ID: ``tabix``
 :Python: ``janis_bioinformatics.tools.htslib.tabix.tabix_1_9 import Tabix_1_9``

@@ -3,7 +3,7 @@
 GATK4 Somatic Variant Caller
 =========================================================
 
-1 contributor · 2 versions
+*1 contributor · 2 versions*
 
 :ID: ``GATK4_SomaticVariantCaller``
 :Python: ``janis_bioinformatics.tools.variantcallers.gatk.gatksomatic_variants_4_0_12 import GatkSomaticVariantCaller_4_0_12``
@@ -13,15 +13,15 @@ GATK4 Somatic Variant Caller
 :Created: 2019-02-01
 :Updated: 2019-09-13
 :Required inputs:
-   - ``normal_bam: BamPair``
+   - ``normal_bam: IndexedBam``
 
-   - ``tumor_bam: BamPair``
+   - ``tumor_bam: IndexedBam``
 
    - ``normal_name: String``
 
    - ``tumor_name: String``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 
    - ``snps_dbsnp: CompressedIndexedVCF``
 
@@ -64,11 +64,11 @@ Additional configuration (inputs)
 ============  ====================  ===================================================================================================================================================
 name          type                  documentation
 ============  ====================  ===================================================================================================================================================
-normal_bam    BamPair
-tumor_bam     BamPair
+normal_bam    IndexedBam
+tumor_bam     IndexedBam
 normal_name   String
 tumor_name    String
-reference     FastaWithDict
+reference     FastaWithIndexes
 snps_dbsnp    CompressedIndexedVCF
 snps_1000gp   CompressedIndexedVCF
 known_indels  CompressedIndexedVCF

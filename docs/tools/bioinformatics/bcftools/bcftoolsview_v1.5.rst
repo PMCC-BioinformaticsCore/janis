@@ -3,7 +3,7 @@
 BCFTools: View
 =============================
 
-0 contributors · 2 versions
+*0 contributors · 2 versions*
 
 :ID: ``bcftoolsview``
 :Python: ``janis_bioinformatics.tools.bcftools.view.versions import BcfToolsView_1_5``

@@ -3,7 +3,7 @@
 GATK4: GetFilterMutectCalls
 ====================================================
 
-1 contributor · 3 versions
+*1 contributor · 3 versions*
 
 :ID: ``Gatk4FilterMutectCalls``
 :Python: ``janis_bioinformatics.tools.gatk4.filtermutectcalls.versions import Gatk4FilterMutectCalls_4_1_3``
@@ -16,7 +16,7 @@ GATK4: GetFilterMutectCalls
 :Required inputs:
    - ``vcf: CompressedIndexedVCF``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``out: CompressedIndexedVCF``
 
@@ -42,7 +42,7 @@ Additional configuration (inputs)
 name                  type                  prefix                                position  documentation
 ====================  ====================  ==================================  ==========  =============================================================================================================================================
 vcf                   CompressedIndexedVCF  -V                                              vcf to be filtered
-reference             FastaWithDict         -R                                              Reference sequence file
+reference             FastaWithIndexes      -R                                              Reference sequence file
 contaminationTable    Optional<File>        --contamination-table                           Tables containing contamination information.
 segmentationFile      Optional<File>        --tumor-segmentation                            Tables containing tumor segments' minor allele fractions for germline hets emitted by CalculateContamination
 statsFile             Optional<File>        --stats                                         The Mutect stats file output by Mutect2

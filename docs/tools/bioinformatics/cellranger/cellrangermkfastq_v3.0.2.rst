@@ -3,7 +3,7 @@
 CellRanger mkfastq
 ======================================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``CellRangerMkfastq``
 :Python: ``janis_bioinformatics.tools.cellranger.mkfastq.versions import CellRangerMkfastq_3_0_2``

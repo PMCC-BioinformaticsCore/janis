@@ -3,7 +3,7 @@
 BCFTools: Annotate
 =====================================
 
-0 contributors · 2 versions
+*0 contributors · 2 versions*
 
 :ID: ``bcftoolsAnnotate``
 :Python: ``janis_bioinformatics.tools.bcftools.annotate.versions import BcfToolsAnnotate_1_5``

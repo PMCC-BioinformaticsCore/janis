@@ -13,6 +13,8 @@ from janis_assistant.templates import (
     EnvironmentTemplate,
 )
 
+from shutil import rmtree
+
 from constants import PROJECT_ROOT_DIR
 from janis_core import (
     Array,
@@ -35,7 +37,10 @@ import janis_unix, janis_bioinformatics
 from docs.generationhelpers.commandtool import prepare_commandtool_page
 from docs.generationhelpers.codetool import prepare_code_tool_page
 from docs.generationhelpers.datatype import prepare_data_type
-from docs.generationhelpers.pipelines import generate_pipeline_box
+from docs.generationhelpers.pipelines import (
+    generate_pipeline_box,
+    prepare_published_pipeline_page,
+)
 from docs.generationhelpers.template import prepare_template
 from docs.generationhelpers.utils import (
     sort_tool_versions,
@@ -69,13 +74,18 @@ tool_module_information = {
 ###### Shouldn't need to touch below this line #####
 
 import os
-from typing import List, Set, Type, Tuple, Dict
-
 import tabulate
 from datetime import date, datetime
+from typing import List, Set, Type, Tuple, Dict
+import traceback
 
 
-def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
+def prepare_tool(
+    tool: Tool,
+    toolversions: List[str],
+    isorphan: bool,
+    is_published_pipeline: bool = False,
+):
     # Stuff to list on the documentation page:
     #   - Versions of tools
     #   - Generated command
@@ -85,6 +95,8 @@ def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
     if not tool:
         return None
     try:
+        if is_published_pipeline:
+            return ""
         if tool.type() == ToolTypes.CommandTool:
             return prepare_commandtool_page(tool, toolversions)
         elif tool.type() == ToolTypes.Workflow:
@@ -92,6 +104,7 @@ def prepare_tool(tool: Tool, toolversions: List[str], isorphan: bool):
         elif tool.type() == ToolTypes.CodeTool:
             return prepare_code_tool_page(tool, toolversions)
     except Exception as e:
+        traceback.print_exc()
         Logger.critical(
             "Couldn't generate documentation for " + tool.id() + " " + str(e)
         )
@@ -111,6 +124,9 @@ def prepare_all_tools():
     tool_module_index = {}
     dt_module_index = {}
     ROOT_KEY = "root"
+
+    if os.path.exists(tools_dir):
+        rmtree(tools_dir)
 
     for toolname, toolsbyversion in tools.items():
         # tool = tool_vs[0][0]()
@@ -147,6 +163,9 @@ def prepare_all_tools():
         for (toolurl, tool, isprimary) in toolurl_to_tool:
             output_str = prepare_tool(tool, tool_versions, not isprimary)
             output_filename = output_dir + toolurl + ".rst"
+            if output_str is None:
+                Logger.warn(f"Skipping {tool.id()}")
+                continue
             with open(output_filename, "w+") as tool_file:
                 tool_file.write(output_str)
 
@@ -325,7 +344,7 @@ Pipelines
 
     # Write all the pages
     for w in workflows:
-        toolstr = prepare_workflow_page(w, [w.version()])
+        toolstr = prepare_published_pipeline_page(w, [w.version()])
         with open(os.path.join(pipelines_dir, w.id().lower() + ".rst"), "w+") as f:
             f.write(toolstr)
 

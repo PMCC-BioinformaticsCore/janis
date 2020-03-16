@@ -3,11 +3,11 @@
 Gridss
 ===============
 
-1 contributor · 3 versions
+*1 contributor · 4 versions*
 
 :ID: ``gridss``
 :Python: ``janis_bioinformatics.tools.papenfuss.gridss.gridss import Gridss_2_5_1``
-:Versions: v2.5.1-dev, v2.4.0, v2.2.3
+:Versions: v2.6.3, v2.5.1-dev, v2.4.0, v2.2.3
 :Container: michaelfranklin/gridss:2.5.1-dev2
 :Authors: Michael Franklin
 :Citations: Daniel L. Cameron, Jan Schröder, Jocelyn Sietsma Penington, Hongdo Do, Ramyar Molania, Alexander Dobrovic, Terence P. Speed and Anthony T. Papenfuss. GRIDSS: sensitive and specific genomic rearrangement detection using positional de Bruijn graph assembly. Genome Research, 2017 doi: 10.1101/gr.222109.117
@@ -17,7 +17,7 @@ Gridss
 :Required inputs:
    - ``bams: Array<BAM>``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``out: VCF``
 
@@ -55,7 +55,7 @@ Additional configuration (inputs)
 name              type                prefix         position  documentation
 ================  ==================  ===========  ==========  ===============
 bams              Array<BAM>                               10
-reference         FastaWithDict       --reference           1
+reference         FastaWithIndexes    --reference           1
 outputFilename    Optional<Filename>  --output              2
 assemblyFilename  Optional<Filename>  --assembly            3
 threads           Optional<Integer>   --threads

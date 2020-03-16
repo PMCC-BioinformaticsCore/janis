@@ -3,7 +3,7 @@
 BGZip
 =============
 
-1 contributor · 2 versions
+*1 contributor · 2 versions*
 
 :ID: ``bgzip``
 :Python: ``janis_bioinformatics.tools.htslib.bgzip.bgzip_1_9 import BGZip_1_9``

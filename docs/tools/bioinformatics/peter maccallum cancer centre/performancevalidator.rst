@@ -3,7 +3,7 @@
 Performance Validator
 ============================================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``performanceValidator``
 :Python: ``janis_bioinformatics.tools.validation.performancevalidator import PerformanceValidator_1_2_1``
@@ -46,13 +46,14 @@ GATK4: Genotype Concordance  ``Gatk4GenotypeConcordance/4.1.4.0``
 Additional configuration (inputs)
 ---------------------------------
 
-==========================================  =================  ===============
+==========================================  =================  ========================================================================================================================================================================================================================================
 name                                        type               documentation
-==========================================  =================  ===============
+==========================================  =================  ========================================================================================================================================================================================================================================
 vcf                                         VCF
 truth                                       IndexedVCF
 intervals                                   Array<VCF>
-genotypeConcord_treatMissingSitesAsHomeRef  Optional<Boolean>
-==========================================  =================  ===============
+genotypeConcord_treatMissingSitesAsHomeRef  Optional<Boolean>  Default is false, which follows the GA4GH Scheme. If true, missing sites in the truth
+                                                               set will be treated as HOM_REF sites and sites missing in both the truth and call sets will be true negatives. Useful when hom ref sites are left out of the truth set. This flag can only be used with a high confidence interval list.
+==========================================  =================  ========================================================================================================================================================================================================================================
 
 .

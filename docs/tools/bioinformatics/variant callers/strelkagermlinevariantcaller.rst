@@ -3,7 +3,7 @@
 Strelka Germline Variant Caller
 ==============================================================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``strelkaGermlineVariantCaller``
 :Python: ``janis_bioinformatics.tools.variantcallers.illuminagermline_strelka import IlluminaGermlineVariantCaller``
@@ -13,9 +13,9 @@ Strelka Germline Variant Caller
 :Created: None
 :Updated: None
 :Required inputs:
-   - ``bam: BamPair``
+   - ``bam: IndexedBam``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``diploid: CompressedIndexedVCF``
 
@@ -45,14 +45,14 @@ Split Multiple Alleles  ``SplitMultiAllele/v0.5772``
 Additional configuration (inputs)
 ---------------------------------
 
-====================  =======================  ===============
+====================  =======================  =======================================================================
 name                  type                     documentation
-====================  =======================  ===============
-bam                   BamPair
-reference             FastaWithDict
+====================  =======================  =======================================================================
+bam                   IndexedBam
+reference             FastaWithIndexes
 intervals             Optional<BedTABIX>
 is_exome              Optional<Boolean>
-bcfview_applyFilters  Optional<Array<String>>
-====================  =======================  ===============
+bcfview_applyFilters  Optional<Array<String>>  (-f) require at least one of the listed FILTER strings (e.g. 'PASS,.'')
+====================  =======================  =======================================================================
 
 .

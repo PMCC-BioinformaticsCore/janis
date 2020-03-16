@@ -28,5 +28,6 @@ max_cores            <class 'int'>                        32                    
 max_ram              <class 'int'>                        508                      Override maximum ram (default 508 [GB])
 submission_queue     <class 'str'>                        cloud
 max_workflow_time    <class 'int'>                        20100
+janis_memory_mb
 ===================  ===================================  =======================  ========================================================
 

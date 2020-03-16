@@ -3,7 +3,7 @@
 Strelka (Germline)
 =====================================
 
-1 contributor · 2 versions
+*1 contributor · 2 versions*
 
 :ID: ``strelka_germline``
 :Python: ``janis_bioinformatics.tools.illumina.strelkagermline.strelkagermline import StrelkaGermline_2_9_10``
@@ -14,9 +14,9 @@ Strelka (Germline)
 :Created: 2018-12-24
 :Updated: 2019-01-24
 :Required inputs:
-   - ``bam: BamPair``
+   - ``bam: IndexedBam``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``configPickle: File``
 
@@ -67,8 +67,8 @@ Arguments
 value                                                               prefix      position  documentation
 ==================================================================  ========  ==========  ==========================================================================================================================================
 configureStrelkaGermlineWorkflow.py                                                    0
-<janis_core.types.selectors.StringFormatter object at 0x10d14dd68>                     2
-<janis_core.types.selectors.CpuSelector object at 0x10d14dcf8>      --jobs             3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
+<janis_core.types.selectors.StringFormatter object at 0x10ca99c18>                     2
+<janis_core.types.selectors.CpuSelector object at 0x10ca99240>      --jobs             3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
 ==================================================================  ========  ==========  ==========================================================================================================================================
 
 Additional configuration (inputs)
@@ -77,8 +77,8 @@ Additional configuration (inputs)
 ========================  ==============================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 name                      type                            prefix                position  documentation
 ========================  ==============================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-bam                       BamPair                         --bam                        1  Sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [required] (no default)
-reference                 FastaWithDict                   --referenceFasta             1  samtools-indexed reference fasta file [required]
+bam                       IndexedBam                      --bam                        1  Sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [required] (no default)
+reference                 FastaWithIndexes                --referenceFasta             1  samtools-indexed reference fasta file [required]
 relativeStrelkaDirectory  Optional<String>                --runDir                     1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory.
 ploidy                    Optional<CompressedIndexedVCF>  --ploidy                     1  Provide ploidy file in VCF. The VCF should include one sample column per input sample labeled with the same sample names found in the input BAM/CRAM RG header sections. Ploidy should be provided in records using the FORMAT/CN field, which are interpreted to span the range [POS+1, INFO/END]. Any CN value besides 1 or 0 will be treated as 2. File must be tabix indexed. (no default)
 noCompress                Optional<CompressedIndexedVCF>  --noCompress                 1  Provide BED file of regions where gVCF block compression is not allowed. File must be bgzip- compressed/tabix-indexed. (no default)

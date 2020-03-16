@@ -62,12 +62,12 @@ def prepare_workflow_page(workflow: Workflow, versions: List[str]):
     input_headers = ["name", "type", "documentation"]
 
     required_input_tuples = [
-        [i.id(), i.intype.id(), i.doc]
+        [i.id(), i.intype.id(), i.doc.doc if i.doc else ""]
         for i in workflow.tool_inputs()
         if not i.intype.optional
     ]
     optional_input_tuples = [
-        [i.id(), i.intype.id(), i.doc]
+        [i.id(), i.intype.id(), i.doc.doc if i.doc else ""]
         for i in workflow.tool_inputs()
         if i.intype.optional
     ]

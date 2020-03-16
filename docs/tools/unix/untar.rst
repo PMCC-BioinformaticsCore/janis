@@ -3,7 +3,7 @@
 Tar (unarchive)
 =======================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``untar``
 :Python: ``janis_unix.tools.untar import Untar``

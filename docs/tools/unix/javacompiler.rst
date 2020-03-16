@@ -3,7 +3,7 @@
 Java compiler
 ============================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``javacompiler``
 :Python: ``janis_unix.tools.compile import Compile``

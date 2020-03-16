@@ -3,7 +3,7 @@
 Trim IUPAC Bases
 ============================
 
-0 contributors · 2 versions
+*0 contributors · 2 versions*
 
 :ID: ``trimIUPAC``
 :Python: ``janis_bioinformatics.tools.pmac.trimiupac.versions import TrimIUPAC_0_0_4``

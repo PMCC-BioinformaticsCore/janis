@@ -38,6 +38,24 @@ Automatically generated index page for GATK4:
      </a>
      <hr />
          
+     <a href="gatk4createsequencedictionary.html">
+       <p style="margin-bottom: 5px"><b>GATK4: CreateSequenceDictionary</b> <span style="margin-left: 10px; color: darkgray">Gatk4CreateSequenceDictionary</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4createsequencedictionary.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatk4fastqtosam.html">
+       <p style="margin-bottom: 5px"><b>GATK4: Convert a FASTQ file to an unaligned BAM or SAM file.</b> <span style="margin-left: 10px; color: darkgray">Gatk4FastqToSam</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4fastqtosam.html" style="margin-bottom: 10px">
+       v<b>4.1.4.1</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="gatk4filtermutectcalls.html">
        <p style="margin-bottom: 5px"><b>GATK4: GetFilterMutectCalls</b> <span style="margin-left: 10px; color: darkgray">Gatk4FilterMutectCalls</span></p>
        
@@ -97,6 +115,15 @@ Automatically generated index page for GATK4:
        
        <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4markduplicates.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatk4mergebamalignment.html">
+       <p style="margin-bottom: 5px"><b>GATK4: Merge SAM or BAM with unmapped BAM file</b> <span style="margin-left: 10px; color: darkgray">Gatk4MergeBamAlignment</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4mergebamalignment.html" style="margin-bottom: 10px">
+       v<b>4.1.4.1</b>
      </a></p>
      </a>
      <hr />

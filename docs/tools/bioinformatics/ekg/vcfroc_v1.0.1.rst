@@ -3,7 +3,7 @@
 VcfLib: Vcf ROC generator
 ==================================
 
-1 contributor · 1 version
+*1 contributor · 1 version*
 
 :ID: ``vcfroc``
 :Python: ``janis_bioinformatics.tools.vcflib.vcfroc.versions import VcfRoc_1_0_1``
@@ -18,7 +18,7 @@ VcfLib: Vcf ROC generator
 
    - ``truth: CompressedVCF``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``out: stdout<VCF>``
 
@@ -46,7 +46,7 @@ name        type               prefix      position  documentation
 ==========  =================  ========  ==========  ====================================================
 vcf         CompressedVCF                         3
 truth       CompressedVCF      -t                    use this VCF as ground truth for ROC generation
-reference   FastaWithDict      -r                    FASTA reference file
+reference   FastaWithIndexes   -r                    FASTA reference file
 windowSize  Optional<Integer>  -w                    compare records up to this many bp away (default 30)
 ==========  =================  ========  ==========  ====================================================
 

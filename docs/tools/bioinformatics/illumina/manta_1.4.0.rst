@@ -3,7 +3,7 @@
 Manta
 =============
 
-1 contributor · 2 versions
+*1 contributor · 2 versions*
 
 :ID: ``manta``
 :Python: ``janis_bioinformatics.tools.illumina.manta.manta import Manta_1_4_0``
@@ -15,9 +15,9 @@ Manta
 :Created: 2019-02-12
 :Updated: 2019-02-19
 :Required inputs:
-   - ``bam: BamPair``
+   - ``bam: IndexedBam``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``python: File``
 
@@ -65,30 +65,30 @@ Arguments
 value                                                               prefix      position  documentation
 ==================================================================  ========  ==========  ====================================================================================================================================
 configManta.py                                                                         0
-<janis_core.types.selectors.StringFormatter object at 0x10d14d390>                     2
-<janis_core.types.selectors.CpuSelector object at 0x10d14d1d0>      -j                 3  (-j) number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
+<janis_core.types.selectors.StringFormatter object at 0x10ca99668>                     2
+<janis_core.types.selectors.CpuSelector object at 0x10ca99c88>      -j                 3  (-j) number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
 ==================================================================  ========  ==========  ====================================================================================================================================
 
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ==================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
-name            type                prefix              position  documentation
-==============  ==================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
-bam             BamPair             --bam                      1  FILE Normal sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [optional] (no default)
-reference       FastaWithDict       --referenceFasta           1  samtools-indexed reference fasta file [required]
-config          Optional<File>      --config                   1  provide a configuration file to override defaults in global config file (/opt/conda/share/manta-1.2.1-0/bin/configManta.py.ini)
-runDir          Optional<Filename>  --runDir                   1  Run script and run output will be written to this directory [required] (default: MantaWorkflow)
-tumorBam        Optional<BamPair>   --tumorBam                 1  Tumor sample BAM or CRAM file. Only up to one tumor bam file accepted. [optional=null]
-exome           Optional<Boolean>   --exome                    1  Set options for WES input: turn off depth filters
-rna             Optional<BAM>       --rna                      1  Set options for RNA-Seq input. Must specify exactly one bam input file
-unstrandedRNA   Optional<File>      --unstrandedRNA            1  Set if RNA-Seq input is unstranded: Allows splice-junctions on either strand
-outputContig    Optional<File>      --outputContig             1  Output assembled contig sequences in VCF file
-callRegions     Optional<BedTABIX>  --callRegions              1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
-mode            Optional<String>    --mode                     3  (-m) select run mode (local|sge)
-quiet           Optional<Boolean>   --quiet                    3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
-queue           Optional<String>    --queue                    3  (-q) specify scheduler queue name
-memgb           Optional<Integer>   --memGb                    3  (-g) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local  mode, 'unlimited' for sge mode)
-maxTaskRuntime  Optional<String>    --maxTaskRuntime           3  (format: hh:mm:ss) Specify scheduler max runtime per task, argument is provided to the 'h_rt' resource limit if using SGE (no default)
-==============  ==================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
+==============  ====================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
+name            type                  prefix              position  documentation
+==============  ====================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
+bam             IndexedBam            --bam                      1  FILE Normal sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [optional] (no default)
+reference       FastaWithIndexes      --referenceFasta           1  samtools-indexed reference fasta file [required]
+config          Optional<File>        --config                   1  provide a configuration file to override defaults in global config file (/opt/conda/share/manta-1.2.1-0/bin/configManta.py.ini)
+runDir          Optional<Filename>    --runDir                   1  Run script and run output will be written to this directory [required] (default: MantaWorkflow)
+tumorBam        Optional<IndexedBam>  --tumorBam                 1  Tumor sample BAM or CRAM file. Only up to one tumor bam file accepted. [optional=null]
+exome           Optional<Boolean>     --exome                    1  Set options for WES input: turn off depth filters
+rna             Optional<BAM>         --rna                      1  Set options for RNA-Seq input. Must specify exactly one bam input file
+unstrandedRNA   Optional<File>        --unstrandedRNA            1  Set if RNA-Seq input is unstranded: Allows splice-junctions on either strand
+outputContig    Optional<File>        --outputContig             1  Output assembled contig sequences in VCF file
+callRegions     Optional<BedTABIX>    --callRegions              1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
+mode            Optional<String>      --mode                     3  (-m) select run mode (local|sge)
+quiet           Optional<Boolean>     --quiet                    3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
+queue           Optional<String>      --queue                    3  (-q) specify scheduler queue name
+memgb           Optional<Integer>     --memGb                    3  (-g) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local  mode, 'unlimited' for sge mode)
+maxTaskRuntime  Optional<String>      --maxTaskRuntime           3  (format: hh:mm:ss) Specify scheduler max runtime per task, argument is provided to the 'h_rt' resource limit if using SGE (no default)
+==============  ====================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
 

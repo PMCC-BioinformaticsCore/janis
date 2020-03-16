@@ -3,7 +3,7 @@
 Echo
 ===========
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``echo``
 :Python: ``janis_unix.tools.echo import Echo``

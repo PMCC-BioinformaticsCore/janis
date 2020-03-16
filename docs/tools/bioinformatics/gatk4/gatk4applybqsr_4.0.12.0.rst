@@ -3,7 +3,7 @@
 GATK4: Apply base quality score recalibration
 ==============================================================
 
-1 contributor · 4 versions
+*1 contributor · 4 versions*
 
 :ID: ``Gatk4ApplyBQSR``
 :Python: ``janis_bioinformatics.tools.gatk4.applybqsr.versions import Gatk4ApplyBqsr_4_0``
@@ -14,11 +14,11 @@ GATK4: Apply base quality score recalibration
 :Created: 2018-12-24
 :Updated: 2019-01-24
 :Required inputs:
-   - ``bam: BamPair``
+   - ``bam: IndexedBam``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
-   - ``out: BamPair``
+   - ``out: IndexedBam``
 
 Documentation
 -------------
@@ -54,8 +54,8 @@ Additional configuration (inputs)
 ==============  ==================  =================  ==========  =============================================================
 name            type                prefix               position  documentation
 ==============  ==================  =================  ==========  =============================================================
-bam             BamPair             -I                         10  The SAM/BAM/CRAM file containing reads.
-reference       FastaWithDict       -R                             Reference sequence
+bam             IndexedBam          -I                         10  The SAM/BAM/CRAM file containing reads.
+reference       FastaWithIndexes    -R                             Reference sequence
 outputFilename  Optional<Filename>  -O                             Write output to this file
 recalFile       Optional<tsv>       --bqsr-recal-file              Input recalibration table for BQSR
 intervals       Optional<bed>       --intervals                    -L (BASE) One or more genomic intervals over which to operate

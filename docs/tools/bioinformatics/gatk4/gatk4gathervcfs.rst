@@ -3,7 +3,7 @@
 GATK4: Gather VCFs
 ====================================
 
-1 contributor · 4 versions
+*1 contributor · 4 versions*
 
 :ID: ``Gatk4GatherVcfs``
 :Python: ``janis_bioinformatics.tools.gatk4.gathervcfs.versions import Gatk4GatherVcfs_4_1_4``

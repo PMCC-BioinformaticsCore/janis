@@ -3,7 +3,7 @@
 FastQC
 ===============
 
-1 contributor · 2 versions
+*1 contributor · 2 versions*
 
 :ID: ``fastqc``
 :Python: ``janis_bioinformatics.tools.babrahambioinformatics.fastqc.fastqc_0_11_8 import FastQC_0_11_8``

@@ -3,7 +3,7 @@
 Vardict Germline Variant Caller
 ==============================================================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``vardictGermlineVariantCaller``
 :Python: ``janis_bioinformatics.tools.variantcallers.vardictgermline_variants import VardictGermlineVariantCaller``
@@ -13,7 +13,7 @@ Vardict Germline Variant Caller
 :Created: None
 :Updated: None
 :Required inputs:
-   - ``bam: BamPair``
+   - ``bam: IndexedBam``
 
    - ``intervals: bed``
 
@@ -21,7 +21,7 @@ Vardict Germline Variant Caller
 
    - ``header_lines: File``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``vardict_variants: CompressedVCF``
 
@@ -49,20 +49,20 @@ Trim IUPAC Bases        ``trimIUPAC/0.0.5``
 Additional configuration (inputs)
 ---------------------------------
 
-============================  =================  ===============
+============================  =================  ============================================================================
 name                          type               documentation
-============================  =================  ===============
-bam                           BamPair
+============================  =================  ============================================================================
+bam                           IndexedBam
 intervals                     bed
 sample_name                   String
 header_lines                  File
-reference                     FastaWithDict
+reference                     FastaWithIndexes
 allele_freq_threshold         Optional<Float>
-vardict_chromNamesAreNumbers  Optional<Boolean>
-vardict_vcfFormat             Optional<Boolean>
-vardict_chromColumn           Optional<Integer>
-vardict_regStartCol           Optional<Integer>
-vardict_geneEndCol            Optional<Integer>
-============================  =================  ===============
+vardict_chromNamesAreNumbers  Optional<Boolean>  Indicate the chromosome names are just numbers, such as 1, 2, not chr1, chr2
+vardict_vcfFormat             Optional<Boolean>  VCF format output
+vardict_chromColumn           Optional<Integer>  The column for chromosome
+vardict_regStartCol           Optional<Integer>  The column for region start, e.g. gene start
+vardict_geneEndCol            Optional<Integer>  The column for region end, e.g. gene end
+============================  =================  ============================================================================
 
 .

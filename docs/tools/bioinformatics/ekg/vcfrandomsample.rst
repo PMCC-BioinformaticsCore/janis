@@ -3,7 +3,7 @@
 VcfLib: Vcf Random Sampling
 =============================================
 
-1 contributor · 1 version
+*1 contributor · 1 version*
 
 :ID: ``vcfrandomsample``
 :Python: ``janis_bioinformatics.tools.vcflib.vcfrandomsample.versions import VcfRandomSample_1_0_1``

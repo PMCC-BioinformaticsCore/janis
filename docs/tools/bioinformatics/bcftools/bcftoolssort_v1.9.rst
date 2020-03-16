@@ -3,7 +3,7 @@
 BCFTools: Sort
 =============================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``bcftoolssort``
 :Python: ``janis_bioinformatics.tools.bcftools.sort.versions import BcfToolsSort_1_9``

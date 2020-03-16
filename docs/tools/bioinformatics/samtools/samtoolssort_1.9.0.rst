@@ -3,7 +3,7 @@
 SamTools: Sort
 =============================
 
-1 contributor · 2 versions
+*1 contributor · 2 versions*
 
 :ID: ``SamToolsSort``
 :Python: ``janis_bioinformatics.tools.samtools.sort.sort import SamToolsSort_1_9``

@@ -3,7 +3,7 @@
 GATK4: Print Reads
 ====================================
 
-1 contributor · 4 versions
+*1 contributor · 4 versions*
 
 :ID: ``Gatk4PrintReads``
 :Python: ``janis_bioinformatics.tools.gatk4.printreads.versions import Gatk4PrintReads_4_1_2``
@@ -16,7 +16,7 @@ GATK4: Print Reads
 :Required inputs:
    - ``bam: BAM``
 :Outputs: 
-   - ``out: BamPair``
+   - ``out: IndexedBam``
 
 Documentation
 -------------

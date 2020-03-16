@@ -3,7 +3,7 @@
 Vardict (Somatic)
 ===================================
 
-0 contributors · 5 versions
+*0 contributors · 5 versions*
 
 :ID: ``vardict_somatic``
 :Python: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_7_0``
@@ -14,9 +14,9 @@ Vardict (Somatic)
 :Created: None
 :Updated: None
 :Required inputs:
-   - ``tumorBam: BamPair``
+   - ``tumorBam: IndexedBam``
 
-   - ``normalBam: BamPair``
+   - ``normalBam: IndexedBam``
 
    - ``intervals: bed``
 
@@ -45,11 +45,11 @@ value                                                               prefix      
 ==================================================================  ========  ==========  ===============
 | testsomatic.R |                                                                      3
 var2vcf_paired.pl                                                                      4
-<janis_core.types.selectors.StringFormatter object at 0x10d14db00>  -b                 1
-<janis_core.types.selectors.InputSelector object at 0x10d14d5f8>    -N                 1
-<janis_core.types.selectors.StringFormatter object at 0x10d14d710>  -N                 5
-<janis_core.types.selectors.InputSelector object at 0x10d14d0f0>    -f                 5
-<janis_core.types.selectors.InputSelector object at 0x10d14dba8>    -f                 1
+<janis_core.types.selectors.StringFormatter object at 0x10ca99940>  -b                 1
+<janis_core.types.selectors.InputSelector object at 0x10ca99be0>    -N                 1
+<janis_core.types.selectors.StringFormatter object at 0x10ca999e8>  -N                 5
+<janis_core.types.selectors.InputSelector object at 0x10ca996a0>    -f                 5
+<janis_core.types.selectors.InputSelector object at 0x10ca99550>    -f                 1
 ==================================================================  ========  ==========  ===============
 
 Additional configuration (inputs)
@@ -58,8 +58,8 @@ Additional configuration (inputs)
 =======================  ==================  ========  ==========  ==================================================================================================================================================================================================================================================================================
 name                     type                prefix      position  documentation
 =======================  ==================  ========  ==========  ==================================================================================================================================================================================================================================================================================
-tumorBam                 BamPair                                   The indexed BAM file
-normalBam                BamPair                                   The indexed BAM file
+tumorBam                 IndexedBam                                The indexed BAM file
+normalBam                IndexedBam                                The indexed BAM file
 intervals                bed                                    2
 reference                FastaFai            -G                 1  The reference fasta. Should be indexed (.fai). Defaults to: /ngs/reference_data/genomes/Hsapiens/hg19/seq/hg19.fa
 tumorName                String                                    The sample name to be used directly.  Will overwrite -n option

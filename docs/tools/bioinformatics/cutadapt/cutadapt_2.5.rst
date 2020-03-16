@@ -3,7 +3,7 @@
 Cutadapt
 ===================
 
-1 contributor · 4 versions
+*1 contributor · 4 versions*
 
 :ID: ``cutadapt``
 :Python: ``janis_bioinformatics.tools.cutadapt.versions import CutAdapt_2_5``

@@ -3,7 +3,7 @@
 VcfLib: VcfAllelicPrimitives
 ===================================================
 
-1 contributor · 1 version
+*1 contributor · 1 version*
 
 :ID: ``vcfallelicprimitives``
 :Python: ``janis_bioinformatics.tools.vcflib.vcfallelicprimitives.versions import VcfAllelicPrimitives_1_0_1``

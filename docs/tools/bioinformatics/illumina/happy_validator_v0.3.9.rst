@@ -3,7 +3,7 @@
 Hap.py validation
 ===================================
 
-1 contributor · 1 version
+*1 contributor · 1 version*
 
 :ID: ``happy_validator``
 :Python: ``janis_bioinformatics.tools.illumina.happy.versions import HapPyValidator_0_3_9``
@@ -18,7 +18,7 @@ Hap.py validation
 
    - ``compareVCF: VCF``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``extended: csv``
 
@@ -92,7 +92,7 @@ name                      type                prefix                          po
 ========================  ==================  ============================  ==========  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 truthVCF                  VCF                                                        1
 compareVCF                VCF                                                        2
-reference                 FastaWithDict       --reference                               (-r)  Specify a reference file.
+reference                 FastaWithIndexes    --reference                               (-r)  Specify a reference file.
 reportPrefix              Optional<Filename>  --report-prefix                           (-o)  Filename prefix for report output.
 intervals                 Optional<bed>       --target-regions                          (-T)  Restrict analysis to given (dense) regions (using -T in bcftools).
 version                   Optional<Boolean>   --version                                 (-v) Show version number and exit.

@@ -3,7 +3,7 @@
 BCFTools: Index
 ===============================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``bcftoolsIndex``
 :Python: ``janis_bioinformatics.tools.bcftools.index.versions import BcfToolsIndex_1_9``

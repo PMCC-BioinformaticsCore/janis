@@ -3,7 +3,7 @@
 GATK4: Mark Duplicates
 ============================================
 
-1 contributor · 4 versions
+*1 contributor · 4 versions*
 
 :ID: ``Gatk4MarkDuplicates``
 :Python: ``janis_bioinformatics.tools.gatk4.markduplicates.versions import Gatk4MarkDuplicates_4_0``
@@ -14,9 +14,9 @@ GATK4: Mark Duplicates
 :Created: 2018-12-24
 :Updated: 2019-01-24
 :Required inputs:
-   - ``bam: BamPair``
+   - ``bam: IndexedBam``
 :Outputs: 
-   - ``out: BamPair``
+   - ``out: IndexedBam``
 
    - ``metrics: tsv``
 
@@ -79,7 +79,7 @@ Additional configuration (inputs)
 ====================  =======================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 name                  type                     prefix                     position  documentation
 ====================  =======================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
-bam                   BamPair                  -I                               10  One or more input SAM or BAM files to analyze. Must be coordinate sorted.
+bam                   IndexedBam               -I                               10  One or more input SAM or BAM files to analyze. Must be coordinate sorted.
 outputFilename        Optional<Filename>       -O                               10  File to write duplication metrics to
 metricsFilename       Optional<Filename>       -M                               10  The output file to write marked records to.
 argumentsFile         Optional<Array<File>>    --arguments_file                 10  read one or more arguments files and add them to the command line

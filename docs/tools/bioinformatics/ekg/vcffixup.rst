@@ -3,7 +3,7 @@
 VcfLib: VcfFixUp
 ===========================
 
-1 contributor · 1 version
+*1 contributor · 1 version*
 
 :ID: ``vcffixup``
 :Python: ``janis_bioinformatics.tools.vcflib.vcffixup.versions import VcfFixUp_1_0_1``

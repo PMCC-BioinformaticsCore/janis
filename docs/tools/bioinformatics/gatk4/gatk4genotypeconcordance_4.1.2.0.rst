@@ -3,7 +3,7 @@
 GATK4: Genotype Concordance
 ======================================================
 
-1 contributor · 4 versions
+*1 contributor · 4 versions*
 
 :ID: ``Gatk4GenotypeConcordance``
 :Python: ``janis_bioinformatics.tools.gatk4.genotypeconcordance.versions import Gatk4GenotypeConcordance_4_1_2``

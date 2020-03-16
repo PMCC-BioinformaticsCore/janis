@@ -3,7 +3,7 @@
 Split Multiple Alleles
 =========================================
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``SplitMultiAllele``
 :Python: ``janis_bioinformatics.tools.common.splitmultiallele import SplitMultiAllele``
@@ -16,7 +16,7 @@ Split Multiple Alleles
 :Required inputs:
    - ``vcf: CompressedVCF``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``out: VCF``
 
@@ -53,7 +53,7 @@ Additional configuration (inputs)
 name            type                prefix      position  documentation
 ==============  ==================  ========  ==========  ===============
 vcf             CompressedVCF                          3
-reference       FastaWithDict       -r                 8
+reference       FastaWithIndexes    -r                 8
 outputFilename  Optional<Filename>  >                 10
 ==============  ==================  ========  ==========  ===============
 

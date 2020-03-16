@@ -55,12 +55,12 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
     argument_headers = ["value", "prefix", "position", "documentation"]
 
     required_input_tuples = [
-        [i.id(), i.input_type.id(), i.prefix, i.position, i.doc]
+        [i.id(), i.input_type.id(), i.prefix, i.position, i.doc.doc if i.doc else ""]
         for i in tool.inputs()
         if not i.input_type.optional
     ]
     optional_input_tuples = [
-        [i.id(), i.input_type.id(), i.prefix, i.position, i.doc]
+        [i.id(), i.input_type.id(), i.prefix, i.position, i.doc.doc if i.doc else ""]
         for i in tool.inputs()
         if i.input_type.optional
     ]
@@ -69,7 +69,8 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
     args = tool.arguments()
     if args:
         argument_tuples = [
-            [str(a.value), a.prefix, a.position, a.doc] for a in tool.arguments()
+            [str(a.value), a.prefix, a.position, a.doc.doc if a.doc else ""]
+            for a in tool.arguments()
         ]
         fargs = tabulate(argument_tuples, headers=argument_headers, tablefmt="rst")
         formatted_args = "Arguments\n----------\n\n" + fargs

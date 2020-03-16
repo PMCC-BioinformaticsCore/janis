@@ -3,7 +3,7 @@
 VcfLib: VcfUniqAlleles
 =======================================
 
-1 contributor · 1 version
+*1 contributor · 1 version*
 
 :ID: ``vcfuniqalleles``
 :Python: ``janis_bioinformatics.tools.vcflib.vcfuniqalleles.versions import VcfUniqAlleles_1_0_1``

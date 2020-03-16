@@ -29,6 +29,15 @@ Automatically generated index page for common:
      </a>
      <hr />
          
+     <a href="indexfasta.html">
+       <p style="margin-bottom: 5px"><b>Index Fasta reference</b> <span style="margin-left: 10px; color: darkgray">IndexFasta</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="indexfasta.html" style="margin-bottom: 10px">
+       v<b>1.0.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="mergeandmarkbams.html">
        <p style="margin-bottom: 5px"><b>Merge and Mark Duplicates</b> <span style="margin-left: 10px; color: darkgray">mergeAndMarkBams</span></p>
        

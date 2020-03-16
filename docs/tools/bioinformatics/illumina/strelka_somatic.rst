@@ -3,7 +3,7 @@
 Strelka (Somatic)
 ===================================
 
-0 contributors · 2 versions
+*0 contributors · 2 versions*
 
 :ID: ``strelka_somatic``
 :Python: ``janis_bioinformatics.tools.illumina.strelkasomatic.strelkasomatic import StrelkaSomatic_2_9_10``
@@ -14,11 +14,11 @@ Strelka (Somatic)
 :Created: 2019-05-27
 :Updated: 2019-10-10
 :Required inputs:
-   - ``normalBam: BamPair``
+   - ``normalBam: IndexedBam``
 
-   - ``tumorBam: BamPair``
+   - ``tumorBam: IndexedBam``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 :Outputs: 
    - ``configPickle: File``
 
@@ -51,8 +51,8 @@ Arguments
 value                                                               prefix      position  documentation
 ==================================================================  ========  ==========  ==========================================================================================================================================
 configureStrelkaSomaticWorkflow.py                                                     0
-<janis_core.types.selectors.StringFormatter object at 0x10d14d9e8>                     2
-<janis_core.types.selectors.CpuSelector object at 0x10d14d518>      --jobs             3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
+<janis_core.types.selectors.StringFormatter object at 0x10ca99c18>                     2
+<janis_core.types.selectors.CpuSelector object at 0x10ca99320>      --jobs             3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
 ==================================================================  ========  ==========  ==========================================================================================================================================
 
 Additional configuration (inputs)
@@ -61,9 +61,9 @@ Additional configuration (inputs)
 =====================  =====================================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 name                   type                                   prefix                      position  documentation
 =====================  =====================================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-normalBam              BamPair                                --normalBam=                       1  Normal sample BAM or CRAM file. (no default)
-tumorBam               BamPair                                --tumourBam=                       1  (--tumorBam)  Tumor sample BAM or CRAM file. [required] (no default)
-reference              FastaWithDict                          --referenceFasta=                  1  samtools-indexed reference fasta file [required]
+normalBam              IndexedBam                             --normalBam=                       1  Normal sample BAM or CRAM file. (no default)
+tumorBam               IndexedBam                             --tumourBam=                       1  (--tumorBam)  Tumor sample BAM or CRAM file. [required] (no default)
+reference              FastaWithIndexes                       --referenceFasta=                  1  samtools-indexed reference fasta file [required]
 rundir                 Optional<Filename>                     --runDir=                          1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory. (default: StrelkaSomaticWorkflow)
 region                 Optional<Array<String>>                --region                           1  Limit the analysis to one or more genome region(s) for debugging purposes. If this argument is provided multiple times the union of all specified regions will be analyzed. All regions must be non-overlapping to get a meaningful result. Examples: '--region chr20' (whole chromosome), '--region chr2:100-2000 --region chr3:2500-3000' (two regions)'. If this option is specified (one or more times) together with the 'callRegions' BED file,then all region arguments will be intersected with the callRegions BED track.
 config                 Optional<File>                         --config=                          1  provide a configuration file to override defaults in global config file (/opt/strelka/bin/configureStrelkaSomaticWorkflow.py.ini)

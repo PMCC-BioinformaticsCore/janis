@@ -29,5 +29,6 @@ max_cores                       <class 'int'>                        28         
 max_ram                         <class 'int'>                        128                                         Maximum amount of ram (GB) that a task can request
 submission_queue                <class 'str'>                        longq                                       Queue to submit the janis 'brain' to
 max_workflow_time               <class 'int'>                        5700
+janis_memory_mb
 ==============================  ===================================  ==========================================  ==========================================================================================
 

@@ -3,7 +3,7 @@
 Combine Variants
 ==================================
 
-1 contributor · 2 versions
+*1 contributor · 2 versions*
 
 :ID: ``combinevariants``
 :Python: ``janis_bioinformatics.tools.pmac.combinevariants.versions import CombineVariants_0_0_5``

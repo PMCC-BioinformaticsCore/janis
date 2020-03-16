@@ -3,11 +3,11 @@
 Gridss
 ===============
 
-1 contributor · 3 versions
+*1 contributor · 4 versions*
 
 :ID: ``gridss``
 :Python: ``janis_bioinformatics.tools.papenfuss.gridss.gridss import Gridss_2_4_0``
-:Versions: v2.5.1-dev, v2.4.0, v2.2.3
+:Versions: v2.6.3, v2.5.1-dev, v2.4.0, v2.2.3
 :Container: gridss/gridss:2.4.0
 :Authors: Michael Franklin
 :Citations: Daniel L. Cameron, Jan Schröder, Jocelyn Sietsma Penington, Hongdo Do, Ramyar Molania, Alexander Dobrovic, Terence P. Speed and Anthony T. Papenfuss. GRIDSS: sensitive and specific genomic rearrangement detection using positional de Bruijn graph assembly. Genome Research, 2017 doi: 10.1101/gr.222109.117
@@ -15,7 +15,7 @@ Gridss
 :Created: 2019-06-19
 :Updated: 2019-07-03
 :Required inputs:
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 
    - ``bams: Array<BAM>``
 
@@ -56,7 +56,7 @@ Additional configuration (inputs)
 =========================  ==================  =============================  ==========  ===================================================================================================================================================================================================================================================================================================================================
 name                       type                prefix                         position    documentation
 =========================  ==================  =============================  ==========  ===================================================================================================================================================================================================================================================================================================================================
-reference                  FastaWithDict       REFERENCE_SEQUENCE=
+reference                  FastaWithIndexes    REFERENCE_SEQUENCE=
 bams                       Array<BAM>          INPUT=                                     (I=File Coordinate-sorted input BAM file. Default value: null. This option may be specified 0 or more times.
 blacklist                  bed                 BLACKLIST=                                 (BL=File) BED blacklist of regions to ignore. Assembly of regions such as high-coverage centromeric repeats is slow, and if such regions are to be filtered in downstream analysis anyway, blacklisting those region will improve runtime performance. For human WGS, the ENCODE DAC blacklist is recommended. Default value: null.
 outputFilename             Optional<Filename>  OUTPUT=                                    (O=) VCF structural variation calls. Required.

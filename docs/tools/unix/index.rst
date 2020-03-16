@@ -38,6 +38,15 @@ Automatically generated index page for unix:
      </a>
      <hr />
          
+     <a href="greet.html">
+       <p style="margin-bottom: 5px"><b>Greet</b> <span style="margin-left: 10px; color: darkgray">greet</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="greet.html" style="margin-bottom: 10px">
+       v<b>1.0.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="hello.html">
        <p style="margin-bottom: 5px"><b>Hello, World!</b> <span style="margin-left: 10px; color: darkgray">hello</span></p>
        

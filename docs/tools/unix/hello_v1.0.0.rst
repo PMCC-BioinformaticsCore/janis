@@ -3,7 +3,7 @@
 Hello, World!
 =====================
 
-1 contributor · 1 version
+*1 contributor · 1 version*
 
 :ID: ``hello``
 :Python: ``janis_unix.tools.hello import HelloWorkflow``

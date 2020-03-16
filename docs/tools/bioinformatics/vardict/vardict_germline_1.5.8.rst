@@ -3,7 +3,7 @@
 VarDict (Germline)
 =====================================
 
-0 contributors · 5 versions
+*0 contributors · 5 versions*
 
 :ID: ``vardict_germline``
 :Python: ``janis_bioinformatics.tools.vardict.vardictgermline import VarDictGermline_1_5_8``
@@ -16,7 +16,7 @@ VarDict (Germline)
 :Required inputs:
    - ``intervals: bed``
 
-   - ``bam: BamPair``
+   - ``bam: IndexedBam``
 
    - ``reference: FastaFai``
 
@@ -54,7 +54,7 @@ Additional configuration (inputs)
 name                        type                prefix      position  documentation
 ==========================  ==================  ========  ==========  ==================================================================================================================================================================================================================================================================================
 intervals                   bed                                    2
-bam                         BamPair             -b                 1  The indexed BAM file
+bam                         IndexedBam          -b                 1  The indexed BAM file
 reference                   FastaFai            -G                 1  The reference fasta. Should be indexed (.fai). Defaults to: /ngs/reference_data/genomes/Hsapiens/hg19/seq/hg19.fa
 sampleName                  String              -N                 1  The sample name to be used directly.  Will overwrite -n option
 var2vcfSampleName           String              -N                 5

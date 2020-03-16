@@ -3,7 +3,7 @@
 CNVKit
 ======
 
-0 contributors · 1 version
+*0 contributors · 1 version*
 
 :ID: ``CNVKit``
 :Python: ``janis_bioinformatics.tools.ucsf.cnvkit.cnvkit_0_9_6 import CNVKit_0_9_6``

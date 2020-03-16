@@ -3,7 +3,7 @@
 GATK4: MergeMutectStats
 ===============================================
 
-1 contributor · 3 versions
+*1 contributor · 3 versions*
 
 :ID: ``Gatk4MergeMutectStats``
 :Python: ``janis_bioinformatics.tools.gatk4.mergemutectstats.versions import Gatk4MergeMutectStats_4_1_3``

@@ -3,7 +3,7 @@
 GATK4: GetPileupSummaries
 ===================================================
 
-1 contributor · 3 versions
+*1 contributor · 3 versions*
 
 :ID: ``Gatk4GetPileupSummaries``
 :Python: ``janis_bioinformatics.tools.gatk4.getpileupsummaries.versions import Gatk4GetPileUpSummaries_4_1_3``
@@ -14,7 +14,7 @@ GATK4: GetPileupSummaries
 :Created: 2019-09-09
 :Updated: 2019-09-09
 :Required inputs:
-   - ``bam: Array<BamPair>``
+   - ``bam: Array<IndexedBam>``
 
    - ``sites: CompressedIndexedVCF``
 :Outputs: 
@@ -38,7 +38,7 @@ Additional configuration (inputs)
 ==============  ==============================  ===========  ==========  =============================================================
 name            type                            prefix         position  documentation
 ==============  ==============================  ===========  ==========  =============================================================
-bam             Array<BamPair>                  -I                    0  The SAM/BAM/CRAM file containing reads.
+bam             Array<IndexedBam>               -I                    0  The SAM/BAM/CRAM file containing reads.
 sites           CompressedIndexedVCF            -V                       sites of common biallelic variants
 intervals       Optional<CompressedIndexedVCF>  --intervals              -L (BASE) One or more genomic intervals over which to operate
 pileupTableOut  Optional<Filename>              -O                    1

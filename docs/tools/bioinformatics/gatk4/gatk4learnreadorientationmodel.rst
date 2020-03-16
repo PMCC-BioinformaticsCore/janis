@@ -3,7 +3,7 @@
 GATK4: LearnReadOrientationModel
 =================================================================
 
-1 contributor · 3 versions
+*1 contributor · 3 versions*
 
 :ID: ``Gatk4LearnReadOrientationModel``
 :Python: ``janis_bioinformatics.tools.gatk4.learnreadorientationmodel.versions import Gatk4LearnReadOrientationModel_4_1_4``

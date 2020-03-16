@@ -3,7 +3,7 @@
 GATK4 Germline Variant Caller
 ===========================================================
 
-1 contributor · 2 versions
+*1 contributor · 2 versions*
 
 :ID: ``GATK4_GermlineVariantCaller``
 :Python: ``janis_bioinformatics.tools.variantcallers.gatk.gatkgermline_variants_4_1_3 import GatkGermlineVariantCaller_4_1_3``
@@ -13,9 +13,9 @@ GATK4 Germline Variant Caller
 :Created: 2019-09-01
 :Updated: 2019-09-13
 :Required inputs:
-   - ``bam: BamPair``
+   - ``bam: IndexedBam``
 
-   - ``reference: FastaWithDict``
+   - ``reference: FastaWithIndexes``
 
    - ``snps_dbsnp: CompressedIndexedVCF``
 
@@ -60,8 +60,8 @@ Additional configuration (inputs)
 ============  ====================  ===================================================================================================================================================
 name          type                  documentation
 ============  ====================  ===================================================================================================================================================
-bam           BamPair
-reference     FastaWithDict
+bam           IndexedBam
+reference     FastaWithIndexes
 snps_dbsnp    CompressedIndexedVCF
 snps_1000gp   CompressedIndexedVCF
 known_indels  CompressedIndexedVCF

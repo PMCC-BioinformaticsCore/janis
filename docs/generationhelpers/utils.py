@@ -48,7 +48,11 @@ def prepare_byline(
         f"{len(contributors)} contributor{'s' if len(contributors) != 1 else ''}"
     )
     versionstr = f"{len(versions)} version{'s' if len(versions) != 1 else ''}"
-    return " · ".join(t for t in [short_prepared, contributorstr, versionstr] if t)
+    return (
+        "*"
+        + " · ".join(t for t in [short_prepared, contributorstr, versionstr] if t)
+        + "*"
+    )
 
 
 def nested_keys_append_with_root(d, keys: List[str], value, root_key):

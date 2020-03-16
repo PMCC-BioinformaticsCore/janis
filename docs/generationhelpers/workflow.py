@@ -1,18 +1,16 @@
 from tabulate import tabulate
 from typing import List
 
-
 from janis_core import Workflow, WorkflowMetadata
+from .utils import prepare_byline, format_rst_link, get_tool_url, prepare_quickstart
 
 
-from .utils import prepare_byline, format_rst_link, get_tool_url
+SHOW_WORKFLOW_IMAGE = False
 
 
 def prepare_workflow_page(workflow: Workflow, versions: List[str]):
     if not workflow:
         return None
-
-    # tool_modules = tool.__module__.split(".") # janis._bioinformatics_.tools.$toolproducer.$toolname.$version
 
     metadata: WorkflowMetadata = workflow.bind_metadata() or workflow.metadata
 
@@ -31,21 +29,21 @@ def prepare_workflow_page(workflow: Workflow, versions: List[str]):
 
     citation = "\n\n".join([el for el in [metadata.citation, metadata.doi] if el])
 
+    formatted_url = (
+        format_rst_link(metadata.documentationUrl, metadata.documentationUrl)
+        if metadata.documentationUrl
+        else "*No URL to the documentation was provided*"
+    )
+
     toolmetadata = [
         ("ID", f"``{workflow.id()}``"),
-        ("Python", f"``{workflow.__module__} import {workflow.__class__.__name__}``"),
+        ("URL", formatted_url),
         ("Versions", ", ".join(str(s) for s in versions[::-1]) if versions else ""),
         ("Authors", ", ".join(metadata.contributors)),
         ("Citations", citation),
         ("Created", str(metadata.dateCreated)),
         ("Updated", str(metadata.dateUpdated)),
     ]
-
-    formatted_url = (
-        format_rst_link(metadata.documentationUrl, metadata.documentationUrl)
-        if metadata.documentationUrl
-        else "*No URL to the documentation was provided*"
-    )
 
     embeddedtoolsraw = {
         f"{s.tool.id()}/{s.tool.version()}": s.tool
@@ -103,8 +101,9 @@ def prepare_workflow_page(workflow: Workflow, versions: List[str]):
         tool_prov = "." + workflow.tool_provider().lower()
 
     workflow_image = (
-        "."
-        or """
+        ""
+        if not SHOW_WORKFLOW_IMAGE
+        else """
 Workflow
 --------
 
@@ -136,26 +135,32 @@ Workflow
 
 {onelinedescription}
 
-{nl.join(f":{key}: {value}" for key, value in toolmetadata)}
-:Required inputs:
-{(2 * nl).join(f"   - ``{ins.id()}: {ins.datatype.id()}``" for ins in workflow.input_nodes.values() if (not ins.datatype.optional and ins.default is None))}
-:Outputs: 
-{(2 * nl).join(f"   - ``{out.id()}: {out.datatype.id()}``" for out in workflow.output_nodes.values())}
+{metadata.documentation if metadata.documentation else "No documentation was provided: " + format_rst_link(
+    "contribute one", f"https://github.com/PMCC-BioinformaticsCore/janis-{workflow.tool_module()}")}
 
-Documentation
--------------
+{prepare_quickstart(workflow)}
+
+Information
+------------
 
 URL: {formatted_url}
 
-{metadata.documentation if metadata.documentation else "No documentation was provided: " + format_rst_link(
-    "contribute one", f"https://github.com/PMCC-BioinformaticsCore/janis-{workflow.tool_module()}")}
+{nl.join(f":{key}: {value}" for key, value in toolmetadata)}
+
+
+
+Outputs
+-----------
+
+{formatted_outputs}
+
 
 Embedded Tools
 ***************
 
 {embeddedtools}
 
-------
+
 
 Additional configuration (inputs)
 ---------------------------------

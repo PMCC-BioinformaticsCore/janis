@@ -5,28 +5,6 @@ Combine Variants
 
 *1 contributor · 2 versions*
 
-:ID: ``combinevariants``
-:Python: ``janis_bioinformatics.tools.pmac.combinevariants.versions import CombineVariants_0_0_4``
-:Versions: 0.0.5, 0.0.4
-:Container: michaelfranklin/pmacutil:0.0.4
-:Authors: Michael Franklin
-:Citations: None
-:Created: None
-:Updated: 2019-07-04 00:00:00
-:Required inputs:
-   - ``vcfs: Array<VCF>``
-
-   - ``type: String``
-:Outputs: 
-   - ``vcf: VCF``
-
-   - ``tsv: tsv``
-
-Documentation
--------------
-
-URL: `https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils <https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils>`_
-
 
 usage: combine_vcf.py [-h] -i I --columns COLUMNS -o O --type
                       {germline,somatic} [--regions REGIONS] [--normal NORMAL]
@@ -56,9 +34,99 @@ optional arguments:
   -h, --help            show this help message and exit
 
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.pmac.combinevariants.versions import CombineVariants_0_0_4
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "combinevariants_step",
+           combinevariants(
+               vcfs=None,
+               type=None,
+           )
+       )
+       wf.output("vcf", source=combinevariants_step.vcf)
+   wf.output("tsv", source=combinevariants_step.tsv)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for combinevariants:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs combinevariants > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       type: <value>
+       vcfs:
+       - vcfs_0.vcf
+       - vcfs_1.vcf
+
+
+
+
+5. Run combinevariants with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       combinevariants
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``combinevariants``
+:URL: `https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils <https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils>`_
+:Versions: 0.0.5, 0.0.4
+:Container: michaelfranklin/pmacutil:0.0.4
+:Authors: Michael Franklin
+:Citations: None
+:Created: None
+:Updated: 2019-07-04 00:00:00
+
+
+
+Outputs
+-----------
+
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+vcf     VCF
+tsv     tsv
+======  ======  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -75,4 +143,3 @@ normal          Optional<String>         --normal                Sample id of ge
 tumor           Optional<String>         --tumor                 tumor sample ID, required if inputs are somatic vcfs
 priority        Optional<Integer>        --priority              The priority of the callers, must match with the callers in the source header
 ==============  =======================  ==========  ==========  =============================================================================
-

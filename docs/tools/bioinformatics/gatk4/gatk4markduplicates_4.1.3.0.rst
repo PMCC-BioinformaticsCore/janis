@@ -5,26 +5,6 @@ GATK4: Mark Duplicates
 
 *1 contributor · 4 versions*
 
-:ID: ``Gatk4MarkDuplicates``
-:Python: ``janis_bioinformatics.tools.gatk4.markduplicates.versions import Gatk4MarkDuplicates_4_1_3``
-:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
-:Container: broadinstitute/gatk:4.1.3.0
-:Authors: Michael Franklin
-:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
-:Created: 2018-12-24
-:Updated: 2019-01-24
-:Required inputs:
-   - ``bam: IndexedBam``
-:Outputs: 
-   - ``out: IndexedBam``
-
-   - ``metrics: tsv``
-
-Documentation
--------------
-
-URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php>`_
-
 MarkDuplicates (Picard): Identifies duplicate reads.
 
 This tool locates and tags duplicate reads in a BAM or SAM file, where duplicate reads are 
@@ -69,9 +49,95 @@ reads are not excluded from the duplication test and can be marked as duplicate 
 
 If desired, duplicates can be removed using the REMOVE_DUPLICATE and REMOVE_SEQUENCING_DUPLICATES options.
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.gatk4.markduplicates.versions import Gatk4MarkDuplicates_4_1_3
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "gatk4markduplicates_step",
+           Gatk4MarkDuplicates(
+               bam=None,
+           )
+       )
+       wf.output("out", source=gatk4markduplicates_step.out)
+   wf.output("metrics", source=gatk4markduplicates_step.metrics)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for Gatk4MarkDuplicates:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs Gatk4MarkDuplicates > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bam: bam.bam
+
+
+
+
+5. Run Gatk4MarkDuplicates with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       Gatk4MarkDuplicates
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``Gatk4MarkDuplicates``
+:URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/picard_sam_markduplicates_MarkDuplicates.php>`_
+:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
+:Container: broadinstitute/gatk:4.1.3.0
+:Authors: Michael Franklin
+:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
+:Created: 2018-12-24
+:Updated: 2019-01-24
+
+
+
+Outputs
+-----------
+
+=======  ==========  ===============
+name     type        documentation
+=======  ==========  ===============
+out      IndexedBam
+metrics  tsv
+=======  ==========  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -97,4 +163,3 @@ useJdkInflater        Optional<Boolean>        --use_jdk_inflater               
 validationStringency  Optional<String>         --VALIDATION_STRINGENCY          11  Validation stringency for all SAM files read by this program. Setting stringency to SILENT can improve performance when processing a BAM file in which variable-length data (read, qualities, tags) do not otherwise need to be decoded.The --VALIDATION_STRINGENCY argument is an enumerated type (ValidationStringency), which can have one of the following values: [STRICT, LENIENT, SILENT]
 verbosity             Optional<String>         --verbosity                      11  The --verbosity argument is an enumerated type (LogLevel), which can have one of the following values: [ERROR, WARNING, INFO, DEBUG]
 ====================  =======================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
-

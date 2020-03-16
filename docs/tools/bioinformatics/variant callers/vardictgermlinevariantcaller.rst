@@ -5,34 +5,104 @@ Vardict Germline Variant Caller
 
 *0 contributors · 1 version*
 
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.variantcallers.vardictgermline_variants import VardictGermlineVariantCaller
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "vardictgermlinevariantcaller_step",
+           vardictGermlineVariantCaller(
+               bam=None,
+               intervals=None,
+               sample_name=None,
+               header_lines=None,
+               reference=None,
+           )
+       )
+       wf.output("vardict_variants", source=vardictgermlinevariantcaller_step.vardict_variants)
+   wf.output("out", source=vardictgermlinevariantcaller_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for vardictGermlineVariantCaller:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs vardictGermlineVariantCaller > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bam: bam.bam
+       header_lines: header_lines
+       intervals: intervals.bed
+       reference: reference.fasta
+       sample_name: <value>
+
+
+
+
+5. Run vardictGermlineVariantCaller with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       vardictGermlineVariantCaller
+
+
+
+
+
+Information
+------------
+
+URL: *No URL to the documentation was provided*
+
 :ID: ``vardictGermlineVariantCaller``
-:Python: ``janis_bioinformatics.tools.variantcallers.vardictgermline_variants import VardictGermlineVariantCaller``
+:URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Authors: 
 :Citations: 
 :Created: None
 :Updated: None
-:Required inputs:
-   - ``bam: IndexedBam``
 
-   - ``intervals: bed``
 
-   - ``sample_name: String``
 
-   - ``header_lines: File``
+Outputs
+-----------
 
-   - ``reference: FastaWithIndexes``
-:Outputs: 
-   - ``vardict_variants: CompressedVCF``
+================  =============  ===============
+name              type           documentation
+================  =============  ===============
+vardict_variants  CompressedVCF
+out               VCF
+================  =============  ===============
 
-   - ``out: VCF``
-
-Documentation
--------------
-
-URL: *No URL to the documentation was provided*
-
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
 Embedded Tools
 ***************
@@ -44,7 +114,7 @@ Split Multiple Alleles  ``SplitMultiAllele/v0.5772``
 Trim IUPAC Bases        ``trimIUPAC/0.0.5``
 ======================  ============================
 
-------
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -65,4 +135,4 @@ vardict_regStartCol           Optional<Integer>  The column for region start, e.
 vardict_geneEndCol            Optional<Integer>  The column for region end, e.g. gene end
 ============================  =================  ============================================================================
 
-.
+

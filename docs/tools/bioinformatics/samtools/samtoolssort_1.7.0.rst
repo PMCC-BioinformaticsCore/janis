@@ -5,26 +5,6 @@ SamTools: Sort
 
 *1 contributor · 2 versions*
 
-:ID: ``SamToolsSort``
-:Python: ``janis_bioinformatics.tools.samtools.sort.sort import SamToolsSort_1_7``
-:Versions: 1.9.0, 1.7.0
-:Container: biocontainers/samtools:v1.7.0_cv3
-:Authors: Michael Franklin
-:Citations: None
-:Created: 2018-12-24
-:Updated: 2019-01-24
-:Required inputs:
-   - ``bam: BAM``
-:Outputs: 
-   - ``out: BAM``
-
-   - ``temporaryOutputs: Optional<Array<BAM>>``
-
-Documentation
--------------
-
-URL: `http://www.htslib.org/doc/samtools.html#DESCRIPTION <http://www.htslib.org/doc/samtools.html#DESCRIPTION>`_
-
 Ensure SAMTOOLS.SORT is inheriting from parent metadata
     
 ---------------------------------------------------------------------------------------------------
@@ -73,9 +53,95 @@ When the -n option is not present, reads are sorted by reference (according to t
     should be changed to an appropriate combination of -T PREFIX and -o FILE. The previous -o 
     option should be removed, as output defaults to standard output.
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.samtools.sort.sort import SamToolsSort_1_7
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "samtoolssort_step",
+           SamToolsSort(
+               bam=None,
+           )
+       )
+       wf.output("out", source=samtoolssort_step.out)
+   wf.output("temporaryOutputs", source=samtoolssort_step.temporaryOutputs)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for SamToolsSort:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs SamToolsSort > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bam: bam.bam
+
+
+
+
+5. Run SamToolsSort with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       SamToolsSort
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``SamToolsSort``
+:URL: `http://www.htslib.org/doc/samtools.html#DESCRIPTION <http://www.htslib.org/doc/samtools.html#DESCRIPTION>`_
+:Versions: 1.9.0, 1.7.0
+:Container: biocontainers/samtools:v1.7.0_cv3
+:Authors: Michael Franklin
+:Citations: None
+:Created: 2018-12-24
+:Updated: 2019-01-24
+
+
+
+Outputs
+-----------
+
+================  ====================  ==============================================================================================================================================================================================
+name              type                  documentation
+================  ====================  ==============================================================================================================================================================================================
+out               BAM
+temporaryOutputs  Optional<Array<BAM>>  By default, any temporary files are written alongside the output file, as out.bam.tmp.nnnn.bam, or if output is to standard output, in the current directory as samtools.mmm.mmm.tmp.nnnn.bam.
+================  ====================  ==============================================================================================================================================================================================
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -94,4 +160,3 @@ temporaryFilesPrefix  Optional<String>    -T                    Write temporary 
 threads               Optional<Integer>   -@                    Set number of sorting and compression threads. By default, operation is single-threaded.
 outputFilename        Optional<Filename>  -o                 5  Output to FILE [stdout].
 ====================  ==================  ========  ==========  ===========================================================================================================================================================================================================================================
-

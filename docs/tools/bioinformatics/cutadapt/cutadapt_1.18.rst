@@ -5,25 +5,6 @@ Cutadapt
 
 *1 contributor · 4 versions*
 
-:ID: ``cutadapt``
-:Python: ``janis_bioinformatics.tools.cutadapt.versions import CutAdapt_1_18``
-:Versions: 2.6, 2.5, 2.4, 1.18
-:Container: quay.io/biocontainers/cutadapt:1.18--py37h14c3975_1
-:Authors: Michael Franklin
-:Citations: Martin, Marcel. “Cutadapt Removes Adapter Sequences from High-Throughput Sequencing Reads.” EMBnet.journal, vol. 17, no. 1, EMBnet Stichting, May 2011, p. 10. Crossref, doi:10.14806/ej.17.1.200.
-:DOI: DOI:10.14806/ej.17.1.200
-:Created: 2019-03-21
-:Updated: 2019-03-29
-:Required inputs:
-   - ``fastq: FastqGzPair``
-:Outputs: 
-   - ``out: FastqGzPair``
-
-Documentation
--------------
-
-URL: `https://cutadapt.readthedocs.io/en/stable/ <https://cutadapt.readthedocs.io/en/stable/>`_
-
 
 Cutadapt finds and removes adapter sequences, primers, poly-A tails and other types of unwanted sequence 
 from your high-throughput sequencing reads.
@@ -40,9 +21,96 @@ input data, without removing adapter sequences at all.
 Cutadapt comes with an extensive suite of automated tests and is available under the terms of the MIT license.
 If you use Cutadapt, please cite DOI:10.14806/ej.17.1.200 .
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.cutadapt.versions import CutAdapt_1_18
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "cutadapt_step",
+           cutadapt(
+               fastq=None,
+           )
+       )
+       wf.output("out", source=cutadapt_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for cutadapt:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs cutadapt > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       fastq:
+       - fastq_0.fastq.gz
+       - fastq_1.fastq.gz
+
+
+
+
+5. Run cutadapt with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       cutadapt
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``cutadapt``
+:URL: `https://cutadapt.readthedocs.io/en/stable/ <https://cutadapt.readthedocs.io/en/stable/>`_
+:Versions: 2.6, 2.5, 2.4, 1.18
+:Container: quay.io/biocontainers/cutadapt:1.18--py37h14c3975_1
+:Authors: Michael Franklin
+:Citations: Martin, Marcel. “Cutadapt Removes Adapter Sequences from High-Throughput Sequencing Reads.” EMBnet.journal, vol. 17, no. 1, EMBnet Stichting, May 2011, p. 10. Crossref, doi:10.14806/ej.17.1.200.
+:DOI: DOI:10.14806/ej.17.1.200
+:Created: 2019-03-21
+:Updated: 2019-03-29
+
+
+
+Outputs
+-----------
+
+======  ===========  ===============
+name    type         documentation
+======  ===========  ===============
+out     FastqGzPair
+======  ===========  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -107,4 +175,3 @@ doubleEncode                Optional<Boolean>   -d                              
 trimPrimer                  Optional<Boolean>   -t                                      Trim primer base and the first color
 zeroCap                     Optional<Boolean>   -z                                      Change negative quality values to zero. Enabled by default in colorspace mode since many tools have problems with negative qualities
 ==========================  ==================  ==========================  ==========  =====================================================================================================================================================================================================================================================================================================================================================================================================
-

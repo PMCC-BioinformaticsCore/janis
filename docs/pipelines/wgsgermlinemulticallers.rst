@@ -65,13 +65,12 @@ mills_indels          CompressedIndexedVCF  HG38: https://console.cloud.google.c
 4. Generate user and static input files for WGSGermlineMultiCallers:
 
 .. code-block:: bash
-   
+
    # user inputs
    janis inputs --user WGSGermlineMultiCallers > inputs.yaml
-    
+
    # static inputs
    janis inputs --static WGSGermlineMultiCallers > static.yaml
-
 
 **inputs.yaml**
 
@@ -104,11 +103,11 @@ mills_indels          CompressedIndexedVCF  HG38: https://console.cloud.google.c
        - vardict_intervals_1.bed
 
 
-5. Run the WGSGermlineMultiCallers pipeline with:
+5. Run WGSGermlineMultiCallers with:
 
 .. code-block:: bash
 
-   janis run [...workflow options] \
+   janis run [...run options] \
        --inputs inputs.yaml \
        --inputs static.yaml \
        WGSGermlineMultiCallers
@@ -136,7 +135,6 @@ Information
 ------------
 
 :ID: ``WGSGermlineMultiCallers``
-:Python: ``janis_pipelines.wgs_germline.wgsgermline import WGSGermlineMultiCallers``
 :Versions: 1.2.0
 :Authors: Michael Franklin, Richard Lupat, Jiaan Yu
 :Citations: 

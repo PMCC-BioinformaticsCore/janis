@@ -5,24 +5,6 @@ BGZip
 
 *1 contributor · 2 versions*
 
-:ID: ``bgzip``
-:Python: ``janis_bioinformatics.tools.htslib.bgzip.bgzip_1_9 import BGZip_1_9``
-:Versions: 1.9, 1.2.1
-:Container: quay.io/biocontainers/htslib:1.9--ha228f0b_7
-:Authors: Michael Franklin
-:Citations: None
-:Created: 2018-12-24
-:Updated: 2019-01-24
-:Required inputs:
-   - ``file: VCF``
-:Outputs: 
-   - ``out: stdout<CompressedVCF>``
-
-Documentation
--------------
-
-URL: `http://www.htslib.org/doc/bgzip.html <http://www.htslib.org/doc/bgzip.html>`_
-
 bgzip – Block compression/decompression utility
 
 Bgzip compresses files in a similar manner to, and compatible with, gzip(1). The file is compressed 
@@ -36,9 +18,93 @@ will write to a new file with a .gz suffix and remove the original. When decompr
 have a .gz suffix, which will be removed to make the output name. 
 Again after decompression completes the input file will be removed.
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.htslib.bgzip.bgzip_1_9 import BGZip_1_9
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "bgzip_step",
+           bgzip(
+               file=None,
+           )
+       )
+       wf.output("out", source=bgzip_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for bgzip:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs bgzip > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       file: file.vcf
+
+
+
+
+5. Run bgzip with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       bgzip
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``bgzip``
+:URL: `http://www.htslib.org/doc/bgzip.html <http://www.htslib.org/doc/bgzip.html>`_
+:Versions: 1.9, 1.2.1
+:Container: quay.io/biocontainers/htslib:1.9--ha228f0b_7
+:Authors: Michael Franklin
+:Citations: None
+:Created: 2018-12-24
+:Updated: 2019-01-24
+
+
+
+Outputs
+-----------
+
+======  =====================  ===============
+name    type                   documentation
+======  =====================  ===============
+out     stdout<CompressedVCF>
+======  =====================  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -60,4 +126,3 @@ rebgzip     Optional<Boolean>  --rebgzip                 g: Try to use an existi
 size        Optional<Integer>  --size                    s: Decompress INT bytes (uncompressed size) to standard output. Implies -c.
 threads     Optional<Integer>  --threads                 @: Number of threads to use [1].
 ==========  =================  ============  ==========  ========================================================================================================================================================================================================================================================
-

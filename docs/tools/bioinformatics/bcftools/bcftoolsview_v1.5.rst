@@ -5,8 +5,79 @@ BCFTools: View
 
 *0 contributors · 2 versions*
 
+________________________________
+ 
+        View, subset and filter VCF or BCF files by position and filtering expression
+        Convert between VCF and BCF. Former bcftools subset.
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.bcftools.view.versions import BcfToolsView_1_5
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "bcftoolsview_step",
+           bcftoolsview(
+               file=None,
+           )
+       )
+       wf.output("out", source=bcftoolsview_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for bcftoolsview:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs bcftoolsview > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       file: file.vcf.gz
+
+
+
+
+5. Run bcftoolsview with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       bcftoolsview
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``bcftoolsview``
-:Python: ``janis_bioinformatics.tools.bcftools.view.versions import BcfToolsView_1_5``
+:URL: `https://samtools.github.io/bcftools/bcftools.html#view <https://samtools.github.io/bcftools/bcftools.html#view>`_
 :Versions: v1.9, v1.5
 :Container: biocontainers/bcftools:v1.5_cv2
 :Authors: 
@@ -14,31 +85,19 @@ BCFTools: View
 :DOI: http://www.ncbi.nlm.nih.gov/pubmed/19505943
 :Created: None
 :Updated: 2019-01-24
-:Required inputs:
-   - ``file: CompressedVCF``
-:Outputs: 
-   - ``out: stdout<CompressedVCF>``
 
-Documentation
--------------
 
-URL: `https://samtools.github.io/bcftools/bcftools.html#view <https://samtools.github.io/bcftools/bcftools.html#view>`_
 
-________________________________
- 
-        View, subset and filter VCF or BCF files by position and filtering expression
-        Convert between VCF and BCF. Former bcftools subset.
+Outputs
+-----------
 
-------
+======  =====================  ===============
+name    type                   documentation
+======  =====================  ===============
+out     stdout<CompressedVCF>
+======  =====================  ===============
 
-Arguments
-----------
 
-=======  =============  ==========  ===================================================================================================
-value    prefix           position  documentation
-=======  =============  ==========  ===================================================================================================
-z        --output-type           1  (-O) [<b|u|z|v>] b: compressed BCF, u: uncompressed BCF, z: compressed VCF, v: uncompressed VCF [v]
-=======  =============  ==========  ===================================================================================================
 
 Additional configuration (inputs)
 ---------------------------------
@@ -83,4 +142,3 @@ excludeTypes      Optional<Array<String>>  --exclude-types               1  (-V)
 private           Optional<Boolean>        --private                     1  (-x) select sites where the non-reference alleles are exclusive (private) to the subset samples
 excludePrivate    Optional<Boolean>        --exclude-private             1  (-X) exclude sites where the non-reference alleles are exclusive (private) to the subset samples
 ================  =======================  ===================  ==========  ==============================================================================================================================================================================
-

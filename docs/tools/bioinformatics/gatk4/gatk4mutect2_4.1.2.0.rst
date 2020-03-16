@@ -5,42 +5,112 @@ GatkMutect2
 
 *1 contributor · 4 versions*
 
+USAGE: Mutect2 [arguments]
+Call somatic SNVs and indels via local assembly of haplotypes
+Version:4.1.2.0
+
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.gatk4.mutect2.versions import GatkMutect2_4_1_2
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "gatk4mutect2_step",
+           Gatk4Mutect2(
+               tumorBams=None,
+               normalBams=None,
+               normalSample=None,
+               reference=None,
+           )
+       )
+       wf.output("out", source=gatk4mutect2_step.out)
+   wf.output("stats", source=gatk4mutect2_step.stats)
+   wf.output("f1f2r_out", source=gatk4mutect2_step.f1f2r_out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for Gatk4Mutect2:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs Gatk4Mutect2 > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       normalBams:
+       - normalBams_0.bam
+       - normalBams_1.bam
+       normalSample: <value>
+       reference: reference.fasta
+       tumorBams:
+       - tumorBams_0.bam
+       - tumorBams_1.bam
+
+
+
+
+5. Run Gatk4Mutect2 with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       Gatk4Mutect2
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``Gatk4Mutect2``
-:Python: ``janis_bioinformatics.tools.gatk4.mutect2.versions import GatkMutect2_4_1_2``
+:URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php>`_
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.1.2.0
 :Authors: Michael Franklin
 :Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
 :Created: 2018-12-24
 :Updated: 2019-01-24
-:Required inputs:
-   - ``tumorBams: Array<IndexedBam>``
-
-   - ``normalBams: Array<IndexedBam>``
-
-   - ``normalSample: String``
-
-   - ``reference: FastaWithIndexes``
-:Outputs: 
-   - ``out: CompressedIndexedVCF``
-
-   - ``stats: TextFile``
-
-   - ``f1f2r_out: CompressedTarFile``
-
-Documentation
--------------
-
-URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php>`_
-
-USAGE: Mutect2 [arguments]
-Call somatic SNVs and indels via local assembly of haplotypes
-Version:4.1.2.0
 
 
-------
 
-None
+Outputs
+-----------
+
+=========  ====================  =================
+name       type                  documentation
+=========  ====================  =================
+out        CompressedIndexedVCF  To determine type
+stats      TextFile              To determine type
+f1f2r_out  CompressedTarFile     To determine type
+=========  ====================  =================
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -181,4 +251,3 @@ readName                             Optional<String>                --read-name
 keepReverseStrandOnly                Optional<Boolean>               --keep-reverse-strand-only                              Keep only reads on the reverse strand  Required. Possible values: {true, false}
 sample                               Optional<String>                -sample                                                 (--sample) The name of the sample(s) to keep, filtering out all others This argument must be specified at least once. Required.
 ===================================  ==============================  ==========================================  ==========  ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

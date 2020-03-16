@@ -5,47 +5,105 @@ VarDict (Germline)
 
 *0 contributors · 5 versions*
 
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.vardict.vardictgermline import VarDictGermline_1_5_7
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "vardict_germline_step",
+           vardict_germline(
+               intervals=None,
+               bam=None,
+               reference=None,
+               sampleName=None,
+               var2vcfSampleName=None,
+               var2vcfAlleleFreqThreshold=None,
+           )
+       )
+       wf.output("out", source=vardict_germline_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for vardict_germline:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs vardict_germline > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bam: bam.bam
+       intervals: intervals.bed
+       reference: reference.fasta
+       sampleName: <value>
+       var2vcfAlleleFreqThreshold: 0.0
+       var2vcfSampleName: <value>
+
+
+
+
+5. Run vardict_germline with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       vardict_germline
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``vardict_germline``
-:Python: ``janis_bioinformatics.tools.vardict.vardictgermline import VarDictGermline_1_5_7``
+:URL: *No URL to the documentation was provided*
 :Versions: 1.7.0, 1.6.0, 1.5.8, 1.5.7, 1.5.6
 :Container: michaelfranklin/vardict:1.5.7
 :Authors: 
 :Citations: None
 :Created: None
 :Updated: None
-:Required inputs:
-   - ``intervals: bed``
 
-   - ``bam: IndexedBam``
 
-   - ``reference: FastaFai``
 
-   - ``sampleName: String``
+Outputs
+-----------
 
-   - ``var2vcfSampleName: String``
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+out     VCF
+======  ======  ===============
 
-   - ``var2vcfAlleleFreqThreshold: Float``
-:Outputs: 
-   - ``out: VCF``
 
-Documentation
--------------
-
-URL: *No URL to the documentation was provided*
-
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
-
-------
-
-Arguments
-----------
-
-====================  ========  ==========  ===============
-value                 prefix      position  documentation
-====================  ========  ==========  ===============
-| teststrandbias.R |                     3
-var2vcf_valid.pl                         4
-====================  ========  ==========  ===============
 
 Additional configuration (inputs)
 ---------------------------------
@@ -101,4 +159,3 @@ yy                          Optional<Boolean>   -y                 1  <No conten
 downsamplingFraction        Optional<Integer>   -Z                 1  For downsampling fraction.  e.g. 0.7 means roughly 70% downsampling.  Default: No downsampling.  Use with caution.  The downsampling will be random and non-reproducible.
 zeroBasedCoords             Optional<Integer>   -z                 1  0/1  Indicate whether coordinates are zero-based, as IGV uses.  Default: 1 for BED file or amplicon BED file. Use 0 to turn it off. When using the -R option, it's set to 0
 ==========================  ==================  ========  ==========  ==================================================================================================================================================================================================================================================================================
-

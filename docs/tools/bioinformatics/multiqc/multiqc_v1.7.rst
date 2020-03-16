@@ -5,29 +5,94 @@ Multiqc
 
 *0 contributors · 1 version*
 
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.multiqc.versions import Multiqc_v1_7
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "multiqc_step",
+           MultiQC(
+               directory=None,
+           )
+       )
+    
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for MultiQC:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs MultiQC > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       directory: null
+
+
+
+
+5. Run MultiQC with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       MultiQC
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``MultiQC``
-:Python: ``janis_bioinformatics.tools.multiqc.versions import Multiqc_v1_7``
+:URL: *No URL to the documentation was provided*
 :Versions: v1.7
 :Container: ewels/multiqc:v1.7
 :Authors: 
 :Citations: None
 :Created: None
 :Updated: None
-:Required inputs:
-   - ``directory: Directory``
-:Outputs: 
 
 
-Documentation
--------------
 
-URL: *No URL to the documentation was provided*
+Outputs
+-----------
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+======  ======  ===============
 
-------
 
-None
 
 Additional configuration (inputs)
 ---------------------------------
@@ -67,4 +132,3 @@ cl_config       Optional<File>           --cl_config                     (--cl-c
 verbose         Optional<Boolean>        --verbose                       (-v) Increase output verbosity.
 quiet           Optional<Boolean>        --quiet                         (-q) Only show log warnings
 ==============  =======================  ==================  ==========  ============================================================================================
-

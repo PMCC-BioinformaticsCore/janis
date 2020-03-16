@@ -5,8 +5,80 @@ BCFTools: Normalize
 
 *0 contributors · 2 versions*
 
+Left-align and normalize indels, check if REF alleles match the reference, 
+split multiallelic sites into multiple rows; recover multiallelics from 
+multiple rows. Left-alignment and normalization will only be applied if 
+the --fasta-ref option is supplied.
+
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.bcftools.norm.versions import BcfToolsNorm_1_9
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "bcftoolsnorm_step",
+           bcftoolsNorm(
+               vcf=None,
+           )
+       )
+       wf.output("out", source=bcftoolsnorm_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for bcftoolsNorm:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs bcftoolsNorm > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       vcf: vcf.vcf.gz
+
+
+
+
+5. Run bcftoolsNorm with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       bcftoolsNorm
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``bcftoolsNorm``
-:Python: ``janis_bioinformatics.tools.bcftools.norm.versions import BcfToolsNorm_1_9``
+:URL: `https://samtools.github.io/bcftools/bcftools.html#norm <https://samtools.github.io/bcftools/bcftools.html#norm>`_
 :Versions: v1.9, v1.5
 :Container: michaelfranklin/bcftools:1.9
 :Authors: 
@@ -14,25 +86,19 @@ BCFTools: Normalize
 :DOI: http://www.ncbi.nlm.nih.gov/pubmed/19505943
 :Created: None
 :Updated: 2019-01-24
-:Required inputs:
-   - ``vcf: CompressedVCF``
-:Outputs: 
-   - ``out: CompressedVCF``
-
-Documentation
--------------
-
-URL: `https://samtools.github.io/bcftools/bcftools.html#norm <https://samtools.github.io/bcftools/bcftools.html#norm>`_
-
-Left-align and normalize indels, check if REF alleles match the reference, 
-split multiallelic sites into multiple rows; recover multiallelics from 
-multiple rows. Left-alignment and normalization will only be applied if 
-the --fasta-ref option is supplied.
 
 
-------
 
-None
+Outputs
+-----------
+
+======  =============  ===============
+name    type           documentation
+======  =============  ===============
+out     CompressedVCF
+======  =============  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -58,4 +124,3 @@ targetsFile            Optional<File>              -T                        --t
 threads                Optional<Integer>           --threads                 Number of output compression threads to use in addition to main thread. Only used when --output-type is b or z. Default: 0.
 siteWin                Optional<Integer>           -w                        --site-win: maximum distance between two records to consider when locally sorting variants which changed position during the realignment
 =====================  ==========================  ============  ==========  ============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

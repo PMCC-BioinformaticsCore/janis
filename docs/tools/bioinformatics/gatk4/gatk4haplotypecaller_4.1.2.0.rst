@@ -5,28 +5,6 @@ GATK4: Haplotype Caller
 
 *1 contributor · 4 versions*
 
-:ID: ``Gatk4HaplotypeCaller``
-:Python: ``janis_bioinformatics.tools.gatk4.haplotypecaller.versions import Gatk4HaplotypeCaller_4_1_2``
-:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
-:Container: broadinstitute/gatk:4.1.2.0
-:Authors: Michael Franklin
-:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
-:Created: 2018-12-24
-:Updated: 2019-01-24
-:Required inputs:
-   - ``inputRead: IndexedBam``
-
-   - ``reference: FastaWithIndexes``
-
-   - ``dbsnp: CompressedIndexedVCF``
-:Outputs: 
-   - ``out: CompressedVCF``
-
-Documentation
--------------
-
-URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_haplotypecaller_HaplotypeCaller.php# <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_haplotypecaller_HaplotypeCaller.php#>`_
-
 Call germline SNPs and indels via local re-assembly of haplotypes
     
 The HaplotypeCaller is capable of calling SNPs and indels simultaneously via local de-novo assembly of haplotypes 
@@ -50,9 +28,97 @@ Finally, HaplotypeCaller is also able to correctly handle the splice junctions t
 for most variant callers, on the condition that the input read data has previously been processed according 
 to our recommendations as documented (https://software.broadinstitute.org/gatk/documentation/article?id=4067).
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.gatk4.haplotypecaller.versions import Gatk4HaplotypeCaller_4_1_2
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "gatk4haplotypecaller_step",
+           Gatk4HaplotypeCaller(
+               inputRead=None,
+               reference=None,
+               dbsnp=None,
+           )
+       )
+       wf.output("out", source=gatk4haplotypecaller_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for Gatk4HaplotypeCaller:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs Gatk4HaplotypeCaller > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       dbsnp: dbsnp.vcf.gz
+       inputRead: inputRead.bam
+       reference: reference.fasta
+
+
+
+
+5. Run Gatk4HaplotypeCaller with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       Gatk4HaplotypeCaller
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``Gatk4HaplotypeCaller``
+:URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_haplotypecaller_HaplotypeCaller.php# <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_haplotypecaller_HaplotypeCaller.php#>`_
+:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
+:Container: broadinstitute/gatk:4.1.2.0
+:Authors: Michael Franklin
+:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
+:Created: 2018-12-24
+:Updated: 2019-01-24
+
+
+
+Outputs
+-----------
+
+======  =============  ===================================================================================================
+name    type           documentation
+======  =============  ===================================================================================================
+out     CompressedVCF  A raw, unfiltered, highly sensitive callset in VCF format. File to which variants should be written
+======  =============  ===================================================================================================
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -99,4 +165,3 @@ useNewQualCalculator                      Optional<Boolean>        --use-new-qua
 outputFilename                            Optional<Filename>       --output                                                  8  File to which variants should be written
 intervals                                 Optional<bed>            --intervals                                                  -L (BASE) One or more genomic intervals over which to operate
 ========================================  =======================  ===============================================  ==========  =================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

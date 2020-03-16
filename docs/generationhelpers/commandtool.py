@@ -4,7 +4,7 @@ from tabulate import tabulate
 
 from janis_core import CommandTool, ToolMetadata
 
-
+from docs.generationhelpers.utils import prepare_quickstart
 from .utils import prepare_byline, format_rst_link, get_tool_url
 
 
@@ -29,11 +29,17 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
         metadata.short_documentation, metadata.contributors, versions
     )
 
+    formatted_url = (
+        format_rst_link(metadata.documentationUrl, metadata.documentationUrl)
+        if metadata.documentationUrl
+        else "*No URL to the documentation was provided*"
+    )
+
     toolmetadata = [
         t
         for t in [
             ("ID", f"``{tool.id()}``"),
-            ("Python", f"``{tool.__module__} import {tool.__class__.__name__}``"),
+            ("URL", formatted_url),
             ("Versions", ", ".join(versions)),
             ("Container", tool.container()),
             ("Authors", ", ".join(metadata.contributors)),
@@ -44,12 +50,6 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
         ]
         if t and len(t) == 2
     ]
-
-    formatted_url = (
-        format_rst_link(metadata.documentationUrl, metadata.documentationUrl)
-        if metadata.documentationUrl
-        else "*No URL to the documentation was provided*"
-    )
 
     input_headers = ["name", "type", "prefix", "position", "documentation"]
     argument_headers = ["value", "prefix", "position", "documentation"]
@@ -95,6 +95,7 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
 
     output_headers = ["name", "type", "documentation"]
     output_tuples = [[o.id(), o.outtype.id(), o.doc] for o in tool.tool_outputs()]
+    formatted_outputs = tabulate(output_tuples, output_headers, tablefmt="rst")
 
     tool_prov = ""
     if tool.tool_provider() is None:
@@ -112,27 +113,28 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
 
 {onelinedescription}
 
-{nl.join(f":{key}: {value}" for key, value in toolmetadata)}
-:Required inputs:
-{(2 * nl).join(f"   - ``{ins.id()}: {ins.input_type.id()}``" for ins in tool.inputs() if (not ins.input_type.optional and ins.default is None))}
-:Outputs: 
-{(2 * nl).join(f"   - ``{out.id()}: {out.output_type.id()}``" for out in tool.outputs())}
-
-Documentation
--------------
-
-URL: {formatted_url}
-
 {metadata.documentation if metadata.documentation else "No documentation was provided: " + format_rst_link(
     "contribute one", f"https://github.com/PMCC-BioinformaticsCore/janis-{tool.tool_module()}")}
 
-------
+{prepare_quickstart(tool)}
 
-{formatted_args}
+Information
+------------
+
+
+{nl.join(f":{key}: {value}" for key, value in toolmetadata)}
+
+
+
+Outputs
+-----------
+
+{formatted_outputs}
+
+
 
 Additional configuration (inputs)
 ---------------------------------
 
 {formatted_inputs}
-
 """

@@ -63,13 +63,12 @@ mills_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/
 4. Generate user and static input files for WGSSomaticGATK:
 
 .. code-block:: bash
-   
+
    # user inputs
    janis inputs --user WGSSomaticGATK > inputs.yaml
-    
+
    # static inputs
    janis inputs --static WGSSomaticGATK > static.yaml
-
 
 **inputs.yaml**
 
@@ -103,11 +102,11 @@ mills_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/
        snps_dbsnp: Homo_sapiens_assembly38.dbsnp138.vcf.gz
 
 
-5. Run the WGSSomaticGATK pipeline with:
+5. Run WGSSomaticGATK with:
 
 .. code-block:: bash
 
-   janis run [...workflow options] \
+   janis run [...run options] \
        --inputs inputs.yaml \
        --inputs static.yaml \
        WGSSomaticGATK
@@ -132,7 +131,6 @@ Information
 ------------
 
 :ID: ``WGSSomaticGATK``
-:Python: ``janis_pipelines.wgs_somatic_gatk.wgssomaticgatk import WGSSomaticGATK``
 :Versions: 1.2.0
 :Authors: Michael Franklin, Richard Lupat, Jiaan Yu
 :Citations: 
@@ -143,8 +141,8 @@ Embedded Tools
 ~~~~~~~~~~~~~~~~~
 
 ============================  ======================================================================================================================================
-                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10cba84e0>>``
-                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10cbb09b0>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x106824ef0>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x106829160>>``
 GATK4 Somatic Variant Caller  ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs            ``Gatk4GatherVcfs/4.1.3.0``
 BCFTools: Sort                ``bcftoolssort/v1.9``

@@ -5,34 +5,6 @@ Strelka (Germline)
 
 *1 contributor · 2 versions*
 
-:ID: ``strelka_germline``
-:Python: ``janis_bioinformatics.tools.illumina.strelkagermline.strelkagermline import StrelkaGermline_2_9_10``
-:Versions: 2.9.10, 2.9.9
-:Container: michaelfranklin/strelka:2.9.10
-:Authors: Michael Franklin
-:Citations: None
-:Created: 2018-12-24
-:Updated: 2019-01-24
-:Required inputs:
-   - ``bam: IndexedBam``
-
-   - ``reference: FastaWithIndexes``
-:Outputs: 
-   - ``configPickle: File``
-
-   - ``script: File``
-
-   - ``stats: tsv``
-
-   - ``variants: CompressedIndexedVCF``
-
-   - ``genome: CompressedIndexedVCF``
-
-Documentation
--------------
-
-URL: `https://github.com/Illumina/strelka <https://github.com/Illumina/strelka>`_
-
 Strelka2 is a fast and accurate small variant caller optimized for analysis of germline variation 
 in small cohorts and somatic variation in tumor/normal sample pairs. The germline caller employs 
 an efficient tiered haplotype model to improve accuracy and provide read-backed phasing, adaptively 
@@ -58,18 +30,103 @@ coverage over all indel sizes (in additional to SVs and SNVs).
 
 See the user guide for a full description of capabilities and limitations
 
-------
+Quickstart
+-----------
 
-Arguments
-----------
+    .. code-block:: python
 
-==================================================================  ========  ==========  ==========================================================================================================================================
-value                                                               prefix      position  documentation
-==================================================================  ========  ==========  ==========================================================================================================================================
-configureStrelkaGermlineWorkflow.py                                                    0
-<janis_core.types.selectors.StringFormatter object at 0x10ca99c18>                     2
-<janis_core.types.selectors.CpuSelector object at 0x10ca99240>      --jobs             3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
-==================================================================  ========  ==========  ==========================================================================================================================================
+       from janis_bioinformatics.tools.illumina.strelkagermline.strelkagermline import StrelkaGermline_2_9_10
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "strelka_germline_step",
+           strelka_germline(
+               bam=None,
+               reference=None,
+           )
+       )
+       wf.output("configPickle", source=strelka_germline_step.configPickle)
+   wf.output("script", source=strelka_germline_step.script)
+   wf.output("stats", source=strelka_germline_step.stats)
+   wf.output("variants", source=strelka_germline_step.variants)
+   wf.output("genome", source=strelka_germline_step.genome)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for strelka_germline:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs strelka_germline > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bam: bam.bam
+       reference: reference.fasta
+
+
+
+
+5. Run strelka_germline with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       strelka_germline
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``strelka_germline``
+:URL: `https://github.com/Illumina/strelka <https://github.com/Illumina/strelka>`_
+:Versions: 2.9.10, 2.9.9
+:Container: michaelfranklin/strelka:2.9.10
+:Authors: Michael Franklin
+:Citations: None
+:Created: 2018-12-24
+:Updated: 2019-01-24
+
+
+
+Outputs
+-----------
+
+============  ====================  ===========================================================================================================================================================================================================================================
+name          type                  documentation
+============  ====================  ===========================================================================================================================================================================================================================================
+configPickle  File
+script        File
+stats         tsv                   A tab-delimited report of various internal statistics from the variant calling process: Runtime information accumulated for each genome segment, excluding auxiliary steps such as BAM indexing and vcf merging. Indel candidacy statistics
+variants      CompressedIndexedVCF  Primary variant inferences are provided as a series of VCF 4.1 files
+genome        CompressedIndexedVCF
+============  ====================  ===========================================================================================================================================================================================================================================
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -95,4 +152,3 @@ memGb                     Optional<String>                --memGb               
 quiet                     Optional<Boolean>               --quiet                      3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
 mailTo                    Optional<String>                --mailTo                     3  (-e) send email notification of job completion status to this address (may be provided multiple times for more than one email address)
 ========================  ==============================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

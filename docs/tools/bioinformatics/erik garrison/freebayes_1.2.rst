@@ -5,34 +5,133 @@ freebayes
 
 *2 contributors · 2 versions*
 
+usage: freebayes [OPTION] ... [BAM FILE] ...
+Bayesian haplotype-based polymorphism discovery.
+Version:1.2.0
+
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.freebayes.versions import FreeBayes_1_2
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "freebayes_step",
+           freebayes(
+               bams=None,
+               reference=None,
+               theta=None,
+               ploidy=None,
+               refQual=None,
+               maxNumOfAlleles=None,
+               haplotypeLength=None,
+               minRepSize=None,
+               minRepEntropy=None,
+               useDupFlag=None,
+               minMappingQual=None,
+               minBaseQual=None,
+               minSupQsum=None,
+               minSupMQsum=None,
+               minSupBQthres=None,
+               maxMisMatchFrac=None,
+               minAltFrac=None,
+               minAltCount=None,
+               minAltQSum=None,
+               minAltTotal=None,
+               minCov=None,
+               probContamin=None,
+               genotypingMaxIter=None,
+               genotypingMaxBDepth=None,
+               postIntegrationLim=None,
+               readDepFact=None,
+           )
+       )
+       wf.output("out", source=freebayes_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for freebayes:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs freebayes > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bams:
+       - bams_0.bam
+       - bams_1.bam
+       maxNumOfAlleles: 0
+       minAltQSum: 0
+       minBaseQual: 0
+       minCov: 0
+       minSupMQsum: 0
+       minSupQsum: 0
+       reference: reference.fasta
+       useDupFlag: true
+
+
+
+
+5. Run freebayes with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       freebayes
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``freebayes``
-:Python: ``janis_bioinformatics.tools.freebayes.versions import FreeBayes_1_2``
+:URL: `https://github.com/ekg/freebayes <https://github.com/ekg/freebayes>`_
 :Versions: 1.3.1, 1.2
 :Container: papaemmelab/docker-freebayes:v0.1.5
 :Authors: Sebastian Hollizeck, Michael Franklin
 :Citations: Garrison E, Marth G. Haplotype-based variant detection from short-read sequencing. arXiv preprint arXiv:1207.3907 [q-bio.GN] 2012
 :Created: 2019-10-08
 :Updated: 2019-10-19
-:Required inputs:
-   - ``bams: Array<IndexedBam>``
-
-   - ``reference: FastaWithIndexes``
-:Outputs: 
-   - ``out: VCF``
-
-Documentation
--------------
-
-URL: `https://github.com/ekg/freebayes <https://github.com/ekg/freebayes>`_
-
-usage: freebayes [OPTION] ... [BAM FILE] ...
-Bayesian haplotype-based polymorphism discovery.
-Version:1.2.0
 
 
-------
 
-None
+Outputs
+-----------
+
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+out     VCF
+======  ======  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -112,4 +211,3 @@ useMQFlag              Optional<Boolean>   -j                                   
 harmIndelQualFlag      Optional<Boolean>   -H                                            -H --harmonic-indel-quality Use a weighted sum of base qualities around an indel, scaled by the distance from the indel. By default use a minimum BQ in flanking sequence.
 gtQuals                Optional<Boolean>   -=                                            -= --genotype-qualities Calculate the marginal probability of genotypes and report as GQ in each sample field in the VCF output.
 =====================  ==================  ================================  ==========  =============================================================================================================================================================================================================================================================================================================
-

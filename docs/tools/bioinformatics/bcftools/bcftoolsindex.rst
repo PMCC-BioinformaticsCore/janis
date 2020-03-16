@@ -5,8 +5,76 @@ BCFTools: Index
 
 *0 contributors · 1 version*
 
+Index bgzip compressed VCF/BCF files for random access.
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.bcftools.index.versions import BcfToolsIndex_1_9
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "bcftoolsindex_step",
+           bcftoolsIndex(
+               vcf=None,
+           )
+       )
+       wf.output("out", source=bcftoolsindex_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for bcftoolsIndex:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs bcftoolsIndex > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       vcf: vcf.vcf.gz
+
+
+
+
+5. Run bcftoolsIndex with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       bcftoolsIndex
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``bcftoolsIndex``
-:Python: ``janis_bioinformatics.tools.bcftools.index.versions import BcfToolsIndex_1_9``
+:URL: `https://samtools.github.io/bcftools/bcftools.html#norm <https://samtools.github.io/bcftools/bcftools.html#norm>`_
 :Versions: v1.9
 :Container: michaelfranklin/bcftools:1.9
 :Authors: 
@@ -14,21 +82,19 @@ BCFTools: Index
 :DOI: http://www.ncbi.nlm.nih.gov/pubmed/19505943
 :Created: 2019-01-24
 :Updated: None
-:Required inputs:
-   - ``vcf: CompressedVCF``
-:Outputs: 
-   - ``out: CompressedIndexedVCF``
 
-Documentation
--------------
 
-URL: `https://samtools.github.io/bcftools/bcftools.html#norm <https://samtools.github.io/bcftools/bcftools.html#norm>`_
 
-Index bgzip compressed VCF/BCF files for random access.
+Outputs
+-----------
 
-------
+======  ====================  ===============
+name    type                  documentation
+======  ====================  ===============
+out     CompressedIndexedVCF
+======  ====================  ===============
 
-None
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -45,4 +111,3 @@ threads   Optional<Integer>  --threads                sets the number of threads
 nrecords  Optional<Boolean>  --nrecords               (-n) print number of records based on existing index file
 stats     Optional<Boolean>  --stats                  (-s) print per contig stats based on existing index file
 ========  =================  ===========  ==========  ============================================================
-

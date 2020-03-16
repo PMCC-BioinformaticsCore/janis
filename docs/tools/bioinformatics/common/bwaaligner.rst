@@ -5,28 +5,100 @@ Align and sort reads
 
 *0 contributors · 1 version*
 
+Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.common.bwaaligner import BwaAligner
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "bwaaligner_step",
+           BwaAligner(
+               sample_name=None,
+               reference=None,
+               fastq=None,
+           )
+       )
+       wf.output("out", source=bwaaligner_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for BwaAligner:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs BwaAligner > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       fastq:
+       - fastq_0.fastq.gz
+       - fastq_1.fastq.gz
+       reference: reference.fasta
+       sample_name: <value>
+
+
+
+
+5. Run BwaAligner with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       BwaAligner
+
+
+
+
+
+Information
+------------
+
+URL: *No URL to the documentation was provided*
+
 :ID: ``BwaAligner``
-:Python: ``janis_bioinformatics.tools.common.bwaaligner import BwaAligner``
+:URL: *No URL to the documentation was provided*
 :Versions: 1.0.0
 :Authors: 
 :Citations: 
 :Created: 2018-12-24
 :Updated: None
-:Required inputs:
-   - ``sample_name: String``
 
-   - ``reference: FastaWithIndexes``
 
-   - ``fastq: FastqGzPair``
-:Outputs: 
-   - ``out: IndexedBam``
 
-Documentation
--------------
+Outputs
+-----------
 
-URL: *No URL to the documentation was provided*
+======  ==========  ===============
+name    type        documentation
+======  ==========  ===============
+out     IndexedBam
+======  ==========  ===============
 
-Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam
 
 Embedded Tools
 ***************
@@ -37,7 +109,7 @@ Bwa mem + Samtools View  ``BwaMemSamtoolsView/0.7.17|1.9``
 GATK4: SortSAM           ``Gatk4SortSam/4.1.3.0``
 =======================  =================================
 
-------
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -62,4 +134,4 @@ sortsam_maxRecordsInRam        Optional<Integer>        When writing SAM files t
 sortsam_tmpDir                 Optional<String>         Undocumented option
 =============================  =======================  ================================================================================================================================================================================================================================================================================================================================================================================================
 
-.
+

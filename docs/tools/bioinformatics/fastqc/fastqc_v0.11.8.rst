@@ -5,32 +5,100 @@ FastQC
 
 *1 contributor · 2 versions*
 
+FastQC is a program designed to spot potential problems in high througput sequencing datasets. It runs a set of analyses on one or more raw sequence files in fastq or bam format and produces a report which summarises the results.
+FastQC will highlight any areas where this library looks unusual and where you should take a closer look. The program is not tied to any specific type of sequencing technique and can be used to look at libraries coming from a large number of different experiment types (Genomic Sequencing, ChIP-Seq, RNA-Seq, BS-Seq etc etc).
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.babrahambioinformatics.fastqc.fastqc_0_11_8 import FastQC_0_11_8
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "fastqc_step",
+           fastqc(
+               reads=None,
+           )
+       )
+       wf.output("out", source=fastqc_step.out)
+   wf.output("datafile", source=fastqc_step.datafile)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for fastqc:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs fastqc > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       reads:
+       - reads_0.fastq.gz
+       - reads_1.fastq.gz
+
+
+
+
+5. Run fastqc with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       fastqc
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``fastqc``
-:Python: ``janis_bioinformatics.tools.babrahambioinformatics.fastqc.fastqc_0_11_8 import FastQC_0_11_8``
+:URL: `http://www.bioinformatics.babraham.ac.uk/projects/fastqc/ <http://www.bioinformatics.babraham.ac.uk/projects/fastqc/>`_
 :Versions: v0.11.8, v0.11.5
 :Container: quay.io/biocontainers/fastqc:0.11.8--1
 :Authors: Michael Franklin
 :Citations: None
 :Created: 2019-03-25
 :Updated: 2019-03-25
-:Required inputs:
-   - ``reads: FastqGzPair``
-:Outputs: 
-   - ``out: Array<Zip>``
 
-   - ``datafile: Array<File>``
 
-Documentation
--------------
 
-URL: `http://www.bioinformatics.babraham.ac.uk/projects/fastqc/ <http://www.bioinformatics.babraham.ac.uk/projects/fastqc/>`_
+Outputs
+-----------
 
-FastQC is a program designed to spot potential problems in high througput sequencing datasets. It runs a set of analyses on one or more raw sequence files in fastq or bam format and produces a report which summarises the results.
-FastQC will highlight any areas where this library looks unusual and where you should take a closer look. The program is not tied to any specific type of sequencing technique and can be used to look at libraries coming from a large number of different experiment types (Genomic Sequencing, ChIP-Seq, RNA-Seq, BS-Seq etc etc).
+========  ===========  ===============
+name      type         documentation
+========  ===========  ===============
+out       Array<Zip>
+datafile  Array<File>
+========  ===========  ===============
 
-------
 
-None
 
 Additional configuration (inputs)
 ---------------------------------
@@ -56,4 +124,3 @@ kmers         Optional<Integer>  --kmers                     (-k) Specifies the 
 quiet         Optional<Boolean>  --quiet                     (-q) Supress all progress messages on stdout and only report errors.
 dir           Optional<String>   --dir                       (-d) Selects a directory to be used for temporary files written when generating report images.Defaults to system temp directory if not specified.
 ============  =================  ==============  ==========  ========================================================================================================================================================================================================================================================================================================================================================================================================
-

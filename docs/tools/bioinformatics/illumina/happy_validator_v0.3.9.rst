@@ -5,46 +5,6 @@ Hap.py validation
 
 *1 contributor · 1 version*
 
-:ID: ``happy_validator``
-:Python: ``janis_bioinformatics.tools.illumina.happy.versions import HapPyValidator_0_3_9``
-:Versions: v0.3.9
-:Container: pkrusche/hap.py:v0.3.9
-:Authors: Michael Franklin
-:Citations: None
-:Created: 2019-05-15
-:Updated: 2019-05-15
-:Required inputs:
-   - ``truthVCF: VCF``
-
-   - ``compareVCF: VCF``
-
-   - ``reference: FastaWithIndexes``
-:Outputs: 
-   - ``extended: csv``
-
-   - ``summary: csv``
-
-   - ``metrics: File``
-
-   - ``vcf: CompressedIndexedVCF``
-
-   - ``runinfo: jsonFile``
-
-   - ``rocOut: File``
-
-   - ``indelLocations: File``
-
-   - ``indelPassLocations: File``
-
-   - ``snpLocations: File``
-
-   - ``snpPassLocations: File``
-
-Documentation
--------------
-
-URL: *No URL to the documentation was provided*
-
 usage: Haplotype Comparison 
     [-h] [-v] [-r REF] [-o REPORTS_PREFIX]
     [--scratch-prefix SCRATCH_PREFIX] [--keep-scratch]
@@ -80,9 +40,115 @@ usage: Haplotype Comparison
 positional arguments:
   _vcfs                 Two VCF files.
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.illumina.happy.versions import HapPyValidator_0_3_9
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "happy_validator_step",
+           happy_validator(
+               truthVCF=None,
+               compareVCF=None,
+               reference=None,
+           )
+       )
+       wf.output("extended", source=happy_validator_step.extended)
+   wf.output("summary", source=happy_validator_step.summary)
+   wf.output("metrics", source=happy_validator_step.metrics)
+   wf.output("vcf", source=happy_validator_step.vcf)
+   wf.output("runinfo", source=happy_validator_step.runinfo)
+   wf.output("rocOut", source=happy_validator_step.rocOut)
+   wf.output("indelLocations", source=happy_validator_step.indelLocations)
+   wf.output("indelPassLocations", source=happy_validator_step.indelPassLocations)
+   wf.output("snpLocations", source=happy_validator_step.snpLocations)
+   wf.output("snpPassLocations", source=happy_validator_step.snpPassLocations)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for happy_validator:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs happy_validator > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       compareVCF: compareVCF.vcf
+       reference: reference.fasta
+       truthVCF: truthVCF.vcf
+
+
+
+
+5. Run happy_validator with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       happy_validator
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``happy_validator``
+:URL: *No URL to the documentation was provided*
+:Versions: v0.3.9
+:Container: pkrusche/hap.py:v0.3.9
+:Authors: Michael Franklin
+:Citations: None
+:Created: 2019-05-15
+:Updated: 2019-05-15
+
+
+
+Outputs
+-----------
+
+==================  ====================  ===============
+name                type                  documentation
+==================  ====================  ===============
+extended            csv
+summary             csv
+metrics             File
+vcf                 CompressedIndexedVCF
+runinfo             jsonFile
+rocOut              File
+indelLocations      File
+indelPassLocations  File
+snpLocations        File
+snpPassLocations    File
+==================  ====================  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -144,4 +210,3 @@ logfile                   Optional<Filename>  --logfile                         
 verbose                   Optional<Boolean>   --verbose                                 Raise logging level from warning to info.
 quiet                     Optional<Boolean>   --quiet                                   Set logging level to output errors only.
 ========================  ==================  ============================  ==========  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

@@ -5,30 +5,100 @@ Strelka Germline Variant Caller
 
 *0 contributors · 1 version*
 
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.variantcallers.illuminagermline_strelka import IlluminaGermlineVariantCaller
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "strelkagermlinevariantcaller_step",
+           strelkaGermlineVariantCaller(
+               bam=None,
+               reference=None,
+           )
+       )
+       wf.output("diploid", source=strelkagermlinevariantcaller_step.diploid)
+   wf.output("variants", source=strelkagermlinevariantcaller_step.variants)
+   wf.output("out", source=strelkagermlinevariantcaller_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for strelkaGermlineVariantCaller:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs strelkaGermlineVariantCaller > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bam: bam.bam
+       reference: reference.fasta
+
+
+
+
+5. Run strelkaGermlineVariantCaller with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       strelkaGermlineVariantCaller
+
+
+
+
+
+Information
+------------
+
+URL: *No URL to the documentation was provided*
+
 :ID: ``strelkaGermlineVariantCaller``
-:Python: ``janis_bioinformatics.tools.variantcallers.illuminagermline_strelka import IlluminaGermlineVariantCaller``
+:URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Authors: 
 :Citations: 
 :Created: None
 :Updated: None
-:Required inputs:
-   - ``bam: IndexedBam``
 
-   - ``reference: FastaWithIndexes``
-:Outputs: 
-   - ``diploid: CompressedIndexedVCF``
 
-   - ``variants: CompressedIndexedVCF``
 
-   - ``out: VCF``
+Outputs
+-----------
 
-Documentation
--------------
+========  ====================  ===============
+name      type                  documentation
+========  ====================  ===============
+diploid   CompressedIndexedVCF
+variants  CompressedIndexedVCF
+out       VCF
+========  ====================  ===============
 
-URL: *No URL to the documentation was provided*
-
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
 Embedded Tools
 ***************
@@ -40,7 +110,7 @@ BCFTools: View          ``bcftoolsview/v1.5``
 Split Multiple Alleles  ``SplitMultiAllele/v0.5772``
 ======================  ============================
 
-------
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -55,4 +125,4 @@ is_exome              Optional<Boolean>
 bcfview_applyFilters  Optional<Array<String>>  (-f) require at least one of the listed FILTER strings (e.g. 'PASS,.'')
 ====================  =======================  =======================================================================
 
-.
+

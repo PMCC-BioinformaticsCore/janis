@@ -5,29 +5,96 @@ GATK4: SplitReads
 
 *0 contributors · 3 versions*
 
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.gatk4.splitreads.versions import Gatk4SplitReads_4_1_4
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "gatk4splitreads_step",
+           Gatk4SplitReads(
+               outputFilename=None,
+               bam=None,
+           )
+       )
+       wf.output("out", source=gatk4splitreads_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for Gatk4SplitReads:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs Gatk4SplitReads > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bam: bam.bam
+
+
+
+
+5. Run Gatk4SplitReads with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       Gatk4SplitReads
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``Gatk4SplitReads``
-:Python: ``janis_bioinformatics.tools.gatk4.splitreads.versions import Gatk4SplitReads_4_1_4``
+:URL: *No URL to the documentation was provided*
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
 :Container: broadinstitute/gatk:4.1.4.0
 :Authors: 
 :Citations: None
 :Created: None
 :Updated: None
-:Required inputs:
-   - ``bam: IndexedBam``
-:Outputs: 
-   - ``out: IndexedBam``
 
-Documentation
--------------
 
-URL: *No URL to the documentation was provided*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+Outputs
+-----------
 
-------
+======  ==========  ===============
+name    type        documentation
+======  ==========  ===============
+out     IndexedBam  Bam
+======  ==========  ===============
 
-None
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -98,4 +165,3 @@ invertSoftClipRatioFilter            Optional<Boolean>           --invert-soft-c
 softClippedLeadingTrailingRatio      Optional<Double>            --soft-clipped-leading-trailing-ratio                Threshold ratio of soft clipped bases (leading / trailing the cigar string) to total bases in read for read to be filtered.  Default value: null.  Cannot be used in conjuction with argument(s) minimumSoftClippedRatio
 softClippedRatioThreshold            Optional<Double>            --soft-clipped-ratio-threshold                       Threshold ratio of soft clipped bases (anywhere in the cigar string) to total bases in read for read to be filtered.  Default value: null.  Cannot be used in conjuction with argument(s) minimumLeadingTrailingSoftClippedRatio
 ===================================  ==========================  =======================================  ==========  ======================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

@@ -5,40 +5,97 @@ BamSorMaDup
 
 *1 contributor · 1 version*
 
+bamsormadup: parallel sorting and duplicate marking
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.biobambam.bamsormadup.versions import BamSorMaDup_2_0_87
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "bamsormadup_step",
+           bamsormadup(
+               alignedReads=None,
+           )
+       )
+       wf.output("out", source=bamsormadup_step.out)
+   wf.output("metrics", source=bamsormadup_step.metrics)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for bamsormadup:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs bamsormadup > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       alignedReads: alignedReads.bam
+
+
+
+
+5. Run bamsormadup with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       bamsormadup
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``bamsormadup``
-:Python: ``janis_bioinformatics.tools.biobambam.bamsormadup.versions import BamSorMaDup_2_0_87``
+:URL: `https://gitlab.com/german.tischler/biobambam2 <https://gitlab.com/german.tischler/biobambam2>`_
 :Versions: 2.0.87
 :Container: quay.io/biocontainers/biobambam:2.0.87--1
 :Authors: Matthias De Smet (@mattdsm)
 :Citations: None
 :Created: 2020-02-26
 :Updated: 2020-02-26
-:Required inputs:
-   - ``alignedReads: BAM``
-:Outputs: 
-   - ``out: stdout<BAM>``
 
-   - ``metrics: File``
 
-Documentation
--------------
 
-URL: `https://gitlab.com/german.tischler/biobambam2 <https://gitlab.com/german.tischler/biobambam2>`_
+Outputs
+-----------
 
-bamsormadup: parallel sorting and duplicate marking
+=======  ===========  ===============
+name     type         documentation
+=======  ===========  ===============
+out      stdout<BAM>
+metrics  File
+=======  ===========  ===============
 
-------
 
-Arguments
-----------
-
-===========  =============  ==========  ==============================================
-value        prefix           position  documentation
-===========  =============  ==========  ==============================================
-metrics.txt  M=                      0  file containing metrics from duplicate removal
-bam          inputformat=            0  input data format
-bam          outputFormat=           0  output data format
-===========  =============  ==========  ==============================================
 
 Additional configuration (inputs)
 ---------------------------------
@@ -54,4 +111,3 @@ threads         Optional<Integer>   threads=                     Number of threa
 sortOrder       Optional<String>    SO=                          output sort order(coordinate by default)
 optMinPixelDif  Optional<Integer>   optminpixeldif=              pixel difference threshold for optical duplicates (patterned flowcell: 12000, unpatterned flowcell: 2500)
 ==============  ==================  ===============  ==========  =========================================================================================================
-

@@ -5,25 +5,6 @@ Cutadapt
 
 *1 contributor · 4 versions*
 
-:ID: ``cutadapt``
-:Python: ``janis_bioinformatics.tools.cutadapt.versions import CutAdapt_2_6``
-:Versions: 2.6, 2.5, 2.4, 1.18
-:Container: quay.io/biocontainers/cutadapt:2.6--py36h516909a_0
-:Authors: Michael Franklin
-:Citations: Martin, Marcel. “Cutadapt Removes Adapter Sequences from High-Throughput Sequencing Reads.” EMBnet.journal, vol. 17, no. 1, EMBnet Stichting, May 2011, p. 10. Crossref, doi:10.14806/ej.17.1.200.
-:DOI: DOI:10.14806/ej.17.1.200
-:Created: 2019-03-21
-:Updated: 2019-07-23
-:Required inputs:
-   - ``fastq: FastqGzPair``
-:Outputs: 
-   - ``out: FastqGzPair``
-
-Documentation
--------------
-
-URL: `https://cutadapt.readthedocs.io/en/stable/ <https://cutadapt.readthedocs.io/en/stable/>`_
-
 cutadapt version 2.4
 Copyright (C) 2010-2019 Marcel Martin <marcel.martin@scilifelab.se>
 cutadapt removes adapter sequences from high-throughput sequencing reads.
@@ -48,9 +29,96 @@ Run "cutadapt - -help" to see all command-line options.
 See https://cutadapt.readthedocs.io/ for full documentation.
 
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.cutadapt.versions import CutAdapt_2_6
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "cutadapt_step",
+           cutadapt(
+               fastq=None,
+           )
+       )
+       wf.output("out", source=cutadapt_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for cutadapt:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs cutadapt > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       fastq:
+       - fastq_0.fastq.gz
+       - fastq_1.fastq.gz
+
+
+
+
+5. Run cutadapt with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       cutadapt
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``cutadapt``
+:URL: `https://cutadapt.readthedocs.io/en/stable/ <https://cutadapt.readthedocs.io/en/stable/>`_
+:Versions: 2.6, 2.5, 2.4, 1.18
+:Container: quay.io/biocontainers/cutadapt:2.6--py36h516909a_0
+:Authors: Michael Franklin
+:Citations: Martin, Marcel. “Cutadapt Removes Adapter Sequences from High-Throughput Sequencing Reads.” EMBnet.journal, vol. 17, no. 1, EMBnet Stichting, May 2011, p. 10. Crossref, doi:10.14806/ej.17.1.200.
+:DOI: DOI:10.14806/ej.17.1.200
+:Created: 2019-03-21
+:Updated: 2019-07-23
+
+
+
+Outputs
+-----------
+
+======  ===========  ===============
+name    type         documentation
+======  ===========  ===============
+out     FastqGzPair
+======  ===========  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -108,4 +176,3 @@ untrimmedPairedOutput       Optional<String>         --untrimmed-paired-output  
 tooShortPairedOutput        Optional<String>         --too-short-paired-output                 Write second read in a pair to this file if pair is too short. Use also --too-short-output.
 tooLongPairedOutput         Optional<String>         --too-long-paired-output                  Write second read in a pair to this file if pair is too long. Use also --too-long-output.
 ==========================  =======================  ============================  ==========  ===========================================================================================================================================================================================================================================================================================================================================================================================================
-

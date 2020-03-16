@@ -5,26 +5,6 @@ BWA-MEM
 
 *1 contributor · 1 version*
 
-:ID: ``bwamem``
-:Python: ``janis_bioinformatics.tools.bwa.mem.versions import BwaMem_0_7_15``
-:Versions: v0.7.15
-:Container: biocontainers/bwa:v0.7.15_cv3
-:Authors: Michael Franklin
-:Citations: The BWA-MEM algorithm has not been published yet.
-:Created: 2018-12-24
-:Updated: 2019-07-23
-:Required inputs:
-   - ``reference: FastaFai``
-
-   - ``reads: FastqGzPair``
-:Outputs: 
-   - ``out: stdout<SAM>``
-
-Documentation
--------------
-
-URL: `http://bio-bwa.sourceforge.net/bwa.shtml#3 <http://bio-bwa.sourceforge.net/bwa.shtml#3>`_
-
 bwa - Burrows-Wheeler Alignment Tool
 BWA is a software package for mapping low-divergent sequences against a large reference genome, such as the human 
 genome. It consists of three algorithms: BWA-backtrack, BWA-SW and BWA-MEM. The first algorithm is designed for 
@@ -46,9 +26,97 @@ The BWA-MEM algorithm performs local alignment. It may produce multiple primary 
 query sequence. This is a crucial feature for long sequences. However, some tools such as Picard’s markDuplicates 
 does not work with split alignments. One may consider to use option -M to flag shorter split hits as secondary.
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.bwa.mem.versions import BwaMem_0_7_15
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "bwamem_step",
+           bwamem(
+               reference=None,
+               reads=None,
+           )
+       )
+       wf.output("out", source=bwamem_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for bwamem:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs bwamem > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       reads:
+       - reads_0.fastq.gz
+       - reads_1.fastq.gz
+       reference: reference.fasta
+
+
+
+
+5. Run bwamem with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       bwamem
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``bwamem``
+:URL: `http://bio-bwa.sourceforge.net/bwa.shtml#3 <http://bio-bwa.sourceforge.net/bwa.shtml#3>`_
+:Versions: v0.7.15
+:Container: biocontainers/bwa:v0.7.15_cv3
+:Authors: Michael Franklin
+:Citations: The BWA-MEM algorithm has not been published yet.
+:Created: 2018-12-24
+:Updated: 2019-07-23
+
+
+
+Outputs
+-----------
+
+======  ===========  ===============
+name    type         documentation
+======  ===========  ===============
+out     stdout<SAM>
+======  ===========  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -82,4 +150,3 @@ hardClipping                 Optional<Boolean>      -H                    Use ha
 markShorterSplits            Optional<Boolean>      -M                    Mark shorter split hits as secondary (for Picard compatibility).
 verboseLevel                 Optional<Integer>      -v                    Control the verbose level of the output. This option has not been fully supported throughout BWA. Ideally, a value: 0 for disabling all the output to stderr; 1 for outputting errors only; 2 for warnings and errors; 3 for all normal messages; 4 or higher for debugging. When this option takes value 4, the output is not SAM. (Default: 3)
 ===========================  =====================  ========  ==========  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

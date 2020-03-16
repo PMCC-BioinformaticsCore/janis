@@ -5,36 +5,6 @@ Strelka (Somatic)
 
 *0 contributors · 2 versions*
 
-:ID: ``strelka_somatic``
-:Python: ``janis_bioinformatics.tools.illumina.strelkasomatic.strelkasomatic import StrelkaSomatic_2_9_10``
-:Versions: 2.9.10, 2.9.9
-:Container: michaelfranklin/strelka:2.9.10
-:Authors: 
-:Citations: None
-:Created: 2019-05-27
-:Updated: 2019-10-10
-:Required inputs:
-   - ``normalBam: IndexedBam``
-
-   - ``tumorBam: IndexedBam``
-
-   - ``reference: FastaWithIndexes``
-:Outputs: 
-   - ``configPickle: File``
-
-   - ``script: File``
-
-   - ``stats: tsv``
-
-   - ``indels: CompressedIndexedVCF``
-
-   - ``snvs: CompressedIndexedVCF``
-
-Documentation
--------------
-
-URL: *No URL to the documentation was provided*
-
 Usage: configureStrelkaSomaticWorkflow.py [options]
 Version: 2.9.10
 This script configures Strelka somatic small variant calling.
@@ -42,18 +12,105 @@ You must specify an alignment file (BAM or CRAM) for each sample of a matched tu
 Configuration will produce a workflow run script which can execute the workflow on a single node or through
 sge and resume any interrupted execution.
 
-------
+Quickstart
+-----------
 
-Arguments
-----------
+    .. code-block:: python
 
-==================================================================  ========  ==========  ==========================================================================================================================================
-value                                                               prefix      position  documentation
-==================================================================  ========  ==========  ==========================================================================================================================================
-configureStrelkaSomaticWorkflow.py                                                     0
-<janis_core.types.selectors.StringFormatter object at 0x10ca99b38>                     2
-<janis_core.types.selectors.CpuSelector object at 0x10ca99978>      --jobs             3  (-j JOBS)  number of jobs, must be an integer or 'unlimited' (default: Estimate total cores on this node for local mode, 128 for sge mode)
-==================================================================  ========  ==========  ==========================================================================================================================================
+       from janis_bioinformatics.tools.illumina.strelkasomatic.strelkasomatic import StrelkaSomatic_2_9_10
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "strelka_somatic_step",
+           strelka_somatic(
+               normalBam=None,
+               tumorBam=None,
+               reference=None,
+           )
+       )
+       wf.output("configPickle", source=strelka_somatic_step.configPickle)
+   wf.output("script", source=strelka_somatic_step.script)
+   wf.output("stats", source=strelka_somatic_step.stats)
+   wf.output("indels", source=strelka_somatic_step.indels)
+   wf.output("snvs", source=strelka_somatic_step.snvs)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for strelka_somatic:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs strelka_somatic > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       normalBam: normalBam.bam
+       reference: reference.fasta
+       tumorBam: tumorBam.bam
+
+
+
+
+5. Run strelka_somatic with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       strelka_somatic
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``strelka_somatic``
+:URL: *No URL to the documentation was provided*
+:Versions: 2.9.10, 2.9.9
+:Container: michaelfranklin/strelka:2.9.10
+:Authors: 
+:Citations: None
+:Created: 2019-05-27
+:Updated: 2019-10-10
+
+
+
+Outputs
+-----------
+
+============  ====================  ===========================================================================================================================================================================================================================================
+name          type                  documentation
+============  ====================  ===========================================================================================================================================================================================================================================
+configPickle  File
+script        File
+stats         tsv                   A tab-delimited report of various internal statistics from the variant calling process: Runtime information accumulated for each genome segment, excluding auxiliary steps such as BAM indexing and vcf merging. Indel candidacy statistics
+indels        CompressedIndexedVCF
+snvs          CompressedIndexedVCF
+============  ====================  ===========================================================================================================================================================================================================================================
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -86,4 +143,3 @@ queue                  Optional<String>                       --queue           
 memGb                  Optional<String>                       --memGb                            3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
 quiet                  Optional<Boolean>                      --quiet                            3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
 =====================  =====================================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

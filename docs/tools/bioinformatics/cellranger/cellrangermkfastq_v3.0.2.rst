@@ -5,29 +5,95 @@ CellRanger mkfastq
 
 *0 contributors · 1 version*
 
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.cellranger.mkfastq.versions import CellRangerMkfastq_3_0_2
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "cellrangermkfastq_step",
+           CellRangerMkfastq(
+               run=None,
+           )
+       )
+       wf.output("out", source=cellrangermkfastq_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for CellRangerMkfastq:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs CellRangerMkfastq > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       run: null
+
+
+
+
+5. Run CellRangerMkfastq with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       CellRangerMkfastq
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``CellRangerMkfastq``
-:Python: ``janis_bioinformatics.tools.cellranger.mkfastq.versions import CellRangerMkfastq_3_0_2``
+:URL: *No URL to the documentation was provided*
 :Versions: v3.0.2
 :Container: fbrundu/cellranger:v3.0.2
 :Authors: 
 :Citations: None
 :Created: None
 :Updated: None
-:Required inputs:
-   - ``run: Directory``
-:Outputs: 
-   - ``out: Directory``
 
-Documentation
--------------
 
-URL: *No URL to the documentation was provided*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+Outputs
+-----------
 
-------
+======  =========  ===============
+name    type       documentation
+======  =========  ===============
+out     Directory
+======  =========  ===============
 
-None
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -50,4 +116,3 @@ localcores          Optional<Integer>        --localcores=                      
 localmem            Optional<Float>          --localmem=                        Set max GB the pipeline may request at one time. Only applies when --jobmode=local.
 nopreflight         Optional<Boolean>        --nopreflight                      Skip preflight checks.
 ==================  =======================  =====================  ==========  ================================================================================================================================================================================================================================================================================
-

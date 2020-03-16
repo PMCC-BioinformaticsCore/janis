@@ -5,41 +5,97 @@ scramble
 
 *1 contributor · 1 version*
 
+scramble: streaming bam to cram compression
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.io_lib.scramble.versions import Scramble_1_14_1_2
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "scramble_step",
+           scramble(
+               inputFilename=None,
+               reference=None,
+           )
+       )
+       wf.output("out", source=scramble_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for scramble:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs scramble > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       inputFilename: inputFilename.bam
+       reference: reference.fasta
+
+
+
+
+5. Run scramble with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       scramble
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``scramble``
-:Python: ``janis_bioinformatics.tools.io_lib.scramble.versions import Scramble_1_14_1_2``
+:URL: `https://github.com/jkbonfield/io_lib/ <https://github.com/jkbonfield/io_lib/>`_
 :Versions: 1.14.12
 :Container: quay.io/biocontainers/staden_io_lib:1.14.12--h244ad75_0
 :Authors: Matthias De Smet (@mattdsm)
 :Citations: None
 :Created: 2020-02-27
 :Updated: 2020-02-27
-:Required inputs:
-   - ``inputFilename: BAM``
 
-   - ``reference: FastaFai``
-:Outputs: 
-   - ``out: stdout<CRAM>``
 
-Documentation
--------------
 
-URL: `https://github.com/jkbonfield/io_lib/ <https://github.com/jkbonfield/io_lib/>`_
+Outputs
+-----------
 
-scramble: streaming bam to cram compression
+======  ============  ===============
+name    type          documentation
+======  ============  ===============
+out     stdout<CRAM>
+======  ============  ===============
 
-------
 
-Arguments
-----------
-
-=======  ========  ==========  ===========================================================
-value    prefix      position  documentation
-=======  ========  ==========  ===========================================================
-bam      -I                 0  input data format
-cram     -O                 0  output data format
--9                          0  compression settings for output cram file (-1=fast,-9=best)
-3.0      -V                 0  Cram version to output
-=======  ========  ==========  ===========================================================
 
 Additional configuration (inputs)
 ---------------------------------
@@ -67,4 +123,3 @@ decodeStop                  Optional<Integer>   -N                    Stop decod
 threads                     Optional<Integer>   -t                    Number of threads. (default = 1)
 enableQualityBinning        Optional<Integer>   -B                    Enable Illumina 8 quality-binning system (lossy).
 ==========================  ==================  ========  ==========  =================================================
-

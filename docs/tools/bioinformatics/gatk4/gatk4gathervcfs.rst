@@ -5,32 +5,100 @@ GATK4: Gather VCFs
 
 *1 contributor · 4 versions*
 
+GatherVcfs (Picard)
+            
+Gathers multiple VCF files from a scatter operation into a single VCF file. 
+Input files must be supplied in genomic order and must not have events at overlapping positions.
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.gatk4.gathervcfs.versions import Gatk4GatherVcfs_4_1_4
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "gatk4gathervcfs_step",
+           Gatk4GatherVcfs(
+               vcfs=None,
+           )
+       )
+       wf.output("out", source=gatk4gathervcfs_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for Gatk4GatherVcfs:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs Gatk4GatherVcfs > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       vcfs:
+       - vcfs_0.vcf
+       - vcfs_1.vcf
+
+
+
+
+5. Run Gatk4GatherVcfs with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       Gatk4GatherVcfs
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``Gatk4GatherVcfs``
-:Python: ``janis_bioinformatics.tools.gatk4.gathervcfs.versions import Gatk4GatherVcfs_4_1_4``
+:URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.12.0/picard_vcf_GatherVcfs.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.12.0/picard_vcf_GatherVcfs.php>`_
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.1.4.0
 :Authors: Michael Franklin
 :Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
 :Created: 2018-05-01
 :Updated: 2019-05-01
-:Required inputs:
-   - ``vcfs: Array<VCF>``
-:Outputs: 
-   - ``out: VCF``
 
-Documentation
--------------
 
-URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.12.0/picard_vcf_GatherVcfs.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.12.0/picard_vcf_GatherVcfs.php>`_
 
-GatherVcfs (Picard)
-            
-Gathers multiple VCF files from a scatter operation into a single VCF file. 
-Input files must be supplied in genomic order and must not have events at overlapping positions.
+Outputs
+-----------
 
-------
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+out     VCF
+======  ======  ===============
 
-None
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -54,4 +122,3 @@ useJdkInflater        Optional<Boolean>      --USE_JDK_INFLATER                 
 validationStringency  Optional<String>       --VALIDATION_STRINGENCY              [default: STRICT] Validation stringency for all SAM files read by this program. Setting stringency to SILENT can improve performance when processing a BAM file in which variable-length data (read, qualities, tags) do not otherwise need to be decoded.
 verbosity             Optional<Boolean>      --VERBOSITY                          [default: INFO] Control verbosity of logging.
 ====================  =====================  =======================  ==========  ======================================================================================================================================================================================================================================================================
-

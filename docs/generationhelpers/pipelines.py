@@ -1,22 +1,9 @@
+from typing import List
+
+from janis_core import WorkflowMetadata, Workflow
 from tabulate import tabulate
-from ruamel.yaml import comments, round_trip_dump
 
-from typing import List, Dict, Union
-
-from janis_core import (
-    WorkflowMetadata,
-    Workflow,
-    Array,
-    File,
-    DataType,
-    String,
-    Int,
-    Float,
-    Boolean,
-    InputQualityType,
-)
-from janis_core.translations import CwlTranslator
-
+from docs.generationhelpers.utils import prepare_run_instructions
 from .utils import prepare_byline, format_rst_link, get_tool_url, version_html
 
 
@@ -57,179 +44,6 @@ def generate_pipeline_box(workflow: Workflow, leading_space=""):
     )
 
 
-def prepare_run_instructions(workflow: Workflow, metadata: WorkflowMetadata):
-
-    has_array_of_arrays_inps = True
-    bla = any(
-        (isinstance(i.intype, Array) and isinstance(i.intype.subtype(), Array))
-        for i in workflow.tool_inputs()
-    )
-
-    static_input_tuples = [
-        [i.id(), i.intype.id(), i.doc.example, i.doc.doc]
-        for i in workflow.tool_inputs()
-        if i.doc.quality == InputQualityType.static
-    ]
-
-    reference_information = ""
-
-    if len(static_input_tuples) > 0:
-        static_input_headers = ["Name", "Type", "Example", "Description"]
-        reference_information = tabulate(
-            static_input_tuples, headers=static_input_headers, tablefmt="rst"
-        )
-
-    overrides = metadata.sample_input_overrides or {}
-    user_inps = {}
-    other_inps = {}
-
-    for i in workflow.tool_inputs():
-        if i.intype.optional or i.default:
-            continue
-
-        val = (
-            overrides.get(i.id())
-            if i.id() in overrides
-            else prepare_default_for_type(i.id(), i.intype)
-        )
-        if i.doc and i.doc.quality != InputQualityType.user:
-            other_inps[i.id()] = val
-        else:
-            user_inps[i.id()] = val
-        # if i.doc:
-        #     inps.yaml_set_comment_before_after_key(i.id(), i.doc)
-
-    if has_array_of_arrays_inps:
-        return prepare_run_instructions_input_file(
-            workflow, user_inps, other_inps, reference_information
-        )
-    else:
-        return prepare_run_instructions_cli(workflow, user_inps, reference_information)
-
-
-def prepare_default_for_type(identifier: str, t: DataType, idx=None):
-    if isinstance(t, Array):
-        st = t.subtype()
-        return [
-            prepare_default_for_type(identifier, st, 0),
-            prepare_default_for_type(identifier, st, 1),
-        ]
-    elif isinstance(t, File):
-        return (
-            identifier
-            + ("_" + str(idx) if idx is not None else "")
-            + str(t.extension or "")
-        )
-
-    elif isinstance(t, String):
-        return "<value>"
-    elif isinstance(t, Int):
-        return 0
-    elif isinstance(t, Float):
-        return 0.0
-    elif isinstance(t, Boolean):
-        return True
-    return None
-
-
-def prepare_run_instructions_input_file(
-    workflow: Workflow, user_inps: dict, other_inps: dict, reference_information: str
-):
-    yaml_user_inps = CwlTranslator.stringify_translated_inputs(user_inps)
-    yaml_other_inps = CwlTranslator.stringify_translated_inputs(other_inps)
-    indented_user = "".join(" " * 7 + s for s in yaml_user_inps.splitlines(True))
-    indented_other = "".join(" " * 7 + s for s in yaml_other_inps.splitlines(True))
-
-    return f"""\
-1. `Install Janis </tutorials/tutorial0.html>`_
-
-2. Ensure Janis is configured to work with Docker or Singularity.
-
-3. Ensure all reference files are available:
-
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-{reference_information}
-
-4. Generate user and static input files for {workflow.id()}:
-
-.. code-block:: bash
-   
-   # user inputs
-   janis inputs --user {workflow.id()} > inputs.yaml
-    
-   # static inputs
-   janis inputs --static {workflow.id()} > static.yaml
-
-
-**inputs.yaml**
-
-.. code-block:: yaml
-
-{indented_user}
-
-**static.yaml**
-
-.. code-block:: yaml
-
-{indented_other}
-
-5. Run the {workflow.id()} pipeline with:
-
-.. code-block:: bash
-
-   janis run [...workflow options] \\
-       --inputs inputs.yaml \\
-       --inputs static.yaml \\
-       {workflow.id()}
-
-"""
-
-
-def prepare_run_instructions_cli(
-    workflow: Workflow, user_inps: dict, other_inps: dict, reference_information: str
-):
-
-    sp = 7 * " "
-    cli = []
-    iters = [*list(user_inps.items()), *list(other_inps.items())]
-    for k, v in iters:
-        vv = v
-        if isinstance(v, bool):
-            cli.append("--" + k)
-        else:
-            if isinstance(v, list):
-                vv = " ".join(str(v))
-            cli.append("--" + k + " " + str(vv))
-
-    clis = (" \\\n" + sp).join(cli)
-
-    return f"""\
-1. `Install Janis </tutorials/tutorial0.html>`_
-
-2. Ensure Janis is configured to work with Docker or Singularity.
-
-3. Ensure all reference files are available:
-
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-{reference_information}
-
-4. In your terminal, you can run the workflow with the following command:
-
-.. code-block:: bash
-
-   janis run [...workflow options] {workflow.id()} \\
-       {clis}
-
-See below for documentation for each input.
-"""
-
-
 def prepare_published_pipeline_page(workflow: Workflow, versions: List[str]):
     if not workflow:
         return None
@@ -255,7 +69,6 @@ def prepare_published_pipeline_page(workflow: Workflow, versions: List[str]):
 
     toolmetadata = [
         ("ID", f"``{workflow.id()}``"),
-        ("Python", f"``{workflow.__module__} import {workflow.__class__.__name__}``"),
         ("Versions", ", ".join(str(s) for s in versions[::-1]) if versions else ""),
         ("Authors", ", ".join(metadata.contributors)),
         ("Citations", citation),
@@ -361,7 +174,7 @@ Workflow
 Quickstart
 -----------
 
-{prepare_run_instructions(workflow, metadata)}
+{prepare_run_instructions(workflow)}
 
 Outputs
 -----------

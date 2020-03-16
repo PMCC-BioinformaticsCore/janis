@@ -5,24 +5,6 @@ Tabix
 
 *1 contributor · 2 versions*
 
-:ID: ``tabix``
-:Python: ``janis_bioinformatics.tools.htslib.tabix.tabix_1_9 import Tabix_1_9``
-:Versions: 1.9, 1.2.1
-:Container: quay.io/biocontainers/htslib:1.9--ha228f0b_7
-:Authors: Michael Franklin
-:Citations: None
-:Created: 2018-12-24
-:Updated: 2019-01-24
-:Required inputs:
-   - ``file: CompressedVCF``
-:Outputs: 
-   - ``out: CompressedIndexedVCF``
-
-Documentation
--------------
-
-URL: `http://www.htslib.org/doc/tabix.html <http://www.htslib.org/doc/tabix.html>`_
-
 tabix – Generic indexer for TAB-delimited genome position files
 
 Tabix indexes a TAB-delimited genome position file in.tab.bgz and creates an index file (in.tab.bgz.tbi or 
@@ -35,9 +17,93 @@ After indexing, tabix is able to quickly retrieve data lines overlapping regions
 Fast data retrieval also works over network if URI is given as a file name and in this case the 
 index file will be downloaded if it is not present locally.
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.htslib.tabix.tabix_1_9 import Tabix_1_9
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "tabix_step",
+           tabix(
+               file=None,
+           )
+       )
+       wf.output("out", source=tabix_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for tabix:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs tabix > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       file: file.vcf.gz
+
+
+
+
+5. Run tabix with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       tabix
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``tabix``
+:URL: `http://www.htslib.org/doc/tabix.html <http://www.htslib.org/doc/tabix.html>`_
+:Versions: 1.9, 1.2.1
+:Container: quay.io/biocontainers/htslib:1.9--ha228f0b_7
+:Authors: Michael Franklin
+:Citations: None
+:Created: 2018-12-24
+:Updated: 2019-01-24
+
+
+
+Outputs
+-----------
+
+======  ====================  ===============
+name    type                  documentation
+======  ====================  ===============
+out     CompressedIndexedVCF
+======  ====================  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -63,4 +129,3 @@ reheader     Optional<File>     --reheader               1  -r: Replace the head
 regions      Optional<File>     --regions               11  -R: Restrict to regions listed in the FILE. The FILE can be BED file (requires .bed, .bed.gz, .bed.bgz file name extension) or a TAB-delimited file with CHROM, POS, and, optionally, POS_TO columns, where positions are 1-based and inclusive. When this option is in use, the input file may not be sorted.
 targets      Optional<File>     --targets               11  -T: Similar to -R but the entire input will be read sequentially and regions not listed in FILE will be skipped
 ===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
-

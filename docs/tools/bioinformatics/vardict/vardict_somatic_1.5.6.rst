@@ -5,52 +5,105 @@ Vardict (Somatic)
 
 *0 contributors · 5 versions*
 
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_5_6
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "vardict_somatic_step",
+           vardict_somatic(
+               tumorBam=None,
+               normalBam=None,
+               intervals=None,
+               reference=None,
+               tumorName=None,
+               normalName=None,
+           )
+       )
+       wf.output("out", source=vardict_somatic_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for vardict_somatic:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs vardict_somatic > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       intervals: intervals.bed
+       normalBam: normalBam.bam
+       normalName: <value>
+       reference: reference.fasta
+       tumorBam: tumorBam.bam
+       tumorName: <value>
+
+
+
+
+5. Run vardict_somatic with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       vardict_somatic
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``vardict_somatic``
-:Python: ``janis_bioinformatics.tools.vardict.vardictsomatic import VarDictSomatic_1_5_6``
+:URL: *No URL to the documentation was provided*
 :Versions: 1.7.0, 1.6.0, 1.5.8, 1.5.7, 1.5.6
 :Container: michaelfranklin/vardict:1.5.6
 :Authors: 
 :Citations: None
 :Created: None
 :Updated: None
-:Required inputs:
-   - ``tumorBam: IndexedBam``
 
-   - ``normalBam: IndexedBam``
 
-   - ``intervals: bed``
 
-   - ``reference: FastaFai``
+Outputs
+-----------
 
-   - ``tumorName: String``
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+out     VCF
+======  ======  ===============
 
-   - ``normalName: String``
-:Outputs: 
-   - ``out: VCF``
 
-Documentation
--------------
-
-URL: *No URL to the documentation was provided*
-
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
-
-------
-
-Arguments
-----------
-
-==================================================================  ========  ==========  ===============
-value                                                               prefix      position  documentation
-==================================================================  ========  ==========  ===============
-| testsomatic.R |                                                                      3
-var2vcf_paired.pl                                                                      4
-<janis_core.types.selectors.StringFormatter object at 0x10ca999b0>  -b                 1
-<janis_core.types.selectors.InputSelector object at 0x10ca99518>    -N                 1
-<janis_core.types.selectors.StringFormatter object at 0x10ca992b0>  -N                 5
-<janis_core.types.selectors.InputSelector object at 0x10ca996a0>    -f                 5
-<janis_core.types.selectors.InputSelector object at 0x10ca997b8>    -f                 1
-==================================================================  ========  ==========  ===============
 
 Additional configuration (inputs)
 ---------------------------------
@@ -106,4 +159,3 @@ yy                       Optional<Boolean>   -y                 1  <No content>
 downsamplingFraction     Optional<Integer>   -Z                 1  For downsampling fraction.  e.g. 0.7 means roughly 70% downsampling.  Default: No downsampling.  Use with caution.  The downsampling will be random and non-reproducible.
 zeroBasedCoords          Optional<Integer>   -z                 1  0/1  Indicate whether coordinates are zero-based, as IGV uses.  Default: 1 for BED file or amplicon BED file. Use 0 to turn it off. When using the -R option, it's set to 0
 =======================  ==================  ========  ==========  ==================================================================================================================================================================================================================================================================================
-

@@ -5,29 +5,97 @@ GATK4: Merge SAM Files
 
 *1 contributor · 4 versions*
 
+Merges multiple SAM/BAM files into one file
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.gatk4.mergesamfiles.versions import Gatk4MergeSamFiles_4_1_3
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "gatk4mergesamfiles_step",
+           Gatk4MergeSamFiles(
+               bams=None,
+           )
+       )
+       wf.output("out", source=gatk4mergesamfiles_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for Gatk4MergeSamFiles:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs Gatk4MergeSamFiles > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bams:
+       - bams_0.bam
+       - bams_1.bam
+
+
+
+
+5. Run Gatk4MergeSamFiles with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       Gatk4MergeSamFiles
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``Gatk4MergeSamFiles``
-:Python: ``janis_bioinformatics.tools.gatk4.mergesamfiles.versions import Gatk4MergeSamFiles_4_1_3``
+:URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_MergeSamFiles.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_MergeSamFiles.php>`_
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.1.3.0
 :Authors: Michael Franklin
 :Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
 :Created: 2018-12-24
 :Updated: 2019-01-24
-:Required inputs:
-   - ``bams: Array<IndexedBam>``
-:Outputs: 
-   - ``out: IndexedBam``
 
-Documentation
--------------
 
-URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_MergeSamFiles.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.beta.3/org_broadinstitute_hellbender_tools_picard_sam_MergeSamFiles.php>`_
 
-Merges multiple SAM/BAM files into one file
+Outputs
+-----------
 
-------
+======  ==========  ===============
+name    type        documentation
+======  ==========  ===============
+out     IndexedBam
+======  ==========  ===============
 
-None
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -55,4 +123,3 @@ useJdkInflater             Optional<Boolean>           --use_jdk_inflater       
 validationStringency       Optional<String>            --VALIDATION_STRINGENCY          11  Validation stringency for all SAM files read by this program. Setting stringency to SILENT can improve performance when processing a BAM file in which variable-length data (read, qualities, tags) do not otherwise need to be decoded.The --VALIDATION_STRINGENCY argument is an enumerated type (ValidationStringency), which can have one of the following values: [STRICT, LENIENT, SILENT]
 verbosity                  Optional<String>            --verbosity                      11  The --verbosity argument is an enumerated type (LogLevel), which can have one of the following values: [ERROR, WARNING, INFO, DEBUG]
 =========================  ==========================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
-

@@ -73,13 +73,12 @@ mills_indels          CompressedIndexedVCF  HG38: https://console.cloud.google.c
 4. Generate user and static input files for WGSSomaticMultiCallers:
 
 .. code-block:: bash
-   
+
    # user inputs
    janis inputs --user WGSSomaticMultiCallers > inputs.yaml
-    
+
    # static inputs
    janis inputs --static WGSSomaticMultiCallers > static.yaml
-
 
 **inputs.yaml**
 
@@ -119,11 +118,11 @@ mills_indels          CompressedIndexedVCF  HG38: https://console.cloud.google.c
        - vardict_intervals_1.bed
 
 
-5. Run the WGSSomaticMultiCallers pipeline with:
+5. Run WGSSomaticMultiCallers with:
 
 .. code-block:: bash
 
-   janis run [...workflow options] \
+   janis run [...run options] \
        --inputs inputs.yaml \
        --inputs static.yaml \
        WGSSomaticMultiCallers
@@ -153,7 +152,6 @@ Information
 ------------
 
 :ID: ``WGSSomaticMultiCallers``
-:Python: ``janis_pipelines.wgs_somatic.wgssomatic import WGSSomaticMultiCallers``
 :Versions: 1.2.0
 :Authors: Michael Franklin, Richard Lupat, Jiaan Yu
 :Citations: 
@@ -164,8 +162,8 @@ Embedded Tools
 ~~~~~~~~~~~~~~~~~
 
 ==============================  ======================================================================================================================================
-                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10cb5e400>>``
-                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10cb69be0>>``
+                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x1067e6e48>>``
+                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x1067f57b8>>``
 GATK4 Somatic Variant Caller    ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs              ``Gatk4GatherVcfs/4.1.3.0``
 Strelka Somatic Variant Caller  ``strelkaSomaticVariantCaller/v0.1.0``

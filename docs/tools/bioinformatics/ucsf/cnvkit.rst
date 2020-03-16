@@ -5,8 +5,78 @@ CNVKit
 
 *0 contributors · 1 version*
 
+
+        A command-line toolkit and Python library for detecting copy number variants 
+        and alterations genome-wide from high-throughput sequencing.
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.ucsf.cnvkit.cnvkit_0_9_6 import CNVKit_0_9_6
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "cnvkit_step",
+           CNVKit(
+               reference=None,
+           )
+       )
+    
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for CNVKit:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs CNVKit > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       reference: reference
+
+
+
+
+5. Run CNVKit with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       CNVKit
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``CNVKit``
-:Python: ``janis_bioinformatics.tools.ucsf.cnvkit.cnvkit_0_9_6 import CNVKit_0_9_6``
+:URL: `https://github.com/etal/cnvkit <https://github.com/etal/cnvkit>`_
 :Versions: 0.9.6
 :Container: etal/cnvkit:0.9.6
 :Authors: 
@@ -14,23 +84,18 @@ CNVKit
 :DOI: 10.1371/journal.pcbi.1004873
 :Created: 2019-07-03 00:00:00
 :Updated: 2019-07-03 00:00:00
-:Required inputs:
-   - ``reference: File``
-:Outputs: 
 
 
-Documentation
--------------
 
-URL: `https://github.com/etal/cnvkit <https://github.com/etal/cnvkit>`_
+Outputs
+-----------
+
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+======  ======  ===============
 
 
-        A command-line toolkit and Python library for detecting copy number variants 
-        and alterations genome-wide from high-throughput sequencing.
-
-------
-
-None
 
 Additional configuration (inputs)
 ---------------------------------
@@ -47,4 +112,3 @@ dropLowCoverage  Optional<String>    --drop-low-coverage              Drop very-
 processes        Optional<String>    --processes                      (-p) [PROCESSES] Number of subprocesses used to running each of the BAM files in parallel. Without an argument, use the maximum number of available CPUs. [Default: process each BAM in serial]
 rscriptPath      Optional<String>    --rscript-path                   Path to the Rscript excecutable to use for running R code. Use this option to specify a non-default R installation. [Default: Rscript]
 ===============  ==================  ===================  ==========  =====================================================================================================================================================================================================================================
-

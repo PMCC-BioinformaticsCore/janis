@@ -5,31 +5,6 @@ Gridss
 
 *1 contributor · 4 versions*
 
-:ID: ``gridss``
-:Python: ``janis_bioinformatics.tools.papenfuss.gridss.gridss import Gridss_2_2_3``
-:Versions: v2.6.3, v2.5.1-dev, v2.4.0, v2.2.3
-:Container: gridss/gridss:v2.2.3
-:Authors: Michael Franklin
-:Citations: Daniel L. Cameron, Jan Schröder, Jocelyn Sietsma Penington, Hongdo Do, Ramyar Molania, Alexander Dobrovic, Terence P. Speed and Anthony T. Papenfuss. GRIDSS: sensitive and specific genomic rearrangement detection using positional de Bruijn graph assembly. Genome Research, 2017 doi: 10.1101/gr.222109.117
-:DOI: 10.1101/gr.222109.117
-:Created: 2019-06-19
-:Updated: 2019-07-03
-:Required inputs:
-   - ``reference: FastaWithIndexes``
-
-   - ``bams: Array<BAM>``
-
-   - ``blacklist: bed``
-:Outputs: 
-   - ``vcf: VCF``
-
-   - ``assembly: BAM``
-
-Documentation
--------------
-
-URL: `https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation <https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation>`_
-
 GRIDSS: the Genomic Rearrangement IDentification Software Suite
 
 GRIDSS is a module software suite containing tools useful for the detection of genomic rearrangements. 
@@ -46,9 +21,102 @@ If you have any trouble running GRIDSS, please raise an issue using the Issues t
 from users, a user guide will be produced outlining common workflows, pitfalls, and use cases.
 
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.papenfuss.gridss.gridss import Gridss_2_2_3
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "gridss_step",
+           gridss(
+               reference=None,
+               bams=None,
+               blacklist=None,
+           )
+       )
+       wf.output("vcf", source=gridss_step.vcf)
+   wf.output("assembly", source=gridss_step.assembly)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for gridss:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs gridss > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bams:
+       - bams_0.bam
+       - bams_1.bam
+       blacklist: blacklist.bed
+       reference: reference.fasta
+
+
+
+
+5. Run gridss with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       gridss
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``gridss``
+:URL: `https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation <https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation>`_
+:Versions: v2.6.3, v2.5.1-dev, v2.4.0, v2.2.3
+:Container: gridss/gridss:v2.2.3
+:Authors: Michael Franklin
+:Citations: Daniel L. Cameron, Jan Schröder, Jocelyn Sietsma Penington, Hongdo Do, Ramyar Molania, Alexander Dobrovic, Terence P. Speed and Anthony T. Papenfuss. GRIDSS: sensitive and specific genomic rearrangement detection using positional de Bruijn graph assembly. Genome Research, 2017 doi: 10.1101/gr.222109.117
+:DOI: 10.1101/gr.222109.117
+:Created: 2019-06-19
+:Updated: 2019-07-03
+
+
+
+Outputs
+-----------
+
+========  ======  ===============
+name      type    documentation
+========  ======  ===============
+vcf       VCF
+assembly  BAM
+========  ======  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -70,4 +138,3 @@ workerThreads              Optional<Integer>   WORKER_THREADS=                  
 workingDir                 Optional<String>    WORKING_DIR=                               Directory to place intermediate results directories. Default location is the same directory as the associated input or output file. Default value: null.
 ignoreDuplicates           Optional<Boolean>   IGNORE_DUPLICATES=                         Ignore reads marked as duplicates. Default value: true. This option can be set to 'null' to clear the default value. Possible values: {true, false}
 =========================  ==================  =============================  ==========  ===================================================================================================================================================================================================================================================================================================================================
-

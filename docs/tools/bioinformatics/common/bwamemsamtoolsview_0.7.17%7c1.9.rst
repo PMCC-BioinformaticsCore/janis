@@ -5,50 +5,101 @@ Bwa mem + Samtools View
 
 *0 contributors · 1 version*
 
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+
+Quickstart
+-----------
+
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.common.bwamem_samtoolsview import BwaMem_SamToolsView
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "bwamemsamtoolsview_step",
+           BwaMemSamtoolsView(
+               reference=None,
+               reads=None,
+               sampleName=None,
+           )
+       )
+       wf.output("out", source=bwamemsamtoolsview_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for BwaMemSamtoolsView:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs BwaMemSamtoolsView > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       reads:
+       - reads_0.fastq.gz
+       - reads_1.fastq.gz
+       reference: reference.fasta
+       sampleName: <value>
+
+
+
+
+5. Run BwaMemSamtoolsView with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       BwaMemSamtoolsView
+
+
+
+
+
+Information
+------------
+
+
 :ID: ``BwaMemSamtoolsView``
-:Python: ``janis_bioinformatics.tools.common.bwamem_samtoolsview import BwaMem_SamToolsView``
+:URL: *No URL to the documentation was provided*
 :Versions: 0.7.17|1.9
 :Container: michaelfranklin/bwasamtools:0.7.17-1.9
 :Authors: 
 :Citations: None
 :Created: None
 :Updated: None
-:Required inputs:
-   - ``reference: FastaWithIndexes``
 
-   - ``reads: FastqGzPair``
 
-   - ``sampleName: String``
-:Outputs: 
-   - ``out: BAM``
 
-Documentation
--------------
+Outputs
+-----------
 
-URL: *No URL to the documentation was provided*
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+out     BAM
+======  ======  ===============
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
-------
-
-Arguments
-----------
-
-==================================================================  =========  ==========  ====================================================================================================================================================================================================================================================================================================
-value                                                               prefix       position  documentation
-==================================================================  =========  ==========  ====================================================================================================================================================================================================================================================================================================
-bwa                                                                                     0
-mem                                                                                     1
-|                                                                                       5
-samtools                                                                                6
-view                                                                                    7
-<janis_core.types.selectors.InputSelector object at 0x10ca87278>    -T                  8
-<janis_core.types.selectors.CpuSelector object at 0x10ca87320>      --threads           8  (-@)  Number of additional threads to use [0]
--h                                                                                      8  Include the header in the output.
--b                                                                                      8  Output in the BAM format.
-<janis_core.types.selectors.StringFormatter object at 0x10ca87518>  -R                  2  Complete read group header line. ’\t’ can be used in STR and will be converted to a TABin the output SAM. The read group ID will be attached to every read in the output. An example is ’@RG\tID:foo\tSM:bar’. (Default=null) https://gatkforums.broadinstitute.org/gatk/discussion/6472/read-groups
-<janis_core.types.selectors.CpuSelector object at 0x10ca875c0>      -t                  2  Number of threads. (default = 1)
-==================================================================  =========  ==========  ====================================================================================================================================================================================================================================================================================================
 
 Additional configuration (inputs)
 ---------------------------------
@@ -97,4 +148,3 @@ readTagToStrip               Optional<String>          -x                     8 
 collapseBackwardCIGAROps     Optional<Boolean>         -B                     8  collapse the backward CIGAR operation Specify a single input file format option in the form of OPTION or OPTION=VALUE
 outputFmt                    Optional<String>          --output-fmt           8  (OPT[, -O)  Specify output format (SAM, BAM, CRAM) Specify a single output file format option in the form of OPTION or OPTION=VALUE
 ===========================  ========================  ============  ==========  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

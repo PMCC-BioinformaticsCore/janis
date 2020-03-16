@@ -5,24 +5,6 @@ GATK4: Print Reads
 
 *1 contributor · 4 versions*
 
-:ID: ``Gatk4PrintReads``
-:Python: ``janis_bioinformatics.tools.gatk4.printreads.versions import Gatk4PrintReads_4_1_4``
-:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
-:Container: broadinstitute/gatk:4.1.4.0
-:Authors: Michael Franklin
-:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
-:Created: 2018-12-24
-:Updated: 2019-01-24
-:Required inputs:
-   - ``bam: BAM``
-:Outputs: 
-   - ``out: IndexedBam``
-
-Documentation
--------------
-
-URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php>`_
-
 
 Write reads from SAM format file (SAM/BAM/CRAM) that pass criteria to a new file.
 A common use case is to subset reads by genomic interval using the -L argument. 
@@ -41,9 +23,93 @@ with the --read-filter argument. See documentation category 'Read Filters' for a
 
 The reference is strictly required when handling CRAM files.
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.gatk4.printreads.versions import Gatk4PrintReads_4_1_4
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "gatk4printreads_step",
+           Gatk4PrintReads(
+               bam=None,
+           )
+       )
+       wf.output("out", source=gatk4printreads_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for Gatk4PrintReads:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs Gatk4PrintReads > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       bam: bam.bam
+
+
+
+
+5. Run Gatk4PrintReads with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       Gatk4PrintReads
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``Gatk4PrintReads``
+:URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_PrintReads.php>`_
+:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
+:Container: broadinstitute/gatk:4.1.4.0
+:Authors: Michael Franklin
+:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
+:Created: 2018-12-24
+:Updated: 2019-01-24
+
+
+
+Outputs
+-----------
+
+======  ==========  ===============
+name    type        documentation
+======  ==========  ===============
+out     IndexedBam
+======  ==========  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -54,4 +120,3 @@ name            type                prefix    position    documentation
 bam             BAM
 outputFilename  Optional<Filename>
 ==============  ==================  ========  ==========  ===============
-

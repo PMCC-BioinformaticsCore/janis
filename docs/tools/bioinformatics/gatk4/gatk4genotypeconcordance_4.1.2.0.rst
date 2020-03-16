@@ -5,30 +5,6 @@ GATK4: Genotype Concordance
 
 *1 contributor · 4 versions*
 
-:ID: ``Gatk4GenotypeConcordance``
-:Python: ``janis_bioinformatics.tools.gatk4.genotypeconcordance.versions import Gatk4GenotypeConcordance_4_1_2``
-:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
-:Container: broadinstitute/gatk:4.1.2.0
-:Authors: Michael Franklin
-:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
-:Created: 2018-12-24
-:Updated: 2019-01-24
-:Required inputs:
-   - ``callVCF: CompressedIndexedVCF``
-
-   - ``truthVCF: IndexedVCF``
-:Outputs: 
-   - ``summaryMetrics: File``
-
-   - ``detailMetrics: File``
-
-   - ``contingencyMetrics: File``
-
-Documentation
--------------
-
-URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.5.0/picard_vcf_GenotypeConcordance.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.5.0/picard_vcf_GenotypeConcordance.php>`_
-
 GenotypeConcordance (Picard)
             
 Calculates the concordance between genotype data of one samples in each of two VCFs - one being 
@@ -75,9 +51,99 @@ VCF Output:
     - The concordance state will be stored in the CONC_ST tag in the INFO field
     - The truth sample name will be "truth" and call sample name will be "call"
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.gatk4.genotypeconcordance.versions import Gatk4GenotypeConcordance_4_1_2
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "gatk4genotypeconcordance_step",
+           Gatk4GenotypeConcordance(
+               callVCF=None,
+               truthVCF=None,
+           )
+       )
+       wf.output("summaryMetrics", source=gatk4genotypeconcordance_step.summaryMetrics)
+   wf.output("detailMetrics", source=gatk4genotypeconcordance_step.detailMetrics)
+   wf.output("contingencyMetrics", source=gatk4genotypeconcordance_step.contingencyMetrics)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for Gatk4GenotypeConcordance:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs Gatk4GenotypeConcordance > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       callVCF: callVCF.vcf.gz
+       truthVCF: truthVCF.vcf
+
+
+
+
+5. Run Gatk4GenotypeConcordance with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       Gatk4GenotypeConcordance
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``Gatk4GenotypeConcordance``
+:URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.5.0/picard_vcf_GenotypeConcordance.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.5.0/picard_vcf_GenotypeConcordance.php>`_
+:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
+:Container: broadinstitute/gatk:4.1.2.0
+:Authors: Michael Franklin
+:Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
+:Created: 2018-12-24
+:Updated: 2019-01-24
+
+
+
+Outputs
+-----------
+
+==================  ======  ===============
+name                type    documentation
+==================  ======  ===============
+summaryMetrics      File
+detailMetrics       File
+contingencyMetrics  File
+==================  ======  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -113,4 +179,3 @@ useJdkInflater              Optional<Boolean>      --use_jdk_inflater           
 validationStringency        Optional<String>       --VALIDATION_STRINGENCY          11  Validation stringency for all SAM files read by this program. Setting stringency to SILENT can improve performance when processing a BAM file in which variable-length data (read, qualities, tags) do not otherwise need to be decoded.The --VALIDATION_STRINGENCY argument is an enumerated type (ValidationStringency), which can have one of the following values: [STRICT, LENIENT, SILENT]
 verbosity                   Optional<String>       --verbosity                      11  The --verbosity argument is an enumerated type (LogLevel), which can have one of the following values: [ERROR, WARNING, INFO, DEBUG]
 ==========================  =====================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
-

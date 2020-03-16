@@ -57,13 +57,12 @@ mills_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/
 4. Generate user and static input files for WGSGermlineGATK:
 
 .. code-block:: bash
-   
+
    # user inputs
    janis inputs --user WGSGermlineGATK > inputs.yaml
-    
+
    # static inputs
    janis inputs --static WGSGermlineGATK > static.yaml
-
 
 **inputs.yaml**
 
@@ -91,11 +90,11 @@ mills_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/
        snps_dbsnp: Homo_sapiens_assembly38.dbsnp138.vcf.gz
 
 
-5. Run the WGSGermlineGATK pipeline with:
+5. Run WGSGermlineGATK with:
 
 .. code-block:: bash
 
-   janis run [...workflow options] \
+   janis run [...run options] \
        --inputs inputs.yaml \
        --inputs static.yaml \
        WGSGermlineGATK
@@ -119,7 +118,6 @@ Information
 ------------
 
 :ID: ``WGSGermlineGATK``
-:Python: ``janis_pipelines.wgs_germline_gatk.wgsgermlinegatk import WGSGermlineGATK``
 :Versions: 1.2.0
 :Authors: Michael Franklin, Richard Lupat, Jiaan Yu
 :Citations: 

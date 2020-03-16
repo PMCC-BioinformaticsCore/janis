@@ -5,26 +5,9 @@ BCFTools: Annotate
 
 *0 contributors · 2 versions*
 
-:ID: ``bcftoolsAnnotate``
-:Python: ``janis_bioinformatics.tools.bcftools.annotate.versions import BcfToolsAnnotate_1_9``
-:Versions: v1.9, v1.5
-:Container: michaelfranklin/bcftools:1.9
-:Authors: 
-:Citations: Li H, Handsaker B, Wysoker A, Fennell T, Ruan J, Homer N, Marth G, Abecasis G, Durbin R, and 1000 Genome Project Data Processing Subgroup, The Sequence alignment/map (SAM) format and SAMtools, Bioinformatics (2009) 25(16) 2078-9
-:DOI: http://www.ncbi.nlm.nih.gov/pubmed/19505943
-:Created: None
-:Updated: 2019-01-24
-:Required inputs:
-   - ``file: CompressedVCF``
-:Outputs: 
-   - ``out: CompressedVCF``
-
-Documentation
--------------
-
-URL: `https://samtools.github.io/bcftools/bcftools.html#annotate <https://samtools.github.io/bcftools/bcftools.html#annotate>`_
-
 ------------------------------------
+
+Add or remove annotations.------------------------------------
 
 Add or remove annotations.------------------------------------
 
@@ -32,9 +15,94 @@ Add or remove annotations.------------------------------------
 
 Add or remove annotations.
 
-------
+Quickstart
+-----------
 
-None
+    .. code-block:: python
+
+       from janis_bioinformatics.tools.bcftools.annotate.versions import BcfToolsAnnotate_1_9
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "bcftoolsannotate_step",
+           bcftoolsAnnotate(
+               file=None,
+           )
+       )
+       wf.output("out", source=bcftoolsannotate_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for bcftoolsAnnotate:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs bcftoolsAnnotate > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       file: file.vcf.gz
+
+
+
+
+5. Run bcftoolsAnnotate with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       bcftoolsAnnotate
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``bcftoolsAnnotate``
+:URL: `https://samtools.github.io/bcftools/bcftools.html#annotate <https://samtools.github.io/bcftools/bcftools.html#annotate>`_
+:Versions: v1.9, v1.5
+:Container: michaelfranklin/bcftools:1.9
+:Authors: 
+:Citations: Li H, Handsaker B, Wysoker A, Fennell T, Ruan J, Homer N, Marth G, Abecasis G, Durbin R, and 1000 Genome Project Data Processing Subgroup, The Sequence alignment/map (SAM) format and SAMtools, Bioinformatics (2009) 25(16) 2078-9
+:DOI: http://www.ncbi.nlm.nih.gov/pubmed/19505943
+:Created: None
+:Updated: 2019-01-24
+
+
+
+Outputs
+-----------
+
+======  =============  ===============
+name    type           documentation
+======  =============  ===============
+out     CompressedVCF
+======  =============  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -62,4 +130,3 @@ samplesFile     Optional<File>           --samples-file              [-S] subset
 threads         Optional<Integer>        --threads                   see Common Options
 remove          Optional<Array<String>>  --remove                    [-x] List of annotations to remove. Use "FILTER" to remove all filters or "FILTER/SomeFilter" to remove a specific filter. Similarly, "INFO" can be used to remove all INFO tags and "FORMAT" to remove all FORMAT tags except GT. To remove all INFO tags except "FOO" and "BAR", use "^INFO/FOO,INFO/BAR" (and similarly for FORMAT and FILTER). "INFO" can be abbreviated to "INF" and "FORMAT" to "FMT".
 ==============  =======================  ==============  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

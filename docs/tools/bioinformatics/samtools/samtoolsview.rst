@@ -5,24 +5,6 @@ SamTools: View
 
 *1 contributor · 2 versions*
 
-:ID: ``SamToolsView``
-:Python: ``janis_bioinformatics.tools.samtools.view.view import SamToolsView_1_9``
-:Versions: 1.9.0, 1.7.0
-:Container: quay.io/biocontainers/samtools:1.9--h8571acd_11
-:Authors: Michael Franklin
-:Citations: None
-:Created: 2018-12-24
-:Updated: 2019-01-24
-:Required inputs:
-   - ``sam: SAM``
-:Outputs: 
-   - ``out: BAM``
-
-Documentation
--------------
-
-URL: `http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS <http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS>`_
-
 Ensure SAMTOOLS.SORT is inheriting from parent metadata
         
 ---------------------------------------------------------------------------------------------------
@@ -34,18 +16,93 @@ You may specify one or more space-separated region specifications after the inpu
 restrict output to only those alignments which overlap the specified region(s). 
 Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format).
 
-------
+Quickstart
+-----------
 
-Arguments
-----------
+    .. code-block:: python
 
-=======  ========  ==========  ===============================================================================================================================================================================================================================
-value    prefix      position  documentation
-=======  ========  ==========  ===============================================================================================================================================================================================================================
--S                          2  Ignored for compatibility with previous samtools versions. Previously this option was required if input was in SAM format, but now the correct format is automatically detected by examining the first few characters of input.
--h                          3  Include the header in the output.
--b                          4  Output in the BAM format.
-=======  ========  ==========  ===============================================================================================================================================================================================================================
+       from janis_bioinformatics.tools.samtools.view.view import SamToolsView_1_9
+
+       wf = WorkflowBuilder("myworkflow")
+
+       wf.step(
+           "samtoolsview_step",
+           SamToolsView(
+               sam=None,
+           )
+       )
+       wf.output("out", source=samtoolsview_step.out)
+    
+
+*OR*
+
+1. `Install Janis </tutorials/tutorial0.html>`_
+
+2. Ensure Janis is configured to work with Docker or Singularity.
+
+3. Ensure all reference files are available:
+
+.. note:: 
+
+   More information about these inputs are available `below <#additional-configuration-inputs>`_.
+
+
+
+4. Generate user input files for SamToolsView:
+
+.. code-block:: bash
+
+   # user inputs
+   janis inputs SamToolsView > inputs.yaml
+
+
+
+**inputs.yaml**
+
+.. code-block:: yaml
+
+       sam: sam.sam
+
+
+
+
+5. Run SamToolsView with:
+
+.. code-block:: bash
+
+   janis run [...run options] \
+       --inputs inputs.yaml \
+       SamToolsView
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``SamToolsView``
+:URL: `http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS <http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS>`_
+:Versions: 1.9.0, 1.7.0
+:Container: quay.io/biocontainers/samtools:1.9--h8571acd_11
+:Authors: Michael Franklin
+:Citations: None
+:Created: 2018-12-24
+:Updated: 2019-01-24
+
+
+
+Outputs
+-----------
+
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+out     BAM
+======  ======  ===============
+
+
 
 Additional configuration (inputs)
 ---------------------------------
@@ -78,4 +135,3 @@ threads                                Optional<Integer>           -@           
 reference                              Optional<FastaWithIndexes>  -T                 6  A FASTA format reference FILE, optionally compressed by bgzip and ideally indexed by samtools faidx. If an index is not present, one will be generated for you.
 outputFilename                         Optional<Filename>          -o                 5  Output to FILE [stdout].
 =====================================  ==========================  ========  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================
-

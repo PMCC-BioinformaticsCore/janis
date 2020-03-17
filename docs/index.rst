@@ -137,6 +137,7 @@ Contents
    tutorials/tutorial0
    tutorials/tutorial1
    tutorials/tutorial2
+   tutorials/tutorial3
    tutorials/running
    tutorials/container
 

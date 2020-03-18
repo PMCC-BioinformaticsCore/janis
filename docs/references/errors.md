@@ -89,3 +89,15 @@ Errors:
 - **ValueError: There were errors in 2 inputs: {'field1': 'value was null', 'field2': 'other reason'}**
 
     One or more of your inputs when running were invalid. The dictionary gives the field that was invalid (key) and the reason Janis thinks your value was invalid (value).
+
+
+## Containers
+
+- **Exception: The tool 'MyTool' did not have a container. Although not recommended, Janis can export empty docker containers with the parameter `allow_empty_container=True` or `--allow-empty-container`**
+
+    One of the tools that you are trying to run or translate did not have a container attached to this. In Janis, we strongly encourage the use of containers however it's not always possible. 
+    
+    To allow a tool to be translated correctly, there are two mechanisms for doing so:
+    
+    - CLI: Include the `--allow-empty-container` flag, eg: `janis [translate|run] --allow-empty-container mytool`
+    - API: Include `allow_empty_container=True` in the `tool.translate` method, eg: `mytool.translate("cwl", allow_emmpty_container=True).

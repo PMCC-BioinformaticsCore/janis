@@ -6,15 +6,8 @@
 _Janis is a framework creating specialised, simple workflow definitions that are then transpiled to   
 Common Workflow Language or Workflow Definition Language._  
   
-Documentation is hosted here: https://janis.readthedocs.io/
+Documentation is available here: https://janis.readthedocs.io/
 
-
-## v0.9.0 release
-
-> v0.9.0 includes backwards incompatible changes, see the [CHANGELOG](https://github.com/PMCC-BioinformaticsCore/janis/blob/master/CHANGELOG.md)
-for more information.
-
-  
 ## Introduction  
 
 >| WARNING: this project is work-in-progress and is provided as-is without warranty of any kind. There may be breaking changes committed to this repository without notice. |
@@ -30,44 +23,72 @@ Janis requires a Python installation > 3.6, and can be installed through PIP
 ([project page](https://pypi.org/project/janis-pipelines/)):  
   
 ```bash
-# Install janis and the bioinformatics tools
+# Install janis and the toolkits
 pip3 install janis-pipelines 
-```  
-  
-You can import Janis into your project with:  
-```python  
-import janis as j  
 ```
 
-### Example  
+There are two ways to use Janis:
+
+- Build workflows (and translate to CWL / WDL)
+- Run tools or workflows with CWLTool or Cromwell
+
+### Example workflow
+
   
-Below we've constructed a simple example that takes a string input, calls the 
+Let's construct a simple example that takes a string input, calls the 
 [echo](https://janis.readthedocs.io/en/latest/tools/unix/echo.html) tool and exposes the 
-Echo tool's output as a workflow output.  
+Echo tool's output as a workflow output. 
+
+
   
-```python  
+```bash
+# write the workflow to `helloworld.py`
+cat <<EOT >> helloworld.py
 import janis as j
-from janis.tools import Echo
+from janis_unix.tools import Echo
 
-w = j.WorkflowBuilder("workflowId")
+w = j.WorkflowBuilder("hello_world")
 
-w.input("inputIdentifier", j.String, default="Hello, World!")
-w.step("stepIdentifier", Echo(inp=w.inputIdentifier))
-w.output("outputIdentifier", source=w.stepIdentifier.out)
+w.input("input_to_print", j.String)
+w.step("echo", Echo(inp=w.input_to_print))
+w.output("echo_out", source=w.echo.out)
+EOT
 
-# Will print the CWL, input file and relevant tools to the console
-w.translate("cwl", to_disk=False)  # or "wdl"
+
+# Translate workflow to WDL
+janis translate helloworld.py wdl
+
+# Run the workflow
+janis run -o helloworld-tutorial helloworld.py --input_to_print "Hello, World!"
+
+# See your output
+cat helloworld-tutorial/echo_out
+# Hello, World!
 ```
 
-We can export a CWL representation to the console using `.translate("cwl")`. By including the 
-`to_disk=True` parameter, we can write this workflow to disk at the current location. 
   
-#### More examples  
+### How to use Janis
 
-- Bioinformatics workflow tutorial: [Aligment](https://janis.readthedocs.io/en/latest/tutorials/tutorial1.html)
-- Simple unix examples: in [`janis/examples`](https://github.com/PMCC-BioinformaticsCore/janis/tree/master/janis/examples).   
+- [Tutorial 0 - Introduction to Janis](https://janis.readthedocs.io/en/latest/tutorials/tutorial0.html)
+- [Tutorial 1 - Building a workflow](https://janis.readthedocs.io/en/latest/tutorials/tutorial1.html)
+- [Tutorial 2 - Wrapping a new tool](https://janis.readthedocs.io/en/latest/tutorials/tutorial2.html)
 
-- Whole genome germline pipelines: [janis-pipelines repository](https://github.com/PMCC-BioinformaticsCore/janis-pipelines).  
+
+#### Workshops
+
+In addition, there are fully self-guided workshops that more broadly go through the functionality of Janis:
+
+- [Workshop 1](https://github.com/PMCC-BioinformaticsCore/janis-workshops/tree/master/workshop1)
+- [Workshop 2](https://github.com/PMCC-BioinformaticsCore/janis-workshops/tree/master/workshop2)
+
+### Examples
+
+Sometimes it's easier to learn by examples, here are a few hand picked examples:
+
+- [Samtools View](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/blob/master/janis_bioinformatics/tools/samtools/view/base.py) ([Docs](https://janis.readthedocs.io/en/latest/tools/bioinformatics/samtools/samtoolsview.html))
+
+- [WGS Germline pipeline (GATK Only)](https://github.com/PMCC-BioinformaticsCore/janis-pipelines/blob/master/janis_pipelines/wgs_germline_gatk/wgsgermlinegatk.py) ([Docs](https://janis.readthedocs.io/en/latest/pipelines/wgsgermlinegatk.html))
+
 
 ## About  
   

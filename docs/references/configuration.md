@@ -34,7 +34,59 @@ In addition, you can also configure the following environment variables:
 
 ## Initialising a template
 
+```bash
+janis init <template> [...options]
+```
 
+By default this will place our config at `~/.janis/janis.conf`. If there's already a config there, it will NOT override it.
+ 
+ - `-o` / `--output`: output path to write to, default (`~/.janis/janis.conf`).
+ - `-f` / `--force`: Overwrite the config if one exists at the output path.
+ - `--stdout`: Write the output to stdout. 
+
+### Example Slurm + Singularity
+
+Let's choose the [`slurm_singularity`](https://janis.readthedocs.io/en/latest/templates/slurm_singularity.html) template. We can look at it's signature via the command line:
+
+```bash
+janis init slurm_singularity -h
+
+# required arguments:
+#   --container_dir CONTAINER_DIR
+#                         Location where to save and execute containers from
+# 
+# optional arguments:
+#   --execution_dir EXECUTION_DIR
+#   --queues QUEUES       A single or list of queues that work should be
+#                         submitted to
+#   --mail_program MAIL_PROGRAM
+#                         Mail program to pipe email to, eg: 'sendmail -t'
+#   --send_job_emails     (default: True) (requires
+#                         JanisConfiguration.notifications.email to be set) Send
+#                         emails for mail types END
+#   --catch_slurm_errors  (default: False) Catch Slurm errors (like OOM or
+#                         walltime)
+#   --build_instructions BUILD_INSTRUCTIONS
+#                         (default: singularity pull $image docker://${docker})
+#                         Instructions for building singularity, it's
+#                         recommended to not touch this setting.
+#   --singularity_load_instructions SINGULARITY_LOAD_INSTRUCTIONS
+#                         Ensure singularity with this command executed in shell
+#   --max_cores MAX_CORES
+#                         Maximum number of cores a task can request
+#   --max_ram MAX_RAM     Maximum amount of ram (GB) that a task can request
+#   --can_run_in_foreground
+#                         (default: False) None
+#   --run_in_background   (default: True) None
+```
+
+We _MUST_ pass a value to `--container_dir` (which is where our singularity containers will be downloaded to), with the other parameters being optional.
+
+We could then initialise our template with:
+
+```bash
+janis init slurm_singularity --container_dir /shared/path/to/singularity_containers/
+```
 
 
 ## Other Janis options
@@ -53,22 +105,36 @@ There are a number of high level keys you can use to configure Janis:
 
 - `config_dir`: (default: `~/.janis/`) (equivalent env: `JANIS_CONFIGDIR`) - places internal database, downloaded workflows and other information in this directory.
 - `output_dir`: Instead of specifying `-o` on every run, specifying this option will use an output directory with the following structure: `$output_dir/<workflow name>/yyyymmdd_hhMMss_<wid>` (where `wid` is the workflow ID).
-- `execution_dir`: Sometimes it's useful to perform the execution in a different directory to where you'd like to place the outputs. One reason might be that Cromwell will copy (rather than hard link) your input files if they don't exist on the same drive) 
+- `execution_dir`: By default, your execution is placed in `<output dir>/janis/execution`, however sometimes it's useful to perform the execution in a different directory. One reason might be that Cromwell will copy (rather than hard link) your input files if they don't exist on the same drive) 
 - `engine`: (OPTIONS: `cromwell` / `cwltool`) (overridable with `--engine ENGINE`) Which engine to use by default.
-- `run_in_background`: (overridable with the `--background` and `--foreground` optiopns) Should workflows run in the background by default.
+- `run_in_background`: (overridable with the `--background` and `--foreground` options) Ask janis to submit workflows in the background.
 
+For example:
 
 ```yaml
 config_dir: <default: ~/.janis/>
 output_dir: <default output directory prefix>
-execution_dir: <
+execution_dir: <execution dir override>
 engine: <cromwell / cwltool>
-
 run_in_background: <boolean>
 ```
 
+## Environment
 
-#### `output_dir`: Default output directory
+> These options will sit under a `environment` key, see the example for more information.
+
+There are a couple of environment options you might want to alter:
+
+- `max_cores`: Limit the maximum amount of requested cores. 
+- max_ram
+
+```yaml
+# other params
+environment:
+  max_cores: int
+  max_ram: int
+
+```
 
 
 

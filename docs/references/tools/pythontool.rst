@@ -2,7 +2,7 @@ Python Tool
 ============
 
 .. note::
-	BETA: Available in v0.9.0 and later
+	Available in v0.9.0 and later
 
 A PythonTool is a Janis mechanism for running arbitrary Python code inside a container. 
 

@@ -87,7 +87,7 @@ Case 1: Simple index
 
 The following ``workflow.input("my_bam", BamBai)``, definition when connected to a tool might look like the following
 
-.. code-block::
+.. code-block:: none
 
    workflow WGSGermlineGATK {
      input {
@@ -127,7 +127,7 @@ This is modification of the first example, nb: this isn't full functional workfl
 
 Might result in the following workflow:
 
-.. code-block::
+.. code-block:: none
 
    workflow WGSGermlineGATK {
      input {
@@ -175,7 +175,7 @@ Consider the following workflow:
 This gets complicated quickly:
 
 
-.. code-block::
+.. code-block:: none
    
    workflow scattered_bioinf_complex {
      input {

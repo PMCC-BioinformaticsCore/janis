@@ -154,9 +154,20 @@ Contents
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: References
+   :caption: API documentation
 
    references/index
+   references/workflow
+   references/commandtool
+   references/tools/pythontool
+   references/scattering
+   references/secondaryfiles
+
+.. toctree::
+   :hidden:
+   :maxdepth: 0
+   :caption: Guides
+
    references/engines
    references/cwl
    references/wdl

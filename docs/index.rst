@@ -138,18 +138,20 @@ Contents
    tutorials/tutorial1
    tutorials/tutorial2
    tutorials/tutorial3
+   tutorials/toolbox
    tutorials/running
    tutorials/container
 
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Registry
+   :caption: Shed / Toolbox
 
    pipelines/index
    tools/index
    datatypes/index
    templates/index
+   resources/toolbox
 
 .. toctree::
    :hidden:

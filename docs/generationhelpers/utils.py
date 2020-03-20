@@ -238,7 +238,7 @@ def prepare_quickstart(tool: Tool):
 
        wf.step(
            "{python_step_name}",
-           {tool.id()}(
+           {tool.__class__.__name__}(
 {required_python_input_map}
            )
        )

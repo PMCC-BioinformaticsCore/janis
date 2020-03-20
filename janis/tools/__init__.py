@@ -1,6 +1,6 @@
 import importlib_metadata
 from janis_core.utils.logger import Logger
-from janis_core.registry.entrypoints import TOOLS
+from janis_core.toolbox.entrypoints import TOOLS
 
 eps = importlib_metadata.entry_points().get(TOOLS, [])
 

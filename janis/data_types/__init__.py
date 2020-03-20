@@ -1,5 +1,5 @@
 from janis_core.utils.logger import Logger
-from janis_core.registry.entrypoints import DATATYPES
+from janis_core.toolbox.entrypoints import DATATYPES
 import importlib_metadata
 
 eps = importlib_metadata.entry_points().get(DATATYPES, [])

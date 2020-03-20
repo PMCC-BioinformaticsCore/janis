@@ -35,7 +35,7 @@ Quickstart
 
        wf.step(
            "gatk4applybqsr_step",
-           Gatk4ApplyBQSR(
+           Gatk4ApplyBqsr_4_1_2(
                bam=None,
                reference=None,
            )

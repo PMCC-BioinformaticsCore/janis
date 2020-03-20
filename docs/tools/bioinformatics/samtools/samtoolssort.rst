@@ -64,7 +64,7 @@ Quickstart
 
        wf.step(
            "samtoolssort_step",
-           SamToolsSort(
+           SamToolsSort_1_9(
                bam=None,
            )
        )

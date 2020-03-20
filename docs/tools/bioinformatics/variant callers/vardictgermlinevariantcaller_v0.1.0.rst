@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "vardictgermlinevariantcaller_step",
-           vardictGermlineVariantCaller(
+           VardictGermlineVariantCaller(
                bam=None,
                intervals=None,
                sample_name=None,

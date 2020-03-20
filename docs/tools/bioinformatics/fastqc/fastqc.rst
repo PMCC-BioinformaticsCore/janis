@@ -19,7 +19,7 @@ Quickstart
 
        wf.step(
            "fastqc_step",
-           fastqc(
+           FastQC_0_11_8(
                reads=None,
            )
        )

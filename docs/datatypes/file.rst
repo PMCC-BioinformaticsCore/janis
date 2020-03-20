@@ -2,11 +2,21 @@
 File
 ====
 
-
-
-Documentation
--------------
-
 A local file
 
-*This page was automatically generated on 2020-03-16*.
+
+
+Quickstart
+-----------
+
+.. code-block:: python
+
+   from janis_core.types.common_data_types import File
+
+   w = WorkflowBuilder("my_workflow")
+
+   w.input("input_file", File(optional=False))
+   
+   # ...other workflow steps
+
+*This page was automatically generated on 2020-03-20*.

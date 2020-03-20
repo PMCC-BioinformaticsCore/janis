@@ -23,7 +23,7 @@ Quickstart
 
        wf.step(
            "vcfrandomsample_step",
-           vcfrandomsample(
+           VcfRandomSample_1_0_1(
                vcf=None,
                rate=None,
                seed=None,

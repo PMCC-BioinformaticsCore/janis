@@ -28,7 +28,7 @@ Quickstart
 
        wf.step(
            "tabix_step",
-           tabix(
+           Tabix_1_2_1(
                file=None,
            )
        )

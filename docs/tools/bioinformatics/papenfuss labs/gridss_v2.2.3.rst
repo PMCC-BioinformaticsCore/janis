@@ -32,7 +32,7 @@ Quickstart
 
        wf.step(
            "gridss_step",
-           gridss(
+           Gridss_2_2_3(
                reference=None,
                bams=None,
                blacklist=None,

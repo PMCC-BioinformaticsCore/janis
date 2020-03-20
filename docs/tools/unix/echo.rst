@@ -21,7 +21,7 @@ Quickstart
 
        wf.step(
            "echo_step",
-           echo(
+           Echo(
                inp=None,
            )
        )

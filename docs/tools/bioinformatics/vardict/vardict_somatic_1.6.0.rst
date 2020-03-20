@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "vardict_somatic_step",
-           vardict_somatic(
+           VarDictSomatic_1_6_0(
                tumorBam=None,
                normalBam=None,
                intervals=None,

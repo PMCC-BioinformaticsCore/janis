@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "vardict_germline_step",
-           vardict_germline(
+           VarDictGermline_1_6_0(
                intervals=None,
                bam=None,
                reference=None,

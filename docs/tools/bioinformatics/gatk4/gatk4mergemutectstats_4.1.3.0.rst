@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "gatk4mergemutectstats_step",
-           Gatk4MergeMutectStats(
+           Gatk4MergeMutectStats_4_1_3(
                statsFiles=None,
            )
        )

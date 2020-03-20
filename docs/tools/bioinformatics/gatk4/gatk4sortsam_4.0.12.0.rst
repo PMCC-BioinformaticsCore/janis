@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "gatk4sortsam_step",
-           Gatk4SortSam(
+           Gatk4SortSam_4_0(
                bam=None,
                sortOrder=None,
            )

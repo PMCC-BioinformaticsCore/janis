@@ -51,7 +51,7 @@ Quickstart
 
        wf.step(
            "happy_validator_step",
-           happy_validator(
+           HapPyValidator_0_3_9(
                truthVCF=None,
                compareVCF=None,
                reference=None,

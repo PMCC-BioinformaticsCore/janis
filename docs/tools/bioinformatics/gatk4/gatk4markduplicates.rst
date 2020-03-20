@@ -60,7 +60,7 @@ Quickstart
 
        wf.step(
            "gatk4markduplicates_step",
-           Gatk4MarkDuplicates(
+           Gatk4MarkDuplicates_4_1_4(
                bam=None,
            )
        )

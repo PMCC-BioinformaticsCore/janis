@@ -40,7 +40,7 @@ Quickstart
 
        wf.step(
            "cutadapt_step",
-           cutadapt(
+           CutAdapt_2_6(
                fastq=None,
            )
        )

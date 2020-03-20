@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "cellrangermkfastq_step",
-           CellRangerMkfastq(
+           CellRangerMkfastq_3_0_2(
                run=None,
            )
        )

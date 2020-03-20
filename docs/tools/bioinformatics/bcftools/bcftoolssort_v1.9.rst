@@ -19,7 +19,7 @@ Quickstart
 
        wf.step(
            "bcftoolssort_step",
-           bcftoolssort(
+           BcfToolsSort_1_9(
                vcf=None,
            )
        )

@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "javacompiler_step",
-           javacompiler(
+           Compile(
                file=None,
            )
        )

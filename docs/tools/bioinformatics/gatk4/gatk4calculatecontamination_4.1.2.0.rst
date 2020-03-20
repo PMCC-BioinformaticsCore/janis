@@ -22,7 +22,7 @@ Quickstart
 
        wf.step(
            "gatk4calculatecontamination_step",
-           Gatk4CalculateContamination(
+           Gatk4CalculateContamination_4_1_2(
                pileupTable=None,
            )
        )

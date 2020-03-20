@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "multiqc_step",
-           MultiQC(
+           Multiqc_v1_7(
                directory=None,
            )
        )

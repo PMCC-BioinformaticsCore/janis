@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "trimiupac_step",
-           trimIUPAC(
+           TrimIUPAC_0_0_4(
                vcf=None,
            )
        )

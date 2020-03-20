@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "bwamemsamtoolsview_step",
-           BwaMemSamtoolsView(
+           BwaMem_SamToolsView(
                reference=None,
                reads=None,
                sampleName=None,

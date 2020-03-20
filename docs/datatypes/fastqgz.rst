@@ -2,11 +2,21 @@
 FastqGz
 =======
 
-
-
-Documentation
--------------
-
 FastqGz files are compressed sequence data with quality score, there are different typeswith no standard: https://en.wikipedia.org/wiki/FASTQ_format
 
-*This page was automatically generated on 2020-03-16*.
+
+
+Quickstart
+-----------
+
+.. code-block:: python
+
+   from janis_bioinformatics.data_types.fastq import FastqGz
+
+   w = WorkflowBuilder("my_workflow")
+
+   w.input("input_fastqgz", FastqGz(optional=False))
+   
+   # ...other workflow steps
+
+*This page was automatically generated on 2020-03-20*.

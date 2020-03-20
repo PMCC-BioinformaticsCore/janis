@@ -27,7 +27,7 @@ Quickstart
 
        wf.step(
            "samtoolsview_step",
-           SamToolsView(
+           SamToolsView_1_9(
                sam=None,
            )
        )

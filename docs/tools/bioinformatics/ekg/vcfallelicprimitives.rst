@@ -22,7 +22,7 @@ Quickstart
 
        wf.step(
            "vcfallelicprimitives_step",
-           vcfallelicprimitives(
+           VcfAllelicPrimitives_1_0_1(
                vcf=None,
            )
        )

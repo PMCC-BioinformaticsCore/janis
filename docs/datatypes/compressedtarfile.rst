@@ -2,11 +2,21 @@
 CompressedTarFile
 =================
 
-
-
-Documentation
--------------
-
 A gzipped tarfile
 
-*This page was automatically generated on 2020-03-16*.
+
+
+Quickstart
+-----------
+
+.. code-block:: python
+
+   from janis_unix.data_types.tarfile import TarFileGz
+
+   w = WorkflowBuilder("my_workflow")
+
+   w.input("input_tarfilegz", TarFileGz(optional=False))
+   
+   # ...other workflow steps
+
+*This page was automatically generated on 2020-03-20*.

@@ -92,7 +92,7 @@ Outputs
 ========  ========  ===============
 name      type      documentation
 ========  ========  ===============
-bwa       FastaFai
+bwa       FastaBwa
 samtools  FastaFai
 dict      FastDict
 ========  ========  ===============

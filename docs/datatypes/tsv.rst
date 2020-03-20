@@ -2,11 +2,21 @@
 tsv
 ===
 
-
-
-Documentation
--------------
-
 A tab separated file
 
-*This page was automatically generated on 2020-03-16*.
+
+
+Quickstart
+-----------
+
+.. code-block:: python
+
+   from janis_unix.data_types.tsv import Tsv
+
+   w = WorkflowBuilder("my_workflow")
+
+   w.input("input_tsv", Tsv(optional=False))
+   
+   # ...other workflow steps
+
+*This page was automatically generated on 2020-03-20*.

@@ -24,7 +24,7 @@ Quickstart
 
        wf.step(
            "gatk4_somaticvariantcaller_step",
-           GATK4_SomaticVariantCaller(
+           GatkSomaticVariantCaller_4_1_3(
                normal_bam=None,
                tumor_bam=None,
                normal_name=None,

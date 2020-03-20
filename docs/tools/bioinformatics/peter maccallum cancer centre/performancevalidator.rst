@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "performancevalidator_step",
-           performanceValidator(
+           PerformanceValidator_1_2_1(
                vcf=None,
                truth=None,
                intervals=None,

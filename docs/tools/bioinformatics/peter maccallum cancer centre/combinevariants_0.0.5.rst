@@ -45,7 +45,7 @@ Quickstart
 
        wf.step(
            "combinevariants_step",
-           combinevariants(
+           CombineVariants_0_0_5(
                vcfs=None,
                type=None,
            )

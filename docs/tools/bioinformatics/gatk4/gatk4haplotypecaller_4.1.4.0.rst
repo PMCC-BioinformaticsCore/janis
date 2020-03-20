@@ -39,7 +39,7 @@ Quickstart
 
        wf.step(
            "gatk4haplotypecaller_step",
-           Gatk4HaplotypeCaller(
+           Gatk4HaplotypeCaller_4_1_4(
                inputRead=None,
                reference=None,
                dbsnp=None,

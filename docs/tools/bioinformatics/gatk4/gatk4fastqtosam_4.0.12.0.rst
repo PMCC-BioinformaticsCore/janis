@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "gatk4fastqtosam_step",
-           Gatk4FastqToSam(
+           Gatk4FastqToSam_4_0(
                fastqR1=None,
            )
        )
@@ -77,7 +77,7 @@ Information
 :URL: `https://gatk.broadinstitute.org/hc/en-us/articles/360037226792-FastqToSam-Picard- <https://gatk.broadinstitute.org/hc/en-us/articles/360037226792-FastqToSam-Picard->`_
 :Versions: 4.1.4.1, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.0.12.0
-:Authors: Michael Franklin (@illisional), Matthias De Smet(@matthdsm)
+:Authors: Michael Franklin (@illusional), Matthias De Smet(@matthdsm)
 :Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
 :Created: 2020-02-26
 :Updated: 2020-02-26
@@ -87,11 +87,11 @@ Information
 Outputs
 -----------
 
-======  ==========  ===============
-name    type        documentation
-======  ==========  ===============
-out     IndexedBam
-======  ==========  ===============
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+out     BAM
+======  ======  ===============
 
 
 

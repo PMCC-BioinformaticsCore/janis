@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "gatk4splitreads_step",
-           Gatk4SplitReads(
+           Gatk4SplitReads_4_1_3(
                outputFilename=None,
                bam=None,
            )

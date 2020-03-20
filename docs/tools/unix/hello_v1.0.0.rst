@@ -24,7 +24,7 @@ Quickstart
 
        wf.step(
            "hello_step",
-           hello(
+           HelloWorkflow(
 
            )
        )

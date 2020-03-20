@@ -36,29 +36,31 @@ Quickstart
 
    More information about these inputs are available `below <#additional-configuration-inputs>`_.
 
-=================  ====================  ===================================================================================================  ======================================================================================================================================================================================================================================================================================================
-Name               Type                  Example                                                                                              Description
-=================  ====================  ===================================================================================================  ======================================================================================================================================================================================================================================================================================================
-cutadapt_adapters  Optional<File>        https://github.com/csf-ngs/fastqc/blob/master/Contaminants/contaminant_list.txt                      Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
-gatk_intervals     Array<bed>            BRCA1.bed                                                                                            List of intervals over which to split the GATK variant calling
-reference          FastaWithIndexes      HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/      The reference genome from which to align the reads. This requires a number indexes (can be generated with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
+=================  ====================  =========================================================================================================================================================================================  ======================================================================================================================================================================================================================================================================================================
+Name               Type                  Example                                                                                                                                                                                    Description
+=================  ====================  =========================================================================================================================================================================================  ======================================================================================================================================================================================================================================================================================================
+cutadapt_adapters  Optional<File>        https://github.com/csf-ngs/fastqc/blob/master/Contaminants/contaminant_list.txt                                                                                                            Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
+gatk_intervals     Array<bed>            BRCA1.bed                                                                                                                                                                                  List of intervals over which to split the GATK variant calling
+reference          FastaWithIndexes      HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            The reference genome from which to align the reads. This requires a number indexes (can be generated with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
 
-                                         File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta                     This pipeline expects the assembly references to be as they appear in the GCP example:
+                                         File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta                                                                                                           This pipeline expects the assembly references to be as they appear in the GCP example:
 
-                                                                                                                                              - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
-snps_dbsnp         CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/      From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+                                                                                                                                                                                                                                    - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
+snps_dbsnp         CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+
+                                         (WARNING: The file available from the genomics-public-data resource on Google Cloud Storage is NOT compressed and indexed. This will need to be completed prior to starting the pipeline.
 
                                          File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz
-snps_1000gp        CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/      From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+snps_1000gp        CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
 
                                          File: gs://genomics-public-data/references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz
-known_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/      From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+known_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
 
                                          File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz
-mills_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/      From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+mills_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
 
                                          File: gs://genomics-public-data/references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
-=================  ====================  ===================================================================================================  ======================================================================================================================================================================================================================================================================================================
+=================  ====================  =========================================================================================================================================================================================  ======================================================================================================================================================================================================================================================================================================
 
 4. Generate user and static input files for WGSSomaticGATK:
 
@@ -141,8 +143,8 @@ Embedded Tools
 ~~~~~~~~~~~~~~~~~
 
 ============================  ======================================================================================================================================
-                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x106824ef0>>``
-                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x106829160>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x11258d860>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x11259db38>>``
 GATK4 Somatic Variant Caller  ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs            ``Gatk4GatherVcfs/4.1.3.0``
 BCFTools: Sort                ``bcftoolssort/v1.9``

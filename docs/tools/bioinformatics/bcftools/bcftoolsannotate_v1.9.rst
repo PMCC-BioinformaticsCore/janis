@@ -26,7 +26,7 @@ Quickstart
 
        wf.step(
            "bcftoolsannotate_step",
-           bcftoolsAnnotate(
+           BcfToolsAnnotate_1_9(
                file=None,
            )
        )

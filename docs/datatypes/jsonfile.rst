@@ -2,11 +2,21 @@
 jsonFile
 ========
 
-
-
-Documentation
--------------
-
 A JSON file file
 
-*This page was automatically generated on 2020-03-16*.
+
+
+Quickstart
+-----------
+
+.. code-block:: python
+
+   from janis_unix.data_types.json import JsonFile
+
+   w = WorkflowBuilder("my_workflow")
+
+   w.input("input_jsonfile", JsonFile(optional=False))
+   
+   # ...other workflow steps
+
+*This page was automatically generated on 2020-03-20*.

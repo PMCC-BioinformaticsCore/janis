@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "greet_step",
-           greet(
+           Greet(
                name=None,
            )
        )

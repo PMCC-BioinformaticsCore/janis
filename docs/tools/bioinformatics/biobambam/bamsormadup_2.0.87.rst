@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "bamsormadup_step",
-           bamsormadup(
+           BamSorMaDup_2_0_87(
                alignedReads=None,
            )
        )

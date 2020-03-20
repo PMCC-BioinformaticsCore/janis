@@ -27,7 +27,7 @@ Quickstart
 
        wf.step(
            "bcftoolsconcat_step",
-           bcftoolsConcat(
+           BcfToolsConcat_1_9(
                vcf=None,
            )
        )

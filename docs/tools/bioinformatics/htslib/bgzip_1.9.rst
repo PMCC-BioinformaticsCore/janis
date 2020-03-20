@@ -29,7 +29,7 @@ Quickstart
 
        wf.step(
            "bgzip_step",
-           bgzip(
+           BGZip_1_9(
                file=None,
            )
        )

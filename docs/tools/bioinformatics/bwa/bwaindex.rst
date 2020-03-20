@@ -22,7 +22,7 @@ Quickstart
 
        wf.step(
            "bwaindex_step",
-           bwaIndex(
+           BwaIndex_0_7_15(
                reference=None,
            )
        )
@@ -94,7 +94,7 @@ Outputs
 ======  ========  ===============
 name    type      documentation
 ======  ========  ===============
-out     FastaFai
+out     FastaBwa
 ======  ========  ===============
 
 

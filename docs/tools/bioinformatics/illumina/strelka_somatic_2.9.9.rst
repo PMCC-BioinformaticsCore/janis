@@ -23,7 +23,7 @@ Quickstart
 
        wf.step(
            "strelka_somatic_step",
-           strelka_somatic(
+           StrelkaSomatic_2_9_9(
                normalBam=None,
                tumorBam=None,
                reference=None,

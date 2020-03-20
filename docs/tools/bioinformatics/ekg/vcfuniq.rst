@@ -19,7 +19,7 @@ Quickstart
 
        wf.step(
            "vcfuniq_step",
-           vcfuniq(
+           VcfUniq_1_0_1(
                vcf=None,
            )
        )

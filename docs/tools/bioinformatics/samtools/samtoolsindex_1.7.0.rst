@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "samtoolsindex_step",
-           SamToolsIndex(
+           SamToolsIndex_1_7(
                bam=None,
            )
        )

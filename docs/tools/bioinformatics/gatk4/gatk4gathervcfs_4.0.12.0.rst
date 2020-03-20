@@ -21,7 +21,7 @@ Quickstart
 
        wf.step(
            "gatk4gathervcfs_step",
-           Gatk4GatherVcfs(
+           Gatk4GatherVcfs_4_0(
                vcfs=None,
            )
        )

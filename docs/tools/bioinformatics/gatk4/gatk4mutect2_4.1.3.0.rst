@@ -21,7 +21,7 @@ Quickstart
 
        wf.step(
            "gatk4mutect2_step",
-           Gatk4Mutect2(
+           GatkMutect2_4_1_3(
                tumorBams=None,
                normalBams=None,
                normalSample=None,

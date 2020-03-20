@@ -62,7 +62,7 @@ Quickstart
 
        wf.step(
            "gatk4genotypeconcordance_step",
-           Gatk4GenotypeConcordance(
+           Gatk4GenotypeConcordance_4_1_2(
                callVCF=None,
                truthVCF=None,
            )

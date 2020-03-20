@@ -26,7 +26,7 @@ Quickstart
 
        wf.step(
            "gatk4baserecalibrator_step",
-           Gatk4BaseRecalibrator(
+           Gatk4BaseRecalibrator_4_1_2(
                bam=None,
                knownSites=None,
                reference=None,

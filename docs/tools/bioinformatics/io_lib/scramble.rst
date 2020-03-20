@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "scramble_step",
-           scramble(
+           Scramble_1_14_1_2(
                inputFilename=None,
                reference=None,
            )

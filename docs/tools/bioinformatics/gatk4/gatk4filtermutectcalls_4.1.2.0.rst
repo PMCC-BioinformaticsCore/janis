@@ -22,7 +22,7 @@ Quickstart
 
        wf.step(
            "gatk4filtermutectcalls_step",
-           Gatk4FilterMutectCalls(
+           Gatk4FilterMutectCalls_4_1_2(
                vcf=None,
                reference=None,
            )

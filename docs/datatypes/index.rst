@@ -23,9 +23,15 @@ Automatically generated index page for Data Types:
    directory
    double
    fasta
+   fastabwa
    fastafai
+   fastagz
+   fastagzbwa
+   fastagzfai
+   fastagzwithindexes
    fastawithindexes
    fastdict
+   fastgzdict
    fastq
    fastqgz
    file
@@ -45,4 +51,4 @@ Automatically generated index page for Data Types:
    vcf
    zip
 
-*This page was auto-generated on 16/03/2020. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 20/03/2020. Please do not directly alter the contents of this page.*

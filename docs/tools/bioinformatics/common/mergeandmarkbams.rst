@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "mergeandmarkbams_step",
-           mergeAndMarkBams(
+           MergeAndMarkBams_4_1_3(
                bams=None,
            )
        )

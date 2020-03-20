@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "gatk4mergesamfiles_step",
-           Gatk4MergeSamFiles(
+           Gatk4MergeSamFiles_4_1_2(
                bams=None,
            )
        )

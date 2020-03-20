@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "bcftoolsindex_step",
-           bcftoolsIndex(
+           BcfToolsIndex_1_9(
                vcf=None,
            )
        )

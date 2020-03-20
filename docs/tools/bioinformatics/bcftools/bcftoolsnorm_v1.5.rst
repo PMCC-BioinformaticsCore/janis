@@ -22,7 +22,7 @@ Quickstart
 
        wf.step(
            "bcftoolsnorm_step",
-           bcftoolsNorm(
+           BcfToolsNorm_1_5(
                vcf=None,
            )
        )

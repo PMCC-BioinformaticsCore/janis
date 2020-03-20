@@ -25,7 +25,7 @@ Quickstart
 
        wf.step(
            "gatk4_germlinevariantcaller_step",
-           GATK4_GermlineVariantCaller(
+           GatkGermlineVariantCaller_4_1_3(
                bam=None,
                reference=None,
                snps_dbsnp=None,

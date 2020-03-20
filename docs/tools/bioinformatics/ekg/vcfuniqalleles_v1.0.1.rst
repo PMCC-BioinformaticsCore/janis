@@ -19,7 +19,7 @@ Quickstart
 
        wf.step(
            "vcfuniqalleles_step",
-           vcfuniqalleles(
+           VcfUniqAlleles_1_0_1(
                vcf=None,
            )
        )

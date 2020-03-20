@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "gatk4mergebamalignment_step",
-           Gatk4MergeBamAlignment(
+           Gatk4MergeBamAlignment_4_1_2(
                ubam=None,
                bam=None,
            )
@@ -54,8 +54,8 @@ Quickstart
 .. code-block:: yaml
 
        bam:
-       - bam_0.bam
-       - bam_1.bam
+       - bam_0.sam
+       - bam_1.sam
        ubam: ubam.bam
 
 
@@ -81,7 +81,7 @@ Information
 :URL: `https://gatk.broadinstitute.org/hc/en-us/articles/360037225832-MergeBamAlignment-Picard- <https://gatk.broadinstitute.org/hc/en-us/articles/360037225832-MergeBamAlignment-Picard->`_
 :Versions: 4.1.4.1, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.1.2.0
-:Authors: Michael Franklin (@illisional), Matthias De Smet(@matthdsm)
+:Authors: Michael Franklin (@illusional), Matthias De Smet(@matthdsm)
 :Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
 :Created: 2018-12-24
 :Updated: 2020-02-26
@@ -91,11 +91,11 @@ Information
 Outputs
 -----------
 
-======  ==========  ===============
-name    type        documentation
-======  ==========  ===============
-out     IndexedBam
-======  ==========  ===============
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+out     BAM
+======  ======  ===============
 
 
 
@@ -105,8 +105,8 @@ Additional configuration (inputs)
 =============================  ==========================  ==================================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 name                           type                        prefix                                position  documentation
 =============================  ==========================  ==================================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
-ubam                           IndexedBam                  --UNMAPPED_BAM                              10  Original SAM or BAM file of unmapped reads, which must be in queryname order.
-bam                            Array<IndexedBam>           --ALIGNED_BAM                               10  SAM or BAM file(s) with alignment data.
+ubam                           BAM                         --UNMAPPED_BAM                              10  Original SAM or BAM file of unmapped reads, which must be in queryname order.
+bam                            Array<SAM>                  --ALIGNED_BAM                               10  SAM or BAM file(s) with alignment data.
 reference                      Optional<FastaWithIndexes>  --REFERENCE_SEQUENCE                        10  Reference sequence file.
 outputFilename                 Optional<Filename>          --OUTPUT                                    10  Merged SAM or BAM file to write to.
 addMateCigar                   Optional<Boolean>           --ADD_MATE_CIGAR                            11  Adds the mate CIGAR tag (MC)

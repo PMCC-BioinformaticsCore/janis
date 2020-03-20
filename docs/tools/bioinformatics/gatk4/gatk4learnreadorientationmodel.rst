@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "gatk4learnreadorientationmodel_step",
-           Gatk4LearnReadOrientationModel(
+           Gatk4LearnReadOrientationModel_4_1_4(
                f1r2CountsFiles=None,
            )
        )

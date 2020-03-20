@@ -28,7 +28,7 @@ Quickstart
 
        wf.step(
            "gatk4createsequencedictionary_step",
-           Gatk4CreateSequenceDictionary(
+           Gatk4CreateSequenceDictionary_4_1_3(
                reference=None,
            )
        )

@@ -2,11 +2,21 @@
 csv
 ===
 
-
-
-Documentation
--------------
-
 A comma separated file
 
-*This page was automatically generated on 2020-03-16*.
+
+
+Quickstart
+-----------
+
+.. code-block:: python
+
+   from janis_unix.data_types.csv import Csv
+
+   w = WorkflowBuilder("my_workflow")
+
+   w.input("input_csv", Csv(optional=False))
+   
+   # ...other workflow steps
+
+*This page was automatically generated on 2020-03-20*.

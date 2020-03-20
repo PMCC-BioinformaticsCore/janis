@@ -21,7 +21,7 @@ Quickstart
 
        wf.step(
            "bcftoolsview_step",
-           bcftoolsview(
+           BcfToolsView_1_5(
                file=None,
            )
        )

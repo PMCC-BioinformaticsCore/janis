@@ -34,7 +34,7 @@ Quickstart
 
        wf.step(
            "gatk4printreads_step",
-           Gatk4PrintReads(
+           Gatk4PrintReads_4_1_3(
                bam=None,
            )
        )

@@ -32,7 +32,7 @@ Quickstart
 
        wf.step(
            "manta_step",
-           manta(
+           Manta_1_5_0(
                bam=None,
                reference=None,
            )

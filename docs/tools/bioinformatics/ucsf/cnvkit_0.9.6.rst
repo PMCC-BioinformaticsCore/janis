@@ -20,7 +20,7 @@ Quickstart
 
        wf.step(
            "cnvkit_step",
-           CNVKit(
+           CNVKit_0_9_6(
                reference=None,
            )
        )

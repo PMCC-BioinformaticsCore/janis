@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "cat_step",
-           cat(
+           Cat(
 
            )
        )

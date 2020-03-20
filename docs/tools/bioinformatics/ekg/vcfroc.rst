@@ -23,7 +23,7 @@ Quickstart
 
        wf.step(
            "vcfroc_step",
-           vcfroc(
+           VcfRoc_1_0_1(
                vcf=None,
                truth=None,
                reference=None,

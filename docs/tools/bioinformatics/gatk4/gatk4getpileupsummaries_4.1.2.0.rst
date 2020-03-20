@@ -19,7 +19,7 @@ Quickstart
 
        wf.step(
            "gatk4getpileupsummaries_step",
-           Gatk4GetPileupSummaries(
+           Gatk4GetPileUpSummaries_4_1_2(
                bam=None,
                sites=None,
            )

@@ -2,11 +2,21 @@
 Float
 =====
 
-
-
-Documentation
--------------
-
 A float
 
-*This page was automatically generated on 2020-03-16*.
+
+
+Quickstart
+-----------
+
+.. code-block:: python
+
+   from janis_core.types.common_data_types import Float
+
+   w = WorkflowBuilder("my_workflow")
+
+   w.input("input_float", Float(optional=False))
+   
+   # ...other workflow steps
+
+*This page was automatically generated on 2020-03-20*.

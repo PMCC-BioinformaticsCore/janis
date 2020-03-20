@@ -2,11 +2,21 @@
 BAM
 ===
 
-
-
-Documentation
--------------
-
 A binary version of a SAM file, http://software.broadinstitute.org/software/igv/bam
 
-*This page was automatically generated on 2020-03-16*.
+
+
+Quickstart
+-----------
+
+.. code-block:: python
+
+   from janis_bioinformatics.data_types.bam import Bam
+
+   w = WorkflowBuilder("my_workflow")
+
+   w.input("input_bam", Bam(optional=False))
+   
+   # ...other workflow steps
+
+*This page was automatically generated on 2020-03-20*.

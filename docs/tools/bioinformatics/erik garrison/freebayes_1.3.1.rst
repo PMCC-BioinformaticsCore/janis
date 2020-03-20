@@ -21,7 +21,7 @@ Quickstart
 
        wf.step(
            "freebayes_step",
-           freebayes(
+           FreeBayes_1_3(
                bams=None,
                reference=None,
                theta=None,

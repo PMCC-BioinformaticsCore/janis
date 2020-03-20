@@ -41,7 +41,7 @@ Quickstart
 
        wf.step(
            "strelka_germline_step",
-           strelka_germline(
+           StrelkaGermline_2_9_10(
                bam=None,
                reference=None,
            )

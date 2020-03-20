@@ -22,7 +22,7 @@ Quickstart
 
        wf.step(
            "vcffixup_step",
-           vcffixup(
+           VcfFixUp_1_0_1(
                vcf=None,
            )
        )

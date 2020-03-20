@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "untar_step",
-           untar(
+           Untar(
                tarfile=None,
            )
        )

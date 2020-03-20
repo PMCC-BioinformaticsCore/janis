@@ -18,7 +18,7 @@ Quickstart
 
        wf.step(
            "strelkagermlinevariantcaller_step",
-           strelkaGermlineVariantCaller(
+           IlluminaGermlineVariantCaller(
                bam=None,
                reference=None,
            )

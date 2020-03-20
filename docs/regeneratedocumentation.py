@@ -31,7 +31,7 @@ from janis_core import (
 
 import janis_unix, janis_bioinformatics
 
-# Import modules here so that the tool registry knows about them
+# Import modules here so that the tool toolbox knows about them
 
 # Output settings
 from docs.generationhelpers.commandtool import prepare_commandtool_page
@@ -261,7 +261,7 @@ def prepare_all_tools():
     )
 
 
-def prepare_runner_templates():
+def prepare_templates():
     """
     Templates can probably 
     :return:
@@ -280,15 +280,7 @@ def prepare_runner_templates():
 Templates
 ###########
     
-This document containers the templates available to Janis by default. These are used
-to configure Cromwell to execute across a number of compute environments.
-
-Janis can be configured to submit to an existing Cromwell instance (including on GCP) with:
-
-.. code-block:: bash
-
-   urlwithport="127.0.0.1:8000"
-   janis run --engine cromwell --cromwell-url $urlwithport hello
+These templates are used to configure Cromwell / CWLTool broadly. For more information, visit `Configuring Janis <https://janis.readthedocs.io/en/latest/references/configuration.html#cromwell>`__.
 """
 
     with open(os.path.join(templates_dir, "index.rst"), "w+") as f:
@@ -351,5 +343,5 @@ Pipelines
 
 if __name__ == "__main__":
     prepare_all_tools()
-    prepare_runner_templates()
+    prepare_templates()
     generate_pipelines_page()

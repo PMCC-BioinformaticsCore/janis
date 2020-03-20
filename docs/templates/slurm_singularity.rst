@@ -1,7 +1,32 @@
-Slurm_Singularity
+Slurm Singularity
 =================
 
-Template ID ``slurm_singularity``
+Template ID: ``slurm_singularity``
+
+
+
+Quickstart
+-----------
+
+Take note below how to configure the template. This quickstart only includes the fields you absolutely require. This will write a new configuration to ``~/.janis.conf``. See `configuring janis <https://janis.readthedocs.io/en/latest/references/configuration.html>`__ for more information.
+
+.. code-block:: bash
+
+   janis init slurm_singularity \
+       --container_dir <value>
+   
+   # or to find out more information
+   janis init slurm_singularity --help
+
+OR you can insert the following lines into your template:
+
+.. code-block:: yaml
+
+   template:
+     id: slurm_singularity
+     container_dir: <value>
+
+
 
 Fields
 -------
@@ -22,8 +47,8 @@ ID                             Type                                 Default     
 execution_dir                  <class 'str'>
 queues                         typing.Union[str, typing.List[str]]                                              A single or list of queues that work should be submitted to
 mail_program                                                                                                    Mail program to pipe email to, eg: 'sendmail -t'
-send_job_emails                <class 'bool'>                       True                                        (requires JanisConfiguration.notifications.email to be set) Send emails for mail types END
-catch_slurm_errors             <class 'bool'>                       False                                       Catch Slurm errors (like OOM or walltime)
+send_job_emails                <class 'bool'>                       False                                       (requires JanisConfiguration.notifications.email to be set) Send emails for mail types END
+catch_slurm_errors             <class 'bool'>                       True                                        Catch Slurm errors (like OOM or walltime)
 build_instructions             <class 'str'>                        singularity pull $image docker://${docker}  Instructions for building singularity, it's recommended to not touch this setting.
 singularity_load_instructions                                                                                   Ensure singularity with this command executed in shell
 max_cores                                                                                                       Maximum number of cores a task can request

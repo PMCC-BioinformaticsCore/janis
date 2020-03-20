@@ -1,7 +1,40 @@
 Pawsey
 ======
 
-Template ID ``pawsey``
+Template ID: ``pawsey``
+
+
+https://support.pawsey.org.au/documentation/display/US/Queue+Policies+and+Limits
+
+Template for Pawsey. This submits Janis to the longq cluster. There is currently NO support
+for workflows that run for longer than 4 days, though workflows can be resubmitted after this
+job dies.
+
+It's proposed that Janis assistant could resubmit itself
+
+
+Quickstart
+-----------
+
+Take note below how to configure the template. This quickstart only includes the fields you absolutely require. This will write a new configuration to ``~/.janis.conf``. See `configuring janis <https://janis.readthedocs.io/en/latest/references/configuration.html>`__ for more information.
+
+.. code-block:: bash
+
+   janis init pawsey \
+       --container_dir <value>
+   
+   # or to find out more information
+   janis init pawsey --help
+
+OR you can insert the following lines into your template:
+
+.. code-block:: yaml
+
+   template:
+     id: pawsey
+     container_dir: <value>
+
+
 
 Fields
 -------

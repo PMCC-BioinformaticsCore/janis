@@ -2,15 +2,7 @@
 Templates
 ###########
     
-This document containers the templates available to Janis by default. These are used
-to configure Cromwell to execute across a number of compute environments.
-
-Janis can be configured to submit to an existing Cromwell instance (including on GCP) with:
-
-.. code-block:: bash
-
-   urlwithport="127.0.0.1:8000"
-   janis run --engine cromwell --cromwell-url $urlwithport hello
+These templates are used to configure Cromwell / CWLTool broadly. For more information, visit `Configuring Janis <https://janis.readthedocs.io/en/latest/references/configuration.html#cromwell>`__.
 
 
 
@@ -30,4 +22,4 @@ List of templates for ``janis-assistant``:
    spartan
    wehi
 
-*This page was auto-generated on 16/03/2020. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 20/03/2020. Please do not directly alter the contents of this page.*

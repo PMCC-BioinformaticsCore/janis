@@ -42,63 +42,97 @@ It was developed as part of the Portable Pipelines Project, a collaboration betw
 Introduction
 ============
 
-Janis is designed to assist in building computational workflows to generate a runnable workflow description (CWL | WDL).
-It can be installed through the Janis `project page <https://pypi.org/project/janis-pipelines/>`__ by running:
+Janis is a framework creating specialised, simple workflow definitions that are then transpiled to
+Common Workflow Language or Workflow Definition Language.
+
+Janis requires a Python installation > 3.6, and can be installed through PIP
+`project page <https://pypi.org/project/janis-pipelines/>`__ by running:
 
 .. code-block:: bash
 
    pip3 install janis-pipelines
 
-You can import Janis into your project by:
+There are two ways to use Janis:
 
-.. code-block:: python
+- Build workflows (and translate to CWL / WDL)
+- Run tools or workflows with CWLTool or Cromwell
 
+
+Example Workflow
+-----------------
+
+.. code-block:: bash
+
+   # write the workflow to `helloworld.py`
+   cat <<EOT >> helloworld.py
    import janis as j
+   from janis_unix.tools import Echo
 
-Included tool definitions and types
-===================================
+   w = j.WorkflowBuilder("hello_world")
 
-A handful of unix and bioinformatics tools have been included in your installation with Janis.
-
-Bioinformatics
---------------
-
-The Janis framework can be extended to include a suite of
-`Bioinformatics data types and tools <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`__. These are installed by default.
-
-This can be referenced through ``janis_bioinformatics``, the tool documentation suggests how this may be imported.
-
-Example
-========
-
-Below we've constructed a simple example that takes a string input, uses the `echo <tools/unix/echo.html>`_
-tool to log this to ``stdout``, and explicitly outputting this ``stdout`` to give you a basic idea of how to construct a pipeline.
-
-.. code-block:: python
-
-   import janis as j
-   from janis.tools import Echo
-
-   w = j.WorkflowBuilder("workflowId")
-
-   w.input("inputIdentifier", j.String, default="Hello, World!")
-   w.step("stepIdentifier", Echo(inp=w.inputIdentifier))
-   w.output("outputIdentifier", source=w.stepIdentifier.out)
-
-   # Will print the CWL, input file and relevant tools to the console
-   w.translate("cwl", to_disk=False)  # or "wdl"
+   w.input("input_to_print", j.String)
+   w.step("echo", Echo(inp=w.input_to_print))
+   w.output("echo_out", source=w.echo.out)
+   EOT
 
 
-Now we've created our workflow, we can export a CWL representation to the console using ``.translate("cwl")``.
+   # Translate workflow to WDL
+   janis translate helloworld.py wdl
 
-More examples
--------------
+   # Run the workflow
+   janis run -o helloworld-tutorial helloworld.py --input_to_print "Hello, World!"
 
-There are some simple example pipelines that use the unix toolset in
-`janis/examples <https://github.com/PMCC-BioinformaticsCore/janis/tree/master/janis/examples>`__.
+   # See your output
+   cat helloworld-tutorial/echo_out
+   # Hello, World!
 
-Additionally there are example bioinformatics workflows that use Janis and the bioinformatics tools in the
-`janis-pipelines repository <https://github.com/PMCC-BioinformaticsCore/janis-pipelines>`__.
+
+
+How to use Janis
+-----------------
+
+- `Tutorial 0 - Introduction to Janis <https://janis.readthedocs.io/en/latest/tutorials/tutorial0.html>`_
+- `Tutorial 1 - Building a workflow <https://janis.readthedocs.io/en/latest/tutorials/tutorial1.html>`_
+- `Tutorial 2 - Wrapping a new tool <https://janis.readthedocs.io/en/latest/tutorials/tutorial2.html>`_
+
+
+Workshops
+-----------
+
+In addition, there are fully self-guided workshops that more broadly go through the functionality of Janis:
+
+- `Workshop 1 <https://github.com/PMCC-BioinformaticsCore/janis-workshops/tree/master/workshop1>`_
+- `Workshop 2 <https://github.com/PMCC-BioinformaticsCore/janis-workshops/tree/master/workshop2>`_
+
+Examples
+---------
+
+Sometimes it's easier to learn by examples, here are a few hand picked examples:
+
+- `Samtools View <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics/blob/master/janis_bioinformatics/tools/samtools/view/base.py>`_ (`Docs <https://janis.readthedocs.io/en/latest/tools/bioinformatics/samtools/samtoolsview.html>`__)
+
+- `WGS Germline pipeline (GATK Only) <https://github.com/PMCC-BioinformaticsCore/janis-pipelines/blob/master/janis_pipelines/wgs_germline_gatk/wgsgermlinegatk.py>`_ (`Docs <https://janis.readthedocs.io/en/latest/pipelines/wgsgermlinegatk.html>`__)
+
+
+Toolbox
+=========
+
+There are two toolboxes currently available on Janis:
+
+- `Unix <https://github.com/PMCC-BioinformaticsCore/janis-unix>`__(`list of tools <https://janis.readthedocs.io/en/latest/tools/bioinformatics/index.html>`__)
+- `Bioinformatics <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`__(`list of tools <https://janis.readthedocs.io/en/latest/tools/unix/index.html>`__)
+
+
+References
+------------
+
+Through conference or talks, this project has been referenced by the following titles:
+
+- Walter and Eliza Hall Institute Talk (WEHI) 2019: *Portable Pipelines Project: Developing reproducible bioinformatics pipelines with standardised workflow languages*
+- Bioinformatics Open Source Conference (BOSC) 2019: *Janis: an open source tool to machine generate type-safe CWL and WDL workflows*
+- Victorian Cancer Bioinformatics Symposium (VCBS) 2019: *Developing portable variant calling pipelines with Janis*
+- GIW / ABACBS 2019: *Janis: A Python framework for Portable Pipelines*
+- Australian BioCommons, December 2019: *Portable pipelines: build once and run everywhere with Janis*
 
 
 Support
@@ -171,6 +205,7 @@ Contents
    :caption: Guides
 
    references/engines
+   references/resources
    references/cwl
    references/wdl
    references/faq

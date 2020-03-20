@@ -90,6 +90,15 @@ Sometimes it's easier to learn by examples, here are a few hand picked examples:
 - [WGS Germline pipeline (GATK Only)](https://github.com/PMCC-BioinformaticsCore/janis-pipelines/blob/master/janis_pipelines/wgs_germline_gatk/wgsgermlinegatk.py) ([Docs](https://janis.readthedocs.io/en/latest/pipelines/wgsgermlinegatk.html))
 
 
+### Toolbox
+
+There are two toolboxes currently available on Janis:
+
+- [Unix](https://github.com/PMCC-BioinformaticsCore/janis-unix) ([list of tools](https://janis.readthedocs.io/en/latest/tools/bioinformatics/index.html))
+- [Bioinformatics](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics) ([list of tools](https://janis.readthedocs.io/en/latest/tools/unix/index.html))
+
+
+
 ## About  
   
 > _Further information_: [About](https://janis.readthedocs.io/en/latest/about.html)   
@@ -112,7 +121,7 @@ Through conference or talks, this project has been referenced by the following t
   
 ## Support  
 
-## v0.9.0 Backwards Compatability
+### v0.9.0 Backwards Compatability
 
 **NOTE: Version 0.9.0 brings changes to output directories and camel case changes**
 

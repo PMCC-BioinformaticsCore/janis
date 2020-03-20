@@ -1,4 +1,4 @@
-# Configuring Janis
+# Configuring Janis Assistant
 
 When we talk about configuring Janis, we're really talking about how to configure the [Janis assistant](https://github.com/PMCC-BioinformaticsCore/janis-assistant) and hence Cromwell / CWLTool to interact with batch systems (eg: Slurm / PBS Torque) and container environments (Docker / Singularity).
 
@@ -12,6 +12,17 @@ Janis has built in templates for the following compute environments:
 In an extension of Janis ([janis-templates](https://github.com/PMCC-BioinformaticsCore/janis-templates)), we've produced a number of location specific templates, usually with sensible defaults.
 
 See this list for a full list of templates: [https://janis.readthedocs.io/en/latest/templates/index.html](https://janis.readthedocs.io/en/latest/templates/index.html)
+
+## Syntax
+
+The config should be in YAML, and can contain nested dictionaries.
+
+**NOTE**: In this guide we might use dots (`.`) to refer to a nested key. For example, `notifications.email` refers to the following structure:
+
+```yaml
+notifications:
+  email: <value>
+```
 
 ## Location of config
 
@@ -96,8 +107,8 @@ This guide has a number of subsections for:
 - `environment`
 - `notifications`
 - `cromwell`
-- `recipes`
 - `call_caching`
+- `recipes`
 - `template` (previously discussed)
 
 
@@ -118,6 +129,19 @@ execution_dir: <execution dir override>
 engine: <cromwell / cwltool>
 run_in_background: <boolean>
 ```
+
+### Environment variables
+
+> Non exhaustive list, some additional options are in the subsections below.
+
+- `JANIS_EXCECUTIONDIR`: equivalent to `execution_dir` as above.
+- `JANIS_OUTPUTDIR`: equivalent to `output_dir` as above.
+
+```bash
+export JANIS_EXCECUTIONDIR=/path/to/alternative/execution/
+export JANIS_OUTPUTDIR=/path/to/default/output/
+```
+
 
 ## Environment
 
@@ -154,9 +178,28 @@ notifications:
 
 ## Cromwell
 
+Sometimes Cromwell can be hard to configure from a simple template, so we've exposed some extra common options. Feel free to [raise an issue](https://github.com/PMCC-BioinformaticsCore/janis-assistant/issues/new) if you have questions or ideas.
+
+- `jar`: A location to a specific Cromwell Jar. By default, it looks for jars in `JANIS_CONFIGDIR` (default: ~/.janis/`), and finds the highest version. 
+- `config_path`: Path to an existing Cromwell Configuration. You might have a configuration file you've written (and that the templates here don't cover very well). Potentially a preconfigured version for the cloud. 
+- `url`: (URL + PORT) Or maybe you've already got an existing Cromwell instance (running on the cloud as well) but you'd still like the benefits that Janis provides (auto generation, submission, progress tracking and output copying). 
+- `memory_mb`: Increase the default heap size (`-xmx`) of Cromwell. The minimum (`-xms`) is raised to half of this value. (See it's usage here: [engines/cromwell/main.py#L163-L166](https://github.com/PMCC-BioinformaticsCore/janis-assistant/blob/edb2044705f8221f52e2520eafc0779efcbf286a/janis_assistant/engines/cromwell/main.py#L163-L166))
+- `call_caching_method`: (Default: `file`, but will become [`fingerprint`](https://github.com/broadinstitute/cromwell/pull/5450)) ([Cromwell Docs](https://cromwell.readthedocs.io/en/stable/Configuring/#local-filesystem-options)).
+
+
+```yaml
+cromwell:
+  jar: <path-to-cromwell.jar>
+  config_path: <path-to-cromwell.conf>
+  url: localhost:8000
+  memory_mb: 1500 # don't include MB or anything with it, this MUST be an int
+  call_caching_method: 
+```
+
 
 ### Existing Cromwell instance
 
+In addition to the previous `cromwell.url` method, you can also manage this through the command line.
 To configure Janis to submit to an existing Cromwell instance (eg: one already set up for the cloud), the CLI has a mechanism for setting the `cromwell_url`:
 
 ```bash
@@ -171,11 +214,102 @@ OR
 ```yaml
 engine: cromwell
 cromwell:
-    url: 127.0.0.1:8000
+  url: 127.0.0.1:8000
+```
+
+### Overriding Cromwell JAR
+
+In additional to the previous `cromwell.jar`, you can set the location of the Cromwell JAR through the environment variable `JANIS_CROMWELLJAR`:
+
+```bash
+export JANIS_CROMWELLJAR=/path/to/cromwell.jar
 ```
 
 ## Call caching
 
+> This section is in testing and still under construction. Let us know you're looking for it by [raising an issue](https://github.com/PMCC-BioinformaticsCore/janis-assistant/issues/new).
+
 ## Recipes / Common inputs
 
-Often between a number of different workflows, you have a set of inputs that you want to apply multiple times.
+Often between a number of different workflows, you have a set of inputs that you want to apply multiple times. For that, we have `recipes`. 
+
+> Recipes only match on the input name. Your input names _MUST_ be consistent through your pipelines for this concept to be useful.
+
+For example, everytime I run the [`WGSGermlineGATK`](https://janis.readthedocs.io/en/latest/pipelines/wgsgermlinegatk.html) pipeline with `hg38`, I know I want to provide the same reference files.
+
+There are a few ways to configure this:
+
+### Directories
+
+You can setup a directory with a series of `*.yaml` files, tell Janis about it; Janis will look up the file names in that directory.
+
+For the following directory: 
+
+```
+recipe_directory/
+    hg38.yaml
+    hg19.yaml
+    mm10.yaml
+```
+
+You could then say `janis run -r hg38 [...options] WGSGermlineGATK`.
+
+Environment variable:
+
+```bash
+export JANIS_RECIPEDIRECTORY=/path/to/recipe_directory/
+```
+
+OR, in your `janis.conf`
+
+```yaml
+recipes:
+  directories:
+  - /path/to/recipe_directory/
+```
+
+### Paths
+
+Create a file called `recipes.yaml` with the following structure:
+
+```yaml
+hg38:
+  reference: /path/to/hg38/reference.fasta
+  type: hg38
+hg19:
+  reference: /path/to/hg19/reference.fasta
+  type: hg19
+```
+
+Environment variable:
+
+```bash
+export JANIS_RECIPEPATHS="comma,separated,/path/to/recipes.yaml
+```
+
+OR, in your `janis.conf`
+
+```yaml
+recipes:
+  paths:
+  - /path/to/recipes.yaml 
+```
+
+### Directly in your `janis.conf`
+
+```yaml
+recipes:
+  recipes:
+    hg38:
+      reference: /path/to/hg38/reference.fasta
+      type: hg38
+    hg19:
+      reference: /path/to/hg19/reference.fasta
+      type: hg19
+```
+
+
+
+
+
+

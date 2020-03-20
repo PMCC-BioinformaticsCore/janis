@@ -185,7 +185,7 @@ Contents
    tools/index
    datatypes/index
    templates/index
-   resources/toolbox
+   references/shed
 
 .. toctree::
    :hidden:
@@ -204,10 +204,12 @@ Contents
    :maxdepth: 0
    :caption: Guides
 
+   references/configuration
    references/engines
    references/resources
    references/cwl
    references/wdl
+   references/updating
    references/faq
    references/errors
 

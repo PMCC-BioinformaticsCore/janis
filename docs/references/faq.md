@@ -81,7 +81,7 @@ If you're still having trouble, use `janis spider --trace mytool` to give you an
       
         def arguments(selfs):
             return [
-                ToolArgument(InputSelector("myInput"), posiion=1),
+                ToolArgument(InputSelector("myInput"), position=1),
                 ToolArgument("transformed-" + InputSelector("myInput"), position=2, prefix="--name")
             ]
     ```

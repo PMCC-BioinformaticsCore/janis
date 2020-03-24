@@ -88,3 +88,24 @@ Use the type annotation ``File``, and open it yourself, for example:
                TOutput("out", str)
            ]
 
+
+
+How to include an Array of strings inside my container
+#########################################################
+
+
+.. code-block:: python
+
+   from janis_core import PythonTool, TOutput, File
+   from typing import Dict, Optional, List, Any
+
+   class JoinStrings(PythonTool):
+       @staticmethod
+       def code_block(my_strings: List[str], separator: str=",") -> Dict[str, Any]:
+
+           return {"out": separator.join(my_strings)}
+
+       def outputs(self) -> List[TOutput]:
+           return [
+               TOutput("out", str)
+           ]

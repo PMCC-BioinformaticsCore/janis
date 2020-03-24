@@ -96,7 +96,7 @@ SamtoolsFlagstat = CommandToolBuilder(
     version="1.9.0",
     
     inputs=[],  # List[ToolInput]
-    outputs=[], # List[ToolOutput]
+    outputs=[] # List[ToolOutput]
 )
 ```
 

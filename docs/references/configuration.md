@@ -227,7 +227,7 @@ export JANIS_CROMWELLJAR=/path/to/cromwell.jar
 
 ## Call caching
 
-> This section is in testing and still under construction. Let us know you're looking for it by [raising an issue](https://github.com/PMCC-BioinformaticsCore/janis-assistant/issues/new).
+Please refer to this guide for configuring Janis + (Cromwell / CWLTool) to use call-caching: [Call Caching](https://janis.readthedocs.io/en/latest/references/callcaching.html).
 
 ## Recipes / Common inputs
 

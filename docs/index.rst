@@ -205,10 +205,11 @@ Contents
    :caption: Guides
 
    references/configuration
-   references/engines
    references/resources
+   references/callcaching
    references/cwl
    references/wdl
+   references/engines
    references/updating
    references/faq
    references/errors

@@ -1,4 +1,4 @@
-# Configuring resources (CPU / Memory / etc)
+# Configuring resources (CPU / Memory)
 
 Sometimes you'll want to override the amount of resources a tool will get.
 

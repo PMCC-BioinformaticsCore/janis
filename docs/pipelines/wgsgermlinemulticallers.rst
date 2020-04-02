@@ -124,7 +124,7 @@ name                    type               documentation
 ======================  =================  =======================================================
 reports                 Array<Array<Zip>>  A zip file of the FastQC quality report.
 bam                     IndexedBam         Aligned and indexed bam.
-variants_combined       CompressedVCF      Combined variants from all 3 callers
+variants                CompressedVCF      Combined variants from all 3 callers
 variants_gatk           VCF                Merged variants from the GATK caller
 variants_vardict        VCF                Merged variants from the VarDict caller
 variants_strelka        VCF                Variants from the Strelka variant caller

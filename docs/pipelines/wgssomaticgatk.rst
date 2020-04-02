@@ -118,15 +118,16 @@ mills_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/
 Outputs
 -----------
 
-=============  =================  ===============
-name           type               documentation
-=============  =================  ===============
-normal_bam     IndexedBam
-tumor_bam      IndexedBam
-normal_report  Array<Array<Zip>>
-tumor_report   Array<Array<Zip>>
-variants_gatk  CompressedVCF
-=============  =================  ===============
+==============  =================  ====================================================
+name            type               documentation
+==============  =================  ====================================================
+normal_bam      IndexedBam
+tumor_bam       IndexedBam
+normal_report   Array<Array<Zip>>
+tumor_report    Array<Array<Zip>>
+variants        CompressedVCF      Merged variants from the GATK caller
+variants_split  Array<VCF>         Unmerged variants from the GATK caller (by interval)
+==============  =================  ====================================================
 
 
 Information
@@ -143,8 +144,8 @@ Embedded Tools
 ~~~~~~~~~~~~~~~~~
 
 ============================  ======================================================================================================================================
-                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x11258d860>>``
-                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x11259db38>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10937fba8>>``
+                              ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x10938ea90>>``
 GATK4 Somatic Variant Caller  ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs            ``Gatk4GatherVcfs/4.1.3.0``
 BCFTools: Sort                ``bcftoolssort/v1.9``

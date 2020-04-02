@@ -7,7 +7,6 @@ A local file
 Secondary Files
 ---------------
 
-- ``.fai``
 - ``^.dict``
 
 .. note:: 
@@ -28,4 +27,4 @@ Quickstart
    
    # ...other workflow steps
 
-*This page was automatically generated on 2020-03-20*.
+*This page was automatically generated on 2020-04-02*.

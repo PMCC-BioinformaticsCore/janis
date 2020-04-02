@@ -134,20 +134,20 @@ mills_indels          CompressedIndexedVCF  HG38: https://console.cloud.google.c
 Outputs
 -----------
 
-=================  =================  ================================================
-name               type               documentation
-=================  =================  ================================================
-normal_report      Array<Array<Zip>>  A zip file of the NORMAL FastQC quality reports.
-tumor_report       Array<Array<Zip>>  A zip file of the TUMOR FastQC quality reports.
-normal_bam         IndexedBam         Aligned and indexed NORMAL bam
-tumor_bam          IndexedBam         Aligned and indexed TUMOR bam
-gridss_assembly    VCF                Assembly returned by GRIDSS
-variants_gatk      VCF                Merged variants from the GATK caller
-variants_strelka   VCF                Variants from the Strelka variant caller
-variants_vardict   VCF                Merged variants from the VarDict caller
-variants_gridss    VCF                Variants from the GRIDSS variant caller
-variants_combined  VCF                Combined variants from all 3 callers
-=================  =================  ================================================
+================  =================  ================================================
+name              type               documentation
+================  =================  ================================================
+normal_report     Array<Array<Zip>>  A zip file of the NORMAL FastQC quality reports.
+tumor_report      Array<Array<Zip>>  A zip file of the TUMOR FastQC quality reports.
+normal_bam        IndexedBam         Aligned and indexed NORMAL bam
+tumor_bam         IndexedBam         Aligned and indexed TUMOR bam
+gridss_assembly   VCF                Assembly returned by GRIDSS
+variants_gatk     VCF                Merged variants from the GATK caller
+variants_strelka  VCF                Variants from the Strelka variant caller
+variants_vardict  VCF                Merged variants from the VarDict caller
+variants_gridss   VCF                Variants from the GRIDSS variant caller
+variants          VCF                Combined variants from all 3 callers
+================  =================  ================================================
 
 
 Information
@@ -164,8 +164,8 @@ Embedded Tools
 ~~~~~~~~~~~~~~~~~
 
 ==============================  ======================================================================================================================================
-                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x11254ccf8>>``
-                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x112560240>>``
+                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x1093397b8>>``
+                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x109352ba8>>``
 GATK4 Somatic Variant Caller    ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs              ``Gatk4GatherVcfs/4.1.3.0``
 Strelka Somatic Variant Caller  ``strelkaSomaticVariantCaller/v0.1.0``

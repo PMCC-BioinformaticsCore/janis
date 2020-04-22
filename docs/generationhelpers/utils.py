@@ -14,6 +14,8 @@ from janis_core import (
     Float,
     Boolean,
     InputQualityType,
+    CommandTool,
+    Workflow,
 )
 from janis_core.translations import CwlTranslator
 from requests.utils import requote_uri
@@ -179,6 +181,59 @@ def get_tool_toc(
 {mappedtools}
 
 """
+
+
+def prepare_container_warning_for_commandtool(tool: CommandTool):
+    if tool.container() is not None and len(tool.container()) > 0:
+        return ""
+
+    return f"""\
+.. warning::
+
+   {tool.friendly_name()} did not include a container. You can provide one through the command line by including
+   the following instruction:
+
+   .. code-block:: bash
+
+      janis run --container-override '{tool.id()}=<organisation/container:version>' {tool.id()}
+    """
+
+
+def prepare_container_warning_for_workflow(tool: Workflow):
+    def recursive_find_tools_without_container(wf: Workflow):
+        tools = {}
+        for s in wf.step_nodes.values():
+            stool = s.tool
+            if isinstance(stool, Workflow):
+                tools.update(recursive_find_tools_without_container(stool))
+            else:
+                if not stool.container():
+                    tools[stool.id()] = stool
+
+        return tools
+
+    tools_without_containers = recursive_find_tools_without_container(tool)
+    if not tools_without_containers:
+        return ""
+
+    intro = (
+        "A tool in" if len(tools_without_containers) == 1 else "Some of the tools in"
+    )
+    merged_command = ", ".join(
+        f"{t.id()}=<organisation/container:version>"
+        for t in tools_without_containers.values()
+    )
+
+    return f"""\
+.. warning::
+
+   {intro} {tool.friendly_name()} did not include a container. You could provide them through
+    the command line by including the following instruction:
+
+   .. code-block:: bash
+
+      janis run --container-override '{merged_command}' {tool.id()}
+    """
 
 
 def get_tool_row(tools: Dict[str, Tool]):

@@ -4,7 +4,10 @@ from tabulate import tabulate
 
 from janis_core import CommandTool, ToolMetadata
 
-from docs.generationhelpers.utils import prepare_quickstart
+from docs.generationhelpers.utils import (
+    prepare_quickstart,
+    prepare_container_warning_for_commandtool,
+)
 from .utils import prepare_byline, format_rst_link, get_tool_url
 
 
@@ -24,6 +27,8 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
     fn = tool.friendly_name() if tool.friendly_name() else tool.id()
     en = f" ({tool.id()})" if fn != tool.id() else ""
     tn = fn + en
+
+    has_container = tool.container() is not None
 
     onelinedescription = prepare_byline(
         metadata.short_documentation, metadata.contributors, versions
@@ -116,6 +121,7 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
 {metadata.documentation if metadata.documentation else "No documentation was provided: " + format_rst_link(
     "contribute one", f"https://github.com/PMCC-BioinformaticsCore/janis-{tool.tool_module()}")}
 
+{prepare_container_warning_for_commandtool(tool)}
 {prepare_quickstart(tool)}
 
 Information

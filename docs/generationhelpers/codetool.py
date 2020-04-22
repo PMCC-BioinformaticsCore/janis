@@ -8,6 +8,7 @@ from docs.generationhelpers.utils import (
     format_rst_link,
     get_tool_url,
     prepare_quickstart,
+    prepare_container_warning_for_commandtool,
 )
 
 
@@ -108,6 +109,7 @@ def prepare_code_tool_page(tool: CodeTool, versions: List[str]):
     {metadata.documentation if metadata.documentation else "No documentation was provided: " + format_rst_link(
         "contribute one", f"https://github.com/PMCC-BioinformaticsCore/janis-{tool.tool_module()}")}
 
+    {prepare_container_warning_for_commandtool(tool)}
     {prepare_quickstart(tool)}
 
     Information

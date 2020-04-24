@@ -7,6 +7,7 @@ BCFTools: Index
 
 Index bgzip compressed VCF/BCF files for random access.
 
+
 Quickstart
 -----------
 

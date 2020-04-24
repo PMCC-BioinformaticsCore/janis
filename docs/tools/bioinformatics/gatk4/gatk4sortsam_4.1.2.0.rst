@@ -7,6 +7,7 @@ GATK4: SortSAM
 
 Sorts a SAM/BAM/CRAM file.
 
+
 Quickstart
 -----------
 

@@ -23,6 +23,7 @@ with the --read-filter argument. See documentation category 'Read Filters' for a
 
 The reference is strictly required when handling CRAM files.
 
+
 Quickstart
 -----------
 

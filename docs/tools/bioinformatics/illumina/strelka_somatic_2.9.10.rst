@@ -12,6 +12,7 @@ You must specify an alignment file (BAM or CRAM) for each sample of a matched tu
 Configuration will produce a workflow run script which can execute the workflow on a single node or through
 sge and resume any interrupted execution.
 
+
 Quickstart
 -----------
 

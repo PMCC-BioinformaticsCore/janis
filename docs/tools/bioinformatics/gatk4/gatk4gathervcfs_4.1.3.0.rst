@@ -10,6 +10,7 @@ GatherVcfs (Picard)
 Gathers multiple VCF files from a scatter operation into a single VCF file. 
 Input files must be supplied in genomic order and must not have events at overlapping positions.
 
+
 Quickstart
 -----------
 

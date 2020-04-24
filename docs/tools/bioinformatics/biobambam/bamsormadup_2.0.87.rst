@@ -7,6 +7,7 @@ BamSorMaDup
 
 bamsormadup: parallel sorting and duplicate marking
 
+
 Quickstart
 -----------
 

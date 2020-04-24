@@ -16,6 +16,7 @@ You may specify one or more space-separated region specifications after the inpu
 restrict output to only those alignments which overlap the specified region(s). 
 Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format).
 
+
 Quickstart
 -----------
 
@@ -134,4 +135,5 @@ subsamplingProportion                  Optional<Float>             -s           
 threads                                Optional<Integer>           -@                 5  Number of BAM compression threads to use in addition to main thread [0].
 reference                              Optional<FastaWithIndexes>  -T                 6  A FASTA format reference FILE, optionally compressed by bgzip and ideally indexed by samtools faidx. If an index is not present, one will be generated for you.
 outputFilename                         Optional<Filename>          -o                 5  Output to FILE [stdout].
+regions                                Optional<Array<String>>                       11  Region specifications after the input filename to restrict output to only those alignments which overlap the specified region(s). Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format)
 =====================================  ==========================  ========  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================

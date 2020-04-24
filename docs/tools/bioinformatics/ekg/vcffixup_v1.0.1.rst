@@ -11,6 +11,7 @@ Count the allele frequencies across alleles
 
 Uses genotypes from the VCF file to correct AC (alternate allele count), AF (alternate allele frequency), NS (number of called), in the VCF records.
 
+
 Quickstart
 -----------
 

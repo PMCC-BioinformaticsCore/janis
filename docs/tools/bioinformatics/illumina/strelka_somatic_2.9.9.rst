@@ -12,6 +12,15 @@ You must specify an alignment file (BAM or CRAM) for each sample of a matched tu
 Configuration will produce a workflow run script which can execute the workflow on a single node or through
 sge and resume any interrupted execution.
 
+.. warning::
+
+   Strelka (Somatic) did not include a container. You can provide one through the command line by including
+   the following instruction:
+
+   .. code-block:: bash
+
+      janis run --container-override 'strelka_somatic=<organisation/container:version>' strelka_somatic
+    
 Quickstart
 -----------
 
@@ -76,6 +85,7 @@ Quickstart
 
    janis run [...run options] \
        --inputs inputs.yaml \
+       --container-override 'strelka_somatic=<organisation/container:version>' \
        strelka_somatic
 
 

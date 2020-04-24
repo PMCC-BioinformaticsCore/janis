@@ -51,6 +51,7 @@ VCF Output:
     - The concordance state will be stored in the CONC_ST tag in the INFO field
     - The truth sample name will be "truth" and call sample name will be "call"
 
+
 Quickstart
 -----------
 

@@ -49,6 +49,7 @@ reads are not excluded from the duplication test and can be marked as duplicate 
 
 If desired, duplicates can be removed using the REMOVE_DUPLICATE and REMOVE_SEQUENCING_DUPLICATES options.
 
+
 Quickstart
 -----------
 

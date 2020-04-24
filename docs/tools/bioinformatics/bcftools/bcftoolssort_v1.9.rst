@@ -8,6 +8,7 @@ BCFTools: Sort
 About:   Sort VCF/BCF file.
 Usage:   bcftools sort [OPTIONS] <FILE.vcf>
 
+
 Quickstart
 -----------
 

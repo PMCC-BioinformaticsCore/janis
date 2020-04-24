@@ -11,6 +11,7 @@ FilterMutectCalls applies filters to the raw output of Mutect2. Parameters are c
 
 If given a --contamination-table file, e.g. results from CalculateContamination, the tool will additionally filter on contamination fractions. This argument may be specified with a table for one or more tumor sample. Alternatively, provide a numerical fraction to filter with the --contamination argument. FilterMutectCalls can also be given one or more --tumor-segmentation files, which are also output by CalculateContamination.
 
+
 Quickstart
 -----------
 

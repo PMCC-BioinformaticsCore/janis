@@ -7,6 +7,7 @@ scramble
 
 scramble: streaming bam to cram compression
 
+
 Quickstart
 -----------
 

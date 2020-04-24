@@ -53,6 +53,7 @@ When the -n option is not present, reads are sorted by reference (according to t
     should be changed to an appropriate combination of -T PREFIX and -o FILE. The previous -o 
     option should be removed, as output defaults to standard output.
 
+
 Quickstart
 -----------
 
@@ -69,7 +70,6 @@ Quickstart
            )
        )
        wf.output("out", source=samtoolssort_step.out)
-   wf.output("temporaryOutputs", source=samtoolssort_step.temporaryOutputs)
     
 
 *OR*
@@ -134,12 +134,11 @@ Information
 Outputs
 -----------
 
-================  ====================  ==============================================================================================================================================================================================
-name              type                  documentation
-================  ====================  ==============================================================================================================================================================================================
-out               BAM
-temporaryOutputs  Optional<Array<BAM>>  By default, any temporary files are written alongside the output file, as out.bam.tmp.nnnn.bam, or if output is to standard output, in the current directory as samtools.mmm.mmm.tmp.nnnn.bam.
-================  ====================  ==============================================================================================================================================================================================
+======  ======  ===============
+name    type    documentation
+======  ======  ===============
+out     BAM
+======  ======  ===============
 
 
 

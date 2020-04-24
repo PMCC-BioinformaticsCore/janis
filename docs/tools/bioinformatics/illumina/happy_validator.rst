@@ -40,6 +40,7 @@ usage: Haplotype Comparison
 positional arguments:
   _vcfs                 Two VCF files.
 
+
 Quickstart
 -----------
 

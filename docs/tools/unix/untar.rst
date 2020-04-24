@@ -7,6 +7,7 @@ Tar (unarchive)
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-unix>`_
 
+
 Quickstart
 -----------
 
@@ -52,7 +53,7 @@ Quickstart
 
 .. code-block:: yaml
 
-       tarfile: tarfile
+       tarfile: tarfile.tar
 
 
 

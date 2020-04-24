@@ -13,6 +13,7 @@ This is a VariantCaller based on the GATK Best Practice pipelines. It uses the G
         3. Mutect2
         4. SplitMultiAllele
 
+
 Quickstart
 -----------
 

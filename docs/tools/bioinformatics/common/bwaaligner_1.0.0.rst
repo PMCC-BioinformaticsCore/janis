@@ -7,6 +7,7 @@ Align and sort reads
 
 Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam
 
+
 Quickstart
 -----------
 

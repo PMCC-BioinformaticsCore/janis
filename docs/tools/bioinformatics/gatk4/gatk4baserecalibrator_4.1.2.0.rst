@@ -15,6 +15,7 @@ Since there is a large amount of data one can then calculate an empirical probab
 particular covariates seen at this site, where p(error) = num mismatches / num observations. The output file is a 
 table (of the several covariate values, num observations, num mismatches, empirical quality score).
 
+
 Quickstart
 -----------
 

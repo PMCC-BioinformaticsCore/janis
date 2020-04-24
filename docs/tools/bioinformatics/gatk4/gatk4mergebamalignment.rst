@@ -7,6 +7,7 @@ GATK4: Merge SAM or BAM with unmapped BAM file
 
 Merges SAM/BAM file with an unmapped BAM file
 
+
 Quickstart
 -----------
 

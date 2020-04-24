@@ -11,6 +11,7 @@ Index database sequences in the FASTA format.
 Warning: `-a bwtsw' does not work for short genomes, while `-a is' and
          `-a div' do not work not for long genomes.
 
+
 Quickstart
 -----------
 

@@ -11,6 +11,15 @@ Automatically generated index page for Illumina:
    <ul>
 
    </ul>
+     <a href="bcl2fastq.html">
+       <p style="margin-bottom: 5px"><b>Bcl2Fastq</b> <span style="margin-left: 10px; color: darkgray">bcl2fastq</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="bcl2fastq.html" style="margin-bottom: 10px">
+       v<b>2.20.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="happy_validator.html">
        <p style="margin-bottom: 5px"><b>Hap.py validation</b> <span style="margin-left: 10px; color: darkgray">happy_validator</span></p>
        

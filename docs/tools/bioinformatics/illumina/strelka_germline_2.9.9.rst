@@ -30,6 +30,15 @@ coverage over all indel sizes (in additional to SVs and SNVs).
 
 See the user guide for a full description of capabilities and limitations
 
+.. warning::
+
+   Strelka (Germline) did not include a container. You can provide one through the command line by including
+   the following instruction:
+
+   .. code-block:: bash
+
+      janis run --container-override 'strelka_germline=<organisation/container:version>' strelka_germline
+    
 Quickstart
 -----------
 
@@ -92,6 +101,7 @@ Quickstart
 
    janis run [...run options] \
        --inputs inputs.yaml \
+       --container-override 'strelka_germline=<organisation/container:version>' \
        strelka_germline
 
 

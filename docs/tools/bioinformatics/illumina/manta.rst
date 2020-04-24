@@ -21,6 +21,7 @@ unmatched tumor samples as well. Manta accepts input read mappings from BAM or C
 reports all SV and indel inferences in VCF 4.1 format. See the user guide for a full description 
 of capabilities and limitations.
 
+
 Quickstart
 -----------
 

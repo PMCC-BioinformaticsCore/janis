@@ -163,9 +163,8 @@ Information
 Embedded Tools
 ~~~~~~~~~~~~~~~~~
 
-==============================  ======================================================================================================================================
-                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x1093397b8>>``
-                                ``somatic_subpipeline/<bound method WorkflowBuilder.version of <janis_core.workflow.workflow.WorkflowBuilder object at 0x109352ba8>>``
+==============================  ======================================
+                                ``somatic_subpipeline/None``
 GATK4 Somatic Variant Caller    ``GATK4_SomaticVariantCaller/4.1.3.0``
 GATK4: Gather VCFs              ``Gatk4GatherVcfs/4.1.3.0``
 Strelka Somatic Variant Caller  ``strelkaSomaticVariantCaller/v0.1.0``
@@ -173,7 +172,7 @@ Gridss                          ``gridss/v2.5.1-dev``
 Vardict Somatic Variant Caller  ``vardictSomaticVariantCaller/v0.1.0``
 Combine Variants                ``combinevariants/0.0.4``
 BCFTools: Sort                  ``bcftoolssort/v1.9``
-==============================  ======================================================================================================================================
+==============================  ======================================
 
 
 Additional configuration (inputs)

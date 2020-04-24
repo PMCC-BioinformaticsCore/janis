@@ -10,6 +10,7 @@ Bayesian haplotype-based polymorphism discovery.
 Version:1.2.0
 
 
+
 Quickstart
 -----------
 

@@ -11,6 +11,7 @@ options:
 	-m, --use-mnps	Retain MNPs as separate events (default: false)
 	-t, --tag-parsed FLAG	Tag records which are split apart of a complex allele with this flag
 
+
 Quickstart
 -----------
 

@@ -15,6 +15,7 @@ somatic calling entails. For the latest pipeline scripts, see the Mutect2 WDL sc
 Although we present the tool for somatic calling, it may apply to other contexts, 
 such as mitochondrial variant calling.
 
+
 Quickstart
 -----------
 

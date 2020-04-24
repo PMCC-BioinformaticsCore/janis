@@ -8,6 +8,7 @@ GATK4: GetPileupSummaries
 Summarizes counts of reads that support reference, alternate and other alleles for given sites. Results can be used with CalculateContamination.
 The tool requires a common germline variant sites VCF, e.g. the gnomAD resource, with population allele frequencies (AF) in the INFO field. This resource must contain only biallelic SNPs and can be an eight-column sites-only VCF. The tool ignores the filter status of the sites. See the GATK Resource Bundle for an example human file.
 
+
 Quickstart
 -----------
 

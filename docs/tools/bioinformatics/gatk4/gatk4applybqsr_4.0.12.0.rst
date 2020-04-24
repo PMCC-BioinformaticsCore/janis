@@ -24,6 +24,7 @@ and write out the recalibrated data to a new BAM or CRAM file.
 - Original qualities can be retained in the output file under the "OQ" tag if desired. 
     See the `--emit-original-quals` argument for details.
 
+
 Quickstart
 -----------
 

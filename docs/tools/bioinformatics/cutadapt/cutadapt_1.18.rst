@@ -21,6 +21,7 @@ input data, without removing adapter sequences at all.
 Cutadapt comes with an extensive suite of automated tests and is available under the terms of the MIT license.
 If you use Cutadapt, please cite DOI:10.14806/ej.17.1.200 .
 
+
 Quickstart
 -----------
 

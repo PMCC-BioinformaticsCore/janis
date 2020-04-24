@@ -18,6 +18,7 @@ will write to a new file with a .gz suffix and remove the original. When decompr
 have a .gz suffix, which will be removed to make the output name. 
 Again after decompression completes the input file will be removed.
 
+
 Quickstart
 -----------
 

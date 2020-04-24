@@ -17,6 +17,7 @@ After indexing, tabix is able to quickly retrieve data lines overlapping regions
 Fast data retrieval also works over network if URI is given as a file name and in this case the 
 index file will be downloaded if it is not present locally.
 
+
 Quickstart
 -----------
 

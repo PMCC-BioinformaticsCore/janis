@@ -16,6 +16,7 @@ are concatenated without being recompressed, which is very fast but dangerous
 if the BCF headers differ.
 
 
+
 Quickstart
 -----------
 

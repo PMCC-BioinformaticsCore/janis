@@ -7,6 +7,7 @@ GATK4: Merge SAM Files
 
 Merges multiple SAM/BAM files into one file
 
+
 Quickstart
 -----------
 

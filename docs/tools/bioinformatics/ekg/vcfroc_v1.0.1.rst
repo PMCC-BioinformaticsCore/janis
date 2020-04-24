@@ -12,6 +12,7 @@ options:
 	-w, --window-size N       compare records up to this many bp away (default 30)
 	-r, --reference FILE	FASTA reference file
 
+
 Quickstart
 -----------
 

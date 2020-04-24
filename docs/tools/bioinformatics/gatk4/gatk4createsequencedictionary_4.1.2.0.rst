@@ -17,6 +17,7 @@ Usage example:
         R=reference.fasta \
         O=reference.dict
 
+
 Quickstart
 -----------
 

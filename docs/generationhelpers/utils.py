@@ -388,7 +388,7 @@ def prepare_default_for_type(identifier: str, t: DataType, idx=None):
 
 
 def prepare_run_instructions_input_file(
-    workflow: Tool, user_inps: dict, other_inps: dict, reference_information: str
+    tool: Tool, user_inps: dict, other_inps: dict, reference_information: str
 ):
     yaml_user_inps = CwlTranslator.stringify_translated_inputs(user_inps)
     yaml_other_inps = CwlTranslator.stringify_translated_inputs(other_inps)
@@ -397,12 +397,15 @@ def prepare_run_instructions_input_file(
 
     has_static = len(other_inps) > 0
 
+    tb = " " * 4
+    run_args = ["janis run [...run options]", tb + "--inputs inputs.yaml"]
+
     static_generation = (
         ""
         if not has_static
         else f"""\
    # static inputs
-   janis inputs --static {workflow.id()} > static.yaml"""
+   janis inputs --static {tool.id()} > static.yaml"""
     )
     static_yaml = (
         ""
@@ -414,7 +417,16 @@ def prepare_run_instructions_input_file(
 
 {indented_other}"""
     )
-    static_run = "" if not has_static else f"\n{' ' * 7}--inputs static.yaml \\"
+    if has_static:
+        run_args.append(tb + "--inputs static.yaml")
+
+    if isinstance(tool, CommandTool) and not tool.container():
+        run_args.append(
+            tb + f"--container-override '{tool.id()}=<organisation/container:version>'"
+        )
+
+    run_args.append(tb + tool.id())
+    run_statement = " \\\n".join(" " * 3 + el for el in run_args)
 
     return f"""\
 1. `Install Janis </tutorials/tutorial0.html>`_
@@ -429,12 +441,12 @@ def prepare_run_instructions_input_file(
 
 {reference_information}
 
-4. Generate user {'and static ' if has_static else ''}input files for {workflow.id()}:
+4. Generate user {'and static ' if has_static else ''}input files for {tool.id()}:
 
 .. code-block:: bash
 
    # user inputs
-   janis inputs {"--user " if has_static else ""}{workflow.id()} > inputs.yaml
+   janis inputs {"--user " if has_static else ""}{tool.id()} > inputs.yaml
 
 {static_generation}
 
@@ -446,13 +458,11 @@ def prepare_run_instructions_input_file(
 
 {static_yaml}
 
-5. Run {workflow.id()} with:
+5. Run {tool.id()} with:
 
 .. code-block:: bash
 
-   janis run [...run options] \\
-       --inputs inputs.yaml \\{static_run}
-       {workflow.id()}
+{run_statement}
 
 """
 

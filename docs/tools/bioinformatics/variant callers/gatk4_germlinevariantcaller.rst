@@ -14,6 +14,7 @@ This is a VariantCaller based on the GATK Best Practice pipelines. It uses the G
         3. HaplotypeCaller
         4. SplitMultiAllele
 
+
 Quickstart
 -----------
 

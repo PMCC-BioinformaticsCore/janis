@@ -21,18 +21,19 @@ If you have any trouble running GRIDSS, please raise an issue using the Issues t
 from users, a user guide will be produced outlining common workflows, pitfalls, and use cases.
 
 
+
 Quickstart
 -----------
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.papenfuss.gridss.gridss import Gridss_2_6_3
+       from janis_bioinformatics.tools.papenfuss.gridss.gridss import Gridss_2_6_2
 
        wf = WorkflowBuilder("myworkflow")
 
        wf.step(
            "gridss_step",
-           Gridss_2_6_3(
+           Gridss_2_6_2(
                bams=None,
                reference=None,
            )
@@ -94,8 +95,8 @@ Information
 
 :ID: ``gridss``
 :URL: `https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation <https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation>`_
-:Versions: v2.6.3, v2.5.1-dev, v2.4.0, v2.2.3
-:Container: gridss/gridss:2.6.3
+:Versions: v2.6.2, v2.5.1-dev, v2.4.0, v2.2.3
+:Container: gridss/gridss:2.6.2
 :Authors: Michael Franklin
 :Citations: Daniel L. Cameron, Jan Schröder, Jocelyn Sietsma Penington, Hongdo Do, Ramyar Molania, Alexander Dobrovic, Terence P. Speed and Anthony T. Papenfuss. GRIDSS: sensitive and specific genomic rearrangement detection using positional de Bruijn graph assembly. Genome Research, 2017 doi: 10.1101/gr.222109.117
 :DOI: 10.1101/gr.222109.117

@@ -1,11 +1,11 @@
 :orphan:
 
-Performance summary workflow (targeted bed)
-========================================================================
+Performance summary workflow (whole genome)
+======================================================================
 
 *0 contributors · 1 version*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-None>`_
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
 
 Quickstart
@@ -13,21 +13,21 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_core.workflow.workflow import WorkflowBuilder
+       from janis_bioinformatics.tools.bioinformaticstoolbase import BioinformaticsWorkflowBuilder
 
        wf = WorkflowBuilder("myworkflow")
 
        wf.step(
-           "performancesummarytargeted_step",
-           WorkflowBuilder(
+           "performancesummarygenome_step",
+           BioinformaticsWorkflowBuilder(
                bam=None,
                bed=None,
                sample_name=None,
            )
        )
-       wf.output("out", source=performancesummarytargeted_step.out)
-       wf.output("geneFileOut", source=performancesummarytargeted_step.geneFileOut)
-       wf.output("regionFileOut", source=performancesummarytargeted_step.regionFileOut)
+       wf.output("performanceSummaryOut", source=performancesummarygenome_step.performanceSummaryOut)
+       wf.output("geneFileOut", source=performancesummarygenome_step.geneFileOut)
+       wf.output("regionFileOut", source=performancesummarygenome_step.regionFileOut)
     
 
 *OR*
@@ -44,12 +44,12 @@ Quickstart
 
 
 
-4. Generate user input files for PerformanceSummaryTargeted:
+4. Generate user input files for PerformanceSummaryGenome:
 
 .. code-block:: bash
 
    # user inputs
-   janis inputs PerformanceSummaryTargeted > inputs.yaml
+   janis inputs PerformanceSummaryGenome > inputs.yaml
 
 
 
@@ -64,13 +64,13 @@ Quickstart
 
 
 
-5. Run PerformanceSummaryTargeted with:
+5. Run PerformanceSummaryGenome with:
 
 .. code-block:: bash
 
    janis run [...run options] \
        --inputs inputs.yaml \
-       PerformanceSummaryTargeted
+       PerformanceSummaryGenome
 
 
 
@@ -81,7 +81,7 @@ Information
 
 URL: *No URL to the documentation was provided*
 
-:ID: ``PerformanceSummaryTargeted``
+:ID: ``PerformanceSummaryGenome``
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Authors: 
@@ -94,13 +94,13 @@ URL: *No URL to the documentation was provided*
 Outputs
 -----------
 
-=============  ========  ===============
-name           type      documentation
-=============  ========  ===============
-out            csv
-geneFileOut    TextFile
-regionFileOut  TextFile
-=============  ========  ===============
+=====================  ========  ===============
+name                   type      documentation
+=====================  ========  ===============
+performanceSummaryOut  csv
+geneFileOut            TextFile
+regionFileOut          TextFile
+=====================  ========  ===============
 
 
 Embedded Tools
@@ -110,9 +110,9 @@ Embedded Tools
 GATK4: CollectInsertSizeMetrics  ``Gatk4CollectInsertSizeMetrics/4.1.3.0``
 SamTools: Flagstat               ``SamToolsFlagstat/1.9.0``
 SamTools: View                   ``SamToolsView/1.9.0``
-BEDTools: intersectBed           ``bedtoolsintersectBed/v2.29.2``
-BEDTools: coverageBed            ``bedtoolsCoverageBed/v2.29.2``
+BEDTools: genomeCoverageBed      ``bedtoolsgenomeCoverageBed/v2.29.2``
 Performance Summary              ``performanceSummary/0.0.7``
+BEDTools: coverageBed            ``bedtoolsCoverageBed/v2.29.2``
 Gene Coverage Per Sample         ``geneCoveragePerSample/0.0.7``
 ===============================  =========================================
 
@@ -130,7 +130,7 @@ sample_name                                    String
 gatk4collectinsertsizemetrics_outputFilename   Optional<Filename>  File to write the output to.  Required.
 gatk4collectinsertsizemetrics_outputHistogram  Optional<Filename>  File to write insert size Histogram chart to.  Required.
 samtoolsview_doNotOutputAlignmentsWithBitsSet  Optional<String>    Do not output alignments with any bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
-bedtoolscoveragebed_histogram                  Optional<Boolean>   Report a histogram of coverage for each feature in A as well as a summary histogram for _all_ features in A. Output (tab delimited) after each feature in A: 1) depth 2) # bases at depth 3) size of A 4) % of A at depth.
+performancesummary_genome                      Optional<Boolean>   calculate statistics for whole genome data.--target_flagstat must not be speicified
 bedtoolscoverage_histogram                     Optional<Boolean>   Report a histogram of coverage for each feature in A as well as a summary histogram for _all_ features in A. Output (tab delimited) after each feature in A: 1) depth 2) # bases at depth 3) size of A 4) % of A at depth.
 genecoverage_outputGeneFile                    Optional<Filename>  Output gene file
 genecoverage_outputRegionFile                  Optional<Filename>  Output region file

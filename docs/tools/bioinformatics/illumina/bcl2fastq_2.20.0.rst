@@ -36,8 +36,8 @@ Quickstart
            )
        )
        wf.output("unalignedReads", source=bcl2fastq_step.unalignedReads)
-   wf.output("stats", source=bcl2fastq_step.stats)
-   wf.output("interop", source=bcl2fastq_step.interop)
+       wf.output("stats", source=bcl2fastq_step.stats)
+       wf.output("interop", source=bcl2fastq_step.interop)
     
 
 *OR*

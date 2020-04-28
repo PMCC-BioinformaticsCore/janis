@@ -281,7 +281,7 @@ def prepare_quickstart(tool: Tool):
 
     python_step_name = tool.id().lower() + "_step"
     output_python_code = "\n".join(
-        f'   wf.output("{o.id()}", source={python_step_name}.{o.id()})'
+        " " * 7 + f'wf.output("{o.id()}", source={python_step_name}.{o.id()})'
         for o in tool.tool_outputs()
     )
     python_codeblock = f"""\
@@ -297,7 +297,7 @@ def prepare_quickstart(tool: Tool):
 {required_python_input_map}
            )
        )
-    {output_python_code}
+{output_python_code}
     """
 
     return f"""\

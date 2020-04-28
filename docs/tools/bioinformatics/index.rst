@@ -11,7 +11,11 @@ Automatically generated index page for bioinformatics:
    <ul>
      <li><a href="bcftools/index.html">bcftools</a></li>
 
+     <li><a href="bedtools/index.html">bedtools</a></li>
+
      <li><a href="biobambam/index.html">biobambam</a></li>
+
+     <li><a href="broad institute/index.html">broad institute</a></li>
 
      <li><a href="bwa/index.html">bwa</a></li>
 

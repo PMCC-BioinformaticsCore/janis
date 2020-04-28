@@ -24,8 +24,8 @@ Quickstart
            )
        )
        wf.output("bwa", source=indexfasta_step.bwa)
-   wf.output("samtools", source=indexfasta_step.samtools)
-   wf.output("dict", source=indexfasta_step.dict)
+       wf.output("samtools", source=indexfasta_step.samtools)
+       wf.output("dict", source=indexfasta_step.dict)
     
 
 *OR*

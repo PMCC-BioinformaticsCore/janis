@@ -38,6 +38,15 @@ Automatically generated index page for GATK4:
      </a>
      <hr />
          
+     <a href="gatk4collectinsertsizemetrics.html">
+       <p style="margin-bottom: 5px"><b>GATK4: CollectInsertSizeMetrics</b> <span style="margin-left: 10px; color: darkgray">Gatk4CollectInsertSizeMetrics</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4collectinsertsizemetrics.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="gatk4createsequencedictionary.html">
        <p style="margin-bottom: 5px"><b>GATK4: CreateSequenceDictionary</b> <span style="margin-left: 10px; color: darkgray">Gatk4CreateSequenceDictionary</span></p>
        

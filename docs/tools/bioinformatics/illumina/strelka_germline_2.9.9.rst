@@ -56,10 +56,10 @@ Quickstart
            )
        )
        wf.output("configPickle", source=strelka_germline_step.configPickle)
-   wf.output("script", source=strelka_germline_step.script)
-   wf.output("stats", source=strelka_germline_step.stats)
-   wf.output("variants", source=strelka_germline_step.variants)
-   wf.output("genome", source=strelka_germline_step.genome)
+       wf.output("script", source=strelka_germline_step.script)
+       wf.output("stats", source=strelka_germline_step.stats)
+       wf.output("variants", source=strelka_germline_step.variants)
+       wf.output("genome", source=strelka_germline_step.genome)
     
 
 *OR*

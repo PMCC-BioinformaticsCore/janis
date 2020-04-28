@@ -25,8 +25,8 @@ Quickstart
            )
        )
        wf.output("diploid", source=strelkagermlinevariantcaller_step.diploid)
-   wf.output("variants", source=strelkagermlinevariantcaller_step.variants)
-   wf.output("out", source=strelkagermlinevariantcaller_step.out)
+       wf.output("variants", source=strelkagermlinevariantcaller_step.variants)
+       wf.output("out", source=strelkagermlinevariantcaller_step.out)
     
 
 *OR*

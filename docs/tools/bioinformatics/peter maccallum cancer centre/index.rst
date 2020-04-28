@@ -29,11 +29,38 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
      </a>
      <hr />
          
+     <a href="addsymtodepthofcoverage.html">
+       <p style="margin-bottom: 5px"><b>Add Sym to DepthOfCoverage</b> <span style="margin-left: 10px; color: darkgray">addSymToDepthOfCoverage</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="addsymtodepthofcoverage.html" style="margin-bottom: 10px">
+       v<b>dev</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="combinevariants.html">
        <p style="margin-bottom: 5px"><b>Combine Variants</b> <span style="margin-left: 10px; color: darkgray">combinevariants</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="combinevariants.html" style="margin-bottom: 10px">
        v<b>0.0.5</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="genecoveragepersample.html">
+       <p style="margin-bottom: 5px"><b>Gene Coverage Per Sample</b> <span style="margin-left: 10px; color: darkgray">geneCoveragePerSample</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="genecoveragepersample.html" style="margin-bottom: 10px">
+       v<b>dev</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="performancesummary.html">
+       <p style="margin-bottom: 5px"><b>Performance Summary</b> <span style="margin-left: 10px; color: darkgray">performanceSummary</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="performancesummary.html" style="margin-bottom: 10px">
+       v<b>dev</b>
      </a></p>
      </a>
      <hr />

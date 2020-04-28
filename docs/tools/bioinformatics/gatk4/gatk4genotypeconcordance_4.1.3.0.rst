@@ -69,8 +69,8 @@ Quickstart
            )
        )
        wf.output("summaryMetrics", source=gatk4genotypeconcordance_step.summaryMetrics)
-   wf.output("detailMetrics", source=gatk4genotypeconcordance_step.detailMetrics)
-   wf.output("contingencyMetrics", source=gatk4genotypeconcordance_step.contingencyMetrics)
+       wf.output("detailMetrics", source=gatk4genotypeconcordance_step.detailMetrics)
+       wf.output("contingencyMetrics", source=gatk4genotypeconcordance_step.contingencyMetrics)
     
 
 *OR*

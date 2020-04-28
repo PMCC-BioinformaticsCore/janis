@@ -30,10 +30,10 @@ Quickstart
            )
        )
        wf.output("logFinalOut", source=star_aligner_step.logFinalOut)
-   wf.output("logOut", source=star_aligner_step.logOut)
-   wf.output("logProgressOut", source=star_aligner_step.logProgressOut)
-   wf.output("sjOutTab", source=star_aligner_step.sjOutTab)
-   wf.output("out", source=star_aligner_step.out)
+       wf.output("logOut", source=star_aligner_step.logOut)
+       wf.output("logProgressOut", source=star_aligner_step.logProgressOut)
+       wf.output("sjOutTab", source=star_aligner_step.sjOutTab)
+       wf.output("out", source=star_aligner_step.out)
     
 
 *OR*
@@ -114,16 +114,16 @@ out             BAM
 Additional configuration (inputs)
 ---------------------------------
 
-=================  ========================  ===================  =================================================================  ========================================================================================================================================================================================================================================================================================================================
-name               type                      prefix               position                                                           documentation
-=================  ========================  ===================  =================================================================  ========================================================================================================================================================================================================================================================================================================================
-help               Optional<Boolean>         --help                                                                                  help page
-runThreadN         Optional<Integer>         --runThreadN                                                                            int: number of threads to run STAR. Default: 1.
-genomeDir          Optional<Directory>       --genomeDir                                                                             string: path to the directory where genome files are stored (for –runMode alignReads) or will be generated (for –runMode generateGenome). Default: ./GenomeDir
-readFilesIn        Optional<Array<FastqGz>>  --readFilesIn                                                                           string(s): paths to files that contain input read1 (and, if needed, read2). Default: Read1,Read2.
-outFileNamePrefix  Optional<Filename>        --outFileNamePrefix  <janis_core.types.common_data_types.String object at 0x10e94ef98>  string: output files name prefix (including full or relative path). Can only be defined on the command line.
-outSAMtype         Optional<Array<String>>   --outSAMtype                                                                            strings: type of SAM/BAM output. 1st word: "BAM": outputBAMwithoutsorting, "SAM": outputSAMwithoutsorting, "None": no SAM/BAM output. 2nd,3rd: "Unsorted": standard unsorted. "SortedByCoordinate": sorted by coordinate. This option will allocate extra memory for sorting which can be specified by –limitBAMsortRAM.
-outSAMunmapped     Optional<String>          --outSAMunmapped                                                                        string(s): output of unmapped reads in the SAM format
-outSAMattributes   Optional<String>          --outSAMattributes                                                                      string: a string of desired SAM attributes, in the order desired for the output SAM
-readFilesCommand   Optional<String>          --readFilesCommand                                                                      string(s): command line to execute for each of the input file. This command should generate FASTA or FASTQ text and send it to stdout
-=================  ========================  ===================  =================================================================  ========================================================================================================================================================================================================================================================================================================================
+=================  ========================  ===================  ==========  ========================================================================================================================================================================================================================================================================================================================
+name               type                      prefix               position    documentation
+=================  ========================  ===================  ==========  ========================================================================================================================================================================================================================================================================================================================
+help               Optional<Boolean>         --help                           help page
+runThreadN         Optional<Integer>         --runThreadN                     int: number of threads to run STAR. Default: 1.
+genomeDir          Optional<Directory>       --genomeDir                      string: path to the directory where genome files are stored (for –runMode alignReads) or will be generated (for –runMode generateGenome). Default: ./GenomeDir
+readFilesIn        Optional<Array<FastqGz>>  --readFilesIn                    string(s): paths to files that contain input read1 (and, if needed, read2). Default: Read1,Read2.
+outFileNamePrefix  Optional<Filename>        --outFileNamePrefix              string: output files name prefix (including full or relative path). Can only be defined on the command line.
+outSAMtype         Optional<Array<String>>   --outSAMtype                     strings: type of SAM/BAM output. 1st word: "BAM": outputBAMwithoutsorting, "SAM": outputSAMwithoutsorting, "None": no SAM/BAM output. 2nd,3rd: "Unsorted": standard unsorted. "SortedByCoordinate": sorted by coordinate. This option will allocate extra memory for sorting which can be specified by –limitBAMsortRAM.
+outSAMunmapped     Optional<String>          --outSAMunmapped                 string(s): output of unmapped reads in the SAM format
+outSAMattributes   Optional<String>          --outSAMattributes               string: a string of desired SAM attributes, in the order desired for the output SAM
+readFilesCommand   Optional<String>          --readFilesCommand               string(s): command line to execute for each of the input file. This command should generate FASTA or FASTQ text and send it to stdout
+=================  ========================  ===================  ==========  ========================================================================================================================================================================================================================================================================================================================

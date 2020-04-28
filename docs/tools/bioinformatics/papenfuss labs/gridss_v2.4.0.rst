@@ -40,7 +40,7 @@ Quickstart
            )
        )
        wf.output("vcf", source=gridss_step.vcf)
-   wf.output("assembly", source=gridss_step.assembly)
+       wf.output("assembly", source=gridss_step.assembly)
     
 
 *OR*

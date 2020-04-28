@@ -52,7 +52,7 @@ Quickstart
            )
        )
        wf.output("vcf", source=combinevariants_step.vcf)
-   wf.output("tsv", source=combinevariants_step.tsv)
+       wf.output("tsv", source=combinevariants_step.tsv)
     
 
 *OR*

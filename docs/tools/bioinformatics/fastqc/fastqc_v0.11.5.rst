@@ -25,7 +25,7 @@ Quickstart
            )
        )
        wf.output("out", source=fastqc_step.out)
-   wf.output("datafile", source=fastqc_step.datafile)
+       wf.output("datafile", source=fastqc_step.datafile)
     
 
 *OR*

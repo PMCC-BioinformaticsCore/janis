@@ -66,7 +66,7 @@ Quickstart
            )
        )
        wf.output("out", source=gatk4markduplicates_step.out)
-   wf.output("metrics", source=gatk4markduplicates_step.metrics)
+       wf.output("metrics", source=gatk4markduplicates_step.metrics)
     
 
 *OR*

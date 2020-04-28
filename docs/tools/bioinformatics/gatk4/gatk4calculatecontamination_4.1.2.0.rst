@@ -28,7 +28,7 @@ Quickstart
            )
        )
        wf.output("contOut", source=gatk4calculatecontamination_step.contOut)
-   wf.output("segOut", source=gatk4calculatecontamination_step.segOut)
+       wf.output("segOut", source=gatk4calculatecontamination_step.segOut)
     
 
 *OR*

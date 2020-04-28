@@ -28,7 +28,7 @@ Quickstart
            )
        )
        wf.output("vardict_variants", source=vardictgermlinevariantcaller_step.vardict_variants)
-   wf.output("out", source=vardictgermlinevariantcaller_step.out)
+       wf.output("out", source=vardictgermlinevariantcaller_step.out)
     
 
 *OR*

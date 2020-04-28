@@ -24,7 +24,7 @@ Quickstart
            )
        )
        wf.output("out", source=bamsormadup_step.out)
-   wf.output("metrics", source=bamsormadup_step.metrics)
+       wf.output("metrics", source=bamsormadup_step.metrics)
     
 
 *OR*

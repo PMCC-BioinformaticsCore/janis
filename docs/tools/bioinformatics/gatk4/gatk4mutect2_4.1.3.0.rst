@@ -30,8 +30,8 @@ Quickstart
            )
        )
        wf.output("out", source=gatk4mutect2_step.out)
-   wf.output("stats", source=gatk4mutect2_step.stats)
-   wf.output("f1f2r_out", source=gatk4mutect2_step.f1f2r_out)
+       wf.output("stats", source=gatk4mutect2_step.stats)
+       wf.output("f1f2r_out", source=gatk4mutect2_step.f1f2r_out)
     
 
 *OR*

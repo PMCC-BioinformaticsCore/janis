@@ -39,7 +39,7 @@ Quickstart
            )
        )
        wf.output("out", source=gridss_step.out)
-   wf.output("assembly", source=gridss_step.assembly)
+       wf.output("assembly", source=gridss_step.assembly)
     
 
 *OR*
@@ -120,13 +120,14 @@ assembly  BAM
 Additional configuration (inputs)
 ---------------------------------
 
-================  ==================  ===========  ==========  ===============
-name              type                prefix         position  documentation
-================  ==================  ===========  ==========  ===============
-bams              Array<BAM>                               10
-reference         FastaWithIndexes    --reference           1
-outputFilename    Optional<Filename>  --output              2
-assemblyFilename  Optional<Filename>  --assembly            3
+================  ==================  ============  ==========  ===============
+name              type                prefix          position  documentation
+================  ==================  ============  ==========  ===============
+bams              Array<BAM>                                10
+reference         FastaWithIndexes    --reference            1
+outputFilename    Optional<Filename>  --output               2
+assemblyFilename  Optional<Filename>  --assembly             3
 threads           Optional<Integer>   --threads
-blacklist         Optional<bed>       --blacklist           4
-================  ==================  ===========  ==========  ===============
+blacklist         Optional<bed>       --blacklist            4
+tmpdir            Optional<String>    --workingdir
+================  ==================  ============  ==========  ===============

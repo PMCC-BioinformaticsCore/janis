@@ -25,8 +25,8 @@ Quickstart
            )
        )
        wf.output("std", source=vep_step.std)
-   wf.output("out", source=vep_step.out)
-   wf.output("stats", source=vep_step.stats)
+       wf.output("out", source=vep_step.out)
+       wf.output("stats", source=vep_step.stats)
     
 
 *OR*

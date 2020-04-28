@@ -26,8 +26,8 @@ Quickstart
            )
        )
        wf.output("summaryMetrics", source=performancevalidator_step.summaryMetrics)
-   wf.output("detailMetrics", source=performancevalidator_step.detailMetrics)
-   wf.output("contingencyMetrics", source=performancevalidator_step.contingencyMetrics)
+       wf.output("detailMetrics", source=performancevalidator_step.detailMetrics)
+       wf.output("contingencyMetrics", source=performancevalidator_step.contingencyMetrics)
     
 
 *OR*

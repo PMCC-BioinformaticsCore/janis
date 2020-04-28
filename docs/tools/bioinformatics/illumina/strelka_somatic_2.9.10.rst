@@ -31,10 +31,10 @@ Quickstart
            )
        )
        wf.output("configPickle", source=strelka_somatic_step.configPickle)
-   wf.output("script", source=strelka_somatic_step.script)
-   wf.output("stats", source=strelka_somatic_step.stats)
-   wf.output("indels", source=strelka_somatic_step.indels)
-   wf.output("snvs", source=strelka_somatic_step.snvs)
+       wf.output("script", source=strelka_somatic_step.script)
+       wf.output("stats", source=strelka_somatic_step.stats)
+       wf.output("indels", source=strelka_somatic_step.indels)
+       wf.output("snvs", source=strelka_somatic_step.snvs)
     
 
 *OR*

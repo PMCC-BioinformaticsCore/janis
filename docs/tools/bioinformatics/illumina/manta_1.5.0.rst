@@ -39,13 +39,13 @@ Quickstart
            )
        )
        wf.output("python", source=manta_step.python)
-   wf.output("pickle", source=manta_step.pickle)
-   wf.output("candidateSV", source=manta_step.candidateSV)
-   wf.output("candidateSmallIndels", source=manta_step.candidateSmallIndels)
-   wf.output("diploidSV", source=manta_step.diploidSV)
-   wf.output("alignmentStatsSummary", source=manta_step.alignmentStatsSummary)
-   wf.output("svCandidateGenerationStats", source=manta_step.svCandidateGenerationStats)
-   wf.output("svLocusGraphStats", source=manta_step.svLocusGraphStats)
+       wf.output("pickle", source=manta_step.pickle)
+       wf.output("candidateSV", source=manta_step.candidateSV)
+       wf.output("candidateSmallIndels", source=manta_step.candidateSmallIndels)
+       wf.output("diploidSV", source=manta_step.diploidSV)
+       wf.output("alignmentStatsSummary", source=manta_step.alignmentStatsSummary)
+       wf.output("svCandidateGenerationStats", source=manta_step.svCandidateGenerationStats)
+       wf.output("svLocusGraphStats", source=manta_step.svLocusGraphStats)
     
 
 *OR*

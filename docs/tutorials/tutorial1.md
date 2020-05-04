@@ -19,7 +19,12 @@ To prepare for this tutorial, we're going to create a folder and download some d
 
 ```bash
 mkdir janis-tutorials && cd janis-tutorials
+
+# If WGET is installed
 wget -q -O- "https://github.com/PMCC-BioinformaticsCore/janis-workshops/raw/master/janis-data.tar" | tar -xz
+
+# If CURL is installed
+curl -Ls "https://github.com/PMCC-BioinformaticsCore/janis-workshops/raw/master/janis-data.tar" | tar -xz
 ```
 
 
@@ -265,7 +270,8 @@ janis translate tools/alignment.py wdl
 ## Running the alignment workflow
 
 ```
-janis run -o tutorial1 tools/alignment.py \
+janis run -o tutorial1 --engine cwltool \
+    tools/alignment.py \
     --fastq data/BRCA1_R*.fastq.gz \
     --reference reference/hg38-brca1.fasta \
     --sample_name NA12878 \

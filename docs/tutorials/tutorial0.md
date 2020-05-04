@@ -18,6 +18,7 @@ Janis uses an *abstracted execution environment*, which removes the shared file 
 - Local environment
 - Python 3.6+
 - Docker
+- Python virtualenv (`pip3 install virtualenv`)
 
 > **NB**: This tutorial requires Docker to be installed and available.
 

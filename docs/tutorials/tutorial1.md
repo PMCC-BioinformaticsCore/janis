@@ -55,7 +55,7 @@ We have four inputs we want to expose on this workflow:
 We've already imported the `String` type, and we can import `FastqGzPair` and `FastaWithIndex` from the `janis_bioinformatics` registry:
 
 ```python
-from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
+from janis_bioinformatics.data_types import FastqGzPairedEnd, FastaWithDict
 ```
 
 ### Tools
@@ -111,7 +111,7 @@ An input requires a unique identifier (string) and a DataType (String, FastqGzPa
 ```python
 w.input("sample_name", String)
 w.input("read_group", String)
-w.input("fastq", FastqGzPair)
+w.input("fastq", FastqGzPairedEnd)
 w.input("reference", FastaWithDict)
 ```
 
@@ -217,7 +217,7 @@ Hopefully you have a workflow that looks like the following!
 ```python
 from janis_core import WorkflowBuilder, String
 
-from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
+from janis_bioinformatics.data_types import FastqGzPairedEnd, FastaWithDict
 
 from janis_bioinformatics.tools.bwa import BwaMemLatest
 from janis_bioinformatics.tools.samtools import SamToolsView_1_9
@@ -228,7 +228,7 @@ w = WorkflowBuilder("alignmentWorkflow")
 # Inputs
 w.input("sample_name", String)
 w.input("read_group", String)
-w.input("fastq", FastqGzPair)
+w.input("fastq", FastqGzPairedEnd)
 w.input("reference", FastaWithDict)
 
 # Steps
@@ -269,8 +269,10 @@ janis translate tools/alignment.py wdl
 
 ## Running the alignment workflow
 
-```
-janis run -o tutorial1 --engine cwltool \
+We'll run the workflow against the current directory.
+
+```bash
+janis run -o . --engine cwltool \
     tools/alignment.py \
     --fastq data/BRCA1_R*.fastq.gz \
     --reference reference/hg38-brca1.fasta \
@@ -283,10 +285,23 @@ After the workflow has run, you'll see the outputs in the current directory:
 ```bash
 ls
 
-drwxr-xr-x  mfranklin  1677682026   160B  data
-drwxr-xr-x  mfranklin  1677682026   256B  janis
--rw-r--r--  mfranklin  wheel        2.7M  out.bam
--rw-r--r--  mfranklin  wheel        296B  out.bam.bai
-drwxr-xr-x  mfranklin  1677682026   320B  reference
-drwxr-xr-x  mfranklin  1677682026   128B  tools
+# drwxr-xr-x  mfranklin  1677682026   160B  data
+# drwxr-xr-x  mfranklin  1677682026   256B  janis
+# -rw-r--r--  mfranklin  wheel        2.7M  out.bam
+# -rw-r--r--  mfranklin  wheel        296B  out.bam.bai
+# drwxr-xr-x  mfranklin  1677682026   320B  reference
+# drwxr-xr-x  mfranklin  1677682026   128B  tools
+```
+
+### OPTIONAL: Run with Cromwell
+
+If you have `java` installed, Janis can run the workflow in the Crowmell execution engine by using the `--engine cromwell` parameter:
+
+```bash
+janis run -o run-with-cromwell --engine cwltool \
+    tools/alignment.py \
+    --fastq data/BRCA1_R*.fastq.gz \
+    --reference reference/hg38-brca1.fasta \
+    --sample_name NA12878 \
+    --read_group "@RG\tID:NA12878\tSM:NA12878\tLB:NA12878\tPL:ILLUMINA"
 ```

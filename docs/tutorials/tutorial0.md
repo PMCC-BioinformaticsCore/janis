@@ -38,7 +38,7 @@ We'll install Janis in a virtual environment as it preserves versioning of Janis
 2. Install Janis through PIP:
 
     ```bash
-    pip install janis-pipelines
+    pip install -q janis-pipelines
     ```
 
 3. Test that janis was installed:

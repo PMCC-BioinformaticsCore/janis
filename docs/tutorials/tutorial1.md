@@ -298,7 +298,7 @@ ls
 If you have `java` installed, Janis can run the workflow in the Crowmell execution engine by using the `--engine cromwell` parameter:
 
 ```bash
-janis run -o run-with-cromwell --engine cwltool \
+janis run -o run-with-cromwell --engine cromwell \
     tools/alignment.py \
     --fastq data/BRCA1_R*.fastq.gz \
     --reference reference/hg38-brca1.fasta \

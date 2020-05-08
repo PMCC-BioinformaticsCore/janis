@@ -1,15 +1,18 @@
 Secondary / Accessory Files
 =============================
 
-In some domains (looking specifically at Bioinformatics here), a single file isn't enough to contain all the information. Often a *secondary* or *accessory* file is used to provide additional information, potentially a quick access index. These files are attached to the original file by a specific file pattern. We'll talk about that more soon.
+In some domains (looking specifically at Bioinformatics here), a single file isn't enough to contain all the information. Janis borrows the concept of secondary files from the CWL specification, and in fact we use the same pattern for grouping these files.
 
-For this reason, Janis allows data_types that inherit from a ``File`` to specify a ``secondary_file`` list.
+Often a *secondary* or *accessory* file is used to provide additional information, potentially a quick access index. These files are attached to the original file by a specific file pattern. We'll talk about that more soon.
+
+
+For this reason, Janis allows data_types that inherit from a ``File`` to specify a ``secondary_file`` list of files to be bundled with.
 
 
 Secondary file pattern
 -----------------------
 
-For consistency, we follow the `Common Workflow Language secondary file pattern <https://github.com/common-workflow-language/common-workflow-language/blob/a062055fddcc7d7d9dbc53d28288e3ccb9a800d8/v1.0/Process.yml#L465-L473>`_
+As earlier mentioned, we follow the `Common Workflow Language secondary file pattern <https://github.com/common-workflow-language/common-workflow-language/blob/a062055fddcc7d7d9dbc53d28288e3ccb9a800d8/v1.0/Process.yml#L465-L473>`_:
 
 1. If string begins with one or more caret ``^`` characters, for each caret, remove the last file extension from the path (the last period ``.`` and all following characters).  If there are no file extensions, the path is unchanged.
 2. Append the remainder of the string to the end of the file path.
@@ -20,13 +23,13 @@ Examples
 - `IndexedBam <https://janis.readthedocs.io/en/latest/datatypes/indexedbam.html>`_
     - Pattern: ``.bai``
     - Files:
-        - ``myfile.bam``
+        - Base: ``myfile.bam``
         - ``myfile.bam.bai``
 
 - `FastaWithIndexes <https://janis.readthedocs.io/en/latest/datatypes/fastawithindexes.html>`_:
     - Pattern: ``.amb``, ``.ann``, ``.bwt``, ``.pac``, ``.sa,`` ``.fai``, ``^.dict``
     - Files:
-        - ``reference.fasta``
+        - Base: ``reference.fasta``
         - ``reference.fasta.amb``
         - ``reference.fasta.ann``
         - ``reference.fasta.bwt``

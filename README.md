@@ -32,6 +32,21 @@ There are two ways to use Janis:
 - Build workflows (and translate to CWL / WDL)
 - Run tools or workflows with CWLTool or Cromwell
 
+### Latest versions
+
+Check the table below for the latest released versions of Janis (`janis -v`):
+
+| Repository 	|   Version  	|
+|------------	|:----------:	|
+| [Janis](https://github.com/PMCC-BioinformaticsCore/janis) | [![PyPI version](https://badge.fury.io/py/janis-pipelines.svg)](https://badge.fury.io/py/janis-pipelines) |
+| [janis-assistant](https://github.com/PMCC-BioinformaticsCore/janis-assistant) | [![PyPI version](https://badge.fury.io/py/janis-pipelines.runner.svg)](https://badge.fury.io/py/janis-pipelines.runner) |
+| [janis-bioinformatics](https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics) | [![PyPI version](https://badge.fury.io/py/janis-pipelines.bioinformatics.svg)](https://badge.fury.io/py/janis-pipelines.bioinformatics) |
+| [janis-core](https://github.com/PMCC-BioinformaticsCore/janis-core) | [![PyPI version](https://badge.fury.io/py/janis-pipelines.core.svg)](https://badge.fury.io/py/janis-pipelines.core) |
+| [janis-pipelines](https://github.com/PMCC-BioinformaticsCore/janis-pipelines) | [![PyPI version](https://badge.fury.io/py/janis-pipelines.pipelines.svg)](https://badge.fury.io/py/janis-pipelines.pipelines) |
+| [janis-templates](https://github.com/PMCC-BioinformaticsCore/janis-templates) | [![PyPI version](https://badge.fury.io/py/janis-pipelines.templates.svg)](https://badge.fury.io/py/janis-pipelines.templates) |
+| [janis-unix](https://github.com/PMCC-BioinformaticsCore/janis-unix) | [![PyPI version](https://badge.fury.io/py/janis-pipelines.unix.svg)](https://badge.fury.io/py/janis-pipelines.unix) |
+
+
 ### Example workflow
 
   

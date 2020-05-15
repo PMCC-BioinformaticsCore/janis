@@ -3,7 +3,12 @@ import inspect
 from datetime import datetime
 from typing import Union, List
 
-from janis_core.tool.commandtool import ToolInput, ToolArgument, ToolOutput
+from janis_core.tool.commandtool import (
+    ToolInput,
+    ToolArgument,
+    ToolOutput,
+    InputDocumentation,
+)
 from janis_core.types import (
     InputSelector,
     WildcardSelector,
@@ -15,24 +20,26 @@ from janis_core.utils.metadata import Metadata, ToolMetadata
 
 
 tool_template = """
+from abc import ABC
 from datetime import datetime
-from janis_core import CommandTool, ToolInput, ToolOutput, File, Boolean, String, Int, InputSelector, Filename, ToolMetadata
+from janis_core import (
+    CommandTool, ToolInput, ToolOutput, File, Boolean, 
+    String, Int, Double, Float, InputSelector, Filename, 
+    ToolMetadata, InputDocumentation
+)
 
-class {name}Base(CommandTool):
+class {name}Base(CommandTool, ABC):
 
     def friendly_name(self) -> str:
         return "{friendly_name}"
 
-    @staticmethod
-    def tool_provider():
+    def tool_provider(self):
         return "{tool_provider}"
 
-    @staticmethod
-    def tool() -> str:
+    def tool(self) -> str:
         return "{toolname}"
 
-    @staticmethod
-    def base_command():
+    def base_command(self):
         return {base_command}
     
     def inputs(self):
@@ -49,12 +56,10 @@ class {name}Base(CommandTool):
         return {metadata}
         
 class {name}_{escapedversion}({name}Base):
-    @staticmethod
-    def version():
+    def version(self):
         return "{version}"
     
-    @staticmethod
-    def container():
+    def container(self):
         return "{container}"
 """
 
@@ -69,13 +74,14 @@ generic_convertible = [
     MemorySelector,
     CpuSelector,
     Metadata,
+    InputDocumentation,
 ]
 
 
 def get_string_repr(obj):
 
     if isinstance(obj, str):
-        nlreplaced = obj.replace("\n", "\\n")
+        nlreplaced = obj.replace("\n", "\\n").replace('"', "'")
         return f'"{nlreplaced}"'
     elif isinstance(obj, datetime):
         return f'datetime.fromisoformat("{obj.isoformat()}")'

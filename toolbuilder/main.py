@@ -4,21 +4,21 @@ from toolbuilder.parse_help import from_container
 
 
 def process_args():
-    cmds = {"fromcontainer": do_docker}
+    cmds = {"container": do_container}
 
     parser = argparse.ArgumentParser(description="Execute a workflow")
     subparsers = parser.add_subparsers(help="subcommand help", dest="command")
     parser.add_argument("-d", "--debug", action="store_true")
 
     subparsers.add_parser("version")
-    add_fromcontainer_args(subparsers.add_parser("fromcontainer"))
+    add_container_args(subparsers.add_parser("container"))
     # add_workflow_args(subparsers.add_parser("run-workflow"))
 
     args = parser.parse_args()
     return cmds[args.command](args)
 
 
-def do_docker(args):
+def do_container(args):
     tool, helpstr = from_container(
         container=args.container,
         basecommand=args.basecommand,
@@ -38,7 +38,7 @@ def do_docker(args):
     print(tool, file=sys.stdout)
 
 
-def add_fromcontainer_args(parser):
+def add_container_args(parser):
     parser.description = (
         "Attempts to parse the help (-h) guide of a tool and convert it into a "
         "CommandTool representation of Janis. The output of the tool is returned to stdout."
@@ -58,7 +58,7 @@ def add_fromcontainer_args(parser):
         help="Version of this tool, will try to get it from the container tag if not present",
         action="store_true",
     )
-    parser.add_argument("--container-tool", default="docker")
+    parser.add_argument("--container-tool", default="docker", choices=["docker"])
     parser.add_argument(
         "--options-marker",
         default="Options:",

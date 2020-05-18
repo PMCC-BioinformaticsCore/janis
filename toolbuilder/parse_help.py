@@ -14,6 +14,8 @@ from janis_core import (
 )
 from janis_core.tool.commandtool import ToolInput
 
+from .templates import ToolTemplateType
+
 container_exec = {
     "docker": ["docker", "run"],
     # "singularity": ["singularity", "exec"]
@@ -237,7 +239,7 @@ def get_tag_and_cleanup_prefix(prefix) -> Tuple[str, str, bool, Optional[DataTyp
     if tag.lower() in common_replacements:
         tag = common_replacements[tag.lower()]
 
-    if tag.lower() == "outputFilename":
+    if tag.lower() == "outputfilename":
         potential_type = Filename
 
     return el, tag, has_equals, potential_type
@@ -251,6 +253,7 @@ def from_container(
     optionsmarker: Optional[str] = None,
     name: Optional[str] = None,
     version: Optional[str] = None,
+    type: ToolTemplateType = ToolTemplateType.base,
 ):
     helpstr = get_help_from_container(
         container=container,
@@ -274,6 +277,7 @@ def from_container(
 
     return (
         convert_command_tool_fragments(
+            type=type,
             toolid=name or basecommand,
             basecommand=basecommand,
             friendly_name="".join(basecommand),

@@ -24,7 +24,9 @@ def do_container(args):
     if args.gatk4:
         tooltype = ToolTemplateType.gatk4
 
-    (tool, version), helpstr = from_container(
+    outputdir = args.output
+
+    (tool, toolversion), helpstr = from_container(
         container=args.container,
         basecommand=args.basecommand,
         helpcommand=args.help_str,
@@ -41,8 +43,20 @@ def do_container(args):
     if args.printtool:
         print(tool, file=sys.stderr)
 
-    print(tool, file=sys.stdout)
-    print("VERSION:\n", version)
+    if outputdir:
+        from os import makedirs, path
+
+        makedirs(outputdir, exist_ok=True)
+
+        with open(path.join(outputdir, "base.py"), "w+") as f:
+            f.write(tool)
+        with open(path.join(outputdir, "versions.py"), "w+") as f:
+            f.write(toolversion)
+        with open(path.join(outputdir, "__init__.py"), "w+"):
+            pass
+    else:
+        print(tool, file=sys.stdout)
+        print(toolversion, file=sys.stdout)
 
 
 def add_container_args(parser):

@@ -26,7 +26,12 @@ common_replacements = {
     "output": "outputFilename",
 }
 
-option_markers = {"options:", "arguments:", "required arguments:"}
+option_markers = {
+    "options:",
+    "arguments:",
+    "required arguments:",
+    "optional arguments:",
+}
 
 
 def get_help_from_container(
@@ -91,7 +96,7 @@ def parse_str(
     options_idx = None
     markers = option_markers
     if option_marker:
-        markers = markers.union({option_marker})
+        markers = markers.union({option_marker.lower()})
     for il in range(len(lines)):
         line = lines[il]
         if not line.lstrip():
@@ -228,13 +233,12 @@ def get_tag_and_cleanup_prefix(prefix) -> Tuple[str, str, bool, Optional[DataTyp
     elif " " in el:
         el = el.split(" ")[0]
 
-    titleComponents = [l.strip().title() for l in el.split("-") if l]
+    titleComponents = [l.strip().lower() for l in el.split("-") if l]
     if len(titleComponents) == 0:
         raise Exception(
             f"Title components for tag '{prefix}' does not have a component"
         )
-    titleComponents[0] = titleComponents[0].lower()
-    tag = "".join(titleComponents)
+    tag = "_".join(titleComponents)
 
     if tag.lower() in common_replacements:
         tag = common_replacements[tag.lower()]

@@ -16,8 +16,8 @@ def generate_gatk4_tooltemplatebase(gatk_command, inputs, outputs, metadata):
 
     return gatk4_tool_template.format(
         gatk_command=gatk_command,
-        inputs="\n".join(io_prefix + s for s in inputs),
-        outputs="\n".join(io_prefix + s for s in outputs),
+        inputs=",\n".join(io_prefix + s for s in inputs),
+        outputs=",\n".join(io_prefix + s for s in outputs),
         metadata=metadata,
     )
 
@@ -41,8 +41,8 @@ def generate_regular_tooltemplatebase(
         friendly_name=friendly_name,
         tool_provider=tool_provider,
         base_command=base_command,
-        inputs="\n".join(io_prefix + s for s in inputs),
-        outputs="\n".join(io_prefix + s for s in outputs),
+        inputs=",\n".join(io_prefix + s for s in inputs),
+        outputs=",\n".join(io_prefix + s for s in outputs),
         metadata=metadata,
     )
 

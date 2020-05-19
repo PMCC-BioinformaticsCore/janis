@@ -185,6 +185,7 @@ Contents
    tools/index
    datatypes/index
    templates/index
+   references/listoperators
    references/shed
 
 .. toctree::

@@ -19,5 +19,6 @@ Features:
 .. toctree::
    :maxdepth: 1
 
+   expressions
    selectors
    scattering

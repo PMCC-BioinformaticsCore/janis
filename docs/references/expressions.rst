@@ -77,47 +77,7 @@ List of operators
 
 .. note::
 
-   This list of operators are manually maintained.
-
-General operators:
-
-- ``IndexOperator(iterable: Array, index: int)``
-- ``AsStringOperator(any)``
-- ``AsIntOperator(any)``
-- ``AsBoolOperator(any)``
-
-Logical operators:
-
-- ``IsDefined(any)``
-- ``If(condition: bool, value_if_true: any, value_if_false: any)`` -> Union[Type[value_if_true], Type[value_if_false]]
-- ``NotOperator(condition: bool)``
-- ``AndOperator(cond1: bool, cond2: bool)``
-- ``OrOperator(cond1: bool, cond2: bool)``
-- ``EqualityOperator(value1: any, value2: any)``
-- ``InequalityOperator(value1: any, value2: any)``
-- ``GtOperator(op1: Union[String, Int, Float, Double], op2: Union[String, Int, Float, Double])``
-- ``GteOperator(op1: Union[String, Int, Float, Double], op2: Union[String, Int, Float, Double])``
-- ``LtOperato(op1: Union[String, Int, Float, Double], op2: Union[String, Int, Float, Double])``
-- ``LteOperato(op1: Union[String, Int, Float, Double], op2: Union[String, Int, Float, Double])``
-- ``AddOperator(op1: any, op2: any)``
-- ``SubtractOperator(op1: Union[Int, Double, Float], op2: Union[Int, Double, Float])``
-- ``MultiplyOperator(op1: NumericType, op2: NumericType)``
-- ``DivideOperator(op1: NumericType, op2: NumericType)``
-- ``FloorOperator(value: Union[Float, Double])``
-- ``CeilOperator(value: Union[Float, Double])``
-- ``RoundOperator(value: Union[Float, Double])``
-
-Standard operator:
-
-- ``JoinOperator(separator: str, iterable: Array[String])``
-- ``BasenameOperator(inp: Union[File, Directory])``
-- ``TransformOperator(inp: Array[Array[any]])``
-- ``LengthOperator(inp: Array[any])``
-- ``FlattenOperator(inp: Array[Array[any]]) -> Array[any]``
-- ``ApplyPrefixOperator(prefix: str, Array[Any]) -> Array[str]``
-- ``FileSizeOperator(inp: Union[File | Directory])`` -> Float (in MEGABYTES)
-- ``FirstOperator(inp: Array[X?])`` -> X
-- ``FilterNullOperator(inp: Array[X?])`` -> Array[x]
+   See the `List of operators <https://janis.readthedocs.io/en/latest/references/listexpressions.html>`_ guide for more information.
 
 Example usage
 ===================

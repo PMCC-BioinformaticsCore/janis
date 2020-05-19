@@ -1,9 +1,14 @@
 import re
 import inspect
 from datetime import datetime
-from typing import Union, List
+from typing import Union, List, Tuple
 
-from janis_core.tool.commandtool import ToolInput, ToolArgument, ToolOutput
+from janis_core.tool.commandtool import (
+    ToolInput,
+    ToolArgument,
+    ToolOutput,
+    InputDocumentation,
+)
 from janis_core.types import (
     InputSelector,
     WildcardSelector,
@@ -13,51 +18,12 @@ from janis_core.types import (
 from janis_core.types.data_types import DataType
 from janis_core.utils.metadata import Metadata, ToolMetadata
 
-
-tool_template = """
-from datetime import datetime
-from janis_core import CommandTool, ToolInput, ToolOutput, File, Boolean, String, Int, InputSelector, Filename, ToolMetadata
-
-class {name}Base(CommandTool):
-
-    def friendly_name(self) -> str:
-        return "{friendly_name}"
-
-    @staticmethod
-    def tool_provider():
-        return "{tool_provider}"
-
-    @staticmethod
-    def tool() -> str:
-        return "{toolname}"
-
-    @staticmethod
-    def base_command():
-        return {base_command}
-    
-    def inputs(self):
-        return [
-{inputs}
-        ]
-        
-    def outputs(self):
-        return [
-{outputs}
-        ]
-        
-    def metadata(self):
-        return {metadata}
-        
-class {name}_{escapedversion}({name}Base):
-    @staticmethod
-    def version():
-        return "{version}"
-    
-    @staticmethod
-    def container():
-        return "{container}"
-"""
-
+from toolbuilder.templates import (
+    ToolTemplateType,
+    generate_tool_version_template,
+    generate_gatk4_tooltemplatebase,
+    generate_regular_tooltemplatebase,
+)
 
 generic_convertible = [
     DataType,
@@ -69,13 +35,14 @@ generic_convertible = [
     MemorySelector,
     CpuSelector,
     Metadata,
+    InputDocumentation,
 ]
 
 
 def get_string_repr(obj):
 
     if isinstance(obj, str):
-        nlreplaced = obj.replace("\n", "\\n")
+        nlreplaced = obj.replace("\n", "\\n").replace('"', "'")
         return f'"{nlreplaced}"'
     elif isinstance(obj, datetime):
         return f'datetime.fromisoformat("{obj.isoformat()}")'
@@ -107,9 +74,10 @@ def convert_generic_class(t, name, ignore_fields=None):
     return f"{name}({', '.join(options)})"
 
 
-def convert_commandtool(commandtool):
+def convert_commandtool(type: ToolTemplateType, commandtool):
 
     convert_command_tool_fragments(
+        type,
         commandtool.id(),
         commandtool.base_command(),
         commandtool.friendly_name(),
@@ -123,6 +91,7 @@ def convert_commandtool(commandtool):
 
 
 def convert_command_tool_fragments(
+    type: ToolTemplateType,
     toolid: str,
     basecommand: Union[str, List[str]],
     friendly_name: str,
@@ -132,8 +101,7 @@ def convert_command_tool_fragments(
     metadata: ToolMetadata,
     version: str,
     container: str,
-):
-    io_prefix = "            "
+) -> Tuple[str, str]:
 
     if not metadata.dateCreated:
         metadata.dateCreated = datetime.now()
@@ -142,18 +110,35 @@ def convert_command_tool_fragments(
     if isinstance(toolid, list):
         toolid = "".join(s.title() for s in toolid)
 
-    return tool_template.format(
-        toolname=toolid,
-        name=toolid.title(),
-        friendly_name=friendly_name.title(),
-        tool_provider=toolprov,
-        base_command=f'"{basecommand}"'
-        if isinstance(basecommand, str)
-        else str(basecommand),
-        inputs=",\n".join((io_prefix + get_string_repr(i)) for i in ins),
-        outputs=",\n".join((io_prefix + get_string_repr(o)) for o in outs),
-        metadata=get_string_repr(metadata),
-        container=container,
-        version=version,
-        escapedversion=re.sub("[\W]", "_", str(version)) if version else str(None),
+    bc = f'"{basecommand}"' if isinstance(basecommand, str) else str(basecommand)
+
+    ins = [get_string_repr(i) for i in ins]
+    outs = [get_string_repr(o) for o in outs]
+
+    if type == ToolTemplateType.base:
+        base = generate_regular_tooltemplatebase(
+            toolname=toolid,
+            name=toolid,
+            friendly_name=friendly_name.title(),
+            tool_provider=toolprov,
+            base_command=bc,
+            inputs=ins,
+            outputs=outs,
+            metadata=get_string_repr(metadata),
+        )
+    elif type == ToolTemplateType.gatk4:
+        base = generate_gatk4_tooltemplatebase(
+            gatk_command=basecommand[1],
+            inputs=ins,
+            outputs=outs,
+            metadata=get_string_repr(metadata),
+        )
+    else:
+        raise NotImplementedError(f"Couldn't convert tool type {type.value}")
+
+    return (
+        base,
+        generate_tool_version_template(
+            name=toolid, version=version, container=container
+        ),
     )

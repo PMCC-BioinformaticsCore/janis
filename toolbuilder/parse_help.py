@@ -1,12 +1,36 @@
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Tuple
+
+from janis_core.utils.validators import Validators
 
 from .cltconvert import convert_command_tool_fragments
-from janis_core import ToolMetadata, String, Logger, JanisShed
+from janis_core import (
+    ToolMetadata,
+    String,
+    Logger,
+    JanisShed,
+    DataType,
+    Boolean,
+    Filename,
+)
 from janis_core.tool.commandtool import ToolInput
+
+from .templates import ToolTemplateType
 
 container_exec = {
     "docker": ["docker", "run"],
     # "singularity": ["singularity", "exec"]
+}
+
+common_replacements = {
+    "input": "inp",
+    "output": "outputFilename",
+}
+
+option_markers = {
+    "options:",
+    "arguments:",
+    "required arguments:",
+    "optional arguments:",
 }
 
 
@@ -56,19 +80,31 @@ def get_version_from_container(
     return help.decode("utf-8").rstrip()
 
 
+def first_or_default(iterable, default=None):
+    filtered = [f for f in iterable if f is not None]
+    if len(filtered) > 0:
+        return filtered[0]
+    return default
+
+
 def parse_str(
-    helpstr, option_marker: str = "Options:", requires_prev_line_blank_or_param=False
+    helpstr, option_marker: str = None, requires_prev_line_blank_or_param=False
 ):
     doc = ""
     args = []
     lines = helpstr.replace("\\n", "\n").split("\n")
     options_idx = None
+    markers = option_markers
+    if option_marker:
+        markers = markers.union({option_marker.lower()})
     for il in range(len(lines)):
         line = lines[il]
         if not line.lstrip():
             continue
 
-        if line.startswith(option_marker):
+        ll = line.lower()
+
+        if any(ll.startswith(m) for m in markers):
             options_idx = il
             break
 
@@ -103,11 +139,11 @@ def parse_str(
             not requires_prev_line_blank_or_param or last_line_was_blank_or_param
         ) and line_args[0].startswith("-"):
             # sometimes this section has two items
-            tags = sorted(
-                [get_tag_and_cleanup_prefix(p) for p in line_args[0].split(",")],
-                key=lambda l: len(l[1]),
-                reverse=True,
-            )
+            processed_tags = [
+                get_tag_and_cleanup_prefix(p) for p in line_args[0].split(",")
+            ]
+            tags = sorted(processed_tags, key=lambda l: len(l[1]), reverse=True,)
+            potential_type = first_or_default([p[3] for p in processed_tags])
 
             if len(tags) > 1:
                 tool_doc += "(" + ", ".join(t[0] for t in tags[1:]) + ") "
@@ -115,30 +151,23 @@ def parse_str(
             if largs > 1:
                 tool_doc += " ".join(line_args[1:])
 
-            prefix, tag, has_equal = tags[0]
+            prefix, tag, has_equal, guessed_type = tags[0]
             eqifrequired = "=" if has_equal else ""
 
-            datatype = String(optional=True)
-
-            if ":" in tag:
-                parts = tag.split(":")
-                tag = parts[0]
-                potentialtypestr = "".join(parts[1:])
-                potentialtype = JanisShed.get_datatype(potentialtypestr)
-                if potentialtype:
-                    Logger.log(f"Found type {potentialtype.__name__} from tag: {tag}")
-                    datatype = potentialtype(optional=True)
+            if not potential_type:
+                potential_type = Boolean
 
             if len(tag) == 1:
-                print(
-                    f"The tag for '{prefix}' was too short, we need you to come up with a new identifier for:"
-                )
-                print("\t" + tool_doc if tool_doc else line)
-                tag = str(input("New identifier: "))
+                while not Validators.validate_identifier(tag):
+                    print(
+                        f"The tag for '{prefix}' was invalid, we need you to come up with a new identifier for:"
+                    )
+                    print("\t" + tool_doc if tool_doc else line)
+                    tag = str(input("New identifier: "))
             try:
                 prev_arg = ToolInput(
                     tag,
-                    datatype,
+                    potential_type(optional=True),
                     prefix=prefix + eqifrequired,
                     separate_value_from_prefix=not has_equal,
                     doc=tool_doc.replace('"', "'"),
@@ -149,14 +178,34 @@ def parse_str(
             # we'll get the longer one for the tag
 
         elif prev_arg:
-            prev_arg.doc += " " + line.lstrip()
+            prev_arg.doc.doc += " " + line.lstrip()
         else:
             last_line_was_blank_or_param = False
 
     return doc, args
 
 
-def get_tag_and_cleanup_prefix(prefix):
+def guess_type(potential_type: str):
+    if not potential_type:
+        return None
+    l = potential_type.lower()
+    hopeful_type = JanisShed.get_datatype(l)
+
+    if not hopeful_type:
+        if "st" in potential_type:
+            hopeful_type = String
+
+    if hopeful_type:
+        Logger.info(f"Found type {hopeful_type.__name__} from tag: {potential_type}")
+
+    return hopeful_type
+
+
+def get_tag_and_cleanup_prefix(prefix) -> Tuple[str, str, bool, Optional[DataType]]:
+    """
+    :param prefix:
+    :return: (raw_element, potentialID, hasSeparator, potentialType)
+    """
     # cases:
     # -a ADAPTER
     # --adapter=ADAPTER
@@ -164,6 +213,19 @@ def get_tag_and_cleanup_prefix(prefix):
     el = prefix.lstrip()
     has_equals = False
     pretag = None
+    potential_type = None
+
+    if ":" in el:
+        parts = el.split(":")
+        if len(parts) > 2:
+            Logger.warn(
+                f"Unexpected number of components in the tag '{el}' to guess the type, using '{parts[0]}' and skipping type inference"
+            )
+        else:
+            el, pt = parts[0], guess_type(parts[1])
+
+            if not potential_type and pt:
+                potential_type = pt
 
     if "=" in el:
         has_equals = True
@@ -171,15 +233,20 @@ def get_tag_and_cleanup_prefix(prefix):
     elif " " in el:
         el = el.split(" ")[0]
 
-    titleComponents = [l.strip().title() for l in el.split("-") if l]
+    titleComponents = [l.strip().lower() for l in el.split("-") if l]
     if len(titleComponents) == 0:
         raise Exception(
             f"Title components for tag '{prefix}' does not have a component"
         )
-    titleComponents[0] = titleComponents[0].lower()
-    tag = "".join(titleComponents)
+    tag = "_".join(titleComponents)
 
-    return el, tag, has_equals
+    if tag.lower() in common_replacements:
+        tag = common_replacements[tag.lower()]
+
+    if tag.lower() == "outputfilename":
+        potential_type = Filename
+
+    return el, tag, has_equals, potential_type
 
 
 def from_container(
@@ -190,6 +257,7 @@ def from_container(
     optionsmarker: Optional[str] = None,
     name: Optional[str] = None,
     version: Optional[str] = None,
+    type: ToolTemplateType = ToolTemplateType.base,
 ):
     helpstr = get_help_from_container(
         container=container,
@@ -213,6 +281,7 @@ def from_container(
 
     return (
         convert_command_tool_fragments(
+            type=type,
             toolid=name or basecommand,
             basecommand=basecommand,
             friendly_name="".join(basecommand),

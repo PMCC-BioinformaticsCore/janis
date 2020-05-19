@@ -29,6 +29,8 @@ with open("./janis/__meta__.py") as fp:
 __version__ = vsn["__version__"]
 githuburl = vsn["GITHUB_URL"]
 
+modules = ["janis_assistant." + p for p in sorted(find_packages("./janis_assistant"))]
+
 
 setup(
     name="janis pipelines",
@@ -39,9 +41,9 @@ setup(
     author_email="michael.franklin@petermac.org",
     license="GNU",
     keywords=["pipelines", "bioinformatics"],
-    packages=["janis"]
+    packages=["janis", "toolbuilder"]
     + ["janis." + p for p in sorted(find_packages("./janis"))]
-    + ["toolbuilder"],
+    + ["toolbuilder." + p for p in sorted(find_packages("./toolbuilder"))],
     install_requires=[
         min_core_version,
         min_assistant_version,

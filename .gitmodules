@@ -7,3 +7,6 @@
 [submodule "janis-unix"]
 	path = janis-unix
 	url = https://github.com/PMCC-BioinformaticsCore/janis-unix.git
+[submodule "janis-assistant"]
+	path = janis-assistant
+	url = https://github.com/PMCC-BioinformaticsCore/janis-assistant.git

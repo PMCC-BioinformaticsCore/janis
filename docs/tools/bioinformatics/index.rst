@@ -33,6 +33,8 @@ Automatically generated index page for bioinformatics:
 
      <li><a href="erik garrison/index.html">erik garrison</a></li>
 
+     <li><a href="facets/index.html">facets</a></li>
+
      <li><a href="fastqc/index.html">fastqc</a></li>
 
      <li><a href="gatk4/index.html">gatk4</a></li>
@@ -50,6 +52,8 @@ Automatically generated index page for bioinformatics:
      <li><a href="peter maccallum cancer centre/index.html">peter maccallum cancer centre</a></li>
 
      <li><a href="samtools/index.html">samtools</a></li>
+
+     <li><a href="sequenza/index.html">sequenza</a></li>
 
      <li><a href="ucsf/index.html">ucsf</a></li>
 

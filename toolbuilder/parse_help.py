@@ -215,8 +215,15 @@ def get_tag_and_cleanup_prefix(prefix) -> Tuple[str, str, bool, Optional[DataTyp
     pretag = None
     potential_type = None
 
-    if ":" in el:
-        parts = el.split(":")
+    # if prefix is split by ':' or split by
+    if ":" in el or "=" in el:
+        parts = None
+        if ":" in el:
+            parts = el.split(":")
+        elif "=" in el:
+            parts = el.split("=")
+            has_equals = True
+
         if len(parts) > 2:
             Logger.warn(
                 f"Unexpected number of components in the tag '{el}' to guess the type, using '{parts[0]}' and skipping type inference"
@@ -227,10 +234,7 @@ def get_tag_and_cleanup_prefix(prefix) -> Tuple[str, str, bool, Optional[DataTyp
             if not potential_type and pt:
                 potential_type = pt
 
-    if "=" in el:
-        has_equals = True
-        el = el.split("=")[0]
-    elif " " in el:
+    if " " in el:
         el = el.split(" ")[0]
 
     titleComponents = [l.strip().lower() for l in el.split("-") if l]

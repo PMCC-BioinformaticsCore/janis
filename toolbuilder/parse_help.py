@@ -16,10 +16,8 @@ from janis_core.tool.commandtool import ToolInput
 
 from .templates import ToolTemplateType
 
-container_exec = {
-    "docker": ["docker", "run"],
-    # "singularity": ["singularity", "exec"]
-}
+container_exec = {"docker": ["docker", "run"], "singularity": ["singularity", "exec"]}
+
 
 common_replacements = {
     "input": "inp",
@@ -43,10 +41,18 @@ def get_help_from_container(
     import subprocess, os
 
     bc = basecommand if isinstance(basecommand, list) else [basecommand]
-    cmd = [*container_exec[containersoftware], container, *bc]
 
     if help_param:
-        cmd.append(help_param)
+        bc.append(help_param)
+
+    cmd = [*container_exec[containersoftware]]
+
+    if containersoftware == "docker":
+        cmd.extend([container, *bc])
+    elif containersoftware == "singularity":
+        # this doesn't work for some reason
+        joined_command = " ".join(bc)
+        cmd.extend(["docker://" + container, "sh", "-c", f'"{joined_command}"'])
 
     print("Running command: " + " ".join(f"'{x}'" for x in cmd))
     try:

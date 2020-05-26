@@ -19,10 +19,7 @@ from .templates import ToolTemplateType
 container_exec = {"docker": ["docker", "run"], "singularity": ["singularity", "exec"]}
 
 
-common_replacements = {
-    "input": "inp",
-    "output": "outputFilename",
-}
+common_replacements = {"input": "inp", "output": "outputFilename"}
 
 option_markers = {
     "options:",
@@ -43,16 +40,15 @@ def get_help_from_container(
     bc = basecommand if isinstance(basecommand, list) else [basecommand]
 
     if help_param:
-        bc.append(help_param)
+        bc = [*bc, help_param]
 
     cmd = [*container_exec[containersoftware]]
 
     if containersoftware == "docker":
         cmd.extend([container, *bc])
     elif containersoftware == "singularity":
-        # this doesn't work for some reason
-        joined_command = " ".join(bc)
-        cmd.extend(["docker://" + container, "sh", "-c", f'"{joined_command}"'])
+        # this doesn't work: https://github.com/hpcng/singularity/issues/5316
+        cmd.extend(["docker://" + container, *bc])
 
     print("Running command: " + " ".join(f"'{x}'" for x in cmd))
     try:
@@ -148,7 +144,7 @@ def parse_str(
             processed_tags = [
                 get_tag_and_cleanup_prefix(p) for p in line_args[0].split(",")
             ]
-            tags = sorted(processed_tags, key=lambda l: len(l[1]), reverse=True,)
+            tags = sorted(processed_tags, key=lambda l: len(l[1]), reverse=True)
             potential_type = first_or_default([p[3] for p in processed_tags])
 
             if len(tags) > 1:

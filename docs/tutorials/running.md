@@ -38,7 +38,7 @@ Most commonly, people use [`docker`](https://www.docker.com/get-started) which b
 
 ## Let's get started
 
-We're going to use the Janis command-line interface (CLI) to run these workflows and track their progress. For this example, we're going to run the [Hello](#) workflow.
+We're going to use the Janis command-line interface (CLI) to run these workflows and track their progress. For this example, we're going to run the [Hello](#) workflow and put the relevant output files in an output directory called `hello_dir`. 
 
 
 By default, Janis will run the workflow using CWLTool, this can be changed by passing the `--engine` parameter with either `"cwltool"` or `"cromwell"`.
@@ -46,7 +46,7 @@ By default, Janis will run the workflow using CWLTool, this can be changed by pa
 Let's do that now:
 
 ```bash
-janis run hello --engine [cwltool|cromwell]
+janis run --engine [cwltool|cromwell] -o hello_dir hello 
 ```
 
 We'll see some important information in our console:

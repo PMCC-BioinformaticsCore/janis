@@ -42,6 +42,12 @@ Import with: ``from janis_core.operators.operator import *``
 
 
 
+- **AsFloatOperator**: ``X -> Float``
+
+
+
+
+
 Logical operators
 +++++++++++++++++
 
@@ -163,6 +169,12 @@ Standard library
 ++++++++++++++++
 
 Import with: ``from janis_core.operators.standard import *``
+
+
+
+
+
+- **ReadContents**: ``File -> String``
 
 
 

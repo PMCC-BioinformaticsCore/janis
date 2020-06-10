@@ -77,7 +77,7 @@ List of operators
 
 .. note::
 
-   See the `List of operators <https://janis.readthedocs.io/en/latest/references/listexpressions.html>`_ guide for more information.
+   See the `List of operators <https://janis.readthedocs.io/en/latest/references/listoperators.html>`_ guide for more information.
 
 Example usage
 ===================

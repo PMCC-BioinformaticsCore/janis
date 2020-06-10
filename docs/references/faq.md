@@ -132,3 +132,13 @@ If you're still having trouble, use `janis spider --trace mytool` to give you an
     And the workflow status can have the following states:
 
     - https://github.com/PMCC-BioinformaticsCore/janis-assistant/blob/master/janis_assistant/data/enums/taskstatus.py
+
+- **How can I override a specific tools' resources, like memory / ram, CPUs, or runtime (coming soon)?**
+
+    Long story short, lookup the override key with:
+    
+    ```bash
+    janis inputs --resources <workflow>  
+    ```
+  
+    It looks like `yourworkflow_embeddedtool_runtime_memory: 8`. More information:  [Configuring resources (CPU / Memory)](https://janis.readthedocs.io/en/latest/references/resources.html).

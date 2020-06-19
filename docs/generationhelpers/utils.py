@@ -340,7 +340,7 @@ def prepare_run_instructions(tool: Tool):
     other_inps = {}
 
     for i in tool.tool_inputs():
-        if i.intype.optional or i.default:
+        if i.intype.optional or i.default is not None:
             continue
 
         val = (

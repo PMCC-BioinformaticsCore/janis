@@ -54,7 +54,7 @@ def get_help_from_container(
     try:
         help = (
             subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-            .decode("utf-8")
+            .decode("utf-16")
             .rstrip()
         )
     except subprocess.CalledProcessError as e:
@@ -79,7 +79,7 @@ def get_version_from_container(
     except subprocess.CalledProcessError as e:
         return None
 
-    return help.decode("utf-8").rstrip()
+    return help.decode("utf-16").rstrip()
 
 
 def first_or_default(iterable, default=None):

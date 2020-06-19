@@ -38,6 +38,15 @@ Automatically generated index page for Illumina:
      </a>
      <hr />
          
+     <a href="manta_cram.html">
+       <p style="margin-bottom: 5px"><b>Manta</b> <span style="margin-left: 10px; color: darkgray">manta_cram</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="manta_cram.html" style="margin-bottom: 10px">
+       v<b>1.5.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="strelka_germline.html">
        <p style="margin-bottom: 5px"><b>Strelka (Germline)</b> <span style="margin-left: 10px; color: darkgray">strelka_germline</span></p>
        
@@ -51,6 +60,15 @@ Automatically generated index page for Illumina:
        <p style="margin-bottom: 5px"><b>Strelka (Somatic)</b> <span style="margin-left: 10px; color: darkgray">strelka_somatic</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="strelka_somatic.html" style="margin-bottom: 10px">
+       v<b>2.9.10</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="strelka_somatic_cram.html">
+       <p style="margin-bottom: 5px"><b>Strelka (Somatic)</b> <span style="margin-left: 10px; color: darkgray">strelka_somatic_cram</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="strelka_somatic_cram.html" style="margin-bottom: 10px">
        v<b>2.9.10</b>
      </a></p>
      </a>

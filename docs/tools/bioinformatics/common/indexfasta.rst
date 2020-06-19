@@ -104,7 +104,7 @@ Embedded Tools
 
 ===============================  =========================================
 BWA-Index                        ``bwaIndex/v0.7.15``
-SamTools: faidx                  ``SamToolsIndex/1.9.0``
+SamTools: faidx                  ``SamToolsFaidx/1.9.0``
 GATK4: CreateSequenceDictionary  ``Gatk4CreateSequenceDictionary/4.1.3.0``
 ===============================  =========================================
 

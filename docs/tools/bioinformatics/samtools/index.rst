@@ -11,6 +11,15 @@ Automatically generated index page for Samtools:
    <ul>
 
    </ul>
+     <a href="samtoolsfaidx.html">
+       <p style="margin-bottom: 5px"><b>SamTools: faidx</b> <span style="margin-left: 10px; color: darkgray">SamToolsFaidx</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="samtoolsfaidx.html" style="margin-bottom: 10px">
+       v<b>1.9.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="samtoolsflagstat.html">
        <p style="margin-bottom: 5px"><b>SamTools: Flagstat</b> <span style="margin-left: 10px; color: darkgray">SamToolsFlagstat</span></p>
        

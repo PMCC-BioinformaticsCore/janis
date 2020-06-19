@@ -41,6 +41,7 @@ Automatically generated index page for Data Types:
    indexedvcf
    integer
    jsonfile
+   kallistoidx
    sam
    stderr
    stdout
@@ -51,4 +52,4 @@ Automatically generated index page for Data Types:
    vcf
    zip
 
-*This page was auto-generated on 22/05/2020. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 19/06/2020. Please do not directly alter the contents of this page.*

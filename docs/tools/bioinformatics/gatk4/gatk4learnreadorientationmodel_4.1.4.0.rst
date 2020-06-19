@@ -54,8 +54,8 @@ Quickstart
 .. code-block:: yaml
 
        f1r2CountsFiles:
-       - f1r2CountsFiles_0.tar.gz
-       - f1r2CountsFiles_1.tar.gz
+       - f1r2CountsFiles_0
+       - f1r2CountsFiles_1
 
 
 

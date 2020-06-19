@@ -68,7 +68,7 @@ Quickstart
 .. code-block:: yaml
 
        runFolderDir: null
-       sampleSheet: sampleSheet.csv
+       sampleSheet: sampleSheet
 
 
 

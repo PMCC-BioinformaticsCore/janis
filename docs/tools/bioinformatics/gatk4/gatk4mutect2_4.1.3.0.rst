@@ -24,8 +24,6 @@ Quickstart
            "gatk4mutect2_step",
            GatkMutect2_4_1_3(
                tumorBams=None,
-               normalBams=None,
-               normalSample=None,
                reference=None,
            )
        )
@@ -61,10 +59,6 @@ Quickstart
 
 .. code-block:: yaml
 
-       normalBams:
-       - normalBams_0.bam
-       - normalBams_1.bam
-       normalSample: <value>
        reference: reference.fasta
        tumorBams:
        - tumorBams_0.bam
@@ -120,9 +114,9 @@ Additional configuration (inputs)
 name                                 type                            prefix                                        position  documentation
 ===================================  ==============================  ==========================================  ==========  ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 tumorBams                            Array<IndexedBam>               -I                                                      (--input) BAM/SAM/CRAM file containing reads This argument must be specified at least once. Required.
-normalBams                           Array<IndexedBam>               -I                                                      (--input) Extra BAM/SAM/CRAM file containing reads This argument must be specified at least once. Required.
-normalSample                         String                          --normal-sample                                         (--normal-sample, if) May be URL-encoded as output by GetSampleName with
 reference                            FastaWithIndexes                --reference                                             (-R) Reference sequence file Required.
+normalBams                           Optional<Array<IndexedBam>>     -I                                                      (--input) Extra BAM/SAM/CRAM file containing reads This argument must be specified at least once. Required.
+normalSample                         Optional<String>                --normal-sample                                         (--normal-sample, if) May be URL-encoded as output by GetSampleName with
 outputFilename                       Optional<Filename>              -O                                                  20
 activityProfileOut                   Optional<String>                --activity-profile-out                                  Default value: null.
 addOutputSamProgramRecord            Optional<Boolean>               -add-output-sam-program-record                          (--add-output-sam-program-record)  If true, adds a PG tag to created SAM/BAM/CRAM files.  Default value: true. Possible values: {true, false}

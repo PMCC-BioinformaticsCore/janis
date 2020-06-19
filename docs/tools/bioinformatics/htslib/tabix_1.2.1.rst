@@ -30,7 +30,7 @@ Quickstart
        wf.step(
            "tabix_step",
            Tabix_1_2_1(
-               file=None,
+               inp=None,
            )
        )
        wf.output("out", source=tabix_step.out)
@@ -63,7 +63,7 @@ Quickstart
 
 .. code-block:: yaml
 
-       file: file.vcf.gz
+       inp: inp.vcf.gz
 
 
 
@@ -112,7 +112,7 @@ Additional configuration (inputs)
 ===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
 name         type               prefix            position  documentation
 ===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
-file         CompressedVCF                               8  File from which to create the index. The input data file must be position sorted and compressed by bgzip which has a gzip(1) like interface.
+inp          CompressedVCF                               8  File from which to create the index. The input data file must be position sorted and compressed by bgzip which has a gzip(1) like interface.
 preset       Optional<String>   --preset                 2  -p: Input format for indexing. Valid values are: gff, bed, sam, vcf. This option should not be applied together with any of -s, -b, -e, -c and -0; it is not used for data retrieval because this setting is stored in the index file. [gff]
 zeroBased    Optional<Boolean>  --zero-based             1  -0: Specify that the position in the data file is 0-based (e.g. UCSC files) rather than 1-based.
 begin        Optional<Integer>  --begin                  4  -b: Column of start chromosomal position. [4]

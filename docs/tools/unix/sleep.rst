@@ -1,11 +1,11 @@
 :orphan:
 
-Greet
+Sleep
 =============
 
 *0 contributors · 1 version*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-unix>`_
+sleep for the given number of seconds
 
 
 Quickstart
@@ -13,17 +13,17 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_unix.tools.greet import Greet
+       from janis_unix.tools.sleep import Sleep
 
        wf = WorkflowBuilder("myworkflow")
 
        wf.step(
-           "greet_step",
-           Greet(
-               name=None,
+           "sleep_step",
+           Sleep(
+               time=None,
            )
        )
-       wf.output("out", source=greet_step.out)
+       wf.output("out", source=sleep_step.out)
     
 
 *OR*
@@ -40,12 +40,12 @@ Quickstart
 
 
 
-4. Generate user input files for greet:
+4. Generate user input files for sleep:
 
 .. code-block:: bash
 
    # user inputs
-   janis inputs greet > inputs.yaml
+   janis inputs sleep > inputs.yaml
 
 
 
@@ -53,18 +53,18 @@ Quickstart
 
 .. code-block:: yaml
 
-       name: <value>
+       time: 0
 
 
 
 
-5. Run greet with:
+5. Run sleep with:
 
 .. code-block:: bash
 
    janis run [...run options] \
        --inputs inputs.yaml \
-       greet
+       sleep
 
 
 
@@ -74,7 +74,7 @@ Information
 ------------
 
 
-:ID: ``greet``
+:ID: ``sleep``
 :URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
 :Container: ubuntu:latest
@@ -99,8 +99,8 @@ out     stdout<File>
 Additional configuration (inputs)
 ---------------------------------
 
-======  ======  ========  ==========  ===============
-name    type    prefix      position  documentation
-======  ======  ========  ==========  ===============
-name    String                     1
-======  ======  ========  ==========  ===============
+======  =======  ========  ==========  ===============
+name    type     prefix      position  documentation
+======  =======  ========  ==========  ===============
+time    Integer                     1
+======  =======  ========  ==========  ===============

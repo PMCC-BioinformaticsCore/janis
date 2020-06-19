@@ -20,6 +20,15 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
      </a>
      <hr />
          
+     <a href="generatevardictheaderlines.html">
+       <p style="margin-bottom: 5px"><b>GenerateVardictHeaderLines</b> <span style="margin-left: 10px; color: darkgray">GenerateVardictHeaderLines</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="generatevardictheaderlines.html" style="margin-bottom: 10px">
+       v<b>0.1.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="parsefastqcadaptors.html">
        <p style="margin-bottom: 5px"><b>Parse FastQC Adaptors</b> <span style="margin-left: 10px; color: darkgray">ParseFastqcAdaptors</span></p>
        
@@ -88,15 +97,6 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
        
        <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="performancesummary.html" style="margin-bottom: 10px">
        v<b>dev</b>
-     </a></p>
-     </a>
-     <hr />
-         
-     <a href="performancevalidator.html">
-       <p style="margin-bottom: 5px"><b>Performance Validator</b> <span style="margin-left: 10px; color: darkgray">performanceValidator</span></p>
-       
-       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="performancevalidator.html" style="margin-bottom: 10px">
-       v<b>1.2.1</b>
      </a></p>
      </a>
      <hr />

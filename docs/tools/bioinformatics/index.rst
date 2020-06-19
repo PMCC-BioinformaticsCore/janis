@@ -27,6 +27,8 @@ Automatically generated index page for bioinformatics:
 
      <li><a href="cutadapt/index.html">cutadapt</a></li>
 
+     <li><a href="dawson labs/index.html">dawson labs</a></li>
+
      <li><a href="ekg/index.html">ekg</a></li>
 
      <li><a href="ensembl/index.html">ensembl</a></li>
@@ -44,6 +46,8 @@ Automatically generated index page for bioinformatics:
      <li><a href="illumina/index.html">illumina</a></li>
 
      <li><a href="io_lib/index.html">io_lib</a></li>
+
+     <li><a href="kallisto/index.html">kallisto</a></li>
 
      <li><a href="multiqc/index.html">multiqc</a></li>
 

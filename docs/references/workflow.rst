@@ -3,9 +3,6 @@ Workflow
 
 *Manages the connections between tools*
 
-.. note::
-	There have been large changes, backwards incompatible changes to the syntax for workflows in v0.6.0.
-
 Declaration
 ###########
 
@@ -18,6 +15,10 @@ There are two major ways to construct a workflow:
 
 .. autoclass:: janis.Workflow
 
+Advanced Workflows
+*******************
+
+Janis allows you to dynamically create workflows based on inputs. More information can be found on the `Dynamic Workflows <dynamicworkflows.html>`_ page.
 
 Overview
 ########

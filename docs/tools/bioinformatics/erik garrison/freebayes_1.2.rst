@@ -84,14 +84,7 @@ Quickstart
        bams:
        - bams_0.bam
        - bams_1.bam
-       maxNumOfAlleles: 0
-       minAltQSum: 0
-       minBaseQual: 0
-       minCov: 0
-       minSupMQsum: 0
-       minSupQsum: 0
        reference: reference.fasta
-       useDupFlag: true
 
 
 

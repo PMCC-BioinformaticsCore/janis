@@ -16,15 +16,10 @@ from janis_core.tool.commandtool import ToolInput
 
 from .templates import ToolTemplateType
 
-container_exec = {
-    "docker": ["docker", "run"],
-    # "singularity": ["singularity", "exec"]
-}
+container_exec = {"docker": ["docker", "run"], "singularity": ["singularity", "exec"]}
 
-common_replacements = {
-    "input": "inp",
-    "output": "outputFilename",
-}
+
+common_replacements = {"input": "inp", "output": "outputFilename"}
 
 option_markers = {
     "options:",
@@ -43,16 +38,23 @@ def get_help_from_container(
     import subprocess, os
 
     bc = basecommand if isinstance(basecommand, list) else [basecommand]
-    cmd = [*container_exec[containersoftware], container, *bc]
 
     if help_param:
-        cmd.append(help_param)
+        bc = [*bc, help_param]
+
+    cmd = [*container_exec[containersoftware]]
+
+    if containersoftware == "docker":
+        cmd.extend([container, *bc])
+    elif containersoftware == "singularity":
+        # this doesn't work: https://github.com/hpcng/singularity/issues/5316
+        cmd.extend(["docker://" + container, *bc])
 
     print("Running command: " + " ".join(f"'{x}'" for x in cmd))
     try:
         help = (
             subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-            .decode("utf-8")
+            .decode("utf-16")
             .rstrip()
         )
     except subprocess.CalledProcessError as e:
@@ -77,7 +79,7 @@ def get_version_from_container(
     except subprocess.CalledProcessError as e:
         return None
 
-    return help.decode("utf-8").rstrip()
+    return help.decode("utf-16").rstrip()
 
 
 def first_or_default(iterable, default=None):
@@ -142,7 +144,7 @@ def parse_str(
             processed_tags = [
                 get_tag_and_cleanup_prefix(p) for p in line_args[0].split(",")
             ]
-            tags = sorted(processed_tags, key=lambda l: len(l[1]), reverse=True,)
+            tags = sorted(processed_tags, key=lambda l: len(l[1]), reverse=True)
             potential_type = first_or_default([p[3] for p in processed_tags])
 
             if len(tags) > 1:
@@ -215,8 +217,15 @@ def get_tag_and_cleanup_prefix(prefix) -> Tuple[str, str, bool, Optional[DataTyp
     pretag = None
     potential_type = None
 
-    if ":" in el:
-        parts = el.split(":")
+    # if prefix is split by ':' or split by
+    if ":" in el or "=" in el:
+        parts = None
+        if ":" in el:
+            parts = el.split(":")
+        elif "=" in el:
+            parts = el.split("=")
+            has_equals = True
+
         if len(parts) > 2:
             Logger.warn(
                 f"Unexpected number of components in the tag '{el}' to guess the type, using '{parts[0]}' and skipping type inference"
@@ -227,10 +236,7 @@ def get_tag_and_cleanup_prefix(prefix) -> Tuple[str, str, bool, Optional[DataTyp
             if not potential_type and pt:
                 potential_type = pt
 
-    if "=" in el:
-        has_equals = True
-        el = el.split("=")[0]
-    elif " " in el:
+    if " " in el:
         el = el.split(" ")[0]
 
     titleComponents = [l.strip().lower() for l in el.split("-") if l]

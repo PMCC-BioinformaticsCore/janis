@@ -20,6 +20,15 @@ Automatically generated index page for ekg:
      </a>
      <hr />
          
+     <a href="vcfcombine.html">
+       <p style="margin-bottom: 5px"><b>VcfLib: VcfCombine</b> <span style="margin-left: 10px; color: darkgray">vcfcombine</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="vcfcombine.html" style="margin-bottom: 10px">
+       v<b>1.0.1</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="vcffixup.html">
        <p style="margin-bottom: 5px"><b>VcfLib: VcfFixUp</b> <span style="margin-left: 10px; color: darkgray">vcffixup</span></p>
        
@@ -42,6 +51,15 @@ Automatically generated index page for ekg:
        <p style="margin-bottom: 5px"><b>VcfLib: Vcf ROC generator</b> <span style="margin-left: 10px; color: darkgray">vcfroc</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="vcfroc.html" style="margin-bottom: 10px">
+       v<b>1.0.1</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="vcfstreamsort.html">
+       <p style="margin-bottom: 5px"><b>VcfLib: VcfStreamSort</b> <span style="margin-left: 10px; color: darkgray">vcfstreamsort</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="vcfstreamsort.html" style="margin-bottom: 10px">
        v<b>1.0.1</b>
      </a></p>
      </a>

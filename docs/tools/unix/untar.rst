@@ -53,7 +53,7 @@ Quickstart
 
 .. code-block:: yaml
 
-       tarfile: tarfile.tar
+       tarfile: tarfile
 
 
 

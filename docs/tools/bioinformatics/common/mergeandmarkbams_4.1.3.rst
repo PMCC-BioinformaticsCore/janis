@@ -116,6 +116,7 @@ name                                type               documentation
 bams                                Array<IndexedBam>
 createIndex                         Optional<Boolean>
 maxRecordsInRam                     Optional<Integer>
+sampleName                          Optional<String>
 mergeSamFiles_useThreading          Optional<Boolean>  Option to create a background thread to encode, compress and write to disk the output file. The threaded version uses about 20% more CPU and decreases runtime by ~20% when writing out a compressed BAM file.
 mergeSamFiles_validationStringency  Optional<String>   Validation stringency for all SAM files read by this program. Setting stringency to SILENT can improve performance when processing a BAM file in which variable-length data (read, qualities, tags) do not otherwise need to be decoded.The --VALIDATION_STRINGENCY argument is an enumerated type (ValidationStringency), which can have one of the following values: [STRICT, LENIENT, SILENT]
 ==================================  =================  ================================================================================================================================================================================================================================================================================================================================================================================================

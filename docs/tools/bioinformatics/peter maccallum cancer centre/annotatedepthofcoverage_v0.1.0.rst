@@ -3,7 +3,7 @@
 Annotate GATK3 DepthOfCoverage Workflow
 =================================================================
 
-*0 contributors · 1 version*
+*1 contributor · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -13,13 +13,13 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.bioinformaticstoolbase import BioinformaticsWorkflowBuilder
+       from janis_bioinformatics.tools.pmac.annotateDepthOfCoverageWorkflow import AnnotateDepthOfCoverage_0_1_0
 
        wf = WorkflowBuilder("myworkflow")
 
        wf.step(
            "annotatedepthofcoverage_step",
-           BioinformaticsWorkflowBuilder(
+           AnnotateDepthOfCoverage_0_1_0(
                bam=None,
                bed=None,
                reference=None,
@@ -84,7 +84,7 @@ URL: *No URL to the documentation was provided*
 :ID: ``AnnotateDepthOfCoverage``
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
-:Authors: 
+:Authors: Jiaan Yu
 :Citations: 
 :Created: None
 :Updated: None

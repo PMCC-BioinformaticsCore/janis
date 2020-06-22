@@ -101,6 +101,15 @@ Automatically generated index page for GATK4:
      </a>
      <hr />
          
+     <a href="gatk4getpileupsummaries_cram.html">
+       <p style="margin-bottom: 5px"><b>GATK4: GetPileupSummaries</b> <span style="margin-left: 10px; color: darkgray">Gatk4GetPileupSummaries_cram</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4getpileupsummaries_cram.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="gatk4haplotypecaller.html">
        <p style="margin-bottom: 5px"><b>GATK4: Haplotype Caller</b> <span style="margin-left: 10px; color: darkgray">Gatk4HaplotypeCaller</span></p>
        
@@ -164,10 +173,28 @@ Automatically generated index page for GATK4:
      </a>
      <hr />
          
+     <a href="gatk4mutect2_cram.html">
+       <p style="margin-bottom: 5px"><b>GatkMutect2</b> <span style="margin-left: 10px; color: darkgray">Gatk4Mutect2_cram</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4mutect2_cram.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="gatk4printreads.html">
        <p style="margin-bottom: 5px"><b>GATK4: Print Reads</b> <span style="margin-left: 10px; color: darkgray">Gatk4PrintReads</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4printreads.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatk4selectvariants.html">
+       <p style="margin-bottom: 5px"><b>GATK4: SelectVariants</b> <span style="margin-left: 10px; color: darkgray">Gatk4SelectVariants</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4selectvariants.html" style="margin-bottom: 10px">
        v<b>4.1.4.0</b>
      </a></p>
      </a>

@@ -105,6 +105,7 @@ Additional configuration (inputs)
 name                       type                        prefix                     position  documentation
 =========================  ==========================  =======================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 bams                       Array<IndexedBam>           -I                               10  The SAM/BAM file to sort.
+sampleName                 Optional<String>                                                 Used for naming purposes only
 outputFilename             Optional<Filename>          -O                               10  SAM/BAM file to write merged result to
 argumentsFile              Optional<Array<File>>       --arguments_file                 10  read one or more arguments files and add them to the command line
 assumeSorted               Optional<Boolean>           -AS                                  If true, assume that the input files are in the same sort order as the requested output sort order, even if their headers say otherwise.

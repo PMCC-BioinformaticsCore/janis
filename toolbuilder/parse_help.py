@@ -54,7 +54,7 @@ def get_help_from_container(
     try:
         help = (
             subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-            .decode("utf-16")
+            .decode("utf-8")
             .rstrip()
         )
     except subprocess.CalledProcessError as e:
@@ -79,7 +79,7 @@ def get_version_from_container(
     except subprocess.CalledProcessError as e:
         return None
 
-    return help.decode("utf-16").rstrip()
+    return help.decode("utf-8").rstrip()
 
 
 def first_or_default(iterable, default=None):
@@ -104,7 +104,7 @@ def parse_str(
         if not line.lstrip():
             continue
 
-        ll = line.lower()
+        ll = line.strip().lower()
 
         if any(ll.startswith(m) for m in markers):
             options_idx = il
@@ -144,6 +144,9 @@ def parse_str(
             processed_tags = [
                 get_tag_and_cleanup_prefix(p) for p in line_args[0].split(",")
             ]
+            processed_tags = [t for t in processed_tags if t is not None]
+            if len(processed_tags) < 1:
+                continue
             tags = sorted(processed_tags, key=lambda l: len(l[1]), reverse=True)
             potential_type = first_or_default([p[3] for p in processed_tags])
 
@@ -203,7 +206,9 @@ def guess_type(potential_type: str):
     return hopeful_type
 
 
-def get_tag_and_cleanup_prefix(prefix) -> Tuple[str, str, bool, Optional[DataType]]:
+def get_tag_and_cleanup_prefix(
+    prefix,
+) -> Optional[Tuple[str, str, bool, Optional[DataType]]]:
     """
     :param prefix:
     :return: (raw_element, potentialID, hasSeparator, potentialType)
@@ -241,9 +246,10 @@ def get_tag_and_cleanup_prefix(prefix) -> Tuple[str, str, bool, Optional[DataTyp
 
     titleComponents = [l.strip().lower() for l in el.split("-") if l]
     if len(titleComponents) == 0:
-        raise Exception(
+        Logger.critical(
             f"Title components for tag '{prefix}' does not have a component"
         )
+        return None
     tag = "_".join(titleComponents)
 
     if tag.lower() in common_replacements:

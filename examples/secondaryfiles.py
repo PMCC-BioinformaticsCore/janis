@@ -1,7 +1,16 @@
 from typing import List
 
-from janis_core import ToolOutput, ToolInput, WorkflowBuilder, File, Array
+from janis_core import (
+    ToolOutput,
+    ToolInput,
+    WorkflowBuilder,
+    File,
+    Array,
+    ScatterDescription,
+    ScatterMethods,
+)
 from janis_core.types import InputSelector
+from janis_core.utils.scatter import ScatterMethod
 from janis_unix.tools.unixtool import UnixTool
 from janis_bioinformatics.data_types import FastaBwa, BamBai
 
@@ -68,7 +77,7 @@ if __name__ == "__main__":
     # EXAMPLE 2
 
     w2 = WorkflowBuilder("scattered_test_workflow")
-    w2.input("inp", Array(DataTypeWithSecondary), default=["path/to/file.ext"])
+    w2.input("inp", Array(DataTypeWithSecondary), value=["path/to/file.ext"])
     w2.step("stp", ToolThatAcceptsAndReturnsSecondary(inp=w2.inp), scatter="inp")
     w2.output("out", source=w2.stp)
     w2.translate("wdl")
@@ -84,7 +93,7 @@ if __name__ == "__main__":
         ToolTypeThatAcceptsMultipleBioinfTypes(
             bam=w3.my_bams, reference=w3.my_references
         ),
-        scatter=["bam", "reference"],
+        scatter=ScatterDescription(["bam", "reference"], ScatterMethods.cross),
     )
 
     w3.output("out_bam", source=w3.my_step.out_bam)

@@ -185,6 +185,7 @@ Contents
    tools/index
    datatypes/index
    templates/index
+   references/listoperators
    references/shed
 
 .. toctree::
@@ -196,6 +197,7 @@ Contents
    references/workflow
    references/commandtool
    references/tools/pythontool
+   references/expressions
    references/scattering
    references/secondaryfiles
 

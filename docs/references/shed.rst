@@ -24,7 +24,7 @@ We won't discuss how to setup a Python package from scratch, but you might want 
 
 Specifically, you'll need to add the lines to your ``setup.py`` (replacing ``bioinformatics`` with a keyword to describe your extension, and ``janis_bioinformatics`` with your package name):
 
-.. code-block:: raw
+.. code-block:: none
 
    entry_points={
        "janis.extension": ["bioinformatics=janis_bioinformatics"],

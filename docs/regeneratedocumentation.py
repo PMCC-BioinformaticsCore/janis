@@ -26,7 +26,7 @@ from janis_core import (
     Logger,
     JanisShed,
     WorkflowMetadata,
-    ToolTypes,
+    ToolType,
 )
 
 import janis_unix, janis_bioinformatics
@@ -97,11 +97,11 @@ def prepare_tool(
     try:
         if is_published_pipeline:
             return ""
-        if tool.type() == ToolTypes.CommandTool:
+        if tool.type() == ToolType.CommandTool:
             return prepare_commandtool_page(tool, toolversions)
-        elif tool.type() == ToolTypes.Workflow:
+        elif tool.type() == ToolType.Workflow:
             return prepare_workflow_page(tool, toolversions)
-        elif tool.type() == ToolTypes.CodeTool:
+        elif tool.type() == ToolType.CodeTool:
             return prepare_code_tool_page(tool, toolversions)
     except Exception as e:
         traceback.print_exc()
@@ -311,7 +311,7 @@ def generate_pipelines_page():
             and type(cls) != type
             and isclass(cls)
             and hasattr(cls, "type")
-            and cls.type() == ToolTypes.Workflow
+            and cls.type() == ToolType.Workflow
         )
 
     wf_strings = "\n".join(

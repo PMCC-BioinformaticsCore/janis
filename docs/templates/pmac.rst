@@ -42,10 +42,11 @@ queues                          typing.Union[str, typing.List[str]]  prod_med,pr
 singularity_version             <class 'str'>                        3.4.0                                                 The version of Singularity to use on the cluster
 send_job_emails                 <class 'bool'>                       False                                                 Send Slurm job notifications using the provided email
 catch_slurm_errors              <class 'bool'>                       True                                                  Fail the task if Slurm kills the job (eg: memory / time)
-singularity_build_instructions                                                                                             Sensible default for PeterMac template
+singularity_build_instructions  <class 'str'>                                                                              Sensible default for PeterMac template
 max_cores                       <class 'int'>                        40                                                    Override maximum number of cores (default: 32)
 max_ram                         <class 'int'>                        256                                                   Override maximum ram (default 508 [GB])
 max_workflow_time               <class 'int'>                        20100                                                 The walltime of the submitted workflow "brain"
-janis_memory_mb
+janis_memory_mb                 <class 'int'>
+email_format                    <class 'str'>                                                                              (None, "molpath")
 ==============================  ===================================  ====================================================  ======================================================================
 

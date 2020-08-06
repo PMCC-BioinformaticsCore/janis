@@ -73,7 +73,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``trimIUPAC``
 :URL: *No URL to the documentation was provided*
 :Versions: 0.0.5, 0.0.4
@@ -82,7 +81,6 @@ Information
 :Citations: None
 :Created: None
 :Updated: None
-
 
 
 Outputs
@@ -95,7 +93,6 @@ out     VCF
 ======  ======  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -105,3 +102,86 @@ name            type                prefix      position  documentation
 vcf             VCF                                    0  The VCF to remove the IUPAC bases from
 outputFilename  Optional<Filename>                     2
 ==============  ==================  ========  ==========  ======================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task trimIUPAC {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File vcf
+       String? outputFilename
+     }
+     command <<<
+       set -e
+       trimIUPAC.py \
+         '~{vcf}' \
+         '~{select_first([outputFilename, "generated.trimmed.vcf"])}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "michaelfranklin/pmacutil:0.0.5"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 1, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = select_first([outputFilename, "generated.trimmed.vcf"])
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: Trim IUPAC Bases
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: michaelfranklin/pmacutil:0.0.5
+
+   inputs:
+   - id: vcf
+     label: vcf
+     doc: The VCF to remove the IUPAC bases from
+     type: File
+     inputBinding:
+       position: 0
+   - id: outputFilename
+     label: outputFilename
+     type:
+     - string
+     - 'null'
+     default: generated.trimmed.vcf
+     inputBinding:
+       position: 2
+
+   outputs:
+   - id: out
+     label: out
+     type: File
+     outputBinding:
+       glob: generated.trimmed.vcf
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: trimIUPAC.py
+   arguments: []
+   id: trimIUPAC
+
+

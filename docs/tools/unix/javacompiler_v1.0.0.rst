@@ -73,7 +73,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``javacompiler``
 :URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
@@ -82,7 +81,6 @@ Information
 :Citations: None
 :Created: None
 :Updated: None
-
 
 
 Outputs
@@ -95,7 +93,6 @@ out     File
 ======  ======  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -104,3 +101,79 @@ name    type    prefix      position  documentation
 ======  ======  ========  ==========  ===============
 file    File                       1
 ======  ======  ========  ==========  ===============
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task javacompiler {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File file
+     }
+     command <<<
+       set -e
+       javac \
+         -d '.' \
+         '~{file}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "openjdk:8"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = glob("*.class")[0]
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: Java compiler
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: openjdk:8
+
+   inputs:
+   - id: file
+     label: file
+     type: File
+     inputBinding:
+       position: 1
+
+   outputs:
+   - id: out
+     label: out
+     type: File
+     outputBinding:
+       glob: '*.class'
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: javac
+   arguments:
+   - prefix: -d
+     position: 0
+     valueFrom: .
+   id: javacompiler
+
+

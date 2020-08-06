@@ -38,6 +38,15 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
      </a>
      <hr />
          
+     <a href="generategenomefileforbedtoolscoverage.html">
+       <p style="margin-bottom: 5px"><b>Generate genome for BedtoolsCoverage</b> <span style="margin-left: 10px; color: darkgray">GenerateGenomeFileForBedtoolsCoverage</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="generategenomefileforbedtoolscoverage.html" style="margin-bottom: 10px">
+       v<b>0.1.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="generatevardictheaderlines.html">
        <p style="margin-bottom: 5px"><b>GenerateVardictHeaderLines</b> <span style="margin-left: 10px; color: darkgray">GenerateVardictHeaderLines</span></p>
        
@@ -133,6 +142,15 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
        
        <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="combinevariants.html" style="margin-bottom: 10px">
        v<b>0.0.8</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="extractstrelkasomaticaddp.html">
+       <p style="margin-bottom: 5px"><b>Extract Strelka Somatic AD DP</b> <span style="margin-left: 10px; color: darkgray">extractStrelkaSomaticADDP</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="extractstrelkasomaticaddp.html" style="margin-bottom: 10px">
+       v<b>dev</b>
      </a></p>
      </a>
      <hr />

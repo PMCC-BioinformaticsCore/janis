@@ -146,4 +146,269 @@ vardict_geneEndCol            Optional<Integer>  The column for region end, e.g.
 compressvcf_stdout            Optional<Boolean>  c: Write to standard output, keep original files unchanged.
 ============================  =================  ============================================================================
 
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   import "tools/vardict_somatic_1_6_0.wdl" as V
+   import "tools/bcftoolsAnnotate_v1_5.wdl" as B
+   import "tools/bgzip_1_2_1.wdl" as B2
+   import "tools/tabix_1_2_1.wdl" as T
+   import "tools/SplitMultiAllele_v0_5772.wdl" as S
+   import "tools/trimIUPAC_0_0_5.wdl" as T2
+   import "tools/FilterVardictSomaticVcf_v1_9.wdl" as F
+
+   workflow vardictSomaticVariantCaller {
+     input {
+       File normal_bam
+       File normal_bam_bai
+       File tumor_bam
+       File tumor_bam_bai
+       String normal_name
+       String tumor_name
+       File intervals
+       Float? allele_freq_threshold = 0.05
+       File header_lines
+       File reference
+       File reference_fai
+       File reference_amb
+       File reference_ann
+       File reference_bwt
+       File reference_pac
+       File reference_sa
+       File reference_dict
+       Boolean? vardict_chromNamesAreNumbers = true
+       Boolean? vardict_vcfFormat = true
+       Int? vardict_chromColumn = 1
+       Int? vardict_regStartCol = 2
+       Int? vardict_geneEndCol = 3
+       Boolean? compressvcf_stdout = true
+     }
+     call V.vardict_somatic as vardict {
+       input:
+         tumorBam=tumor_bam,
+         tumorBam_bai=tumor_bam_bai,
+         normalBam=normal_bam,
+         normalBam_bai=normal_bam_bai,
+         intervals=intervals,
+         reference=reference,
+         reference_fai=reference_fai,
+         tumorName=tumor_name,
+         normalName=normal_name,
+         alleleFreqThreshold=select_first([allele_freq_threshold, 0.05]),
+         chromNamesAreNumbers=select_first([vardict_chromNamesAreNumbers, true]),
+         chromColumn=select_first([vardict_chromColumn, 1]),
+         geneEndCol=select_first([vardict_geneEndCol, 3]),
+         regStartCol=select_first([vardict_regStartCol, 2]),
+         vcfFormat=select_first([vardict_vcfFormat, true])
+     }
+     call B.bcftoolsAnnotate as annotate {
+       input:
+         vcf=vardict.out,
+         headerLines=header_lines
+     }
+     call B2.bgzip as compressvcf {
+       input:
+         file=annotate.out,
+         stdout=select_first([compressvcf_stdout, true])
+     }
+     call T.tabix as tabixvcf {
+       input:
+         inp=compressvcf.out
+     }
+     call S.SplitMultiAllele as splitnormalisevcf {
+       input:
+         vcf=annotate.out,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict
+     }
+     call T2.trimIUPAC as trim {
+       input:
+         vcf=splitnormalisevcf.out
+     }
+     call F.FilterVardictSomaticVcf as filterpass {
+       input:
+         vcf=trim.out
+     }
+     output {
+       File variants = tabixvcf.out
+       File variants_tbi = tabixvcf.out_tbi
+       File out = filterpass.out
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: Workflow
+   cwlVersion: v1.0
+   label: Vardict Somatic Variant Caller
+
+   requirements:
+   - class: InlineJavascriptRequirement
+   - class: StepInputExpressionRequirement
+
+   inputs:
+   - id: normal_bam
+     type: File
+     secondaryFiles:
+     - .bai
+   - id: tumor_bam
+     type: File
+     secondaryFiles:
+     - .bai
+   - id: normal_name
+     type: string
+   - id: tumor_name
+     type: string
+   - id: intervals
+     type: File
+   - id: allele_freq_threshold
+     type: float
+     default: 0.05
+   - id: header_lines
+     type: File
+   - id: reference
+     type: File
+     secondaryFiles:
+     - .fai
+     - .amb
+     - .ann
+     - .bwt
+     - .pac
+     - .sa
+     - ^.dict
+   - id: vardict_chromNamesAreNumbers
+     doc: Indicate the chromosome names are just numbers, such as 1, 2, not chr1, chr2
+     type: boolean
+     default: true
+   - id: vardict_vcfFormat
+     doc: VCF format output
+     type: boolean
+     default: true
+   - id: vardict_chromColumn
+     doc: The column for chromosome
+     type: int
+     default: 1
+   - id: vardict_regStartCol
+     doc: The column for region start, e.g. gene start
+     type: int
+     default: 2
+   - id: vardict_geneEndCol
+     doc: The column for region end, e.g. gene end
+     type: int
+     default: 3
+   - id: compressvcf_stdout
+     doc: 'c: Write to standard output, keep original files unchanged.'
+     type: boolean
+     default: true
+
+   outputs:
+   - id: variants
+     type: File
+     secondaryFiles:
+     - .tbi
+     outputSource: tabixvcf/out
+   - id: out
+     type: File
+     outputSource: filterpass/out
+
+   steps:
+   - id: vardict
+     label: Vardict (Somatic)
+     in:
+     - id: tumorBam
+       source: tumor_bam
+     - id: normalBam
+       source: normal_bam
+     - id: intervals
+       source: intervals
+     - id: reference
+       source: reference
+     - id: tumorName
+       source: tumor_name
+     - id: normalName
+       source: normal_name
+     - id: alleleFreqThreshold
+       source: allele_freq_threshold
+     - id: chromNamesAreNumbers
+       source: vardict_chromNamesAreNumbers
+     - id: chromColumn
+       source: vardict_chromColumn
+     - id: geneEndCol
+       source: vardict_geneEndCol
+     - id: regStartCol
+       source: vardict_regStartCol
+     - id: vcfFormat
+       source: vardict_vcfFormat
+     run: tools/vardict_somatic_1_6_0.cwl
+     out:
+     - id: out
+   - id: annotate
+     label: 'BCFTools: Annotate'
+     in:
+     - id: vcf
+       source: vardict/out
+     - id: headerLines
+       source: header_lines
+     run: tools/bcftoolsAnnotate_v1_5.cwl
+     out:
+     - id: out
+   - id: compressvcf
+     label: BGZip
+     in:
+     - id: file
+       source: annotate/out
+     - id: stdout
+       source: compressvcf_stdout
+     run: tools/bgzip_1_2_1.cwl
+     out:
+     - id: out
+   - id: tabixvcf
+     label: Tabix
+     in:
+     - id: inp
+       source: compressvcf/out
+     run: tools/tabix_1_2_1.cwl
+     out:
+     - id: out
+   - id: splitnormalisevcf
+     label: Split Multiple Alleles
+     in:
+     - id: vcf
+       source: annotate/out
+     - id: reference
+       source: reference
+     run: tools/SplitMultiAllele_v0_5772.cwl
+     out:
+     - id: out
+   - id: trim
+     label: Trim IUPAC Bases
+     in:
+     - id: vcf
+       source: splitnormalisevcf/out
+     run: tools/trimIUPAC_0_0_5.cwl
+     out:
+     - id: out
+   - id: filterpass
+     label: Filter Vardict Somatic Vcf
+     in:
+     - id: vcf
+       source: trim/out
+     run: tools/FilterVardictSomaticVcf_v1_9.cwl
+     out:
+     - id: out
+   id: vardictSomaticVariantCaller
 

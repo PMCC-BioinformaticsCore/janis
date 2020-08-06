@@ -54,8 +54,8 @@ Quickstart
 .. code-block:: yaml
 
        f1r2CountsFiles:
-       - f1r2CountsFiles_0
-       - f1r2CountsFiles_1
+       - f1r2CountsFiles_0.tar.gz
+       - f1r2CountsFiles_1.tar.gz
 
 
 
@@ -75,7 +75,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``Gatk4LearnReadOrientationModel``
 :URL: `TBD <TBD>`_
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
@@ -86,7 +85,6 @@ Information
 :Updated: 2019-09-09
 
 
-
 Outputs
 -----------
 
@@ -95,7 +93,6 @@ name    type               documentation
 ======  =================  =============================================================
 out     CompressedTarFile  Model file containing information about fragment orientations
 ======  =================  =============================================================
-
 
 
 Additional configuration (inputs)
@@ -110,3 +107,125 @@ compression_level  Optional<Integer>                                          Co
 numEmIterations    Optional<Integer>         --num-em-iterations           1  Amount of iterations for the em process before it bails
 modelFileOut       Optional<Filename>        -O                            3
 =================  ========================  ===================  ==========  ========================================================================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task Gatk4LearnReadOrientationModel {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       Array[String]? javaOptions
+       Int? compression_level
+       Array[File] f1r2CountsFiles
+       Int? numEmIterations
+       String? modelFileOut
+     }
+     command <<<
+       set -e
+       gatk LearnReadOrientationModel \
+         --java-options '-Xmx~{((select_first([runtime_memory, 32, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
+         ~{"-I '" + sep("' -I '", f1r2CountsFiles) + "'"} \
+         ~{if defined(select_first([numEmIterations, 30])) then ("--num-em-iterations " + select_first([numEmIterations, 30])) else ''} \
+         -O '~{select_first([modelFileOut, "generated.tar.gz"])}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "broadinstitute/gatk:4.1.4.0"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 32, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = select_first([modelFileOut, "generated.tar.gz"])
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: 'GATK4: LearnReadOrientationModel'
+   doc: TBD
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: broadinstitute/gatk:4.1.4.0
+
+   inputs:
+   - id: javaOptions
+     label: javaOptions
+     type:
+     - type: array
+       items: string
+     - 'null'
+   - id: compression_level
+     label: compression_level
+     doc: |-
+       Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
+     type:
+     - int
+     - 'null'
+   - id: f1r2CountsFiles
+     label: f1r2CountsFiles
+     doc: Counts for the read orientation of fragments
+     type:
+       type: array
+       inputBinding:
+         prefix: -I
+       items: File
+     inputBinding:
+       position: 0
+   - id: numEmIterations
+     label: numEmIterations
+     doc: Amount of iterations for the em process before it bails
+     type: int
+     default: 30
+     inputBinding:
+       prefix: --num-em-iterations
+       position: 1
+   - id: modelFileOut
+     label: modelFileOut
+     type:
+     - string
+     - 'null'
+     default: generated.tar.gz
+     inputBinding:
+       prefix: -O
+       position: 3
+
+   outputs:
+   - id: out
+     label: out
+     doc: Model file containing information about fragment orientations
+     type: File
+     outputBinding:
+       glob: generated.tar.gz
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand:
+   - gatk
+   - LearnReadOrientationModel
+   arguments:
+   - prefix: --java-options
+     position: -1
+     valueFrom: |-
+       $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 32, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+   id: Gatk4LearnReadOrientationModel
+
+

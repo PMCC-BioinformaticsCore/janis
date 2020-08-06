@@ -73,7 +73,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``md5sum``
 :URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
@@ -82,7 +81,6 @@ Information
 :Citations: None
 :Created: None
 :Updated: 2020-06-09 00:00:00
-
 
 
 Outputs
@@ -95,7 +93,6 @@ out     stdout<File>
 ======  ============  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -104,3 +101,77 @@ name        type    prefix      position  documentation
 ==========  ======  ========  ==========  ===============
 input_file  File                       1
 ==========  ======  ========  ==========  ===============
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task md5sum {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File input_file
+     }
+     command <<<
+       set -e
+       md5sum \
+         '~{input_file}' \
+         | awk '{print $1}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "ubuntu:latest"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = stdout()
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: MD5 Sum
+   doc: Compute the MD5 message digest of the given file.
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: ubuntu:latest
+
+   inputs:
+   - id: input_file
+     label: input_file
+     type: File
+     inputBinding:
+       position: 1
+
+   outputs:
+   - id: out
+     label: out
+     type: stdout
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: md5sum
+   arguments:
+   - position: 2
+     valueFrom: "| awk '{print $1}'"
+     shellQuote: false
+   id: md5sum
+
+

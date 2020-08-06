@@ -82,7 +82,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``vcfroc``
 :URL: `https://github.com/vcflib/vcflib <https://github.com/vcflib/vcflib>`_
 :Versions: v1.0.1
@@ -93,7 +92,6 @@ Information
 :Updated: 2019-10-18
 
 
-
 Outputs
 -----------
 
@@ -102,7 +100,6 @@ name    type         documentation
 ======  ===========  ===============
 out     stdout<VCF>  VCF output
 ======  ===========  ===============
-
 
 
 Additional configuration (inputs)
@@ -116,3 +113,120 @@ truth       CompressedVCF      -t                    use this VCF as ground trut
 reference   FastaWithIndexes   -r                    FASTA reference file
 windowSize  Optional<Integer>  -w                    compare records up to this many bp away (default 30)
 ==========  =================  ========  ==========  ====================================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task vcfroc {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File vcf
+       File truth
+       Int? windowSize
+       File reference
+       File reference_fai
+       File reference_amb
+       File reference_ann
+       File reference_bwt
+       File reference_pac
+       File reference_sa
+       File reference_dict
+     }
+     command <<<
+       set -e
+       vcfroc \
+         -t '~{truth}' \
+         ~{if defined(select_first([windowSize, 30])) then ("-w " + select_first([windowSize, 30])) else ''} \
+         -r '~{reference}' \
+         '~{vcf}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "shollizeck/vcflib:1.0.1"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = stdout()
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: 'VcfLib: Vcf ROC generator'
+   doc: |-
+     usage: vcfroc [options] [<vcf file>]
+
+     options:
+     	-t, --truth-vcf FILE	use this VCF as ground truth for ROC generation
+     	-w, --window-size N       compare records up to this many bp away (default 30)
+     	-r, --reference FILE	FASTA reference file
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: shollizeck/vcflib:1.0.1
+
+   inputs:
+   - id: vcf
+     label: vcf
+     type: File
+     inputBinding:
+       position: 3
+   - id: truth
+     label: truth
+     doc: use this VCF as ground truth for ROC generation
+     type: File
+     inputBinding:
+       prefix: -t
+   - id: windowSize
+     label: windowSize
+     doc: compare records up to this many bp away (default 30)
+     type: int
+     default: 30
+     inputBinding:
+       prefix: -w
+   - id: reference
+     label: reference
+     doc: FASTA reference file
+     type: File
+     secondaryFiles:
+     - .fai
+     - .amb
+     - .ann
+     - .bwt
+     - .pac
+     - .sa
+     - ^.dict
+     inputBinding:
+       prefix: -r
+
+   outputs:
+   - id: out
+     label: out
+     doc: VCF output
+     type: stdout
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: vcfroc
+   arguments: []
+   id: vcfroc
+
+

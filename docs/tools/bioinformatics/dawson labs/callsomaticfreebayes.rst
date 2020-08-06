@@ -74,16 +74,14 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``callSomaticFreeBayes``
 :URL: *No URL to the documentation was provided*
-:Versions: 0.1.6
-:Container: shollizeck/dawsontoolkit:0.1.6.1
+:Versions: 0.1.7
+:Container: shollizeck/dawsontoolkit:0.1.7.1
 :Authors: Sebastian Hollizeck
 :Citations: None
 :Created: 2019-10-19
 :Updated: 2019-10-25
-
 
 
 Outputs
@@ -96,7 +94,6 @@ out     VCF     To determine type
 ======  ======  =================
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -107,3 +104,99 @@ vcf               VCF                 -i                    input vcf
 normalSampleName  Optional<String>    -n                    the normal sample name in the vcf (default: first sample in vcf)
 outputFilename    Optional<Filename>  -o                    output file name (default: STDOUT)
 ================  ==================  ========  ==========  ================================================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task callSomaticFreeBayes {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File vcf
+       String? normalSampleName
+       String? outputFilename
+     }
+     command <<<
+       set -e
+       callSomaticFreeBayes.R \
+         -i '~{vcf}' \
+         ~{if defined(normalSampleName) then ("-n '" + normalSampleName + "'") else ""} \
+         -o '~{select_first([outputFilename, "generated.vcf"])}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 4, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "shollizeck/dawsontoolkit:0.1.7.1"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 12, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = select_first([outputFilename, "generated.vcf"])
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: Call Somatic Variants from freebayes
+   doc: "Usage: callSomaticFreeBayes.R [options]\n"
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: shollizeck/dawsontoolkit:0.1.7.1
+
+   inputs:
+   - id: vcf
+     label: vcf
+     doc: input vcf
+     type: File
+     inputBinding:
+       prefix: -i
+   - id: normalSampleName
+     label: normalSampleName
+     doc: 'the normal sample name in the vcf (default: first sample in vcf)'
+     type:
+     - string
+     - 'null'
+     inputBinding:
+       prefix: -n
+   - id: outputFilename
+     label: outputFilename
+     doc: 'output file name (default: STDOUT)'
+     type:
+     - string
+     - 'null'
+     default: generated.vcf
+     inputBinding:
+       prefix: -o
+
+   outputs:
+   - id: out
+     label: out
+     doc: To determine type
+     type: File
+     outputBinding:
+       glob: generated.vcf
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: callSomaticFreeBayes.R
+   arguments: []
+   id: callSomaticFreeBayes
+
+

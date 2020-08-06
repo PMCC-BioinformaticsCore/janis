@@ -78,7 +78,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``kallistoQuant``
 :URL: `https://pachterlab.github.io/kallisto/manual.html <https://pachterlab.github.io/kallisto/manual.html>`_
 :Versions: v0.46.2
@@ -90,7 +89,6 @@ Information
 :Updated: 2020-05-25
 
 
-
 Outputs
 -----------
 
@@ -100,7 +98,6 @@ name    type    documentation
 out     File
 stats   File
 ======  ======  ===============
-
 
 
 Additional configuration (inputs)
@@ -121,3 +118,192 @@ rf_stranded      Optional<Boolean>   --rf-stranded                  Strand speci
 fragment_length  Optional<Double>    -l                             Estimated average fragment length
 fragment_sd      Optional<Double>    -s                             Estimated standard deviation of fragment length
 ===============  ==================  =================  ==========  ========================================================================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task kallistoQuant {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File index
+       String? outdir
+       Array[File] fastq
+       Boolean? bias
+       Boolean? fusion
+       Boolean? single
+       Boolean? overhang
+       Boolean? fr_stranded
+       Boolean? rf_stranded
+       Float? fragment_length
+       Float? fragment_sd
+     }
+     command <<<
+       set -e
+       kallisto quant \
+         ~{if defined(bias) then "--bias" else ""} \
+         ~{if defined(fusion) then "--fusion" else ""} \
+         ~{if defined(single) then "--single" else ""} \
+         ~{if defined(overhang) then "--single-overhang" else ""} \
+         ~{if defined(fr_stranded) then "--fr-stranded" else ""} \
+         ~{if defined(rf_stranded) then "--rf-stranded" else ""} \
+         ~{if defined(fragment_length) then ("-l " + fragment_length) else ''} \
+         ~{if defined(fragment_sd) then ("-s " + fragment_sd) else ''} \
+         -i '~{index}' \
+         -o '~{select_first([outdir, "generated"])}' \
+         ~{"'" + sep("' '", fastq) + "'"}
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "quay.io/biocontainers/kallisto:0.46.2--h4f7b962_1"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 2, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = (select_first([outdir, "generated"]) + "/abundance.tsv")
+       File stats = (select_first([outdir, "generated"]) + "/run_info.json")
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: Kallisto-Quant
+   doc: Builds a kallisto index
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: quay.io/biocontainers/kallisto:0.46.2--h4f7b962_1
+
+   inputs:
+   - id: index
+     label: index
+     doc: Filename for the kallisto index to be constructed
+     type: File
+     inputBinding:
+       prefix: -i
+       position: 2
+   - id: outdir
+     label: outdir
+     doc: directory to put outputs in
+     type:
+     - string
+     - 'null'
+     default: generated
+     inputBinding:
+       prefix: -o
+       position: 3
+   - id: fastq
+     label: fastq
+     doc: FASTQ files to process
+     type:
+       type: array
+       items: File
+     inputBinding:
+       position: 4
+   - id: bias
+     label: bias
+     doc: Perform sequence based bias correction
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: --bias
+   - id: fusion
+     label: fusion
+     doc: Search for fusions for Pizzly
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: --fusion
+   - id: single
+     label: single
+     doc: Quantify single-end reads
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: --single
+   - id: overhang
+     label: overhang
+     doc: |-
+       Include reads where unobserved rest of fragment is predicted to lie outside a transcript
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: --single-overhang
+   - id: fr_stranded
+     label: fr_stranded
+     doc: Strand specific reads, first read forward
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: --fr-stranded
+   - id: rf_stranded
+     label: rf_stranded
+     doc: Strand specific reads, first read reverse
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: --rf-stranded
+   - id: fragment_length
+     label: fragment_length
+     doc: Estimated average fragment length
+     type:
+     - double
+     - 'null'
+     inputBinding:
+       prefix: -l
+   - id: fragment_sd
+     label: fragment_sd
+     doc: Estimated standard deviation of fragment length
+     type:
+     - double
+     - 'null'
+     inputBinding:
+       prefix: -s
+
+   outputs:
+   - id: out
+     label: out
+     type: File
+     outputBinding:
+       glob: $((inputs.outdir + "/abundance.tsv"))
+       outputEval: $((inputs.outdir + "/abundance.tsv"))
+       loadContents: false
+   - id: stats
+     label: stats
+     type: File
+     outputBinding:
+       glob: $((inputs.outdir + "/run_info.json"))
+       outputEval: $((inputs.outdir + "/run_info.json"))
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand:
+   - kallisto
+   - quant
+   arguments: []
+   id: kallistoQuant
+
+

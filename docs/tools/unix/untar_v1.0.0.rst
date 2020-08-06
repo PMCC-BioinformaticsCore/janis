@@ -53,7 +53,7 @@ Quickstart
 
 .. code-block:: yaml
 
-       tarfile: tarfile
+       tarfile: tarfile.tar
 
 
 
@@ -73,7 +73,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``untar``
 :URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
@@ -82,7 +81,6 @@ Information
 :Citations: None
 :Created: None
 :Updated: None
-
 
 
 Outputs
@@ -95,7 +93,6 @@ out     Array<File>
 ======  ===========  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -104,3 +101,79 @@ name     type     prefix      position  documentation
 =======  =======  ========  ==========  ===============
 tarfile  TarFile                     0
 =======  =======  ========  ==========  ===============
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task untar {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File tarfile
+     }
+     command <<<
+       set -e
+       tar xf \
+         '~{tarfile}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "ubuntu:latest"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       Array[File] out = glob("*.java")
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: Tar (unarchive)
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: ubuntu:latest
+
+   inputs:
+   - id: tarfile
+     label: tarfile
+     type: File
+     inputBinding:
+       position: 0
+
+   outputs:
+   - id: out
+     label: out
+     type:
+       type: array
+       items: File
+     outputBinding:
+       glob: '*.java'
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand:
+   - tar
+   - xf
+   arguments: []
+   id: untar
+
+

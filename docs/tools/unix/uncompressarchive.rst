@@ -73,7 +73,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``UncompressArchive``
 :URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
@@ -84,7 +83,6 @@ Information
 :Updated: None
 
 
-
 Outputs
 -----------
 
@@ -93,7 +91,6 @@ name    type          documentation
 ======  ============  ===============
 out     stdout<File>
 ======  ============  ===============
-
 
 
 Additional configuration (inputs)
@@ -118,3 +115,211 @@ fast        Optional<Boolean>  -1                       compress faster
 best        Optional<Boolean>  -9                       compress better
 rsyncable   Optional<Boolean>  --rsyncable              Make rsync-friendly archive
 ==========  =================  ===========  ==========  =======================================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task UncompressArchive {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File file
+       Boolean? stdout
+       Boolean? decompress
+       Boolean? force
+       Boolean? keep
+       Boolean? list
+       Boolean? noName
+       Boolean? name
+       Boolean? quiet
+       Boolean? recursive
+       String? suffix
+       Boolean? test
+       Boolean? fast
+       Boolean? best
+       Boolean? rsyncable
+     }
+     command <<<
+       set -e
+       gunzip \
+         ~{if defined(select_first([stdout, true])) then "-c" else ""} \
+         ~{if defined(decompress) then "-d" else ""} \
+         ~{if defined(force) then "-f" else ""} \
+         ~{if defined(keep) then "-k" else ""} \
+         ~{if defined(list) then "-l" else ""} \
+         ~{if defined(noName) then "-n" else ""} \
+         ~{if defined(name) then "-N" else ""} \
+         ~{if defined(quiet) then "-q" else ""} \
+         ~{if defined(recursive) then "-r" else ""} \
+         ~{if defined(suffix) then ("-s '" + suffix + "'") else ""} \
+         ~{if defined(test) then "-t" else ""} \
+         ~{if defined(fast) then "-1" else ""} \
+         ~{if defined(best) then "-9" else ""} \
+         ~{if defined(rsyncable) then "--rsyncable" else ""} \
+         '~{file}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "ubuntu:latest"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = stdout()
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: UncompressArchive
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: ubuntu:latest
+
+   inputs:
+   - id: file
+     label: file
+     type: File
+     inputBinding:
+       position: 1
+   - id: stdout
+     label: stdout
+     doc: write on standard output, keep original files unchanged
+     type: boolean
+     default: true
+     inputBinding:
+       prefix: -c
+   - id: decompress
+     label: decompress
+     doc: decompress
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -d
+   - id: force
+     label: force
+     doc: force overwrite of output file and compress links
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -f
+   - id: keep
+     label: keep
+     doc: keep (don't delete) input files
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -k
+   - id: list
+     label: list
+     doc: list compressed file contents
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -l
+   - id: noName
+     label: noName
+     doc: do not save or restore the original name and time stamp
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -n
+   - id: name
+     label: name
+     doc: save or restore the original name and time stamp
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -N
+   - id: quiet
+     label: quiet
+     doc: suppress all warnings
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -q
+   - id: recursive
+     label: recursive
+     doc: operate recursively on directories
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -r
+   - id: suffix
+     label: suffix
+     doc: use suffix SUF on compressed files
+     type:
+     - string
+     - 'null'
+     inputBinding:
+       prefix: -s
+   - id: test
+     label: test
+     doc: test compressed file integrity
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -t
+   - id: fast
+     label: fast
+     doc: compress faster
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: '-1'
+   - id: best
+     label: best
+     doc: compress better
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: '-9'
+   - id: rsyncable
+     label: rsyncable
+     doc: Make rsync-friendly archive
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: --rsyncable
+
+   outputs:
+   - id: out
+     label: out
+     type: stdout
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: gunzip
+   arguments: []
+   id: UncompressArchive
+
+

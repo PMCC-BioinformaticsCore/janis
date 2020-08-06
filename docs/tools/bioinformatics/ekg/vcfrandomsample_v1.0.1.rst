@@ -82,7 +82,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``vcfrandomsample``
 :URL: `https://github.com/vcflib/vcflib <https://github.com/vcflib/vcflib>`_
 :Versions: v1.0.1
@@ -93,7 +92,6 @@ Information
 :Updated: 2019-10-18
 
 
-
 Outputs
 -----------
 
@@ -102,7 +100,6 @@ name    type         documentation
 ======  ===========  ===============
 out     stdout<VCF>  VCF output
 ======  ===========  ===============
-
 
 
 Additional configuration (inputs)
@@ -116,3 +113,106 @@ rate     Float             -t                    base sampling probability per l
 seed     Integer           -p                    use this random seed
 scaleBy  Optional<String>  -s                    scale sampling likelihood by this Float info field
 =======  ================  ========  ==========  ==================================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task vcfrandomsample {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File vcf
+       Float rate
+       String? scaleBy
+       Int seed
+     }
+     command <<<
+       set -e
+       vcfrandomsample \
+         -t ~{rate} \
+         ~{if defined(scaleBy) then ("-s '" + scaleBy + "'") else ""} \
+         -p ~{seed} \
+         '~{vcf}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "shollizeck/vcflib:1.0.1"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = stdout()
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: 'VcfLib: Vcf Random Sampling'
+   doc: |-
+     usage: vcfrandomsample [options] [<vcf file>]
+
+     options:
+     	-r, --rate RATE 	base sampling probability per locus
+     	-s, --scale-by KEY\scale sampling likelihood by this Float info field
+     	-p, --random-seed N	use this random seed
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: shollizeck/vcflib:1.0.1
+
+   inputs:
+   - id: vcf
+     label: vcf
+     type: File
+     inputBinding:
+       position: 3
+   - id: rate
+     label: rate
+     doc: base sampling probability per locus
+     type: float
+     inputBinding:
+       prefix: -t
+   - id: scaleBy
+     label: scaleBy
+     doc: scale sampling likelihood by this Float info field
+     type:
+     - string
+     - 'null'
+     inputBinding:
+       prefix: -s
+   - id: seed
+     label: seed
+     doc: use this random seed
+     type: int
+     inputBinding:
+       prefix: -p
+
+   outputs:
+   - id: out
+     label: out
+     doc: VCF output
+     type: stdout
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: vcfrandomsample
+   arguments: []
+   id: vcfrandomsample
+
+

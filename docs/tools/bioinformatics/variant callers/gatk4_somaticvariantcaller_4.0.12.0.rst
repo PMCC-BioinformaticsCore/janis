@@ -147,4 +147,306 @@ mills_indels  CompressedIndexedVCF
 intervals     Optional<bed>         This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
 ============  ====================  ===================================================================================================================================================
 
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   import "tools/Gatk4BaseRecalibrator_4_0_12_0.wdl" as G
+   import "tools/Gatk4ApplyBQSR_4_0_12_0.wdl" as G2
+   import "tools/Gatk4Mutect2_4_0_12_0.wdl" as G3
+   import "tools/SplitMultiAllele_v0_5772.wdl" as S
+
+   workflow GATK4_SomaticVariantCaller {
+     input {
+       File normal_bam
+       File normal_bam_bai
+       File tumor_bam
+       File tumor_bam_bai
+       String normal_name
+       String tumor_name
+       File? intervals
+       File reference
+       File reference_fai
+       File reference_amb
+       File reference_ann
+       File reference_bwt
+       File reference_pac
+       File reference_sa
+       File reference_dict
+       File snps_dbsnp
+       File snps_dbsnp_tbi
+       File snps_1000gp
+       File snps_1000gp_tbi
+       File known_indels
+       File known_indels_tbi
+       File mills_indels
+       File mills_indels_tbi
+     }
+     call G.Gatk4BaseRecalibrator as base_recalibrator_normal {
+       input:
+         bam=normal_bam,
+         bam_bai=normal_bam_bai,
+         knownSites=[snps_dbsnp, snps_1000gp, known_indels, mills_indels],
+         knownSites_tbi=[snps_dbsnp_tbi, snps_1000gp_tbi, known_indels_tbi, mills_indels_tbi],
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict,
+         intervals=intervals
+     }
+     call G.Gatk4BaseRecalibrator as base_recalibrator_tumor {
+       input:
+         bam=tumor_bam,
+         bam_bai=tumor_bam_bai,
+         knownSites=[snps_dbsnp, snps_1000gp, known_indels, mills_indels],
+         knownSites_tbi=[snps_dbsnp_tbi, snps_1000gp_tbi, known_indels_tbi, mills_indels_tbi],
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict,
+         intervals=intervals
+     }
+     call G2.Gatk4ApplyBQSR as apply_bqsr_normal {
+       input:
+         bam=normal_bam,
+         bam_bai=normal_bam_bai,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict,
+         recalFile=base_recalibrator_normal.out,
+         intervals=intervals
+     }
+     call G2.Gatk4ApplyBQSR as apply_bqsr_tumor {
+       input:
+         bam=tumor_bam,
+         bam_bai=tumor_bam_bai,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict,
+         recalFile=base_recalibrator_tumor.out,
+         intervals=intervals
+     }
+     call G3.Gatk4Mutect2 as mutect2 {
+       input:
+         tumor=apply_bqsr_tumor.out,
+         tumor_bai=apply_bqsr_tumor.out_bai,
+         tumorName=tumor_name,
+         normal=apply_bqsr_normal.out,
+         normal_bai=apply_bqsr_normal.out_bai,
+         normalName=normal_name,
+         intervals=intervals,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict
+     }
+     call S.SplitMultiAllele as split_multi_allele {
+       input:
+         vcf=mutect2.out,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict
+     }
+     output {
+       File out = split_multi_allele.out
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: Workflow
+   cwlVersion: v1.0
+   label: GATK4 Somatic Variant Caller
+   doc: |-
+     This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.0.12.0.
+
+             It has the following steps:
+
+             1. Base Recalibrator x 2
+             3. Mutect2
+             4. SplitMultiAllele
+
+   requirements:
+   - class: InlineJavascriptRequirement
+   - class: StepInputExpressionRequirement
+
+   inputs:
+   - id: normal_bam
+     type: File
+     secondaryFiles:
+     - .bai
+   - id: tumor_bam
+     type: File
+     secondaryFiles:
+     - .bai
+   - id: normal_name
+     type: string
+   - id: tumor_name
+     type: string
+   - id: intervals
+     doc: |-
+       This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
+     type:
+     - File
+     - 'null'
+   - id: reference
+     type: File
+     secondaryFiles:
+     - .fai
+     - .amb
+     - .ann
+     - .bwt
+     - .pac
+     - .sa
+     - ^.dict
+   - id: snps_dbsnp
+     type: File
+     secondaryFiles:
+     - .tbi
+   - id: snps_1000gp
+     type: File
+     secondaryFiles:
+     - .tbi
+   - id: known_indels
+     type: File
+     secondaryFiles:
+     - .tbi
+   - id: mills_indels
+     type: File
+     secondaryFiles:
+     - .tbi
+
+   outputs:
+   - id: out
+     type: File
+     outputSource: split_multi_allele/out
+
+   steps:
+   - id: base_recalibrator_normal
+     label: 'GATK4: Base Recalibrator'
+     in:
+     - id: bam
+       source: normal_bam
+     - id: knownSites
+       source:
+       - snps_dbsnp
+       - snps_1000gp
+       - known_indels
+       - mills_indels
+     - id: reference
+       source: reference
+     - id: intervals
+       source: intervals
+     run: tools/Gatk4BaseRecalibrator_4_0_12_0.cwl
+     out:
+     - id: out
+   - id: base_recalibrator_tumor
+     label: 'GATK4: Base Recalibrator'
+     in:
+     - id: bam
+       source: tumor_bam
+     - id: knownSites
+       source:
+       - snps_dbsnp
+       - snps_1000gp
+       - known_indels
+       - mills_indels
+     - id: reference
+       source: reference
+     - id: intervals
+       source: intervals
+     run: tools/Gatk4BaseRecalibrator_4_0_12_0.cwl
+     out:
+     - id: out
+   - id: apply_bqsr_normal
+     label: 'GATK4: Apply base quality score recalibration'
+     in:
+     - id: bam
+       source: normal_bam
+     - id: reference
+       source: reference
+     - id: recalFile
+       source: base_recalibrator_normal/out
+     - id: intervals
+       source: intervals
+     run: tools/Gatk4ApplyBQSR_4_0_12_0.cwl
+     out:
+     - id: out
+   - id: apply_bqsr_tumor
+     label: 'GATK4: Apply base quality score recalibration'
+     in:
+     - id: bam
+       source: tumor_bam
+     - id: reference
+       source: reference
+     - id: recalFile
+       source: base_recalibrator_tumor/out
+     - id: intervals
+       source: intervals
+     run: tools/Gatk4ApplyBQSR_4_0_12_0.cwl
+     out:
+     - id: out
+   - id: mutect2
+     label: 'GATK4: MuTect2'
+     in:
+     - id: tumor
+       source: apply_bqsr_tumor/out
+     - id: tumorName
+       source: tumor_name
+     - id: normal
+       source: apply_bqsr_normal/out
+     - id: normalName
+       source: normal_name
+     - id: intervals
+       source: intervals
+     - id: reference
+       source: reference
+     run: tools/Gatk4Mutect2_4_0_12_0.cwl
+     out:
+     - id: out
+   - id: split_multi_allele
+     label: Split Multiple Alleles
+     in:
+     - id: vcf
+       source: mutect2/out
+     - id: reference
+       source: reference
+     run: tools/SplitMultiAllele_v0_5772.cwl
+     out:
+     - id: out
+   id: GATK4_SomaticVariantCaller
 

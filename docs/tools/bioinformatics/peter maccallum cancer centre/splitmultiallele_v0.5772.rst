@@ -75,7 +75,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``SplitMultiAllele``
 :URL: *No URL to the documentation was provided*
 :Versions: v0.5772
@@ -84,7 +83,6 @@ Information
 :Citations: None
 :Created: None
 :Updated: None
-
 
 
 Outputs
@@ -97,7 +95,6 @@ out     VCF
 ======  ======  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -108,3 +105,118 @@ vcf             VCF                                    1
 reference       FastaWithIndexes    -r                 4
 outputFilename  Optional<Filename>  -o                 6
 ==============  ==================  ========  ==========  ===============
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task SplitMultiAllele {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File vcf
+       File reference
+       File reference_fai
+       File reference_amb
+       File reference_ann
+       File reference_bwt
+       File reference_pac
+       File reference_sa
+       File reference_dict
+       String? outputFilename
+     }
+     command <<<
+       set -e
+        \
+         vt decompose -s \
+         ~{vcf} \
+         | vt normalize -n -q - \
+         -r ~{reference} \
+         -o ~{select_first([outputFilename, "generated.norm.vcf"])}
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "heuermh/vt"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 8, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = select_first([outputFilename, "generated.norm.vcf"])
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: Split Multiple Alleles
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: heuermh/vt
+
+   inputs:
+   - id: vcf
+     label: vcf
+     type: File
+     inputBinding:
+       position: 1
+       shellQuote: false
+   - id: reference
+     label: reference
+     type: File
+     secondaryFiles:
+     - .fai
+     - .amb
+     - .ann
+     - .bwt
+     - .pac
+     - .sa
+     - ^.dict
+     inputBinding:
+       prefix: -r
+       position: 4
+       shellQuote: false
+   - id: outputFilename
+     label: outputFilename
+     type:
+     - string
+     - 'null'
+     default: generated.norm.vcf
+     inputBinding:
+       prefix: -o
+       position: 6
+       shellQuote: false
+
+   outputs:
+   - id: out
+     label: out
+     type: File
+     outputBinding:
+       glob: generated.norm.vcf
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+   arguments:
+   - position: 0
+     valueFrom: 'vt decompose -s '
+     shellQuote: false
+   - position: 2
+     valueFrom: '| vt normalize -n -q - '
+     shellQuote: false
+   id: SplitMultiAllele
+
+

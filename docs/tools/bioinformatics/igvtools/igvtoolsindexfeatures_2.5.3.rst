@@ -73,7 +73,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``IgvToolsIndexFeatures``
 :URL: *No URL to the documentation was provided*
 :Versions: 2.5.3
@@ -82,7 +81,6 @@ Information
 :Citations: None
 :Created: None
 :Updated: None
-
 
 
 Outputs
@@ -95,7 +93,6 @@ out     IndexedVCF
 ======  ==========  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -104,3 +101,85 @@ name    type    prefix      position  documentation
 ======  ======  ========  ==========  ===============
 inp     VCF                        1
 ======  ======  ========  ==========  ===============
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task IgvToolsIndexFeatures {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File inp
+     }
+     command <<<
+       set -e
+       cp -f ~{inp} sample.vcf
+       igvtools index \
+         sample.vcf
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "quay.io/biocontainers/igvtools:2.5.3--0"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = "sample.vcf"
+       File out_idx = "sample.vcf" + ".idx"
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: 'IGVTools: Index Features'
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: InitialWorkDirRequirement
+     listing:
+     - entryname: sample.vcf
+       entry: $(inputs.inp)
+   - class: DockerRequirement
+     dockerPull: quay.io/biocontainers/igvtools:2.5.3--0
+
+   inputs:
+   - id: inp
+     label: inp
+     type: File
+     inputBinding:
+       position: 1
+
+   outputs:
+   - id: out
+     label: out
+     type: File
+     secondaryFiles:
+     - .idx
+     outputBinding:
+       glob: $(inputs.inp)
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand:
+   - igvtools
+   - index
+   arguments: []
+   id: IgvToolsIndexFeatures
+
+

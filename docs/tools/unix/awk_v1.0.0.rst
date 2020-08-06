@@ -77,7 +77,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``awk``
 :URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
@@ -86,7 +85,6 @@ Information
 :Citations: None
 :Created: None
 :Updated: None
-
 
 
 Outputs
@@ -99,7 +97,6 @@ out     stdout<File>
 ======  ============  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -109,3 +106,83 @@ name         type         prefix      position  documentation
 script       File         -f                 1
 input_files  Array<File>                     2
 ===========  ===========  ========  ==========  ===============
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task awk {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File script
+       Array[File] input_files
+     }
+     command <<<
+       set -e
+       awk \
+         -f '~{script}' \
+         ~{"'" + sep("' '", input_files) + "'"}
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "ubuntu:latest"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = stdout()
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: Awk
+   doc: run an awk script
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: ubuntu:latest
+
+   inputs:
+   - id: script
+     label: script
+     type: File
+     inputBinding:
+       prefix: -f
+       position: 1
+   - id: input_files
+     label: input_files
+     type:
+       type: array
+       items: File
+     inputBinding:
+       position: 2
+
+   outputs:
+   - id: out
+     label: out
+     type: stdout
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: awk
+   arguments: []
+   id: awk
+
+

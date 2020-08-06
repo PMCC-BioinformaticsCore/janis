@@ -75,7 +75,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``Gatk4MergeMutectStats``
 :URL: `TBD <TBD>`_
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
@@ -86,7 +85,6 @@ Information
 :Updated: 2019-09-09
 
 
-
 Outputs
 -----------
 
@@ -95,7 +93,6 @@ name    type      documentation
 ======  ========  ========================
 out     TextFile  Merged callability stats
 ======  ========  ========================
-
 
 
 Additional configuration (inputs)
@@ -109,3 +106,115 @@ javaOptions        Optional<Array<String>>
 compression_level  Optional<Integer>                              Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
 mergedStatsOut     Optional<Filename>       -O                 1
 =================  =======================  ========  ==========  ========================================================================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task Gatk4MergeMutectStats {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       Array[String]? javaOptions
+       Int? compression_level
+       Array[File] statsFiles
+       String? mergedStatsOut
+     }
+     command <<<
+       set -e
+       gatk MergeMutectStats \
+         --java-options '-Xmx~{((select_first([runtime_memory, 8, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
+         ~{"--stats '" + sep("' --stats '", statsFiles) + "'"} \
+         -O '~{select_first([mergedStatsOut, "generated.txt"])}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "broadinstitute/gatk:4.1.4.0"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 8, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = select_first([mergedStatsOut, "generated.txt"])
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: 'GATK4: MergeMutectStats'
+   doc: TBD
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: broadinstitute/gatk:4.1.4.0
+
+   inputs:
+   - id: javaOptions
+     label: javaOptions
+     type:
+     - type: array
+       items: string
+     - 'null'
+   - id: compression_level
+     label: compression_level
+     doc: |-
+       Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
+     type:
+     - int
+     - 'null'
+   - id: statsFiles
+     label: statsFiles
+     doc: Callability stats
+     type:
+       type: array
+       inputBinding:
+         prefix: --stats
+       items: File
+     inputBinding:
+       position: 0
+   - id: mergedStatsOut
+     label: mergedStatsOut
+     type:
+     - string
+     - 'null'
+     default: generated.txt
+     inputBinding:
+       prefix: -O
+       position: 1
+
+   outputs:
+   - id: out
+     label: out
+     doc: Merged callability stats
+     type: File
+     outputBinding:
+       glob: generated.txt
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand:
+   - gatk
+   - MergeMutectStats
+   arguments:
+   - prefix: --java-options
+     position: -1
+     valueFrom: |-
+       $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 8, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+   id: Gatk4MergeMutectStats
+
+

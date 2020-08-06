@@ -77,7 +77,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``vcffixup``
 :URL: `https://github.com/vcflib/vcflib <https://github.com/vcflib/vcflib>`_
 :Versions: v1.0.1
@@ -86,7 +85,6 @@ Information
 :Citations: None
 :Created: 2019-10-18
 :Updated: 2019-10-18
-
 
 
 Outputs
@@ -99,7 +97,6 @@ out     stdout<VCF>  VCF output
 ======  ===========  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -108,3 +105,79 @@ name    type           prefix      position  documentation
 ======  =============  ========  ==========  ===============
 vcf     CompressedVCF                     3
 ======  =============  ========  ==========  ===============
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task vcffixup {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File vcf
+     }
+     command <<<
+       set -e
+       vcffixup \
+         '~{vcf}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "shollizeck/vcflib:1.0.1"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = stdout()
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: 'VcfLib: VcfFixUp'
+   doc: |-
+     usage: vcffixup [file]
+     Count the allele frequencies across alleles
+      present in each record in the VCF file. (Similar to vcftools --freq.)
+
+     Uses genotypes from the VCF file to correct AC (alternate allele count), AF (alternate allele frequency), NS (number of called), in the VCF records.
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: shollizeck/vcflib:1.0.1
+
+   inputs:
+   - id: vcf
+     label: vcf
+     type: File
+     inputBinding:
+       position: 3
+
+   outputs:
+   - id: out
+     label: out
+     doc: VCF output
+     type: stdout
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: vcffixup
+   arguments: []
+   id: vcffixup
+
+

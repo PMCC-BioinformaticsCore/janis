@@ -75,7 +75,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``bedtoolsCoverageBed``
 :URL: `https://bedtools.readthedocs.io/en/latest/content/tools/coverage.html <https://bedtools.readthedocs.io/en/latest/content/tools/coverage.html>`_
 :Versions: v2.29.2
@@ -86,7 +85,6 @@ Information
 :Updated: 2020-02-26
 
 
-
 Outputs
 -----------
 
@@ -95,7 +93,6 @@ name    type              documentation
 ======  ================  ===============
 out     stdout<TextFile>
 ======  ================  ===============
-
 
 
 Additional configuration (inputs)
@@ -124,3 +121,267 @@ depth                  Optional<Boolean>  -d                        Report the d
 counts                 Optional<Boolean>  -counts                   Only report the count of overlaps, don't compute fraction, etc.
 mean                   Optional<Boolean>  -mean                     Report the mean depth of all positions in each A feature.
 =====================  =================  ============  ==========  ===========================================================================================================================================================================================================================================================================================================================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task bedtoolsCoverageBed {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       Boolean? strandedness
+       Boolean? differentStrandedness
+       Float? fractionA
+       Float? fractionB
+       Boolean? reciprocalFraction
+       Boolean? minFraction
+       Boolean? split
+       File? genome
+       Boolean? noNameCheck
+       Boolean? sorted
+       Boolean? header
+       Boolean? noBuf
+       Int? bufMem
+       File inputABed
+       File inputBBam
+       Boolean? histogram
+       Boolean? depth
+       Boolean? counts
+       Boolean? mean
+     }
+     command <<<
+       set -e
+       coverageBed \
+         ~{if defined(strandedness) then "-s" else ""} \
+         ~{if defined(differentStrandedness) then "-S" else ""} \
+         ~{if defined(fractionA) then ("-f " + fractionA) else ''} \
+         ~{if defined(fractionB) then ("-F " + fractionB) else ''} \
+         ~{if defined(reciprocalFraction) then "-r" else ""} \
+         ~{if defined(minFraction) then "-r" else ""} \
+         ~{if defined(split) then "-split" else ""} \
+         ~{if defined(genome) then ("-g '" + genome + "'") else ""} \
+         ~{if defined(noNameCheck) then "-nonamecheck" else ""} \
+         ~{if defined(sorted) then "-sorted" else ""} \
+         ~{if defined(header) then "-header" else ""} \
+         ~{if defined(noBuf) then "-nobuf" else ""} \
+         ~{if defined(bufMem) then ("-iobuf " + bufMem) else ''} \
+         -a '~{inputABed}' \
+         -b '~{inputBBam}' \
+         ~{if defined(histogram) then "-hist" else ""} \
+         ~{if defined(depth) then "-d" else ""} \
+         ~{if defined(counts) then "-counts" else ""} \
+         ~{if defined(mean) then "-mean" else ""}
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "quay.io/biocontainers/bedtools:2.29.2--hc088bd4_0"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 8, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = stdout()
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: 'BEDTools: coverageBed'
+   doc: |-
+     The bedtools coverage tool computes both the depth and breadth of coverage of features in file B on the features in file A. For example, bedtools coverage can compute the coverage of sequence alignments (file B) across 1 kilobase (arbitrary) windows (file A) tiling a genome of interest. One advantage that bedtools coverage offers is that it not only counts the number of features that overlap an interval in file A, it also computes the fraction of bases in the interval in A that were overlapped by one or more features. Thus, bedtools coverage also computes the breadth of coverage observed for each interval in A.
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: quay.io/biocontainers/bedtools:2.29.2--hc088bd4_0
+
+   inputs:
+   - id: strandedness
+     label: strandedness
+     doc: |-
+       Require same strandedness.  That is, only report hits in B that overlap A on the _same_ strand. - By default, overlaps are reported without respect to strand.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -s
+   - id: differentStrandedness
+     label: differentStrandedness
+     doc: |-
+       Require different strandedness.  That is, only report hits in B that overlap A on the _opposite_ strand. - By default, overlaps are reported without respect to strand.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -S
+   - id: fractionA
+     label: fractionA
+     doc: |-
+       Minimum overlap required as a fraction of A. - Default is 1E-9 (i.e., 1bp). - FLOAT (e.g. 0.50)
+     type:
+     - float
+     - 'null'
+     inputBinding:
+       prefix: -f
+   - id: fractionB
+     label: fractionB
+     doc: |-
+       Minimum overlap required as a fraction of B. - Default is 1E-9 (i.e., 1bp). - FLOAT (e.g. 0.50)
+     type:
+     - float
+     - 'null'
+     inputBinding:
+       prefix: -F
+   - id: reciprocalFraction
+     label: reciprocalFraction
+     doc: |-
+       Require that the fraction overlap be reciprocal for A AND B. - In other words, if -f is 0.90 and -r is used, this requires that B overlap 90% of A and A _also_ overlaps 90% of B.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -r
+   - id: minFraction
+     label: minFraction
+     doc: |-
+       Require that the minimum fraction be satisfied for A OR B. - In other words, if -e is used with -f 0.90 and -F 0.10 this requires that either 90% of A is covered OR 10% of  B is covered. Without -e, both fractions would have to be satisfied.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -r
+   - id: split
+     label: split
+     doc: Treat 'split' BAM or BED12 entries as distinct BED intervals.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -split
+   - id: genome
+     label: genome
+     doc: |-
+       Provide a genome file to enforce consistent chromosome sort order across input files. Only applies when used with -sorted option.
+     type:
+     - File
+     - 'null'
+     inputBinding:
+       prefix: -g
+   - id: noNameCheck
+     label: noNameCheck
+     doc: |-
+       For sorted data, don't throw an error if the file has different naming conventions for the same chromosome. ex. 'chr1' vs 'chr01'.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -nonamecheck
+   - id: sorted
+     label: sorted
+     doc: Use the 'chromsweep' algorithm for sorted (-k1,1 -k2,2n) input.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -sorted
+   - id: header
+     label: header
+     doc: Print the header from the A file prior to results.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -header
+   - id: noBuf
+     label: noBuf
+     doc: |-
+       Disable buffered output. Using this option will cause each line of output to be printed as it is generated, rather than saved in a buffer. This will make printing large output files noticeably slower, but can be useful in conjunction with other software tools and scripts that need to process one line of bedtools output at a time.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -nobuf
+   - id: bufMem
+     label: bufMem
+     doc: |-
+       Specify amount of memory to use for input buffer. Takes an integer argument. Optional suffixes K/M/G supported. Note: currently has no effect with compressed files.
+     type:
+     - int
+     - 'null'
+     inputBinding:
+       prefix: -iobuf
+   - id: inputABed
+     label: inputABed
+     doc: |-
+       input file a: only bed is supported. May be followed with multiple databases and/or  wildcard (*) character(s). 
+     type: File
+     inputBinding:
+       prefix: -a
+   - id: inputBBam
+     label: inputBBam
+     doc: 'input file b: only bam is supported.'
+     type: File
+     inputBinding:
+       prefix: -b
+   - id: histogram
+     label: histogram
+     doc: |-
+       Report a histogram of coverage for each feature in A as well as a summary histogram for _all_ features in A. Output (tab delimited) after each feature in A: 1) depth 2) # bases at depth 3) size of A 4) % of A at depth.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -hist
+   - id: depth
+     label: depth
+     doc: |-
+       Report the depth at each position in each A feature. Positions reported are one based.  Each position and depth follow the complete A feature.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -d
+   - id: counts
+     label: counts
+     doc: Only report the count of overlaps, don't compute fraction, etc.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -counts
+   - id: mean
+     label: mean
+     doc: Report the mean depth of all positions in each A feature.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -mean
+
+   outputs:
+   - id: out
+     label: out
+     type: stdout
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand:
+   - coverageBed
+   arguments: []
+   id: bedtoolsCoverageBed
+
+

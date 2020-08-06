@@ -73,7 +73,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``SamToolsIndex``
 :URL: `http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS <http://www.htslib.org/doc/samtools.html#COMMANDS_AND_OPTIONS>`_
 :Versions: 1.9.0, 1.7.0
@@ -82,7 +81,6 @@ Information
 :Citations: None
 :Created: 2019-12-17
 :Updated: 2019-12-17
-
 
 
 Outputs
@@ -95,7 +93,6 @@ out     IndexedBam
 ======  ==========  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -105,3 +102,100 @@ name     type               prefix      position  documentation
 bam      BAM                                  10
 threads  Optional<Integer>  -@                10
 =======  =================  ========  ==========  ===============
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task SamToolsIndex {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File bam
+       Int? threads
+     }
+     command <<<
+       set -e
+       cp -f ~{bam} .
+       samtools index \
+         '-b' \
+         '~{basename(bam)}' \
+         ~{if defined(select_first([threads, select_first([runtime_cpu, 1])])) then ("-@ " + select_first([threads, select_first([runtime_cpu, 1])])) else ''}
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "biocontainers/samtools:v1.7.0_cv3"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = basename(bam)
+       File out_bai = basename(bam) + ".bai"
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: 'SamTools: Index'
+   doc: ''
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: InitialWorkDirRequirement
+     listing:
+     - entry: $(inputs.bam)
+   - class: DockerRequirement
+     dockerPull: biocontainers/samtools:v1.7.0_cv3
+
+   inputs:
+   - id: bam
+     label: bam
+     type: File
+     inputBinding:
+       position: 10
+   - id: threads
+     label: threads
+     type:
+     - int
+     - 'null'
+     inputBinding:
+       prefix: -@
+       position: 10
+       valueFrom: $([inputs.runtime_cpu, 1].filter(function (inner) { return inner !=
+         null })[0])
+
+   outputs:
+   - id: out
+     label: out
+     type: File
+     secondaryFiles:
+     - .bai
+     outputBinding:
+       glob: $(inputs.bam)
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand:
+   - samtools
+   - index
+   arguments:
+   - position: 4
+     valueFrom: -b
+   id: SamToolsIndex
+
+

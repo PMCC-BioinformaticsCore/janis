@@ -78,7 +78,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``Gatk4GetPileupSummaries``
 :URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.0.0/org_broadinstitute_hellbender_tools_walkers_contamination_GetPileupSummaries.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.0.0/org_broadinstitute_hellbender_tools_walkers_contamination_GetPileupSummaries.php>`_
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
@@ -89,7 +88,6 @@ Information
 :Updated: 2019-09-09
 
 
-
 Outputs
 -----------
 
@@ -98,7 +96,6 @@ name    type      documentation
 ======  ========  ================================
 out     TextFile  Table containing the pileup info
 ======  ========  ================================
-
 
 
 Additional configuration (inputs)
@@ -114,3 +111,139 @@ compression_level  Optional<Integer>                                 Compression
 intervals          Optional<bed>            --intervals              -L (BASE) One or more genomic intervals over which to operate
 pileupTableOut     Optional<Filename>       -O                    1
 =================  =======================  ===========  ==========  ========================================================================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task Gatk4GetPileupSummaries {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       Array[String]? javaOptions
+       Int? compression_level
+       Array[File] bam
+       Array[File] bam_bai
+       File sites
+       File sites_tbi
+       File? intervals
+       String? pileupTableOut
+     }
+     command <<<
+       set -e
+       gatk GetPileupSummaries \
+         --java-options '-Xmx~{((select_first([runtime_memory, 64, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
+         ~{"-I '" + sep("' -I '", bam) + "'"} \
+         -V '~{sites}' \
+         ~{if defined(intervals) then ("--intervals '" + intervals + "'") else ""} \
+         -O '~{select_first([pileupTableOut, "generated.txt"])}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "broadinstitute/gatk:4.1.3.0"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 64, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = select_first([pileupTableOut, "generated.txt"])
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: 'GATK4: GetPileupSummaries'
+   doc: |-
+     Summarizes counts of reads that support reference, alternate and other alleles for given sites. Results can be used with CalculateContamination.
+     The tool requires a common germline variant sites VCF, e.g. the gnomAD resource, with population allele frequencies (AF) in the INFO field. This resource must contain only biallelic SNPs and can be an eight-column sites-only VCF. The tool ignores the filter status of the sites. See the GATK Resource Bundle for an example human file.
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: broadinstitute/gatk:4.1.3.0
+
+   inputs:
+   - id: javaOptions
+     label: javaOptions
+     type:
+     - type: array
+       items: string
+     - 'null'
+   - id: compression_level
+     label: compression_level
+     doc: |-
+       Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
+     type:
+     - int
+     - 'null'
+   - id: bam
+     label: bam
+     doc: The SAM/BAM/CRAM file containing reads.
+     type:
+       type: array
+       inputBinding:
+         prefix: -I
+       items: File
+     inputBinding:
+       position: 0
+   - id: sites
+     label: sites
+     doc: sites of common biallelic variants
+     type: File
+     secondaryFiles:
+     - .tbi
+     inputBinding:
+       prefix: -V
+   - id: intervals
+     label: intervals
+     doc: -L (BASE) One or more genomic intervals over which to operate
+     type:
+     - File
+     - 'null'
+     inputBinding:
+       prefix: --intervals
+   - id: pileupTableOut
+     label: pileupTableOut
+     type:
+     - string
+     - 'null'
+     default: generated.txt
+     inputBinding:
+       prefix: -O
+       position: 1
+
+   outputs:
+   - id: out
+     label: out
+     doc: Table containing the pileup info
+     type: File
+     outputBinding:
+       glob: generated.txt
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand:
+   - gatk
+   - GetPileupSummaries
+   arguments:
+   - prefix: --java-options
+     position: -1
+     valueFrom: |-
+       $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 64, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+   id: Gatk4GetPileupSummaries
+
+

@@ -74,7 +74,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``vcfuniqalleles``
 :URL: `https://github.com/vcflib/vcflib <https://github.com/vcflib/vcflib>`_
 :Versions: v1.0.1
@@ -83,7 +82,6 @@ Information
 :Citations: None
 :Created: 2019-10-18
 :Updated: 2019-10-18
-
 
 
 Outputs
@@ -96,7 +94,6 @@ out     stdout<VCF>  VCF output
 ======  ===========  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -105,3 +102,76 @@ name    type           prefix      position  documentation
 ======  =============  ========  ==========  ===============
 vcf     CompressedVCF                     3
 ======  =============  ========  ==========  ===============
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task vcfuniqalleles {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File vcf
+     }
+     command <<<
+       set -e
+       vcfuniqalleles \
+         '~{vcf}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "shollizeck/vcflib:1.0.1"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = stdout()
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: 'VcfLib: VcfUniqAlleles'
+   doc: |-
+     usage: vcffuniq [file]
+     For each record, remove any duplicate alternate alleles that may have resulted from merging separate VCF files.
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: shollizeck/vcflib:1.0.1
+
+   inputs:
+   - id: vcf
+     label: vcf
+     type: File
+     inputBinding:
+       position: 3
+
+   outputs:
+   - id: out
+     label: out
+     doc: VCF output
+     type: stdout
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: vcfuniqalleles
+   arguments: []
+   id: vcfuniqalleles
+
+

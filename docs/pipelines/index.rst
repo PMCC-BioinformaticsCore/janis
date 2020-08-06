@@ -11,7 +11,7 @@ Pipelines
             <p>A variant-calling WGS pipeline using GATK, VarDict and Strelka2.</p>
             <p style="margin-bottom: 10px; font-size: 12px; margin-top: 0px;">Contributors: Michael Franklin, Richard Lupat, Jiaan Yu</p>
             <a class="version-button"  style="margin-bottom: 10px">
-          v<b>1.2.0</b>
+          v<b>1.3.1</b>
         </a>
         </div>
         
@@ -22,7 +22,7 @@ Pipelines
             <p>A variant-calling WGS pipeline using only the GATK Haplotype variant caller.</p>
             <p style="margin-bottom: 10px; font-size: 12px; margin-top: 0px;">Contributors: Michael Franklin, Richard Lupat, Jiaan Yu</p>
             <a class="version-button"  style="margin-bottom: 10px">
-          v<b>1.2.0</b>
+          v<b>1.3.1</b>
         </a>
         </div>
         
@@ -33,7 +33,7 @@ Pipelines
             <p>A somatic tumor-normal variant-calling WGS pipeline using GATK, VarDict and Strelka2.</p>
             <p style="margin-bottom: 10px; font-size: 12px; margin-top: 0px;">Contributors: Michael Franklin, Richard Lupat, Jiaan Yu</p>
             <a class="version-button"  style="margin-bottom: 10px">
-          v<b>1.2.0</b>
+          v<b>1.3.0</b>
         </a>
         </div>
         
@@ -44,7 +44,7 @@ Pipelines
             <p>A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2</p>
             <p style="margin-bottom: 10px; font-size: 12px; margin-top: 0px;">Contributors: Michael Franklin, Richard Lupat, Jiaan Yu</p>
             <a class="version-button"  style="margin-bottom: 10px">
-          v<b>1.2.0</b>
+          v<b>1.3.0</b>
         </a>
         </div>
         

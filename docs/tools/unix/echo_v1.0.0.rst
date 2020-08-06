@@ -76,7 +76,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``echo``
 :URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
@@ -85,7 +84,6 @@ Information
 :Citations: None
 :Created: None
 :Updated: None
-
 
 
 Outputs
@@ -98,7 +96,6 @@ out     stdout<File>
 ======  ============  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -108,3 +105,88 @@ name             type               prefix      position  documentation
 inp              String                                1
 include_newline  Optional<Boolean>  -n                    Do not print the trailing newline character.  This may also be achieved by appending `\c' to the end of the string, as is done by iBCS2 compatible systems.  Note that this option as well as the effect of `\c' are implementation-defined in IEEE Std 1003.1-2001 (``POSIX.1'') as amended by Cor. 1-2002.  Applications aiming for maximum portability are strongly encouraged to use printf(1) to suppress the newline character.
 ===============  =================  ========  ==========  =====================================================================================================================================================================================================================================================================================================================================================================================================================================
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task echo {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       String inp
+       Boolean? include_newline
+     }
+     command <<<
+       set -e
+       echo \
+         ~{if defined(include_newline) then "-n" else ""} \
+         '~{inp}'
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "ubuntu:latest"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = stdout()
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: Echo
+   doc: |-
+     The echo utility writes any specified operands, separated by single blank (` ') characters and followed by a newline (`
+     ') character, to the standard output.
+
+     Some shells may provide a builtin echo command which is similar or identical to this utility. Most notably, the builtin echo in sh(1) does not accept the -n option. Consult the builtin(1) manual page.
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: ubuntu:latest
+
+   inputs:
+   - id: inp
+     label: inp
+     type: string
+     inputBinding:
+       position: 1
+   - id: include_newline
+     label: include_newline
+     doc: |-
+       Do not print the trailing newline character.  This may also be achieved by appending `\c' to the end of the string, as is done by iBCS2 compatible systems.  Note that this option as well as the effect of `\c' are implementation-defined in IEEE Std 1003.1-2001 (``POSIX.1'') as amended by Cor. 1-2002.  Applications aiming for maximum portability are strongly encouraged to use printf(1) to suppress the newline character.
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: -n
+
+   outputs:
+   - id: out
+     label: out
+     type: stdout
+   stdout: _stdout
+   stderr: _stderr
+
+   baseCommand: echo
+   arguments: []
+   id: echo
+
+

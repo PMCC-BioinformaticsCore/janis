@@ -52,7 +52,7 @@ container_dir  <class 'str'>  Location where to save and execute containers from
 ==============================  ===================================  ==========================================  ==========================================================================================
 ID                              Type                                 Default                                     Documentation
 ==============================  ===================================  ==========================================  ==========================================================================================
-execution_dir                   <class 'str'>
+intermediate_execution_dir      <class 'str'>
 queues                          typing.Union[str, typing.List[str]]  workq                                       A single or list of queues that woork should be submitted to
 singularity_version             <class 'str'>                        3.3.0                                       Version of singularity to load
 catch_slurm_errors              <class 'bool'>                       True                                        Catch Slurm errors (like OOM or walltime)

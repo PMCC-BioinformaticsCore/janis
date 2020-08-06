@@ -36,7 +36,7 @@ Fields
 ==============================  ===================================  ====================================================  ======================================================================
 ID                              Type                                 Default                                               Documentation
 ==============================  ===================================  ====================================================  ======================================================================
-execution_dir                   <class 'str'>                                                                              Execution directory
+intermediate_execution_dir      <class 'str'>                                                                              Computation directory
 container_dir                   <class 'str'>                        /config/binaries/singularity/containers_devel/janis/  [OPTIONAL] Override the directory singularity containers are stored in
 queues                          typing.Union[str, typing.List[str]]  prod_med,prod                                         The queue to submit jobs to
 singularity_version             <class 'str'>                        3.4.0                                                 The version of Singularity to use on the cluster
@@ -48,5 +48,6 @@ max_ram                         <class 'int'>                        256        
 max_workflow_time               <class 'int'>                        20100                                                 The walltime of the submitted workflow "brain"
 janis_memory_mb                 <class 'int'>
 email_format                    <class 'str'>                                                                              (None, "molpath")
+log_janis_job_id_to_stdout      <class 'bool'>                       False
 ==============================  ===================================  ====================================================  ======================================================================
 

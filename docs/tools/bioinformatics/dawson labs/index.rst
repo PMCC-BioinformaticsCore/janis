@@ -38,6 +38,24 @@ Automatically generated index page for Dawson Labs:
      </a>
      <hr />
          
+     <a href="strelka2passworkflow.html">
+       <p style="margin-bottom: 5px"><b>Strelka 2Pass analysis</b> <span style="margin-left: 10px; color: darkgray">Strelka2PassWorkflow</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="strelka2passworkflow.html" style="margin-bottom: 10px">
+       v<b>0.1</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="strelka2passworkflowstep1.html">
+       <p style="margin-bottom: 5px"><b>Strelka 2Pass analysis step1</b> <span style="margin-left: 10px; color: darkgray">Strelka2PassWorkflowStep1</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="strelka2passworkflowstep1.html" style="margin-bottom: 10px">
+       v<b>0.1</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="strelka2passworkflowstep2.html">
        <p style="margin-bottom: 5px"><b>Strelka 2Pass analysis step 2</b> <span style="margin-left: 10px; color: darkgray">Strelka2PassWorkflowStep2</span></p>
        
@@ -51,7 +69,7 @@ Automatically generated index page for Dawson Labs:
        <p style="margin-bottom: 5px"><b>Call Somatic Variants from freebayes</b> <span style="margin-left: 10px; color: darkgray">callSomaticFreeBayes</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="callsomaticfreebayes.html" style="margin-bottom: 10px">
-       v<b>0.1.6</b>
+       v<b>0.1.7</b>
      </a></p>
      </a>
      <hr />
@@ -60,7 +78,7 @@ Automatically generated index page for Dawson Labs:
        <p style="margin-bottom: 5px"><b>Refilter Strelka2 Variant Calls</b> <span style="margin-left: 10px; color: darkgray">refilterStrelka2Calls</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="refilterstrelka2calls.html" style="margin-bottom: 10px">
-       v<b>0.1.6</b>
+       v<b>0.1.7</b>
      </a></p>
      </a>
      <hr />

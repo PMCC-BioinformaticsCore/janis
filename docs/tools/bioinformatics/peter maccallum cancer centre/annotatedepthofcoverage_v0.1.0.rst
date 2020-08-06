@@ -125,4 +125,153 @@ gatk3depthofcoverage_countType                 Optional<String>          overlap
 gatk3depthofcoverage_summaryCoverageThreshold  Optional<Array<Integer>>  Coverage threshold (in percent) for summarizing statistics
 =============================================  ========================  =====================================================================================================================
 
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   import "tools/Gatk3DepthOfCoverage_3_8_1.wdl" as G
+   import "tools/addSymToDepthOfCoverage_0_0_7.wdl" as A
+
+   workflow AnnotateDepthOfCoverage {
+     input {
+       File bam
+       File bam_bai
+       File bed
+       File reference
+       File reference_fai
+       File reference_amb
+       File reference_ann
+       File reference_bwt
+       File reference_pac
+       File reference_sa
+       File reference_dict
+       String sample_name
+       String? gatk3depthofcoverage_countType = "COUNT_FRAGMENTS_REQUIRE_SAME_BASE"
+       Array[Int]? gatk3depthofcoverage_summaryCoverageThreshold = [1, 50, 100, 300, 500]
+     }
+     call G.Gatk3DepthOfCoverage as gatk3depthofcoverage {
+       input:
+         bam=bam,
+         bam_bai=bam_bai,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict,
+         outputPrefix=sample_name,
+         intervals=bed,
+         countType=select_first([gatk3depthofcoverage_countType, "COUNT_FRAGMENTS_REQUIRE_SAME_BASE"]),
+         summaryCoverageThreshold=select_first([gatk3depthofcoverage_summaryCoverageThreshold, [1, 50, 100, 300, 500]])
+     }
+     call A.addSymToDepthOfCoverage as addsymtodepthofcoverage {
+       input:
+         inputFile=gatk3depthofcoverage.sampleIntervalSummary,
+         outputFilename=sample_name,
+         bed=bed
+     }
+     output {
+       File out = addsymtodepthofcoverage.out
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: Workflow
+   cwlVersion: v1.0
+   label: Annotate GATK3 DepthOfCoverage Workflow
+
+   requirements:
+   - class: InlineJavascriptRequirement
+   - class: StepInputExpressionRequirement
+
+   inputs:
+   - id: bam
+     type: File
+     secondaryFiles:
+     - .bai
+   - id: bed
+     type: File
+   - id: reference
+     type: File
+     secondaryFiles:
+     - .fai
+     - .amb
+     - .ann
+     - .bwt
+     - .pac
+     - .sa
+     - ^.dict
+   - id: sample_name
+     type: string
+   - id: gatk3depthofcoverage_countType
+     doc: |-
+       overlapping reads from the same  fragment be handled? (COUNT_READS|COUNT_FRAGMENTS|COUNT_FRAGMENTS_REQUIRE_SAME_BASE)
+     type: string
+     default: COUNT_FRAGMENTS_REQUIRE_SAME_BASE
+   - id: gatk3depthofcoverage_summaryCoverageThreshold
+     doc: Coverage threshold (in percent) for summarizing statistics
+     type:
+       type: array
+       items: int
+     default:
+     - 1
+     - 50
+     - 100
+     - 300
+     - 500
+
+   outputs:
+   - id: out
+     type: File
+     outputSource: addsymtodepthofcoverage/out
+
+   steps:
+   - id: gatk3depthofcoverage
+     label: |-
+       GATK3 DepthOfCoverage: Determine coverage at different levels of partitioning and aggregation.
+     in:
+     - id: bam
+       source: bam
+     - id: reference
+       source: reference
+     - id: outputPrefix
+       source: sample_name
+     - id: intervals
+       source: bed
+     - id: countType
+       source: gatk3depthofcoverage_countType
+     - id: summaryCoverageThreshold
+       source: gatk3depthofcoverage_summaryCoverageThreshold
+     run: tools/Gatk3DepthOfCoverage_3_8_1.cwl
+     out:
+     - id: sample
+     - id: sampleCumulativeCoverageCounts
+     - id: sampleCumulativeCoverageProportions
+     - id: sampleIntervalStatistics
+     - id: sampleIntervalSummary
+     - id: sampleStatistics
+     - id: sampleSummary
+   - id: addsymtodepthofcoverage
+     label: Add Sym to DepthOfCoverage
+     in:
+     - id: inputFile
+       source: gatk3depthofcoverage/sampleIntervalSummary
+     - id: outputFilename
+       source: sample_name
+     - id: bed
+       source: bed
+     run: tools/addSymToDepthOfCoverage_0_0_7.cwl
+     out:
+     - id: out
+   id: AnnotateDepthOfCoverage
 

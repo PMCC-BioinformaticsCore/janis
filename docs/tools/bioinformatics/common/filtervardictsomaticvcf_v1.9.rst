@@ -73,7 +73,6 @@ Quickstart
 Information
 ------------
 
-
 :ID: ``FilterVardictSomaticVcf``
 :URL: *No URL to the documentation was provided*
 :Versions: v1.9
@@ -82,7 +81,6 @@ Information
 :Citations: None
 :Created: None
 :Updated: None
-
 
 
 Outputs
@@ -95,7 +93,6 @@ out     VCF
 ======  ======  ===============
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
@@ -105,3 +102,95 @@ name            type                prefix      position  documentation
 vcf             Optional<VCF>                          1
 outputFilename  Optional<Filename>  -o                 3
 ==============  ==================  ========  ==========  ===============
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+   version development
+
+   task FilterVardictSomaticVcf {
+     input {
+       Int? runtime_cpu
+       Int? runtime_memory
+       Int? runtime_seconds
+       Int? runtime_disks
+       File? vcf
+       String? outputFilename
+     }
+     command <<<
+       set -e
+        \
+         bcftools filter -e 'STATUS="GERMLINE"' -o - \
+         ~{if defined(vcf) then ("'" + vcf + "'") else ""} \
+         | bcftools filter -i 'FILTER=="PASS"' \
+         -o ~{select_first([outputFilename, "generated.filter.vcf"])}
+     >>>
+     runtime {
+       cpu: select_first([runtime_cpu, 1])
+       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       docker: "biocontainers/bcftools:v1.9-1-deb_cv1"
+       duration: select_first([runtime_seconds, 86400])
+       memory: "~{select_first([runtime_memory, 4])}G"
+       preemptible: 2
+     }
+     output {
+       File out = select_first([outputFilename, "generated.filter.vcf"])
+     }
+   }
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+   #!/usr/bin/env cwl-runner
+   class: CommandLineTool
+   cwlVersion: v1.0
+   label: Filter Vardict Somatic Vcf
+
+   requirements:
+   - class: ShellCommandRequirement
+   - class: InlineJavascriptRequirement
+   - class: DockerRequirement
+     dockerPull: biocontainers/bcftools:v1.9-1-deb_cv1
+
+   inputs:
+   - id: vcf
+     label: vcf
+     type:
+     - File
+     - 'null'
+     inputBinding:
+       position: 1
+   - id: outputFilename
+     label: outputFilename
+     type:
+     - string
+     - 'null'
+     default: generated.filter.vcf
+     inputBinding:
+       prefix: -o
+       position: 3
+       shellQuote: false
+
+   outputs:
+   - id: out
+     label: out
+     type: File
+     outputBinding:
+       glob: generated.filter.vcf
+       loadContents: false
+   stdout: _stdout
+   stderr: _stderr
+   arguments:
+   - position: 0
+     valueFrom: "bcftools filter -e 'STATUS=\"GERMLINE\"' -o - "
+     shellQuote: false
+   - position: 2
+     valueFrom: "| bcftools filter -i 'FILTER==\"PASS\"'"
+     shellQuote: false
+   id: FilterVardictSomaticVcf
+
+

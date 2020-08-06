@@ -1,3 +1,4 @@
+from textwrap import indent
 from typing import List
 from tabulate import tabulate
 
@@ -102,6 +103,9 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
     output_tuples = [[o.id(), o.outtype.id(), o.doc] for o in tool.tool_outputs()]
     formatted_outputs = tabulate(output_tuples, output_headers, tablefmt="rst")
 
+    cwl = tool.translate("cwl", to_console=False, allow_empty_container=True)
+    wdl = tool.translate("wdl", to_console=False, allow_empty_container=True)
+
     tool_prov = ""
     if tool.tool_provider() is None:
         print("Tool :" + tool.id() + " has no company")
@@ -127,9 +131,7 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
 Information
 ------------
 
-
 {nl.join(f":{key}: {value}" for key, value in toolmetadata)}
-
 
 
 Outputs
@@ -138,9 +140,23 @@ Outputs
 {formatted_outputs}
 
 
-
 Additional configuration (inputs)
 ---------------------------------
 
 {formatted_inputs}
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+{indent(wdl, "   ")}
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+{indent(cwl, "   ")}
+
 """

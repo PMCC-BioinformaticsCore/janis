@@ -1,3 +1,5 @@
+from textwrap import indent
+
 from tabulate import tabulate
 from typing import List
 
@@ -99,6 +101,9 @@ def prepare_workflow_page(workflow: Workflow, versions: List[str]):
     ]
     formatted_outputs = tabulate(output_tuples, output_headers, tablefmt="rst")
 
+    cwl = workflow.translate("cwl", to_console=False, allow_empty_container=True)[0]
+    wdl = workflow.translate("wdl", to_console=False, allow_empty_container=True)[0]
+
     tool_prov = ""
     if workflow.tool_provider() is None:
         print("Tool :" + workflow.id() + " has no company")
@@ -173,5 +178,17 @@ Additional configuration (inputs)
 
 {formatted_inputs}
 
-{workflow_image}
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+{indent(wdl, "   ")}
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+{indent(cwl, "   ")}
 """

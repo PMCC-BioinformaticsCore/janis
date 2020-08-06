@@ -1,3 +1,4 @@
+from textwrap import indent
 from typing import List
 
 from janis_core import WorkflowMetadata, Workflow
@@ -75,6 +76,9 @@ def prepare_published_pipeline_page(workflow: Workflow, versions: List[str]):
         ("Created", str(metadata.dateCreated)),
         ("Updated", str(metadata.dateUpdated)),
     ]
+
+    cwl = workflow.translate("cwl", to_console=False, allow_empty_container=True)[0]
+    wdl = workflow.translate("wdl", to_console=False, allow_empty_container=True)[0]
 
     formatted_url = (
         format_rst_link(metadata.documentationUrl, metadata.documentationUrl)
@@ -197,4 +201,18 @@ Additional configuration (inputs)
 ---------------------------------
 
 {formatted_inputs}
+
+Workflow Description Language
+------------------------------
+
+.. code-block:: text
+
+{indent(wdl, "   ")}
+
+Common Workflow Language
+-------------------------
+
+.. code-block:: text
+
+{indent(cwl, "   ")}
 """

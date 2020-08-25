@@ -1,0 +1,7 @@
+// Annotate GATK3 DepthOfCoverage Workflow
+digraph AnnotateDepthOfCoverage {
+	node [shape=record]
+	gatk3depthofcoverage [label="gatk3depthofcoverage (GATK3 DepthOfCoverage: Determine coverage at different levels of partitioning and aggregation.)"]
+	addsymtodepthofcoverage [label="addsymtodepthofcoverage (Add Sym to DepthOfCoverage)"]
+	gatk3depthofcoverage -> addsymtodepthofcoverage
+}

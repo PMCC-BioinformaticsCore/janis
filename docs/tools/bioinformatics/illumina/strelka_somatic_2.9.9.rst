@@ -127,7 +127,7 @@ name                   type                                   prefix            
 =====================  =====================================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 normalBam              IndexedBam                             --normalBam=                       1  Normal sample BAM or CRAM file. (no default)
 tumorBam               IndexedBam                             --tumourBam=                       1  (--tumorBam)  Tumor sample BAM or CRAM file. [required] (no default)
-reference              FastaWithIndexes                       --referenceFasta=                  1  samtools-indexed reference fasta file [required]
+reference              FastaFai                               --referenceFasta=                  1  samtools-indexed reference fasta file [required]
 rundir                 Optional<Filename>                     --runDir=                          1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory. (default: StrelkaSomaticWorkflow)
 region                 Optional<Array<String>>                --region                           1  Limit the analysis to one or more genome region(s) for debugging purposes. If this argument is provided multiple times the union of all specified regions will be analyzed. All regions must be non-overlapping to get a meaningful result. Examples: '--region chr20' (whole chromosome), '--region chr2:100-2000 --region chr3:2500-3000' (two regions)'. If this option is specified (one or more times) together with the 'callRegions' BED file,then all region arguments will be intersected with the callRegions BED track.
 config                 Optional<File>                         --config=                          1  provide a configuration file to override defaults in global config file (/opt/strelka/bin/configureStrelkaSomaticWorkflow.py.ini)
@@ -170,12 +170,6 @@ Workflow Description Language
        File tumorBam_bai
        File reference
        File reference_fai
-       File reference_amb
-       File reference_ann
-       File reference_bwt
-       File reference_pac
-       File reference_sa
-       File reference_dict
        String? rundir
        Array[String]? region
        File? config
@@ -302,12 +296,6 @@ Common Workflow Language
      type: File
      secondaryFiles:
      - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
      inputBinding:
        prefix: --referenceFasta=
        position: 1

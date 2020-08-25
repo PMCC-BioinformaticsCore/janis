@@ -14,6 +14,7 @@ List of templates for ``janis-assistant``:
    :caption: Contents:
 
    local
+   molpath
    pawsey
    pbs_singularity
    pmac
@@ -22,4 +23,4 @@ List of templates for ``janis-assistant``:
    spartan
    wehi
 
-*This page was auto-generated on 07/08/2020. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 25/08/2020. Please do not directly alter the contents of this page.*

@@ -108,6 +108,11 @@ out_directory  Array<Directory>
 =============  ================  ===============
 
 
+Workflow
+--------
+
+.. image:: fastqc_single_scattered_v0_11_8.dot.png
+
 Embedded Tools
 ***************
 

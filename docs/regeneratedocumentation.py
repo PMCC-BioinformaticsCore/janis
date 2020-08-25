@@ -27,6 +27,7 @@ from janis_core import (
     JanisShed,
     WorkflowMetadata,
     ToolType,
+    WorkflowBase,
 )
 
 import janis_unix, janis_bioinformatics
@@ -163,6 +164,8 @@ def prepare_all_tools():
         for (toolurl, tool, isprimary) in toolurl_to_tool:
             output_str = prepare_tool(tool, tool_versions, not isprimary)
             output_filename = output_dir + toolurl + ".rst"
+            if isinstance(tool, WorkflowBase):
+                tool.get_dot_plot(output_directory=output_dir, log_to_stdout=False)
             if output_str is None:
                 Logger.warn(f"Skipping {tool.id()}")
                 continue
@@ -337,6 +340,8 @@ Pipelines
     # Write all the pages
     for w in workflows:
         toolstr = prepare_published_pipeline_page(w, [w.version()])
+        w.get_dot_plot(output_directory=pipelines_dir, log_to_stdout=False)
+
         with open(os.path.join(pipelines_dir, w.id().lower() + ".rst"), "w+") as f:
             f.write(toolstr)
 

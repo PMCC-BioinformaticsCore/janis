@@ -113,6 +113,11 @@ svs     Array<Optional<CompressedIndexedVCF>>
 ======  =====================================  ===============
 
 
+Workflow
+--------
+
+.. image:: Strelka2PassWorkflow_0_1.dot.png
+
 Embedded Tools
 ***************
 
@@ -134,7 +139,7 @@ name           type                     documentation
 =============  =======================  ===============
 normalBam      CramPair
 tumorBams      Array<CramPair>
-reference      FastaWithIndexes
+reference      FastaFai
 configStrelka  Optional<File>
 callRegions    Optional<BedTABIX>
 exome          Optional<Boolean>
@@ -162,12 +167,6 @@ Workflow Description Language
        Array[File] tumorBams_crai
        File reference
        File reference_fai
-       File reference_amb
-       File reference_ann
-       File reference_bwt
-       File reference_pac
-       File reference_sa
-       File reference_dict
        File? configStrelka
        File? callRegions
        File? callRegions_tbi
@@ -183,12 +182,6 @@ Workflow Description Language
            tumorBam_crai=t[1],
            reference=reference,
            reference_fai=reference_fai,
-           reference_amb=reference_amb,
-           reference_ann=reference_ann,
-           reference_bwt=reference_bwt,
-           reference_pac=reference_pac,
-           reference_sa=reference_sa,
-           reference_dict=reference_dict,
            callRegions=callRegions,
            callRegions_tbi=callRegions_tbi,
            exome=select_first([exome, false]),
@@ -204,12 +197,6 @@ Workflow Description Language
            tumorBam_crai=t[1],
            reference=reference,
            reference_fai=reference_fai,
-           reference_amb=reference_amb,
-           reference_ann=reference_ann,
-           reference_bwt=reference_bwt,
-           reference_pac=reference_pac,
-           reference_sa=reference_sa,
-           reference_dict=reference_dict,
            callRegions=callRegions,
            callRegions_tbi=callRegions_tbi,
            exome=select_first([exome, false]),
@@ -307,12 +294,6 @@ Common Workflow Language
      type: File
      secondaryFiles:
      - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
    - id: configStrelka
      type:
      - File

@@ -133,7 +133,7 @@ Additional configuration (inputs)
 name            type                prefix              position  documentation
 ==============  ==================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
 bam             CramPair            --bam                      1  FILE Normal sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [optional] (no default)
-reference       FastaWithIndexes    --referenceFasta           1  samtools-indexed reference fasta file [required]
+reference       FastaFai            --referenceFasta           1  samtools-indexed reference fasta file [required]
 config          Optional<File>      --config                   1  provide a configuration file to override defaults in global config file (/opt/conda/share/manta-1.2.1-0/bin/configManta.py.ini)
 runDir          Optional<Filename>  --runDir                   1  Run script and run output will be written to this directory [required] (default: MantaWorkflow)
 tumorBam        Optional<CramPair>  --tumorBam                 1  Tumor sample BAM or CRAM file. Only up to one tumor bam file accepted. [optional=null]
@@ -168,12 +168,6 @@ Workflow Description Language
        String? runDir
        File reference
        File reference_fai
-       File reference_amb
-       File reference_ann
-       File reference_bwt
-       File reference_pac
-       File reference_sa
-       File reference_dict
        File? tumorBam
        File? tumorBam_crai
        Boolean? exome
@@ -308,12 +302,6 @@ Common Workflow Language
      type: File
      secondaryFiles:
      - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
      inputBinding:
        prefix: --referenceFasta
        position: 1

@@ -1,0 +1,13 @@
+// Strelka Germline Variant Caller
+digraph strelkaGermlineVariantCaller {
+	node [shape=record]
+	manta [label="manta (Manta)"]
+	strelka [label="strelka (Strelka (Germline))"]
+	uncompressvcf [label="uncompressvcf (UncompressArchive)"]
+	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles)"]
+	filterpass [label="filterpass (VcfTools)"]
+	manta -> strelka
+	strelka -> uncompressvcf
+	uncompressvcf -> splitnormalisevcf
+	splitnormalisevcf -> filterpass
+}

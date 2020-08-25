@@ -99,6 +99,11 @@ performanceSummaryOut  csv
 =====================  ======  ===============
 
 
+Workflow
+--------
+
+.. image:: PerformanceSummaryGenome_v0_1_0.dot.png
+
 Embedded Tools
 ***************
 

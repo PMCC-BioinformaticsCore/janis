@@ -1,0 +1,25 @@
+// GATK4 Somatic Variant Caller
+digraph GATK4_SomaticVariantCaller {
+	node [shape=record]
+	normal_split_bam [label=normal_split_bam color=grey80 style=filled]
+	tumor_split_bam [label=tumor_split_bam color=grey80 style=filled]
+	mutect2 [label="mutect2 (GatkMutect2)"]
+	learnorientationmodel [label="learnorientationmodel (GATK4: LearnReadOrientationModel)"]
+	getpileupsummaries [label="getpileupsummaries (GATK4: GetPileupSummaries)"]
+	calculatecontamination [label="calculatecontamination (GATK4: CalculateContamination)"]
+	filtermutect2calls [label="filtermutect2calls (GATK4: GetFilterMutectCalls)"]
+	uncompressvcf [label="uncompressvcf (UncompressArchive)"]
+	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles)"]
+	filterpass [label="filterpass (VcfTools)"]
+	normal_split_bam -> mutect2
+	tumor_split_bam -> mutect2
+	mutect2 -> learnorientationmodel
+	tumor_split_bam -> getpileupsummaries
+	getpileupsummaries -> calculatecontamination
+	learnorientationmodel -> filtermutect2calls
+	mutect2 -> filtermutect2calls
+	calculatecontamination -> filtermutect2calls
+	filtermutect2calls -> uncompressvcf
+	uncompressvcf -> splitnormalisevcf
+	splitnormalisevcf -> filterpass
+}

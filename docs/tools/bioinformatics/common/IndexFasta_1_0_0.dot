@@ -1,0 +1,7 @@
+// Index Fasta reference
+digraph IndexFasta {
+	node [shape=record]
+	create_bwa [label="create_bwa (BWA-Index)"]
+	create_samtools [label="create_samtools (SamTools: faidx)"]
+	create_dict [label="create_dict (GATK4: CreateSequenceDictionary)"]
+}

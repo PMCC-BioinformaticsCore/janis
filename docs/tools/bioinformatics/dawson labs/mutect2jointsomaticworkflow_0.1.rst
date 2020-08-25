@@ -113,6 +113,11 @@ out     CompressedIndexedVCF
 ======  ====================  ===============
 
 
+Workflow
+--------
+
+.. image:: Mutect2JointSomaticWorkflow_0_1.dot.png
+
 Embedded Tools
 ***************
 
@@ -242,7 +247,9 @@ Workflow Description Language
          bam_crai=tumorBams_crai,
          sites=biallelicSites,
          sites_tbi=biallelicSites_tbi,
-         intervals=biallelicSites
+         intervals=biallelicSites,
+         reference=reference,
+         reference_fai=reference_fai
      }
      call G5.Gatk4CalculateContamination as contamination {
        input:
@@ -269,13 +276,7 @@ Workflow Description Language
        input:
          vcf=filtering.out,
          reference=reference,
-         reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict
+         reference_fai=reference_fai
      }
      call B2.bcftoolsIndex as indexFiltered {
        input:
@@ -436,6 +437,8 @@ Common Workflow Language
        source: biallelicSites
      - id: intervals
        source: biallelicSites
+     - id: reference
+       source: reference
      run: tools/Gatk4GetPileupSummaries_cram_4_1_4_0.cwl
      out:
      - id: out

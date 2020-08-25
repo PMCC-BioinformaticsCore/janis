@@ -1,0 +1,9 @@
+// Annotate Bam Stats to Somatic Vcf Workflow
+digraph AddBamStatsSomatic {
+	node [shape=record]
+	tumor [label=tumor color=grey80 style=filled]
+	normal [label=normal color=grey80 style=filled]
+	addbamstats [label="addbamstats (Add Bam Statistics to Vcf)"]
+	tumor -> addbamstats
+	normal -> addbamstats
+}

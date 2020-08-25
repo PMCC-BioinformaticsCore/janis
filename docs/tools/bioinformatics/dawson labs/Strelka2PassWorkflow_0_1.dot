@@ -1,0 +1,19 @@
+// Strelka 2Pass analysis
+digraph Strelka2PassWorkflow {
+	node [shape=record]
+	step1 [label="step1 (Strelka 2Pass analysis step1)" color=grey80 style=filled]
+	step2 [label="step2 (Strelka 2Pass analysis step 2)" color=grey80 style=filled]
+	refilterSNVs [label="refilterSNVs (Refilter Strelka2 Variant Calls)"]
+	compressSNVs [label="compressSNVs (BGZip)"]
+	indexSNVs [label="indexSNVs (Tabix)"]
+	refilterINDELs [label="refilterINDELs (Refilter Strelka2 Variant Calls)"]
+	compressINDELs [label="compressINDELs (BGZip)"]
+	indexINDELs [label="indexINDELs (Tabix)"]
+	step1 -> step2
+	step2 -> refilterSNVs
+	refilterSNVs -> compressSNVs
+	compressSNVs -> indexSNVs
+	step2 -> refilterINDELs
+	refilterINDELs -> compressINDELs
+	compressINDELs -> indexINDELs
+}

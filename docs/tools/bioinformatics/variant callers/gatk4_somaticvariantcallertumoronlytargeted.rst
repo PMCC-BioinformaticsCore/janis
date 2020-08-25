@@ -112,6 +112,11 @@ out       VCF
 ========  ====================  ===============
 
 
+Workflow
+--------
+
+.. image:: GATK4_SomaticVariantCallerTumorOnlyTargeted_v0_1_1.dot.png
+
 Embedded Tools
 ***************
 

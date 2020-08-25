@@ -1,0 +1,25 @@
+// Performance summary workflow (targeted bed)
+digraph PerformanceSummaryTargeted {
+	node [shape=record]
+	gatk4collectinsertsizemetrics [label="gatk4collectinsertsizemetrics (GATK4: CollectInsertSizeMetrics)"]
+	bamflagstat [label="bamflagstat (SamTools: Flagstat)"]
+	samtoolsview [label="samtoolsview (SamTools: View)"]
+	rmdupbamflagstat [label="rmdupbamflagstat (SamTools: Flagstat)"]
+	bedtoolsintersectbed [label="bedtoolsintersectbed (BEDTools: intersectBed)"]
+	targetbamflagstat [label="targetbamflagstat (SamTools: Flagstat)"]
+	bedtoolscoveragebed [label="bedtoolscoveragebed (BEDTools: coverageBed)"]
+	performancesummary [label="performancesummary (Performance Summary)"]
+	bedtoolscoverage [label="bedtoolscoverage (BEDTools: coverageBed)"]
+	genecoverage [label="genecoverage (Gene Coverage Per Sample)"]
+	samtoolsview -> rmdupbamflagstat
+	samtoolsview -> bedtoolsintersectbed
+	bedtoolsintersectbed -> targetbamflagstat
+	bedtoolsintersectbed -> bedtoolscoveragebed
+	gatk4collectinsertsizemetrics -> performancesummary
+	targetbamflagstat -> performancesummary
+	bedtoolscoveragebed -> performancesummary
+	bamflagstat -> performancesummary
+	rmdupbamflagstat -> performancesummary
+	samtoolsview -> bedtoolscoverage
+	bedtoolscoverage -> genecoverage
+}

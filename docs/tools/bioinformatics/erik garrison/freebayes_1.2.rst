@@ -131,7 +131,7 @@ Additional configuration (inputs)
 name                   type                prefix                            position    documentation
 =====================  ==================  ================================  ==========  =============================================================================================================================================================================================================================================================================================================
 bams                   Array<IndexedBam>   -b                                            Add FILE to the set of BAM files to be analyzed.
-reference              FastaWithIndexes    -f                                            Use FILE as the reference sequence for analysis. An index file (FILE.fai) will be created if none exists. If neither --targets nor --region are specified, FreeBayes will analyze every position in this reference.
+reference              FastaFai            -f                                            Use FILE as the reference sequence for analysis. An index file (FILE.fai) will be created if none exists. If neither --targets nor --region are specified, FreeBayes will analyze every position in this reference.
 theta                  Float               -T                                            The expected mutation rate or pairwise nucleotide diversity among the population under analysis. This serves as the single parameter to the Ewens Sampling Formula prior model default: 0.001
 ploidy                 Integer             -p                                            Sets the default ploidy for the analysis to N. default: 2
 refQual                String              --reference-quality                           --reference-quality MQ,BQ  Assign mapping quality of MQ to the reference allele at each site and base quality of BQ. default: 100,60
@@ -221,12 +221,6 @@ Workflow Description Language
        File? bamList
        File reference
        File reference_fai
-       File reference_amb
-       File reference_ann
-       File reference_bwt
-       File reference_pac
-       File reference_sa
-       File reference_dict
        File? targetsFile
        String? region
        File? samplesFile
@@ -429,12 +423,6 @@ Common Workflow Language
      type: File
      secondaryFiles:
      - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
      inputBinding:
        prefix: -f
    - id: targetsFile

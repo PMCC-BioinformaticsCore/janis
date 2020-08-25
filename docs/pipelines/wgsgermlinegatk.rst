@@ -1,17 +1,14 @@
 :orphan:
 
-WGS Germline (GATK only)
-==========================================
+WGS Germline (GATK) [VARIANTS only]
+=====================================================
 
 *A variant-calling WGS pipeline using only the GATK Haplotype variant caller · 3 contributors · 1 version*
 
-This is a genomics pipeline to align sequencing data (Fastq pairs) into BAMs and call variants using GATK. The final variants are outputted in the VCF format.
+This is a genomics pipeline to ONLY call variants using GATK and GRIDSS from an indexed bam. The final variants are outputted in the VCF format.
 
 This workflow is a reference pipeline using the Janis Python framework (pipelines assistant).
 
-- Takes raw sequence data in the FASTQ format;
-- Align to the reference genome using BWA MEM;
-- Marks duplicates using Picard;
 - Call variants using GRIDSS and GATK4;
 - Outputs the final variants in the VCF format.
 
@@ -128,9 +125,15 @@ out_variants             CompressedVCF      Merged variants from the GATK caller
 out_variants_split       Array<VCF>         Unmerged variants from the GATK caller (by interval)
 =======================  =================  ====================================================
 
+Workflow
+--------
+
+.. image:: WGSGermlineGATK_1_3_1.dot.png
+
 
 Information
 ------------
+
 
 :ID: ``WGSGermlineGATK``
 :Versions: 1.3.1
@@ -293,33 +296,36 @@ Workflow Description Language
          reference_dict=reference_dict,
          blacklist=gridss_blacklist
      }
-     call G3.GATKBaseRecalBQSRWorkflow as bqsr {
-       input:
-         bam=merge_and_mark.out,
-         bam_bai=merge_and_mark.out_bai,
-         reference=reference,
-         reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict,
-         snps_dbsnp=snps_dbsnp,
-         snps_dbsnp_tbi=snps_dbsnp_tbi,
-         snps_1000gp=snps_1000gp,
-         snps_1000gp_tbi=snps_1000gp_tbi,
-         known_indels=known_indels,
-         known_indels_tbi=known_indels_tbi,
-         mills_indels=mills_indels,
-         mills_indels_tbi=mills_indels_tbi
-     }
      scatter (g in gatk_intervals) {
+        call G3.GATKBaseRecalBQSRWorkflow as bqsr {
+         input:
+           bam=merge_and_mark.out,
+           bam_bai=merge_and_mark.out_bai,
+           intervals=g,
+           reference=reference,
+           reference_fai=reference_fai,
+           reference_amb=reference_amb,
+           reference_ann=reference_ann,
+           reference_bwt=reference_bwt,
+           reference_pac=reference_pac,
+           reference_sa=reference_sa,
+           reference_dict=reference_dict,
+           snps_dbsnp=snps_dbsnp,
+           snps_dbsnp_tbi=snps_dbsnp_tbi,
+           snps_1000gp=snps_1000gp,
+           snps_1000gp_tbi=snps_1000gp_tbi,
+           known_indels=known_indels,
+           known_indels_tbi=known_indels_tbi,
+           mills_indels=mills_indels,
+           mills_indels_tbi=mills_indels_tbi
+       }
+     }
+     scatter (Q in zip(gatk_intervals, transpose([bqsr.out, bqsr.out_bai]))) {
         call G4.GATK4_GermlineVariantCaller as vc_gatk {
          input:
-           bam=bqsr.out,
-           bam_bai=bqsr.out_bai,
-           intervals=g,
+           bam=Q.right[0],
+           bam_bai=Q.right[1],
+           intervals=Q.left,
            reference=reference,
            reference_fai=reference_fai,
            reference_amb=reference_amb,
@@ -352,7 +358,15 @@ Workflow Description Language
        input:
          bam=merge_and_mark.out,
          bam_bai=merge_and_mark.out_bai,
-         vcf=vc_gatk_uncompress_for_bamstats.out
+         vcf=vc_gatk_uncompress_for_bamstats.out,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict
      }
      output {
        Array[Array[File]] out_fastqc_reports = fastqc.out
@@ -374,15 +388,12 @@ Common Workflow Language
    #!/usr/bin/env cwl-runner
    class: Workflow
    cwlVersion: v1.0
-   label: WGS Germline (GATK only)
+   label: WGS Germline (GATK) [VARIANTS only]
    doc: |
-     This is a genomics pipeline to align sequencing data (Fastq pairs) into BAMs and call variants using GATK. The final variants are outputted in the VCF format.
+     This is a genomics pipeline to ONLY call variants using GATK and GRIDSS from an indexed bam. The final variants are outputted in the VCF format.
 
      This workflow is a reference pipeline using the Janis Python framework (pipelines assistant).
 
-     - Takes raw sequence data in the FASTQ format;
-     - Align to the reference genome using BWA MEM;
-     - Marks duplicates using Picard;
      - Call variants using GRIDSS and GATK4;
      - Outputs the final variants in the VCF format.
 
@@ -417,9 +428,9 @@ Common Workflow Language
    - id: reference
      doc: |2-
            The reference genome from which to align the reads. This requires a number indexes (can be generated     with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
-        
+
            This pipeline expects the assembly references to be as they appear in the GCP example:
-        
+
            - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
      type: File
      secondaryFiles:
@@ -605,6 +616,8 @@ Common Workflow Language
      in:
      - id: bam
        source: merge_and_mark/out
+     - id: intervals
+       source: gatk_intervals
      - id: reference
        source: reference
      - id: snps_dbsnp
@@ -615,6 +628,8 @@ Common Workflow Language
        source: known_indels
      - id: mills_indels
        source: mills_indels
+     scatter:
+     - intervals
      run: tools/GATKBaseRecalBQSRWorkflow_4_1_3.cwl
      out:
      - id: out
@@ -631,6 +646,8 @@ Common Workflow Language
        source: snps_dbsnp
      scatter:
      - intervals
+     - bam
+     scatterMethod: dotproduct
      run: tools/GATK4_GermlineVariantCaller_4_1_3_0.cwl
      out:
      - id: variants
@@ -675,6 +692,8 @@ Common Workflow Language
        source: merge_and_mark/out
      - id: vcf
        source: vc_gatk_uncompress_for_bamstats/out
+     - id: reference
+       source: reference
      run: tools/AddBamStatsGermline_v0_1_0.cwl
      out:
      - id: out

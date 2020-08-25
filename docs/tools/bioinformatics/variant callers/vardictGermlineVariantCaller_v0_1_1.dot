@@ -1,0 +1,17 @@
+// Vardict Germline Variant Caller
+digraph vardictGermlineVariantCaller {
+	node [shape=record]
+	vardict [label="vardict (VarDict (Germline))"]
+	annotate [label="annotate (BCFTools: Annotate)"]
+	compressvcf [label="compressvcf (BGZip)"]
+	tabixvcf [label="tabixvcf (Tabix)"]
+	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles)"]
+	trim [label="trim (Trim IUPAC Bases)"]
+	filterpass [label="filterpass (VcfTools)"]
+	vardict -> annotate
+	annotate -> compressvcf
+	compressvcf -> tabixvcf
+	annotate -> splitnormalisevcf
+	splitnormalisevcf -> trim
+	trim -> filterpass
+}

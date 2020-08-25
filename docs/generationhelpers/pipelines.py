@@ -2,6 +2,7 @@ from textwrap import indent
 from typing import List
 
 from janis_core import WorkflowMetadata, Workflow
+from requests.utils import requote_uri
 from tabulate import tabulate
 
 from docs.generationhelpers.utils import prepare_run_instructions
@@ -141,26 +142,7 @@ def prepare_published_pipeline_page(workflow: Workflow, versions: List[str]):
     else:
         tool_prov = "." + workflow.tool_provider().lower()
 
-    workflow_image = """
-Workflow
---------
-
-.. raw:: html
-
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
-   <script src="https://unpkg.com/vue-cwl/dist/index.js"></script>
-   <div id="vue" style="width: 800px; height: 500px; border-radius: 5px; overflow: hidden;">
-          <cwl cwl-url="https://unpkg.com/cwl-svg@2.1.5/cwl-samples/fastqc.json"></cwl>
-   </div>
-   <script>
-   new Vue({
-       el: '#vue',
-       components: {
-           cwl: vueCwl.default
-       }
-   });
-   </script>
-    """
+    workflow_image = requote_uri(workflow.versioned_id()) + ".dot.png"
 
     nl = "\n"
 
@@ -185,9 +167,15 @@ Outputs
 
 {formatted_outputs}
 
+Workflow
+--------
+
+.. image:: {workflow_image}
+
 
 Information
 ------------
+
 
 {nl.join(f":{key}: {value}" for key, value in toolmetadata)}
 

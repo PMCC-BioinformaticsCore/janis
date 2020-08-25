@@ -22,6 +22,7 @@ Quickstart
            AddBamStatsGermline_0_1_0(
                bam=None,
                vcf=None,
+               reference=None,
            )
        )
        wf.output("out", source=addbamstatsgermline_step.out)
@@ -55,6 +56,7 @@ Quickstart
 .. code-block:: yaml
 
        bam: bam.bam
+       reference: reference.fasta
        vcf: vcf.vcf
 
 
@@ -97,6 +99,11 @@ out     VCF
 ======  ======  ===============
 
 
+Workflow
+--------
+
+.. image:: AddBamStatsGermline_v0_1_0.dot.png
+
 Embedded Tools
 ***************
 
@@ -115,6 +122,7 @@ name                          type               documentation
 ============================  =================  ========================================================
 bam                           IndexedBam
 vcf                           VCF
+reference                     FastaWithIndexes
 samtoolsmpileup_countOrphans  Optional<Boolean>  do not discard anomalous read pairs
 samtoolsmpileup_noBAQ         Optional<Boolean>  disable BAQ (per-Base Alignment Quality)
 samtoolsmpileup_minBQ         Optional<Integer>  Minimum base quality for a base to be considered [13]
@@ -137,6 +145,14 @@ Workflow Description Language
        File bam
        File bam_bai
        File vcf
+       File reference
+       File reference_fai
+       File reference_amb
+       File reference_ann
+       File reference_bwt
+       File reference_pac
+       File reference_sa
+       File reference_dict
        Boolean? samtoolsmpileup_countOrphans = true
        Boolean? samtoolsmpileup_noBAQ = true
        Int? samtoolsmpileup_minBQ = 0
@@ -150,6 +166,7 @@ Workflow Description Language
          maxDepth=select_first([samtoolsmpileup_maxDepth, 10000]),
          positions=vcf,
          minBQ=select_first([samtoolsmpileup_minBQ, 0]),
+         reference=reference,
          bam=bam,
          bam_bai=bam_bai
      }
@@ -185,6 +202,16 @@ Common Workflow Language
      - .bai
    - id: vcf
      type: File
+   - id: reference
+     type: File
+     secondaryFiles:
+     - .fai
+     - .amb
+     - .ann
+     - .bwt
+     - .pac
+     - .sa
+     - ^.dict
    - id: samtoolsmpileup_countOrphans
      doc: do not discard anomalous read pairs
      type: boolean
@@ -225,6 +252,8 @@ Common Workflow Language
        source: vcf
      - id: minBQ
        source: samtoolsmpileup_minBQ
+     - id: reference
+       source: reference
      - id: bam
        source: bam
      run: tools/SamToolsMpileup_1_9_0.cwl

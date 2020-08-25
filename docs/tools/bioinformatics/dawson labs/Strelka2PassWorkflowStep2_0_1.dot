@@ -1,0 +1,13 @@
+// Strelka 2Pass analysis step 2
+digraph Strelka2PassWorkflowStep2 {
+	node [shape=record]
+	strelka2pass [label="strelka2pass (Strelka (Somatic))"]
+	normaliseSNVs [label="normaliseSNVs (BCFTools: Normalize)"]
+	indexSNVs [label="indexSNVs (BCFTools: Index)"]
+	normaliseINDELs [label="normaliseINDELs (BCFTools: Normalize)"]
+	indexINDELs [label="indexINDELs (BCFTools: Index)"]
+	strelka2pass -> normaliseSNVs
+	normaliseSNVs -> indexSNVs
+	strelka2pass -> normaliseINDELs
+	normaliseINDELs -> indexINDELs
+}

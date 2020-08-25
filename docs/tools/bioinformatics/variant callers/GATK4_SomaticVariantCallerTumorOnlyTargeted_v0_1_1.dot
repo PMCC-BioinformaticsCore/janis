@@ -1,0 +1,16 @@
+// GATK4 Somatic Variant Caller for Tumour Only Samples with Targeted BED
+digraph GATK4_SomaticVariantCallerTumorOnlyTargeted {
+	node [shape=record]
+	mutect2 [label="mutect2 (GatkMutect2)"]
+	learnorientationmodel [label="learnorientationmodel (GATK4: LearnReadOrientationModel)"]
+	getpileupsummaries [label="getpileupsummaries (GATK4: GetPileupSummaries)"]
+	calculatecontamination [label="calculatecontamination (GATK4: CalculateContamination)"]
+	filtermutect2calls [label="filtermutect2calls (GATK4: GetFilterMutectCalls)"]
+	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles and Normalise Vcf)"]
+	mutect2 -> learnorientationmodel
+	getpileupsummaries -> calculatecontamination
+	learnorientationmodel -> filtermutect2calls
+	mutect2 -> filtermutect2calls
+	calculatecontamination -> filtermutect2calls
+	filtermutect2calls -> splitnormalisevcf
+}

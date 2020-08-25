@@ -105,6 +105,11 @@ out     IndexedBam
 ======  ==========  ===============
 
 
+Workflow
+--------
+
+.. image:: GATKBaseRecalBQSRWorkflow_4_1_3.dot.png
+
 Embedded Tools
 ***************
 

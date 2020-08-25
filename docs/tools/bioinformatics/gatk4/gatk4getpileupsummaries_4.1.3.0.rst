@@ -110,6 +110,7 @@ javaOptions        Optional<Array<String>>
 compression_level  Optional<Integer>                                 Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
 intervals          Optional<bed>            --intervals              -L (BASE) One or more genomic intervals over which to operate
 pileupTableOut     Optional<Filename>       -O                    1
+reference          Optional<FastaFai>       -R                       reference to use when decoding CRAMS
 =================  =======================  ===========  ==========  ========================================================================================
 
 Workflow Description Language
@@ -133,6 +134,8 @@ Workflow Description Language
        File sites_tbi
        File? intervals
        String? pileupTableOut
+       File? reference
+       File? reference_fai
      }
      command <<<
        set -e
@@ -141,6 +144,7 @@ Workflow Description Language
          ~{"-I '" + sep("' -I '", bam) + "'"} \
          -V '~{sites}' \
          ~{if defined(intervals) then ("--intervals '" + intervals + "'") else ""} \
+         ~{if defined(reference) then ("-R '" + reference + "'") else ""} \
          -O '~{select_first([pileupTableOut, "generated.txt"])}'
      >>>
      runtime {
@@ -224,6 +228,16 @@ Common Workflow Language
      inputBinding:
        prefix: -O
        position: 1
+   - id: reference
+     label: reference
+     doc: reference to use when decoding CRAMS
+     type:
+     - File
+     - 'null'
+     secondaryFiles:
+     - .fai
+     inputBinding:
+       prefix: -R
 
    outputs:
    - id: out

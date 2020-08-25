@@ -1,0 +1,7 @@
+// GATK Base Recalibration on Bam
+digraph GATKBaseRecalBQSRWorkflow {
+	node [shape=record]
+	base_recalibrator [label="base_recalibrator (GATK4: Base Recalibrator)"]
+	apply_bqsr [label="apply_bqsr (GATK4: Apply base quality score recalibration)"]
+	base_recalibrator -> apply_bqsr
+}

@@ -1,0 +1,5 @@
+// FastQC (Single, Scattered)
+digraph fastqc_single_scattered {
+	node [shape=record]
+	fastqc [label="fastqc (FastQC (single read))"]
+}

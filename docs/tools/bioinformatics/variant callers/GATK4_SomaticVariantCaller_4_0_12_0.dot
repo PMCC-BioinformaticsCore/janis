@@ -1,0 +1,15 @@
+// GATK4 Somatic Variant Caller
+digraph GATK4_SomaticVariantCaller {
+	node [shape=record]
+	base_recalibrator_normal [label="base_recalibrator_normal (GATK4: Base Recalibrator)"]
+	base_recalibrator_tumor [label="base_recalibrator_tumor (GATK4: Base Recalibrator)"]
+	apply_bqsr_normal [label="apply_bqsr_normal (GATK4: Apply base quality score recalibration)"]
+	apply_bqsr_tumor [label="apply_bqsr_tumor (GATK4: Apply base quality score recalibration)"]
+	mutect2 [label="mutect2 (GATK4: MuTect2)"]
+	split_multi_allele [label="split_multi_allele (Split Multiple Alleles)"]
+	base_recalibrator_normal -> apply_bqsr_normal
+	base_recalibrator_tumor -> apply_bqsr_tumor
+	apply_bqsr_normal -> mutect2
+	apply_bqsr_tumor -> mutect2
+	mutect2 -> split_multi_allele
+}

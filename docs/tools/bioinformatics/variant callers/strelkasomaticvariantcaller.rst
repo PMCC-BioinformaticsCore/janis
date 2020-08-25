@@ -103,6 +103,11 @@ out       VCF
 ========  ====================  ===============
 
 
+Workflow
+--------
+
+.. image:: strelkaSomaticVariantCaller_v0_1_1.dot.png
+
 Embedded Tools
 ***************
 
@@ -176,12 +181,6 @@ Workflow Description Language
          bam_bai=normal_bam_bai,
          reference=reference,
          reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict,
          tumorBam=tumor_bam,
          tumorBam_bai=tumor_bam_bai,
          exome=is_exome,
@@ -196,12 +195,6 @@ Workflow Description Language
          tumorBam_bai=tumor_bam_bai,
          reference=reference,
          reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict,
          indelCandidates=[manta.candidateSmallIndels],
          indelCandidates_tbi=[manta.candidateSmallIndels_tbi],
          exome=is_exome,

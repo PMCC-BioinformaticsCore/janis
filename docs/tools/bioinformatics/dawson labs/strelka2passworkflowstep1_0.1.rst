@@ -113,6 +113,11 @@ somaticSVs  Optional<CompressedIndexedVCF>
 ==========  ==============================  ===============
 
 
+Workflow
+--------
+
+.. image:: Strelka2PassWorkflowStep1_0_1.dot.png
+
 Embedded Tools
 ***************
 
@@ -133,7 +138,7 @@ name           type                documentation
 =============  ==================  ===============
 normalBam      CramPair
 tumorBam       CramPair
-reference      FastaWithIndexes
+reference      FastaFai
 callRegions    Optional<BedTABIX>
 exome          Optional<Boolean>
 configStrelka  Optional<File>
@@ -159,12 +164,6 @@ Workflow Description Language
        File tumorBam_crai
        File reference
        File reference_fai
-       File reference_amb
-       File reference_ann
-       File reference_bwt
-       File reference_pac
-       File reference_sa
-       File reference_dict
        File? callRegions
        File? callRegions_tbi
        Boolean? exome = false
@@ -176,12 +175,6 @@ Workflow Description Language
          bam_crai=normalBam_crai,
          reference=reference,
          reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict,
          tumorBam=tumorBam,
          tumorBam_crai=tumorBam_crai,
          exome=select_first([exome, false]),
@@ -196,12 +189,6 @@ Workflow Description Language
          tumorBam_crai=tumorBam_crai,
          reference=reference,
          reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict,
          config=configStrelka,
          indelCandidates=[manta.candidateSmallIndels],
          indelCandidates_tbi=[manta.candidateSmallIndels_tbi],
@@ -213,13 +200,7 @@ Workflow Description Language
        input:
          vcf=strelka.snvs,
          reference=reference,
-         reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict
+         reference_fai=reference_fai
      }
      call B2.bcftoolsIndex as indexSNVs {
        input:
@@ -229,13 +210,7 @@ Workflow Description Language
        input:
          vcf=strelka.indels,
          reference=reference,
-         reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict
+         reference_fai=reference_fai
      }
      call B2.bcftoolsIndex as indexINDELs {
        input:
@@ -291,12 +266,6 @@ Common Workflow Language
      type: File
      secondaryFiles:
      - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
    - id: callRegions
      type:
      - File

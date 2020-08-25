@@ -1,0 +1,32 @@
+// WGS Germline (GATK) [VARIANTS only]
+digraph WGSGermlineGATK {
+	node [shape=record]
+	fastqc [label="fastqc (FastQC)"]
+	getfastqc_adapters [label="getfastqc_adapters (Parse FastQC Adaptors)"]
+	align_and_sort [label="align_and_sort (Align and sort reads)" color=grey80 style=filled]
+	merge_and_mark [label="merge_and_mark (Merge and Mark Duplicates)" color=grey80 style=filled]
+	calculate_performancesummary_genomefile [label="calculate_performancesummary_genomefile (Generate genome for BedtoolsCoverage)"]
+	performance_summary [label="performance_summary (Performance summary workflow (whole genome))" color=grey80 style=filled]
+	vc_gridss [label="vc_gridss (Gridss)"]
+	bqsr [label="bqsr (GATK Base Recalibration on Bam)" color=grey80 style=filled]
+	vc_gatk [label="vc_gatk (GATK4 Germline Variant Caller)" color=grey80 style=filled]
+	vc_gatk_merge [label="vc_gatk_merge (GATK4: Gather VCFs)"]
+	vc_gatk_compressvcf [label="vc_gatk_compressvcf (BGZip)"]
+	vc_gatk_sort_combined [label="vc_gatk_sort_combined (BCFTools: Sort)"]
+	vc_gatk_uncompress_for_bamstats [label="vc_gatk_uncompress_for_bamstats (UncompressArchive)"]
+	vc_gatk_addbamstats [label="vc_gatk_addbamstats (Annotate Bam Stats to Germline Vcf Workflow)" color=grey80 style=filled]
+	fastqc -> getfastqc_adapters
+	getfastqc_adapters -> align_and_sort
+	align_and_sort -> merge_and_mark
+	merge_and_mark -> performance_summary
+	calculate_performancesummary_genomefile -> performance_summary
+	merge_and_mark -> vc_gridss
+	merge_and_mark -> bqsr
+	bqsr -> vc_gatk
+	vc_gatk -> vc_gatk_merge
+	vc_gatk_merge -> vc_gatk_compressvcf
+	vc_gatk_compressvcf -> vc_gatk_sort_combined
+	vc_gatk_sort_combined -> vc_gatk_uncompress_for_bamstats
+	vc_gatk_uncompress_for_bamstats -> vc_gatk_addbamstats
+	merge_and_mark -> vc_gatk_addbamstats
+}

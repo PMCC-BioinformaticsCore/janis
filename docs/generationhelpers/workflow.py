@@ -1,5 +1,6 @@
 from textwrap import indent
 
+from requests.utils import requote_uri
 from tabulate import tabulate
 from typing import List
 
@@ -110,30 +111,7 @@ def prepare_workflow_page(workflow: Workflow, versions: List[str]):
     else:
         tool_prov = "." + workflow.tool_provider().lower()
 
-    workflow_image = (
-        ""
-        if not SHOW_WORKFLOW_IMAGE
-        else """
-Workflow
---------
-
-.. raw:: html
-
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
-   <script src="https://unpkg.com/vue-cwl/dist/index.js"></script>
-   <div id="vue" style="width: 800px; height: 500px; border-radius: 5px; overflow: hidden;">
-          <cwl cwl-url="https://unpkg.com/cwl-svg@2.1.5/cwl-samples/fastqc.json"></cwl>
-   </div>
-   <script>
-   new Vue({{
-       el: '#vue',
-       components: {{
-           cwl: vueCwl.default
-       }}
-   }});
-   </script>
-    """
-    )
+    workflow_image = requote_uri(workflow.versioned_id()) + ".dot.png"
 
     nl = "\n"
 
@@ -165,6 +143,11 @@ Outputs
 
 {formatted_outputs}
 
+
+Workflow
+--------
+
+.. image:: {workflow_image}
 
 Embedded Tools
 ***************

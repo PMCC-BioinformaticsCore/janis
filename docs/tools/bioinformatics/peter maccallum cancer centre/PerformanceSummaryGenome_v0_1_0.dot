@@ -1,0 +1,16 @@
+// Performance summary workflow (whole genome)
+digraph PerformanceSummaryGenome {
+	node [shape=record]
+	gatk4collectinsertsizemetrics [label="gatk4collectinsertsizemetrics (GATK4: CollectInsertSizeMetrics)"]
+	bamflagstat [label="bamflagstat (SamTools: Flagstat)"]
+	samtoolsview [label="samtoolsview (SamTools: View)"]
+	rmdupbamflagstat [label="rmdupbamflagstat (SamTools: Flagstat)"]
+	bedtoolsgenomecoveragebed [label="bedtoolsgenomecoveragebed (BEDTools: genomeCoverageBed)"]
+	performancesummary [label="performancesummary (Performance Summary)"]
+	samtoolsview -> rmdupbamflagstat
+	samtoolsview -> bedtoolsgenomecoveragebed
+	gatk4collectinsertsizemetrics -> performancesummary
+	bedtoolsgenomecoveragebed -> performancesummary
+	bamflagstat -> performancesummary
+	rmdupbamflagstat -> performancesummary
+}

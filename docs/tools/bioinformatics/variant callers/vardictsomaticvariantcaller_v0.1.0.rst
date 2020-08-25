@@ -109,6 +109,11 @@ out       VCF
 ========  ====================  ===============
 
 
+Workflow
+--------
+
+.. image:: vardictSomaticVariantCaller_v0_1_0.dot.png
+
 Embedded Tools
 ***************
 

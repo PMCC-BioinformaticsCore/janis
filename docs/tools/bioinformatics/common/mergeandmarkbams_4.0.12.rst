@@ -97,6 +97,11 @@ out     IndexedBam
 ======  ==========  ===============
 
 
+Workflow
+--------
+
+.. image:: mergeAndMarkBams_4_0_12.dot.png
+
 Embedded Tools
 ***************
 

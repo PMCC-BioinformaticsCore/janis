@@ -115,6 +115,11 @@ out       VCF
 ========  ====================  ===============
 
 
+Workflow
+--------
+
+.. image:: GATK4_SomaticVariantCaller_4_1_3_0.dot.png
+
 Embedded Tools
 ***************
 

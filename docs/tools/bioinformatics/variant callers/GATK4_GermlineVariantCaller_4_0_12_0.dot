@@ -1,0 +1,13 @@
+// GATK4 Germline Variant Caller
+digraph GATK4_GermlineVariantCaller {
+	node [shape=record]
+	base_recalibrator [label="base_recalibrator (GATK4: Base Recalibrator)"]
+	apply_bqsr [label="apply_bqsr (GATK4: Apply base quality score recalibration)"]
+	haplotype_caller [label="haplotype_caller (GATK4: Haplotype Caller)"]
+	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles and Normalise Vcf)"]
+	addbamstats [label="addbamstats (Annotate Bam Stats to Germline Vcf Workflow)" color=grey80 style=filled]
+	base_recalibrator -> apply_bqsr
+	apply_bqsr -> haplotype_caller
+	haplotype_caller -> splitnormalisevcf
+	splitnormalisevcf -> addbamstats
+}

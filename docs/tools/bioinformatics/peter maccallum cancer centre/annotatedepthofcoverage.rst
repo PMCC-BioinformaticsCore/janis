@@ -101,6 +101,11 @@ out     TextFile
 ======  ========  ===============
 
 
+Workflow
+--------
+
+.. image:: AnnotateDepthOfCoverage_v0_1_0.dot.png
+
 Embedded Tools
 ***************
 

@@ -101,6 +101,11 @@ out     File
 ======  ======  ===============
 
 
+Workflow
+--------
+
+.. image:: hello_v1_0_0.dot.png
+
 Embedded Tools
 ***************
 

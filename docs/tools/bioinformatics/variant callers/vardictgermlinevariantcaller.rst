@@ -105,6 +105,11 @@ out       VCF
 ========  ====================  ===============
 
 
+Workflow
+--------
+
+.. image:: vardictGermlineVariantCaller_v0_1_1.dot.png
+
 Embedded Tools
 ***************
 

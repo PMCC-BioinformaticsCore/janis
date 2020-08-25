@@ -1,0 +1,17 @@
+// Vardict Somatic Variant Caller
+digraph vardictSomaticVariantCaller {
+	node [shape=record]
+	vardict [label="vardict (Vardict (Somatic))"]
+	annotate [label="annotate (BCFTools: Annotate)"]
+	compressvcf [label="compressvcf (BGZip)"]
+	tabixvcf [label="tabixvcf (Tabix)"]
+	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles)"]
+	trim [label="trim (Trim IUPAC Bases)"]
+	filterpass [label="filterpass (Filter Vardict Somatic Vcf)"]
+	vardict -> annotate
+	annotate -> compressvcf
+	compressvcf -> tabixvcf
+	annotate -> splitnormalisevcf
+	splitnormalisevcf -> trim
+	trim -> filterpass
+}

@@ -1,0 +1,26 @@
+// Molpath Germline Workflow
+digraph MolpathGermlineWorkflow {
+	node [shape=record]
+	fastqc [label="fastqc (FastQC)"]
+	getfastqc_adapters [label="getfastqc_adapters (Parse FastQC Adaptors)"]
+	align_and_sort [label="align_and_sort (Align and sort reads)" color=grey80 style=filled]
+	merge_and_mark [label="merge_and_mark (Merge and Mark Duplicates)" color=grey80 style=filled]
+	annotate_doc [label="annotate_doc (Annotate GATK3 DepthOfCoverage Workflow)" color=grey80 style=filled]
+	performance_summary [label="performance_summary (Performance summary workflow (targeted bed))" color=grey80 style=filled]
+	gridss [label="gridss (Gridss)"]
+	bqsr [label="bqsr (GATK Base Recalibration on Bam)" color=grey80 style=filled]
+	haplotype_caller [label="haplotype_caller (GATK4: Haplotype Caller)"]
+	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles and Normalise Vcf)"]
+	addbamstats [label="addbamstats (Annotate Bam Stats to Germline Vcf Workflow)" color=grey80 style=filled]
+	fastqc -> getfastqc_adapters
+	getfastqc_adapters -> align_and_sort
+	align_and_sort -> merge_and_mark
+	merge_and_mark -> annotate_doc
+	merge_and_mark -> performance_summary
+	merge_and_mark -> gridss
+	merge_and_mark -> bqsr
+	bqsr -> haplotype_caller
+	haplotype_caller -> splitnormalisevcf
+	merge_and_mark -> addbamstats
+	splitnormalisevcf -> addbamstats
+}

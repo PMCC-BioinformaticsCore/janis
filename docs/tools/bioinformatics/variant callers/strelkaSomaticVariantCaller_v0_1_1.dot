@@ -1,0 +1,17 @@
+// Strelka Somatic Variant Caller
+digraph strelkaSomaticVariantCaller {
+	node [shape=record]
+	manta [label="manta (Manta)"]
+	strelka [label="strelka (Strelka (Somatic))"]
+	concatvcf [label="concatvcf (Concat Strelka Somatic Vcf)"]
+	sortvcf [label="sortvcf (BCFTools: Sort)"]
+	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles)"]
+	extractaddp [label="extractaddp (Extract Strelka Somatic AD DP)"]
+	filterpass [label="filterpass (VcfTools)"]
+	manta -> strelka
+	strelka -> concatvcf
+	concatvcf -> sortvcf
+	sortvcf -> splitnormalisevcf
+	splitnormalisevcf -> extractaddp
+	extractaddp -> filterpass
+}

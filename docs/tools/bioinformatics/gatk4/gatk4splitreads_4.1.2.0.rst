@@ -319,7 +319,7 @@ Workflow Description Language
          ~{if defined(softClippedLeadingTrailingRatio) then ("--soft-clipped-leading-trailing-ratio " + softClippedLeadingTrailingRatio) else ''} \
          ~{if defined(softClippedRatioThreshold) then ("--soft-clipped-ratio-threshold " + softClippedRatioThreshold) else ''} \
          --input '~{bam}'
-       if [ -f $(echo '~{basename(bam, ".bam")}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{basename(bam, ".bam")}' | sed 's/\.[^.]*$//').bai $(echo '~{basename(bam, ".bam")}' ).bai; fi
+       if [ -f $(echo '~{basename(bam)}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{basename(bam)}' | sed 's/\.[^.]*$//').bai $(echo '~{basename(bam)}' ).bai; fi
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])
@@ -330,8 +330,8 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = basename(bam, ".bam")
-       File out_bai = basename(bam, ".bam") + ".bai"
+       File out = basename(bam)
+       File out_bai = basename(bam) + ".bai"
      }
    }
 
@@ -964,6 +964,7 @@ Common Workflow Language
        }
      outputBinding:
        glob: $(inputs.bam.basename)
+       outputEval: $(inputs.bam.basename)
        loadContents: false
    stdout: _stdout
    stderr: _stderr

@@ -99,6 +99,11 @@ dict      FastDict
 ========  ========  ===============
 
 
+Workflow
+--------
+
+.. image:: IndexFasta_1_0_0.dot.png
+
 Embedded Tools
 ***************
 

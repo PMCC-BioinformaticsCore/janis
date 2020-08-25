@@ -117,6 +117,11 @@ out       VCF
 ========  ====================  ===============
 
 
+Workflow
+--------
+
+.. image:: GATK4_GermlineVariantCaller_4_0_12_0.dot.png
+
 Embedded Tools
 ***************
 
@@ -246,7 +251,15 @@ Workflow Description Language
        input:
          bam=bam,
          bam_bai=bam_bai,
-         vcf=splitnormalisevcf.out
+         vcf=splitnormalisevcf.out,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict
      }
      output {
        File variants = haplotype_caller.out
@@ -408,6 +421,8 @@ Common Workflow Language
        source: bam
      - id: vcf
        source: splitnormalisevcf/out
+     - id: reference
+       source: reference
      run: tools/AddBamStatsGermline_v0_1_0.cwl
      out:
      - id: out

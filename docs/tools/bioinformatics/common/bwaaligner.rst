@@ -101,6 +101,11 @@ out     IndexedBam
 ======  ==========  ===============
 
 
+Workflow
+--------
+
+.. image:: BwaAligner_1_0_0.dot.png
+
 Embedded Tools
 ***************
 

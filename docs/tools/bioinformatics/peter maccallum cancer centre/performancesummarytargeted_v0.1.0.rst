@@ -107,6 +107,11 @@ regionFileOut  TextFile
 =============  ========  ===============
 
 
+Workflow
+--------
+
+.. image:: PerformanceSummaryTargeted_v0_1_0.dot.png
+
 Embedded Tools
 ***************
 

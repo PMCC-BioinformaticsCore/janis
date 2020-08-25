@@ -1,0 +1,5 @@
+// Hello, World!
+digraph hello {
+	node [shape=record]
+	hello [label="hello (Echo)"]
+}

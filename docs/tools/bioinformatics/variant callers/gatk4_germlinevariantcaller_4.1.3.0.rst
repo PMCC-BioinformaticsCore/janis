@@ -109,6 +109,11 @@ out       VCF
 ========  ====================  ===============
 
 
+Workflow
+--------
+
+.. image:: GATK4_GermlineVariantCaller_4_1_3_0.dot.png
+
 Embedded Tools
 ***************
 

@@ -24,6 +24,7 @@ Quickstart
                tumor_id=None,
                normal_bam=None,
                tumor_bam=None,
+               reference=None,
                vcf=None,
            )
        )
@@ -59,6 +60,7 @@ Quickstart
 
        normal_bam: normal_bam.bam
        normal_id: <value>
+       reference: reference.fasta
        tumor_bam: tumor_bam.bam
        tumor_id: <value>
        vcf: vcf.vcf
@@ -103,6 +105,11 @@ out     VCF
 ======  ======  ===============
 
 
+Workflow
+--------
+
+.. image:: AddBamStatsSomatic_v0_1_0.dot.png
+
 Embedded Tools
 ***************
 
@@ -123,6 +130,7 @@ normal_id         String
 tumor_id          String
 normal_bam        IndexedBam
 tumor_bam         IndexedBam
+reference         FastaWithIndexes
 vcf               VCF
 addbamstats_type  Optional<String>  must be either germline or somatic
 ================  ================  ==================================
@@ -145,6 +153,14 @@ Workflow Description Language
        File normal_bam_bai
        File tumor_bam
        File tumor_bam_bai
+       File reference
+       File reference_fai
+       File reference_amb
+       File reference_ann
+       File reference_bwt
+       File reference_pac
+       File reference_sa
+       File reference_dict
        File vcf
        String? addbamstats_type = "somatic"
      }
@@ -152,13 +168,29 @@ Workflow Description Language
        input:
          vcf=vcf,
          bam=tumor_bam,
-         bam_bai=tumor_bam_bai
+         bam_bai=tumor_bam_bai,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict
      }
      call S.samtools_mpileup_subpipeline as normal {
        input:
          vcf=vcf,
          bam=normal_bam,
-         bam_bai=normal_bam_bai
+         bam_bai=normal_bam_bai,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict
      }
      call A.addBamStats as addbamstats {
        input:
@@ -202,6 +234,16 @@ Common Workflow Language
      type: File
      secondaryFiles:
      - .bai
+   - id: reference
+     type: File
+     secondaryFiles:
+     - .fai
+     - .amb
+     - .ann
+     - .bwt
+     - .pac
+     - .sa
+     - ^.dict
    - id: vcf
      type: File
    - id: addbamstats_type
@@ -221,6 +263,8 @@ Common Workflow Language
        source: vcf
      - id: bam
        source: tumor_bam
+     - id: reference
+       source: reference
      run: tools/samtools_mpileup_subpipeline.cwl
      out:
      - id: out
@@ -230,6 +274,8 @@ Common Workflow Language
        source: vcf
      - id: bam
        source: normal_bam
+     - id: reference
+       source: reference
      run: tools/samtools_mpileup_subpipeline.cwl
      out:
      - id: out

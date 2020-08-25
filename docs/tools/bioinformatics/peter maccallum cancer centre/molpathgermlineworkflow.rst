@@ -141,6 +141,11 @@ normalise_vcf   VCF
 ==============  ====================  ===============
 
 
+Workflow
+--------
+
+.. image:: MolpathGermlineWorkflow_v1_0_0.dot.png
+
 Embedded Tools
 ***************
 
@@ -366,7 +371,15 @@ Workflow Description Language
        input:
          bam=merge_and_mark.out,
          bam_bai=merge_and_mark.out_bai,
-         vcf=splitnormalisevcf.out
+         vcf=splitnormalisevcf.out,
+         reference=reference,
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict
      }
      output {
        Array[Array[File]] fastq_qc = fastqc.out
@@ -675,6 +688,8 @@ Common Workflow Language
        source: merge_and_mark/out
      - id: vcf
        source: splitnormalisevcf/out
+     - id: reference
+       source: reference
      run: tools/AddBamStatsGermline_v0_1_0.cwl
      out:
      - id: out

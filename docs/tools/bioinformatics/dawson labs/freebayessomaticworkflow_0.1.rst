@@ -104,6 +104,11 @@ somaticOutVcf  CompressedIndexedVCF
 =============  ====================  ===============
 
 
+Workflow
+--------
+
+.. image:: FreeBayesSomaticWorkflow_0_1.dot.png
+
 Embedded Tools
 ***************
 
@@ -131,7 +136,7 @@ Additional configuration (inputs)
 name                              type                     documentation
 ================================  =======================  ================================================================================================================================================================================================================================================================================
 bams                              Array<CramPair>
-reference                         FastaWithIndexes
+reference                         FastaFai
 normalSample                      String
 regionSize                        Optional<Integer>
 sampleNames                       Optional<Array<String>>
@@ -190,12 +195,6 @@ Workflow Description Language
        Array[File] bams_crai
        File reference
        File reference_fai
-       File reference_amb
-       File reference_ann
-       File reference_bwt
-       File reference_pac
-       File reference_sa
-       File reference_dict
        Int? regionSize = 10000000
        String normalSample
        Array[String]? sampleNames
@@ -241,12 +240,6 @@ Workflow Description Language
            bams_crai=bams_crai,
            reference=reference,
            reference_fai=reference_fai,
-           reference_amb=reference_amb,
-           reference_ann=reference_ann,
-           reference_bwt=reference_bwt,
-           reference_pac=reference_pac,
-           reference_sa=reference_sa,
-           reference_dict=reference_dict,
            region=c,
            strictFlag=select_first([callVariants_strictFlag, true]),
            pooledDiscreteFlag=select_first([callVariants_pooledDiscreteFlag, true]),
@@ -289,12 +282,6 @@ Workflow Description Language
          outputFilename=select_first([normalizeSomatic1_outputFilename, "normalised.vcf"]),
          reference=reference,
          reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict,
          outputType=select_first([normalizeSomatic1_outputType, "v"])
      }
      call V3.vcfallelicprimitives as allelicPrimitves {
@@ -318,12 +305,6 @@ Workflow Description Language
          outputFilename=select_first([normalizeSomatic2_outputFilename, "normalised.vcf"]),
          reference=reference,
          reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict,
          outputType=select_first([normalizeSomatic2_outputType, "v"])
      }
      call V5.vcfuniqalleles as uniqueAlleles {
@@ -384,12 +365,6 @@ Common Workflow Language
      type: File
      secondaryFiles:
      - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
    - id: regionSize
      type: int
      default: 10000000

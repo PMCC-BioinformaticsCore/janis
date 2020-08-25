@@ -33,9 +33,9 @@ Fields
 
 **Optional**
 
-==============================  ===================================  ====================================================  ======================================================================
+==============================  ===================================  ====================================================  ===========================================================================================================================
 ID                              Type                                 Default                                               Documentation
-==============================  ===================================  ====================================================  ======================================================================
+==============================  ===================================  ====================================================  ===========================================================================================================================
 intermediate_execution_dir      <class 'str'>                                                                              Computation directory
 container_dir                   <class 'str'>                        /config/binaries/singularity/containers_devel/janis/  [OPTIONAL] Override the directory singularity containers are stored in
 queues                          typing.Union[str, typing.List[str]]  prod_med,prod                                         The queue to submit jobs to
@@ -47,7 +47,8 @@ max_cores                       <class 'int'>                        40         
 max_ram                         <class 'int'>                        256                                                   Override maximum ram (default 508 [GB])
 max_workflow_time               <class 'int'>                        20100                                                 The walltime of the submitted workflow "brain"
 janis_memory_mb                 <class 'int'>
-email_format                    <class 'str'>                                                                              (None, "molpath")
-log_janis_job_id_to_stdout      <class 'bool'>                       False
-==============================  ===================================  ====================================================  ======================================================================
+email_format                    <class 'str'>                                                                              (null, "molpath")
+log_janis_job_id_to_stdout      <class 'bool'>                       False                                                 This is already logged to STDERR, but you can also log the "Submitted batch job \d" to stdout with this option set to true.
+submission_sbatch               <class 'str'>                        sbatch
+==============================  ===================================  ====================================================  ===========================================================================================================================
 

@@ -1,0 +1,11 @@
+// GATK4 Germline Variant Caller
+digraph GATK4_GermlineVariantCaller {
+	node [shape=record]
+	split_bam [label="split_bam (GATK4: SplitReads)"]
+	haplotype_caller [label="haplotype_caller (GATK4: Haplotype Caller)"]
+	uncompressvcf [label="uncompressvcf (UncompressArchive)"]
+	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles)"]
+	split_bam -> haplotype_caller
+	haplotype_caller -> uncompressvcf
+	uncompressvcf -> splitnormalisevcf
+}

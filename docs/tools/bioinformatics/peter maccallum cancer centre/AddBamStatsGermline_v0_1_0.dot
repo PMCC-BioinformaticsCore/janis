@@ -1,0 +1,7 @@
+// Annotate Bam Stats to Germline Vcf Workflow
+digraph AddBamStatsGermline {
+	node [shape=record]
+	samtoolsmpileup [label="samtoolsmpileup (SamTools: Mpileup)"]
+	addbamstats [label="addbamstats (Add Bam Statistics to Vcf)"]
+	samtoolsmpileup -> addbamstats
+}

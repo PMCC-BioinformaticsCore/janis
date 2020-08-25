@@ -1,0 +1,9 @@
+// Align and sort reads
+digraph BwaAligner {
+	node [shape=record]
+	cutadapt [label="cutadapt (Cutadapt)"]
+	bwamem [label="bwamem (Bwa mem + Samtools View)"]
+	sortsam [label="sortsam (GATK4: SortSAM)"]
+	cutadapt -> bwamem
+	bwamem -> sortsam
+}

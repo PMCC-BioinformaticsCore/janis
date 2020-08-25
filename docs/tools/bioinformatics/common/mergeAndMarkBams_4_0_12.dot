@@ -1,0 +1,7 @@
+// Merge and Mark Duplicates
+digraph mergeAndMarkBams {
+	node [shape=record]
+	mergeSamFiles [label="mergeSamFiles (GATK4: Merge SAM Files)"]
+	markDuplicates [label="markDuplicates (GATK4: Mark Duplicates)"]
+	mergeSamFiles -> markDuplicates
+}

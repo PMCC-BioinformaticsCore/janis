@@ -102,11 +102,29 @@ Janis will throw an error if all the *required* inputs are not provided. You can
 Creating an output
 *********************
 
-An output requires a unique identifier (string), an output source and an *optional* :class:`janis.DataType`. If a data type is provided, it is type-checked against the output source.
+An output requires a unique identifier (string), an output source and an *optional* :class:`janis.DataType`. If a data
+type is provided, it is type-checked against the output source. Don't be put off by the automatically generated
+interface for the output method, it's there to be exhaustive for the type definitions.
+
+Here is the (simplified) method definition:
+
+.. code-block:: python
+
+   def output(
+       self,
+       identifier: str,
+       datatype: Optional[ParseableType] = None,
+       source: Union[Selector, ConnectionSource]=None # or List[Selector, ConnectionSource]
+       output_folder: Union[str, Selector, List[Union[str, Selector]]] = None,
+       output_name: Union[bool, str, Selector, ConnectionSource] = True, # let janis decide output name
+       extension: Optional[str] = None, # file extension if janis names file
+       doc: Union[str, OutputDocumentation] = None,
+   ):
+
 
 .. automethod:: janis.Workflow.output
 
-You are unable to connect an input node to an output node, and an output node cannot be referenced as a step input.
+You are unable to connect an input node directly to an output node, and an output node cannot be referenced as a step input.
 
 
 .. code-block:: python

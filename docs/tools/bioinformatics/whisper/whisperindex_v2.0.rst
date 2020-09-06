@@ -3,7 +3,7 @@
 Whisper-Index
 ============================
 
-*1 contributor · 1 version*
+``WhisperIndex`` · *1 contributor · 1 version*
 
 Builds a whisper index
 

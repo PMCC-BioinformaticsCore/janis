@@ -3,7 +3,7 @@
 GATK4: GetFilterMutectCalls
 ====================================================
 
-*1 contributor · 3 versions*
+``Gatk4FilterMutectCalls`` · *1 contributor · 3 versions*
 
 Filter variants in a Mutect2 VCF callset.
 

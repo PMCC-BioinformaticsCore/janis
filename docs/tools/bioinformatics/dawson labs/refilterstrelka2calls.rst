@@ -3,7 +3,7 @@
 Refilter Strelka2 Variant Calls
 =======================================================
 
-*1 contributor · 1 version*
+``refilterStrelka2Calls`` · *1 contributor · 1 version*
 
 Usage: filterStrelkaCalls.R [options]
 

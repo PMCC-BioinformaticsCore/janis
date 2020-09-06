@@ -3,7 +3,7 @@
 Mutect2 joint somatic variant calling workflow
 ============================================================================
 
-*0 contributors · 1 version*
+``Mutect2JointSomaticWorkflow`` · *0 contributors · 1 version*
 
 This workflow uses the capability of mutect2 to call several samples at the same time and improve recall and accuracy through a joint model.
         Most of these tools are still in a beta state and not intended for main production (as of 4.1.4.0)
@@ -123,14 +123,14 @@ Embedded Tools
 
 ================================  ==========================================
 Create genomic call regions       ``CreateCallRegions/v0.1.0``
-GatkMutect2                       ``Gatk4Mutect2_cram/4.1.4.0``
+GatkMutect2                       ``Gatk4Mutect2_cram/4.1.6.0``
 BCFTools: Concat                  ``bcftoolsConcat/v1.9``
 BCFTools: Index                   ``bcftoolsIndex/v1.9``
 GATK4: LearnReadOrientationModel  ``Gatk4LearnReadOrientationModel/4.1.4.0``
-GATK4: MergeMutectStats           ``Gatk4MergeMutectStats/4.1.2.0``
-GATK4: GetPileupSummaries         ``Gatk4GetPileupSummaries_cram/4.1.4.0``
+GATK4: MergeMutectStats           ``Gatk4MergeMutectStats/4.1.4.0``
+GATK4: GetPileupSummaries         ``Gatk4GetPileupSummaries_cram/4.1.6.0``
 GATK4: CalculateContamination     ``Gatk4CalculateContamination/4.1.4.0``
-GATK4: GetFilterMutectCalls       ``Gatk4FilterMutectCalls/4.1.4.0``
+GATK4: GetFilterMutectCalls       ``Gatk4FilterMutectCalls/4.1.3.0``
 BCFTools: Normalize               ``bcftoolsNorm/v1.9``
 ================================  ==========================================
 
@@ -161,14 +161,14 @@ Workflow Description Language
    version development
 
    import "tools/CreateCallRegions_v0_1_0.wdl" as C
-   import "tools/Gatk4Mutect2_cram_4_1_4_0.wdl" as G
+   import "tools/Gatk4Mutect2_cram_4_1_6_0.wdl" as G
    import "tools/bcftoolsConcat_v1_9.wdl" as B
    import "tools/bcftoolsIndex_v1_9.wdl" as B2
    import "tools/Gatk4LearnReadOrientationModel_4_1_4_0.wdl" as G2
-   import "tools/Gatk4MergeMutectStats_4_1_2_0.wdl" as G3
-   import "tools/Gatk4GetPileupSummaries_cram_4_1_4_0.wdl" as G4
+   import "tools/Gatk4MergeMutectStats_4_1_4_0.wdl" as G3
+   import "tools/Gatk4GetPileupSummaries_cram_4_1_6_0.wdl" as G4
    import "tools/Gatk4CalculateContamination_4_1_4_0.wdl" as G5
-   import "tools/Gatk4FilterMutectCalls_4_1_4_0.wdl" as G6
+   import "tools/Gatk4FilterMutectCalls_4_1_3_0.wdl" as G6
    import "tools/bcftoolsNorm_v1_9.wdl" as B3
 
    workflow Mutect2JointSomaticWorkflow {
@@ -249,7 +249,13 @@ Workflow Description Language
          sites_tbi=biallelicSites_tbi,
          intervals=biallelicSites,
          reference=reference,
-         reference_fai=reference_fai
+         reference_fai=reference_fai,
+         reference_amb=reference_amb,
+         reference_ann=reference_ann,
+         reference_bwt=reference_bwt,
+         reference_pac=reference_pac,
+         reference_sa=reference_sa,
+         reference_dict=reference_dict
      }
      call G5.Gatk4CalculateContamination as contamination {
        input:
@@ -390,7 +396,7 @@ Common Workflow Language
        source: panelOfNormals
      scatter:
      - intervals
-     run: tools/Gatk4Mutect2_cram_4_1_4_0.cwl
+     run: tools/Gatk4Mutect2_cram_4_1_6_0.cwl
      out:
      - id: out
      - id: stats
@@ -425,7 +431,7 @@ Common Workflow Language
      in:
      - id: statsFiles
        source: mutect2/stats
-     run: tools/Gatk4MergeMutectStats_4_1_2_0.cwl
+     run: tools/Gatk4MergeMutectStats_4_1_4_0.cwl
      out:
      - id: out
    - id: pileup
@@ -439,7 +445,7 @@ Common Workflow Language
        source: biallelicSites
      - id: reference
        source: reference
-     run: tools/Gatk4GetPileupSummaries_cram_4_1_4_0.cwl
+     run: tools/Gatk4GetPileupSummaries_cram_4_1_6_0.cwl
      out:
      - id: out
    - id: contamination
@@ -466,7 +472,7 @@ Common Workflow Language
        source: indexUnfiltered/out
      - id: reference
        source: reference
-     run: tools/Gatk4FilterMutectCalls_4_1_4_0.cwl
+     run: tools/Gatk4FilterMutectCalls_4_1_3_0.cwl
      out:
      - id: out
    - id: normalise

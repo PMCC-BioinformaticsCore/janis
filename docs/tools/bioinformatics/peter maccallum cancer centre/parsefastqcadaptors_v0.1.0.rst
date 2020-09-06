@@ -3,7 +3,7 @@
     Parse FastQC Adaptors
     ===========================================
 
-    *0 contributors · 1 version*
+    ``ParseFastqcAdaptors`` · *0 contributors · 1 version*
 
     Parse overrepresented region and lookup in Cutadapt table
 

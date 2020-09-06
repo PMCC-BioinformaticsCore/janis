@@ -3,7 +3,7 @@
 VcfLib: VcfStreamSort
 =====================================
 
-*1 contributor · 1 version*
+``vcfstreamsort`` · *1 contributor · 1 version*
 
 usage: vcfallelicprimitives [options] [file]
 

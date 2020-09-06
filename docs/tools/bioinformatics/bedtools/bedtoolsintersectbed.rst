@@ -3,7 +3,7 @@
 BEDTools: intersectBed
 =============================================
 
-*0 contributors · 1 version*
+``bedtoolsintersectBed`` · *0 contributors · 1 version*
 
 By far, the most common question asked of two sets of genomic features is whether or not any of the features in the two sets “overlap” with one another. This is known as feature intersection. bedtools intersect allows one to screen for overlaps between two sets of genomic features. Moreover, it allows one to have fine control as to how the intersections are reported. bedtools intersect works with both BED/GFF/VCF and BAM files as input.
 

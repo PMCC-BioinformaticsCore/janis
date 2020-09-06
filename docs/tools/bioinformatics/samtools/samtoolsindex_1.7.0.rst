@@ -3,7 +3,7 @@
 SamTools: Index
 ===============================
 
-*1 contributor · 2 versions*
+``SamToolsIndex`` · *1 contributor · 2 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

@@ -3,7 +3,7 @@
 GATK4 Somatic Variant Caller
 =========================================================
 
-*1 contributor · 2 versions*
+``GATK4_SomaticVariantCaller`` · *1 contributor · 2 versions*
 
 This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.0.12.0.
 

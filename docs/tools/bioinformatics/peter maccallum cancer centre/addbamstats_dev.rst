@@ -3,7 +3,7 @@
 Add Bam Statistics to Vcf
 =======================================
 
-*1 contributor · 2 versions*
+``addBamStats`` · *1 contributor · 2 versions*
 
 usage: add_bam_stats.py [-h] -i I -o O --type {germline,somatic}
                         [--mpileup MPILEUP] [--normal_mpileup NORMAL_MPILEUP]

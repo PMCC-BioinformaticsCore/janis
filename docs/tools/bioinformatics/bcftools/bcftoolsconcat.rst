@@ -3,7 +3,7 @@
 BCFTools: Concat
 =================================
 
-*0 contributors · 1 version*
+``bcftoolsConcat`` · *0 contributors · 1 version*
 
 
 Concatenate or combine VCF/BCF files. All source files must have the same sample

@@ -3,7 +3,7 @@
 VcfLib: VcfUniq
 =========================
 
-*1 contributor · 1 version*
+``vcfuniq`` · *1 contributor · 1 version*
 
 usage: vcffuniq [file]
 Like GNU uniq, but for VCF records. Remove records which have the same positon, ref, and alt as the previous record.

@@ -3,7 +3,7 @@
 GATK4 Germline Variant Caller
 ===========================================================
 
-*2 contributors · 2 versions*
+``GATK4_GermlineVariantCaller`` · *2 contributors · 2 versions*
 
 This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.1.3.
 

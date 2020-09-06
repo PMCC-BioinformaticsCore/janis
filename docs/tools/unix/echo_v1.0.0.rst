@@ -3,7 +3,7 @@
 Echo
 ===========
 
-*0 contributors · 1 version*
+``echo`` · *0 contributors · 1 version*
 
 The echo utility writes any specified operands, separated by single blank (` ') characters and followed by a newline (`
 ') character, to the standard output.

@@ -3,7 +3,7 @@
 VcfLib: Vcf ROC generator
 ==================================
 
-*1 contributor · 1 version*
+``vcfroc`` · *1 contributor · 1 version*
 
 usage: vcfroc [options] [<vcf file>]
 

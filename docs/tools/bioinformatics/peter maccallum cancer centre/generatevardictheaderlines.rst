@@ -3,7 +3,7 @@
     GenerateVardictHeaderLines
     ==========================
 
-    *2 contributors · 1 version*
+    ``GenerateVardictHeaderLines`` · *2 contributors · 1 version*
 
     Generate VarDict Headerlines.       
         

@@ -1,4 +1,4 @@
-// WGS Germline (GATK) [VARIANTS only]
+// WGS Germline (GATK)
 digraph WGSGermlineGATK {
 	node [shape=record]
 	fastqc [label="fastqc (FastQC)"]
@@ -18,8 +18,8 @@ digraph WGSGermlineGATK {
 	fastqc -> getfastqc_adapters
 	getfastqc_adapters -> align_and_sort
 	align_and_sort -> merge_and_mark
-	merge_and_mark -> performance_summary
 	calculate_performancesummary_genomefile -> performance_summary
+	merge_and_mark -> performance_summary
 	merge_and_mark -> vc_gridss
 	merge_and_mark -> bqsr
 	bqsr -> vc_gatk

@@ -3,7 +3,7 @@
 GATK4: Mark Duplicates
 ============================================
 
-*1 contributor · 4 versions*
+``Gatk4MarkDuplicates`` · *1 contributor · 4 versions*
 
 MarkDuplicates (Picard): Identifies duplicate reads.
 

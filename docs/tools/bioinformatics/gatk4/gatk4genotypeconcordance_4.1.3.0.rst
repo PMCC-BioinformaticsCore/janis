@@ -3,7 +3,7 @@
 GATK4: Genotype Concordance
 ======================================================
 
-*1 contributor · 4 versions*
+``Gatk4GenotypeConcordance`` · *1 contributor · 4 versions*
 
 GenotypeConcordance (Picard)
             

@@ -3,7 +3,7 @@
 Annotate Bam Stats to Germline Vcf Workflow
 =================================================================
 
-*1 contributor · 1 version*
+``AddBamStatsGermline`` · *1 contributor · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

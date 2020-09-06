@@ -3,7 +3,7 @@
 GATK4: MergeMutectStats
 ===============================================
 
-*1 contributor · 3 versions*
+``Gatk4MergeMutectStats`` · *1 contributor · 3 versions*
 
 TBD
 

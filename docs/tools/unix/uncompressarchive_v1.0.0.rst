@@ -3,7 +3,7 @@
 UncompressArchive
 =================
 
-*0 contributors · 1 version*
+``UncompressArchive`` · *0 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-unix>`_
 

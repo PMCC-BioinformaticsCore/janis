@@ -3,7 +3,7 @@
 GATK4: Gather VCFs
 ====================================
 
-*1 contributor · 4 versions*
+``Gatk4GatherVcfs`` · *1 contributor · 4 versions*
 
 GatherVcfs (Picard)
             

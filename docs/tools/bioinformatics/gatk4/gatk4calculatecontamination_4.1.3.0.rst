@@ -3,7 +3,7 @@
 GATK4: CalculateContamination
 ===========================================================
 
-*1 contributor · 3 versions*
+``Gatk4CalculateContamination`` · *1 contributor · 3 versions*
 
 Calculates the fraction of reads coming from cross-sample contamination, given results from GetPileupSummaries. The resulting contamination table is used with FilterMutectCalls.
 

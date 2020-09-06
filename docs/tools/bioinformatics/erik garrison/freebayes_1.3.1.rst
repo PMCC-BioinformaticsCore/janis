@@ -3,7 +3,7 @@
 freebayes
 =========
 
-*2 contributors · 2 versions*
+``freebayes`` · *2 contributors · 2 versions*
 
 usage: freebayes [OPTION] ... [BAM FILE] ...
 Bayesian haplotype-based polymorphism discovery.

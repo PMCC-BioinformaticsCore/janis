@@ -122,8 +122,8 @@ Automatically generated index page for GATK4:
      <a href="gatk4getpileupsummaries.html">
        <p style="margin-bottom: 5px"><b>GATK4: GetPileupSummaries</b> <span style="margin-left: 10px; color: darkgray">Gatk4GetPileupSummaries</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4getpileupsummaries.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4getpileupsummaries.html" style="margin-bottom: 10px">
+       v<b>4.1.6.0</b>
      </a></p>
      </a>
      <hr />
@@ -131,8 +131,8 @@ Automatically generated index page for GATK4:
      <a href="gatk4getpileupsummaries_cram.html">
        <p style="margin-bottom: 5px"><b>GATK4: GetPileupSummaries</b> <span style="margin-left: 10px; color: darkgray">Gatk4GetPileupSummaries_cram</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4getpileupsummaries_cram.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4getpileupsummaries_cram.html" style="margin-bottom: 10px">
+       v<b>4.1.6.0</b>
      </a></p>
      </a>
      <hr />
@@ -140,8 +140,8 @@ Automatically generated index page for GATK4:
      <a href="gatk4haplotypecaller.html">
        <p style="margin-bottom: 5px"><b>GATK4: Haplotype Caller</b> <span style="margin-left: 10px; color: darkgray">Gatk4HaplotypeCaller</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4haplotypecaller.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
+       <p><span style="margin-right: 10px; color: darkgray">(7 versions)</span><a class="version-button" href="gatk4haplotypecaller.html" style="margin-bottom: 10px">
+       v<b>4.1.8.1</b>
      </a></p>
      </a>
      <hr />
@@ -194,8 +194,8 @@ Automatically generated index page for GATK4:
      <a href="gatk4mutect2.html">
        <p style="margin-bottom: 5px"><b>GatkMutect2</b> <span style="margin-left: 10px; color: darkgray">Gatk4Mutect2</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4mutect2.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
+       <p><span style="margin-right: 10px; color: darkgray">(7 versions)</span><a class="version-button" href="gatk4mutect2.html" style="margin-bottom: 10px">
+       v<b>4.1.8.1</b>
      </a></p>
      </a>
      <hr />
@@ -203,8 +203,8 @@ Automatically generated index page for GATK4:
      <a href="gatk4mutect2_cram.html">
        <p style="margin-bottom: 5px"><b>GatkMutect2</b> <span style="margin-left: 10px; color: darkgray">Gatk4Mutect2_cram</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="gatk4mutect2_cram.html" style="margin-bottom: 10px">
-       v<b>4.1.4.0</b>
+       <p><span style="margin-right: 10px; color: darkgray">(6 versions)</span><a class="version-button" href="gatk4mutect2_cram.html" style="margin-bottom: 10px">
+       v<b>4.1.8.1</b>
      </a></p>
      </a>
      <hr />

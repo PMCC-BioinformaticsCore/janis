@@ -3,7 +3,7 @@
 Cutadapt
 ===================
 
-*1 contributor · 5 versions*
+``cutadapt`` · *1 contributor · 5 versions*
 
 cutadapt version 2.4
 Copyright (C) 2010-2019 Marcel Martin <marcel.martin@scilifelab.se>

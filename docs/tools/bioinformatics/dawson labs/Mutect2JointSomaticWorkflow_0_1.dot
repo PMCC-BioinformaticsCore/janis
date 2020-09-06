@@ -19,9 +19,9 @@ digraph Mutect2JointSomaticWorkflow {
 	mutect2 -> mergeMutect2
 	pileup -> contamination
 	learn -> filtering
-	mergeMutect2 -> filtering
 	contamination -> filtering
 	indexUnfiltered -> filtering
+	mergeMutect2 -> filtering
 	filtering -> normalise
 	normalise -> indexFiltered
 }

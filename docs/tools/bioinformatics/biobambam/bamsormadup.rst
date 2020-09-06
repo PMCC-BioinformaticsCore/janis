@@ -3,7 +3,7 @@
 BamSorMaDup
 =========================
 
-*1 contributor · 1 version*
+``bamsormadup`` · *1 contributor · 1 version*
 
 bamsormadup: parallel sorting and duplicate marking
 

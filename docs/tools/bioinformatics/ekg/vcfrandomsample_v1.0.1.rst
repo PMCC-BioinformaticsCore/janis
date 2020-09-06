@@ -3,7 +3,7 @@
 VcfLib: Vcf Random Sampling
 =============================================
 
-*1 contributor · 1 version*
+``vcfrandomsample`` · *1 contributor · 1 version*
 
 usage: vcfrandomsample [options] [<vcf file>]
 

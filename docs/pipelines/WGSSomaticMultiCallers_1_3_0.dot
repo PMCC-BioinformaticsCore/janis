@@ -24,8 +24,8 @@ digraph WGSSomaticMultiCallers {
 	combined_sort [label="combined_sort (BCFTools: Sort)"]
 	combined_uncompress [label="combined_uncompress (UncompressArchive)"]
 	combined_addbamstats [label="combined_addbamstats (Annotate Bam Stats to Somatic Vcf Workflow)" color=grey80 style=filled]
-	tumor -> vc_gridss
 	normal -> vc_gridss
+	tumor -> vc_gridss
 	normal -> bqsr_normal
 	tumor -> bqsr_tumor
 	bqsr_normal -> vc_gatk
@@ -34,25 +34,25 @@ digraph WGSSomaticMultiCallers {
 	vc_gatk_merge -> vc_gatk_compress_for_sort
 	vc_gatk_compress_for_sort -> vc_gatk_sort_combined
 	vc_gatk_sort_combined -> vc_gatk_uncompress_for_combine
-	tumor -> addbamstats
-	normal -> addbamstats
 	vc_gatk_uncompress_for_combine -> addbamstats
-	tumor -> vc_vardict
+	normal -> addbamstats
+	tumor -> addbamstats
 	normal -> vc_vardict
+	tumor -> vc_vardict
 	generate_vardict_headerlines -> vc_vardict
 	vc_vardict -> vc_vardict_merge
 	vc_vardict_merge -> vc_vardict_compress_for_sort
 	vc_vardict_compress_for_sort -> vc_vardict_sort_combined
 	vc_vardict_sort_combined -> vc_vardict_uncompress_for_combine
-	tumor -> vc_strelka
 	normal -> vc_strelka
-	vc_vardict_uncompress_for_combine -> combine_variants
-	vc_strelka -> combine_variants
+	tumor -> vc_strelka
 	vc_gatk_uncompress_for_combine -> combine_variants
+	vc_strelka -> combine_variants
+	vc_vardict_uncompress_for_combine -> combine_variants
 	combine_variants -> combined_compress
 	combined_compress -> combined_sort
 	combined_sort -> combined_uncompress
-	combined_uncompress -> combined_addbamstats
-	tumor -> combined_addbamstats
 	normal -> combined_addbamstats
+	tumor -> combined_addbamstats
+	combined_uncompress -> combined_addbamstats
 }

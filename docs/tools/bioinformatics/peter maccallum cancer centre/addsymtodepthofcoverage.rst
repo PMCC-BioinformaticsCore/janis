@@ -3,7 +3,7 @@
 Add Sym to DepthOfCoverage
 ====================================================
 
-*1 contributor · 2 versions*
+``addSymToDepthOfCoverage`` · *1 contributor · 2 versions*
 
 usage: add_sym_to_DepthOfCoverage.py [-h] -i INPUT -o OUTPUT -bed BED
 

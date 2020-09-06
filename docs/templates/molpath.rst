@@ -4,8 +4,9 @@ Molpath
 Template ID: ``molpath``
 
 
-Template for Peter Mac molpath, the primary difference being sbatch
-is changed to `. /etc/profile.d/modules.sh; sbatch`.
+Template for Peter Mac molpath, the primary difference being the initial detatched
+submission `sbatch` is changed to `. /etc/profile.d/modules.sh; sbatch` to handle
+the pipeline server.
 
 
 Quickstart

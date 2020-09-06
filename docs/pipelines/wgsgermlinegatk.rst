@@ -1,9 +1,9 @@
 :orphan:
 
-WGS Germline (GATK) [VARIANTS only]
-=====================================================
+WGS Germline (GATK)
+=====================================
 
-*A variant-calling WGS pipeline using only the GATK Haplotype variant caller · 3 contributors · 1 version*
+``WGSGermlineGATK`` · *A variant-calling WGS pipeline using only the GATK Haplotype variant caller · 3 contributors · 1 version*
 
 This is a genomics pipeline to ONLY call variants using GATK and GRIDSS from an indexed bam. The final variants are outputted in the VCF format.
 
@@ -128,7 +128,7 @@ out_variants_split       Array<VCF>         Unmerged variants from the GATK call
 Workflow
 --------
 
-.. image:: WGSGermlineGATK_1_3_1.dot.png
+.. image:: WGSGermlineGATK_1_4_0.dot.png
 
 
 Information
@@ -136,7 +136,7 @@ Information
 
 
 :ID: ``WGSGermlineGATK``
-:Versions: 1.3.1
+:Versions: 1.4.0
 :Authors: Michael Franklin, Richard Lupat, Jiaan Yu
 :Citations: 
 :Created: 2018-12-24
@@ -388,7 +388,7 @@ Common Workflow Language
    #!/usr/bin/env cwl-runner
    class: Workflow
    cwlVersion: v1.0
-   label: WGS Germline (GATK) [VARIANTS only]
+   label: WGS Germline (GATK)
    doc: |
      This is a genomics pipeline to ONLY call variants using GATK and GRIDSS from an indexed bam. The final variants are outputted in the VCF format.
 

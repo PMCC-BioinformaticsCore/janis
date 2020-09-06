@@ -3,7 +3,7 @@
 CellRanger mkfastq
 ======================================
 
-*0 contributors · 1 version*
+``CellRangerMkfastq`` · *0 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

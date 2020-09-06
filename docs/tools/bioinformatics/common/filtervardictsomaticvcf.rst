@@ -3,7 +3,7 @@
 Filter Vardict Somatic Vcf
 ====================================================
 
-*0 contributors · 1 version*
+``FilterVardictSomaticVcf`` · *0 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

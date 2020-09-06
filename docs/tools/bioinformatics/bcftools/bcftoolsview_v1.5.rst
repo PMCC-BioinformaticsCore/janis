@@ -3,7 +3,7 @@
 BCFTools: View
 =============================
 
-*0 contributors · 2 versions*
+``bcftoolsview`` · *0 contributors · 2 versions*
 
 ________________________________
  

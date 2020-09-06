@@ -3,7 +3,7 @@
 Performance summary workflow (whole genome)
 ======================================================================
 
-*1 contributor · 1 version*
+``PerformanceSummaryGenome`` · *1 contributor · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

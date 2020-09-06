@@ -3,7 +3,7 @@
 BEDTools: coverageBed
 ===========================================
 
-*0 contributors · 1 version*
+``bedtoolsCoverageBed`` · *0 contributors · 1 version*
 
 The bedtools coverage tool computes both the depth and breadth of coverage of features in file B on the features in file A. For example, bedtools coverage can compute the coverage of sequence alignments (file B) across 1 kilobase (arbitrary) windows (file A) tiling a genome of interest. One advantage that bedtools coverage offers is that it not only counts the number of features that overlap an interval in file A, it also computes the fraction of bases in the interval in A that were overlapped by one or more features. Thus, bedtools coverage also computes the breadth of coverage observed for each interval in A.
 

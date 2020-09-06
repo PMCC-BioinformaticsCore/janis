@@ -3,7 +3,7 @@
 GATK4 Somatic Variant Caller for Tumour Only Samples with Targeted BED
 ====================================================================================================================
 
-*2 contributors · 1 version*
+``GATK4_SomaticVariantCallerTumorOnlyTargeted`` · *2 contributors · 1 version*
 
 This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.1.2.
 

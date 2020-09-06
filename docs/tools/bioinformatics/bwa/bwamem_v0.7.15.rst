@@ -3,7 +3,7 @@
 BWA-MEM
 ================
 
-*1 contributor · 1 version*
+``bwamem`` · *1 contributor · 1 version*
 
 bwa - Burrows-Wheeler Alignment Tool
 BWA is a software package for mapping low-divergent sequences against a large reference genome, such as the human 

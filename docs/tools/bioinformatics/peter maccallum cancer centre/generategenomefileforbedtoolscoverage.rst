@@ -3,7 +3,7 @@
     Generate genome for BedtoolsCoverage
     ============================================================================
 
-    *2 contributors · 1 version*
+    ``GenerateGenomeFileForBedtoolsCoverage`` · *2 contributors · 1 version*
 
     Generate --genome FILE for BedToolsCoverage      
         

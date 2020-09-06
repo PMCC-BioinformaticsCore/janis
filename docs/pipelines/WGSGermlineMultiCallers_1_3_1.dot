@@ -29,8 +29,8 @@ digraph WGSGermlineMultiCallers {
 	fastqc -> getfastqc_adapters
 	getfastqc_adapters -> align_and_sort
 	align_and_sort -> merge_and_mark
-	merge_and_mark -> performance_summary
 	calculate_performancesummary_genomefile -> performance_summary
+	merge_and_mark -> performance_summary
 	merge_and_mark -> vc_gridss
 	merge_and_mark -> bqsr
 	bqsr -> vc_gatk
@@ -45,12 +45,12 @@ digraph WGSGermlineMultiCallers {
 	vc_vardict_merge -> vc_vardict_compress_for_sort
 	vc_vardict_compress_for_sort -> vc_vardict_sort_combined
 	vc_vardict_sort_combined -> vc_vardict_uncompress_for_combine
-	vc_vardict_uncompress_for_combine -> combine_variants
-	vc_strelka -> combine_variants
 	vc_gatk_uncompress_for_combine -> combine_variants
+	vc_strelka -> combine_variants
+	vc_vardict_uncompress_for_combine -> combine_variants
 	combine_variants -> combined_compress
 	combined_compress -> combined_sort
 	combined_sort -> combined_uncompress
-	combined_uncompress -> combined_addbamstats
 	merge_and_mark -> combined_addbamstats
+	combined_uncompress -> combined_addbamstats
 }

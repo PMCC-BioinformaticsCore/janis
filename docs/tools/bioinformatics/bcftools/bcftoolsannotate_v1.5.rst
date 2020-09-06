@@ -3,7 +3,7 @@
 BCFTools: Annotate
 =====================================
 
-*0 contributors · 2 versions*
+``bcftoolsAnnotate`` · *0 contributors · 2 versions*
 
 ------------------------------------
 

@@ -3,7 +3,7 @@
 Freebayes somatic workflow
 =====================================================
 
-*0 contributors · 1 version*
+``FreeBayesSomaticWorkflow`` · *0 contributors · 1 version*
 
 This workflow uses the capabilities of freebayes to output all variants independent of the
         diploid model which then in turn allows us to create a likelihood based difference between

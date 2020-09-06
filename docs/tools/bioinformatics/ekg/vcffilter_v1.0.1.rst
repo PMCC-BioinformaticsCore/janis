@@ -3,7 +3,7 @@
 VcfLib: Vcf Filter
 ==============================
 
-*1 contributor · 1 version*
+``vcffilter`` · *1 contributor · 1 version*
 
 Filter the specified vcf file using the set of filters.
 Filters are specified in the form "<ID> <operator> <value>:

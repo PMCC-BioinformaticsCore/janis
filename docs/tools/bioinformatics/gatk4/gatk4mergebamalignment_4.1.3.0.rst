@@ -3,7 +3,7 @@
 GATK4: Merge SAM or BAM with unmapped BAM file
 =======================================================================
 
-*2 contributors · 4 versions*
+``Gatk4MergeBamAlignment`` · *2 contributors · 4 versions*
 
 Merges SAM/BAM file with an unmapped BAM file
 

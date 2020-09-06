@@ -3,7 +3,7 @@
 VcfLib: Vcf Length
 ==============================
 
-*1 contributor · 1 version*
+``vcflength`` · *1 contributor · 1 version*
 
 Adds the length of the variant record (in [-/+]) relative to the reference allele to each VCF record.
 

@@ -3,7 +3,7 @@
 SamTools: Sort
 =============================
 
-*1 contributor · 2 versions*
+``SamToolsSort`` · *1 contributor · 2 versions*
 
 Ensure SAMTOOLS.SORT is inheriting from parent metadata
     

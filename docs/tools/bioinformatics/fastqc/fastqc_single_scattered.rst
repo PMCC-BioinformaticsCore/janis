@@ -3,7 +3,7 @@
 FastQC (Single, Scattered)
 ====================================================
 
-*1 contributor · 1 version*
+``fastqc_single_scattered`` · *1 contributor · 1 version*
 
 
 FastQC doesn't return a Directory unless it's the single variant, but Janis will make

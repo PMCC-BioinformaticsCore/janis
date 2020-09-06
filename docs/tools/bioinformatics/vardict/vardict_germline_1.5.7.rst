@@ -3,7 +3,7 @@
 VarDict (Germline)
 =====================================
 
-*0 contributors · 5 versions*
+``vardict_germline`` · *0 contributors · 5 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

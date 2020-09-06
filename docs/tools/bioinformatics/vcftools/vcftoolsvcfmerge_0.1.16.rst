@@ -3,7 +3,7 @@
 VcfTools: VcfMerge
 =====================================
 
-*1 contributor · 1 version*
+``VcfToolsVcfMerge`` · *1 contributor · 1 version*
 
 Merges two or more VCF files into one so that, for example, if two source files had one column each, on output will be printed a file with two columns. See also vcf-concat for concatenating VCFs split by chromosome.
 

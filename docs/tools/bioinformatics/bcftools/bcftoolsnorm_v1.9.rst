@@ -3,7 +3,7 @@
 BCFTools: Normalize
 ==================================
 
-*0 contributors · 2 versions*
+``bcftoolsNorm`` · *0 contributors · 2 versions*
 
 Left-align and normalize indels, check if REF alleles match the reference,
 split multiallelic sites into multiple rows; recover multiallelics from

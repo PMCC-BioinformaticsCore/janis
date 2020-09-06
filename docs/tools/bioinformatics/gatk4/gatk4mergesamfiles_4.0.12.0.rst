@@ -3,7 +3,7 @@
 GATK4: Merge SAM Files
 ===========================================
 
-*1 contributor · 4 versions*
+``Gatk4MergeSamFiles`` · *1 contributor · 4 versions*
 
 Merges multiple SAM/BAM files into one file
 

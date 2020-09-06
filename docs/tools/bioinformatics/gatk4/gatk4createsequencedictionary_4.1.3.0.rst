@@ -3,7 +3,7 @@
 GATK4: CreateSequenceDictionary
 ===============================================================
 
-*1 contributor · 3 versions*
+``Gatk4CreateSequenceDictionary`` · *1 contributor · 3 versions*
 
 Creates a sequence dictionary for a reference sequence.  This tool creates a sequence dictionary file (with ".dict"
 extension) from a reference sequence provided in FASTA format, which is required by many processing and analysis tools.

@@ -3,7 +3,7 @@
 Performance Summary
 ========================================
 
-*1 contributor · 2 versions*
+``performanceSummary`` · *1 contributor · 2 versions*
 
 usage: performance_summary.py [-h] --flagstat FLAGSTAT
                               --collect_insert_metrics COLLECT_INSERT_METRICS

@@ -3,7 +3,7 @@
 Call Somatic Variants from freebayes
 ===========================================================
 
-*1 contributor · 1 version*
+``callSomaticFreeBayes`` · *1 contributor · 1 version*
 
 Usage: callSomaticFreeBayes.R [options]
 

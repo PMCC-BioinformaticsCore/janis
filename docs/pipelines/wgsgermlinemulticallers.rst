@@ -3,7 +3,7 @@
 WGS Germline (Multi callers)
 ======================================================
 
-*A variant-calling WGS pipeline using GATK, VarDict and Strelka2 · 3 contributors · 1 version*
+``WGSGermlineMultiCallers`` · *A variant-calling WGS pipeline using GATK, VarDict and Strelka2 · 3 contributors · 1 version*
 
 This is a genomics pipeline to align sequencing data (Fastq pairs) into BAMs and call variants using:
 
@@ -142,7 +142,7 @@ out_variants                VCF                Combined variants from all 3 call
 Workflow
 --------
 
-.. image:: WGSGermlineMultiCallers_1_3_1.dot.png
+.. image:: WGSGermlineMultiCallers_1_4_0.dot.png
 
 
 Information
@@ -150,7 +150,7 @@ Information
 
 
 :ID: ``WGSGermlineMultiCallers``
-:Versions: 1.3.1
+:Versions: 1.4.0
 :Authors: Michael Franklin, Richard Lupat, Jiaan Yu
 :Citations: 
 :Created: None

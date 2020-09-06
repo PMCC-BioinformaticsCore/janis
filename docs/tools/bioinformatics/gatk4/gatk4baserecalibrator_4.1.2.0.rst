@@ -3,7 +3,7 @@
 GATK4: Base Recalibrator
 ================================================
 
-*1 contributor · 4 versions*
+``Gatk4BaseRecalibrator`` · *1 contributor · 4 versions*
 
 First pass of the base quality score recalibration. Generates a recalibration table based on various covariates. 
 The default covariates are read group, reported quality score, machine cycle, and nucleotide context.

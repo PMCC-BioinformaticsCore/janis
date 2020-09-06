@@ -3,7 +3,7 @@
 Gene Coverage Per Sample
 ================================================
 
-*1 contributor · 3 versions*
+``geneCoveragePerSample`` · *1 contributor · 3 versions*
 
 usage: gene_coverage_per_sample.py [-h] [-l LIST] [-n NAME] [-p PATH] [-b BED]
                                    [-g GENE] [-r REGION] [-f FOLDS] [-d]

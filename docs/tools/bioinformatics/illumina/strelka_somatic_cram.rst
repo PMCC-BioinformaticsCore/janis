@@ -3,7 +3,7 @@
 Strelka (Somatic)
 ========================================
 
-*0 contributors · 2 versions*
+``strelka_somatic_cram`` · *0 contributors · 2 versions*
 
 Usage: configureStrelkaSomaticWorkflow.py [options]
 Version: 2.9.10

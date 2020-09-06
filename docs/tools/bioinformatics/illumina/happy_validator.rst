@@ -3,7 +3,7 @@
 Hap.py validation
 ===================================
 
-*1 contributor · 1 version*
+``happy_validator`` · *1 contributor · 1 version*
 
 usage: Haplotype Comparison 
     [-h] [-v] [-r REF] [-o REPORTS_PREFIX]

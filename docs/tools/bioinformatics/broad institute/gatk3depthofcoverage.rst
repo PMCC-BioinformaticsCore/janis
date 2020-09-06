@@ -3,7 +3,7 @@
 GATK3 DepthOfCoverage: Determine coverage at different levels of partitioning and aggregation.
 =====================================================================================================================
 
-*1 contributor · 2 versions*
+``Gatk3DepthOfCoverage`` · *1 contributor · 2 versions*
 
 Overview
 This tool processes a set of bam files to determine coverage at different levels of partitioning and aggregation. Coverage can be analyzed per locus, per interval, per gene, or in total; can be partitioned by sample, by read group, by technology, by center, or by library; and can be summarized by mean, median, quartiles, and/or percentage of bases covered to or beyond a threshold. Additionally, reads and bases can be filtered by mapping or base quality score.

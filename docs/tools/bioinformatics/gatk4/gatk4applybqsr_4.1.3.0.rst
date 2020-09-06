@@ -3,7 +3,7 @@
 GATK4: Apply base quality score recalibration
 ==============================================================
 
-*1 contributor · 4 versions*
+``Gatk4ApplyBQSR`` · *1 contributor · 4 versions*
 
 Apply base quality score recalibration: This tool performs the second pass in a two-stage 
 process called Base Quality Score Recalibration (BQSR). Specifically, it recalibrates the 

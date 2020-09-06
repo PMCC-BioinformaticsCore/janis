@@ -3,7 +3,7 @@
 GatkMutect2
 ==========================
 
-*1 contributor · 4 versions*
+``Gatk4Mutect2`` · *1 contributor · 7 versions*
 
 USAGE: Mutect2 [arguments]
 Call somatic SNVs and indels via local assembly of haplotypes
@@ -16,13 +16,13 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.gatk4.mutect2.versions import GatkMutect2_4_1_4
+       from janis_bioinformatics.tools.gatk4.mutect2.versions import GatkMutect2_4_1_8
 
        wf = WorkflowBuilder("myworkflow")
 
        wf.step(
            "gatk4mutect2_step",
-           GatkMutect2_4_1_4(
+           GatkMutect2_4_1_8(
                tumorBams=None,
                reference=None,
            )
@@ -85,8 +85,8 @@ Information
 
 :ID: ``Gatk4Mutect2``
 :URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.10.0/org_broadinstitute_hellbender_tools_walkers_mutect_Mutect2.php>`_
-:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
-:Container: broadinstitute/gatk:4.1.4.0
+:Versions: 4.1.8.1, 4.1.7.0, 4.1.6.0, 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
+:Container: broadinstitute/gatk:4.1.8.1
 :Authors: Michael Franklin
 :Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
 :Created: 2018-12-24
@@ -548,7 +548,7 @@ Workflow Description Language
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "broadinstitute/gatk:4.1.4.0"
+       docker: "broadinstitute/gatk:4.1.8.1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 16, 4])}G"
        preemptible: 2
@@ -581,7 +581,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: broadinstitute/gatk:4.1.4.0
+     dockerPull: broadinstitute/gatk:4.1.8.1
 
    inputs:
    - id: javaOptions

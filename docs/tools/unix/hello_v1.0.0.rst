@@ -3,7 +3,7 @@
 Hello, World!
 =====================
 
-*1 contributor · 1 version*
+``hello`` · *1 contributor · 1 version*
 
 This is the 'Hello, world' equivalent workflow that uses the Echo unix
 tool to log "Hello, World!" to the console, and collects the result.

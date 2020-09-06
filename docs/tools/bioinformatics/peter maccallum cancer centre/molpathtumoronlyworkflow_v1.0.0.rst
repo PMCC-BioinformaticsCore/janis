@@ -3,7 +3,7 @@
 Molpath Tumor Only Workflow
 ======================================================
 
-*1 contributor · 1 version*
+``MolpathTumorOnlyWorkflow`` · *1 contributor · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

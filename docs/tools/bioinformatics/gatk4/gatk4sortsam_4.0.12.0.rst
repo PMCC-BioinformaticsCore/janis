@@ -3,7 +3,7 @@
 GATK4: SortSAM
 =============================
 
-*1 contributor · 4 versions*
+``Gatk4SortSam`` · *1 contributor · 4 versions*
 
 Sorts a SAM/BAM/CRAM file.
 

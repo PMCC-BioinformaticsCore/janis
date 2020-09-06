@@ -3,7 +3,7 @@
 scramble
 ========
 
-*1 contributor · 1 version*
+``scramble`` · *1 contributor · 1 version*
 
 scramble: streaming bam to cram compression
 

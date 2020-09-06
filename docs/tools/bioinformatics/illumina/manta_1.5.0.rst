@@ -3,7 +3,7 @@
 Manta
 =============
 
-*1 contributor · 2 versions*
+``manta`` · *1 contributor · 2 versions*
 
 Manta calls structural variants (SVs) and indels from mapped paired-end sequencing reads.
 It is optimized for analysis of germline variation in small sets of individuals and somatic

@@ -55,5 +55,6 @@ max_cores                                                                       
 max_ram                                                                                                         Maximum amount of ram (GB) that a task can request
 can_run_in_foreground          <class 'bool'>                       True
 run_in_background              <class 'bool'>                       False
+sbatch                         <class 'str'>                        sbatch                                      Override the sbatch command
 =============================  ===================================  ==========================================  ==========================================================================================
 

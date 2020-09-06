@@ -3,7 +3,7 @@
 GATK4: LearnReadOrientationModel
 =================================================================
 
-*1 contributor · 3 versions*
+``Gatk4LearnReadOrientationModel`` · *1 contributor · 3 versions*
 
 TBD
 

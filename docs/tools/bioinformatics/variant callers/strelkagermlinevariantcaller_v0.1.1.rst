@@ -3,7 +3,7 @@
 Strelka Germline Variant Caller
 ==============================================================
 
-*0 contributors · 1 version*
+``strelkaGermlineVariantCaller`` · *0 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

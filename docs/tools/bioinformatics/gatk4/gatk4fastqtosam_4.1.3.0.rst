@@ -3,7 +3,7 @@
 GATK4: Convert a FASTQ file to an unaligned BAM or SAM file.
 ==============================================================================
 
-*2 contributors · 4 versions*
+``Gatk4FastqToSam`` · *2 contributors · 4 versions*
 
 Converts a FASTQ file to an unaligned BAM or SAM file.
 

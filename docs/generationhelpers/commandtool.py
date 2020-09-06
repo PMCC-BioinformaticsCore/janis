@@ -32,7 +32,7 @@ def prepare_commandtool_page(tool: CommandTool, versions: List[str]):
     has_container = tool.container() is not None
 
     onelinedescription = prepare_byline(
-        metadata.short_documentation, metadata.contributors, versions
+        tool.id(), metadata.short_documentation, metadata.contributors, versions
     )
 
     formatted_url = (

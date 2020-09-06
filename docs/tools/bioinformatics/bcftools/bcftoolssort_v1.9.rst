@@ -3,7 +3,7 @@
 BCFTools: Sort
 =============================
 
-*0 contributors · 1 version*
+``bcftoolssort`` · *0 contributors · 1 version*
 
 About:   Sort VCF/BCF file.
 Usage:   bcftools sort [OPTIONS] <FILE.vcf>

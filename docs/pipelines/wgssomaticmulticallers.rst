@@ -3,7 +3,7 @@
 WGS Somatic (Multi callers)
 ====================================================
 
-*A somatic tumor-normal variant-calling WGS pipeline using GATK, VarDict and Strelka2 · 3 contributors · 1 version*
+``WGSSomaticMultiCallers`` · *A somatic tumor-normal variant-calling WGS pipeline using GATK, VarDict and Strelka2 · 3 contributors · 1 version*
 
 This is a genomics pipeline to align sequencing data (Fastq pairs) into BAMs:
 
@@ -151,7 +151,7 @@ out_variants                    VCF                Combined variants from GATK, 
 Workflow
 --------
 
-.. image:: WGSSomaticMultiCallers_1_3_0.dot.png
+.. image:: WGSSomaticMultiCallers_1_4_0.dot.png
 
 
 Information
@@ -159,7 +159,7 @@ Information
 
 
 :ID: ``WGSSomaticMultiCallers``
-:Versions: 1.3.0
+:Versions: 1.4.0
 :Authors: Michael Franklin, Richard Lupat, Jiaan Yu
 :Citations: 
 :Created: 2018-12-24

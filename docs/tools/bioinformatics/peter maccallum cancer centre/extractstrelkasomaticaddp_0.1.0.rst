@@ -3,7 +3,7 @@
 Extract Strelka Somatic AD DP
 =========================================================
 
-*1 contributor · 2 versions*
+``extractStrelkaSomaticADDP`` · *1 contributor · 3 versions*
 
 
  - Extract and calculate AD and AF value for each variant (both SNVs and INDELs)
@@ -78,7 +78,7 @@ Information
 
 :ID: ``extractStrelkaSomaticADDP``
 :URL: `https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils <https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils>`_
-:Versions: dev, 0.1.0
+:Versions: dev, 0.1.1, 0.1.0
 :Container: michaelfranklin/pmacutil:0.1.0
 :Authors: Jiaan Yu
 :Citations: None

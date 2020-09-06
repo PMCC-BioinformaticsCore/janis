@@ -3,7 +3,7 @@
 Facets: snp-pileup
 ====================================
 
-*2 contributors · 3 versions*
+``FacetsSnpPileup`` · *2 contributors · 3 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

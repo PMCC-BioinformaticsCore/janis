@@ -3,7 +3,7 @@
 GATK4: GatherBQSRReports
 =================================================
 
-*0 contributors · 4 versions*
+``Gatk4GatherBQSRReports`` · *0 contributors · 4 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

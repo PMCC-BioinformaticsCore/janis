@@ -3,7 +3,7 @@
 Split Multiple Alleles
 =========================================
 
-*0 contributors · 1 version*
+``SplitMultiAllele`` · *0 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

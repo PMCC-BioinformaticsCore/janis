@@ -3,7 +3,7 @@
 VcfLib: VcfCombine
 ===============================
 
-*1 contributor · 1 version*
+``vcfcombine`` · *1 contributor · 1 version*
 
 usage: vcfcombine [vcf file] [vcf file] ...
 

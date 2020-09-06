@@ -3,7 +3,7 @@
 BWA-Index
 ====================
 
-*1 contributor · 1 version*
+``bwaIndex`` · *1 contributor · 1 version*
 
 bwa - Burrows-Wheeler Alignment Tool
 Index database sequences in the FASTA format.

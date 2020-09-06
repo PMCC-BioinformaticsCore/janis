@@ -32,7 +32,7 @@ def prepare_workflow_page(workflow: Workflow, versions: List[str]):
     tn = fn + en
 
     onelinedescription = prepare_byline(
-        metadata.short_documentation, metadata.contributors, versions
+        workflow.id(), metadata.short_documentation, metadata.contributors, versions
     )
 
     citation = "\n\n".join([el for el in [metadata.citation, metadata.doi] if el])

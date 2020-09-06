@@ -3,7 +3,7 @@
 Whisper-Align
 ============================
 
-*1 contributor · 1 version*
+``whisperAlign`` · *1 contributor · 1 version*
 
 Builds a whisper index
 

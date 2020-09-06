@@ -3,7 +3,7 @@
 VcfLib: VcfUniqAlleles
 =======================================
 
-*1 contributor · 1 version*
+``vcfuniqalleles`` · *1 contributor · 1 version*
 
 usage: vcffuniq [file]
 For each record, remove any duplicate alternate alleles that may have resulted from merging separate VCF files.

@@ -3,7 +3,7 @@
 GATK4: Generate coverage summary information for reads data
 ==================================================================================
 
-*1 contributor · 1 version*
+``Gatk4DepthOfCoverage`` · *1 contributor · 1 version*
 
 Generate coverage summary information for reads data
 

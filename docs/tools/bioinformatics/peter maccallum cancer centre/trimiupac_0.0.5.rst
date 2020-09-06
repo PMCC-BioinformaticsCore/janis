@@ -3,7 +3,7 @@
 Trim IUPAC Bases
 ============================
 
-*0 contributors · 2 versions*
+``trimIUPAC`` · *0 contributors · 2 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

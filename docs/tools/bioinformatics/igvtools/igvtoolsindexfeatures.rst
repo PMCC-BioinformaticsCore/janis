@@ -3,7 +3,7 @@
 IGVTools: Index Features
 ================================================
 
-*0 contributors · 1 version*
+``IgvToolsIndexFeatures`` · *0 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

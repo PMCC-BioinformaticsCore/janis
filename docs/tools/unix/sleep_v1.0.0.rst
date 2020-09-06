@@ -3,7 +3,7 @@
 Sleep
 =============
 
-*0 contributors · 1 version*
+``sleep`` · *0 contributors · 1 version*
 
 sleep for the given number of seconds
 

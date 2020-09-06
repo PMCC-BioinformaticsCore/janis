@@ -3,7 +3,7 @@
 Gridss
 ===============
 
-*1 contributor · 4 versions*
+``gridss`` · *1 contributor · 4 versions*
 
 GRIDSS: the Genomic Rearrangement IDentification Software Suite
 

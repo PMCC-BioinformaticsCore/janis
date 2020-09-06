@@ -3,7 +3,7 @@
 GATK4 Somatic Variant Caller
 =========================================================
 
-*2 contributors · 2 versions*
+``GATK4_SomaticVariantCaller`` · *2 contributors · 2 versions*
 
 This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.0.12.0. Takes GATK Base Recalibrated Bam as input
 
@@ -127,7 +127,7 @@ Embedded Tools
                                   ``split_bam_subpipeline/None``
 GatkMutect2                       ``Gatk4Mutect2/4.1.3.0``
 GATK4: LearnReadOrientationModel  ``Gatk4LearnReadOrientationModel/4.1.4.0``
-GATK4: GetPileupSummaries         ``Gatk4GetPileupSummaries/4.1.4.0``
+GATK4: GetPileupSummaries         ``Gatk4GetPileupSummaries/4.1.6.0``
 GATK4: CalculateContamination     ``Gatk4CalculateContamination/4.1.4.0``
 GATK4: GetFilterMutectCalls       ``Gatk4FilterMutectCalls/4.1.3.0``
 UncompressArchive                 ``UncompressArchive/v1.0.0``
@@ -165,7 +165,7 @@ Workflow Description Language
    import "tools/split_bam_subpipeline.wdl" as S
    import "tools/Gatk4Mutect2_4_1_3_0.wdl" as G
    import "tools/Gatk4LearnReadOrientationModel_4_1_4_0.wdl" as G2
-   import "tools/Gatk4GetPileupSummaries_4_1_4_0.wdl" as G3
+   import "tools/Gatk4GetPileupSummaries_4_1_6_0.wdl" as G3
    import "tools/Gatk4CalculateContamination_4_1_4_0.wdl" as G4
    import "tools/Gatk4FilterMutectCalls_4_1_3_0.wdl" as G5
    import "tools/UncompressArchive_v1_0_0.wdl" as U
@@ -457,7 +457,7 @@ Common Workflow Language
        source: gnomad
      - id: intervals
        source: intervals
-     run: tools/Gatk4GetPileupSummaries_4_1_4_0.cwl
+     run: tools/Gatk4GetPileupSummaries_4_1_6_0.cwl
      out:
      - id: out
    - id: calculatecontamination

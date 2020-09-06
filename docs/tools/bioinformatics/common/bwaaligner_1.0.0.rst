@@ -3,7 +3,7 @@
 Align and sort reads
 =================================
 
-*0 contributors · 1 version*
+``BwaAligner`` · *0 contributors · 1 version*
 
 Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam
 

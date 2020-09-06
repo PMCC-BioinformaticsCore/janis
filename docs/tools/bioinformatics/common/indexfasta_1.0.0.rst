@@ -3,7 +3,7 @@
 Index Fasta reference
 ==================================
 
-*0 contributors · 1 version*
+``IndexFasta`` · *0 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

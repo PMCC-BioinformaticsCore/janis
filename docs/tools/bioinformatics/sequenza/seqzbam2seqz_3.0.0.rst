@@ -3,7 +3,7 @@
 Sequenza: bam2seqz
 =================================
 
-*2 contributors · 2 versions*
+``SeqzBam2Seqz`` · *2 contributors · 2 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

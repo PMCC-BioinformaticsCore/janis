@@ -3,7 +3,7 @@
 Bcl2Fastq
 =====================
 
-*1 contributor · 1 version*
+``bcl2fastq`` · *1 contributor · 1 version*
 
 BCL to FASTQ file converter
 

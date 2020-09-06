@@ -3,7 +3,7 @@
 Strelka 2Pass analysis step 2
 =========================================================
 
-*1 contributor · 1 version*
+``Strelka2PassWorkflowStep2`` · *1 contributor · 1 version*
 
 This is the second step for joint somatic variant calling
         based on a 2pass analysis common in RNASeq.

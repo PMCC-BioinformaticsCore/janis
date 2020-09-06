@@ -3,7 +3,7 @@
 SamTools: Mpileup
 ===================================
 
-*1 contributor · 2 versions*
+``SamToolsMpileup`` · *1 contributor · 2 versions*
 
 Generate text pileup output for one or multiple BAM files. Each input file produces a separate group of pileup columns in the output.
 

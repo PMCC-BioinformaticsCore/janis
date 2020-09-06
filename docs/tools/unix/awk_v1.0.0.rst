@@ -3,7 +3,7 @@
 Awk
 =========
 
-*0 contributors · 1 version*
+``awk`` · *0 contributors · 1 version*
 
 run an awk script
 

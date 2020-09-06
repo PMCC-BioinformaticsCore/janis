@@ -3,7 +3,7 @@
 Sequenza: seqz binning
 ====================================
 
-*2 contributors · 2 versions*
+``SeqzBinning`` · *2 contributors · 2 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

@@ -3,7 +3,7 @@
 Cutadapt
 ===================
 
-*1 contributor · 5 versions*
+``cutadapt`` · *1 contributor · 5 versions*
 
 
 Cutadapt finds and removes adapter sequences, primers, poly-A tails and other types of unwanted sequence 

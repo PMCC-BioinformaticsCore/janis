@@ -3,7 +3,7 @@
 WGS Somatic (GATK only) [VARIANTS only]
 ====================================================================
 
-*A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2 · 3 contributors · 1 version*
+``WGSSomaticGATKVariantsOnly`` · *A somatic tumor-normal variant-calling WGS pipeline using only GATK Mutect2 · 3 contributors · 1 version*
 
 This is a genomics pipeline to align sequencing data (Fastq pairs) into BAMs:
 
@@ -39,6 +39,9 @@ Quickstart
 =================  ==============================  =========================================================================================================================================================================================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
 Name               Type                            Example                                                                                                                                                                                    Description
 =================  ==============================  =========================================================================================================================================================================================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
+cutadapt_adapters  Optional<File>                  https://github.com/csf-ngs/fastqc/blob/master/Contaminants/contaminant_list.txt                                                                                                            Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
+gnomad             CompressedIndexedVCF            https://storage.cloud.google.com/gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz                                                                                               The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
+panel_of_normals   Optional<CompressedIndexedVCF>  gs://gatk-best-practices/somatic-b37/Mutect2-exome-panel.vcf or gs://gatk-best-practices/somatic-b37/Mutect2-WGS-panel-b37.vcf for hg19/b37                                                VCF file of sites observed in normal.
 reference          FastaWithIndexes                HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            The reference genome from which to align the reads. This requires a number indexes (can be generated with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
 
                                                    File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta                                                                                                           This pipeline expects the assembly references to be as they appear in the GCP example:
@@ -60,9 +63,6 @@ mills_indels       CompressedIndexedVCF            HG38: https://console.cloud.g
                                                    File: gs://genomics-public-data/references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
 gatk_intervals     Array<bed>                      BRCA1.bed                                                                                                                                                                                  List of intervals over which to split the GATK variant calling
 gridss_blacklist   bed                             https://github.com/PapenfussLab/gridss#blacklist                                                                                                                                           BED file containing regions to ignore.
-cutadapt_adapters  Optional<File>                  https://github.com/csf-ngs/fastqc/blob/master/Contaminants/contaminant_list.txt                                                                                                            Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
-gnomad             CompressedIndexedVCF            https://storage.cloud.google.com/gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz                                                                                               The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
-panel_of_normals   Optional<CompressedIndexedVCF>  gs://gatk-best-practices/somatic-b37/Mutect2-exome-panel.vcf or gs://gatk-best-practices/somatic-b37/Mutect2-WGS-panel-b37.vcf for hg19/b37                                                VCF file of sites observed in normal.
 =================  ==============================  =========================================================================================================================================================================================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
 
 4. Generate user and static input files for WGSSomaticGATKVariantsOnly:
@@ -79,17 +79,9 @@ panel_of_normals   Optional<CompressedIndexedVCF>  gs://gatk-best-practices/soma
 
 .. code-block:: yaml
 
-       normal_inputs:
-       - - normal_R1.fastq.gz
-         - normal_R2.fastq.gz
-       - - normal_R1-TOPUP.fastq.gz
-         - normal_R2-TOPUP.fastq.gz
+       normal_bam: normal_bam.bam
        normal_name: <value>
-       tumor_inputs:
-       - - tumor_R1.fastq.gz
-         - tumor_R2.fastq.gz
-       - - tumor_R1-TOPUP.fastq.gz
-         - tumor_R2-TOPUP.fastq.gz
+       tumor_bam: tumor_bam.bam
        tumor_name: <value>
 
 
@@ -123,26 +115,20 @@ panel_of_normals   Optional<CompressedIndexedVCF>  gs://gatk-best-practices/soma
 Outputs
 -----------
 
-==============================  =================  ====================================================
-name                            type               documentation
-==============================  =================  ====================================================
-out_normal_fastqc_reports       Array<Array<Zip>>
-out_tumor_fastqc_reports        Array<Array<Zip>>
-out_normal_performance_summary  csv                A text file of performance summary of NORMAL bam
-out_tumor_performance_summary   csv                A text file of performance summary of TUMOR bam
-out_normal_bam                  IndexedBam
-out_tumor_bam                   IndexedBam
-out_gridss_assembly             BAM                Assembly returned by GRIDSS
-out_variants_gridss             VCF                Variants from the GRIDSS variant caller
-out_variants_gatk               CompressedVCF      Merged variants from the GATK caller
-out_variants_split              Array<VCF>         Unmerged variants from the GATK caller (by interval)
-out_variants                    VCF                Final vcf
-==============================  =================  ====================================================
+===================  =============  ====================================================
+name                 type           documentation
+===================  =============  ====================================================
+out_gridss_assembly  BAM            Assembly returned by GRIDSS
+out_variants_gridss  VCF            Variants from the GRIDSS variant caller
+out_variants_gatk    CompressedVCF  Merged variants from the GATK caller
+out_variants_split   Array<VCF>     Unmerged variants from the GATK caller (by interval)
+out_variants         VCF            Final vcf
+===================  =============  ====================================================
 
 Workflow
 --------
 
-.. image:: WGSSomaticGATKVariantsOnly_1_3_1.dot.png
+.. image:: WGSSomaticGATKVariantsOnly_1_4_0.dot.png
 
 
 Information
@@ -150,7 +136,7 @@ Information
 
 
 :ID: ``WGSSomaticGATKVariantsOnly``
-:Versions: 1.3.1
+:Versions: 1.4.0
 :Authors: Michael Franklin, Richard Lupat, Jiaan Yu
 :Citations: 
 :Created: None
@@ -160,7 +146,6 @@ Embedded Tools
 ~~~~~~~~~~~~~~~~~
 
 ==========================================  ======================================
-                                            ``somatic_subpipeline/None``
 Gridss                                      ``gridss/v2.6.2``
 GATK Base Recalibration on Bam              ``GATKBaseRecalBQSRWorkflow/4.1.3``
 GATK4 Somatic Variant Caller                ``GATK4_SomaticVariantCaller/4.1.3.0``
@@ -178,10 +163,11 @@ Additional configuration (inputs)
 =================  ==============================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
 name               type                            documentation
 =================  ==============================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
-normal_inputs      Array<FastqGzPair>              An array of NORMAL FastqGz pairs. These are aligned separately and merged to create higher depth coverages from multiple sets of reads
-tumor_inputs       Array<FastqGzPair>              An array of TUMOR FastqGz pairs. These are aligned separately and merged to create higher depth coverages from multiple sets of reads
+normal_bam         IndexedBam                      Indexed NORMAL bam to call somatic variants against
+tumor_bam          IndexedBam                      Indexed TUMOR bam to call somatic variants against
 normal_name        String                          Sample name for the NORMAL sample from which to generate the readGroupHeaderLine for BwaMem
 tumor_name         String                          Sample name for the TUMOR sample from which to generate the readGroupHeaderLine for BwaMem
+gnomad             CompressedIndexedVCF            The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
 reference          FastaWithIndexes                The reference genome from which to align the reads. This requires a number indexes (can be generated with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
 
                                                    This pipeline expects the assembly references to be as they appear in the GCP example:
@@ -193,7 +179,6 @@ known_indels       CompressedIndexedVCF            From the GATK resource bundle
 mills_indels       CompressedIndexedVCF            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
 gatk_intervals     Array<bed>                      List of intervals over which to split the GATK variant calling
 gridss_blacklist   bed                             BED file containing regions to ignore.
-gnomad             CompressedIndexedVCF            The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
 cutadapt_adapters  Optional<File>                  Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
 panel_of_normals   Optional<CompressedIndexedVCF>  VCF file of sites observed in normal.
 =================  ==============================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
@@ -205,7 +190,6 @@ Workflow Description Language
 
    version development
 
-   import "tools/somatic_subpipeline.wdl" as S
    import "tools/gridss_v2_6_2.wdl" as G
    import "tools/GATKBaseRecalBQSRWorkflow_4_1_3.wdl" as G2
    import "tools/GATK4_SomaticVariantCaller_4_1_3_0.wdl" as G3
@@ -217,10 +201,17 @@ Workflow Description Language
 
    workflow WGSSomaticGATKVariantsOnly {
      input {
-       Array[Array[File]] normal_inputs
-       Array[Array[File]] tumor_inputs
+       File normal_bam
+       File normal_bam_bai
+       File tumor_bam
+       File tumor_bam_bai
        String normal_name
        String tumor_name
+       File? cutadapt_adapters
+       File gnomad
+       File gnomad_tbi
+       File? panel_of_normals
+       File? panel_of_normals_tbi
        File reference
        File reference_fai
        File reference_amb
@@ -239,62 +230,11 @@ Workflow Description Language
        File mills_indels_tbi
        Array[File] gatk_intervals
        File gridss_blacklist
-       File? cutadapt_adapters
-       File gnomad
-       File gnomad_tbi
-       File? panel_of_normals
-       File? panel_of_normals_tbi
-     }
-     call S.somatic_subpipeline as tumor {
-       input:
-         reads=tumor_inputs,
-         sample_name=tumor_name,
-         reference=reference,
-         reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict,
-         cutadapt_adapters=cutadapt_adapters,
-         gatk_intervals=gatk_intervals,
-         snps_dbsnp=snps_dbsnp,
-         snps_dbsnp_tbi=snps_dbsnp_tbi,
-         snps_1000gp=snps_1000gp,
-         snps_1000gp_tbi=snps_1000gp_tbi,
-         known_indels=known_indels,
-         known_indels_tbi=known_indels_tbi,
-         mills_indels=mills_indels,
-         mills_indels_tbi=mills_indels_tbi
-     }
-     call S.somatic_subpipeline as normal {
-       input:
-         reads=normal_inputs,
-         sample_name=normal_name,
-         reference=reference,
-         reference_fai=reference_fai,
-         reference_amb=reference_amb,
-         reference_ann=reference_ann,
-         reference_bwt=reference_bwt,
-         reference_pac=reference_pac,
-         reference_sa=reference_sa,
-         reference_dict=reference_dict,
-         cutadapt_adapters=cutadapt_adapters,
-         gatk_intervals=gatk_intervals,
-         snps_dbsnp=snps_dbsnp,
-         snps_dbsnp_tbi=snps_dbsnp_tbi,
-         snps_1000gp=snps_1000gp,
-         snps_1000gp_tbi=snps_1000gp_tbi,
-         known_indels=known_indels,
-         known_indels_tbi=known_indels_tbi,
-         mills_indels=mills_indels,
-         mills_indels_tbi=mills_indels_tbi
      }
      call G.gridss as vc_gridss {
        input:
-         bams=[normal.out_bam, tumor.out_bam],
-         bams_bai=[normal.out_bam_bai, tumor.out_bam_bai],
+         bams=[normal_bam, tumor_bam],
+         bams_bai=[normal_bam_bai, tumor_bam_bai],
          reference=reference,
          reference_fai=reference_fai,
          reference_amb=reference_amb,
@@ -308,8 +248,8 @@ Workflow Description Language
      scatter (g in gatk_intervals) {
         call G2.GATKBaseRecalBQSRWorkflow as bqsr_normal {
          input:
-           bam=normal.out_bam,
-           bam_bai=normal.out_bam_bai,
+           bam=normal_bam,
+           bam_bai=normal_bam_bai,
            intervals=g,
            reference=reference,
            reference_fai=reference_fai,
@@ -332,8 +272,8 @@ Workflow Description Language
      scatter (g in gatk_intervals) {
         call G2.GATKBaseRecalBQSRWorkflow as bqsr_tumor {
          input:
-           bam=tumor.out_bam,
-           bam_bai=tumor.out_bam_bai,
+           bam=tumor_bam,
+           bam_bai=tumor_bam_bai,
            intervals=g,
            reference=reference,
            reference_fai=reference_fai,
@@ -396,10 +336,10 @@ Workflow Description Language
        input:
          normal_id=normal_name,
          tumor_id=tumor_name,
-         normal_bam=normal.out_bam,
-         normal_bam_bai=normal.out_bam_bai,
-         tumor_bam=tumor.out_bam,
-         tumor_bam_bai=tumor.out_bam_bai,
+         normal_bam=normal_bam,
+         normal_bam_bai=normal_bam_bai,
+         tumor_bam=tumor_bam,
+         tumor_bam_bai=tumor_bam_bai,
          reference=reference,
          reference_fai=reference_fai,
          reference_amb=reference_amb,
@@ -411,14 +351,6 @@ Workflow Description Language
          vcf=vc_gatk_uncompressvcf.out
      }
      output {
-       Array[Array[File]] out_normal_fastqc_reports = normal.out_fastqc_reports
-       Array[Array[File]] out_tumor_fastqc_reports = tumor.out_fastqc_reports
-       File out_normal_performance_summary = normal.out_performance_summary
-       File out_tumor_performance_summary = tumor.out_performance_summary
-       File out_normal_bam = normal.out_bam
-       File out_normal_bam_bai = normal.out_bam_bai
-       File out_tumor_bam = tumor.out_bam
-       File out_tumor_bam_bai = tumor.out_bam_bai
        File out_gridss_assembly = vc_gridss.assembly
        File out_variants_gridss = vc_gridss.out
        File out_variants_gatk = vc_gatk_sort_combined.out
@@ -462,22 +394,16 @@ Common Workflow Language
    - class: MultipleInputFeatureRequirement
 
    inputs:
-   - id: normal_inputs
-     doc: |-
-       An array of NORMAL FastqGz pairs. These are aligned separately and merged to create higher depth coverages from multiple sets of reads
-     type:
-       type: array
-       items:
-         type: array
-         items: File
-   - id: tumor_inputs
-     doc: |-
-       An array of TUMOR FastqGz pairs. These are aligned separately and merged to create higher depth coverages from multiple sets of reads
-     type:
-       type: array
-       items:
-         type: array
-         items: File
+   - id: normal_bam
+     doc: Indexed NORMAL bam to call somatic variants against
+     type: File
+     secondaryFiles:
+     - .bai
+   - id: tumor_bam
+     doc: Indexed TUMOR bam to call somatic variants against
+     type: File
+     secondaryFiles:
+     - .bai
    - id: normal_name
      doc: |-
        Sample name for the NORMAL sample from which to generate the readGroupHeaderLine for BwaMem
@@ -486,6 +412,25 @@ Common Workflow Language
      doc: |-
        Sample name for the TUMOR sample from which to generate the readGroupHeaderLine for BwaMem
      type: string
+   - id: cutadapt_adapters
+     doc: |-
+       Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
+     type:
+     - File
+     - 'null'
+   - id: gnomad
+     doc: |-
+       The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
+     type: File
+     secondaryFiles:
+     - .tbi
+   - id: panel_of_normals
+     doc: VCF file of sites observed in normal.
+     type:
+     - File
+     - 'null'
+     secondaryFiles:
+     - .tbi
    - id: reference
      doc: |-
        The reference genome from which to align the reads. This requires a number indexes (can be generated with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
@@ -530,59 +475,8 @@ Common Workflow Language
    - id: gridss_blacklist
      doc: BED file containing regions to ignore.
      type: File
-   - id: cutadapt_adapters
-     doc: |-
-       Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
-     type:
-     - File
-     - 'null'
-   - id: gnomad
-     doc: |-
-       The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
-     type: File
-     secondaryFiles:
-     - .tbi
-   - id: panel_of_normals
-     doc: VCF file of sites observed in normal.
-     type:
-     - File
-     - 'null'
-     secondaryFiles:
-     - .tbi
 
    outputs:
-   - id: out_normal_fastqc_reports
-     type:
-       type: array
-       items:
-         type: array
-         items: File
-     outputSource: normal/out_fastqc_reports
-   - id: out_tumor_fastqc_reports
-     type:
-       type: array
-       items:
-         type: array
-         items: File
-     outputSource: tumor/out_fastqc_reports
-   - id: out_normal_performance_summary
-     doc: A text file of performance summary of NORMAL bam
-     type: File
-     outputSource: normal/out_performance_summary
-   - id: out_tumor_performance_summary
-     doc: A text file of performance summary of TUMOR bam
-     type: File
-     outputSource: tumor/out_performance_summary
-   - id: out_normal_bam
-     type: File
-     secondaryFiles:
-     - .bai
-     outputSource: normal/out_bam
-   - id: out_tumor_bam
-     type: File
-     secondaryFiles:
-     - .bai
-     outputSource: tumor/out_bam
    - id: out_gridss_assembly
      doc: Assembly returned by GRIDSS
      type: File
@@ -607,63 +501,13 @@ Common Workflow Language
      outputSource: addbamstats/out
 
    steps:
-   - id: tumor
-     in:
-     - id: reads
-       source: tumor_inputs
-     - id: sample_name
-       source: tumor_name
-     - id: reference
-       source: reference
-     - id: cutadapt_adapters
-       source: cutadapt_adapters
-     - id: gatk_intervals
-       source: gatk_intervals
-     - id: snps_dbsnp
-       source: snps_dbsnp
-     - id: snps_1000gp
-       source: snps_1000gp
-     - id: known_indels
-       source: known_indels
-     - id: mills_indels
-       source: mills_indels
-     run: tools/somatic_subpipeline.cwl
-     out:
-     - id: out_bam
-     - id: out_fastqc_reports
-     - id: out_performance_summary
-   - id: normal
-     in:
-     - id: reads
-       source: normal_inputs
-     - id: sample_name
-       source: normal_name
-     - id: reference
-       source: reference
-     - id: cutadapt_adapters
-       source: cutadapt_adapters
-     - id: gatk_intervals
-       source: gatk_intervals
-     - id: snps_dbsnp
-       source: snps_dbsnp
-     - id: snps_1000gp
-       source: snps_1000gp
-     - id: known_indels
-       source: known_indels
-     - id: mills_indels
-       source: mills_indels
-     run: tools/somatic_subpipeline.cwl
-     out:
-     - id: out_bam
-     - id: out_fastqc_reports
-     - id: out_performance_summary
    - id: vc_gridss
      label: Gridss
      in:
      - id: bams
        source:
-       - normal/out_bam
-       - tumor/out_bam
+       - normal_bam
+       - tumor_bam
      - id: reference
        source: reference
      - id: blacklist
@@ -676,7 +520,7 @@ Common Workflow Language
      label: GATK Base Recalibration on Bam
      in:
      - id: bam
-       source: normal/out_bam
+       source: normal_bam
      - id: intervals
        source: gatk_intervals
      - id: reference
@@ -698,7 +542,7 @@ Common Workflow Language
      label: GATK Base Recalibration on Bam
      in:
      - id: bam
-       source: tumor/out_bam
+       source: tumor_bam
      - id: intervals
        source: gatk_intervals
      - id: reference
@@ -783,9 +627,9 @@ Common Workflow Language
      - id: tumor_id
        source: tumor_name
      - id: normal_bam
-       source: normal/out_bam
+       source: normal_bam
      - id: tumor_bam
-       source: tumor/out_bam
+       source: tumor_bam
      - id: reference
        source: reference
      - id: vcf

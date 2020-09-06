@@ -3,7 +3,7 @@
 GATK4: CollectInsertSizeMetrics
 ===============================================================
 
-*1 contributor · 4 versions*
+``Gatk4CollectInsertSizeMetrics`` · *1 contributor · 4 versions*
 
 Provides useful metrics for validating library construction including the insert size distribution and read orientation of paired-end libraries
 

@@ -3,7 +3,7 @@
 GATK Base Recalibration on Bam
 ==========================================================
 
-*0 contributors · 2 versions*
+``GATKBaseRecalBQSRWorkflow`` · *0 contributors · 2 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

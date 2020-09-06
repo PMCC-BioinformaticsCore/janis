@@ -3,7 +3,7 @@
 STAR Aligner
 ===========================
 
-*1 contributor · 1 version*
+``star_aligner`` · *1 contributor · 1 version*
 
 Usage: STAR  [options]... --genomeDir /path/to/genome/index/   --readFilesIn R1.fq R2.fq
 Spliced Transcripts Alignment to a Reference (c) Alexander Dobin, 2009-2019

@@ -3,7 +3,7 @@
 BGZip
 =============
 
-*1 contributor · 2 versions*
+``bgzip`` · *1 contributor · 2 versions*
 
 bgzip – Block compression/decompression utility
 

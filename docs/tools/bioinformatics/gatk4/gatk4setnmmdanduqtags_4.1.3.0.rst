@@ -3,7 +3,7 @@
 GATK4: SetNmMdAndUqTags
 ===============================================
 
-*0 contributors · 2 versions*
+``Gatk4SetNmMdAndUqTags`` · *0 contributors · 2 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

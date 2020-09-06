@@ -3,7 +3,7 @@
 Tabix
 =============
 
-*1 contributor · 2 versions*
+``tabix`` · *1 contributor · 2 versions*
 
 tabix – Generic indexer for TAB-delimited genome position files
 

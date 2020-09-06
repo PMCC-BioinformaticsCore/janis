@@ -3,7 +3,7 @@
 GATK4: GetPileupSummaries
 ========================================================
 
-*1 contributor · 3 versions*
+``Gatk4GetPileupSummaries_cram`` · *1 contributor · 4 versions*
 
 Summarizes counts of reads that support reference, alternate and other alleles for given sites. Results can be used with CalculateContamination.
 The tool requires a common germline variant sites VCF, e.g. the gnomAD resource, with population allele frequencies (AF) in the INFO field. This resource must contain only biallelic SNPs and can be an eight-column sites-only VCF. The tool ignores the filter status of the sites. See the GATK Resource Bundle for an example human file.
@@ -80,7 +80,7 @@ Information
 
 :ID: ``Gatk4GetPileupSummaries_cram``
 :URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.0.0/org_broadinstitute_hellbender_tools_walkers_contamination_GetPileupSummaries.php <https://software.broadinstitute.org/gatk/documentation/tooldocs/4.0.0.0/org_broadinstitute_hellbender_tools_walkers_contamination_GetPileupSummaries.php>`_
-:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
+:Versions: 4.1.6.0, 4.1.4.0, 4.1.3.0, 4.1.2.0
 :Container: broadinstitute/gatk:4.1.4.0
 :Authors: Hollizeck Sebastian
 :Citations: TBD
@@ -101,17 +101,17 @@ out     TextFile  Table containing the pileup info
 Additional configuration (inputs)
 ---------------------------------
 
-=================  =======================  ===========  ==========  ========================================================================================
-name               type                     prefix         position  documentation
-=================  =======================  ===========  ==========  ========================================================================================
-bam                Array<CramPair>          -I                    0  The SAM/BAM/CRAM file containing reads.
-sites              CompressedIndexedVCF     -V                       sites of common biallelic variants
+=================  ==========================  ===========  ==========  ========================================================================================
+name               type                        prefix         position  documentation
+=================  ==========================  ===========  ==========  ========================================================================================
+bam                Array<CramPair>             -I                    0  The SAM/BAM/CRAM file containing reads.
+sites              CompressedIndexedVCF        -V                       sites of common biallelic variants
 javaOptions        Optional<Array<String>>
-compression_level  Optional<Integer>                                 Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
-intervals          Optional<bed>            --intervals              -L (BASE) One or more genomic intervals over which to operate
-pileupTableOut     Optional<Filename>       -O                    1
-reference          Optional<FastaFai>       -R                       reference to use when decoding CRAMS
-=================  =======================  ===========  ==========  ========================================================================================
+compression_level  Optional<Integer>                                    Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
+intervals          Optional<bed>               --intervals              -L (BASE) One or more genomic intervals over which to operate
+pileupTableOut     Optional<Filename>          -O                    1
+reference          Optional<FastaWithIndexes>  -R                       reference to use when decoding CRAMS
+=================  ==========================  ===========  ==========  ========================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -136,6 +136,12 @@ Workflow Description Language
        String? pileupTableOut
        File? reference
        File? reference_fai
+       File? reference_amb
+       File? reference_ann
+       File? reference_bwt
+       File? reference_pac
+       File? reference_sa
+       File? reference_dict
      }
      command <<<
        set -e
@@ -236,6 +242,12 @@ Common Workflow Language
      - 'null'
      secondaryFiles:
      - .fai
+     - .amb
+     - .ann
+     - .bwt
+     - .pac
+     - .sa
+     - ^.dict
      inputBinding:
        prefix: -R
 

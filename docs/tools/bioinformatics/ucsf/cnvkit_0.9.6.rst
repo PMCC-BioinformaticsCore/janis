@@ -3,7 +3,7 @@
 CNVKit
 ======
 
-*0 contributors · 1 version*
+``CNVKit`` · *0 contributors · 1 version*
 
 
         A command-line toolkit and Python library for detecting copy number variants 

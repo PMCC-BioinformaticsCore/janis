@@ -10,7 +10,7 @@ digraph GATK4_SomaticVariantCallerTumorOnlyTargeted {
 	mutect2 -> learnorientationmodel
 	getpileupsummaries -> calculatecontamination
 	learnorientationmodel -> filtermutect2calls
-	mutect2 -> filtermutect2calls
 	calculatecontamination -> filtermutect2calls
+	mutect2 -> filtermutect2calls
 	filtermutect2calls -> splitnormalisevcf
 }

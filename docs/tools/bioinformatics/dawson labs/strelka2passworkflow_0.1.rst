@@ -3,7 +3,7 @@
 Strelka 2Pass analysis
 =============================================
 
-*1 contributor · 1 version*
+``Strelka2PassWorkflow`` · *1 contributor · 1 version*
 
 This is the full 2pass analysis workflow to do joint somatic variant calling with strelka2.
         The idea is similar to the RNASeq 2pass analysis, when the input of the first analysis is used to guide the second analysis.

@@ -3,7 +3,7 @@
 Vardict (Somatic)
 ===================================
 
-*0 contributors · 5 versions*
+``vardict_somatic`` · *0 contributors · 5 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 

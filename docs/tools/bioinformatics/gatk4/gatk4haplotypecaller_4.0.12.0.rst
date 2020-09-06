@@ -3,7 +3,7 @@
 GATK4: Haplotype Caller
 ==============================================
 
-*1 contributor · 4 versions*
+``Gatk4HaplotypeCaller`` · *1 contributor · 7 versions*
 
 Call germline SNPs and indels via local re-assembly of haplotypes
     
@@ -99,7 +99,7 @@ Information
 
 :ID: ``Gatk4HaplotypeCaller``
 :URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_haplotypecaller_HaplotypeCaller.php# <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_haplotypecaller_HaplotypeCaller.php#>`_
-:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
+:Versions: 4.1.8.1, 4.1.7.0, 4.1.6.0, 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.0.12.0
 :Authors: Michael Franklin
 :Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information

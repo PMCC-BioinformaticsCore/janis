@@ -3,7 +3,7 @@
 Strelka Somatic Variant Caller
 ============================================================
 
-*0 contributors · 1 version*
+``strelkaSomaticVariantCaller`` · *0 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -117,7 +117,7 @@ Strelka (Somatic)              ``strelka_somatic/2.9.10``
 Concat Strelka Somatic Vcf     ``ConcatStrelkaSomaticVcf/0.1.16``
 BCFTools: Sort                 ``bcftoolssort/v1.9``
 Split Multiple Alleles         ``SplitMultiAllele/v0.5772``
-Extract Strelka Somatic AD DP  ``extractStrelkaSomaticADDP/0.1.0``
+Extract Strelka Somatic AD DP  ``extractStrelkaSomaticADDP/0.1.1``
 VcfTools                       ``VcfTools/0.1.16``
 =============================  ===================================
 
@@ -151,7 +151,7 @@ Workflow Description Language
    import "tools/ConcatStrelkaSomaticVcf_0_1_16.wdl" as C
    import "tools/bcftoolssort_v1_9.wdl" as B
    import "tools/SplitMultiAllele_v0_5772.wdl" as S2
-   import "tools/extractStrelkaSomaticADDP_0_1_0.wdl" as E
+   import "tools/extractStrelkaSomaticADDP_0_1_1.wdl" as E
    import "tools/VcfTools_0_1_16.wdl" as V
 
    workflow strelkaSomaticVariantCaller {
@@ -400,7 +400,7 @@ Common Workflow Language
      in:
      - id: vcf
        source: splitnormalisevcf/out
-     run: tools/extractStrelkaSomaticADDP_0_1_0.cwl
+     run: tools/extractStrelkaSomaticADDP_0_1_1.cwl
      out:
      - id: out
    - id: filterpass

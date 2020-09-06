@@ -3,7 +3,7 @@
 VcfLib: VcfFixUp
 ===========================
 
-*1 contributor · 1 version*
+``vcffixup`` · *1 contributor · 1 version*
 
 usage: vcffixup [file]
 Count the allele frequencies across alleles

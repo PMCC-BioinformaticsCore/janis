@@ -3,7 +3,7 @@
 VcfLib: VcfAllelicPrimitives
 ===================================================
 
-*1 contributor · 1 version*
+``vcfallelicprimitives`` · *1 contributor · 1 version*
 
 usage: vcfallelicprimitives [options] [file]
 

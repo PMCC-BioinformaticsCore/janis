@@ -3,7 +3,7 @@
 GATK4: Haplotype Caller
 ==============================================
 
-*1 contributor · 4 versions*
+``Gatk4HaplotypeCaller`` · *1 contributor · 7 versions*
 
 Call germline SNPs and indels via local re-assembly of haplotypes
     
@@ -34,13 +34,13 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.gatk4.haplotypecaller.versions import Gatk4HaplotypeCaller_4_1_4
+       from janis_bioinformatics.tools.gatk4.haplotypecaller.versions import Gatk4HaplotypeCaller_4_1_8
 
        wf = WorkflowBuilder("myworkflow")
 
        wf.step(
            "gatk4haplotypecaller_step",
-           Gatk4HaplotypeCaller_4_1_4(
+           Gatk4HaplotypeCaller_4_1_8(
                inputRead=None,
                reference=None,
            )
@@ -99,8 +99,8 @@ Information
 
 :ID: ``Gatk4HaplotypeCaller``
 :URL: `https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_haplotypecaller_HaplotypeCaller.php# <https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_hellbender_tools_walkers_haplotypecaller_HaplotypeCaller.php#>`_
-:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
-:Container: broadinstitute/gatk:4.1.4.0
+:Versions: 4.1.8.1, 4.1.7.0, 4.1.6.0, 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
+:Container: broadinstitute/gatk:4.1.8.1
 :Authors: Michael Franklin
 :Citations: See https://software.broadinstitute.org/gatk/documentation/article?id=11027 for more information
 :Created: 2018-12-24
@@ -289,7 +289,7 @@ Workflow Description Language
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "broadinstitute/gatk:4.1.4.0"
+       docker: "broadinstitute/gatk:4.1.8.1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
@@ -339,7 +339,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: broadinstitute/gatk:4.1.4.0
+     dockerPull: broadinstitute/gatk:4.1.8.1
 
    inputs:
    - id: javaOptions

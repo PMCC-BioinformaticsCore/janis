@@ -3,7 +3,7 @@
 VcfTools: VcfConcat
 =======================================
 
-*1 contributor · 1 version*
+``VcfToolsVcfConcat`` · *1 contributor · 1 version*
 
 Concatenates VCF files (for example split by chromosome). Note that the input and output VCFs will have the same number of columns, the script does not merge VCFs by position (see also vcf-merge).
 

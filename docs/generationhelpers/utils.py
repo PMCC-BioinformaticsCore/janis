@@ -50,7 +50,7 @@ def get_tool_url(toolname, version):
 
 
 def prepare_byline(
-    shortdocumentation: str, contributors: List[str], versions: List[str]
+    toolid, shortdocumentation: str, contributors: List[str], versions: List[str]
 ):
     short_prepared = (
         shortdocumentation[:-1]
@@ -64,7 +64,8 @@ def prepare_byline(
     )
     versionstr = f"{len(versions)} version{'s' if len(versions) != 1 else ''}"
     return (
-        "*"
+        f"``{toolid}``"
+        + " · *"
         + " · ".join(t for t in [short_prepared, contributorstr, versionstr] if t)
         + "*"
     )

@@ -3,7 +3,7 @@
 SamTools: Flagstat
 =====================================
 
-*1 contributor · 2 versions*
+``SamToolsFlagstat`` · *1 contributor · 2 versions*
 
 Does a full pass through the input file to calculate and print statistics to stdout.
 

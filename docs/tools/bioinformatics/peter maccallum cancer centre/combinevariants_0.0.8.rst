@@ -3,7 +3,7 @@
 Combine Variants
 ==================================
 
-*1 contributor · 1 version*
+``combinevariants`` · *1 contributor · 1 version*
 
 
 usage: combine_vcf.py [-h] -i I --columns COLUMNS -o O --type

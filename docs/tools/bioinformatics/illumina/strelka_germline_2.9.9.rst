@@ -3,7 +3,7 @@
 Strelka (Germline)
 =====================================
 
-*1 contributor · 2 versions*
+``strelka_germline`` · *1 contributor · 2 versions*
 
 Strelka2 is a fast and accurate small variant caller optimized for analysis of germline variation 
 in small cohorts and somatic variation in tumor/normal sample pairs. The germline caller employs 

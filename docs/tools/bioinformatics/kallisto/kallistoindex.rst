@@ -3,7 +3,7 @@
 Kallisto-Index
 ==============================
 
-*1 contributor · 1 version*
+``kallistoIndex`` · *1 contributor · 1 version*
 
 Builds a kallisto index
 

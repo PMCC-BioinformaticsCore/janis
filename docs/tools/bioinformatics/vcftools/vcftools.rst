@@ -3,7 +3,7 @@
 VcfTools
 ========
 
-*1 contributor · 1 version*
+``VcfTools`` · *1 contributor · 1 version*
 
 NAME
 vcftools v0.1.16 − Utilities for the variant call format (VCF) and binary variant call format (BCF)

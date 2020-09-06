@@ -3,7 +3,7 @@
 GATK4: Print Reads
 ====================================
 
-*1 contributor · 4 versions*
+``Gatk4PrintReads`` · *1 contributor · 4 versions*
 
 
 Write reads from SAM format file (SAM/BAM/CRAM) that pass criteria to a new file.

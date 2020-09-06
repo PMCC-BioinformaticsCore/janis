@@ -3,7 +3,7 @@
 MD5 Sum
 ================
 
-*0 contributors · 1 version*
+``md5sum`` · *0 contributors · 1 version*
 
 Compute the MD5 message digest of the given file.
 

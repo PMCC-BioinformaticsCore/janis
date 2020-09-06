@@ -30,7 +30,7 @@ def prepare_code_tool_page(tool: CodeTool, versions: List[str]):
     tn = fn + en
 
     onelinedescription = prepare_byline(
-        metadata.short_documentation, metadata.contributors, versions
+        tool.id(), metadata.short_documentation, metadata.contributors, versions
     )
 
     formatted_url = (

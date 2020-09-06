@@ -3,7 +3,7 @@
 BCFTools: Index
 ===============================
 
-*0 contributors · 1 version*
+``bcftoolsIndex`` · *0 contributors · 1 version*
 
 Index bgzip compressed VCF/BCF files for random access.
 

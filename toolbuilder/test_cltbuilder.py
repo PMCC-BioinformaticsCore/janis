@@ -59,6 +59,4 @@ class TestDateTime(unittest.TestCase):
         from datetime import datetime
 
         dt = datetime(1985, 11, 26, 1, 20)
-        self.assertEqual(
-            'datetime.fromisoformat("1985-11-26T01:20:00")', get_string_repr(dt)
-        )
+        self.assertEqual("datetime(1985, 11, 26)", get_string_repr(dt))

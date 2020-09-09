@@ -45,7 +45,7 @@ def get_string_repr(obj):
         nlreplaced = obj.replace("\n", "\\n").replace('"', "'")
         return f'"{nlreplaced}"'
     elif isinstance(obj, datetime):
-        return f'datetime.fromisoformat("{obj.isoformat()}")'
+        return f"datetime({obj.year}, {obj.month}, {obj.day})"
     elif any(isinstance(obj, T) for T in generic_convertible):
         return convert_generic_class(obj, type(obj).__name__)
 

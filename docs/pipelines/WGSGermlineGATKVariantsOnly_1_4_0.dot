@@ -1,0 +1,21 @@
+// WGS Germline (GATK) [VARIANTS only]
+digraph WGSGermlineGATKVariantsOnly {
+	node [shape=record]
+	calculate_performancesummary_genomefile [label="calculate_performancesummary_genomefile (Generate genome for BedtoolsCoverage)"]
+	performance_summary [label="performance_summary (Performance summary workflow (whole genome))" color=grey80 style=filled]
+	vc_gridss [label="vc_gridss (Gridss)"]
+	bqsr [label="bqsr (GATK Base Recalibration on Bam)" color=grey80 style=filled]
+	vc_gatk [label="vc_gatk (GATK4 Germline Variant Caller)" color=grey80 style=filled]
+	vc_gatk_merge [label="vc_gatk_merge (GATK4: Gather VCFs)"]
+	vc_gatk_compressvcf [label="vc_gatk_compressvcf (BGZip)"]
+	vc_gatk_sort_combined [label="vc_gatk_sort_combined (BCFTools: Sort)"]
+	vc_gatk_uncompress_for_bamstats [label="vc_gatk_uncompress_for_bamstats (UncompressArchive)"]
+	vc_gatk_addbamstats [label="vc_gatk_addbamstats (Annotate Bam Stats to Germline Vcf Workflow)" color=grey80 style=filled]
+	calculate_performancesummary_genomefile -> performance_summary
+	bqsr -> vc_gatk
+	vc_gatk -> vc_gatk_merge
+	vc_gatk_merge -> vc_gatk_compressvcf
+	vc_gatk_compressvcf -> vc_gatk_sort_combined
+	vc_gatk_sort_combined -> vc_gatk_uncompress_for_bamstats
+	vc_gatk_uncompress_for_bamstats -> vc_gatk_addbamstats
+}

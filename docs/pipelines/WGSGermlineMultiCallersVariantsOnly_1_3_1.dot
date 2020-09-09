@@ -1,0 +1,43 @@
+// WGS Germline (Multi callers) [VARIANTS only]
+digraph WGSGermlineMultiCallersVariantsOnly {
+	node [shape=record]
+	calculate_performancesummary_genomefile [label="calculate_performancesummary_genomefile (Generate genome for BedtoolsCoverage)"]
+	performance_summary [label="performance_summary (Performance summary workflow (whole genome))" color=grey80 style=filled]
+	vc_gridss [label="vc_gridss (Gridss)"]
+	bqsr [label="bqsr (GATK Base Recalibration on Bam)" color=grey80 style=filled]
+	vc_gatk [label="vc_gatk (GATK4 Germline Variant Caller)" color=grey80 style=filled]
+	vc_gatk_merge [label="vc_gatk_merge (GATK4: Gather VCFs)"]
+	vc_gatk_compress_for_sort [label="vc_gatk_compress_for_sort (BGZip)"]
+	vc_gatk_sort_combined [label="vc_gatk_sort_combined (BCFTools: Sort)"]
+	vc_gatk_uncompress_for_combine [label="vc_gatk_uncompress_for_combine (UncompressArchive)"]
+	vc_strelka [label="vc_strelka (Strelka Germline Variant Caller)" color=grey80 style=filled]
+	generate_vardict_headerlines [label="generate_vardict_headerlines (GenerateVardictHeaderLines)"]
+	vc_vardict [label="vc_vardict (Vardict Germline Variant Caller)" color=grey80 style=filled]
+	vc_vardict_merge [label="vc_vardict_merge (GATK4: Gather VCFs)"]
+	vc_vardict_compress_for_sort [label="vc_vardict_compress_for_sort (BGZip)"]
+	vc_vardict_sort_combined [label="vc_vardict_sort_combined (BCFTools: Sort)"]
+	vc_vardict_uncompress_for_combine [label="vc_vardict_uncompress_for_combine (UncompressArchive)"]
+	combine_variants [label="combine_variants (Combine Variants)"]
+	combined_compress [label="combined_compress (BGZip)"]
+	combined_sort [label="combined_sort (BCFTools: Sort)"]
+	combined_uncompress [label="combined_uncompress (UncompressArchive)"]
+	combined_addbamstats [label="combined_addbamstats (Annotate Bam Stats to Germline Vcf Workflow)" color=grey80 style=filled]
+	calculate_performancesummary_genomefile -> performance_summary
+	bqsr -> vc_gatk
+	vc_gatk -> vc_gatk_merge
+	vc_gatk_merge -> vc_gatk_compress_for_sort
+	vc_gatk_compress_for_sort -> vc_gatk_sort_combined
+	vc_gatk_sort_combined -> vc_gatk_uncompress_for_combine
+	generate_vardict_headerlines -> vc_vardict
+	vc_vardict -> vc_vardict_merge
+	vc_vardict_merge -> vc_vardict_compress_for_sort
+	vc_vardict_compress_for_sort -> vc_vardict_sort_combined
+	vc_vardict_sort_combined -> vc_vardict_uncompress_for_combine
+	vc_gatk_uncompress_for_combine -> combine_variants
+	vc_strelka -> combine_variants
+	vc_vardict_uncompress_for_combine -> combine_variants
+	combine_variants -> combined_compress
+	combined_compress -> combined_sort
+	combined_sort -> combined_uncompress
+	combined_uncompress -> combined_addbamstats
+}

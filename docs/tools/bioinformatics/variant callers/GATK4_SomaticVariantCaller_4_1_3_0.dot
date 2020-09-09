@@ -11,14 +11,14 @@ digraph GATK4_SomaticVariantCaller {
 	uncompressvcf [label="uncompressvcf (UncompressArchive)"]
 	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles)"]
 	filterpass [label="filterpass (VcfTools)"]
-	tumor_split_bam -> mutect2
 	normal_split_bam -> mutect2
+	tumor_split_bam -> mutect2
 	mutect2 -> learnorientationmodel
 	tumor_split_bam -> getpileupsummaries
 	getpileupsummaries -> calculatecontamination
+	mutect2 -> filtermutect2calls
 	learnorientationmodel -> filtermutect2calls
 	calculatecontamination -> filtermutect2calls
-	mutect2 -> filtermutect2calls
 	filtermutect2calls -> uncompressvcf
 	uncompressvcf -> splitnormalisevcf
 	splitnormalisevcf -> filterpass

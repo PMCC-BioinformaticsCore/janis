@@ -1,0 +1,28 @@
+// WGS Somatic (GATK only)
+digraph WGSSomaticGATK {
+	node [shape=record]
+	tumor [label=tumor color=grey80 style=filled]
+	normal [label=normal color=grey80 style=filled]
+	vc_gridss [label="vc_gridss (Gridss)"]
+	bqsr_normal [label="bqsr_normal (GATK Base Recalibration on Bam)" color=grey80 style=filled]
+	bqsr_tumor [label="bqsr_tumor (GATK Base Recalibration on Bam)" color=grey80 style=filled]
+	vc_gatk [label="vc_gatk (GATK4 Somatic Variant Caller)" color=grey80 style=filled]
+	vc_gatk_merge [label="vc_gatk_merge (GATK4: Gather VCFs)"]
+	vc_gatk_compressvcf [label="vc_gatk_compressvcf (BGZip)"]
+	vc_gatk_sort_combined [label="vc_gatk_sort_combined (BCFTools: Sort)"]
+	vc_gatk_uncompressvcf [label="vc_gatk_uncompressvcf (UncompressArchive)"]
+	addbamstats [label="addbamstats (Annotate Bam Stats to Somatic Vcf Workflow)" color=grey80 style=filled]
+	normal -> vc_gridss
+	tumor -> vc_gridss
+	normal -> bqsr_normal
+	tumor -> bqsr_tumor
+	bqsr_normal -> vc_gatk
+	bqsr_tumor -> vc_gatk
+	vc_gatk -> vc_gatk_merge
+	vc_gatk_merge -> vc_gatk_compressvcf
+	vc_gatk_compressvcf -> vc_gatk_sort_combined
+	vc_gatk_sort_combined -> vc_gatk_uncompressvcf
+	normal -> addbamstats
+	vc_gatk_uncompressvcf -> addbamstats
+	tumor -> addbamstats
+}

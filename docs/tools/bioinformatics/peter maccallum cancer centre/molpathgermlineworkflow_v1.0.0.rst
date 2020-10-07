@@ -150,7 +150,7 @@ Embedded Tools
 ***************
 
 ===========================================  ========================================
-FastQC                                       ``fastqc/v0.11.8``
+FastQC                                       ``fastqc/v0.11.5``
 Parse FastQC Adaptors                        ``ParseFastqcAdaptors/v0.1.0``
 Align and sort reads                         ``BwaAligner/1.0.0``
 Merge and Mark Duplicates                    ``mergeAndMarkBams/4.1.3``
@@ -197,7 +197,7 @@ Workflow Description Language
 
    version development
 
-   import "tools/fastqc_v0_11_8.wdl" as F
+   import "tools/fastqc_v0_11_5.wdl" as F
    import "tools/ParseFastqcAdaptors_v0_1_0.wdl" as P
    import "tools/BwaAligner_1_0_0.wdl" as B
    import "tools/mergeAndMarkBams_4_1_3.wdl" as M
@@ -538,7 +538,7 @@ Common Workflow Language
        source: fastqc_threads
      scatter:
      - reads
-     run: tools/fastqc_v0_11_8.cwl
+     run: tools/fastqc_v0_11_5.cwl
      out:
      - id: out
      - id: datafile
@@ -599,6 +599,7 @@ Common Workflow Language
      run: tools/AnnotateDepthOfCoverage_v0_1_0.cwl
      out:
      - id: out
+     - id: out_sample_summary
    - id: performance_summary
      label: Performance summary workflow (targeted bed)
      in:

@@ -161,15 +161,15 @@ Workflow Description Language
          -o '~{select_first([outputFilename, "generated.vcf.gz"])}' \
          ~{if defined(checkRef) then ("-c '" + checkRef + "'") else ""} \
          ~{if defined(removeDups) then ("-d '" + removeDups + "'") else ""} \
-         ~{if defined(removeDupsAcrossFiles) then "-D" else ""} \
+         ~{if (defined(removeDupsAcrossFiles) && select_first([removeDupsAcrossFiles])) then "-D" else ""} \
          ~{if defined(reference) then ("-f '" + reference + "'") else ""} \
          ~{if defined(select_first([multiallelics, "-"])) then ("-m '" + select_first([multiallelics, "-"]) + "'") else ""} \
-         ~{if defined(noVersion) then "--no-version" else ""} \
-         ~{if defined(noNormalize) then "-N" else ""} \
+         ~{if (defined(noVersion) && select_first([noVersion])) then "--no-version" else ""} \
+         ~{if (defined(noNormalize) && select_first([noNormalize])) then "-N" else ""} \
          ~{if defined(select_first([outputType, "z"])) then ("-O '" + select_first([outputType, "z"]) + "'") else ""} \
          ~{if defined(regions) then ("-r '" + regions + "'") else ""} \
          ~{if defined(regionsFile) then ("-R '" + regionsFile + "'") else ""} \
-         ~{if defined(strictFilter) then "-s" else ""} \
+         ~{if (defined(strictFilter) && select_first([strictFilter])) then "-s" else ""} \
          ~{if (defined(targets) && length(select_first([targets])) > 0) then "-t '" + sep("' '", select_first([targets])) + "'" else ""} \
          ~{if defined(targetsFile) then ("-T '" + targetsFile + "'") else ""} \
          ~{if defined(threads) then ("--threads " + threads) else ''} \

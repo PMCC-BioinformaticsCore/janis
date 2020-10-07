@@ -115,7 +115,7 @@ Embedded Tools
 ====================================  ===============================
 Create genomic call regions           ``CreateCallRegions/v0.1.0``
 freebayes                             ``freebayes_cram/1.3.1``
-Call Somatic Variants from freebayes  ``callSomaticFreeBayes/0.1.7``
+Call Somatic Variants from freebayes  ``callSomaticFreeBayes/0.1.8``
 VcfLib: VcfCombine                    ``vcfcombine/v1.0.1``
 VcfLib: VcfStreamSort                 ``vcfstreamsort/v1.0.1``
 BCFTools: Normalize                   ``bcftoolsNorm/v1.9``
@@ -132,42 +132,41 @@ Tabix                                 ``tabix/1.2.1``
 Additional configuration (inputs)
 ---------------------------------
 
-================================  =======================  ================================================================================================================================================================================================================================================================================
-name                              type                     documentation
-================================  =======================  ================================================================================================================================================================================================================================================================================
+================================  ==================  ================================================================================================================================================================================================================================================================================
+name                              type                documentation
+================================  ==================  ================================================================================================================================================================================================================================================================================
 bams                              Array<CramPair>
 reference                         FastaFai
 normalSample                      String
 regionSize                        Optional<Integer>
-sampleNames                       Optional<Array<String>>
 skipCov                           Optional<Integer>
 minCov                            Optional<Integer>
 createCallRegions_equalize        Optional<Boolean>
-callVariants_pooledDiscreteFlag   Optional<Boolean>        Assume that samples result from pooled sequencing. Model pooled samples using discrete genotypes across pools. When using this flag, set --ploidy to the number of alleles in each sample or use the --cnv-map to define per-sample ploidy.
-callVariants_gtQuals              Optional<Boolean>        -= --genotype-qualities Calculate the marginal probability of genotypes and report as GQ in each sample field in the VCF output.
-callVariants_strictFlag           Optional<Boolean>        Generate strict VCF format (FORMAT/GQ will be an int)
-callVariants_pooledContinousFlag  Optional<Boolean>        Output all alleles which pass input filters, regardles of genotyping outcome or model.
-callVariants_reportMaxGLFlag      Optional<Boolean>        --report-genotype-likelihood-max Report genotypes using the maximum-likelihood estimate provided from genotype likelihoods.
-callVariants_noABPriorsFlag       Optional<Boolean>        -a --allele-balance-priors-off Disable use of aggregate probability of observation balance between alleles as a component of the priors.
-callVariants_maxNumOfAlleles      Optional<Integer>        Evaluate only the best N SNP alleles, ranked by sum of supporting quality scores. (Set to 0 to use all; default: all)
-callVariants_noPartObsFlag        Optional<Boolean>        Exclude observations which do not fully span the dynamically-determined detection window. (default, use all observations, dividing partial support across matching haplotypes when generating haplotypes.)
-callVariants_useDupFlag           Optional<Boolean>        Include duplicate-marked alignments in the analysis. default: exclude duplicates marked as such in alignments
-callVariants_minBaseQual          Optional<Integer>        -q --min-base-quality Q Exclude alleles from analysis if their supporting base quality is less than Q. default: 0
-callVariants_minSupMQsum          Optional<Integer>        -Y --min-supporting-mapping-qsum Q Consider any allele in which and the sum of mapping qualities of supporting reads is at least Q. default: 0
-callVariants_minSupQsum           Optional<Integer>        -R --min-supporting-allele-qsum Q Consider any allele in which the sum of qualities of supporting observations is at least Q. default: 0
-callVariants_minAltFrac           Optional<Float>          -F --min-alternate-fraction N Require at least this fraction of observations supporting an alternate allele within a single individual in the in order to evaluate the position. default: 0.05
-callVariants_minAltQSum           Optional<Integer>        -3 --min-alternate-qsum N Require at least this sum of quality of observations supporting an alternate allele within a single individual in order to evaluate the position. default: 0
-callVariants_minAltTotal          Optional<Integer>        -G --min-alternate-total N Require at least this count of observations supporting an alternate allele within the total population in order to use the allele in analysis. default: 1
-sortSomatic1_inMemoryFlag         Optional<Boolean>        load all sites and then sort in memory
-normalizeSomatic1_outputType      Optional<String>         --output-type b|u|z|v: Output compressed BCF (b), uncompressed BCF (u), compressed VCF (z), uncompressed VCF (v). Use the -Ou option when piping between bcftools subcommands to speed up performance by removing unnecessary compression/decompression and VCF←→BCF conversion.
-normalizeSomatic1_outputFilename  Optional<Filename>       --output: When output consists of a single stream, write it to FILE rather than to standard output, where it is written by default.
-allelicPrimitves_tagParsed        Optional<String>         Tag records which are split apart of a complex allele with this flag
-allelicPrimitves_keepGenoFlag     Optional<Boolean>        Maintain genotype-level annotations when decomposing.  Similar caution should be used for this as for --keep-info.
-sortSomatic2_inMemoryFlag         Optional<Boolean>        load all sites and then sort in memory
-normalizeSomatic2_outputType      Optional<String>         --output-type b|u|z|v: Output compressed BCF (b), uncompressed BCF (u), compressed VCF (z), uncompressed VCF (v). Use the -Ou option when piping between bcftools subcommands to speed up performance by removing unnecessary compression/decompression and VCF←→BCF conversion.
-normalizeSomatic2_outputFilename  Optional<Filename>       --output: When output consists of a single stream, write it to FILE rather than to standard output, where it is written by default.
-sortFinal_inMemoryFlag            Optional<Boolean>        load all sites and then sort in memory
-================================  =======================  ================================================================================================================================================================================================================================================================================
+callVariants_pooledDiscreteFlag   Optional<Boolean>   Assume that samples result from pooled sequencing. Model pooled samples using discrete genotypes across pools. When using this flag, set --ploidy to the number of alleles in each sample or use the --cnv-map to define per-sample ploidy.
+callVariants_gtQuals              Optional<Boolean>   -= --genotype-qualities Calculate the marginal probability of genotypes and report as GQ in each sample field in the VCF output.
+callVariants_strictFlag           Optional<Boolean>   Generate strict VCF format (FORMAT/GQ will be an int)
+callVariants_pooledContinousFlag  Optional<Boolean>   Output all alleles which pass input filters, regardles of genotyping outcome or model.
+callVariants_reportMaxGLFlag      Optional<Boolean>   --report-genotype-likelihood-max Report genotypes using the maximum-likelihood estimate provided from genotype likelihoods.
+callVariants_noABPriorsFlag       Optional<Boolean>   -a --allele-balance-priors-off Disable use of aggregate probability of observation balance between alleles as a component of the priors.
+callVariants_maxNumOfAlleles      Optional<Integer>   Evaluate only the best N SNP alleles, ranked by sum of supporting quality scores. (Set to 0 to use all; default: all)
+callVariants_noPartObsFlag        Optional<Boolean>   Exclude observations which do not fully span the dynamically-determined detection window. (default, use all observations, dividing partial support across matching haplotypes when generating haplotypes.)
+callVariants_useDupFlag           Optional<Boolean>   Include duplicate-marked alignments in the analysis. default: exclude duplicates marked as such in alignments
+callVariants_minBaseQual          Optional<Integer>   -q --min-base-quality Q Exclude alleles from analysis if their supporting base quality is less than Q. default: 0
+callVariants_minSupMQsum          Optional<Integer>   -Y --min-supporting-mapping-qsum Q Consider any allele in which and the sum of mapping qualities of supporting reads is at least Q. default: 0
+callVariants_minSupQsum           Optional<Integer>   -R --min-supporting-allele-qsum Q Consider any allele in which the sum of qualities of supporting observations is at least Q. default: 0
+callVariants_minAltFrac           Optional<Float>     -F --min-alternate-fraction N Require at least this fraction of observations supporting an alternate allele within a single individual in the in order to evaluate the position. default: 0.05
+callVariants_minAltQSum           Optional<Integer>   -3 --min-alternate-qsum N Require at least this sum of quality of observations supporting an alternate allele within a single individual in order to evaluate the position. default: 0
+callVariants_minAltTotal          Optional<Integer>   -G --min-alternate-total N Require at least this count of observations supporting an alternate allele within the total population in order to use the allele in analysis. default: 1
+sortSomatic1_inMemoryFlag         Optional<Boolean>   load all sites and then sort in memory
+normalizeSomatic1_outputType      Optional<String>    --output-type b|u|z|v: Output compressed BCF (b), uncompressed BCF (u), compressed VCF (z), uncompressed VCF (v). Use the -Ou option when piping between bcftools subcommands to speed up performance by removing unnecessary compression/decompression and VCF←→BCF conversion.
+normalizeSomatic1_outputFilename  Optional<Filename>  --output: When output consists of a single stream, write it to FILE rather than to standard output, where it is written by default.
+allelicPrimitves_tagParsed        Optional<String>    Tag records which are split apart of a complex allele with this flag
+allelicPrimitves_keepGenoFlag     Optional<Boolean>   Maintain genotype-level annotations when decomposing.  Similar caution should be used for this as for --keep-info.
+sortSomatic2_inMemoryFlag         Optional<Boolean>   load all sites and then sort in memory
+normalizeSomatic2_outputType      Optional<String>    --output-type b|u|z|v: Output compressed BCF (b), uncompressed BCF (u), compressed VCF (z), uncompressed VCF (v). Use the -Ou option when piping between bcftools subcommands to speed up performance by removing unnecessary compression/decompression and VCF←→BCF conversion.
+normalizeSomatic2_outputFilename  Optional<Filename>  --output: When output consists of a single stream, write it to FILE rather than to standard output, where it is written by default.
+sortFinal_inMemoryFlag            Optional<Boolean>   load all sites and then sort in memory
+================================  ==================  ================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -178,7 +177,7 @@ Workflow Description Language
 
    import "tools/CreateCallRegions_v0_1_0.wdl" as C
    import "tools/freebayes_cram_1_3_1.wdl" as F
-   import "tools/callSomaticFreeBayes_0_1_7.wdl" as C2
+   import "tools/callSomaticFreeBayes_0_1_8.wdl" as C2
    import "tools/vcfcombine_v1_0_1.wdl" as V
    import "tools/vcfstreamsort_v1_0_1.wdl" as V2
    import "tools/bcftoolsNorm_v1_9.wdl" as B
@@ -197,7 +196,6 @@ Workflow Description Language
        File reference_fai
        Int? regionSize = 10000000
        String normalSample
-       Array[String]? sampleNames
        Int? skipCov = 500
        Int? minCov = 10
        Boolean? createCallRegions_equalize = true
@@ -257,7 +255,7 @@ Workflow Description Language
            noABPriorsFlag=select_first([callVariants_noABPriorsFlag, true]),
            reportMaxGLFlag=select_first([callVariants_reportMaxGLFlag, true]),
            gtQuals=select_first([callVariants_gtQuals, true]),
-           skipCov=select_first([skipCov, 500])
+           skipCov=(select_first([skipCov, 500]) * length(bams))
        }
      }
      scatter (c in callVariants.out) {
@@ -370,11 +368,6 @@ Common Workflow Language
      default: 10000000
    - id: normalSample
      type: string
-   - id: sampleNames
-     type:
-     - type: array
-       items: string
-     - 'null'
    - id: skipCov
      type: int
      default: 500
@@ -565,8 +558,13 @@ Common Workflow Language
        source: callVariants_reportMaxGLFlag
      - id: gtQuals
        source: callVariants_gtQuals
-     - id: skipCov
+     - id: _callVariants_skipCov_skipCov
        source: skipCov
+     - id: _callVariants_skipCov_bams
+       source: bams
+     - id: skipCov
+       valueFrom: |-
+         $((inputs._callVariants_skipCov_skipCov * inputs._callVariants_skipCov_bams.length))
      scatter:
      - region
      run: tools/freebayes_cram_1_3_1.cwl
@@ -581,7 +579,7 @@ Common Workflow Language
        source: normalSample
      scatter:
      - vcf
-     run: tools/callSomaticFreeBayes_0_1_7.cwl
+     run: tools/callSomaticFreeBayes_0_1_8.cwl
      out:
      - id: out
    - id: combineRegions

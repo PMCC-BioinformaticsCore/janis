@@ -167,14 +167,14 @@ Workflow Description Language
          -SO '~{sortOrder}' \
          ~{if (defined(argumentsFile) && length(select_first([argumentsFile])) > 0) then "--arguments_file '" + sep("' --arguments_file '", select_first([argumentsFile])) + "'" else ""} \
          ~{if defined(compressionLevel) then ("--COMPRESSION_LEVEL " + compressionLevel) else ''} \
-         ~{if defined(select_first([createIndex, true])) then "--CREATE_INDEX" else ""} \
-         ~{if defined(createMd5File) then "--CREATE_MD5_FILE" else ""} \
+         ~{if select_first([createIndex, true]) then "--CREATE_INDEX" else ""} \
+         ~{if (defined(createMd5File) && select_first([createMd5File])) then "--CREATE_MD5_FILE" else ""} \
          ~{if defined(maxRecordsInRam) then ("--MAX_RECORDS_IN_RAM " + maxRecordsInRam) else ''} \
-         ~{if defined(quiet) then "--QUIET" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--QUIET" else ""} \
          ~{if defined(reference) then ("--reference '" + reference + "'") else ""} \
          ~{if defined(select_first([tmpDir, "/tmp/"])) then ("--TMP_DIR '" + select_first([tmpDir, "/tmp/"]) + "'") else ""} \
-         ~{if defined(useJdkDeflater) then "--use_jdk_deflater" else ""} \
-         ~{if defined(useJdkInflater) then "--use_jdk_inflater" else ""} \
+         ~{if (defined(useJdkDeflater) && select_first([useJdkDeflater])) then "--use_jdk_deflater" else ""} \
+         ~{if (defined(useJdkInflater) && select_first([useJdkInflater])) then "--use_jdk_inflater" else ""} \
          ~{if defined(validationStringency) then ("--VALIDATION_STRINGENCY '" + validationStringency + "'") else ""} \
          ~{if defined(verbosity) then ("--verbosity '" + verbosity + "'") else ""}
        if [ -f $(echo '~{select_first([outputFilename, "~{basename(bam, ".bam")}.sorted.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([outputFilename, "~{basename(bam, ".bam")}.sorted.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([outputFilename, "~{basename(bam, ".bam")}.sorted.bam"])}' ).bai; fi

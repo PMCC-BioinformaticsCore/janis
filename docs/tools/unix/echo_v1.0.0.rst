@@ -125,14 +125,14 @@ Workflow Description Language
      command <<<
        set -e
        echo \
-         ~{if defined(include_newline) then "-n" else ""} \
+         ~{if (defined(include_newline) && select_first([include_newline])) then "-n" else ""} \
          '~{inp}'
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
        docker: "ubuntu:latest"
-       duration: select_first([runtime_seconds, 86400])
+       duration: select_first([runtime_seconds, 60, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }

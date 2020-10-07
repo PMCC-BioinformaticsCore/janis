@@ -157,14 +157,14 @@ Workflow Description Language
          ~{if defined(gatkConfigFile) then ("--gatk-config-file '" + gatkConfigFile + "'") else ""} \
          ~{if defined(gcsMaxRetries) then ("--gcs-max-retries " + gcsMaxRetries) else ''} \
          ~{if defined(gcsProjectForRequesterPays) then ("--gcs-project-for-requester-pays '" + gcsProjectForRequesterPays + "'") else ""} \
-         ~{if defined(help) then "--help" else ""} \
-         ~{if defined(quiet) then "--QUIET" else ""} \
-         ~{if defined(tmpDir) then "--tmp-dir" else ""} \
-         ~{if defined(useJdkDeflater) then "--use-jdk-deflater" else ""} \
-         ~{if defined(useJdkInflater) then "--use-jdk-inflater" else ""} \
-         ~{if defined(verbosity) then "--verbosity" else ""} \
-         ~{if defined(version) then "--version" else ""} \
-         ~{if defined(showhidden) then "--showHidden" else ""}
+         ~{if (defined(help) && select_first([help])) then "--help" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--QUIET" else ""} \
+         ~{if (defined(tmpDir) && select_first([tmpDir])) then "--tmp-dir" else ""} \
+         ~{if (defined(useJdkDeflater) && select_first([useJdkDeflater])) then "--use-jdk-deflater" else ""} \
+         ~{if (defined(useJdkInflater) && select_first([useJdkInflater])) then "--use-jdk-inflater" else ""} \
+         ~{if (defined(verbosity) && select_first([verbosity])) then "--verbosity" else ""} \
+         ~{if (defined(version) && select_first([version])) then "--version" else ""} \
+         ~{if (defined(showhidden) && select_first([showhidden])) then "--showHidden" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

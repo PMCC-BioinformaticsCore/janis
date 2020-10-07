@@ -3,7 +3,7 @@
 FastQC (single read)
 ====================================
 
-``fastqc_single`` · *1 contributor · 1 version*
+``fastqc_single`` · *1 contributor · 2 versions*
 
 FastQC is a program designed to spot potential problems in high througput sequencing datasets. It runs a set of analyses on one or more raw sequence files in fastq or bam format and produces a report which summarises the results.
 FastQC will highlight any areas where this library looks unusual and where you should take a closer look. The program is not tied to any specific type of sequencing technique and can be used to look at libraries coming from a large number of different experiment types (Genomic Sequencing, ChIP-Seq, RNA-Seq, BS-Seq etc etc).
@@ -14,13 +14,13 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.babrahambioinformatics.fastqc.versions import FastQCSingle_0_11_5
+       from janis_bioinformatics.tools.babrahambioinformatics.fastqc.versions import FastQCSingle_0_11_8
 
        wf = WorkflowBuilder("myworkflow")
 
        wf.step(
            "fastqc_single_step",
-           FastQCSingle_0_11_5(
+           FastQCSingle_0_11_8(
                read=None,
            )
        )
@@ -79,7 +79,7 @@ Information
 
 :ID: ``fastqc_single``
 :URL: `http://www.bioinformatics.babraham.ac.uk/projects/fastqc/ <http://www.bioinformatics.babraham.ac.uk/projects/fastqc/>`_
-:Versions: v0.11.8
+:Versions: v0.11.8, v0.11.5
 :Container: quay.io/biocontainers/fastqc:0.11.8--1
 :Authors: Michael Franklin
 :Citations: None
@@ -160,20 +160,20 @@ Workflow Description Language
        set -e
        fastqc \
          ~{if defined(select_first([outdir, "."])) then ("--outdir '" + select_first([outdir, "."]) + "'") else ""} \
-         ~{if defined(casava) then "--casava" else ""} \
-         ~{if defined(nano) then "--nano" else ""} \
-         ~{if defined(nofilter) then "--nofilter" else ""} \
-         ~{if defined(select_first([extract, true])) then "--extract" else ""} \
+         ~{if (defined(casava) && select_first([casava])) then "--casava" else ""} \
+         ~{if (defined(nano) && select_first([nano])) then "--nano" else ""} \
+         ~{if (defined(nofilter) && select_first([nofilter])) then "--nofilter" else ""} \
+         ~{if select_first([extract, true]) then "--extract" else ""} \
          ~{if defined(java) then ("--java '" + java + "'") else ""} \
-         ~{if defined(noextract) then "--noextract" else ""} \
-         ~{if defined(nogroup) then "--nogroup" else ""} \
+         ~{if (defined(noextract) && select_first([noextract])) then "--noextract" else ""} \
+         ~{if (defined(nogroup) && select_first([nogroup])) then "--nogroup" else ""} \
          ~{if defined(format) then ("--format '" + format + "'") else ""} \
          ~{if defined(select_first([threads, select_first([runtime_cpu, 1])])) then ("--threads " + select_first([threads, select_first([runtime_cpu, 1])])) else ''} \
          ~{if defined(contaminants) then ("--contaminants '" + contaminants + "'") else ""} \
          ~{if defined(adapters) then ("--adapters '" + adapters + "'") else ""} \
          ~{if defined(limits) then ("--limits '" + limits + "'") else ""} \
          ~{if defined(kmers) then ("--kmers " + kmers) else ''} \
-         ~{if defined(quiet) then "--quiet" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          ~{if defined(dir) then ("--dir '" + dir + "'") else ""} \
          '~{read}'
      >>>

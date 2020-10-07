@@ -145,13 +145,13 @@ Workflow Description Language
        set -e
         vcf-merge \
          ~{if defined(collapse) then ("-c '" + collapse + "'") else ""} \
-         ~{if defined(removeDuplicates) then "--remove-duplicates" else ""} \
+         ~{if (defined(removeDuplicates) && select_first([removeDuplicates])) then "--remove-duplicates" else ""} \
          ~{if defined(vcfHeader) then ("--vcf-header '" + vcfHeader + "'") else ""} \
          ~{if (defined(regionsList) && length(select_first([regionsList])) > 0) then "--regions '" + sep("','", select_first([regionsList])) + "'" else ""} \
          ~{if defined(regionsFile) then ("--regions '" + regionsFile + "'") else ""} \
          ~{if defined(refForMissing) then ("--ref-for-missing '" + refForMissing + "'") else ""} \
-         ~{if defined(silent) then "--silent" else ""} \
-         ~{if defined(trimALTs) then "--trim-ALTs" else ""} \
+         ~{if (defined(silent) && select_first([silent])) then "--silent" else ""} \
+         ~{if (defined(trimALTs) && select_first([trimALTs])) then "--trim-ALTs" else ""} \
          ~{"'" + sep("' '", vcfTabix) + "'"}
      >>>
      runtime {

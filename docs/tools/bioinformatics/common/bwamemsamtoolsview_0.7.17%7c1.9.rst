@@ -220,24 +220,24 @@ Workflow Description Language
          ~{reference} \
          ~{if defined(minimumSeedLength) then ("-k " + minimumSeedLength) else ''} \
          ~{if defined(batchSize) then ("-K " + batchSize) else ''} \
-         ~{if defined(useSoftClippingForSupplementaryAlignments) then "-Y" else ""} \
+         ~{if (defined(useSoftClippingForSupplementaryAlignments) && select_first([useSoftClippingForSupplementaryAlignments])) then "-Y" else ""} \
          ~{if defined(bandwidth) then ("-w " + bandwidth) else ''} \
          ~{if defined(offDiagonalXDropoff) then ("-d " + offDiagonalXDropoff) else ''} \
          ~{if defined(reseedTrigger) then ("-r " + reseedTrigger) else ''} \
          ~{if defined(occurenceDiscard) then ("-c " + occurenceDiscard) else ''} \
-         ~{if defined(performSW) then "-P" else ""} \
+         ~{if (defined(performSW) && select_first([performSW])) then "-P" else ""} \
          ~{if defined(matchingScore) then ("-A " + matchingScore) else ''} \
          ~{if defined(mismatchPenalty) then ("-B " + mismatchPenalty) else ''} \
          ~{if defined(openGapPenalty) then ("-O " + openGapPenalty) else ''} \
          ~{if defined(gapExtensionPenalty) then ("-E " + gapExtensionPenalty) else ''} \
          ~{if defined(clippingPenalty) then ("-L " + clippingPenalty) else ''} \
          ~{if defined(unpairedReadPenalty) then ("-U " + unpairedReadPenalty) else ''} \
-         ~{if defined(assumeInterleavedFirstInput) then "-p" else ""} \
+         ~{if (defined(assumeInterleavedFirstInput) && select_first([assumeInterleavedFirstInput])) then "-p" else ""} \
          ~{if defined(outputAlignmentThreshold) then ("-T " + outputAlignmentThreshold) else ''} \
-         ~{if defined(outputAllElements) then "-a" else ""} \
-         ~{if defined(appendComments) then "-C" else ""} \
-         ~{if defined(hardClipping) then "-H" else ""} \
-         ~{if defined(markShorterSplits) then "-M" else ""} \
+         ~{if (defined(outputAllElements) && select_first([outputAllElements])) then "-a" else ""} \
+         ~{if (defined(appendComments) && select_first([appendComments])) then "-C" else ""} \
+         ~{if (defined(hardClipping) && select_first([hardClipping])) then "-H" else ""} \
+         ~{if (defined(markShorterSplits) && select_first([markShorterSplits])) then "-M" else ""} \
          ~{if defined(verboseLevel) then ("-v " + verboseLevel) else ''} \
          -R '@RG\tID:~{sampleName}\tSM:~{sampleName}\tLB:~{sampleName}\tPL:~{select_first([platformTechnology, "ILLUMINA"])}' \
          -t ~{select_first([runtime_cpu, 16, 1])} \
@@ -258,9 +258,9 @@ Workflow Description Language
          ~{if (defined(includeReadsWithAllFLAGs) && length(select_first([includeReadsWithAllFLAGs])) > 0) then "-f " + sep(" ", select_first([includeReadsWithAllFLAGs])) else ""} \
          ~{if (defined(includeReadsWithoutFLAGs) && length(select_first([includeReadsWithoutFLAGs])) > 0) then "-F " + sep(" ", select_first([includeReadsWithoutFLAGs])) else ""} \
          ~{if (defined(excludeReadsWithAllFLAGs) && length(select_first([excludeReadsWithAllFLAGs])) > 0) then "-G " + sep(" ", select_first([excludeReadsWithAllFLAGs])) else ""} \
-         ~{if defined(useMultiRegionIterator) then "-M" else ""} \
+         ~{if (defined(useMultiRegionIterator) && select_first([useMultiRegionIterator])) then "-M" else ""} \
          ~{if defined(readTagToStrip) then ("-x " + readTagToStrip) else ''} \
-         ~{if defined(collapseBackwardCIGAROps) then "-B" else ""} \
+         ~{if (defined(collapseBackwardCIGAROps) && select_first([collapseBackwardCIGAROps])) then "-B" else ""} \
          ~{if defined(outputFmt) then ("--output-fmt " + outputFmt) else ''} \
          -T ~{reference} \
          --threads ~{select_first([runtime_cpu, 16, 1])} \

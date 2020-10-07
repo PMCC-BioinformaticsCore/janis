@@ -173,6 +173,15 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
      </a>
      <hr />
          
+     <a href="prepareallsortsinput.html">
+       <p style="margin-bottom: 5px"><b>Prepare ALLSorts Input</b> <span style="margin-left: 10px; color: darkgray">prepareALLSortsInput</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="prepareallsortsinput.html" style="margin-bottom: 10px">
+       v<b>0.1.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="trimiupac.html">
        <p style="margin-bottom: 5px"><b>Trim IUPAC Bases</b> <span style="margin-left: 10px; color: darkgray">trimIUPAC</span></p>
        

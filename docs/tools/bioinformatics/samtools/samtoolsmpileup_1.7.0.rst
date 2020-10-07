@@ -169,26 +169,26 @@ Workflow Description Language
      command <<<
        set -e
        samtools mpileup \
-         ~{if defined(illuminaEncoding) then "--illumina1.3+" else ""} \
-         ~{if defined(countOrphans) then "--count-orphans" else ""} \
-         ~{if defined(noBAQ) then "--no-BAQ" else ""} \
+         ~{if (defined(illuminaEncoding) && select_first([illuminaEncoding])) then "--illumina1.3+" else ""} \
+         ~{if (defined(countOrphans) && select_first([countOrphans])) then "--count-orphans" else ""} \
+         ~{if (defined(noBAQ) && select_first([noBAQ])) then "--no-BAQ" else ""} \
          ~{if defined(adjustMQ) then ("--adjust-MQ " + adjustMQ) else ''} \
          ~{if defined(maxDepth) then ("--max-depth " + maxDepth) else ''} \
-         ~{if defined(redoBAQ) then "--redo-BAQ" else ""} \
+         ~{if (defined(redoBAQ) && select_first([redoBAQ])) then "--redo-BAQ" else ""} \
          ~{if defined(fastaRef) then ("--fasta-ref '" + fastaRef + "'") else ""} \
          ~{if defined(excludeRG) then ("--exclude-RG '" + excludeRG + "'") else ""} \
          ~{if defined(positions) then ("--positions '" + positions + "'") else ""} \
          ~{if defined(minBQ) then ("--min-BQ " + minBQ) else ''} \
          ~{if defined(minMQ) then ("--min-MQ " + minMQ) else ''} \
          ~{if defined(region) then ("--region '" + region + "'") else ""} \
-         ~{if defined(ignoreRG) then "--ignore-RG" else ""} \
+         ~{if (defined(ignoreRG) && select_first([ignoreRG])) then "--ignore-RG" else ""} \
          ~{if defined(inclFlags) then ("--incl-flags '" + inclFlags + "'") else ""} \
          ~{if defined(exclFlags) then ("--excl-flags '" + exclFlags + "'") else ""} \
-         ~{if defined(ignoreOverlaps) then "--ignore-overlaps" else ""} \
-         ~{if defined(outputBP) then "--output-BP" else ""} \
-         ~{if defined(outputMQ) then "--output-MQ" else ""} \
-         ~{if defined(outputQNAME) then "--output-QNAME" else ""} \
-         ~{if defined(allPositions) then "-a" else ""} \
+         ~{if (defined(ignoreOverlaps) && select_first([ignoreOverlaps])) then "--ignore-overlaps" else ""} \
+         ~{if (defined(outputBP) && select_first([outputBP])) then "--output-BP" else ""} \
+         ~{if (defined(outputMQ) && select_first([outputMQ])) then "--output-MQ" else ""} \
+         ~{if (defined(outputQNAME) && select_first([outputQNAME])) then "--output-QNAME" else ""} \
+         ~{if (defined(allPositions) && select_first([allPositions])) then "-a" else ""} \
          ~{if defined(reference) then ("--reference '" + reference + "'") else ""} \
          '~{bam}'
      >>>

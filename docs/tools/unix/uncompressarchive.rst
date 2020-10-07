@@ -148,20 +148,20 @@ Workflow Description Language
      command <<<
        set -e
        gunzip \
-         ~{if defined(select_first([stdout, true])) then "-c" else ""} \
-         ~{if defined(decompress) then "-d" else ""} \
-         ~{if defined(force) then "-f" else ""} \
-         ~{if defined(keep) then "-k" else ""} \
-         ~{if defined(list) then "-l" else ""} \
-         ~{if defined(noName) then "-n" else ""} \
-         ~{if defined(name) then "-N" else ""} \
-         ~{if defined(quiet) then "-q" else ""} \
-         ~{if defined(recursive) then "-r" else ""} \
+         ~{if select_first([stdout, true]) then "-c" else ""} \
+         ~{if (defined(decompress) && select_first([decompress])) then "-d" else ""} \
+         ~{if (defined(force) && select_first([force])) then "-f" else ""} \
+         ~{if (defined(keep) && select_first([keep])) then "-k" else ""} \
+         ~{if (defined(list) && select_first([list])) then "-l" else ""} \
+         ~{if (defined(noName) && select_first([noName])) then "-n" else ""} \
+         ~{if (defined(name) && select_first([name])) then "-N" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "-q" else ""} \
+         ~{if (defined(recursive) && select_first([recursive])) then "-r" else ""} \
          ~{if defined(suffix) then ("-s '" + suffix + "'") else ""} \
-         ~{if defined(test) then "-t" else ""} \
-         ~{if defined(fast) then "-1" else ""} \
-         ~{if defined(best) then "-9" else ""} \
-         ~{if defined(rsyncable) then "--rsyncable" else ""} \
+         ~{if (defined(test) && select_first([test])) then "-t" else ""} \
+         ~{if (defined(fast) && select_first([fast])) then "-1" else ""} \
+         ~{if (defined(best) && select_first([best])) then "-9" else ""} \
+         ~{if (defined(rsyncable) && select_first([rsyncable])) then "--rsyncable" else ""} \
          '~{file}'
      >>>
      runtime {

@@ -136,13 +136,13 @@ Workflow Description Language
      command <<<
        set -e
        cat \
-         ~{if defined(number_output) then "-n" else ""} \
-         ~{if defined(number_non_blank) then "-b" else ""} \
-         ~{if defined(disable_output_buffer) then "-u" else ""} \
-         ~{if defined(squeeze) then "-s" else ""} \
-         ~{if defined(display_nonprint_and_eol_chars) then "-e" else ""} \
-         ~{if defined(display_nonprint_and_tab_chars) then "-t" else ""} \
-         ~{if defined(display_nonprint_chars) then "-v" else ""} \
+         ~{if (defined(number_output) && select_first([number_output])) then "-n" else ""} \
+         ~{if (defined(number_non_blank) && select_first([number_non_blank])) then "-b" else ""} \
+         ~{if (defined(disable_output_buffer) && select_first([disable_output_buffer])) then "-u" else ""} \
+         ~{if (defined(squeeze) && select_first([squeeze])) then "-s" else ""} \
+         ~{if (defined(display_nonprint_and_eol_chars) && select_first([display_nonprint_and_eol_chars])) then "-e" else ""} \
+         ~{if (defined(display_nonprint_and_tab_chars) && select_first([display_nonprint_and_tab_chars])) then "-t" else ""} \
+         ~{if (defined(display_nonprint_chars) && select_first([display_nonprint_chars])) then "-v" else ""} \
          ~{if (defined(files) && length(select_first([files])) > 0) then "'" + sep("' '", select_first([files])) + "'" else ""}
      >>>
      runtime {

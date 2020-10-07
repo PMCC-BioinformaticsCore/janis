@@ -250,18 +250,18 @@ Workflow Description Language
          ~{if defined(adapter) then ("-a '" + adapter + "'") else ""} \
          -o '~{select_first([outputFilename, "generated--R1.fastq.gz"])}' \
          -p '~{select_first([secondReadFile, "generated--R2.fastq.gz"])}' \
-         ~{if defined(debug) then "--debug" else ""} \
-         ~{if defined(noIndels) then "--no-indels" else ""} \
-         ~{if defined(matchReadWildcards) then "--match-read-wildcards" else ""} \
-         ~{if defined(trimN) then "--trim-n" else ""} \
-         ~{if defined(discardCasava) then "--discard-casava" else ""} \
-         ~{if defined(quiet) then "--quiet" else ""} \
-         ~{if defined(stripF3) then "--strip-f3" else ""} \
-         ~{if defined(noZeroCap) then "--no-zero-cap" else ""} \
-         ~{if defined(interleaved) then "--interleaved" else ""} \
-         ~{if defined(discardTrimmed) then "--discard-trimmed" else ""} \
-         ~{if defined(discardUntrimmed) then "--discard-untrimmed" else ""} \
-         ~{if defined(maq) then "--maq" else ""} \
+         ~{if (defined(debug) && select_first([debug])) then "--debug" else ""} \
+         ~{if (defined(noIndels) && select_first([noIndels])) then "--no-indels" else ""} \
+         ~{if (defined(matchReadWildcards) && select_first([matchReadWildcards])) then "--match-read-wildcards" else ""} \
+         ~{if (defined(trimN) && select_first([trimN])) then "--trim-n" else ""} \
+         ~{if (defined(discardCasava) && select_first([discardCasava])) then "--discard-casava" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
+         ~{if (defined(stripF3) && select_first([stripF3])) then "--strip-f3" else ""} \
+         ~{if (defined(noZeroCap) && select_first([noZeroCap])) then "--no-zero-cap" else ""} \
+         ~{if (defined(interleaved) && select_first([interleaved])) then "--interleaved" else ""} \
+         ~{if (defined(discardTrimmed) && select_first([discardTrimmed])) then "--discard-trimmed" else ""} \
+         ~{if (defined(discardUntrimmed) && select_first([discardUntrimmed])) then "--discard-untrimmed" else ""} \
+         ~{if (defined(maq) && select_first([maq])) then "--maq" else ""} \
          ~{if defined(pairFilter) then ("--pair-filter= '" + pairFilter + "'") else ""} \
          ~{if defined(nextseqTrim) then ("--nextseq-trim= '" + nextseqTrim + "'") else ""} \
          ~{if defined(action) then ("--action= '" + action + "'") else ""} \
@@ -297,11 +297,11 @@ Workflow Description Language
          ~{if defined(removeMiddle5Adapter) then ("-G '" + removeMiddle5Adapter + "'") else ""} \
          ~{if defined(removeMiddleBothAdapter) then ("-B '" + removeMiddleBothAdapter + "'") else ""} \
          ~{if defined(removeNBasesFromSecondRead) then ("-U " + removeNBasesFromSecondRead) else ''} \
-         ~{if defined(noMatchAdapterWildcards) then "-N" else ""} \
-         ~{if defined(colorspace) then "-c" else ""} \
-         ~{if defined(doubleEncode) then "-d" else ""} \
-         ~{if defined(trimPrimer) then "-t" else ""} \
-         ~{if defined(zeroCap) then "-z" else ""} \
+         ~{if (defined(noMatchAdapterWildcards) && select_first([noMatchAdapterWildcards])) then "-N" else ""} \
+         ~{if (defined(colorspace) && select_first([colorspace])) then "-c" else ""} \
+         ~{if (defined(doubleEncode) && select_first([doubleEncode])) then "-d" else ""} \
+         ~{if (defined(trimPrimer) && select_first([trimPrimer])) then "-t" else ""} \
+         ~{if (defined(zeroCap) && select_first([zeroCap])) then "-z" else ""} \
          ~{"'" + sep("' '", fastq) + "'"}
      >>>
      runtime {

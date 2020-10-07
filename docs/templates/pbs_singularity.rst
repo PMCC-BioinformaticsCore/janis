@@ -53,6 +53,7 @@ build_instructions             <class 'str'>                        singularity 
 singularity_load_instructions                                                                                   Ensure singularity with this command executed in shell
 max_cores                                                                                                       Maximum number of cores a task can request
 max_ram                                                                                                         Maximum amount of ram (GB) that a task can request
+max_duration                                                                                                    Maximum amount of time in seconds (s) that a task can request
 can_run_in_foreground          <class 'bool'>                       True
 run_in_background              <class 'bool'>                       False
 =============================  ===================================  ==========================================  ==========================================================================================

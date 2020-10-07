@@ -163,13 +163,13 @@ Workflow Description Language
        set -e
        cp -f ~{inp} .
        tabix \
-         ~{if defined(zeroBased) then "--zero-based" else ""} \
-         ~{if defined(csi) then "--csi" else ""} \
-         ~{if defined(force) then "--force" else ""} \
+         ~{if (defined(zeroBased) && select_first([zeroBased])) then "--zero-based" else ""} \
+         ~{if (defined(csi) && select_first([csi])) then "--csi" else ""} \
+         ~{if (defined(force) && select_first([force])) then "--force" else ""} \
          ~{if defined(minShift) then ("--min-shift " + minShift) else ''} \
-         ~{if defined(printHeader) then "--print-header" else ""} \
-         ~{if defined(onlyHeader) then "--only-header" else ""} \
-         ~{if defined(listChroms) then "--list-chroms" else ""} \
+         ~{if (defined(printHeader) && select_first([printHeader])) then "--print-header" else ""} \
+         ~{if (defined(onlyHeader) && select_first([onlyHeader])) then "--only-header" else ""} \
+         ~{if (defined(listChroms) && select_first([listChroms])) then "--list-chroms" else ""} \
          ~{if defined(reheader) then ("--reheader '" + reheader + "'") else ""} \
          ~{if defined(select_first([preset, "vcf"])) then ("--preset '" + select_first([preset, "vcf"]) + "'") else ""} \
          ~{if defined(sequence) then ("--sequence " + sequence) else ''} \

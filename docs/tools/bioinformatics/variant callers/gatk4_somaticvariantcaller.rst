@@ -110,7 +110,7 @@ Outputs
 name      type                  documentation
 ========  ====================  ===============
 variants  CompressedIndexedVCF
-out_bam   IndexedBam
+out_bam   Optional<IndexedBam>
 out       VCF
 ========  ====================  ===============
 
@@ -288,8 +288,8 @@ Workflow Description Language
      output {
        File variants = filtermutect2calls.out
        File variants_tbi = filtermutect2calls.out_tbi
-       File out_bam = mutect2.bam
-       File out_bam_bai = mutect2.bam_bai
+       File? out_bam = mutect2.bam
+       File? out_bam_bai = mutect2.bam_bai
        File out = filterpass.out
      }
    }
@@ -382,7 +382,9 @@ Common Workflow Language
      - .tbi
      outputSource: filtermutect2calls/out
    - id: out_bam
-     type: File
+     type:
+     - File
+     - 'null'
      secondaryFiles:
      - .bai
      outputSource: mutect2/bam

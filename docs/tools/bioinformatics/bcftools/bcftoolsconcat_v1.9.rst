@@ -161,14 +161,14 @@ Workflow Description Language
        set -e
        bcftools concat \
          -o '~{select_first([outputFilename, "generated.vcf.gz"])}' \
-         ~{if defined(allowOverLaps) then "-a" else ""} \
-         ~{if defined(compactPS) then "-c" else ""} \
+         ~{if (defined(allowOverLaps) && select_first([allowOverLaps])) then "-a" else ""} \
+         ~{if (defined(compactPS) && select_first([compactPS])) then "-c" else ""} \
          ~{if defined(rmDups) then ("-d '" + rmDups + "'") else ""} \
-         ~{if defined(rmDupsNone) then "-d" else ""} \
+         ~{if (defined(rmDupsNone) && select_first([rmDupsNone])) then "-d" else ""} \
          ~{if defined(fileList) then ("-f '" + fileList + "'") else ""} \
-         ~{if defined(ligate) then "-l" else ""} \
-         ~{if defined(noVersion) then "--no-version" else ""} \
-         ~{if defined(naive) then "-n" else ""} \
+         ~{if (defined(ligate) && select_first([ligate])) then "-l" else ""} \
+         ~{if (defined(noVersion) && select_first([noVersion])) then "--no-version" else ""} \
+         ~{if (defined(naive) && select_first([naive])) then "-n" else ""} \
          ~{if defined(select_first([outputType, "z"])) then ("-O '" + select_first([outputType, "z"]) + "'") else ""} \
          ~{if defined(minPG) then ("-q " + minPG) else ''} \
          ~{if defined(regions) then ("-r '" + regions + "'") else ""} \

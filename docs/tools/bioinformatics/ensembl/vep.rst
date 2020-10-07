@@ -420,122 +420,122 @@ Workflow Description Language
        vep \
          --input_file '~{inputFile}' \
          --output_file '~{select_first([outputFilename, "generated.vep"])}' \
-         ~{if defined(select_first([vcf, true])) then "--vcf" else ""} \
-         ~{if defined(help) then "--help" else ""} \
-         ~{if defined(quiet) then "--quiet" else ""} \
-         ~{if defined(verbose) then "--verbose" else ""} \
+         ~{if select_first([vcf, true]) then "--vcf" else ""} \
+         ~{if (defined(help) && select_first([help])) then "--help" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
+         ~{if (defined(verbose) && select_first([verbose])) then "--verbose" else ""} \
          ~{if defined(config) then ("--config '" + config + "'") else ""} \
-         ~{if defined(everything) then "--everything" else ""} \
+         ~{if (defined(everything) && select_first([everything])) then "--everything" else ""} \
          ~{if defined(species) then ("--species '" + species + "'") else ""} \
          ~{if defined(assembly) then ("--assembly '" + assembly + "'") else ""} \
          ~{if defined(inputData) then ("--input_data '" + inputData + "'") else ""} \
          ~{if defined(format) then ("--format '" + format + "'") else ""} \
-         ~{if defined(forceOverwrite) then "--force_overwrite" else ""} \
+         ~{if (defined(forceOverwrite) && select_first([forceOverwrite])) then "--force_overwrite" else ""} \
          ~{if defined(select_first([statsFile, "variant_effect_output.txt_summary.html"])) then ("--stats_file '" + select_first([statsFile, "variant_effect_output.txt_summary.html"]) + "'") else ""} \
-         ~{if defined(noStats) then "--no_stats" else ""} \
-         ~{if defined(statsText) then "--stats_text" else ""} \
+         ~{if (defined(noStats) && select_first([noStats])) then "--no_stats" else ""} \
+         ~{if (defined(statsText) && select_first([statsText])) then "--stats_text" else ""} \
          --warning_file '~{select_first([warningFile, "generated-warning.txt"])}' \
-         ~{if defined(maxSvSize) then "--max_sv_size" else ""} \
-         ~{if defined(noCheckVariantsOrder) then "--no_check_variants_order" else ""} \
+         ~{if (defined(maxSvSize) && select_first([maxSvSize])) then "--max_sv_size" else ""} \
+         ~{if (defined(noCheckVariantsOrder) && select_first([noCheckVariantsOrder])) then "--no_check_variants_order" else ""} \
          ~{if defined(fork) then ("--fork " + fork) else ''} \
          ~{if (defined(custom) && length(select_first([custom])) > 0) then "--custom '" + sep("' '", select_first([custom])) + "'" else ""} \
          ~{if defined(gff) then ("--gff '" + gff + "'") else ""} \
          ~{if defined(gtf) then ("--gtf '" + gtf + "'") else ""} \
          ~{if defined(bam) then ("--bam '" + bam + "'") else ""} \
-         ~{if defined(useTranscriptRef) then "--use_transcript_ref" else ""} \
-         ~{if defined(useGivenRef) then "--use_given_ref" else ""} \
-         ~{if defined(customMultiAllelic) then "--custom_multi_allelic" else ""} \
-         ~{if defined(tab) then "--tab" else ""} \
-         ~{if defined(json) then "--json" else ""} \
+         ~{if (defined(useTranscriptRef) && select_first([useTranscriptRef])) then "--use_transcript_ref" else ""} \
+         ~{if (defined(useGivenRef) && select_first([useGivenRef])) then "--use_given_ref" else ""} \
+         ~{if (defined(customMultiAllelic) && select_first([customMultiAllelic])) then "--custom_multi_allelic" else ""} \
+         ~{if (defined(tab) && select_first([tab])) then "--tab" else ""} \
+         ~{if (defined(json) && select_first([json])) then "--json" else ""} \
          ~{if defined(select_first([compressOutput, "bgzip"])) then ("--compress_output '" + select_first([compressOutput, "bgzip"]) + "'") else ""} \
          ~{if (defined(fields) && length(select_first([fields])) > 0) then "--fields '" + sep("' '", select_first([fields])) + "'" else ""} \
-         ~{if defined(minimal) then "--minimal" else ""} \
-         ~{if defined(variantClass) then "--variant_class" else ""} \
+         ~{if (defined(minimal) && select_first([minimal])) then "--minimal" else ""} \
+         ~{if (defined(variantClass) && select_first([variantClass])) then "--variant_class" else ""} \
          ~{if defined(sift) then ("--sift '" + sift + "'") else ""} \
          ~{if defined(polyphen) then ("--polyphen '" + polyphen + "'") else ""} \
-         ~{if defined(humdiv) then "--humdiv" else ""} \
+         ~{if (defined(humdiv) && select_first([humdiv])) then "--humdiv" else ""} \
          ~{if defined(nearest) then ("--nearest '" + nearest + "'") else ""} \
          ~{if (defined(distance) && length(select_first([distance])) > 0) then "--distance " + sep(",", select_first([distance])) else ""} \
-         ~{if defined(overlaps) then "--overlaps" else ""} \
-         ~{if defined(genePhenotype) then "--gene_phenotype" else ""} \
-         ~{if defined(regulatory) then "--regulatory" else ""} \
-         ~{if defined(cellType) then "--cell_type" else ""} \
+         ~{if (defined(overlaps) && select_first([overlaps])) then "--overlaps" else ""} \
+         ~{if (defined(genePhenotype) && select_first([genePhenotype])) then "--gene_phenotype" else ""} \
+         ~{if (defined(regulatory) && select_first([regulatory])) then "--regulatory" else ""} \
+         ~{if (defined(cellType) && select_first([cellType])) then "--cell_type" else ""} \
          ~{if (defined(individual) && length(select_first([individual])) > 0) then "--individual '" + sep("','", select_first([individual])) + "'" else ""} \
-         ~{if defined(phased) then "--phased" else ""} \
-         ~{if defined(alleleNumber) then "--allele_number" else ""} \
-         ~{if defined(showRefAllele) then "--show_ref_allele" else ""} \
-         ~{if defined(totalLength) then "--total_length" else ""} \
-         ~{if defined(numbers) then "--numbers" else ""} \
-         ~{if defined(noEscape) then "--no_escape" else ""} \
-         ~{if defined(keepCsq) then "--keep_csq" else ""} \
+         ~{if (defined(phased) && select_first([phased])) then "--phased" else ""} \
+         ~{if (defined(alleleNumber) && select_first([alleleNumber])) then "--allele_number" else ""} \
+         ~{if (defined(showRefAllele) && select_first([showRefAllele])) then "--show_ref_allele" else ""} \
+         ~{if (defined(totalLength) && select_first([totalLength])) then "--total_length" else ""} \
+         ~{if (defined(numbers) && select_first([numbers])) then "--numbers" else ""} \
+         ~{if (defined(noEscape) && select_first([noEscape])) then "--no_escape" else ""} \
+         ~{if (defined(keepCsq) && select_first([keepCsq])) then "--keep_csq" else ""} \
          ~{if defined(vcfInfoField) then ("--vcf_info_field '" + vcfInfoField + "'") else ""} \
          ~{if defined(terms) then ("--terms '" + terms + "'") else ""} \
-         ~{if defined(noHeaders) then "--no_headers" else ""} \
-         ~{if defined(hgvs) then "--hgvs" else ""} \
-         ~{if defined(hgvsg) then "--hgvsg" else ""} \
-         ~{if defined(shiftHgvs) then "--shift_hgvs" else ""} \
-         ~{if defined(transcriptVersion) then "--transcript_version" else ""} \
-         ~{if defined(protein) then "--protein" else ""} \
-         ~{if defined(symbol) then "--symbol" else ""} \
-         ~{if defined(ccds) then "--ccds" else ""} \
-         ~{if defined(uniprot) then "--uniprot" else ""} \
-         ~{if defined(tsl) then "--tsl" else ""} \
-         ~{if defined(appris) then "--appris" else ""} \
-         ~{if defined(canonical) then "--canonical" else ""} \
-         ~{if defined(mane) then "--mane" else ""} \
-         ~{if defined(biotype) then "--biotype" else ""} \
-         ~{if defined(domains) then "--domains" else ""} \
-         ~{if defined(xrefRefseq) then "--xref_refseq" else ""} \
+         ~{if (defined(noHeaders) && select_first([noHeaders])) then "--no_headers" else ""} \
+         ~{if (defined(hgvs) && select_first([hgvs])) then "--hgvs" else ""} \
+         ~{if (defined(hgvsg) && select_first([hgvsg])) then "--hgvsg" else ""} \
+         ~{if (defined(shiftHgvs) && select_first([shiftHgvs])) then "--shift_hgvs" else ""} \
+         ~{if (defined(transcriptVersion) && select_first([transcriptVersion])) then "--transcript_version" else ""} \
+         ~{if (defined(protein) && select_first([protein])) then "--protein" else ""} \
+         ~{if (defined(symbol) && select_first([symbol])) then "--symbol" else ""} \
+         ~{if (defined(ccds) && select_first([ccds])) then "--ccds" else ""} \
+         ~{if (defined(uniprot) && select_first([uniprot])) then "--uniprot" else ""} \
+         ~{if (defined(tsl) && select_first([tsl])) then "--tsl" else ""} \
+         ~{if (defined(appris) && select_first([appris])) then "--appris" else ""} \
+         ~{if (defined(canonical) && select_first([canonical])) then "--canonical" else ""} \
+         ~{if (defined(mane) && select_first([mane])) then "--mane" else ""} \
+         ~{if (defined(biotype) && select_first([biotype])) then "--biotype" else ""} \
+         ~{if (defined(domains) && select_first([domains])) then "--domains" else ""} \
+         ~{if (defined(xrefRefseq) && select_first([xrefRefseq])) then "--xref_refseq" else ""} \
          ~{if defined(synonyms) then ("--synonyms '" + synonyms + "'") else ""} \
-         ~{if defined(checkExisting) then "--check_existing" else ""} \
-         ~{if defined(checkSvs) then "--check_svs" else ""} \
-         ~{if defined(clinSigAllele) then "--clin_sig_allele" else ""} \
-         ~{if defined(excludeNullAlleles) then "--exclude_null_alleles" else ""} \
-         ~{if defined(noCheckAlleles) then "--no_check_alleles" else ""} \
-         ~{if defined(af) then "--af" else ""} \
-         ~{if defined(maxAf) then "--max_af" else ""} \
+         ~{if (defined(checkExisting) && select_first([checkExisting])) then "--check_existing" else ""} \
+         ~{if (defined(checkSvs) && select_first([checkSvs])) then "--check_svs" else ""} \
+         ~{if (defined(clinSigAllele) && select_first([clinSigAllele])) then "--clin_sig_allele" else ""} \
+         ~{if (defined(excludeNullAlleles) && select_first([excludeNullAlleles])) then "--exclude_null_alleles" else ""} \
+         ~{if (defined(noCheckAlleles) && select_first([noCheckAlleles])) then "--no_check_alleles" else ""} \
+         ~{if (defined(af) && select_first([af])) then "--af" else ""} \
+         ~{if (defined(maxAf) && select_first([maxAf])) then "--max_af" else ""} \
          ~{if defined(af1kg) then ("--af_1kg '" + af1kg + "'") else ""} \
-         ~{if defined(afEsp) then "--af_esp" else ""} \
-         ~{if defined(afGnomad) then "--af_gnomad" else ""} \
-         ~{if defined(afExac) then "--af_exac" else ""} \
-         ~{if defined(pubmed) then "--pubmed" else ""} \
-         ~{if defined(failed) then "--failed" else ""} \
-         ~{if defined(gencodeBasic) then "--gencode_basic" else ""} \
-         ~{if defined(excludePredicted) then "--exclude_predicted" else ""} \
-         ~{if defined(transcriptFilter) then "--transcript_filter" else ""} \
-         ~{if defined(checkRef) then "--check_ref" else ""} \
-         ~{if defined(lookupRef) then "--lookup_ref" else ""} \
-         ~{if defined(dontSkip) then "--dont_skip" else ""} \
-         ~{if defined(allowNonVariant) then "--allow_non_variant" else ""} \
+         ~{if (defined(afEsp) && select_first([afEsp])) then "--af_esp" else ""} \
+         ~{if (defined(afGnomad) && select_first([afGnomad])) then "--af_gnomad" else ""} \
+         ~{if (defined(afExac) && select_first([afExac])) then "--af_exac" else ""} \
+         ~{if (defined(pubmed) && select_first([pubmed])) then "--pubmed" else ""} \
+         ~{if (defined(failed) && select_first([failed])) then "--failed" else ""} \
+         ~{if (defined(gencodeBasic) && select_first([gencodeBasic])) then "--gencode_basic" else ""} \
+         ~{if (defined(excludePredicted) && select_first([excludePredicted])) then "--exclude_predicted" else ""} \
+         ~{if (defined(transcriptFilter) && select_first([transcriptFilter])) then "--transcript_filter" else ""} \
+         ~{if (defined(checkRef) && select_first([checkRef])) then "--check_ref" else ""} \
+         ~{if (defined(lookupRef) && select_first([lookupRef])) then "--lookup_ref" else ""} \
+         ~{if (defined(dontSkip) && select_first([dontSkip])) then "--dont_skip" else ""} \
+         ~{if (defined(allowNonVariant) && select_first([allowNonVariant])) then "--allow_non_variant" else ""} \
          ~{if (defined(chr) && length(select_first([chr])) > 0) then "--chr '" + sep("','", select_first([chr])) + "'" else ""} \
-         ~{if defined(codingOnly) then "--coding_only" else ""} \
-         ~{if defined(noIntergenic) then "--no_intergenic" else ""} \
-         ~{if defined(pick) then "--pick" else ""} \
-         ~{if defined(pickAllele) then "--pick_allele" else ""} \
-         ~{if defined(perGene) then "--per_gene" else ""} \
-         ~{if defined(pickAlleleGene) then "--pick_allele_gene" else ""} \
-         ~{if defined(flagPick) then "--flag_pick" else ""} \
-         ~{if defined(flagPickAllele) then "--flag_pick_allele" else ""} \
-         ~{if defined(flagPickAlleleGene) then "--flag_pick_allele_gene" else ""} \
+         ~{if (defined(codingOnly) && select_first([codingOnly])) then "--coding_only" else ""} \
+         ~{if (defined(noIntergenic) && select_first([noIntergenic])) then "--no_intergenic" else ""} \
+         ~{if (defined(pick) && select_first([pick])) then "--pick" else ""} \
+         ~{if (defined(pickAllele) && select_first([pickAllele])) then "--pick_allele" else ""} \
+         ~{if (defined(perGene) && select_first([perGene])) then "--per_gene" else ""} \
+         ~{if (defined(pickAlleleGene) && select_first([pickAlleleGene])) then "--pick_allele_gene" else ""} \
+         ~{if (defined(flagPick) && select_first([flagPick])) then "--flag_pick" else ""} \
+         ~{if (defined(flagPickAllele) && select_first([flagPickAllele])) then "--flag_pick_allele" else ""} \
+         ~{if (defined(flagPickAlleleGene) && select_first([flagPickAlleleGene])) then "--flag_pick_allele_gene" else ""} \
          ~{if (defined(pickOrder) && length(select_first([pickOrder])) > 0) then "--pick_order '" + sep("','", select_first([pickOrder])) + "'" else ""} \
-         ~{if defined(mostSevere) then "--most_severe" else ""} \
-         ~{if defined(summary) then "--summary" else ""} \
-         ~{if defined(filterCommon) then "--filter_common" else ""} \
-         ~{if defined(checkFrequency) then "--check_frequency" else ""} \
+         ~{if (defined(mostSevere) && select_first([mostSevere])) then "--most_severe" else ""} \
+         ~{if (defined(summary) && select_first([summary])) then "--summary" else ""} \
+         ~{if (defined(filterCommon) && select_first([filterCommon])) then "--filter_common" else ""} \
+         ~{if (defined(checkFrequency) && select_first([checkFrequency])) then "--check_frequency" else ""} \
          ~{if defined(freqPop) then ("--freq_pop '" + freqPop + "'") else ""} \
          ~{if defined(freqFreq) then ("--freq_freq " + freqFreq) else ''} \
          ~{if defined(freqGtLt) then ("--freq_gt_lt '" + freqGtLt + "'") else ""} \
          ~{if defined(freqFilter) then ("--freq_filter '" + freqFilter + "'") else ""} \
-         ~{if defined(cache) then "--cache" else ""} \
+         ~{if (defined(cache) && select_first([cache])) then "--cache" else ""} \
          ~{if defined(cacheDir) then ("--dir '" + cacheDir + "'") else ""} \
          ~{if defined(dirCache) then ("--dir_cache '" + dirCache + "'") else ""} \
          ~{if defined(dirPlugins) then ("--dir_plugins '" + dirPlugins + "'") else ""} \
-         ~{if defined(offline) then "--offline" else ""} \
+         ~{if (defined(offline) && select_first([offline])) then "--offline" else ""} \
          ~{if defined(fasta) then ("--fasta '" + fasta + "'") else ""} \
-         ~{if defined(refseq) then "--refseq" else ""} \
-         ~{if defined(merged) then "--merged" else ""} \
-         ~{if defined(cacheVersion) then "--cache_version" else ""} \
-         ~{if defined(showCacheInfo) then "--show_cache_info" else ""} \
+         ~{if (defined(refseq) && select_first([refseq])) then "--refseq" else ""} \
+         ~{if (defined(merged) && select_first([merged])) then "--merged" else ""} \
+         ~{if (defined(cacheVersion) && select_first([cacheVersion])) then "--cache_version" else ""} \
+         ~{if (defined(showCacheInfo) && select_first([showCacheInfo])) then "--show_cache_info" else ""} \
          ~{if defined(bufferSize) then ("--buffer_size " + bufferSize) else ''}
      >>>
      runtime {

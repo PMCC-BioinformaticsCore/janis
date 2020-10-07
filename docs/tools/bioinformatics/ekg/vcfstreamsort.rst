@@ -128,7 +128,7 @@ Workflow Description Language
      command <<<
        set -e
        vcfstreamsort \
-         ~{if defined(select_first([inMemoryFlag, false])) then "-a" else ""} \
+         ~{if select_first([inMemoryFlag, false]) then "-a" else ""} \
          ~{if defined(windowSize) then ("-w " + windowSize) else ''} \
          '~{vcf}'
      >>>

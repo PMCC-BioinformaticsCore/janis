@@ -137,9 +137,9 @@ Workflow Description Language
         vcftools \
          --vcf '~{vcf}' \
          --out '~{select_first([outputFilename, "generated"])}' \
-         ~{if defined(removeFileteredAll) then "--remove-filtered-all" else ""} \
-         ~{if defined(recode) then "--recode" else ""} \
-         ~{if defined(recodeINFOAll) then "--recode-INFO-all" else ""}
+         ~{if (defined(removeFileteredAll) && select_first([removeFileteredAll])) then "--remove-filtered-all" else ""} \
+         ~{if (defined(recode) && select_first([recode])) then "--recode" else ""} \
+         ~{if (defined(recodeINFOAll) && select_first([recodeINFOAll])) then "--recode-INFO-all" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

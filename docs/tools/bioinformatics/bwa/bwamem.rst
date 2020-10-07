@@ -202,20 +202,20 @@ Workflow Description Language
          ~{if defined(offDiagonalXDropoff) then ("-d " + offDiagonalXDropoff) else ''} \
          ~{if defined(reseedTrigger) then ("-r " + reseedTrigger) else ''} \
          ~{if defined(occurenceDiscard) then ("-c " + occurenceDiscard) else ''} \
-         ~{if defined(performSW) then "-P" else ""} \
+         ~{if (defined(performSW) && select_first([performSW])) then "-P" else ""} \
          ~{if defined(matchingScore) then ("-A " + matchingScore) else ''} \
          ~{if defined(mismatchPenalty) then ("-B " + mismatchPenalty) else ''} \
          ~{if defined(openGapPenalty) then ("-O " + openGapPenalty) else ''} \
          ~{if defined(gapExtensionPenalty) then ("-E " + gapExtensionPenalty) else ''} \
          ~{if defined(clippingPenalty) then ("-L " + clippingPenalty) else ''} \
          ~{if defined(unpairedReadPenalty) then ("-U " + unpairedReadPenalty) else ''} \
-         ~{if defined(assumeInterleavedFirstInput) then "-p" else ""} \
+         ~{if (defined(assumeInterleavedFirstInput) && select_first([assumeInterleavedFirstInput])) then "-p" else ""} \
          ~{if defined(readGroupHeaderLine) then ("-R '" + readGroupHeaderLine + "'") else ""} \
          ~{if defined(outputAlignmentThreshold) then ("-T " + outputAlignmentThreshold) else ''} \
-         ~{if defined(outputAllElements) then "-a" else ""} \
-         ~{if defined(appendComments) then "-C" else ""} \
-         ~{if defined(hardClipping) then "-H" else ""} \
-         ~{if defined(markShorterSplits) then "-M" else ""} \
+         ~{if (defined(outputAllElements) && select_first([outputAllElements])) then "-a" else ""} \
+         ~{if (defined(appendComments) && select_first([appendComments])) then "-C" else ""} \
+         ~{if (defined(hardClipping) && select_first([hardClipping])) then "-H" else ""} \
+         ~{if (defined(markShorterSplits) && select_first([markShorterSplits])) then "-M" else ""} \
          ~{if defined(verboseLevel) then ("-v " + verboseLevel) else ''} \
          '~{reference}' \
          ~{"'" + sep("' '", reads) + "'"} \

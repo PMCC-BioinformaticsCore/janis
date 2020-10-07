@@ -149,13 +149,13 @@ Workflow Description Language
      command <<<
        set -e
        LD_LIBRARY_PATH=/opt/conda/lib /snp-pileup \
-         ~{if defined(count_orphans) then "--count-orphans" else ""} \
-         ~{if defined(ignore_overlaps) then "--ignore-overlaps" else ""} \
+         ~{if (defined(count_orphans) && select_first([count_orphans])) then "--count-orphans" else ""} \
+         ~{if (defined(ignore_overlaps) && select_first([ignore_overlaps])) then "--ignore-overlaps" else ""} \
          ~{if defined(max_depth) then ("--maxdepth=" + max_depth) else ''} \
          ~{if defined(min_map_quality) then ("--min-map-quality=" + min_map_quality) else ''} \
          ~{if defined(min_base_quality) then ("--min-base-quality=" + min_base_quality) else ''} \
          ~{if defined(min_read_counts) then ("--min-read-counts='" + min_read_counts + "'") else ""} \
-         ~{if defined(gzip) then "--gzip" else ""} \
+         ~{if (defined(gzip) && select_first([gzip])) then "--gzip" else ""} \
          ~{if defined(pseudo_snps) then ("--pseudo-snps='" + pseudo_snps + "'") else ""} \
          '~{vcf_file}' \
          '~{select_first([output_filename, "generated.csv.gz"])}' \

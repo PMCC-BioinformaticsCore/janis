@@ -5,7 +5,9 @@ GATK4: SplitReads
 
 ``Gatk4SplitReads`` · *0 contributors · 3 versions*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+USAGE: SplitReads [arguments]
+Outputs reads from a SAM/BAM/CRAM by read group, sample and library name
+Version:4.1.3.0
 
 
 Quickstart
@@ -80,8 +82,8 @@ Information
 :Container: broadinstitute/gatk:4.1.3.0
 :Authors: 
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2019-09-16
+:Updated: 2019-09-16
 
 
 Outputs
@@ -259,8 +261,8 @@ Workflow Description Language
          --java-options '-Xmx~{((select_first([runtime_memory, 4, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
          --output '~{select_first([outputFilename, "."])}' \
          ~{if defined(intervals) then ("--intervals '" + intervals + "'") else ""} \
-         ~{if defined(addOutputSamProgramRecord) then "-add-output-sam-program-record" else ""} \
-         ~{if defined(addOutputVcfCommandLine) then "-add-output-vcf-command-line" else ""} \
+         ~{if (defined(addOutputSamProgramRecord) && select_first([addOutputSamProgramRecord])) then "-add-output-sam-program-record" else ""} \
+         ~{if (defined(addOutputVcfCommandLine) && select_first([addOutputVcfCommandLine])) then "-add-output-vcf-command-line" else ""} \
          ~{if defined(arguments_file) then ("--arguments_file:File '" + arguments_file + "'") else ""} \
          ~{if defined(cloudIndexPrefetchBuffer) then ("--cloud-index-prefetch-buffer '" + cloudIndexPrefetchBuffer + "'") else ""} \
          ~{if defined(cloudPrefetchBuffer) then ("--cloud-prefetch-buffer '" + cloudPrefetchBuffer + "'") else ""} \
@@ -270,7 +272,7 @@ Workflow Description Language
          ~{if defined(createOutputVariantMd5) then ("--create-output-variant-md5 '" + createOutputVariantMd5 + "'") else ""} \
          ~{if defined(disableBamIndexCaching) then ("--disable-bam-index-caching '" + disableBamIndexCaching + "'") else ""} \
          ~{if defined(disableReadFilter) then ("--disable-read-filter '" + disableReadFilter + "'") else ""} \
-         ~{if defined(disableSequenceDictionaryValidation) then "-disable-sequence-dictionary-validation" else ""} \
+         ~{if (defined(disableSequenceDictionaryValidation) && select_first([disableSequenceDictionaryValidation])) then "-disable-sequence-dictionary-validation" else ""} \
          ~{if defined(excludeIntervals) then ("--exclude-intervals '" + excludeIntervals + "'") else ""} \
          ~{if defined(gatkConfigFile) then ("--gatk-config-file '" + gatkConfigFile + "'") else ""} \
          ~{if defined(gcsRetries) then ("-gcs-retries " + gcsRetries) else ''} \
@@ -279,23 +281,23 @@ Workflow Description Language
          ~{if defined(imr) then ("-imr:IntervalMergingRule '" + imr + "'") else ""} \
          ~{if defined(ip) then ("-ip " + ip) else ''} \
          ~{if defined(isr) then ("-isr:IntervalSetRule '" + isr + "'") else ""} \
-         ~{if defined(le) then "--lenient" else ""} \
-         ~{if defined(quiet) then "--QUIET" else ""} \
+         ~{if (defined(le) && select_first([le])) then "--lenient" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--QUIET" else ""} \
          ~{if defined(readFilter) then ("--read-filter '" + readFilter + "'") else ""} \
          ~{if defined(readIndex) then ("-read-index '" + readIndex + "'") else ""} \
          ~{if defined(readValidationStringency) then ("--read-validation-stringency '" + readValidationStringency + "'") else ""} \
          ~{if defined(reference) then ("--reference '" + reference + "'") else ""} \
          ~{if defined(secondsBetweenProgressUpdates) then ("-seconds-between-progress-updates " + secondsBetweenProgressUpdates) else ''} \
          ~{if defined(sequenceDictionary) then ("-sequence-dictionary '" + sequenceDictionary + "'") else ""} \
-         ~{if defined(sitesOnlyVcfOutput) then "--sites-only-vcf-output:Boolean" else ""} \
+         ~{if (defined(sitesOnlyVcfOutput) && select_first([sitesOnlyVcfOutput])) then "--sites-only-vcf-output:Boolean" else ""} \
          ~{if defined(splitLibraryName) then ("--split-library-name '" + splitLibraryName + "'") else ""} \
          ~{if defined(rg) then ("--split-read-group '" + rg + "'") else ""} \
          ~{if defined(splitSample) then ("--split-sample '" + splitSample + "'") else ""} \
          ~{if defined(tmpDir) then ("--tmp-dir:GATKPathSpecifier '" + tmpDir + "'") else ""} \
-         ~{if defined(jdkDeflater) then "-jdk-deflater" else ""} \
-         ~{if defined(jdkInflater) then "-jdk-inflater" else ""} \
+         ~{if (defined(jdkDeflater) && select_first([jdkDeflater])) then "-jdk-deflater" else ""} \
+         ~{if (defined(jdkInflater) && select_first([jdkInflater])) then "-jdk-inflater" else ""} \
          ~{if defined(verbosity) then ("-verbosity:LogLevel '" + verbosity + "'") else ""} \
-         ~{if defined(disableToolDefaultReadFilters) then "-disable-tool-default-read-filters" else ""} \
+         ~{if (defined(disableToolDefaultReadFilters) && select_first([disableToolDefaultReadFilters])) then "-disable-tool-default-read-filters" else ""} \
          ~{if defined(ambigFilterBases) then ("--ambig-filter-bases " + ambigFilterBases) else ''} \
          ~{if defined(ambigFilterFrac) then ("--ambig-filter-frac " + ambigFilterFrac) else ''} \
          ~{if defined(maxFragmentLength) then ("--max-fragment-length " + maxFragmentLength) else ''} \
@@ -304,7 +306,7 @@ Workflow Description Language
          ~{if defined(library) then ("-library '" + library + "'") else ""} \
          ~{if defined(maximumMappingQuality) then ("--maximum-mapping-quality " + maximumMappingQuality) else ''} \
          ~{if defined(minimumMappingQuality) then ("--minimum-mapping-quality " + minimumMappingQuality) else ''} \
-         ~{if defined(dontRequireSoftClipsBothEnds) then "--dont-require-soft-clips-both-ends" else ""} \
+         ~{if (defined(dontRequireSoftClipsBothEnds) && select_first([dontRequireSoftClipsBothEnds])) then "--dont-require-soft-clips-both-ends" else ""} \
          ~{if defined(filterTooShort) then ("--filter-too-short " + filterTooShort) else ''} \
          ~{if defined(platformFilterName) then ("--platform-filter-name:String '" + platformFilterName + "'") else ""} \
          ~{if defined(blackListedLanes) then ("--black-listed-lanes:String '" + blackListedLanes + "'") else ""} \
@@ -313,9 +315,9 @@ Workflow Description Language
          ~{if defined(maxReadLength) then ("--max-read-length " + maxReadLength) else ''} \
          ~{if defined(minReadLength) then ("--min-read-length " + minReadLength) else ''} \
          ~{if defined(readName) then ("--read-name:String '" + readName + "'") else ""} \
-         ~{if defined(keepReverseStrandOnly) then "--keep-reverse-strand-only" else ""} \
+         ~{if (defined(keepReverseStrandOnly) && select_first([keepReverseStrandOnly])) then "--keep-reverse-strand-only" else ""} \
          ~{if defined(sample) then ("-sample:String '" + sample + "'") else ""} \
-         ~{if defined(invertSoftClipRatioFilter) then "--invert-soft-clip-ratio-filter" else ""} \
+         ~{if (defined(invertSoftClipRatioFilter) && select_first([invertSoftClipRatioFilter])) then "--invert-soft-clip-ratio-filter" else ""} \
          ~{if defined(softClippedLeadingTrailingRatio) then ("--soft-clipped-leading-trailing-ratio " + softClippedLeadingTrailingRatio) else ''} \
          ~{if defined(softClippedRatioThreshold) then ("--soft-clipped-ratio-threshold " + softClippedRatioThreshold) else ''} \
          --input '~{bam}'
@@ -344,6 +346,10 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.0
    label: 'GATK4: SplitReads'
+   doc: |-
+     USAGE: SplitReads [arguments]
+     Outputs reads from a SAM/BAM/CRAM by read group, sample and library name
+     Version:4.1.3.0
 
    requirements:
    - class: ShellCommandRequirement

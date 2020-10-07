@@ -131,8 +131,8 @@ Workflow Description Language
      command <<<
        set -e
         vcf-concat \
-         ~{if defined(checkColumns) then "-c" else ""} \
-         ~{if defined(padMissing) then "-p" else ""} \
+         ~{if (defined(checkColumns) && select_first([checkColumns])) then "-c" else ""} \
+         ~{if (defined(padMissing) && select_first([padMissing])) then "-p" else ""} \
          ~{if defined(mergeSort) then ("--merge-sort " + mergeSort) else ''} \
          ~{"'" + sep("' '", vcfTabix) + "'"}
      >>>

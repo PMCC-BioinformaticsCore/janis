@@ -158,25 +158,25 @@ Workflow Description Language
      command <<<
        set -e
        coverageBed \
-         ~{if defined(strandedness) then "-s" else ""} \
-         ~{if defined(differentStrandedness) then "-S" else ""} \
+         ~{if (defined(strandedness) && select_first([strandedness])) then "-s" else ""} \
+         ~{if (defined(differentStrandedness) && select_first([differentStrandedness])) then "-S" else ""} \
          ~{if defined(fractionA) then ("-f " + fractionA) else ''} \
          ~{if defined(fractionB) then ("-F " + fractionB) else ''} \
-         ~{if defined(reciprocalFraction) then "-r" else ""} \
-         ~{if defined(minFraction) then "-r" else ""} \
-         ~{if defined(split) then "-split" else ""} \
+         ~{if (defined(reciprocalFraction) && select_first([reciprocalFraction])) then "-r" else ""} \
+         ~{if (defined(minFraction) && select_first([minFraction])) then "-r" else ""} \
+         ~{if (defined(split) && select_first([split])) then "-split" else ""} \
          ~{if defined(genome) then ("-g '" + genome + "'") else ""} \
-         ~{if defined(noNameCheck) then "-nonamecheck" else ""} \
-         ~{if defined(sorted) then "-sorted" else ""} \
-         ~{if defined(header) then "-header" else ""} \
-         ~{if defined(noBuf) then "-nobuf" else ""} \
+         ~{if (defined(noNameCheck) && select_first([noNameCheck])) then "-nonamecheck" else ""} \
+         ~{if (defined(sorted) && select_first([sorted])) then "-sorted" else ""} \
+         ~{if (defined(header) && select_first([header])) then "-header" else ""} \
+         ~{if (defined(noBuf) && select_first([noBuf])) then "-nobuf" else ""} \
          ~{if defined(bufMem) then ("-iobuf " + bufMem) else ''} \
          -a '~{inputABed}' \
          -b '~{inputBBam}' \
-         ~{if defined(histogram) then "-hist" else ""} \
-         ~{if defined(depth) then "-d" else ""} \
-         ~{if defined(counts) then "-counts" else ""} \
-         ~{if defined(mean) then "-mean" else ""}
+         ~{if (defined(histogram) && select_first([histogram])) then "-hist" else ""} \
+         ~{if (defined(depth) && select_first([depth])) then "-d" else ""} \
+         ~{if (defined(counts) && select_first([counts])) then "-counts" else ""} \
+         ~{if (defined(mean) && select_first([mean])) then "-mean" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

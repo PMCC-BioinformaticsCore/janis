@@ -1,0 +1,17 @@
+// Oncopipe: sample preparation
+digraph OncopipeSamplePreparation {
+	node [shape=record]
+	trim [label="trim (Trimmomatic: Paired End (PE))"]
+	star [label="star (STAR Aligner)"]
+	arriba [label="arriba (Arriba)"]
+	sortsam [label="sortsam (GATK4: SortSAM)"]
+	featureCounts [label="featureCounts (featureCounts)"]
+	prepareAllsortsInput [label="prepareAllsortsInput (Prepare ALLSorts Input)"]
+	allsorts [label="allsorts (Allsorts)"]
+	trim -> star
+	star -> arriba
+	star -> sortsam
+	star -> featureCounts
+	featureCounts -> prepareAllsortsInput
+	prepareAllsortsInput -> allsorts
+}

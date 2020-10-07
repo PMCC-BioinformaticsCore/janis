@@ -156,15 +156,15 @@ Workflow Description Language
          -H '~{select_first([outputHistogram, "generated.histogram.pdf"])}' \
          -I '~{bam}' \
          ~{if (defined(argumentsFile) && length(select_first([argumentsFile])) > 0) then "--arguments_file '" + sep("' --arguments_file '", select_first([argumentsFile])) + "'" else ""} \
-         ~{if defined(assumeSorted) then "--ASSUME_SORTED" else ""} \
+         ~{if (defined(assumeSorted) && select_first([assumeSorted])) then "--ASSUME_SORTED" else ""} \
          ~{if defined(deviations) then ("--DEVIATIONS " + deviations) else ''} \
          ~{if defined(histogramWidth) then ("--HISTOGRAM_WIDTH " + histogramWidth) else ''} \
-         ~{if defined(includeDuplicates) then "--INCLUDE_DUPLICATES" else ""} \
+         ~{if (defined(includeDuplicates) && select_first([includeDuplicates])) then "--INCLUDE_DUPLICATES" else ""} \
          ~{if defined(metricAccumulationLevel) then ("--METRIC_ACCUMULATION_LEVEL '" + metricAccumulationLevel + "'") else ""} \
          ~{if defined(minimumPCT) then ("--MINIMUM_PCT " + minimumPCT) else ''} \
          ~{if defined(stopAfter) then ("--STOP_AFTER " + stopAfter) else ''} \
-         ~{if defined(version) then "--version" else ""} \
-         ~{if defined(showHidden) then "--showHidden" else ""}
+         ~{if (defined(version) && select_first([version])) then "--version" else ""} \
+         ~{if (defined(showHidden) && select_first([showHidden])) then "--showHidden" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])

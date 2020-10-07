@@ -147,12 +147,12 @@ Workflow Description Language
      command <<<
        set -e
        kallisto quant \
-         ~{if defined(bias) then "--bias" else ""} \
-         ~{if defined(fusion) then "--fusion" else ""} \
-         ~{if defined(single) then "--single" else ""} \
-         ~{if defined(overhang) then "--single-overhang" else ""} \
-         ~{if defined(fr_stranded) then "--fr-stranded" else ""} \
-         ~{if defined(rf_stranded) then "--rf-stranded" else ""} \
+         ~{if (defined(bias) && select_first([bias])) then "--bias" else ""} \
+         ~{if (defined(fusion) && select_first([fusion])) then "--fusion" else ""} \
+         ~{if (defined(single) && select_first([single])) then "--single" else ""} \
+         ~{if (defined(overhang) && select_first([overhang])) then "--single-overhang" else ""} \
+         ~{if (defined(fr_stranded) && select_first([fr_stranded])) then "--fr-stranded" else ""} \
+         ~{if (defined(rf_stranded) && select_first([rf_stranded])) then "--rf-stranded" else ""} \
          ~{if defined(fragment_length) then ("-l " + fragment_length) else ''} \
          ~{if defined(fragment_sd) then ("-s " + fragment_sd) else ''} \
          -i '~{index}' \

@@ -17,8 +17,8 @@ digraph GATK4_SomaticVariantCaller {
 	tumor_split_bam -> getpileupsummaries
 	getpileupsummaries -> calculatecontamination
 	mutect2 -> filtermutect2calls
-	learnorientationmodel -> filtermutect2calls
 	calculatecontamination -> filtermutect2calls
+	learnorientationmodel -> filtermutect2calls
 	filtermutect2calls -> uncompressvcf
 	uncompressvcf -> splitnormalisevcf
 	splitnormalisevcf -> filterpass

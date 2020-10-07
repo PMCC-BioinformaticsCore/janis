@@ -228,27 +228,27 @@ Workflow Description Language
          ~{if defined(intervals) then ("-L '" + intervals + "'") else ""} \
          ~{if defined(excludeIntervals) then ("--excludeIntervals '" + excludeIntervals + "'") else ""} \
          ~{if defined(argFile) then ("--arg_file '" + argFile + "'") else ""} \
-         ~{if defined(showFullBamList) then "--showFullBamList" else ""} \
+         ~{if (defined(showFullBamList) && select_first([showFullBamList])) then "--showFullBamList" else ""} \
          ~{if defined(read_buffer_size) then ("--read_buffer_size " + read_buffer_size) else ''} \
-         ~{if defined(read_filter) then "--read_filter" else ""} \
-         ~{if defined(disable_read_filter) then "--disable_read_filter" else ""} \
+         ~{if (defined(read_filter) && select_first([read_filter])) then "--read_filter" else ""} \
+         ~{if (defined(disable_read_filter) && select_first([disable_read_filter])) then "--disable_read_filter" else ""} \
          ~{if defined(interval_set_rule) then ("--interval_set_rule '" + interval_set_rule + "'") else ""} \
          ~{if defined(interval_merging) then ("--interval_merging '" + interval_merging + "'") else ""} \
          ~{if defined(interval_padding) then ("--interval_padding " + interval_padding) else ''} \
-         ~{if defined(nonDeterministicRandomSeed) then "--nonDeterministicRandomSeed" else ""} \
+         ~{if (defined(nonDeterministicRandomSeed) && select_first([nonDeterministicRandomSeed])) then "--nonDeterministicRandomSeed" else ""} \
          ~{if defined(maxRuntime) then ("--maxRuntime '" + maxRuntime + "'") else ""} \
          ~{if defined(downsampling_type) then ("--downsampling_type '" + downsampling_type + "'") else ""} \
          ~{if defined(downsample_to_fraction) then ("--downsample_to_fraction " + downsample_to_fraction) else ''} \
          ~{if defined(baq) then ("--baq '" + baq + "'") else ""} \
-         ~{if defined(refactor_NDN_cigar_string) then "--refactor_NDN_cigar_string" else ""} \
-         ~{if defined(fixMisencodedQuals) then "--fixMisencodedQuals" else ""} \
-         ~{if defined(allowPotentiallyMisencodedQuals) then "--allowPotentiallyMisencodedQuals" else ""} \
-         ~{if defined(useOriginalQualities) then "--useOriginalQualities" else ""} \
+         ~{if (defined(refactor_NDN_cigar_string) && select_first([refactor_NDN_cigar_string])) then "--refactor_NDN_cigar_string" else ""} \
+         ~{if (defined(fixMisencodedQuals) && select_first([fixMisencodedQuals])) then "--fixMisencodedQuals" else ""} \
+         ~{if (defined(allowPotentiallyMisencodedQuals) && select_first([allowPotentiallyMisencodedQuals])) then "--allowPotentiallyMisencodedQuals" else ""} \
+         ~{if (defined(useOriginalQualities) && select_first([useOriginalQualities])) then "--useOriginalQualities" else ""} \
          ~{if defined(defaultBaseQualities) then ("--defaultBaseQualities " + defaultBaseQualities) else ''} \
          --performanceLog '~{select_first([performanceLog, "generated"])}' \
          ~{if defined(BQSR) then ("--BQSR '" + BQSR + "'") else ""} \
-         ~{if defined(disable_indel_quals) then "--disable_indel_quals" else ""} \
-         ~{if defined(emit_original_quals) then "--emit_original_quals" else ""} \
+         ~{if (defined(disable_indel_quals) && select_first([disable_indel_quals])) then "--disable_indel_quals" else ""} \
+         ~{if (defined(emit_original_quals) && select_first([emit_original_quals])) then "--emit_original_quals" else ""} \
          ~{if defined(preserve_qscores_less_than) then ("--preserve_qscores_less_than " + preserve_qscores_less_than) else ''} \
          ~{if defined(countType) then ("--countType '" + countType + "'") else ""} \
          ~{if (defined(summaryCoverageThreshold) && length(select_first([summaryCoverageThreshold])) > 0) then sep(" ", prefix("-ct ", select_first([summaryCoverageThreshold]))) else ""} \

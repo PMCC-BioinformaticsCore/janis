@@ -231,27 +231,27 @@ Workflow Description Language
          --CALL_VCF '~{callVCF}' \
          --TRUTH_VCF '~{truthVCF}' \
          --OUTPUT '~{select_first([outputBasename, "generated"])}' \
-         ~{if defined(ignoreFilterStatus) then "--IGNORE_FILTER_STATUS" else ""} \
-         ~{if defined(intersectIntervals) then "--INTERSECT_INTERVALS" else ""} \
+         ~{if (defined(ignoreFilterStatus) && select_first([ignoreFilterStatus])) then "--IGNORE_FILTER_STATUS" else ""} \
+         ~{if (defined(intersectIntervals) && select_first([intersectIntervals])) then "--INTERSECT_INTERVALS" else ""} \
          ~{if (defined(intervals) && length(select_first([intervals])) > 0) then "--INTERVALS '" + sep("' '", select_first([intervals])) + "'" else ""} \
          ~{if defined(minDP) then ("--MIN_DP " + minDP) else ''} \
          ~{if defined(minGQ) then ("--MIN_GQ " + minGQ) else ''} \
-         ~{if defined(treatMissingSitesAsHomeRef) then "--MISSING_SITES_HOM_REF" else ""} \
-         ~{if defined(outputAllRows) then "--OUTPUT_ALL_ROWS" else ""} \
-         ~{if defined(outputVcf) then "--OUTPUT_VCF" else ""} \
+         ~{if (defined(treatMissingSitesAsHomeRef) && select_first([treatMissingSitesAsHomeRef])) then "--MISSING_SITES_HOM_REF" else ""} \
+         ~{if (defined(outputAllRows) && select_first([outputAllRows])) then "--OUTPUT_ALL_ROWS" else ""} \
+         ~{if (defined(outputVcf) && select_first([outputVcf])) then "--OUTPUT_VCF" else ""} \
          ~{if defined(truthSample) then ("--TRUTH_SAMPLE '" + truthSample + "'") else ""} \
-         ~{if defined(useVcfIndex) then "--USE_VCF_INDEX" else ""} \
+         ~{if (defined(useVcfIndex) && select_first([useVcfIndex])) then "--USE_VCF_INDEX" else ""} \
          ~{if (defined(argumentsFile) && length(select_first([argumentsFile])) > 0) then "--arguments_file '" + sep("' '", select_first([argumentsFile])) + "'" else ""} \
          ~{if defined(callSample) then ("--CALL_SAMPLE '" + callSample + "'") else ""} \
          ~{if defined(compressionLevel) then ("--COMPRESSION_LEVEL " + compressionLevel) else ''} \
-         ~{if defined(createIndex) then "--CREATE_INDEX" else ""} \
-         ~{if defined(createMd5File) then "--CREATE_MD5_FILE" else ""} \
+         ~{if (defined(createIndex) && select_first([createIndex])) then "--CREATE_INDEX" else ""} \
+         ~{if (defined(createMd5File) && select_first([createMd5File])) then "--CREATE_MD5_FILE" else ""} \
          ~{if defined(maxRecordsInRam) then ("--MAX_RECORDS_IN_RAM " + maxRecordsInRam) else ''} \
-         ~{if defined(quiet) then "--QUIET" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--QUIET" else ""} \
          ~{if defined(reference) then ("--REFERENCE_SEQUENCE '" + reference + "'") else ""} \
          ~{if defined(select_first([tmpDir, "/tmp/"])) then ("--TMP_DIR '" + select_first([tmpDir, "/tmp/"]) + "'") else ""} \
-         ~{if defined(useJdkDeflater) then "--use_jdk_deflater" else ""} \
-         ~{if defined(useJdkInflater) then "--use_jdk_inflater" else ""} \
+         ~{if (defined(useJdkDeflater) && select_first([useJdkDeflater])) then "--use_jdk_deflater" else ""} \
+         ~{if (defined(useJdkInflater) && select_first([useJdkInflater])) then "--use_jdk_inflater" else ""} \
          ~{if defined(validationStringency) then ("--VALIDATION_STRINGENCY '" + validationStringency + "'") else ""} \
          ~{if defined(verbosity) then ("--verbosity '" + verbosity + "'") else ""}
      >>>

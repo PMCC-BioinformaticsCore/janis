@@ -156,20 +156,20 @@ Workflow Description Language
      command <<<
        set -e
        genomeCoverageBed \
-         ~{if defined(depth) then "-d" else ""} \
-         ~{if defined(depthZero) then "-dz" else ""} \
-         ~{if defined(BedGraphFormat) then "-bg" else ""} \
-         ~{if defined(BedGraphFormata) then "-bga" else ""} \
-         ~{if defined(split) then "-split" else ""} \
+         ~{if (defined(depth) && select_first([depth])) then "-d" else ""} \
+         ~{if (defined(depthZero) && select_first([depthZero])) then "-dz" else ""} \
+         ~{if (defined(BedGraphFormat) && select_first([BedGraphFormat])) then "-bg" else ""} \
+         ~{if (defined(BedGraphFormata) && select_first([BedGraphFormata])) then "-bga" else ""} \
+         ~{if (defined(split) && select_first([split])) then "-split" else ""} \
          ~{if defined(strand) then ("-strand '" + strand + "'") else ""} \
-         ~{if defined(pairEnd) then "-pc" else ""} \
-         ~{if defined(fragmentSize) then "-fs" else ""} \
-         ~{if defined(du) then "-du" else ""} \
-         ~{if defined(fivePos) then "-5" else ""} \
-         ~{if defined(threePos) then "-3" else ""} \
+         ~{if (defined(pairEnd) && select_first([pairEnd])) then "-pc" else ""} \
+         ~{if (defined(fragmentSize) && select_first([fragmentSize])) then "-fs" else ""} \
+         ~{if (defined(du) && select_first([du])) then "-du" else ""} \
+         ~{if (defined(fivePos) && select_first([fivePos])) then "-5" else ""} \
+         ~{if (defined(threePos) && select_first([threePos])) then "-3" else ""} \
          ~{if defined(max) then ("-max " + max) else ''} \
          ~{if defined(scale) then ("-scale " + scale) else ''} \
-         ~{if defined(trackline) then "-trackline" else ""} \
+         ~{if (defined(trackline) && select_first([trackline])) then "-trackline" else ""} \
          ~{if defined(trackopts) then ("-trackopts '" + trackopts + "'") else ""} \
          ~{if defined(inputBam) then ("-ibam '" + inputBam + "'") else ""} \
          ~{if defined(inputBed) then ("-iBed '" + inputBed + "'") else ""} \

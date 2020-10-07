@@ -185,7 +185,7 @@ Workflow Description Language
          ~{if defined(configurationFile) then ("CONFIGURATION_FILE='" + configurationFile + "'") else ""} \
          ~{if defined(workerThreads) then ("WORKER_THREADS=" + workerThreads) else ''} \
          ~{if defined(select_first([workingDir, "."])) then ("WORKING_DIR='" + select_first([workingDir, "."]) + "'") else ""} \
-         ~{if defined(ignoreDuplicates) then "IGNORE_DUPLICATES=" else ""}
+         ~{if (defined(ignoreDuplicates) && select_first([ignoreDuplicates])) then "IGNORE_DUPLICATES=" else ""}
        if [ -f $(echo '~{select_first([assemblyFilename, "generated.assembled.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([assemblyFilename, "generated.assembled.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([assemblyFilename, "generated.assembled.bam"])}' ).bai; fi
      >>>
      runtime {

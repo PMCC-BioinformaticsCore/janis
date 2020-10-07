@@ -9,6 +9,8 @@ Automatically generated index page for bioinformatics:
 .. raw:: html
 
    <ul>
+     <li><a href="arriba/index.html">arriba</a></li>
+
      <li><a href="bcftools/index.html">bcftools</a></li>
 
      <li><a href="bedtools/index.html">bedtools</a></li>
@@ -33,6 +35,8 @@ Automatically generated index page for bioinformatics:
 
      <li><a href="ensembl/index.html">ensembl</a></li>
 
+     <li><a href="ensembl/index.html">ensembl</a></li>
+
      <li><a href="erik garrison/index.html">erik garrison</a></li>
 
      <li><a href="facets/index.html">facets</a></li>
@@ -53,6 +57,10 @@ Automatically generated index page for bioinformatics:
 
      <li><a href="multiqc/index.html">multiqc</a></li>
 
+     <li><a href="oncopipe/index.html">oncopipe</a></li>
+
+     <li><a href="oshlack/index.html">oshlack</a></li>
+
      <li><a href="papenfuss labs/index.html">papenfuss labs</a></li>
 
      <li><a href="peter maccallum cancer centre/index.html">peter maccallum cancer centre</a></li>
@@ -61,7 +69,11 @@ Automatically generated index page for bioinformatics:
 
      <li><a href="sequenza/index.html">sequenza</a></li>
 
+     <li><a href="subread/index.html">subread</a></li>
+
      <li><a href="ucsf/index.html">ucsf</a></li>
+
+     <li><a href="usadel lab/index.html">usadel lab</a></li>
 
      <li><a href="vardict/index.html">vardict</a></li>
 

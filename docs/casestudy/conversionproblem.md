@@ -19,11 +19,13 @@ checking that you're providing a SAM, BAM or CRAM to `samtools index`, rather th
 
 Janis supports a mechanism to simply teach Janis to convert to a file format, for example:
 
+```
 | Input 	|     Ouptut 	|           Tool 	| Code |
 |-------	|------------	|----------------	|----- |
 | Bam   	| IndexedBam 	| `samtools index` 	| `JanisTransformation(Bam, BamBai, SamToolsIndex_1_9, relevant_tool_input="bam")` |
 | VCF   	| VcfGz      	| `bgzip`          	| `JanisTransformation(Vcf, CompressedVcf, BGZip_1_9)` |
 | VcfGz 	| VcfTabix   	| `tabix`          	| `JanisTransformation(CompressedVcf, VcfTabix, Tabix_1_9)` |
+```
 
 Internally, this builds up a graph of transformations. The annotated tool in a `JanisTransformation` could also be a 
 code tool or even a workflow.  
@@ -106,7 +108,7 @@ workflow convert_vcf_to_compressedindexedvcf {
 }
 ```
 
-![Workflow diagram of Vcf -> VcfTabix](conversions_vcf_tabix.png)
+![Workflow diagram of Vcf -> VcfTabix](./conversions_vcf_tabix.png)
 
 ## Wrapping up
 

@@ -186,12 +186,12 @@ Workflow Description Language
          ~{if (defined(phred33) && select_first([phred33])) then "-phred33" else ""} \
          ~{if (defined(phred64) && select_first([phred64])) then "-phred64" else ""} \
          -trimlog '~{select_first([trimLogFilename, "trimlog.log"])}' \
-         ~{"'" + sep("' '", inp) + "'"} \
+         ~{if length(inp) > 0 then "'" + sep("' '", inp) + "'" else ""} \
          '~{select_first([outputFilename_R1, "~{sampleName}-_R1.trimmed.fastq.gz"])}' \
          '~{select_first([outputFilenameUnpaired_R1, "~{sampleName}-_R1.unpaired.fastq.gz"])}' \
          '~{select_first([outputFilename_R2, "~{sampleName}-_R2.trimmed.fastq.gz"])}' \
          '~{select_first([outputFilenameUnpaired_R2, "~{sampleName}-_R2.unpaired.fastq.gz"])}' \
-         ~{"'" + sep("' '", steps) + "'"}
+         ~{if length(steps) > 0 then "'" + sep("' '", steps) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

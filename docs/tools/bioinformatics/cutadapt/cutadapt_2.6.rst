@@ -125,6 +125,7 @@ Additional configuration (inputs)
 name                        type                     prefix                          position  documentation
 ==========================  =======================  ============================  ==========  ===========================================================================================================================================================================================================================================================================================================================================================================================================
 fastq                       FastqGzPair                                                     5
+outputPrefix                Optional<String>                                                   Used for naming purposes
 adapter                     Optional<Array<String>>  -a                                        Sequence of an adapter ligated to the 3' end (paired data: of the first read). The adapter and subsequent bases are trimmed. If a '$' character is appended ('anchoring'), the adapter is only found if it is a suffix of the read.
 outputFilename              Optional<Filename>       -o                                        Write trimmed reads to FILE. FASTQ or FASTA format is chosen depending on input. The summary report is sent to standard output. Use '{name}' in FILE to demultiplex reads into multiple files. Default: write to standard output
 secondReadFile              Optional<Filename>       -p                                        Write second read in a pair to FILE.
@@ -188,6 +189,7 @@ Workflow Description Language
        Int? runtime_memory
        Int? runtime_seconds
        Int? runtime_disks
+       String? outputPrefix
        Array[File] fastq
        Array[String]? adapter
        String? outputFilename
@@ -242,8 +244,8 @@ Workflow Description Language
        set -e
        cutadapt \
          ~{if (defined(adapter) && length(select_first([adapter])) > 0) then "-a '" + sep("' -a '", select_first([adapter])) + "'" else ""} \
-         -o '~{select_first([outputFilename, "generated--R1.fastq.gz"])}' \
-         -p '~{select_first([secondReadFile, "generated--R2.fastq.gz"])}' \
+         -o '~{select_first([outputFilename, "~{outputPrefix}-R1.fastq.gz"])}' \
+         -p '~{select_first([secondReadFile, "~{outputPrefix}-R2.fastq.gz"])}' \
          ~{if defined(cores) then ("--cores " + cores) else ''} \
          ~{if defined(front) then ("--front '" + front + "'") else ""} \
          ~{if defined(anywhere) then ("--anywhere '" + anywhere + "'") else ""} \
@@ -289,7 +291,7 @@ Workflow Description Language
          ~{if defined(untrimmedPairedOutput) then ("--untrimmed-paired-output '" + untrimmedPairedOutput + "'") else ""} \
          ~{if defined(tooShortPairedOutput) then ("--too-short-paired-output '" + tooShortPairedOutput + "'") else ""} \
          ~{if defined(tooLongPairedOutput) then ("--too-long-paired-output '" + tooLongPairedOutput + "'") else ""} \
-         ~{"'" + sep("' '", fastq) + "'"}
+         ~{if length(fastq) > 0 then "'" + sep("' '", fastq) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 5, 1])
@@ -344,6 +346,12 @@ Common Workflow Language
      dockerPull: quay.io/biocontainers/cutadapt:2.6--py36h516909a_0
 
    inputs:
+   - id: outputPrefix
+     label: outputPrefix
+     doc: Used for naming purposes
+     type:
+     - string
+     - 'null'
    - id: fastq
      label: fastq
      type:
@@ -369,18 +377,20 @@ Common Workflow Language
      type:
      - string
      - 'null'
-     default: generated--R1.fastq.gz
+     default: generated-R1.fastq.gz
      inputBinding:
        prefix: -o
+       valueFrom: '$(inputs.outputPrefix ? inputs.outputPrefix : "generated")-R1.fastq.gz'
    - id: secondReadFile
      label: secondReadFile
      doc: Write second read in a pair to FILE.
      type:
      - string
      - 'null'
-     default: generated--R2.fastq.gz
+     default: generated-R2.fastq.gz
      inputBinding:
        prefix: -p
+       valueFrom: '$(inputs.outputPrefix ? inputs.outputPrefix : "generated")-R2.fastq.gz'
    - id: cores
      label: cores
      doc: '(-j)  Number of CPU cores to use. Use 0 to auto-detect. Default: 1'

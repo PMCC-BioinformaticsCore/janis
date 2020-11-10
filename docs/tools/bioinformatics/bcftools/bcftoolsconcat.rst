@@ -174,7 +174,7 @@ Workflow Description Language
          ~{if defined(regions) then ("-r '" + regions + "'") else ""} \
          ~{if defined(regionsFile) then ("-R '" + regionsFile + "'") else ""} \
          ~{if defined(threads) then ("--threads " + threads) else ''} \
-         ~{"'" + sep("' '", vcf) + "'"}
+         ~{if length(vcf) > 0 then "'" + sep("' '", vcf) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

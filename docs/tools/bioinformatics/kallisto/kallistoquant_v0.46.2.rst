@@ -157,7 +157,7 @@ Workflow Description Language
          ~{if defined(fragment_sd) then ("-s " + fragment_sd) else ''} \
          -i '~{index}' \
          -o '~{select_first([outdir, "generated"])}' \
-         ~{"'" + sep("' '", fastq) + "'"}
+         ~{if length(fastq) > 0 then "'" + sep("' '", fastq) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])

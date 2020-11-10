@@ -9,8 +9,8 @@ digraph GATK4_SomaticVariantCallerTumorOnlyTargeted {
 	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles and Normalise Vcf)"]
 	mutect2 -> learnorientationmodel
 	getpileupsummaries -> calculatecontamination
-	mutect2 -> filtermutect2calls
 	calculatecontamination -> filtermutect2calls
+	mutect2 -> filtermutect2calls
 	learnorientationmodel -> filtermutect2calls
 	filtermutect2calls -> splitnormalisevcf
 }

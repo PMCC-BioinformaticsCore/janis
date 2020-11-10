@@ -129,7 +129,7 @@ Workflow Description Language
        set -e
        gatk MergeMutectStats \
          --java-options '-Xmx~{((select_first([runtime_memory, 8, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
-         ~{"--stats '" + sep("' --stats '", statsFiles) + "'"} \
+         ~{if length(statsFiles) > 0 then "--stats '" + sep("' --stats '", statsFiles) + "'" else ""} \
          -O '~{select_first([mergedStatsOut, "generated.txt"])}'
      >>>
      runtime {

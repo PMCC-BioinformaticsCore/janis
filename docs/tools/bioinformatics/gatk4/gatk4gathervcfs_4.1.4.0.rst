@@ -158,7 +158,7 @@ Workflow Description Language
        set -e
        gatk GatherVcfs \
          --java-options '-Xmx~{((select_first([runtime_memory, 8, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
-         ~{"--INPUT '" + sep("' --INPUT '", vcfs) + "'"} \
+         ~{if length(vcfs) > 0 then "--INPUT '" + sep("' --INPUT '", vcfs) + "'" else ""} \
          --OUTPUT '~{select_first([outputFilename, "generated.gathered.vcf"])}' \
          ~{if (defined(argumentsFile) && length(select_first([argumentsFile])) > 0) then "--arguments_file '" + sep("' '", select_first([argumentsFile])) + "'" else ""} \
          ~{if defined(compressionLevel) then ("--COMPRESSION_LEVEL " + compressionLevel) else ''} \

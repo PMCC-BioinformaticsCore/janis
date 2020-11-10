@@ -178,7 +178,7 @@ Workflow Description Language
          -trimlog '~{select_first([trimLogFilename, "trimlog.log"])}' \
          '~{inp}' \
          '~{select_first([outputFilename, "~{sampleName}.trimmed.fastq.gz"])}' \
-         ~{"'" + sep("' '", steps) + "'"}
+         ~{if length(steps) > 0 then "'" + sep("' '", steps) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

@@ -167,7 +167,7 @@ Workflow Description Language
          --output '~{select_first([outputFilename, "generated.svs.vcf"])}' \
          --assembly '~{select_first([assemblyFilename, "generated.assembled.bam"])}' \
          ~{if defined(blacklist) then ("--blacklist '" + blacklist + "'") else ""} \
-         ~{"'" + sep("' '", bams) + "'"}
+         ~{if length(bams) > 0 then "'" + sep("' '", bams) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 8, 1])

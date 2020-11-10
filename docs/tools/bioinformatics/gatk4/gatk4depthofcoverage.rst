@@ -182,7 +182,7 @@ Workflow Description Language
          -I '~{bam}' \
          -R '~{reference}' \
          -O '~{outputPrefix}' \
-         ~{"--intervals '" + sep("' --intervals '", intervals) + "'"} \
+         ~{if length(intervals) > 0 then "--intervals '" + sep("' --intervals '", intervals) + "'" else ""} \
          ~{if defined(countType) then ("--count-type '" + countType + "'") else ""} \
          ~{if (defined(summaryCoverageThreshold) && length(select_first([summaryCoverageThreshold])) > 0) then sep(" ", prefix("--summary-coverage-threshold ", select_first([summaryCoverageThreshold]))) else ""} \
          ~{if (defined(omitDepthOutputAtEachBase) && select_first([omitDepthOutputAtEachBase])) then "--omit-depth-output-at-each-base" else ""} \

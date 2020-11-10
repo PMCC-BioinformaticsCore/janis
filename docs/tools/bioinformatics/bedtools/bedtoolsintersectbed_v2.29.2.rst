@@ -196,7 +196,7 @@ Workflow Description Language
          ~{if (defined(noBuf) && select_first([noBuf])) then "-nobuf" else ""} \
          ~{if defined(bufMem) then ("-iobuf " + bufMem) else ''} \
          -a '~{inputABam}' \
-         ~{"-b '" + sep("' '", inputBBed) + "'"}
+         ~{if length(inputBBed) > 0 then "-b '" + sep("' '", inputBBed) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

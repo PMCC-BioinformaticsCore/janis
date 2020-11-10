@@ -133,10 +133,10 @@ Workflow Description Language
        set -e
         \
          vcf-merge \
-         ~{"'" + sep("' '", headerVcfs) + "'"} \
+         ~{if length(headerVcfs) > 0 then "'" + sep("' '", headerVcfs) + "'" else ""} \
          | grep '^##' > header.vcf; \
          vcf-concat \
-         ~{"'" + sep("' '", contentVcfs) + "'"} \
+         ~{if length(contentVcfs) > 0 then "'" + sep("' '", contentVcfs) + "'" else ""} \
          | grep -v '^##' > content.vcf; cat header.vcf content.vcf \
          > ~{select_first([outputFilename, "generated.strelka.vcf"])}
      >>>

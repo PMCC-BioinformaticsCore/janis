@@ -80,7 +80,7 @@ Information
 :ID: ``fastqc``
 :URL: `http://www.bioinformatics.babraham.ac.uk/projects/fastqc/ <http://www.bioinformatics.babraham.ac.uk/projects/fastqc/>`_
 :Versions: v0.11.8, v0.11.5
-:Container: quay.io/biocontainers/fastqc:0.11.8--1
+:Container: quay.io/biocontainers/fastqc:0.11.8--2
 :Authors: Michael Franklin
 :Citations: None
 :Created: 2019-03-25
@@ -173,12 +173,12 @@ Workflow Description Language
          ~{if defined(kmers) then ("--kmers " + kmers) else ''} \
          ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          ~{if defined(dir) then ("--dir '" + dir + "'") else ""} \
-         ~{"'" + sep("' '", reads) + "'"}
+         ~{if length(reads) > 0 then "'" + sep("' '", reads) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "quay.io/biocontainers/fastqc:0.11.8--1"
+       docker: "quay.io/biocontainers/fastqc:0.11.8--2"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
@@ -206,7 +206,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: quay.io/biocontainers/fastqc:0.11.8--1
+     dockerPull: quay.io/biocontainers/fastqc:0.11.8--2
 
    inputs:
    - id: reads

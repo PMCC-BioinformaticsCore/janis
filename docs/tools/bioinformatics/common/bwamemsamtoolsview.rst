@@ -241,7 +241,7 @@ Workflow Description Language
          ~{if defined(verboseLevel) then ("-v " + verboseLevel) else ''} \
          -R '@RG\tID:~{sampleName}\tSM:~{sampleName}\tLB:~{sampleName}\tPL:~{select_first([platformTechnology, "ILLUMINA"])}' \
          -t ~{select_first([runtime_cpu, 16, 1])} \
-         ~{sep(" ", reads)} \
+         ~{if length(reads) > 0 then sep(" ", reads) else ""} \
          ~{if (defined(mates) && length(select_first([mates])) > 0) then sep(" ", select_first([mates])) else ""} \
          | \
          samtools \

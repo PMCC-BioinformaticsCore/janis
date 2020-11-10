@@ -290,7 +290,7 @@ Workflow Description Language
      command <<<
        set -e
        freebayes \
-         ~{"-b '" + sep("' -b '", bams) + "'"} \
+         ~{if length(bams) > 0 then "-b '" + sep("' -b '", bams) + "'" else ""} \
          ~{if defined(bamList) then ("-L '" + bamList + "'") else ""} \
          -f '~{reference}' \
          ~{if defined(targetsFile) then ("-t '" + targetsFile + "'") else ""} \

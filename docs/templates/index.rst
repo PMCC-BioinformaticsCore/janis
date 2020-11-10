@@ -23,4 +23,4 @@ List of templates for ``janis-assistant``:
    spartan
    wehi
 
-*This page was auto-generated on 08/10/2020. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 10/11/2020. Please do not directly alter the contents of this page.*

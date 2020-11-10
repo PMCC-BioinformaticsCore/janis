@@ -151,7 +151,7 @@ Workflow Description Language
      command <<<
        set -e
        filterStrelkaCalls.R \
-         ~{"-i '" + sep("','", inputFiles) + "'"} \
+         ~{if length(inputFiles) > 0 then "-i '" + sep("','", inputFiles) + "'" else ""} \
          --mq ~{select_first([MQ, 15])} \
          --dp ~{select_first([DP, 10])} \
          --evs ~{select_first([EVS, 10])} \

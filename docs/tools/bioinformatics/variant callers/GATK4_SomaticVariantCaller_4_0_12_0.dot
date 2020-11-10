@@ -9,7 +9,7 @@ digraph GATK4_SomaticVariantCaller {
 	split_multi_allele [label="split_multi_allele (Split Multiple Alleles)"]
 	base_recalibrator_normal -> apply_bqsr_normal
 	base_recalibrator_tumor -> apply_bqsr_tumor
-	apply_bqsr_tumor -> mutect2
 	apply_bqsr_normal -> mutect2
+	apply_bqsr_tumor -> mutect2
 	mutect2 -> split_multi_allele
 }

@@ -208,7 +208,7 @@ Workflow Description Language
          ~{if (defined(collapseBackwardCIGAR) && select_first([collapseBackwardCIGAR])) then "-B" else ""} \
          ~{if defined(subsamplingProportion) then ("-s " + subsamplingProportion) else ''} \
          ~{if defined(threads) then ("-@ " + threads) else ''} \
-         -o '~{select_first([outputFilename, "generated.bam"])}' \
+         -o '~{select_first([outputFilename, "~{basename(sam)}.bam"])}' \
          ~{if defined(reference) then ("-T '" + reference + "'") else ""} \
          ~{sam} \
          ~{if (defined(regions) && length(select_first([regions])) > 0) then "'" + sep("' '", select_first([regions])) + "'" else ""}
@@ -222,7 +222,7 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = select_first([outputFilename, "generated.bam"])
+       File out = select_first([outputFilename, "~{basename(sam)}.bam"])
      }
    }
 
@@ -488,6 +488,7 @@ Common Workflow Language
      inputBinding:
        prefix: -o
        position: 5
+       valueFrom: $(inputs.sam).bam
    - id: regions
      label: regions
      doc: |-
@@ -504,7 +505,7 @@ Common Workflow Language
      label: out
      type: File
      outputBinding:
-       glob: generated.bam
+       glob: $(inputs.sam).bam
        loadContents: false
    stdout: _stdout
    stderr: _stderr

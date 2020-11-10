@@ -4,6 +4,6 @@ digraph AddBamStatsSomatic {
 	tumor [label=tumor color=grey80 style=filled]
 	normal [label=normal color=grey80 style=filled]
 	addbamstats [label="addbamstats (Add Bam Statistics to Vcf)"]
-	normal -> addbamstats
 	tumor -> addbamstats
+	normal -> addbamstats
 }

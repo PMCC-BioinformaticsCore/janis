@@ -76,7 +76,7 @@ Information
 :ID: ``FilterVep``
 :URL: *No URL to the documentation was provided*
 :Versions: 98.3
-:Container: ensemblorg/ensembl-vep:release_98.3
+:Container: quay.io/biocontainers/ensembl-vep:98.3--pl526hecc5488_0
 :Authors: 
 :Citations: None
 :Created: None
@@ -155,7 +155,7 @@ Workflow Description Language
      runtime {
        cpu: select_first([runtime_cpu, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "ensemblorg/ensembl-vep:release_98.3"
+       docker: "quay.io/biocontainers/ensembl-vep:98.3--pl526hecc5488_0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
@@ -179,7 +179,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: ensemblorg/ensembl-vep:release_98.3
+     dockerPull: quay.io/biocontainers/ensembl-vep:98.3--pl526hecc5488_0
 
    inputs:
    - id: input_file

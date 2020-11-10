@@ -152,7 +152,7 @@ Workflow Description Language
          ~{if defined(refForMissing) then ("--ref-for-missing '" + refForMissing + "'") else ""} \
          ~{if (defined(silent) && select_first([silent])) then "--silent" else ""} \
          ~{if (defined(trimALTs) && select_first([trimALTs])) then "--trim-ALTs" else ""} \
-         ~{"'" + sep("' '", vcfTabix) + "'"}
+         ~{if length(vcfTabix) > 0 then "'" + sep("' '", vcfTabix) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

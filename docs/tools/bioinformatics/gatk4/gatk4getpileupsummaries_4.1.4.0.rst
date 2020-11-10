@@ -108,6 +108,7 @@ bam                Array<IndexedBam>           -I                    0  The SAM/
 sites              CompressedIndexedVCF        -V                       sites of common biallelic variants
 javaOptions        Optional<Array<String>>
 compression_level  Optional<Integer>                                    Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
+sampleName         Optional<String>                                     Used for naming purposes
 intervals          Optional<bed>               --intervals              -L (BASE) One or more genomic intervals over which to operate
 pileupTableOut     Optional<Filename>          -O                    1
 reference          Optional<FastaWithIndexes>  -R                       reference to use when decoding CRAMS
@@ -130,6 +131,7 @@ Workflow Description Language
        Int? compression_level
        Array[File] bam
        Array[File] bam_bai
+       String? sampleName
        File sites
        File sites_tbi
        File? intervals
@@ -147,11 +149,11 @@ Workflow Description Language
        set -e
        gatk GetPileupSummaries \
          --java-options '-Xmx~{((select_first([runtime_memory, 64, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
-         ~{"-I '" + sep("' -I '", bam) + "'"} \
+         ~{if length(bam) > 0 then "-I '" + sep("' -I '", bam) + "'" else ""} \
          -V '~{sites}' \
          ~{if defined(intervals) then ("--intervals '" + intervals + "'") else ""} \
          ~{if defined(reference) then ("-R '" + reference + "'") else ""} \
-         -O '~{select_first([pileupTableOut, "generated.txt"])}'
+         -O '~{select_first([pileupTableOut, "~{sep(".", select_all([select_first([sampleName, "generated"])]))}.txt"])}'
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
@@ -162,7 +164,7 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = select_first([pileupTableOut, "generated.txt"])
+       File out = select_first([pileupTableOut, "~{sep(".", select_all([select_first([sampleName, "generated"])]))}.txt"])
      }
    }
 
@@ -209,6 +211,12 @@ Common Workflow Language
        items: File
      inputBinding:
        position: 0
+   - id: sampleName
+     label: sampleName
+     doc: Used for naming purposes
+     type:
+     - string
+     - 'null'
    - id: sites
      label: sites
      doc: sites of common biallelic variants
@@ -234,6 +242,8 @@ Common Workflow Language
      inputBinding:
        prefix: -O
        position: 1
+       valueFrom: |-
+         $([[inputs.sampleName, "generated"].filter(function (inner) { return inner != null })[0]].filter(function (inner) { return inner != null }).join(".")).txt
    - id: reference
      label: reference
      doc: reference to use when decoding CRAMS
@@ -257,7 +267,8 @@ Common Workflow Language
      doc: Table containing the pileup info
      type: File
      outputBinding:
-       glob: generated.txt
+       glob: |-
+         $([[inputs.sampleName, "generated"].filter(function (inner) { return inner != null })[0]].filter(function (inner) { return inner != null }).join(".")).txt
        loadContents: false
    stdout: _stdout
    stderr: _stderr

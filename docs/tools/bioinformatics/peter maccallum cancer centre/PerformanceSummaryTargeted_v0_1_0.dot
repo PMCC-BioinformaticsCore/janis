@@ -21,11 +21,11 @@ digraph PerformanceSummaryTargeted {
 	samtoolsview -> bedtoolsintersectbed
 	bedtoolsintersectbed -> targetbamflagstat
 	bedtoolsintersectbed -> bedtoolscoveragebed
-	targetbamflagstat -> performancesummary
-	gatk4collectinsertsizemetrics -> performancesummary
 	rmdupbamflagstat -> performancesummary
-	bamflagstat -> performancesummary
 	bedtoolscoveragebed -> performancesummary
+	gatk4collectinsertsizemetrics -> performancesummary
+	targetbamflagstat -> performancesummary
+	bamflagstat -> performancesummary
 	samtoolsview -> bedtoolscoverage
 	bedtoolscoverage -> genecoverage
 }

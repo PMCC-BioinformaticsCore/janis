@@ -213,7 +213,7 @@ Workflow Description Language
        gatk MergeBamAlignment \
          --java-options '-Xmx~{((select_first([runtime_memory, 4, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
          --UNMAPPED_BAM '~{ubam}' \
-         ~{"--ALIGNED_BAM '" + sep("' --ALIGNED_BAM '", bam) + "'"} \
+         ~{if length(bam) > 0 then "--ALIGNED_BAM '" + sep("' --ALIGNED_BAM '", bam) + "'" else ""} \
          ~{if defined(reference) then ("--REFERENCE_SEQUENCE '" + reference + "'") else ""} \
          --OUTPUT '~{select_first([outputFilename, "generated.bam"])}' \
          ~{if defined(sortOrder) then ("-SO '" + sortOrder + "'") else ""} \

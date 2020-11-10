@@ -251,7 +251,7 @@ Workflow Description Language
          ~{if defined(maxMOp) then ("--maxMOp " + maxMOp) else ''} \
          -o '~{select_first([outputFilename, "generated.txt"])}' \
          -a '~{annotationFile}' \
-         ~{"'" + sep("' '", bam) + "'"}
+         ~{if length(bam) > 0 then "'" + sep("' '", bam) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

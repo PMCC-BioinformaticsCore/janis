@@ -178,6 +178,7 @@ Workflow Description Language
      }
      call C.cutadapt as cutadapt {
        input:
+         outputPrefix=sample_name,
          fastq=fastq,
          adapter=cutadapt_adapter,
          front=cutadapt_front,
@@ -314,6 +315,8 @@ Common Workflow Language
    - id: cutadapt
      label: Cutadapt
      in:
+     - id: outputPrefix
+       source: sample_name
      - id: fastq
        source: fastq
      - id: adapter

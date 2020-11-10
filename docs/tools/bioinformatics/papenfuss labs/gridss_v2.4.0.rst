@@ -175,7 +175,7 @@ Workflow Description Language
        java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -XshowSettings:vm -Dsamjdk.create_index=true -Dsamjdk.use_async_io_read_samtools=true -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=true -Dgridss.gridss.output_to_temp_file=true -Dsamjdk.buffer_size=4194304 -cp /data/gridss/gridss-2.4.0-gridss-jar-with-dependencies.jar gridss.CallVariants \
          OUTPUT='~{select_first([outputFilename, "generated.vcf"])}' \
          REFERENCE_SEQUENCE='~{reference}' \
-         ~{"INPUT='" + sep("' INPUT='", bams) + "'"} \
+         ~{if length(bams) > 0 then "INPUT='" + sep("' INPUT='", bams) + "'" else ""} \
          ASSEMBLY='~{select_first([assemblyFilename, "generated.assembled.bam"])}' \
          ~{if defined(inputLabel) then ("INPUT_LABEL='" + inputLabel + "'") else ""} \
          ~{if defined(inputMaxFragmentSize) then ("INPUT_MAX_FRAGMENT_SIZE=" + inputMaxFragmentSize) else ''} \

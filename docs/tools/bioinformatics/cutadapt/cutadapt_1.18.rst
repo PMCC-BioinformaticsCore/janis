@@ -302,7 +302,7 @@ Workflow Description Language
          ~{if (defined(doubleEncode) && select_first([doubleEncode])) then "-d" else ""} \
          ~{if (defined(trimPrimer) && select_first([trimPrimer])) then "-t" else ""} \
          ~{if (defined(zeroCap) && select_first([zeroCap])) then "-z" else ""} \
-         ~{"'" + sep("' '", fastq) + "'"}
+         ~{if length(fastq) > 0 then "'" + sep("' '", fastq) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 5, 1])

@@ -80,7 +80,7 @@ Information
 :ID: ``fastqc_single``
 :URL: `http://www.bioinformatics.babraham.ac.uk/projects/fastqc/ <http://www.bioinformatics.babraham.ac.uk/projects/fastqc/>`_
 :Versions: v0.11.8, v0.11.5
-:Container: quay.io/biocontainers/fastqc:0.11.5--pl5.22.0_3
+:Container: quay.io/biocontainers/fastqc:0.11.5--4
 :Authors: Michael Franklin
 :Citations: None
 :Created: 2019-03-25
@@ -180,7 +180,7 @@ Workflow Description Language
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "quay.io/biocontainers/fastqc:0.11.5--pl5.22.0_3"
+       docker: "quay.io/biocontainers/fastqc:0.11.5--4"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
@@ -210,7 +210,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: quay.io/biocontainers/fastqc:0.11.5--pl5.22.0_3
+     dockerPull: quay.io/biocontainers/fastqc:0.11.5--4
 
    inputs:
    - id: read

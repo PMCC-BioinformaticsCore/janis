@@ -146,6 +146,7 @@ Additional configuration (inputs)
 name                           type                     prefix                                position  documentation
 =============================  =======================  ==================================  ==========  ================================================================================================================================================================================================================================================================================================================================================================================================
 bam                            Array<BAM>               -I                                          10  One or more input SAM or BAM files to analyze. Must be coordinate sorted.
+outputPrefix                   Optional<String>
 outputFilename                 Optional<Filename>       -O                                          10  File to write duplication metrics to
 metricsFilename                Optional<Filename>       -M                                          10  The output file to write marked records to.
 javaOptions                    Optional<Array<String>>
@@ -180,6 +181,7 @@ Workflow Description Language
        Int? runtime_seconds
        Int? runtime_disks
        Array[File] bam
+       String? outputPrefix
        String? outputFilename
        String? metricsFilename
        Array[String]? javaOptions
@@ -207,9 +209,9 @@ Workflow Description Language
          ~{if defined(barcodeTag) then ("--BARCODE_TAG '" + barcodeTag + "'") else ""} \
          ~{if (defined(comment) && length(select_first([comment])) > 0) then "-CO '" + sep("' '", select_first([comment])) + "'" else ""} \
          ~{if defined(opticalDuplicatePixelDistance) then ("--OPTICAL_DUPLICATE_PIXEL_DISTANCE " + opticalDuplicatePixelDistance) else ''} \
-         ~{"-I '" + sep("' '", bam) + "'"} \
-         -O '~{select_first([outputFilename, "generated.markduped.bam"])}' \
-         -M '~{select_first([metricsFilename, "generated.metrics.txt"])}' \
+         ~{if length(bam) > 0 then "-I '" + sep("' '", bam) + "'" else ""} \
+         -O '~{select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.markduped.bam"])}' \
+         -M '~{select_first([metricsFilename, "~{select_first([outputPrefix, "generated"])}.metrics.txt"])}' \
          ~{if (defined(argumentsFile) && length(select_first([argumentsFile])) > 0) then "--arguments_file '" + sep("' '", select_first([argumentsFile])) + "'" else ""} \
          ~{if select_first([createIndex, true]) then "--CREATE_INDEX" else ""} \
          ~{if (defined(createMd5File) && select_first([createMd5File])) then "--CREATE_MD5_FILE" else ""} \
@@ -220,7 +222,7 @@ Workflow Description Language
          ~{if (defined(useJdkInflater) && select_first([useJdkInflater])) then "--use_jdk_inflater" else ""} \
          ~{if defined(validationStringency) then ("--VALIDATION_STRINGENCY '" + validationStringency + "'") else ""} \
          ~{if defined(verbosity) then ("--verbosity '" + verbosity + "'") else ""}
-       if [ -f $(echo '~{select_first([outputFilename, "generated.markduped.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([outputFilename, "generated.markduped.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([outputFilename, "generated.markduped.bam"])}' ).bai; fi
+       if [ -f $(echo '~{select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.markduped.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.markduped.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.markduped.bam"])}' ).bai; fi
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
@@ -231,9 +233,9 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = select_first([outputFilename, "generated.markduped.bam"])
-       File out_bai = select_first([outputFilename, "generated.markduped.bam"]) + ".bai"
-       File metrics = select_first([metricsFilename, "generated.metrics.txt"])
+       File out = select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.markduped.bam"])
+       File out_bai = select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.markduped.bam"]) + ".bai"
+       File metrics = select_first([metricsFilename, "~{select_first([outputPrefix, "generated"])}.metrics.txt"])
      }
    }
 
@@ -307,6 +309,11 @@ Common Workflow Language
      inputBinding:
        prefix: -I
        position: 10
+   - id: outputPrefix
+     label: outputPrefix
+     type:
+     - string
+     - 'null'
    - id: outputFilename
      label: outputFilename
      doc: File to write duplication metrics to
@@ -317,6 +324,8 @@ Common Workflow Language
      inputBinding:
        prefix: -O
        position: 10
+       valueFrom: |-
+         $([inputs.outputPrefix, "generated"].filter(function (inner) { return inner != null })[0]).markduped.bam
    - id: metricsFilename
      label: metricsFilename
      doc: The output file to write marked records to.
@@ -327,6 +336,8 @@ Common Workflow Language
      inputBinding:
        prefix: -M
        position: 10
+       valueFrom: |-
+         $([inputs.outputPrefix, "generated"].filter(function (inner) { return inner != null })[0]).metrics.txt
    - id: javaOptions
      label: javaOptions
      type:
@@ -494,13 +505,15 @@ Common Workflow Language
 
        }
      outputBinding:
-       glob: generated.markduped.bam
+       glob: |-
+         $([inputs.outputPrefix, "generated"].filter(function (inner) { return inner != null })[0]).markduped.bam
        loadContents: false
    - id: metrics
      label: metrics
      type: File
      outputBinding:
-       glob: generated.metrics.txt
+       glob: |-
+         $([inputs.outputPrefix, "generated"].filter(function (inner) { return inner != null })[0]).metrics.txt
        loadContents: false
    stdout: _stdout
    stderr: _stderr

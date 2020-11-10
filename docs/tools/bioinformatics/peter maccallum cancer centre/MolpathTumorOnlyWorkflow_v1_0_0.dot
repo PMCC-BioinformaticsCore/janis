@@ -37,8 +37,8 @@ digraph MolpathTumorOnlyWorkflow {
 	combinevariants -> compressvcf
 	compressvcf -> sortvcf
 	sortvcf -> uncompressvcf
-	merge_and_mark -> addbamstats
 	uncompressvcf -> addbamstats
+	merge_and_mark -> addbamstats
 	addbamstats -> compressvcf2
 	compressvcf2 -> tabixvcf
 	tabixvcf -> calculate_variant_length

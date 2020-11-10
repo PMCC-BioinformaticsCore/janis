@@ -137,7 +137,7 @@ Workflow Description Language
          ~{vcf} \
          | vt normalize -n -q - \
          -r ~{reference} \
-         -o ~{select_first([outputFilename, "generated.norm.vcf"])}
+         -o ~{select_first([outputFilename, "~{basename(vcf, ".vcf")}.norm.vcf"])}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
@@ -148,7 +148,7 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = select_first([outputFilename, "generated.norm.vcf"])
+       File out = select_first([outputFilename, "~{basename(vcf, ".vcf")}.norm.vcf"])
      }
    }
 
@@ -199,6 +199,7 @@ Common Workflow Language
      inputBinding:
        prefix: -o
        position: 6
+       valueFrom: $(inputs.vcf.basename.replace(/.vcf$/, "")).norm.vcf
        shellQuote: false
 
    outputs:
@@ -206,7 +207,7 @@ Common Workflow Language
      label: out
      type: File
      outputBinding:
-       glob: generated.norm.vcf
+       glob: $(inputs.vcf.basename.replace(/.vcf$/, "")).norm.vcf
        loadContents: false
    stdout: _stdout
    stderr: _stderr

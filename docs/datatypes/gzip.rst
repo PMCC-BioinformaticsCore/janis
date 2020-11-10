@@ -1,8 +1,8 @@
 
-CompressedTarFile
-=================
+Gzip
+====
 
-A gzipped tarfile
+A gzipped file
 
 
 
@@ -11,11 +11,11 @@ Quickstart
 
 .. code-block:: python
 
-   from janis_unix.data_types.tarfile import TarFileGz
+   from janis_unix.data_types.gunzipped import Gunzipped
 
    w = WorkflowBuilder("my_workflow")
 
-   w.input("input_tarfilegz", TarFileGz(optional=False))
+   w.input("input_gunzipped", Gunzipped(optional=False))
    
    # ...other workflow steps
 

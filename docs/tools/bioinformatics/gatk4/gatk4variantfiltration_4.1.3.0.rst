@@ -312,7 +312,7 @@ Workflow Description Language
          ~{if (defined(disableSequenceDictionaryValidation) && select_first([disableSequenceDictionaryValidation])) then "--disable-sequence-dictionary-validation" else ""} \
          ~{if (defined(excludeIntervals) && select_first([excludeIntervals])) then "--exclude-intervals" else ""} \
          ~{if (defined(filterExpression) && length(select_first([filterExpression])) > 0) then "--filter-expression '" + sep("' --filter-expression '", select_first([filterExpression])) + "'" else ""} \
-         ~{"--filter-name '" + sep("' --filter-name '", select_all(filterName)) + "'"} \
+         ~{if length(filterName) > 0 then "--filter-name '" + sep("' --filter-name '", select_all(filterName)) + "'" else ""} \
          ~{if (defined(filterNotInMask) && select_first([filterNotInMask])) then "--filter-not-in-mask" else ""} \
          ~{if defined(gatkConfigFile) then ("--gatk-config-file '" + gatkConfigFile + "'") else ""} \
          ~{if defined(gcsMaxRetries) then ("--gcs-max-retries " + gcsMaxRetries) else ''} \

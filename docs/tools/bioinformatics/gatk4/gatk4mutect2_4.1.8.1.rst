@@ -118,6 +118,7 @@ javaOptions                          Optional<Array<String>>
 compression_level                    Optional<Integer>                                                                       Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
 normalBams                           Optional<Array<IndexedBam>>     -I                                                      (--input) Extra BAM/SAM/CRAM file containing reads This argument must be specified at least once. Required.
 normalSample                         Optional<String>                --normal-sample                                         (--normal-sample, if) May be URL-encoded as output by GetSampleName with
+outputPrefix                         Optional<String>                                                                        Used as a prefix for the outputFilename if not specified, with format: {outputPrefix}.vcf.gz
 outputFilename                       Optional<Filename>              -O                                                  20
 outputBamName                        Optional<String>                -bamout                                                 File to which assembled haplotypes should be written
 activityProfileOut                   Optional<String>                --activity-profile-out                                  Default value: null.
@@ -268,6 +269,7 @@ Workflow Description Language
        Array[File]? normalBams
        Array[File]? normalBams_bai
        String? normalSample
+       String? outputPrefix
        String? outputFilename
        File reference
        File reference_fai
@@ -411,7 +413,7 @@ Workflow Description Language
        set -e
        gatk Mutect2 \
          --java-options '-Xmx~{((select_first([runtime_memory, 16, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
-         ~{"-I '" + sep("' -I '", tumorBams) + "'"} \
+         ~{if length(tumorBams) > 0 then "-I '" + sep("' -I '", tumorBams) + "'" else ""} \
          ~{if (defined(normalBams) && length(select_first([normalBams])) > 0) then "-I '" + sep("' -I '", select_first([normalBams])) + "'" else ""} \
          ~{if defined(normalSample) then ("--normal-sample '" + normalSample + "'") else ""} \
          --reference '~{reference}' \
@@ -542,7 +544,7 @@ Workflow Description Language
          ~{if defined(readName) then ("--read-name '" + readName + "'") else ""} \
          ~{if (defined(keepReverseStrandOnly) && select_first([keepReverseStrandOnly])) then "--keep-reverse-strand-only" else ""} \
          ~{if defined(sample) then ("-sample '" + sample + "'") else ""} \
-         -O '~{select_first([outputFilename, "generated.vcf.gz"])}'
+         -O '~{select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.vcf.gz"])}'
        if [ -f $(echo '~{outputBamName}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{outputBamName}' | sed 's/\.[^.]*$//').bai $(echo '~{outputBamName}' ).bai; fi
      >>>
      runtime {
@@ -554,9 +556,9 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = select_first([outputFilename, "generated.vcf.gz"])
-       File out_tbi = select_first([outputFilename, "generated.vcf.gz"]) + ".tbi"
-       File stats = (select_first([outputFilename, "generated.vcf.gz"]) + ".stats")
+       File out = select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.vcf.gz"])
+       File out_tbi = select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.vcf.gz"]) + ".tbi"
+       File stats = (select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.vcf.gz"]) + ".stats")
        File f1f2r_out = select_first([f1r2TarGz_outputFilename, "generated.tar.gz"])
        File? bam = outputBamName
        File? bam_bai = if defined(outputBamName) then (outputBamName + ".bai") else None
@@ -626,6 +628,12 @@ Common Workflow Language
      - 'null'
      inputBinding:
        prefix: --normal-sample
+   - id: outputPrefix
+     label: outputPrefix
+     doc: |-
+       Used as a prefix for the outputFilename if not specified, with format: {outputPrefix}.vcf.gz
+     type: string
+     default: generated
    - id: outputFilename
      label: outputFilename
      type:
@@ -635,6 +643,7 @@ Common Workflow Language
      inputBinding:
        prefix: -O
        position: 20
+       valueFrom: '$(inputs.outputPrefix ? inputs.outputPrefix : "generated").vcf.gz'
    - id: reference
      label: reference
      doc: (-R) Reference sequence file Required.
@@ -1776,7 +1785,7 @@ Common Workflow Language
      secondaryFiles:
      - .tbi
      outputBinding:
-       glob: generated.vcf.gz
+       glob: '$(inputs.outputPrefix ? inputs.outputPrefix : "generated").vcf.gz'
        loadContents: false
    - id: stats
      label: stats

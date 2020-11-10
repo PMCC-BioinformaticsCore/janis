@@ -137,7 +137,7 @@ Workflow Description Language
        set -e
        whisper -stdout -t 4 -store-BAM \
          '~{index}' \
-         ~{"'" + sep("' '", fastq) + "'"}
+         ~{if length(fastq) > 0 then "'" + sep("' '", fastq) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])

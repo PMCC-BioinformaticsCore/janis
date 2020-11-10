@@ -12,8 +12,7 @@ Take note below how to configure the template. This quickstart only includes the
 
 .. code-block:: bash
 
-   janis init pbs_singularity \
-       --container_dir <value>
+   janis init pbs_singularity
    
    # or to find out more information
    janis init pbs_singularity --help
@@ -24,26 +23,20 @@ OR you can insert the following lines into your template:
 
    template:
      id: pbs_singularity
-     container_dir: <value>
 
 
 
 Fields
 -------
 
-**Required**
 
-=============  =============  ==================================================
-ID             Type           Documentation
-=============  =============  ==================================================
-container_dir  <class 'str'>  Location where to save and execute containers from
-=============  =============  ==================================================
 
 **Optional**
 
-=============================  ===================================  ==========================================  ==========================================================================================
+=============================  ===================================  ==========================================  ========================================================================================================================================
 ID                             Type                                 Default                                     Documentation
-=============================  ===================================  ==========================================  ==========================================================================================
+=============================  ===================================  ==========================================  ========================================================================================================================================
+container_dir                  <class 'str'>                                                                    Location where to save and execute containers to, this will also look at the env variables 'CWL_SINGULARITY_CACHE', 'SINGULARITY_TMPDIR'
 intermediate_execution_dir     <class 'str'>
 queues                         typing.Union[str, typing.List[str]]                                              A queue that work should be submitted to
 mail_program                                                                                                    Mail program to pipe email to, eg: 'sendmail -t'
@@ -56,5 +49,5 @@ max_ram                                                                         
 max_duration                                                                                                    Maximum amount of time in seconds (s) that a task can request
 can_run_in_foreground          <class 'bool'>                       True
 run_in_background              <class 'bool'>                       False
-=============================  ===================================  ==========================================  ==========================================================================================
+=============================  ===================================  ==========================================  ========================================================================================================================================
 

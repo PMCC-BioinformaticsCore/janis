@@ -215,6 +215,7 @@ Workflow Description Language
          normalBams=[normal_split_bam.out],
          normalBams_bai=[normal_split_bam.out_bai],
          normalSample=normal_name,
+         outputPrefix=normal_name,
          reference=reference,
          reference_fai=reference_fai,
          reference_amb=reference_amb,
@@ -423,6 +424,8 @@ Common Workflow Language
        - normal_split_bam/out
        linkMerge: merge_nested
      - id: normalSample
+       source: normal_name
+     - id: outputPrefix
        source: normal_name
      - id: reference
        source: reference

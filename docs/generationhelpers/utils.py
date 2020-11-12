@@ -1,3 +1,4 @@
+from janis_core.workflow.workflow import InputNode
 from tabulate import tabulate
 from typing import List, Dict
 from datetime import date
@@ -16,6 +17,7 @@ from janis_core import (
     InputQualityType,
     CommandTool,
     Workflow,
+    WorkflowBase,
 )
 from janis_core.translations import CwlTranslator
 from requests.utils import requote_uri
@@ -314,6 +316,16 @@ Quickstart
 """
 
 
+def prepare_source(source):
+    if isinstance(source, list):
+        return ", ".join(prepare_source(s) for s in source)
+    elif isinstance(source, str):
+        return source
+    elif isinstance(source, dict):
+        return "\n".join(f"* {k}: {prepare_source(v)}" for k, v in source.items())
+    return str(source)
+
+
 def prepare_run_instructions(tool: Tool):
     metadata = tool.bind_metadata() or tool.metadata
     has_array_of_arrays_inps = True
@@ -323,7 +335,7 @@ def prepare_run_instructions(tool: Tool):
     )
 
     static_input_tuples = [
-        [i.id(), i.intype.id(), i.doc.example, i.doc.doc]
+        [i.id(), i.intype.id(), prepare_source(i.doc.source), i.doc.doc]
         for i in tool.tool_inputs()
         if i.doc.quality == InputQualityType.static
     ]
@@ -331,12 +343,12 @@ def prepare_run_instructions(tool: Tool):
     reference_information = ""
 
     if len(static_input_tuples) > 0:
-        static_input_headers = ["Name", "Type", "Example", "Description"]
+        static_input_headers = ["Name", "Type", "Source", "Description"]
         reference_information = tabulate(
             static_input_tuples, headers=static_input_headers, tablefmt="rst"
         )
 
-    overrides = metadata.sample_input_overrides or {}
+    # overrides = metadata.sample_input_overrides or {}
     user_inps = {}
     other_inps = {}
 
@@ -344,11 +356,7 @@ def prepare_run_instructions(tool: Tool):
         if i.intype.optional or i.default is not None:
             continue
 
-        val = (
-            overrides.get(i.id())
-            if i.id() in overrides
-            else prepare_default_for_type(i.id(), i.intype)
-        )
+        val = i.doc.example or prepare_default_for_type(i.id(), i.intype)
         if i.doc and i.doc.quality and i.doc.quality != InputQualityType.user:
             other_inps[i.id()] = val
         else:
@@ -360,7 +368,9 @@ def prepare_run_instructions(tool: Tool):
             tool, user_inps, other_inps, reference_information
         )
     else:
-        return prepare_run_instructions_cli(tool, user_inps, reference_information)
+        return prepare_run_instructions_cli(
+            tool, user_inps, other_inps, reference_information
+        )
 
 
 def prepare_default_for_type(identifier: str, t: DataType, idx=None):

@@ -1,0 +1,48 @@
+from typing import List, Dict, Any
+from janis_assistant.main import run_with_outputs
+from janis_core.tool.test_suite_runner import ToolTestSuiteRunner
+from janis_core.tool.test_helpers import get_one_tool
+from janis_core import JanisShed
+from janis_assistant.engines.enginetypes import EngineType
+import janis_bioinformatics
+
+
+class UpdateStatusOption:
+
+    def __init__(self, api_endpoint: str, token: str, method: str):
+        self.api_endpoint = api_endpoint
+        self.token = token
+        self.method = method
+
+
+def run_test_case(tool_id: str, test_case: str, engine: EngineType) -> Dict[str, Any]:
+    # shed = JanisShed
+    # shed.hydrate(force=True)
+    #
+    # tool = shed.get_tool(tool=tool_id)()
+
+    tool = get_one_tool(tool_id, modules=[janis_bioinformatics.tools])
+
+    if not tool:
+        raise Exception(f"Tool {tool_id} not found")
+
+    runner = ToolTestSuiteRunner(tool)
+    tests_to_run = [tc for tc in tool.tests() if tc.name == test_case]
+
+    if not tests_to_run:
+        raise Exception(f"Test case {test_case} not found")
+
+    if len(tests_to_run) > 1:
+        raise Exception(f"There is more than one test case with the same name {test_case}")
+
+    failed, succeeded, output = runner.run_one_test_case(tests_to_run[0], engine)
+
+    return {
+        "failed": list(failed),
+        "succeeded": list(succeeded),
+        "output": output
+    }
+
+def update_status(result: Dict, option: UpdateStatusOption):
+    print(option)
+    pass

@@ -2,10 +2,12 @@ import argparse, sys
 
 from toolbuilder.parse_help import from_container
 from toolbuilder.templates import ToolTemplateType
+from toolbuilder.runtest.runner import run_test_case, update_status, UpdateStatusOption
+from janis_assistant.engines.enginetypes import EngineType
 
 
 def process_args():
-    cmds = {"container": do_container}
+    cmds = {"container": do_container, "run-test": do_runtest}
 
     parser = argparse.ArgumentParser(description="Execute a workflow")
     subparsers = parser.add_subparsers(help="subcommand help", dest="command")
@@ -13,6 +15,7 @@ def process_args():
 
     subparsers.add_parser("version")
     add_container_args(subparsers.add_parser("container"))
+    add_runtest_args(subparsers.add_parser("run-test"))
     # add_workflow_args(subparsers.add_parser("run-workflow"))
 
     args = parser.parse_args()
@@ -107,6 +110,41 @@ def add_container_args(parser):
     extra = parser.add_argument_group("Extra options")
     extra.add_argument(
         "--gatk4", action="store_true", help="Use the GATK4 tool template"
+    )
+
+
+def do_runtest(args):
+    print(args)
+    result = run_test_case(tool_id=args.tool, test_case=args.test_case, engine=args.engine)
+
+    # print output and send output to test framework API
+    option = UpdateStatusOption(api_endpoint=args.test_manager_url, api_token=args.test_manager_token)
+    update_status(result, option)
+
+
+def add_runtest_args(parser):
+    parser.add_argument("tool", help="tool to test")
+    parser.add_argument("--test-case", help="name of the test case to run")
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="Dictionary of a pre-run output",
+    )
+    parser.add_argument(
+        "-e",
+        "--engine",
+        help="engine",
+        default=EngineType.cromwell
+    )
+
+    parser.add_argument(
+        "--test-manager-url",
+        help="API endpoint to update run status in Test Manager",
+    )
+
+    parser.add_argument(
+        "--test-manager-token",
+        help="Authentication token for Test Manager API",
     )
 
 

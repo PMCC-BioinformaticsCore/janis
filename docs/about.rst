@@ -11,7 +11,7 @@ This project was produced as part of the Portable Pipelines Project in partnersh
 Motivations
 ===========
   
-Given the `awesome list of <https://github.com/pditommaso/awesome-pipeline/>`_ pipeline frameworks, languages and engines, why create another framework to generate workflow langauges.
+Given the `awesome list of <https://github.com/pditommaso/awesome-pipeline/>`_ pipeline frameworks, languages and engines, why create another framework to generate workflow languages?
   
 That's a great question, and it's a little complicated. Our project goals are to have a portable workflow specification, that is reproducible across many different compute platforms. And instead of backing one technology, we thought it  would be more powerful to create a technology that can utilise the community's work.  
   

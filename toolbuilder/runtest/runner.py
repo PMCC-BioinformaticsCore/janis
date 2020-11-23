@@ -1,4 +1,5 @@
-from typing import List, Dict, Any
+import requests
+from typing import List, Dict, Any, Optional
 from janis_assistant.main import run_with_outputs
 from janis_core.tool.test_suite_runner import ToolTestSuiteRunner
 from janis_core.tool.test_helpers import get_one_tool
@@ -10,8 +11,8 @@ import janis_bioinformatics
 
 class UpdateStatusOption:
 
-    def __init__(self, api_endpoint: str, token: str, method: str):
-        self.api_endpoint = api_endpoint
+    def __init__(self, url: str, token: str, method: Optional[str] = "patch"):
+        self.url = url
         self.token = token
         self.method = method
 
@@ -46,8 +47,19 @@ def run_test_case(tool_id: str, test_case: str, engine: EngineType) -> Dict[str,
 
 
 def update_status(result: Dict, option: UpdateStatusOption):
-    print(option)
-    pass
+    Logger.info(f"Updating test status via {option.method} {option.url}")
+
+    status = "failed"
+    if not len(result["failed"]):
+        status = "succeeded"
+
+    headers = {"Authorization": f"Bearer {option.token}"}
+    data = {"status": status}
+    resp = requests.request(method=option.method, url=option.url, json=data, headers=headers)
+
+    Logger.info(f"status updated: {resp.status_code} {resp.text}")
+
+    return resp.status_code, resp.text
 
 
 def cli_logging(result: Dict):

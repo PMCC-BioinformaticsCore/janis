@@ -119,8 +119,8 @@ def do_runtest(args):
 
     # print output and send output to test framework API
     if args.test_manager_url and args.test_manager_token:
-        option = UpdateStatusOption(api_endpoint=args.test_manager_url, api_token=args.test_manager_token)
-        update_status(result, option)
+        option = UpdateStatusOption(url=args.test_manager_url, token=args.test_manager_token)
+        code, resp = update_status(result, option)
 
     cli_logging(result)
 

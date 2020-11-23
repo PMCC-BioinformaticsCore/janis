@@ -2,6 +2,7 @@ from typing import List, Dict, Any
 from janis_assistant.main import run_with_outputs
 from janis_core.tool.test_suite_runner import ToolTestSuiteRunner
 from janis_core.tool.test_helpers import get_one_tool
+from janis_core import Logger
 from janis_core import JanisShed
 from janis_assistant.engines.enginetypes import EngineType
 import janis_bioinformatics
@@ -43,6 +44,23 @@ def run_test_case(tool_id: str, test_case: str, engine: EngineType) -> Dict[str,
         "output": output
     }
 
+
 def update_status(result: Dict, option: UpdateStatusOption):
     print(option)
     pass
+
+
+def cli_logging(result: Dict):
+    Logger.info(f"Output: {result['output']}")
+
+    Logger.info(f"{len(result['succeeded'])} expected output PASSED")
+    if len(result['succeeded']) > 0:
+        Logger.info("Succeeded expected output:")
+        for s in result["succeeded"]:
+            Logger.info(s)
+
+    Logger.info(f"{len(result['failed'])} expected output FAILED")
+    if len(result['failed']) > 0:
+        Logger.info("Failed expected output:")
+        for f in result["failed"]:
+            Logger.info(f)

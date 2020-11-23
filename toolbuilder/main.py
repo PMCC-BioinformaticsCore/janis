@@ -2,7 +2,7 @@ import argparse, sys
 
 from toolbuilder.parse_help import from_container
 from toolbuilder.templates import ToolTemplateType
-from toolbuilder.runtest.runner import run_test_case, update_status, UpdateStatusOption
+from toolbuilder.runtest.runner import run_test_case, update_status, UpdateStatusOption, cli_logging
 from janis_assistant.engines.enginetypes import EngineType
 
 
@@ -118,8 +118,11 @@ def do_runtest(args):
     result = run_test_case(tool_id=args.tool, test_case=args.test_case, engine=args.engine)
 
     # print output and send output to test framework API
-    option = UpdateStatusOption(api_endpoint=args.test_manager_url, api_token=args.test_manager_token)
-    update_status(result, option)
+    if args.test_manager_url and args.test_manager_token:
+        option = UpdateStatusOption(api_endpoint=args.test_manager_url, api_token=args.test_manager_token)
+        update_status(result, option)
+
+    cli_logging(result)
 
 
 def add_runtest_args(parser):

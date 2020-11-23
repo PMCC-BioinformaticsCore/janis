@@ -17,7 +17,7 @@ class UpdateStatusOption:
         self.method = method
 
 
-def run_test_case(tool_id: str, test_case: str, engine: EngineType) -> Dict[str, Any]:
+def run_test_case(tool_id: str, test_case: str, engine: EngineType, output: Optional[Dict] = None) -> Dict[str, Any]:
     # shed = JanisShed
     # shed.hydrate(force=True)
     #
@@ -37,7 +37,10 @@ def run_test_case(tool_id: str, test_case: str, engine: EngineType) -> Dict[str,
     if len(tests_to_run) > 1:
         raise Exception(f"There is more than one test case with the same name {test_case}")
 
-    failed, succeeded, output = runner.run_one_test_case(tests_to_run[0], engine)
+    if output is not None:
+        Logger.info("Dryrun: validating test using provided output data without running the workflow")
+
+    failed, succeeded, output = runner.run_one_test_case(t=tests_to_run[0], engine=engine, output=output)
 
     return {
         "failed": list(failed),
@@ -57,7 +60,9 @@ def update_status(result: Dict, option: UpdateStatusOption):
     data = {"status": status}
     resp = requests.request(method=option.method, url=option.url, json=data, headers=headers)
 
-    Logger.info(f"status updated: {resp.status_code} {resp.text}")
+    Logger.info("status updated")
+    Logger.info(f"Response code {resp.status_code}")
+    Logger.info(f"Response:\n{resp.text}")
 
     return resp.status_code, resp.text
 

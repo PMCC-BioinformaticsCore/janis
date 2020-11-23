@@ -1,4 +1,4 @@
-import argparse, sys
+import argparse, sys, ast
 
 from toolbuilder.parse_help import from_container
 from toolbuilder.templates import ToolTemplateType
@@ -114,25 +114,23 @@ def add_container_args(parser):
 
 
 def do_runtest(args):
-    print(args)
-    result = run_test_case(tool_id=args.tool, test_case=args.test_case, engine=args.engine)
+    output = None
+    if args.output:
+        output = ast.literal_eval(args.output)
+
+    result = run_test_case(tool_id=args.tool, test_case=args.test_case, engine=args.engine, output=output)
+    cli_logging(result)
 
     # print output and send output to test framework API
     if args.test_manager_url and args.test_manager_token:
         option = UpdateStatusOption(url=args.test_manager_url, token=args.test_manager_token)
         code, resp = update_status(result, option)
 
-    cli_logging(result)
-
 
 def add_runtest_args(parser):
-    parser.add_argument("tool", help="tool to test")
-    parser.add_argument("--test-case", help="name of the test case to run")
-    parser.add_argument(
-        "-o",
-        "--output",
-        help="Dictionary of a pre-run output",
-    )
+    parser.add_argument("tool", help="Name of tool to test")
+    parser.add_argument("--test-case", help="Name of the test case to run", required=True)
+
     parser.add_argument(
         "-e",
         "--engine",
@@ -140,6 +138,13 @@ def add_runtest_args(parser):
         default=EngineType.cromwell
     )
 
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="Dry run test by providing a dictionary of output",
+    )
+
+    # For updating test-framework API endpoint
     parser.add_argument(
         "--test-manager-url",
         help="API endpoint to update run status in Test Manager",

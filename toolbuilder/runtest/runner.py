@@ -2,7 +2,7 @@ import requests
 from typing import List, Dict, Any, Optional
 from janis_assistant.main import run_with_outputs
 from janis_core.tool.test_suite_runner import ToolTestSuiteRunner
-from janis_core.tool.test_helpers import get_one_tool
+from janis_core.tool import test_helpers
 from janis_core import Logger
 from janis_core import JanisShed
 from janis_assistant.engines.enginetypes import EngineType
@@ -18,12 +18,7 @@ class UpdateStatusOption:
 
 
 def run_test_case(tool_id: str, test_case: str, engine: EngineType, output: Optional[Dict] = None) -> Dict[str, Any]:
-    # shed = JanisShed
-    # shed.hydrate(force=True)
-    #
-    # tool = shed.get_tool(tool=tool_id)()
-
-    tool = get_one_tool(tool_id, modules=[janis_bioinformatics.tools])
+    tool = test_helpers.get_one_tool(tool_id)
 
     if not tool:
         raise Exception(f"Tool {tool_id} not found")
@@ -56,8 +51,9 @@ def update_status(result: Dict, option: UpdateStatusOption):
     if not len(result["failed"]):
         status = "succeeded"
 
+    data = {"status": status, **result}
+
     headers = {"Authorization": f"Bearer {option.token}"}
-    data = {"status": status}
     resp = requests.request(method=option.method, url=option.url, json=data, headers=headers)
 
     Logger.info("status updated")
@@ -70,14 +66,19 @@ def update_status(result: Dict, option: UpdateStatusOption):
 def cli_logging(result: Dict):
     Logger.info(f"Output: {result['output']}")
 
-    Logger.info(f"{len(result['succeeded'])} expected output PASSED")
     if len(result['succeeded']) > 0:
+        Logger.info(f"{len(result['succeeded'])} expected output PASSED")
+
         Logger.info("Succeeded expected output:")
         for s in result["succeeded"]:
             Logger.info(s)
 
-    Logger.info(f"{len(result['failed'])} expected output FAILED")
     if len(result['failed']) > 0:
+        Logger.info(f"{len(result['failed'])} expected output FAILED")
+
         Logger.info("Failed expected output:")
         for f in result["failed"]:
             Logger.info(f)
+
+    else:
+        Logger.info("Test SUCCEEDED")

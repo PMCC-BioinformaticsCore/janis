@@ -128,8 +128,8 @@ def do_runtest(args):
 
 
 def add_runtest_args(parser):
+    parser.add_argument("test_case", help="Name of test case as listed in tool.tests()")
     parser.add_argument("tool", help="Name of tool to test")
-    parser.add_argument("--test-case", help="Name of the test case to run", required=True)
 
     parser.add_argument(
         "-e",

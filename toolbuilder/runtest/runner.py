@@ -47,9 +47,9 @@ def run_test_case(tool_id: str, test_case: str, engine: EngineType, output: Opti
 def update_status(result: Dict, option: UpdateStatusOption):
     Logger.info(f"Updating test status via {option.method} {option.url}")
 
-    status = "failed"
+    status = "test-failed"
     if not len(result["failed"]):
-        status = "succeeded"
+        status = "test-succeeded"
 
     data = {"status": status, **result}
 

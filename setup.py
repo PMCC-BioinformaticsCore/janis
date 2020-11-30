@@ -12,16 +12,10 @@ JANIS_TEMPLATES_VERSION = "v0.9.4"
 
 
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########
-
-# TODO: undo this
-min_core_version = f"janis-pipelines.core @ git+https://github.com/PMCC-BioinformaticsCore/janis-core.git@unit-test-with-janis-prepare"
-min_assistant_version = f"janis-pipelines.runner @ git+https://github.com/PMCC-BioinformaticsCore/janis-assistant.git@v0.11.x"
-min_bioinf_version = f"janis-pipelines.bioinformatics @ git+https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics.git@v0.11.x"
-
-# min_core_version = f"janis-pipelines.core>=" + JANIS_CORE_VERSION
-# min_assistant_version = f"janis-pipelines.runner>=" + JANIS_ASSISTANT_VERSION
+min_core_version = f"janis-pipelines.core>=" + JANIS_CORE_VERSION
+min_assistant_version = f"janis-pipelines.runner>=" + JANIS_ASSISTANT_VERSION
 min_unix_version = f"janis-pipelines.unix>=" + JANIS_UNIX_VERSION
-# min_bioinf_version = f"janis-pipelines.bioinformatics>=" + JANIS_BIOINFORMATICS_VERSION
+min_bioinf_version = f"janis-pipelines.bioinformatics>=" + JANIS_BIOINFORMATICS_VERSION
 min_pipes_version = f"janis-pipelines.pipelines>=" + JANIS_PIPELINES_VERSION
 min_templs_version = f"janis-pipelines.templates>=" + JANIS_TEMPLATES_VERSION
 

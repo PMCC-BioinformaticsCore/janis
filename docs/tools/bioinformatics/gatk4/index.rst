@@ -254,4 +254,40 @@ Automatically generated index page for GATK4:
      </a>
      <hr />
          
+     <a href="gatk4variantfiltration.html">
+       <p style="margin-bottom: 5px"><b>GATK4: VariantFiltration</b> <span style="margin-left: 10px; color: darkgray">Gatk4Variantfiltration</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatk4variantfiltration.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatkaddorreplacereadgroups.html">
+       <p style="margin-bottom: 5px"><b>Gatk4: AddOrReplaceReadGroups</b> <span style="margin-left: 10px; color: darkgray">GatkAddOrReplaceReadGroups</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatkaddorreplacereadgroups.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatkreordersam.html">
+       <p style="margin-bottom: 5px"><b>Gatk4: ReorderSam</b> <span style="margin-left: 10px; color: darkgray">GatkReorderSam</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="gatkreordersam.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="gatksplitncigarreads.html">
+       <p style="margin-bottom: 5px"><b>GATK4: SplitNCigarReads</b> <span style="margin-left: 10px; color: darkgray">GatkSplitNCigarReads</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(4 versions)</span><a class="version-button" href="gatksplitncigarreads.html" style="margin-bottom: 10px">
+       v<b>4.1.4.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
 

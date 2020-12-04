@@ -136,10 +136,10 @@ Workflow Description Language
        set -e
         vcftools \
          --vcf '~{vcf}' \
-         --out '~{select_first([outputFilename, "generated"])}' \
-         ~{if defined(removeFileteredAll) then "--remove-filtered-all" else ""} \
-         ~{if defined(recode) then "--recode" else ""} \
-         ~{if defined(recodeINFOAll) then "--recode-INFO-all" else ""}
+         --out '~{select_first([outputFilename, "~{basename(vcf, ".vcf")}"])}' \
+         ~{if (defined(removeFileteredAll) && select_first([removeFileteredAll])) then "--remove-filtered-all" else ""} \
+         ~{if (defined(recode) && select_first([recode])) then "--recode" else ""} \
+         ~{if (defined(recodeINFOAll) && select_first([recodeINFOAll])) then "--recode-INFO-all" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])
@@ -150,7 +150,7 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = (select_first([outputFilename, "generated"]) + ".recode.vcf")
+       File out = (select_first([outputFilename, "~{basename(vcf, ".vcf")}"]) + ".recode.vcf")
      }
    }
 
@@ -197,6 +197,7 @@ Common Workflow Language
      default: generated
      inputBinding:
        prefix: --out
+       valueFrom: $(inputs.vcf.basename.replace(/.vcf$/, ""))
    - id: removeFileteredAll
      label: removeFileteredAll
      doc: Removes all sites with a FILTER flag other than PASS.

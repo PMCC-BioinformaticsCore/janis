@@ -128,7 +128,7 @@ Workflow Description Language
        set -e
        whindex whisper-index \
          '~{index_name}' \
-         ~{"'" + sep("' '", fasta) + "'"}
+         ~{if length(fasta) > 0 then "'" + sep("' '", fasta) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])

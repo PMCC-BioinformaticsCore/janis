@@ -131,7 +131,7 @@ Workflow Description Language
        set -e
        vcfcombine \
          ~{if defined(region) then ("-r '" + region + "'") else ""} \
-         ~{"'" + sep("' '", vcf) + "'"}
+         ~{if length(vcf) > 0 then "'" + sep("' '", vcf) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

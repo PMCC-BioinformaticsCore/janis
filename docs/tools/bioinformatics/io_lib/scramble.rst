@@ -164,15 +164,15 @@ Workflow Description Language
          ~{if defined(select_first([maxBases, 5000000])) then ("-b " + select_first([maxBases, 5000000])) else ''} \
          ~{if defined(select_first([maxSequences, 10000])) then ("-s " + select_first([maxSequences, 10000])) else ''} \
          ~{if defined(select_first([maxSlicesPerContainer, 1])) then ("-S " + select_first([maxSlicesPerContainer, 1])) else ''} \
-         ~{if defined(embedReferenceSeuence) then "-e" else ""} \
-         ~{if defined(nonReferenceBaseEncoding) then "-x" else ""} \
-         ~{if defined(multipleReferencesPerSlice) then "-M" else ""} \
-         ~{if defined(generateTags) then "-m" else ""} \
-         ~{if defined(lzmaCompression) then "-Z" else ""} \
-         ~{if defined(discardReadNames) then "-n" else ""} \
-         ~{if defined(preserveAuxTags) then "-P" else ""} \
-         ~{if defined(preserveAuxTagSizes) then "-p" else ""} \
-         ~{if defined(noAddPG) then "-q" else ""} \
+         ~{if (defined(embedReferenceSeuence) && select_first([embedReferenceSeuence])) then "-e" else ""} \
+         ~{if (defined(nonReferenceBaseEncoding) && select_first([nonReferenceBaseEncoding])) then "-x" else ""} \
+         ~{if (defined(multipleReferencesPerSlice) && select_first([multipleReferencesPerSlice])) then "-M" else ""} \
+         ~{if (defined(generateTags) && select_first([generateTags])) then "-m" else ""} \
+         ~{if (defined(lzmaCompression) && select_first([lzmaCompression])) then "-Z" else ""} \
+         ~{if (defined(discardReadNames) && select_first([discardReadNames])) then "-n" else ""} \
+         ~{if (defined(preserveAuxTags) && select_first([preserveAuxTags])) then "-P" else ""} \
+         ~{if (defined(preserveAuxTagSizes) && select_first([preserveAuxTagSizes])) then "-p" else ""} \
+         ~{if (defined(noAddPG) && select_first([noAddPG])) then "-q" else ""} \
          ~{if defined(decodeStop) then ("-N " + decodeStop) else ''} \
          ~{if defined(select_first([threads, select_first([runtime_cpu, 1])])) then ("-t " + select_first([threads, select_first([runtime_cpu, 1])])) else ''} \
          ~{if defined(enableQualityBinning) then ("-B " + enableQualityBinning) else ''} \

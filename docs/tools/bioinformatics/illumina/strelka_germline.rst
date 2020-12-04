@@ -205,17 +205,17 @@ Workflow Description Language
          ~{if defined(select_first([relativeStrelkaDirectory, "strelka_dir"])) then ("--runDir " + select_first([relativeStrelkaDirectory, "strelka_dir"])) else ''} \
          ~{if defined(ploidy) then ("--ploidy " + ploidy) else ''} \
          ~{if defined(noCompress) then ("--noCompress " + noCompress) else ''} \
-         ~{if defined(rna) then "--rna" else ""} \
+         ~{if (defined(rna) && select_first([rna])) then "--rna" else ""} \
          ~{if defined(indelCandidates) then ("--indelCandidates " + indelCandidates) else ''} \
          ~{if defined(forcedGT) then ("--forcedGT " + forcedGT) else ''} \
-         ~{if defined(exome) then "--exome" else ""} \
-         ~{if defined(targeted) then "--exome" else ""} \
+         ~{if (defined(exome) && select_first([exome])) then "--exome" else ""} \
+         ~{if (defined(targeted) && select_first([targeted])) then "--exome" else ""} \
          ~{if defined(callRegions) then ("--callRegions='" + callRegions + "'") else ""} \
          ;~{select_first([relativeStrelkaDirectory, "strelka_dir"])}/runWorkflow.py \
          ~{if defined(select_first([mode, "local"])) then ("--mode " + select_first([mode, "local"])) else ''} \
          ~{if defined(queue) then ("--queue " + queue) else ''} \
          ~{if defined(memGb) then ("--memGb " + memGb) else ''} \
-         ~{if defined(quiet) then "--quiet" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          ~{if defined(mailTo) then ("--mailTo " + mailTo) else ''} \
          --jobs ~{select_first([runtime_cpu, 4, 1])}
      >>>

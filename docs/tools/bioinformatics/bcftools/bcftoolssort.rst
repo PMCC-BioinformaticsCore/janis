@@ -54,7 +54,7 @@ Quickstart
 
 .. code-block:: yaml
 
-       vcf: vcf.vcf.gz
+       vcf: null
 
 
 
@@ -97,14 +97,14 @@ out     CompressedVCF
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ==================  =============  ==========  =======================================================================================
-name            type                prefix           position  documentation
-==============  ==================  =============  ==========  =======================================================================================
-vcf             CompressedVCF                               1  The VCF file to sort
-outputFilename  Optional<Filename>  --output-file              (-o) output file name [stdout]
-outputType      Optional<String>    --output-type              (-O) b: compressed BCF, u: uncompressed BCF, z: compressed VCF, v: uncompressed VCF [v]
-tempDir         Optional<String>    --temp-dir                 (-T) temporary files [/tmp/bcftools-sort.XXXXXX/]
-==============  ==================  =============  ==========  =======================================================================================
+==============  =========================  =============  ==========  =======================================================================================
+name            type                       prefix           position  documentation
+==============  =========================  =============  ==========  =======================================================================================
+vcf             Union<VCF, CompressedVCF>                          1  The VCF file to sort
+outputFilename  Optional<Filename>         --output-file              (-o) output file name [stdout]
+outputType      Optional<String>           --output-type              (-O) b: compressed BCF, u: uncompressed BCF, z: compressed VCF, v: uncompressed VCF [v]
+tempDir         Optional<String>           --temp-dir                 (-T) temporary files [/tmp/bcftools-sort.XXXXXX/]
+==============  =========================  =============  ==========  =======================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -130,7 +130,7 @@ Workflow Description Language
          --output-file '~{select_first([outputFilename, "generated.sorted.vcf.gz"])}' \
          ~{if defined(select_first([outputType, "z"])) then ("--output-type '" + select_first([outputType, "z"]) + "'") else ""} \
          ~{if defined(tempDir) then ("--temp-dir '" + tempDir + "'") else ""} \
-         '~{vcf}'
+         ~{vcf}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])

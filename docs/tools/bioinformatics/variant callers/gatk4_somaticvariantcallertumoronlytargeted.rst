@@ -107,7 +107,7 @@ Outputs
 name      type                  documentation
 ========  ====================  ===============
 variants  CompressedIndexedVCF
-out_bam   IndexedBam
+out_bam   Optional<IndexedBam>
 out       VCF
 ========  ====================  ===============
 
@@ -243,8 +243,8 @@ Workflow Description Language
      output {
        File variants = mutect2.out
        File variants_tbi = mutect2.out_tbi
-       File out_bam = mutect2.bam
-       File out_bam_bai = mutect2.bam_bai
+       File? out_bam = mutect2.bam
+       File? out_bam_bai = mutect2.bam_bai
        File out = splitnormalisevcf.out
      }
    }
@@ -314,7 +314,9 @@ Common Workflow Language
      - .tbi
      outputSource: mutect2/out
    - id: out_bam
-     type: File
+     type:
+     - File
+     - 'null'
      secondaryFiles:
      - .bai
      outputSource: mutect2/bam

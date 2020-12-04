@@ -157,7 +157,7 @@ haplotypecaller_vcf   CompressedIndexedVCF
 haplotypecaller_bam   IndexedBam
 haplotypecaller_norm  VCF
 mutect2_vcf           CompressedIndexedVCF
-mutect2_bam           IndexedBam
+mutect2_bam           Optional<IndexedBam>
 mutect2_norm          VCF
 addbamstats_vcf       VCF
 ====================  ====================  ===============
@@ -172,7 +172,7 @@ Embedded Tools
 ***************
 
 ======================================================================  ======================================================
-FastQC                                                                  ``fastqc/v0.11.8``
+FastQC                                                                  ``fastqc/v0.11.5``
 Parse FastQC Adaptors                                                   ``ParseFastqcAdaptors/v0.1.0``
 Align and sort reads                                                    ``BwaAligner/1.0.0``
 Merge and Mark Duplicates                                               ``mergeAndMarkBams/4.1.3``
@@ -239,7 +239,7 @@ Workflow Description Language
 
    version development
 
-   import "tools/fastqc_v0_11_8.wdl" as F
+   import "tools/fastqc_v0_11_5.wdl" as F
    import "tools/ParseFastqcAdaptors_v0_1_0.wdl" as P
    import "tools/BwaAligner_1_0_0.wdl" as B
    import "tools/mergeAndMarkBams_4_1_3.wdl" as M
@@ -522,8 +522,8 @@ Workflow Description Language
        File haplotypecaller_norm = splitnormalisevcf.out
        File mutect2_vcf = mutect2.variants
        File mutect2_vcf_tbi = mutect2.variants_tbi
-       File mutect2_bam = mutect2.out_bam
-       File mutect2_bam_bai = mutect2.out_bam_bai
+       File? mutect2_bam = mutect2.out_bam
+       File? mutect2_bam_bai = mutect2.out_bam_bai
        File mutect2_norm = mutect2.out
        File addbamstats_vcf = addbamstats.out
      }
@@ -707,7 +707,9 @@ Common Workflow Language
      - .tbi
      outputSource: mutect2/variants
    - id: mutect2_bam
-     type: File
+     type:
+     - File
+     - 'null'
      secondaryFiles:
      - .bai
      outputSource: mutect2/out_bam
@@ -728,7 +730,7 @@ Common Workflow Language
        source: fastqc_threads
      scatter:
      - reads
-     run: tools/fastqc_v0_11_8.cwl
+     run: tools/fastqc_v0_11_5.cwl
      out:
      - id: out
      - id: datafile
@@ -791,6 +793,7 @@ Common Workflow Language
      run: tools/AnnotateDepthOfCoverage_v0_1_0.cwl
      out:
      - id: out
+     - id: out_sample_summary
    - id: performance_summary
      label: Performance summary workflow (targeted bed)
      in:

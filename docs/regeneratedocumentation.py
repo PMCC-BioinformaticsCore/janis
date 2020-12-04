@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 This class regenerates all the tool definitions
 

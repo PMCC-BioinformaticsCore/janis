@@ -290,7 +290,7 @@ Workflow Description Language
      command <<<
        set -e
        freebayes \
-         ~{"-b '" + sep("' -b '", bams) + "'"} \
+         ~{if length(bams) > 0 then "-b '" + sep("' -b '", bams) + "'" else ""} \
          ~{if defined(bamList) then ("-L '" + bamList + "'") else ""} \
          -f '~{reference}' \
          ~{if defined(targetsFile) then ("-t '" + targetsFile + "'") else ""} \
@@ -299,33 +299,33 @@ Workflow Description Language
          ~{if defined(popFile) then ("--populations '" + popFile + "'") else ""} \
          ~{if defined(cnvFile) then ("-A '" + cnvFile + "'") else ""} \
          -v '~{select_first([outputFilename, "generated.vcf"])}' \
-         ~{if defined(select_first([gvcfFlag, false])) then "--gvcf" else ""} \
+         ~{if select_first([gvcfFlag, false]) then "--gvcf" else ""} \
          ~{if defined(gvcfChunkSize) then ("--gvcf-chunk " + gvcfChunkSize) else ''} \
          ~{if defined(candidateVcf) then ("-@ '" + candidateVcf + "'") else ""} \
-         ~{if defined(restrictSitesFlag) then "-l" else ""} \
+         ~{if (defined(restrictSitesFlag) && select_first([restrictSitesFlag])) then "-l" else ""} \
          ~{if defined(candidateHaploVcf) then ("--haplotype-basis-alleles '" + candidateHaploVcf + "'") else ""} \
-         ~{if defined(reportHapAllelesFlag) then "--report-all-haplotype-alleles" else ""} \
-         ~{if defined(monomorphicFlag) then "--report-monomorphic" else ""} \
+         ~{if (defined(reportHapAllelesFlag) && select_first([reportHapAllelesFlag])) then "--report-all-haplotype-alleles" else ""} \
+         ~{if (defined(monomorphicFlag) && select_first([monomorphicFlag])) then "--report-monomorphic" else ""} \
          ~{if defined(polyMoprhProbFlag) then ("-P " + polyMoprhProbFlag) else ''} \
-         ~{if defined(strictFlag) then "--strict-vcf" else ""} \
+         ~{if (defined(strictFlag) && select_first([strictFlag])) then "--strict-vcf" else ""} \
          ~{if defined(theta) then ("-T " + theta) else ''} \
          -p ~{select_first([ploidy, 2])} \
-         ~{if defined(pooledDiscreteFlag) then "-J" else ""} \
-         ~{if defined(pooledContinousFlag) then "-K" else ""} \
-         ~{if defined(addRefFlag) then "-Z" else ""} \
+         ~{if (defined(pooledDiscreteFlag) && select_first([pooledDiscreteFlag])) then "-J" else ""} \
+         ~{if (defined(pooledContinousFlag) && select_first([pooledContinousFlag])) then "-K" else ""} \
+         ~{if (defined(addRefFlag) && select_first([addRefFlag])) then "-Z" else ""} \
          --reference-quality '~{select_first([refQual, "100,60"])}' \
-         ~{if defined(ignoreSNPsFlag) then "-I" else ""} \
-         ~{if defined(ignoreINDELsFlag) then "-i" else ""} \
-         ~{if defined(ignoreMNPsFlag) then "-X" else ""} \
-         ~{if defined(ignoreComplexVarsFlag) then "-u" else ""} \
+         ~{if (defined(ignoreSNPsFlag) && select_first([ignoreSNPsFlag])) then "-I" else ""} \
+         ~{if (defined(ignoreINDELsFlag) && select_first([ignoreINDELsFlag])) then "-i" else ""} \
+         ~{if (defined(ignoreMNPsFlag) && select_first([ignoreMNPsFlag])) then "-X" else ""} \
+         ~{if (defined(ignoreComplexVarsFlag) && select_first([ignoreComplexVarsFlag])) then "-u" else ""} \
          -n ~{select_first([maxNumOfAlleles, 0])} \
          ~{if defined(maxNumOfComplexVars) then ("-E " + maxNumOfComplexVars) else ''} \
          --haplotype-length ~{select_first([haplotypeLength, 3])} \
          --min-repeat-size ~{select_first([minRepSize, 5])} \
          --min-repeat-entropy ~{select_first([minRepEntropy, 1])} \
-         ~{if defined(noPartObsFlag) then "--no-partial-observations" else ""} \
-         ~{if defined(noNormaliseFlag) then "-O" else ""} \
-         ~{if defined(select_first([useDupFlag, false])) then "-4" else ""} \
+         ~{if (defined(noPartObsFlag) && select_first([noPartObsFlag])) then "--no-partial-observations" else ""} \
+         ~{if (defined(noNormaliseFlag) && select_first([noNormaliseFlag])) then "-O" else ""} \
+         ~{if select_first([useDupFlag, false]) then "-4" else ""} \
          -m ~{select_first([minMappingQual, 1])} \
          -q ~{select_first([minBaseQual, 0])} \
          -R ~{select_first([minSupQsum, 0])} \
@@ -335,32 +335,32 @@ Workflow Description Language
          ~{if defined(maxMisMatchFrac) then ("-z " + maxMisMatchFrac) else ''} \
          ~{if defined(readSNPLim) then ("-$ " + readSNPLim) else ''} \
          ~{if defined(readINDELLim) then ("-e " + readINDELLim) else ''} \
-         ~{if defined(standardFilterFlag) then "-0" else ""} \
+         ~{if (defined(standardFilterFlag) && select_first([standardFilterFlag])) then "-0" else ""} \
          ~{if defined(minAltFrac) then ("-F " + minAltFrac) else ''} \
          -C ~{select_first([minAltCount, 2])} \
          -3 ~{select_first([minAltQSum, 0])} \
          -G ~{select_first([minAltTotal, 1])} \
          --min-coverage ~{select_first([minCov, 0])} \
          ~{if defined(maxCov) then ("--limit-coverage " + maxCov) else ''} \
-         ~{if defined(noPopPriorsFlag) then "-k" else ""} \
-         ~{if defined(noHWEPriorsFlag) then "-w" else ""} \
-         ~{if defined(noBinOBSPriorsFlag) then "-V" else ""} \
-         ~{if defined(noABPriorsFlag) then "-a" else ""} \
+         ~{if (defined(noPopPriorsFlag) && select_first([noPopPriorsFlag])) then "-k" else ""} \
+         ~{if (defined(noHWEPriorsFlag) && select_first([noHWEPriorsFlag])) then "-w" else ""} \
+         ~{if (defined(noBinOBSPriorsFlag) && select_first([noBinOBSPriorsFlag])) then "-V" else ""} \
+         ~{if (defined(noABPriorsFlag) && select_first([noABPriorsFlag])) then "-a" else ""} \
          ~{if defined(obsBiasFile) then ("--observation-bias '" + obsBiasFile + "'") else ""} \
          ~{if defined(baseQualCap) then ("--base-quality-cap " + baseQualCap) else ''} \
          ~{if defined(probContamin) then ("--prob-contamination " + probContamin) else ''} \
-         ~{if defined(legGLScalc) then "--legacy-gls" else ""} \
+         ~{if (defined(legGLScalc) && select_first([legGLScalc])) then "--legacy-gls" else ""} \
          ~{if defined(contaminEst) then ("--contamination-estimates '" + contaminEst + "'") else ""} \
-         ~{if defined(reportMaxGLFlag) then "--report-genotype-likelihood-max" else ""} \
+         ~{if (defined(reportMaxGLFlag) && select_first([reportMaxGLFlag])) then "--report-genotype-likelihood-max" else ""} \
          -B ~{select_first([genotypingMaxIter, 1000])} \
          --genotyping-max-banddepth ~{select_first([genotypingMaxBDepth, 6])} \
          -W '~{select_first([postIntegrationLim, "1,3"])}' \
-         ~{if defined(excludeUnObsGT) then "-N" else ""} \
+         ~{if (defined(excludeUnObsGT) && select_first([excludeUnObsGT])) then "-N" else ""} \
          ~{if defined(gtVarThres) then ("-S " + gtVarThres) else ''} \
-         ~{if defined(useMQFlag) then "-j" else ""} \
-         ~{if defined(harmIndelQualFlag) then "-H" else ""} \
+         ~{if (defined(useMQFlag) && select_first([useMQFlag])) then "-j" else ""} \
+         ~{if (defined(harmIndelQualFlag) && select_first([harmIndelQualFlag])) then "-H" else ""} \
          ~{if defined(readDepFact) then ("-D " + readDepFact) else ''} \
-         ~{if defined(gtQuals) then "-=" else ""} \
+         ~{if (defined(gtQuals) && select_first([gtQuals])) then "-=" else ""} \
          ~{if defined(skipCov) then ("--skip-coverage " + skipCov) else ''}
      >>>
      runtime {

@@ -3,9 +3,25 @@
 CellRanger mkfastq
 ======================================
 
-``CellRangerMkfastq`` · *0 contributors · 1 version*
+``CellRangerMkfastq`` · *1 contributor · 1 version*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+/opt/cellranger-3.0.2/cellranger-cs/3.0.2/bin
+cellranger mkfastq (3.0.2)
+Copyright (c) 2019 10x Genomics, Inc.  All rights reserved.
+-------------------------------------------------------------------------------
+Run Illumina demultiplexer on sample sheets that contain 10x-specific sample 
+index sets, and generate 10x-specific quality metrics after the demultiplex.  
+Any bcl2fastq argument will work (except a few that are set by the pipeline 
+to ensure proper trimming and sample indexing). The FASTQ output generated 
+will be the same as when running bcl2fastq directly.
+These bcl2fastq arguments are overridden by this pipeline:
+    --fastq-cluster-count
+    --minimum-trimmed-read-length
+    --mask-short-adapter-reads
+Usage:
+    cellranger mkfastq --run=PATH [options]
+    cellranger mkfastq -h | --help | --version
+
 
 
 Quickstart
@@ -77,10 +93,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: v3.0.2
 :Container: fbrundu/cellranger:v3.0.2
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2019-10-24
+:Updated: 2019-10-24
 
 
 Outputs
@@ -151,15 +167,15 @@ Workflow Description Language
          --output-dir='~{select_first([outputFoldername, "generated"])}' \
          ~{if defined(csv) then ("--csv='" + csv + "'") else ""} \
          ~{if defined(sampleSheet) then ("--sample-sheet='" + sampleSheet + "'") else ""} \
-         ~{if defined(ignoreDualIndex) then "--ignore-dual-index" else ""} \
-         ~{if defined(qc) then "--qc" else ""} \
+         ~{if (defined(ignoreDualIndex) && select_first([ignoreDualIndex])) then "--ignore-dual-index" else ""} \
+         ~{if (defined(qc) && select_first([qc])) then "--qc" else ""} \
          ~{if (defined(lanes) && length(select_first([lanes])) > 0) then "--lanes='" + sep("','", select_first([lanes])) + "'" else ""} \
          ~{if defined(useBasesMask) then ("--use-bases-mask='" + useBasesMask + "'") else ""} \
-         ~{if defined(deleteUndetermined) then "--delete-undetermined" else ""} \
+         ~{if (defined(deleteUndetermined) && select_first([deleteUndetermined])) then "--delete-undetermined" else ""} \
          ~{if defined(project) then ("--project='" + project + "'") else ""} \
          ~{if defined(select_first([localcores, select_first([runtime_cpu, 1])])) then ("--localcores=" + select_first([localcores, select_first([runtime_cpu, 1])])) else ''} \
          ~{if defined(localmem) then ("--localmem=" + localmem) else ''} \
-         ~{if defined(nopreflight) then "--nopreflight" else ""}
+         ~{if (defined(nopreflight) && select_first([nopreflight])) then "--nopreflight" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])
@@ -183,6 +199,23 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.0
    label: CellRanger mkfastq
+   doc: |
+     /opt/cellranger-3.0.2/cellranger-cs/3.0.2/bin
+     cellranger mkfastq (3.0.2)
+     Copyright (c) 2019 10x Genomics, Inc.  All rights reserved.
+     -------------------------------------------------------------------------------
+     Run Illumina demultiplexer on sample sheets that contain 10x-specific sample 
+     index sets, and generate 10x-specific quality metrics after the demultiplex.  
+     Any bcl2fastq argument will work (except a few that are set by the pipeline 
+     to ensure proper trimming and sample indexing). The FASTQ output generated 
+     will be the same as when running bcl2fastq directly.
+     These bcl2fastq arguments are overridden by this pipeline:
+         --fastq-cluster-count
+         --minimum-trimmed-read-length
+         --mask-short-adapter-reads
+     Usage:
+         cellranger mkfastq --run=PATH [options]
+         cellranger mkfastq -h | --help | --version
 
    requirements:
    - class: ShellCommandRequirement

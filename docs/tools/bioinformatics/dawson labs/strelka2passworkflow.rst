@@ -124,7 +124,7 @@ Embedded Tools
 ===============================  =================================
 Strelka 2Pass analysis step1     ``Strelka2PassWorkflowStep1/0.1``
 Strelka 2Pass analysis step 2    ``Strelka2PassWorkflowStep2/0.1``
-Refilter Strelka2 Variant Calls  ``refilterStrelka2Calls/0.1.7``
+Refilter Strelka2 Variant Calls  ``refilterStrelka2Calls/0.1.8``
 BGZip                            ``bgzip/1.2.1``
 Tabix                            ``tabix/1.2.1``
 ===============================  =================================
@@ -144,6 +144,7 @@ configStrelka  Optional<File>
 callRegions    Optional<BedTABIX>
 exome          Optional<Boolean>
 sampleNames    Optional<Array<String>>
+minAD          Optional<Integer>
 =============  =======================  ===============
 
 Workflow Description Language
@@ -155,7 +156,7 @@ Workflow Description Language
 
    import "tools/Strelka2PassWorkflowStep1_0_1.wdl" as S
    import "tools/Strelka2PassWorkflowStep2_0_1.wdl" as S2
-   import "tools/refilterStrelka2Calls_0_1_7.wdl" as R
+   import "tools/refilterStrelka2Calls_0_1_8.wdl" as R
    import "tools/bgzip_1_2_1.wdl" as B
    import "tools/tabix_1_2_1.wdl" as T
 
@@ -172,6 +173,7 @@ Workflow Description Language
        File? callRegions_tbi
        Boolean? exome = false
        Array[String]? sampleNames
+       Int? minAD = 2
      }
      scatter (t in transpose([tumorBams, tumorBams_crai])) {
         call S.Strelka2PassWorkflowStep1 as step1 {
@@ -211,6 +213,7 @@ Workflow Description Language
        input:
          inputFiles=step2.snvs,
          inputFiles_tbi=step2.snvs_tbi,
+         minAD=select_first([minAD, 2]),
          sampleNames=sampleNames
      }
      scatter (r in refilterSNVs.out) {
@@ -229,6 +232,7 @@ Workflow Description Language
        input:
          inputFiles=step2.indels,
          inputFiles_tbi=step2.indels_tbi,
+         minAD=select_first([minAD, 2]),
          sampleNames=sampleNames
      }
      scatter (r in refilterINDELs.out) {
@@ -312,6 +316,9 @@ Common Workflow Language
      - type: array
        items: string
      - 'null'
+   - id: minAD
+     type: int
+     default: 2
 
    outputs:
    - id: snvs
@@ -387,9 +394,11 @@ Common Workflow Language
      in:
      - id: inputFiles
        source: step2/snvs
+     - id: minAD
+       source: minAD
      - id: sampleNames
        source: sampleNames
-     run: tools/refilterStrelka2Calls_0_1_7.cwl
+     run: tools/refilterStrelka2Calls_0_1_8.cwl
      out:
      - id: out
    - id: compressSNVs
@@ -417,9 +426,11 @@ Common Workflow Language
      in:
      - id: inputFiles
        source: step2/indels
+     - id: minAD
+       source: minAD
      - id: sampleNames
        source: sampleNames
-     run: tools/refilterStrelka2Calls_0_1_7.cwl
+     run: tools/refilterStrelka2Calls_0_1_8.cwl
      out:
      - id: out
    - id: compressINDELs

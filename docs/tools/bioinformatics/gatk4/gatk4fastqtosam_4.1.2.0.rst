@@ -200,7 +200,7 @@ Workflow Description Language
          ~{if defined(reference) then ("--REFERENCE_SEQUENCE '" + reference + "'") else ""} \
          --OUTPUT '~{select_first([outputFilename, "generated.bam"])}' \
          ~{if defined(sortOrder) then ("-SO '" + sortOrder + "'") else ""} \
-         ~{if defined(allowAndIgnoreEmptyLines) then "--ALLOW_AND_IGNORE_EMPTY_LINES" else ""} \
+         ~{if (defined(allowAndIgnoreEmptyLines) && select_first([allowAndIgnoreEmptyLines])) then "--ALLOW_AND_IGNORE_EMPTY_LINES" else ""} \
          ~{if (defined(argumentsFile) && length(select_first([argumentsFile])) > 0) then "--arguments_file '" + sep("' '", select_first([argumentsFile])) + "'" else ""} \
          ~{if (defined(comment) && length(select_first([comment])) > 0) then "--COMMENT '" + sep("' '", select_first([comment])) + "'" else ""} \
          ~{if (defined(description) && length(select_first([description])) > 0) then "--DESCRIPTION '" + sep("' '", select_first([description])) + "'" else ""} \
@@ -215,15 +215,15 @@ Workflow Description Language
          ~{if defined(readGroupName) then ("--READ_GROUP_NAME '" + readGroupName + "'") else ""} \
          ~{if defined(runDate) then ("--RUN_DATE '" + runDate + "'") else ""} \
          ~{if defined(sequencingCenter) then ("--SEQUENCING_CENTER '" + sequencingCenter + "'") else ""} \
-         ~{if defined(useSequenctialFastqs) then "--USE_SEQUENTIAL_FASTQS" else ""} \
+         ~{if (defined(useSequenctialFastqs) && select_first([useSequenctialFastqs])) then "--USE_SEQUENTIAL_FASTQS" else ""} \
          ~{if defined(compressionLevel) then ("--COMPRESSION_LEVEL " + compressionLevel) else ''} \
-         ~{if defined(createIndex) then "--CREATE_INDEX" else ""} \
-         ~{if defined(createMd5File) then "--CREATE_MD5_FILE" else ""} \
+         ~{if (defined(createIndex) && select_first([createIndex])) then "--CREATE_INDEX" else ""} \
+         ~{if (defined(createMd5File) && select_first([createMd5File])) then "--CREATE_MD5_FILE" else ""} \
          ~{if defined(maxRecordsInRam) then ("--MAX_RECORDS_IN_RAM " + maxRecordsInRam) else ''} \
-         ~{if defined(quiet) then "--QUIET" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--QUIET" else ""} \
          ~{if defined(select_first([tmpDir, "/tmp/"])) then ("--TMP_DIR '" + select_first([tmpDir, "/tmp/"]) + "'") else ""} \
-         ~{if defined(useJdkDeflater) then "--use_jdk_deflater" else ""} \
-         ~{if defined(useJdkInflater) then "--use_jdk_inflater" else ""} \
+         ~{if (defined(useJdkDeflater) && select_first([useJdkDeflater])) then "--use_jdk_deflater" else ""} \
+         ~{if (defined(useJdkInflater) && select_first([useJdkInflater])) then "--use_jdk_inflater" else ""} \
          ~{if defined(validationStringency) then ("--VALIDATION_STRINGENCY '" + validationStringency + "'") else ""} \
          ~{if defined(verbosity) then ("--verbosity '" + verbosity + "'") else ""}
      >>>

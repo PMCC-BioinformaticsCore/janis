@@ -26,6 +26,7 @@ Quickstart
                DP=None,
                EVS=None,
                RPRS=None,
+               minAD=None,
                threads=None,
                outputFolder=None,
            )
@@ -84,8 +85,8 @@ Information
 
 :ID: ``refilterStrelka2Calls``
 :URL: *No URL to the documentation was provided*
-:Versions: 0.1.7
-:Container: shollizeck/dawsontoolkit:0.1.7.1
+:Versions: 0.1.8
+:Container: shollizeck/dawsontoolkit:0.1.8.1
 :Authors: Sebastian Hollizeck
 :Citations: None
 :Created: 2019-10-19
@@ -113,6 +114,7 @@ MQ            Integer                      --mq                       minimum ma
 DP            Integer                      --dp                       minimum depth of coverage for a variant to be accepted (default: 10)
 EVS           Integer                      --evs                      minimum phred scaled evidence for a variant to be accepted (default: 20)
 RPRS          Integer                      --rprs                     minimum phred scaled evidence for a variant to be accepted (default: 20)
+minAD         Integer                      --minAD                    minimum allelic depth for a variant to be accepted (default: 2)
 threads       Integer                      -t                         amount of threads to use for parallelization (default: 5)
 outputFolder  String                       -o                         Name of the normal sample (default: infered from all sample names)
 interval      Optional<String>             -L                         interval to call on (default: everything)
@@ -139,6 +141,7 @@ Workflow Description Language
        Int? DP
        Int? EVS
        Int? RPRS
+       Int? minAD
        Int? threads
        String? interval
        String? normalName
@@ -148,11 +151,12 @@ Workflow Description Language
      command <<<
        set -e
        filterStrelkaCalls.R \
-         ~{"-i '" + sep("','", inputFiles) + "'"} \
+         ~{if length(inputFiles) > 0 then "-i '" + sep("','", inputFiles) + "'" else ""} \
          --mq ~{select_first([MQ, 15])} \
          --dp ~{select_first([DP, 10])} \
          --evs ~{select_first([EVS, 10])} \
          --rprs ~{select_first([RPRS, -10])} \
+         --minAD ~{select_first([minAD, 2])} \
          -t ~{select_first([threads, select_first([runtime_cpu, 1])])} \
          ~{if defined(interval) then ("-L '" + interval + "'") else ""} \
          ~{if defined(normalName) then ("-n '" + normalName + "'") else ""} \
@@ -162,7 +166,7 @@ Workflow Description Language
      runtime {
        cpu: select_first([runtime_cpu, 20, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "shollizeck/dawsontoolkit:0.1.7.1"
+       docker: "shollizeck/dawsontoolkit:0.1.8.1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 48, 4])}G"
        preemptible: 2
@@ -187,7 +191,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: shollizeck/dawsontoolkit:0.1.7.1
+     dockerPull: shollizeck/dawsontoolkit:0.1.8.1
 
    inputs:
    - id: inputFiles
@@ -227,6 +231,13 @@ Common Workflow Language
      default: -10
      inputBinding:
        prefix: --rprs
+   - id: minAD
+     label: minAD
+     doc: 'minimum allelic depth for a variant to be accepted (default: 2)'
+     type: int
+     default: 2
+     inputBinding:
+       prefix: --minAD
    - id: threads
      label: threads
      doc: 'amount of threads to use for parallelization (default: 5)'

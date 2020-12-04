@@ -226,20 +226,20 @@ Workflow Description Language
        set -e
        VarDict \
          -G ~{reference} \
-         ~{if defined(indels3prime) then "-3" else ""} \
+         ~{if (defined(indels3prime) && select_first([indels3prime])) then "-3" else ""} \
          ~{if defined(amplicon) then ("-a " + amplicon) else ''} \
          ~{if defined(minReads) then ("-B " + minReads) else ''} \
-         ~{if defined(chromNamesAreNumbers) then "-C" else ""} \
+         ~{if (defined(chromNamesAreNumbers) && select_first([chromNamesAreNumbers])) then "-C" else ""} \
          ~{if defined(chromColumn) then ("-c " + chromColumn) else ''} \
-         ~{if defined(debug) then "-D" else ""} \
+         ~{if (defined(debug) && select_first([debug])) then "-D" else ""} \
          ~{if defined(splitDelimeter) then ("-d " + splitDelimeter) else ''} \
          ~{if defined(geneEndCol) then ("-E " + geneEndCol) else ''} \
          ~{if defined(segEndCol) then ("-e " + segEndCol) else ''} \
          ~{if defined(filter) then ("-F " + filter) else ''} \
          ~{if defined(geneNameCol) then ("-g " + geneNameCol) else ''} \
-         ~{if defined(printHeaderRow) then "-h" else ""} \
+         ~{if (defined(printHeaderRow) && select_first([printHeaderRow])) then "-h" else ""} \
          ~{if defined(indelSize) then ("-I " + indelSize) else ''} \
-         ~{if defined(outputSplice) then "-i" else ""} \
+         ~{if (defined(outputSplice) && select_first([outputSplice])) then "-i" else ""} \
          ~{if defined(performLocalRealignment) then ("-k " + performLocalRealignment) else ''} \
          ~{if defined(minMatches) then ("-M " + minMatches) else ''} \
          ~{if defined(maxMismatches) then ("-m " + maxMismatches) else ''} \
@@ -247,7 +247,7 @@ Workflow Description Language
          ~{if defined(mapq) then ("-O " + mapq) else ''} \
          ~{if defined(qratio) then ("-o " + qratio) else ''} \
          ~{if defined(readPosition) then ("-P " + readPosition) else ''} \
-         ~{if defined(pileup) then "-p" else ""} \
+         ~{if (defined(pileup) && select_first([pileup])) then "-p" else ""} \
          ~{if defined(minMappingQual) then ("-Q " + minMappingQual) else ''} \
          ~{if defined(phredScore) then ("-q " + phredScore) else ''} \
          ~{if defined(region) then ("-R " + region) else ''} \
@@ -255,14 +255,14 @@ Workflow Description Language
          ~{if defined(regStartCol) then ("-S " + regStartCol) else ''} \
          ~{if defined(segStartCol) then ("-s " + segStartCol) else ''} \
          ~{if defined(minReadsBeforeTrim) then ("-T " + minReadsBeforeTrim) else ''} \
-         ~{if defined(removeDuplicateReads) then "-t" else ""} \
+         ~{if (defined(removeDuplicateReads) && select_first([removeDuplicateReads])) then "-t" else ""} \
          ~{if defined(select_first([threads, select_first([runtime_cpu, 1])])) then ("-th " + select_first([threads, select_first([runtime_cpu, 1])])) else ''} \
          ~{if defined(freq) then ("-V " + freq) else ''} \
-         ~{if defined(vcfFormat) then "-v" else ""} \
+         ~{if (defined(vcfFormat) && select_first([vcfFormat])) then "-v" else ""} \
          ~{if defined(vs) then ("-VS " + vs) else ''} \
          ~{if defined(bp) then ("-X " + bp) else ''} \
          ~{if defined(extensionNucleotide) then ("-x " + extensionNucleotide) else ''} \
-         ~{if defined(yy) then "-y" else ""} \
+         ~{if (defined(yy) && select_first([yy])) then "-y" else ""} \
          ~{if defined(downsamplingFraction) then ("-Z " + downsamplingFraction) else ''} \
          ~{if defined(zeroBasedCoords) then ("-z " + zeroBasedCoords) else ''} \
          -b '~{sep("|", [tumorBam, normalBam])}' \

@@ -116,9 +116,10 @@ Embedded Tools
 ***************
 
 ===============================  =========================================
-GATK4: CollectInsertSizeMetrics  ``Gatk4CollectInsertSizeMetrics/4.1.3.0``
-SamTools: Flagstat               ``SamToolsFlagstat/1.9.0``
 SamTools: View                   ``SamToolsView/1.9.0``
+SamTools: Index                  ``SamToolsIndex/1.9.0``
+GATK4: CollectInsertSizeMetrics  ``Gatk4CollectInsertSizeMetrics/4.1.2.0``
+SamTools: Flagstat               ``SamToolsFlagstat/1.9.0``
 BEDTools: intersectBed           ``bedtoolsintersectBed/v2.29.2``
 BEDTools: coverageBed            ``bedtoolsCoverageBed/v2.29.2``
 Performance Summary              ``performanceSummary/0.0.7``
@@ -130,21 +131,22 @@ Gene Coverage Per Sample         ``geneCoveragePerSample/0.0.8``
 Additional configuration (inputs)
 ---------------------------------
 
-=============================================  =================  ==========================================================================================================================================================================================================================
-name                                           type               documentation
-=============================================  =================  ==========================================================================================================================================================================================================================
-bam                                            IndexedBam
-genecoverage_bed                               bed
-region_bed                                     bed
-sample_name                                    String
-genome_file                                    TextFile
-samtoolsview_doNotOutputAlignmentsWithBitsSet  Optional<String>   Do not output alignments with any bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
-bedtoolsintersectbed_sorted                    Optional<Boolean>  Use the 'chromsweep' algorithm for sorted (-k1,1 -k2,2n) input.
-bedtoolscoveragebed_sorted                     Optional<Boolean>  Use the 'chromsweep' algorithm for sorted (-k1,1 -k2,2n) input.
-bedtoolscoveragebed_histogram                  Optional<Boolean>  Report a histogram of coverage for each feature in A as well as a summary histogram for _all_ features in A. Output (tab delimited) after each feature in A: 1) depth 2) # bases at depth 3) size of A 4) % of A at depth.
-bedtoolscoverage_sorted                        Optional<Boolean>  Use the 'chromsweep' algorithm for sorted (-k1,1 -k2,2n) input.
-bedtoolscoverage_histogram                     Optional<Boolean>  Report a histogram of coverage for each feature in A as well as a summary histogram for _all_ features in A. Output (tab delimited) after each feature in A: 1) depth 2) # bases at depth 3) size of A 4) % of A at depth.
-=============================================  =================  ==========================================================================================================================================================================================================================
+======================================================  =================  ==========================================================================================================================================================================================================================
+name                                                    type               documentation
+======================================================  =================  ==========================================================================================================================================================================================================================
+bam                                                     IndexedBam
+genecoverage_bed                                        bed
+region_bed                                              bed
+sample_name                                             String
+genome_file                                             TextFile
+rmsecondaryalignments_doNotOutputAlignmentsWithBitsSet  Optional<String>   Do not output alignments with any bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
+samtoolsview_doNotOutputAlignmentsWithBitsSet           Optional<String>   Do not output alignments with any bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
+bedtoolsintersectbed_sorted                             Optional<Boolean>  Use the 'chromsweep' algorithm for sorted (-k1,1 -k2,2n) input.
+bedtoolscoveragebed_sorted                              Optional<Boolean>  Use the 'chromsweep' algorithm for sorted (-k1,1 -k2,2n) input.
+bedtoolscoveragebed_histogram                           Optional<Boolean>  Report a histogram of coverage for each feature in A as well as a summary histogram for _all_ features in A. Output (tab delimited) after each feature in A: 1) depth 2) # bases at depth 3) size of A 4) % of A at depth.
+bedtoolscoverage_sorted                                 Optional<Boolean>  Use the 'chromsweep' algorithm for sorted (-k1,1 -k2,2n) input.
+bedtoolscoverage_histogram                              Optional<Boolean>  Report a histogram of coverage for each feature in A as well as a summary histogram for _all_ features in A. Output (tab delimited) after each feature in A: 1) depth 2) # bases at depth 3) size of A 4) % of A at depth.
+======================================================  =================  ==========================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -153,9 +155,10 @@ Workflow Description Language
 
    version development
 
-   import "tools/Gatk4CollectInsertSizeMetrics_4_1_3_0.wdl" as G
-   import "tools/SamToolsFlagstat_1_9_0.wdl" as S
-   import "tools/SamToolsView_1_9_0.wdl" as S2
+   import "tools/SamToolsView_1_9_0.wdl" as S
+   import "tools/SamToolsIndex_1_9_0.wdl" as S2
+   import "tools/Gatk4CollectInsertSizeMetrics_4_1_2_0.wdl" as G
+   import "tools/SamToolsFlagstat_1_9_0.wdl" as S3
    import "tools/bedtoolsintersectBed_v2_29_2.wdl" as B
    import "tools/bedtoolsCoverageBed_v2_29_2.wdl" as B2
    import "tools/performanceSummary_0_0_7.wdl" as P
@@ -169,6 +172,7 @@ Workflow Description Language
        File region_bed
        String sample_name
        File genome_file
+       String? rmsecondaryalignments_doNotOutputAlignmentsWithBitsSet = "0x100"
        String? samtoolsview_doNotOutputAlignmentsWithBitsSet = "0x400"
        Boolean? bedtoolsintersectbed_sorted = true
        Boolean? bedtoolscoveragebed_sorted = true
@@ -176,21 +180,30 @@ Workflow Description Language
        Boolean? bedtoolscoverage_sorted = true
        Boolean? bedtoolscoverage_histogram = true
      }
-     call G.Gatk4CollectInsertSizeMetrics as gatk4collectinsertsizemetrics {
+     call S.SamToolsView as rmsecondaryalignments {
        input:
-         bam=bam,
-         bam_bai=bam_bai
-     }
-     call S.SamToolsFlagstat as bamflagstat {
-       input:
-         bam=bam
-     }
-     call S2.SamToolsView as samtoolsview {
-       input:
-         doNotOutputAlignmentsWithBitsSet=select_first([samtoolsview_doNotOutputAlignmentsWithBitsSet, "0x400"]),
+         doNotOutputAlignmentsWithBitsSet=select_first([rmsecondaryalignments_doNotOutputAlignmentsWithBitsSet, "0x100"]),
          sam=bam
      }
-     call S.SamToolsFlagstat as rmdupbamflagstat {
+     call S2.SamToolsIndex as indexbam {
+       input:
+         bam=rmsecondaryalignments.out
+     }
+     call G.Gatk4CollectInsertSizeMetrics as gatk4collectinsertsizemetrics {
+       input:
+         bam=indexbam.out,
+         bam_bai=indexbam.out_bai
+     }
+     call S3.SamToolsFlagstat as bamflagstat {
+       input:
+         bam=rmsecondaryalignments.out
+     }
+     call S.SamToolsView as samtoolsview {
+       input:
+         doNotOutputAlignmentsWithBitsSet=select_first([samtoolsview_doNotOutputAlignmentsWithBitsSet, "0x400"]),
+         sam=rmsecondaryalignments.out
+     }
+     call S3.SamToolsFlagstat as rmdupbamflagstat {
        input:
          bam=samtoolsview.out
      }
@@ -201,7 +214,7 @@ Workflow Description Language
          inputABam=samtoolsview.out,
          inputBBed=[region_bed]
      }
-     call S.SamToolsFlagstat as targetbamflagstat {
+     call S3.SamToolsFlagstat as targetbamflagstat {
        input:
          bam=bedtoolsintersectbed.out
      }
@@ -270,6 +283,11 @@ Common Workflow Language
      type: string
    - id: genome_file
      type: File
+   - id: rmsecondaryalignments_doNotOutputAlignmentsWithBitsSet
+     doc: |-
+       Do not output alignments with any bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
+     type: string
+     default: '0x100'
    - id: samtoolsview_doNotOutputAlignmentsWithBitsSet
      doc: |-
        Do not output alignments with any bits set in INT present in the FLAG field. INT can be specified in hex by beginning with `0x' (i.e. /^0x[0-9A-F]+/) or in octal by beginning with `0' (i.e. /^0[0-7]+/) [0].
@@ -310,12 +328,30 @@ Common Workflow Language
      outputSource: genecoverage/regionFileOut
 
    steps:
+   - id: rmsecondaryalignments
+     label: 'SamTools: View'
+     in:
+     - id: doNotOutputAlignmentsWithBitsSet
+       source: rmsecondaryalignments_doNotOutputAlignmentsWithBitsSet
+     - id: sam
+       source: bam
+     run: tools/SamToolsView_1_9_0.cwl
+     out:
+     - id: out
+   - id: indexbam
+     label: 'SamTools: Index'
+     in:
+     - id: bam
+       source: rmsecondaryalignments/out
+     run: tools/SamToolsIndex_1_9_0.cwl
+     out:
+     - id: out
    - id: gatk4collectinsertsizemetrics
      label: 'GATK4: CollectInsertSizeMetrics'
      in:
      - id: bam
-       source: bam
-     run: tools/Gatk4CollectInsertSizeMetrics_4_1_3_0.cwl
+       source: indexbam/out
+     run: tools/Gatk4CollectInsertSizeMetrics_4_1_2_0.cwl
      out:
      - id: out
      - id: outHistogram
@@ -323,7 +359,7 @@ Common Workflow Language
      label: 'SamTools: Flagstat'
      in:
      - id: bam
-       source: bam
+       source: rmsecondaryalignments/out
      run: tools/SamToolsFlagstat_1_9_0.cwl
      out:
      - id: out
@@ -333,7 +369,7 @@ Common Workflow Language
      - id: doNotOutputAlignmentsWithBitsSet
        source: samtoolsview_doNotOutputAlignmentsWithBitsSet
      - id: sam
-       source: bam
+       source: rmsecondaryalignments/out
      run: tools/SamToolsView_1_9_0.cwl
      out:
      - id: out

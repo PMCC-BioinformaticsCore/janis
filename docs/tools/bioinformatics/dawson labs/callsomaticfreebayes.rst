@@ -76,8 +76,8 @@ Information
 
 :ID: ``callSomaticFreeBayes``
 :URL: *No URL to the documentation was provided*
-:Versions: 0.1.7
-:Container: shollizeck/dawsontoolkit:0.1.7.1
+:Versions: 0.1.8
+:Container: shollizeck/dawsontoolkit:0.1.8.1
 :Authors: Sebastian Hollizeck
 :Citations: None
 :Created: 2019-10-19
@@ -132,7 +132,7 @@ Workflow Description Language
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "shollizeck/dawsontoolkit:0.1.7.1"
+       docker: "shollizeck/dawsontoolkit:0.1.8.1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 12, 4])}G"
        preemptible: 2
@@ -157,7 +157,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: shollizeck/dawsontoolkit:0.1.7.1
+     dockerPull: shollizeck/dawsontoolkit:0.1.8.1
 
    inputs:
    - id: vcf

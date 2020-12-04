@@ -3,9 +3,16 @@
 Multiqc
 =================
 
-``MultiQC`` · *0 contributors · 1 version*
+``MultiQC`` · *1 contributor · 1 version*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+Usage: multiqc [OPTIONS] <analysis directory>
+MultiQC aggregates results from bioinformatics analyses across many samples into a single report.
+It searches a given directory for analysis logs and compiles a HTML report. It's a general use tool, 
+perfect for summarising the output from numerous bioinformatics tools.
+To run, supply with one or more directory to scan for analysis results. To run here, use 'multiqc .'
+
+Author: Phil Ewels (http://phil.ewels.co.uk)
+
 
 
 Quickstart
@@ -74,13 +81,13 @@ Information
 ------------
 
 :ID: ``MultiQC``
-:URL: *No URL to the documentation was provided*
+:URL: `http://multiqc.info <http://multiqc.info>`_
 :Versions: v1.7
 :Container: ewels/multiqc:v1.7
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2019-10-24
+:Updated: 2019-10-24
 
 
 Outputs
@@ -179,36 +186,36 @@ Workflow Description Language
      command <<<
        set -e
        multiqc \
-         ~{if defined(force) then "--force" else ""} \
+         ~{if (defined(force) && select_first([force])) then "--force" else ""} \
          ~{if defined(dirs) then ("--dirs '" + dirs + "'") else ""} \
          ~{if defined(dirsDepth) then ("--dirs-depth " + dirsDepth) else ''} \
-         ~{if defined(fullnames) then "--fullnames" else ""} \
+         ~{if (defined(fullnames) && select_first([fullnames])) then "--fullnames" else ""} \
          ~{if defined(title) then ("--title '" + title + "'") else ""} \
          ~{if defined(comment) then ("--comment '" + comment + "'") else ""} \
          --filename '~{select_first([filename, "generated"])}' \
          --outdir '~{select_first([outdir, "generated"])}' \
          ~{if defined(template) then ("--template '" + template + "'") else ""} \
          ~{if defined(tag) then ("--tag '" + tag + "'") else ""} \
-         ~{if defined(view_tags) then "--view_tags" else ""} \
-         ~{if defined(ignore) then "--ignore" else ""} \
-         ~{if defined(ignoreSamples) then "--ignore-samples" else ""} \
-         ~{if defined(ignoreSymlinks) then "--ignore-symlinks" else ""} \
+         ~{if (defined(view_tags) && select_first([view_tags])) then "--view_tags" else ""} \
+         ~{if (defined(ignore) && select_first([ignore])) then "--ignore" else ""} \
+         ~{if (defined(ignoreSamples) && select_first([ignoreSamples])) then "--ignore-samples" else ""} \
+         ~{if (defined(ignoreSymlinks) && select_first([ignoreSymlinks])) then "--ignore-symlinks" else ""} \
          ~{if defined(sampleNames) then ("--sample-names '" + sampleNames + "'") else ""} \
          ~{if (defined(exclude) && length(select_first([exclude])) > 0) then "--exclude '" + sep("' --exclude '", select_first([exclude])) + "'" else ""} \
          ~{if (defined(module) && length(select_first([module])) > 0) then "--module '" + sep("' --module '", select_first([module])) + "'" else ""} \
-         ~{if defined(dataDir) then "--data-dir" else ""} \
-         ~{if defined(noDataDir) then "--no-data-dir" else ""} \
+         ~{if (defined(dataDir) && select_first([dataDir])) then "--data-dir" else ""} \
+         ~{if (defined(noDataDir) && select_first([noDataDir])) then "--no-data-dir" else ""} \
          ~{if defined(dataFormat) then ("--data-format '" + dataFormat + "'") else ""} \
-         ~{if defined(export) then "--export" else ""} \
-         ~{if defined(flat) then "--flat" else ""} \
-         ~{if defined(interactive) then "--interactive" else ""} \
-         ~{if defined(lint) then "--lint" else ""} \
-         ~{if defined(pdf) then "--pdf" else ""} \
-         ~{if defined(noMegaqcUpload) then "--no-megaqc-upload" else ""} \
+         ~{if (defined(export) && select_first([export])) then "--export" else ""} \
+         ~{if (defined(flat) && select_first([flat])) then "--flat" else ""} \
+         ~{if (defined(interactive) && select_first([interactive])) then "--interactive" else ""} \
+         ~{if (defined(lint) && select_first([lint])) then "--lint" else ""} \
+         ~{if (defined(pdf) && select_first([pdf])) then "--pdf" else ""} \
+         ~{if (defined(noMegaqcUpload) && select_first([noMegaqcUpload])) then "--no-megaqc-upload" else ""} \
          ~{if defined(config) then ("--config '" + config + "'") else ""} \
          ~{if defined(cl_config) then ("--cl_config '" + cl_config + "'") else ""} \
-         ~{if defined(verbose) then "--verbose" else ""} \
-         ~{if defined(quiet) then "--quiet" else ""} \
+         ~{if (defined(verbose) && select_first([verbose])) then "--verbose" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          '~{directory}'
      >>>
      runtime {
@@ -230,6 +237,14 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.0
    label: Multiqc
+   doc: |
+     Usage: multiqc [OPTIONS] <analysis directory>
+     MultiQC aggregates results from bioinformatics analyses across many samples into a single report.
+     It searches a given directory for analysis logs and compiles a HTML report. It's a general use tool, 
+     perfect for summarising the output from numerous bioinformatics tools.
+     To run, supply with one or more directory to scan for analysis results. To run here, use 'multiqc .'
+
+     Author: Phil Ewels (http://phil.ewels.co.uk)
 
    requirements:
    - class: ShellCommandRequirement

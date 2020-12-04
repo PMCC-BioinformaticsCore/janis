@@ -172,31 +172,31 @@ Workflow Description Language
      command <<<
        set -e
        intersectBed \
-         ~{if defined(writeOriginalA) then "-wa" else ""} \
-         ~{if defined(writeOriginalB) then "-wb" else ""} \
-         ~{if defined(leftOuterJoin) then "-loj" else ""} \
-         ~{if defined(writeOriginalAB) then "-wo" else ""} \
-         ~{if defined(writeABBase) then "-wao" else ""} \
-         ~{if defined(modeu) then "-u" else ""} \
-         ~{if defined(modec) then "-c" else ""} \
-         ~{if defined(modeC) then "-C" else ""} \
-         ~{if defined(modev) then "-v" else ""} \
-         ~{if defined(strandedness) then "-s" else ""} \
-         ~{if defined(differentStrandedness) then "-S" else ""} \
+         ~{if (defined(writeOriginalA) && select_first([writeOriginalA])) then "-wa" else ""} \
+         ~{if (defined(writeOriginalB) && select_first([writeOriginalB])) then "-wb" else ""} \
+         ~{if (defined(leftOuterJoin) && select_first([leftOuterJoin])) then "-loj" else ""} \
+         ~{if (defined(writeOriginalAB) && select_first([writeOriginalAB])) then "-wo" else ""} \
+         ~{if (defined(writeABBase) && select_first([writeABBase])) then "-wao" else ""} \
+         ~{if (defined(modeu) && select_first([modeu])) then "-u" else ""} \
+         ~{if (defined(modec) && select_first([modec])) then "-c" else ""} \
+         ~{if (defined(modeC) && select_first([modeC])) then "-C" else ""} \
+         ~{if (defined(modev) && select_first([modev])) then "-v" else ""} \
+         ~{if (defined(strandedness) && select_first([strandedness])) then "-s" else ""} \
+         ~{if (defined(differentStrandedness) && select_first([differentStrandedness])) then "-S" else ""} \
          ~{if defined(fractionA) then ("-f " + fractionA) else ''} \
          ~{if defined(fractionB) then ("-F " + fractionB) else ''} \
-         ~{if defined(reciprocalFraction) then "-r" else ""} \
-         ~{if defined(minFraction) then "-r" else ""} \
-         ~{if defined(split) then "-split" else ""} \
+         ~{if (defined(reciprocalFraction) && select_first([reciprocalFraction])) then "-r" else ""} \
+         ~{if (defined(minFraction) && select_first([minFraction])) then "-r" else ""} \
+         ~{if (defined(split) && select_first([split])) then "-split" else ""} \
          ~{if defined(genome) then ("-g '" + genome + "'") else ""} \
-         ~{if defined(noNameCheck) then "-nonamecheck" else ""} \
-         ~{if defined(sorted) then "-sorted" else ""} \
-         ~{if defined(sortOut) then "-sortout" else ""} \
-         ~{if defined(header) then "-header" else ""} \
-         ~{if defined(noBuf) then "-nobuf" else ""} \
+         ~{if (defined(noNameCheck) && select_first([noNameCheck])) then "-nonamecheck" else ""} \
+         ~{if (defined(sorted) && select_first([sorted])) then "-sorted" else ""} \
+         ~{if (defined(sortOut) && select_first([sortOut])) then "-sortout" else ""} \
+         ~{if (defined(header) && select_first([header])) then "-header" else ""} \
+         ~{if (defined(noBuf) && select_first([noBuf])) then "-nobuf" else ""} \
          ~{if defined(bufMem) then ("-iobuf " + bufMem) else ''} \
          -a '~{inputABam}' \
-         ~{"-b '" + sep("' '", inputBBed) + "'"}
+         ~{if length(inputBBed) > 0 then "-b '" + sep("' '", inputBBed) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

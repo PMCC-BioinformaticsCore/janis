@@ -50,5 +50,6 @@ janis_memory_mb                 <class 'int'>
 email_format                    <class 'str'>                                                                              (null, "molpath")
 log_janis_job_id_to_stdout      <class 'bool'>                       False                                                 This is already logged to STDERR, but you can also log the "Submitted batch job \d" to stdout with this option set to true.
 submission_sbatch               <class 'str'>                        sbatch
+submission_node                 typing.Union[str, NoneType]          papr-expanded02,                                      Request a specific node with '--nodelist <nodename>'
 ==============================  ===================================  ====================================================  ===========================================================================================================================
 

@@ -158,14 +158,14 @@ Workflow Description Language
        vcffilter \
          ~{if defined(info_filter) then ("--info-filter '" + info_filter + "'") else ""} \
          ~{if defined(genotype_filter) then ("--genotype-filter '" + genotype_filter + "'") else ""} \
-         ~{if defined(keep_info) then "--keep-info" else ""} \
-         ~{if defined(filter_sites) then "--filter-sites" else ""} \
+         ~{if (defined(keep_info) && select_first([keep_info])) then "--keep-info" else ""} \
+         ~{if (defined(filter_sites) && select_first([filter_sites])) then "--filter-sites" else ""} \
          ~{if defined(tag_pass) then ("--tag-pass '" + tag_pass + "'") else ""} \
          ~{if defined(tag_fail) then ("--tag-fail '" + tag_fail + "'") else ""} \
-         ~{if defined(append_filter) then "--append-filter" else ""} \
+         ~{if (defined(append_filter) && select_first([append_filter])) then "--append-filter" else ""} \
          ~{if defined(allele_tag) then ("--allele-tag '" + allele_tag + "'") else ""} \
-         ~{if defined(invert) then "--invert" else ""} \
-         ~{if defined(use_logical_or) then "--or" else ""} \
+         ~{if (defined(invert) && select_first([invert])) then "--invert" else ""} \
+         ~{if (defined(use_logical_or) && select_first([use_logical_or])) then "--or" else ""} \
          ~{if (defined(region) && length(select_first([region])) > 0) then "--region '" + sep("' '", select_first([region])) + "'" else ""} \
          '~{vcf}'
      >>>

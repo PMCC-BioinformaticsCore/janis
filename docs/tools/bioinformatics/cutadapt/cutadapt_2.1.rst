@@ -125,6 +125,7 @@ Additional configuration (inputs)
 name                        type                     prefix                          position  documentation
 ==========================  =======================  ============================  ==========  ===========================================================================================================================================================================================================================================================================================================================================================================================================
 fastq                       FastqGzPair                                                     5
+outputPrefix                Optional<String>                                                   Used for naming purposes
 adapter                     Optional<Array<String>>  -a                                        Sequence of an adapter ligated to the 3' end (paired data: of the first read). The adapter and subsequent bases are trimmed. If a '$' character is appended ('anchoring'), the adapter is only found if it is a suffix of the read.
 outputFilename              Optional<Filename>       -o                                        Write trimmed reads to FILE. FASTQ or FASTA format is chosen depending on input. The summary report is sent to standard output. Use '{name}' in FILE to demultiplex reads into multiple files. Default: write to standard output
 secondReadFile              Optional<Filename>       -p                                        Write second read in a pair to FILE.
@@ -188,6 +189,7 @@ Workflow Description Language
        Int? runtime_memory
        Int? runtime_seconds
        Int? runtime_disks
+       String? outputPrefix
        Array[File] fastq
        Array[String]? adapter
        String? outputFilename
@@ -242,36 +244,36 @@ Workflow Description Language
        set -e
        cutadapt \
          ~{if (defined(adapter) && length(select_first([adapter])) > 0) then "-a '" + sep("' -a '", select_first([adapter])) + "'" else ""} \
-         -o '~{select_first([outputFilename, "generated--R1.fastq.gz"])}' \
-         -p '~{select_first([secondReadFile, "generated--R2.fastq.gz"])}' \
+         -o '~{select_first([outputFilename, "~{outputPrefix}-R1.fastq.gz"])}' \
+         -p '~{select_first([secondReadFile, "~{outputPrefix}-R2.fastq.gz"])}' \
          ~{if defined(cores) then ("--cores " + cores) else ''} \
          ~{if defined(front) then ("--front '" + front + "'") else ""} \
          ~{if defined(anywhere) then ("--anywhere '" + anywhere + "'") else ""} \
          ~{if defined(errorRate) then ("--error-rate " + errorRate) else ''} \
-         ~{if defined(noIndels) then "--no-indels" else ""} \
+         ~{if (defined(noIndels) && select_first([noIndels])) then "--no-indels" else ""} \
          ~{if defined(times) then ("--times " + times) else ''} \
          ~{if defined(overlap) then ("--overlap " + overlap) else ''} \
-         ~{if defined(matchReadWildcards) then "--match-read-wildcards" else ""} \
-         ~{if defined(noMatchAdapterWildcards) then "--no-match-adapter-wildcards" else ""} \
+         ~{if (defined(matchReadWildcards) && select_first([matchReadWildcards])) then "--match-read-wildcards" else ""} \
+         ~{if (defined(noMatchAdapterWildcards) && select_first([noMatchAdapterWildcards])) then "--no-match-adapter-wildcards" else ""} \
          ~{if defined(action) then ("--action '" + action + "'") else ""} \
          ~{if defined(cut) then ("--cut " + cut) else ''} \
          ~{if defined(nextseqTrim) then ("--nextseq-trim '" + nextseqTrim + "'") else ""} \
          ~{if defined(qualityCutoff) then ("--quality-cutoff " + qualityCutoff) else ''} \
-         ~{if defined(qualityBase) then "--quality-base" else ""} \
+         ~{if (defined(qualityBase) && select_first([qualityBase])) then "--quality-base" else ""} \
          ~{if defined(length) then ("--length " + length) else ''} \
          ~{if defined(trimN) then ("--trim-n " + trimN) else ''} \
          ~{if defined(lengthTag) then ("--length-tag " + lengthTag) else ''} \
          ~{if defined(stripSuffix) then ("--strip-suffix '" + stripSuffix + "'") else ""} \
          ~{if defined(prefix) then ("--prefix '" + prefix + "'") else ""} \
          ~{if defined(suffix) then ("--suffix '" + suffix + "'") else ""} \
-         ~{if defined(zeroCap) then "--zero-cap" else ""} \
+         ~{if (defined(zeroCap) && select_first([zeroCap])) then "--zero-cap" else ""} \
          ~{if defined(minimumLength) then ("--minimum-length " + minimumLength) else ''} \
          ~{if defined(maximumLength) then ("--maximum-length " + maximumLength) else ''} \
          ~{if defined(maxN) then ("--max-n " + maxN) else ''} \
-         ~{if defined(discardTrimmed) then "--discard-trimmed" else ""} \
-         ~{if defined(discardUntrimmed) then "--discard-untrimmed" else ""} \
-         ~{if defined(discardCasava) then "--discard-casava" else ""} \
-         ~{if defined(quiet) then "--quiet" else ""} \
+         ~{if (defined(discardTrimmed) && select_first([discardTrimmed])) then "--discard-trimmed" else ""} \
+         ~{if (defined(discardUntrimmed) && select_first([discardUntrimmed])) then "--discard-untrimmed" else ""} \
+         ~{if (defined(discardCasava) && select_first([discardCasava])) then "--discard-casava" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          ~{if defined(compressionLevel) then ("-Z '" + compressionLevel + "'") else ""} \
          ~{if defined(infoFile) then ("--info-file '" + infoFile + "'") else ""} \
          ~{if defined(restFile) then ("--rest-file '" + restFile + "'") else ""} \
@@ -285,11 +287,11 @@ Workflow Description Language
          ~{if defined(removeNBasesFromSecondRead) then ("-U '" + removeNBasesFromSecondRead + "'") else ""} \
          ~{if defined(pairAdapters) then ("--pair-adapters '" + pairAdapters + "'") else ""} \
          ~{if defined(pairFilter) then ("--pair-filter '" + pairFilter + "'") else ""} \
-         ~{if defined(interleaved) then "--interleaved" else ""} \
+         ~{if (defined(interleaved) && select_first([interleaved])) then "--interleaved" else ""} \
          ~{if defined(untrimmedPairedOutput) then ("--untrimmed-paired-output '" + untrimmedPairedOutput + "'") else ""} \
          ~{if defined(tooShortPairedOutput) then ("--too-short-paired-output '" + tooShortPairedOutput + "'") else ""} \
          ~{if defined(tooLongPairedOutput) then ("--too-long-paired-output '" + tooLongPairedOutput + "'") else ""} \
-         ~{"'" + sep("' '", fastq) + "'"}
+         ~{if length(fastq) > 0 then "'" + sep("' '", fastq) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 5, 1])
@@ -344,6 +346,12 @@ Common Workflow Language
      dockerPull: quay.io/biocontainers/cutadapt:2.1--py37h14c3975_0
 
    inputs:
+   - id: outputPrefix
+     label: outputPrefix
+     doc: Used for naming purposes
+     type:
+     - string
+     - 'null'
    - id: fastq
      label: fastq
      type:
@@ -369,18 +377,20 @@ Common Workflow Language
      type:
      - string
      - 'null'
-     default: generated--R1.fastq.gz
+     default: generated-R1.fastq.gz
      inputBinding:
        prefix: -o
+       valueFrom: '$(inputs.outputPrefix ? inputs.outputPrefix : "generated")-R1.fastq.gz'
    - id: secondReadFile
      label: secondReadFile
      doc: Write second read in a pair to FILE.
      type:
      - string
      - 'null'
-     default: generated--R2.fastq.gz
+     default: generated-R2.fastq.gz
      inputBinding:
        prefix: -p
+       valueFrom: '$(inputs.outputPrefix ? inputs.outputPrefix : "generated")-R2.fastq.gz'
    - id: cores
      label: cores
      doc: '(-j)  Number of CPU cores to use. Use 0 to auto-detect. Default: 1'

@@ -289,44 +289,44 @@ Workflow Description Language
          --report-prefix '~{select_first([reportPrefix, "generated"])}' \
          --reference '~{reference}' \
          ~{if defined(intervals) then ("--target-regions '" + intervals + "'") else ""} \
-         ~{if defined(version) then "--version" else ""} \
+         ~{if (defined(version) && select_first([version])) then "--version" else ""} \
          ~{if defined(scratchPrefix) then ("--scratch-prefix '" + scratchPrefix + "'") else ""} \
          ~{if defined(keepScratch) then ("--keep-scratch '" + keepScratch + "'") else ""} \
          ~{if defined(falsePositives) then ("--false-positives '" + falsePositives + "'") else ""} \
          ~{if defined(stratification) then ("--stratification '" + stratification + "'") else ""} \
          ~{if defined(stratificationRegion) then ("--stratification-region '" + stratificationRegion + "'") else ""} \
          ~{if defined(stratificationFixchr) then ("--stratification-fixchr '" + stratificationFixchr + "'") else ""} \
-         ~{if defined(writeVcf) then "--write-vcf" else ""} \
-         ~{if defined(writeCounts) then "--write-counts" else ""} \
-         ~{if defined(noWriteCounts) then "--no-write-counts" else ""} \
-         ~{if defined(outputVtc) then "--output-vtc" else ""} \
-         ~{if defined(preserveInfo) then "--preserve-info" else ""} \
+         ~{if (defined(writeVcf) && select_first([writeVcf])) then "--write-vcf" else ""} \
+         ~{if (defined(writeCounts) && select_first([writeCounts])) then "--write-counts" else ""} \
+         ~{if (defined(noWriteCounts) && select_first([noWriteCounts])) then "--no-write-counts" else ""} \
+         ~{if (defined(outputVtc) && select_first([outputVtc])) then "--output-vtc" else ""} \
+         ~{if (defined(preserveInfo) && select_first([preserveInfo])) then "--preserve-info" else ""} \
          ~{if defined(roc) then ("--roc '" + roc + "'") else ""} \
-         ~{if defined(noRoc) then "--no-roc" else ""} \
+         ~{if (defined(noRoc) && select_first([noRoc])) then "--no-roc" else ""} \
          ~{if defined(rocRegions) then ("--roc-regions '" + rocRegions + "'") else ""} \
          ~{if defined(rocFilter) then ("--roc-filter '" + rocFilter + "'") else ""} \
          ~{if defined(rocDelta) then ("--roc-delta " + rocDelta) else ''} \
          ~{if defined(ciAlpha) then ("--ci-alpha " + ciAlpha) else ''} \
-         ~{if defined(noJson) then "--no-json" else ""} \
-         ~{if defined(passOnly) then "--pass-only" else ""} \
-         ~{if defined(restrictRegions) then "--restrict-regions" else ""} \
-         ~{if defined(leftshift) then "--leftshift" else ""} \
-         ~{if defined(noLeftshift) then "--no-leftshift" else ""} \
-         ~{if defined(decompose) then "--decompose" else ""} \
-         ~{if defined(noDecompose) then "--no-decompose" else ""} \
-         ~{if defined(bcftoolsNorm) then "--bcftools-norm" else ""} \
-         ~{if defined(fixchr) then "--fixchr" else ""} \
-         ~{if defined(noFixchr) then "--no-fixchr" else ""} \
-         ~{if defined(bcf) then "--bcf" else ""} \
-         ~{if defined(somatic) then "--somatic" else ""} \
-         ~{if defined(setGT) then "--set-gt" else ""} \
+         ~{if (defined(noJson) && select_first([noJson])) then "--no-json" else ""} \
+         ~{if (defined(passOnly) && select_first([passOnly])) then "--pass-only" else ""} \
+         ~{if (defined(restrictRegions) && select_first([restrictRegions])) then "--restrict-regions" else ""} \
+         ~{if (defined(leftshift) && select_first([leftshift])) then "--leftshift" else ""} \
+         ~{if (defined(noLeftshift) && select_first([noLeftshift])) then "--no-leftshift" else ""} \
+         ~{if (defined(decompose) && select_first([decompose])) then "--decompose" else ""} \
+         ~{if (defined(noDecompose) && select_first([noDecompose])) then "--no-decompose" else ""} \
+         ~{if (defined(bcftoolsNorm) && select_first([bcftoolsNorm])) then "--bcftools-norm" else ""} \
+         ~{if (defined(fixchr) && select_first([fixchr])) then "--fixchr" else ""} \
+         ~{if (defined(noFixchr) && select_first([noFixchr])) then "--no-fixchr" else ""} \
+         ~{if (defined(bcf) && select_first([bcf])) then "--bcf" else ""} \
+         ~{if (defined(somatic) && select_first([somatic])) then "--somatic" else ""} \
+         ~{if (defined(setGT) && select_first([setGT])) then "--set-gt" else ""} \
          ~{if defined(gender) then ("--gender '" + gender + "'") else ""} \
-         ~{if defined(preprocessTruth) then "--preprocess-truth" else ""} \
-         ~{if defined(usefilteredTruth) then "--usefiltered-truth" else ""} \
-         ~{if defined(preprocessingWindowSize) then "--preprocessing-window-size" else ""} \
-         ~{if defined(adjustConfRegions) then "--adjust-conf-regions" else ""} \
-         ~{if defined(noAdjustConfRegions) then "--no-adjust-conf-regions" else ""} \
-         ~{if defined(noHaplotypeComparison) then "--no-haplotype-comparison" else ""} \
+         ~{if (defined(preprocessTruth) && select_first([preprocessTruth])) then "--preprocess-truth" else ""} \
+         ~{if (defined(usefilteredTruth) && select_first([usefilteredTruth])) then "--usefiltered-truth" else ""} \
+         ~{if (defined(preprocessingWindowSize) && select_first([preprocessingWindowSize])) then "--preprocessing-window-size" else ""} \
+         ~{if (defined(adjustConfRegions) && select_first([adjustConfRegions])) then "--adjust-conf-regions" else ""} \
+         ~{if (defined(noAdjustConfRegions) && select_first([noAdjustConfRegions])) then "--no-adjust-conf-regions" else ""} \
+         ~{if (defined(noHaplotypeComparison) && select_first([noHaplotypeComparison])) then "--no-haplotype-comparison" else ""} \
          ~{if defined(windowSize) then ("--window-size " + windowSize) else ''} \
          ~{if defined(xcmpEnumerationThreshold) then ("--xcmp-enumeration-threshold " + xcmpEnumerationThreshold) else ''} \
          ~{if defined(xcmpExpandHapblocks) then ("--xcmp-expand-hapblocks '" + xcmpExpandHapblocks + "'") else ""} \
@@ -335,8 +335,8 @@ Workflow Description Language
          ~{if defined(engineVcfevalTemplate) then ("--engine-vcfeval-template '" + engineVcfevalTemplate + "'") else ""} \
          ~{if defined(scmpDistance) then ("--scmp-distance " + scmpDistance) else ''} \
          --logfile '~{select_first([logfile, "generated--log.txt"])}' \
-         ~{if defined(verbose) then "--verbose" else ""} \
-         ~{if defined(quiet) then "--quiet" else ""} \
+         ~{if (defined(verbose) && select_first([verbose])) then "--verbose" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          '~{truthVCF}' \
          '~{compareVCF}'
      >>>

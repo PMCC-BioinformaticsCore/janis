@@ -134,10 +134,10 @@ Workflow Description Language
      command <<<
        set -e
        vcfallelicprimitives \
-         ~{if defined(select_first([useMnpsFlag, false])) then "-m" else ""} \
+         ~{if select_first([useMnpsFlag, false]) then "-m" else ""} \
          ~{if defined(tagParsed) then ("-t '" + tagParsed + "'") else ""} \
-         ~{if defined(keepInfoFlag) then "-k" else ""} \
-         ~{if defined(keepGenoFlag) then "-g" else ""} \
+         ~{if (defined(keepInfoFlag) && select_first([keepInfoFlag])) then "-k" else ""} \
+         ~{if (defined(keepGenoFlag) && select_first([keepGenoFlag])) then "-g" else ""} \
          ~{if defined(maxLength) then ("-L " + maxLength) else ''} \
          '~{vcf}'
      >>>

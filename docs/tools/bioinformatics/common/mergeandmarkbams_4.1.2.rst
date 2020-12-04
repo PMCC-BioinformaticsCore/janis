@@ -159,6 +159,7 @@ Workflow Description Language
      call G2.Gatk4MarkDuplicates as markDuplicates {
        input:
          bam=[mergeSamFiles.out],
+         outputPrefix=sampleName,
          createIndex=select_first([createIndex, true]),
          maxRecordsInRam=select_first([maxRecordsInRam, 5000000])
      }
@@ -244,6 +245,8 @@ Common Workflow Language
        source:
        - mergeSamFiles/out
        linkMerge: merge_nested
+     - id: outputPrefix
+       source: sampleName
      - id: createIndex
        source: createIndex
      - id: maxRecordsInRam

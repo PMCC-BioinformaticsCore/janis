@@ -169,7 +169,7 @@ Workflow Description Language
          -o '~{select_first([outputPrefix, "generated.csv"])}' \
          ~{if defined(targetFlagstat) then ("--target_flagstat '" + targetFlagstat + "'") else ""} \
          ~{if defined(rmdupFlagstat) then ("--rmdup_flagstat '" + rmdupFlagstat + "'") else ""} \
-         ~{if defined(genome) then "--genome" else ""}
+         ~{if (defined(genome) && select_first([genome])) then "--genome" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])

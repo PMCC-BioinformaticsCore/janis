@@ -21,6 +21,6 @@ digraph MolpathGermlineWorkflow {
 	merge_and_mark -> bqsr
 	bqsr -> haplotype_caller
 	haplotype_caller -> splitnormalisevcf
-	merge_and_mark -> addbamstats
 	splitnormalisevcf -> addbamstats
+	merge_and_mark -> addbamstats
 }

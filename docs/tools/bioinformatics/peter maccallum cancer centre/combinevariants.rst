@@ -164,7 +164,7 @@ Workflow Description Language
        set -e
        combine_vcf.py \
          -o '~{select_first([outputFilename, "generated.combined.vcf"])}' \
-         ~{"-i '" + sep("' -i '", vcfs) + "'"} \
+         ~{if length(vcfs) > 0 then "-i '" + sep("' -i '", vcfs) + "'" else ""} \
          --type '~{type}' \
          ~{if (defined(columns) && length(select_first([columns])) > 0) then "--columns '" + sep("','", select_first([columns])) + "'" else ""} \
          ~{if defined(normal) then ("--normal '" + normal + "'") else ""} \

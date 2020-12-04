@@ -157,7 +157,7 @@ Workflow Description Language
          ~{if defined(readOrientationModel) then ("--orientation-bias-artifact-priors '" + readOrientationModel + "'") else ""} \
          -V '~{vcf}' \
          -R '~{reference}' \
-         -O '~{select_first([outputFilename, "generated.vcf.gz"])}'
+         -O '~{select_first([outputFilename, "~{basename(vcf, ".vcf.gz")}.vcf.gz"])}'
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
@@ -168,8 +168,8 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = select_first([outputFilename, "generated.vcf.gz"])
-       File out_tbi = select_first([outputFilename, "generated.vcf.gz"]) + ".tbi"
+       File out = select_first([outputFilename, "~{basename(vcf, ".vcf.gz")}.vcf.gz"])
+       File out_tbi = select_first([outputFilename, "~{basename(vcf, ".vcf.gz")}.vcf.gz"]) + ".tbi"
      }
    }
 
@@ -274,6 +274,7 @@ Common Workflow Language
      inputBinding:
        prefix: -O
        position: 2
+       valueFrom: $(inputs.vcf.basename.replace(/.vcf.gz$/, "")).vcf.gz
 
    outputs:
    - id: out
@@ -283,7 +284,7 @@ Common Workflow Language
      secondaryFiles:
      - .tbi
      outputBinding:
-       glob: generated.vcf.gz
+       glob: $(inputs.vcf.basename.replace(/.vcf.gz$/, "")).vcf.gz
        loadContents: false
    stdout: _stdout
    stderr: _stderr

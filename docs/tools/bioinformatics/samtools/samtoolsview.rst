@@ -62,7 +62,7 @@ Quickstart
 
 .. code-block:: yaml
 
-       sam: sam.sam
+       sam: null
 
 
 
@@ -108,7 +108,7 @@ Additional configuration (inputs)
 =====================================  ==========================  ========  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================
 name                                   type                        prefix      position  documentation
 =====================================  ==========================  ========  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================
-sam                                    SAM                                           10
+sam                                    Union<SAM, BAM, CRAM>                         10
 cramOutput                             Optional<Boolean>           -C                 5  Output in the CRAM format (requires -T).
 compressedBam                          Optional<Boolean>           -1                 5  Enable fast BAM compression (implies -b).
 uncompressedBam                        Optional<Boolean>           -u                 5  Output uncompressed BAM. This option saves time spent on compression/decompression and is thus preferred when the output is piped to another samtools command.
@@ -187,15 +187,15 @@ Workflow Description Language
          '-S' \
          '-h' \
          '-b' \
-         ~{if defined(cramOutput) then "-C" else ""} \
-         ~{if defined(compressedBam) then "-1" else ""} \
-         ~{if defined(uncompressedBam) then "-u" else ""} \
-         ~{if defined(onlyOutputHeader) then "-H" else ""} \
-         ~{if defined(countAlignments) then "-c" else ""} \
+         ~{if (defined(cramOutput) && select_first([cramOutput])) then "-C" else ""} \
+         ~{if (defined(compressedBam) && select_first([compressedBam])) then "-1" else ""} \
+         ~{if (defined(uncompressedBam) && select_first([uncompressedBam])) then "-u" else ""} \
+         ~{if (defined(onlyOutputHeader) && select_first([onlyOutputHeader])) then "-H" else ""} \
+         ~{if (defined(countAlignments) && select_first([countAlignments])) then "-c" else ""} \
          ~{if defined(writeAlignments) then ("-U '" + writeAlignments + "'") else ""} \
          ~{if defined(inputTSV) then ("-t '" + inputTSV + "'") else ""} \
          ~{if defined(onlyOverlapping) then ("-L '" + onlyOverlapping + "'") else ""} \
-         ~{if defined(useMultiRegionIterator) then "-M" else ""} \
+         ~{if (defined(useMultiRegionIterator) && select_first([useMultiRegionIterator])) then "-M" else ""} \
          ~{if defined(outputAlignmentsInReadGroup) then ("-r '" + outputAlignmentsInReadGroup + "'") else ""} \
          ~{if defined(outputAlignmentsInFileReadGroups) then ("-R '" + outputAlignmentsInFileReadGroups + "'") else ""} \
          ~{if defined(mapqThreshold) then ("-q " + mapqThreshold) else ''} \
@@ -205,12 +205,12 @@ Workflow Description Language
          ~{if defined(doNotOutputAlignmentsWithBitsSet) then ("-F '" + doNotOutputAlignmentsWithBitsSet + "'") else ""} \
          ~{if defined(doNotOutputAlignmentsWithAllBitsSet) then ("-G '" + doNotOutputAlignmentsWithAllBitsSet + "'") else ""} \
          ~{if defined(readTagToExclude) then ("-x '" + readTagToExclude + "'") else ""} \
-         ~{if defined(collapseBackwardCIGAR) then "-B" else ""} \
+         ~{if (defined(collapseBackwardCIGAR) && select_first([collapseBackwardCIGAR])) then "-B" else ""} \
          ~{if defined(subsamplingProportion) then ("-s " + subsamplingProportion) else ''} \
          ~{if defined(threads) then ("-@ " + threads) else ''} \
-         -o '~{select_first([outputFilename, "generated.bam"])}' \
+         -o '~{select_first([outputFilename, "~{basename(sam)}.bam"])}' \
          ~{if defined(reference) then ("-T '" + reference + "'") else ""} \
-         '~{sam}' \
+         ~{sam} \
          ~{if (defined(regions) && length(select_first([regions])) > 0) then "'" + sep("' '", select_first([regions])) + "'" else ""}
      >>>
      runtime {
@@ -222,7 +222,7 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = select_first([outputFilename, "generated.bam"])
+       File out = select_first([outputFilename, "~{basename(sam)}.bam"])
      }
    }
 
@@ -488,6 +488,7 @@ Common Workflow Language
      inputBinding:
        prefix: -o
        position: 5
+       valueFrom: $(inputs.sam).bam
    - id: regions
      label: regions
      doc: |-
@@ -504,7 +505,7 @@ Common Workflow Language
      label: out
      type: File
      outputBinding:
-       glob: generated.bam
+       glob: $(inputs.sam).bam
        loadContents: false
    stdout: _stdout
    stderr: _stderr

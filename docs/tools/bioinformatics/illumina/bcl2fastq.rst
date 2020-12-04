@@ -183,16 +183,16 @@ Workflow Description Language
          ~{if defined(useBasesMask) then ("--use-bases-mask '" + useBasesMask + "'") else ""} \
          ~{if defined(maskShortAdapterReads) then ("--mask-short-adapter-reads " + maskShortAdapterReads) else ''} \
          ~{if defined(adapterStringency) then ("--adapter-stringency " + adapterStringency) else ''} \
-         ~{if defined(ignoreMissingBcls) then "--ignore-missing-bcls" else ""} \
-         ~{if defined(ignoreMissingFilter) then "--ignore-missing-filter" else ""} \
-         ~{if defined(ignoreMissingPositions) then "--ignore-missing-positions" else ""} \
-         ~{if defined(writeFastqReverseComplement) then "--write-fastq-reverse-complement" else ""} \
-         ~{if defined(withFailedReads) then "--with-failed-reads" else ""} \
-         ~{if defined(createFastqForIndexReads) then "--create-fastq-for-index-reads" else ""} \
-         ~{if defined(findAdaptersWithSlidingWindow) then "--find-adapters-with-sliding-window" else ""} \
-         ~{if defined(noBgzfCompression) then "--no-bgzf-compression" else ""} \
+         ~{if (defined(ignoreMissingBcls) && select_first([ignoreMissingBcls])) then "--ignore-missing-bcls" else ""} \
+         ~{if (defined(ignoreMissingFilter) && select_first([ignoreMissingFilter])) then "--ignore-missing-filter" else ""} \
+         ~{if (defined(ignoreMissingPositions) && select_first([ignoreMissingPositions])) then "--ignore-missing-positions" else ""} \
+         ~{if (defined(writeFastqReverseComplement) && select_first([writeFastqReverseComplement])) then "--write-fastq-reverse-complement" else ""} \
+         ~{if (defined(withFailedReads) && select_first([withFailedReads])) then "--with-failed-reads" else ""} \
+         ~{if (defined(createFastqForIndexReads) && select_first([createFastqForIndexReads])) then "--create-fastq-for-index-reads" else ""} \
+         ~{if (defined(findAdaptersWithSlidingWindow) && select_first([findAdaptersWithSlidingWindow])) then "--find-adapters-with-sliding-window" else ""} \
+         ~{if (defined(noBgzfCompression) && select_first([noBgzfCompression])) then "--no-bgzf-compression" else ""} \
          ~{if defined(barcodeMismatches) then ("--barcode-mismatches " + barcodeMismatches) else ''} \
-         ~{if defined(noLaneSplitting) then " --no-lane-splitting" else ""} \
+         ~{if (defined(noLaneSplitting) && select_first([noLaneSplitting])) then " --no-lane-splitting" else ""} \
          --output-dir '.'
      >>>
      runtime {

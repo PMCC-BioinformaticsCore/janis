@@ -53,7 +53,7 @@ Quickstart
 
 .. code-block:: yaml
 
-       file: file
+       file: file.gz
 
 
 
@@ -76,7 +76,7 @@ Information
 :ID: ``UncompressArchive``
 :URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
-:Container: ubuntu:latest
+:Container: ubuntu@sha256:1d7b639619bdca2d008eca2d5293e3c43ff84cbee597ff76de3b7a7de3e84956
 :Authors: 
 :Citations: None
 :Created: None
@@ -99,7 +99,7 @@ Additional configuration (inputs)
 ==========  =================  ===========  ==========  =======================================================
 name        type               prefix         position  documentation
 ==========  =================  ===========  ==========  =======================================================
-file        File                                     1
+file        Gzipped<File>                            1
 stdout      Optional<Boolean>  -c                       write on standard output, keep original files unchanged
 decompress  Optional<Boolean>  -d                       decompress
 force       Optional<Boolean>  -f                       force overwrite of output file and compress links
@@ -148,26 +148,26 @@ Workflow Description Language
      command <<<
        set -e
        gunzip \
-         ~{if defined(select_first([stdout, true])) then "-c" else ""} \
-         ~{if defined(decompress) then "-d" else ""} \
-         ~{if defined(force) then "-f" else ""} \
-         ~{if defined(keep) then "-k" else ""} \
-         ~{if defined(list) then "-l" else ""} \
-         ~{if defined(noName) then "-n" else ""} \
-         ~{if defined(name) then "-N" else ""} \
-         ~{if defined(quiet) then "-q" else ""} \
-         ~{if defined(recursive) then "-r" else ""} \
+         ~{if select_first([stdout, true]) then "-c" else ""} \
+         ~{if (defined(decompress) && select_first([decompress])) then "-d" else ""} \
+         ~{if (defined(force) && select_first([force])) then "-f" else ""} \
+         ~{if (defined(keep) && select_first([keep])) then "-k" else ""} \
+         ~{if (defined(list) && select_first([list])) then "-l" else ""} \
+         ~{if (defined(noName) && select_first([noName])) then "-n" else ""} \
+         ~{if (defined(name) && select_first([name])) then "-N" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "-q" else ""} \
+         ~{if (defined(recursive) && select_first([recursive])) then "-r" else ""} \
          ~{if defined(suffix) then ("-s '" + suffix + "'") else ""} \
-         ~{if defined(test) then "-t" else ""} \
-         ~{if defined(fast) then "-1" else ""} \
-         ~{if defined(best) then "-9" else ""} \
-         ~{if defined(rsyncable) then "--rsyncable" else ""} \
+         ~{if (defined(test) && select_first([test])) then "-t" else ""} \
+         ~{if (defined(fast) && select_first([fast])) then "-1" else ""} \
+         ~{if (defined(best) && select_first([best])) then "-9" else ""} \
+         ~{if (defined(rsyncable) && select_first([rsyncable])) then "--rsyncable" else ""} \
          '~{file}'
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "ubuntu:latest"
+       docker: "ubuntu@sha256:1d7b639619bdca2d008eca2d5293e3c43ff84cbee597ff76de3b7a7de3e84956"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
@@ -191,7 +191,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: ubuntu:latest
+     dockerPull: ubuntu@sha256:1d7b639619bdca2d008eca2d5293e3c43ff84cbee597ff76de3b7a7de3e84956
 
    inputs:
    - id: file

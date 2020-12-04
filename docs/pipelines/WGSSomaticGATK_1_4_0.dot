@@ -12,8 +12,8 @@ digraph WGSSomaticGATK {
 	vc_gatk_sort_combined [label="vc_gatk_sort_combined (BCFTools: Sort)"]
 	vc_gatk_uncompressvcf [label="vc_gatk_uncompressvcf (UncompressArchive)"]
 	addbamstats [label="addbamstats (Annotate Bam Stats to Somatic Vcf Workflow)" color=grey80 style=filled]
-	tumor -> vc_gridss
 	normal -> vc_gridss
+	tumor -> vc_gridss
 	normal -> bqsr_normal
 	tumor -> bqsr_tumor
 	bqsr_normal -> vc_gatk
@@ -22,7 +22,7 @@ digraph WGSSomaticGATK {
 	vc_gatk_merge -> vc_gatk_compressvcf
 	vc_gatk_compressvcf -> vc_gatk_sort_combined
 	vc_gatk_sort_combined -> vc_gatk_uncompressvcf
-	tumor -> addbamstats
-	normal -> addbamstats
 	vc_gatk_uncompressvcf -> addbamstats
+	normal -> addbamstats
+	tumor -> addbamstats
 }

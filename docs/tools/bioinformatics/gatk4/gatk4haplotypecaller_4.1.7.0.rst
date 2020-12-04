@@ -164,6 +164,7 @@ standardMinConfidenceThresholdForCalling  Optional<Double>                --stan
 useNewQualCalculator                      Optional<Boolean>               --use-new-qual-calculator                                    -new-qual If provided, we will use the new AF model instead of the so-called exact model
 gvcfGqBands                               Optional<Array<Integer>>        -GQB                                                         (--gvcf-gq-bands) Exclusive upper bounds for reference confidence GQ bands (must be in [1, 100] and specified in increasing order)
 emitRefConfidence                         Optional<String>                --emit-ref-confidence                                        (-ERC) Mode for emitting reference confidence scores (For Mutect2, this is a BETA feature)
+dontUseSoftClippedBases                   Optional<Boolean>               --dont-use-soft-clipped-bases                                Do not analyze soft clipped bases in the reads
 outputFilename                            Optional<Filename>              --output                                                  8  File to which variants should be written
 dbsnp                                     Optional<CompressedIndexedVCF>  --dbsnp                                                   7  (Also: -D) A dbSNP VCF file.
 intervals                                 Optional<bed>                   --intervals                                                  -L (BASE) One or more genomic intervals over which to operate
@@ -221,6 +222,7 @@ Workflow Description Language
        Boolean? useNewQualCalculator
        Array[Int]? gvcfGqBands
        String? emitRefConfidence
+       Boolean? dontUseSoftClippedBases
        File inputRead
        File inputRead_bai
        File reference
@@ -245,7 +247,7 @@ Workflow Description Language
          ~{if defined(pairHmmImplementation) then ("--pair-hmm-implementation '" + pairHmmImplementation + "'") else ""} \
          ~{if defined(activityProfileOut) then ("--activity-profile-out '" + activityProfileOut + "'") else ""} \
          ~{if defined(alleles) then ("--alleles '" + alleles + "'") else ""} \
-         ~{if defined(annotateWithNumDiscoveredAlleles) then "--annotate-with-num-discovered-alleles" else ""} \
+         ~{if (defined(annotateWithNumDiscoveredAlleles) && select_first([annotateWithNumDiscoveredAlleles])) then "--annotate-with-num-discovered-alleles" else ""} \
          ~{if (defined(annotation) && length(select_first([annotation])) > 0) then "--annotation '" + sep("' '", select_first([annotation])) + "'" else ""} \
          ~{if (defined(annotationGroup) && length(select_first([annotationGroup])) > 0) then "--annotation-group '" + sep("' '", select_first([annotationGroup])) + "'" else ""} \
          ~{if (defined(annotationsToExclude) && length(select_first([annotationsToExclude])) > 0) then "--annotations-to-exclude '" + sep("' '", select_first([annotationsToExclude])) + "'" else ""} \
@@ -255,8 +257,8 @@ Workflow Description Language
          ~{if defined(cloudIndexPrefetchBuffer) then ("--cloud-index-prefetch-buffer " + cloudIndexPrefetchBuffer) else ''} \
          ~{if defined(cloudPrefetchBuffer) then ("--cloud-prefetch-buffer " + cloudPrefetchBuffer) else ''} \
          ~{if defined(contaminationFractionToFilter) then ("--contamination-fraction-to-filter " + contaminationFractionToFilter) else ''} \
-         ~{if defined(correctOverlappingQuality) then "--correct-overlapping-quality" else ""} \
-         ~{if defined(disableBamIndexCaching) then "--disable-bam-index-caching" else ""} \
+         ~{if (defined(correctOverlappingQuality) && select_first([correctOverlappingQuality])) then "--correct-overlapping-quality" else ""} \
+         ~{if (defined(disableBamIndexCaching) && select_first([disableBamIndexCaching])) then "--disable-bam-index-caching" else ""} \
          ~{if (defined(founderId) && length(select_first([founderId])) > 0) then "--founder-id '" + sep("' '", select_first([founderId])) + "'" else ""} \
          ~{if defined(genotypingMode) then ("--genotyping-mode '" + genotypingMode + "'") else ""} \
          ~{if defined(heterozygosity) then ("--heterozygosity " + heterozygosity) else ''} \
@@ -266,18 +268,19 @@ Workflow Description Language
          ~{if defined(maxReadsPerAlignmentStart) then ("--max-reads-per-alignment-start " + maxReadsPerAlignmentStart) else ''} \
          ~{if defined(minBaseQualityScore) then ("--min-base-quality-score " + minBaseQualityScore) else ''} \
          ~{if defined(nativePairHmmThreads) then ("--native-pair-hmm-threads " + nativePairHmmThreads) else ''} \
-         ~{if defined(nativePairHmmUseDoublePrecision) then "--native-pair-hmm-use-double-precision" else ""} \
+         ~{if (defined(nativePairHmmUseDoublePrecision) && select_first([nativePairHmmUseDoublePrecision])) then "--native-pair-hmm-use-double-precision" else ""} \
          ~{if defined(numReferenceSamplesIfNoCall) then ("--num-reference-samples-if-no-call " + numReferenceSamplesIfNoCall) else ''} \
          ~{if defined(outputMode) then ("--output-mode '" + outputMode + "'") else ""} \
          ~{if defined(pedigree) then ("--pedigree '" + pedigree + "'") else ""} \
          ~{if defined(populationCallset) then ("--population-callset '" + populationCallset + "'") else ""} \
          ~{if defined(sampleName) then ("--sample-name '" + sampleName + "'") else ""} \
          ~{if defined(samplePloidy) then ("--sample-ploidy " + samplePloidy) else ''} \
-         ~{if defined(sitesOnlyVcfOutput) then "--sites-only-vcf-output" else ""} \
+         ~{if (defined(sitesOnlyVcfOutput) && select_first([sitesOnlyVcfOutput])) then "--sites-only-vcf-output" else ""} \
          ~{if defined(standardMinConfidenceThresholdForCalling) then ("--standard-min-confidence-threshold-for-calling " + standardMinConfidenceThresholdForCalling) else ''} \
-         ~{if defined(useNewQualCalculator) then "--use-new-qual-calculator" else ""} \
+         ~{if (defined(useNewQualCalculator) && select_first([useNewQualCalculator])) then "--use-new-qual-calculator" else ""} \
          ~{if (defined(gvcfGqBands) && length(select_first([gvcfGqBands])) > 0) then sep(" ", prefix("-GQB ", select_first([gvcfGqBands]))) else ""} \
          ~{if defined(emitRefConfidence) then ("--emit-ref-confidence '" + emitRefConfidence + "'") else ""} \
+         ~{if (defined(dontUseSoftClippedBases) && select_first([dontUseSoftClippedBases])) then "--dont-use-soft-clipped-bases" else ""} \
          --input '~{inputRead}' \
          ~{if defined(intervals) then ("--intervals '" + intervals + "'") else ""} \
          --reference '~{reference}' \
@@ -673,6 +676,14 @@ Common Workflow Language
      - 'null'
      inputBinding:
        prefix: --emit-ref-confidence
+   - id: dontUseSoftClippedBases
+     label: dontUseSoftClippedBases
+     doc: Do not analyze soft clipped bases in the reads
+     type:
+     - boolean
+     - 'null'
+     inputBinding:
+       prefix: --dont-use-soft-clipped-bases
    - id: inputRead
      label: inputRead
      doc: BAM/SAM/CRAM file containing reads

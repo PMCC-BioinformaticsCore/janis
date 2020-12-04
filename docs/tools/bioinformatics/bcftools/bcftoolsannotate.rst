@@ -169,7 +169,7 @@ Workflow Description Language
          ~{if defined(headerLines) then ("--header-lines '" + headerLines + "'") else ""} \
          ~{if defined(setId) then ("--set-id '" + setId + "'") else ""} \
          ~{if defined(include) then ("--include '" + include + "'") else ""} \
-         ~{if defined(keepSites) then "--keep-sites" else ""} \
+         ~{if (defined(keepSites) && select_first([keepSites])) then "--keep-sites" else ""} \
          ~{if defined(markSites) then ("--mark-sites '" + markSites + "'") else ""} \
          ~{if defined(outputType) then ("--output-type '" + outputType + "'") else ""} \
          ~{if defined(regions) then ("--regions '" + regions + "'") else ""} \

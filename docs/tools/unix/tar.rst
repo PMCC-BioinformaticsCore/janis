@@ -78,7 +78,7 @@ Information
 :ID: ``Tar``
 :URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
-:Container: ubuntu:latest
+:Container: ubuntu@sha256:1d7b639619bdca2d008eca2d5293e3c43ff84cbee597ff76de3b7a7de3e84956
 :Authors: 
 :Citations: None
 :Created: None
@@ -127,13 +127,13 @@ Workflow Description Language
        set -e
        tar cvf \
          '~{select_first([outputFilename, "generated.tar"])}' \
-         ~{"'" + sep("' '", files) + "'"} \
+         ~{if length(files) > 0 then "'" + sep("' '", files) + "'" else ""} \
          ~{if (defined(files2) && length(select_first([files2])) > 0) then "'" + sep("' '", select_first([files2])) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "ubuntu:latest"
+       docker: "ubuntu@sha256:1d7b639619bdca2d008eca2d5293e3c43ff84cbee597ff76de3b7a7de3e84956"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
@@ -157,7 +157,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: ubuntu:latest
+     dockerPull: ubuntu@sha256:1d7b639619bdca2d008eca2d5293e3c43ff84cbee597ff76de3b7a7de3e84956
 
    inputs:
    - id: files

@@ -191,14 +191,14 @@ Workflow Description Language
          --runDir ~{select_first([runDir, "generated"])} \
          --referenceFasta ~{reference} \
          ~{if defined(tumorBam) then ("--tumorBam " + tumorBam) else ''} \
-         ~{if defined(exome) then "--exome" else ""} \
-         ~{if defined(rna) then "--rna" else ""} \
-         ~{if defined(unstrandedRNA) then "--unstrandedRNA" else ""} \
-         ~{if defined(outputContig) then "--outputContig" else ""} \
+         ~{if (defined(exome) && select_first([exome])) then "--exome" else ""} \
+         ~{if (defined(rna) && select_first([rna])) then "--rna" else ""} \
+         ~{if (defined(unstrandedRNA) && select_first([unstrandedRNA])) then "--unstrandedRNA" else ""} \
+         ~{if (defined(outputContig) && select_first([outputContig])) then "--outputContig" else ""} \
          ~{if defined(callRegions) then ("--callRegions " + callRegions) else ''} \
          ;~{select_first([runDir, "generated"])}/runWorkflow.py \
          ~{if defined(select_first([mode, "local"])) then ("--mode " + select_first([mode, "local"])) else ''} \
-         ~{if defined(quiet) then "--quiet" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          ~{if defined(queue) then ("--queue " + queue) else ''} \
          ~{if defined(memgb) then ("--memGb " + memgb) else ''} \
          ~{if defined(maxTaskRuntime) then ("--maxTaskRuntime " + maxTaskRuntime) else ''} \
@@ -225,7 +225,7 @@ Workflow Description Language
        File svCandidateGenerationStats = (select_first([runDir, "generated"]) + "/results/stats/svCandidateGenerationStats.tsv")
        File svLocusGraphStats = (select_first([runDir, "generated"]) + "/results/stats/svLocusGraphStats.tsv")
        File? somaticSVs = (select_first([runDir, "generated"]) + "/results/variants/somaticSV.vcf.gz")
-       File? somaticSVs_tbi = (select_first([runDir, "generated"]) + "/results/variants/somaticSV.vcf.gz") + ".tbi"
+       File? somaticSVs_tbi = if defined((select_first([runDir, "generated"]) + "/results/variants/somaticSV.vcf.gz")) then ((select_first([runDir, "generated"]) + "/results/variants/somaticSV.vcf.gz") + ".tbi") else None
      }
    }
 

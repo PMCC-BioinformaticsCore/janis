@@ -32,13 +32,13 @@ digraph MolpathTumorOnlyWorkflow {
 	bqsr -> mutect2
 	bqsr -> haplotype_caller
 	haplotype_caller -> splitnormalisevcf
-	mutect2 -> combinevariants
 	splitnormalisevcf -> combinevariants
+	mutect2 -> combinevariants
 	combinevariants -> compressvcf
 	compressvcf -> sortvcf
 	sortvcf -> uncompressvcf
-	merge_and_mark -> addbamstats
 	uncompressvcf -> addbamstats
+	merge_and_mark -> addbamstats
 	addbamstats -> compressvcf2
 	compressvcf2 -> tabixvcf
 	tabixvcf -> calculate_variant_length

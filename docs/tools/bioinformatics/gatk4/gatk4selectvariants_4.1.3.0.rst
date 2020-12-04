@@ -332,23 +332,23 @@ Workflow Description Language
          --java-options '-Xmx~{((select_first([runtime_memory, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
          -O '~{select_first([outputFilename, "generated"])}' \
          ~{if defined(variants) then ("-V '" + variants + "'") else ""} \
-         ~{if defined(addOutputSamProgramRecord) then "-add-output-sam-program-record:Boolean" else ""} \
-         ~{if defined(addOutputVcfCommandLine) then "-add-output-vcf-command-line" else ""} \
+         ~{if (defined(addOutputSamProgramRecord) && select_first([addOutputSamProgramRecord])) then "-add-output-sam-program-record:Boolean" else ""} \
+         ~{if (defined(addOutputVcfCommandLine) && select_first([addOutputVcfCommandLine])) then "-add-output-vcf-command-line" else ""} \
          ~{if defined(arguments_file) then ("--arguments_file '" + arguments_file + "'") else ""} \
          ~{if defined(cloudIndexPrefetchBuffer) then ("--cloud-index-prefetch-buffer " + cloudIndexPrefetchBuffer) else ''} \
          ~{if defined(cloudPrefetchBuffer) then ("--cloud-prefetch-buffer " + cloudPrefetchBuffer) else ''} \
          ~{if defined(conc) then ("-conc '" + conc + "'") else ""} \
-         ~{if defined(createOutputBamIndex) then "--create-output-bam-index" else ""} \
-         ~{if defined(createOutputBamMd5) then "--create-output-bam-md5" else ""} \
-         ~{if defined(select_first([createOutputvariantIndex, true])) then "--create-output-variant-index" else ""} \
-         ~{if defined(createOutputvariantMd5) then "--create-output-variant-md5" else ""} \
-         ~{if defined(disableBamIndexCaching) then "--disable-bam-index-caching" else ""} \
+         ~{if (defined(createOutputBamIndex) && select_first([createOutputBamIndex])) then "--create-output-bam-index" else ""} \
+         ~{if (defined(createOutputBamMd5) && select_first([createOutputBamMd5])) then "--create-output-bam-md5" else ""} \
+         ~{if select_first([createOutputvariantIndex, true]) then "--create-output-variant-index" else ""} \
+         ~{if (defined(createOutputvariantMd5) && select_first([createOutputvariantMd5])) then "--create-output-variant-md5" else ""} \
+         ~{if (defined(disableBamIndexCaching) && select_first([disableBamIndexCaching])) then "--disable-bam-index-caching" else ""} \
          ~{if defined(disableReadFilter) then ("--disable-read-filter '" + disableReadFilter + "'") else ""} \
-         ~{if defined(disableSequenceDictionaryValidation) then "-disable-sequence-dictionary-validation" else ""} \
+         ~{if (defined(disableSequenceDictionaryValidation) && select_first([disableSequenceDictionaryValidation])) then "-disable-sequence-dictionary-validation" else ""} \
          ~{if defined(disc) then ("-disc '" + disc + "'") else ""} \
          ~{if defined(dropGenotypeAnnotation) then ("--drop-genotype-annotation '" + dropGenotypeAnnotation + "'") else ""} \
          ~{if defined(dropInfoAnnotation) then ("--drop-info-annotation '" + dropInfoAnnotation + "'") else ""} \
-         ~{if defined(excludeFiltered) then "--exclude-filtered" else ""} \
+         ~{if (defined(excludeFiltered) && select_first([excludeFiltered])) then "--exclude-filtered" else ""} \
          ~{if defined(xlIds) then ("-xl-ids '" + xlIds + "'") else ""} \
          ~{if defined(excludeIntervals) then ("--exclude-intervals '" + excludeIntervals + "'") else ""} \
          ~{if defined(excludeNonvariants) then ("--exclude-non-variants '" + excludeNonvariants + "'") else ""} \
@@ -357,38 +357,38 @@ Workflow Description Language
          ~{if defined(gatkConfigFile) then ("--gatk-config-file '" + gatkConfigFile + "'") else ""} \
          ~{if defined(gcsRetries) then ("-gcs-retries " + gcsRetries) else ''} \
          ~{if defined(gcsProjectForRequesterPays) then ("--gcs-project-for-requester-pays '" + gcsProjectForRequesterPays + "'") else ""} \
-         ~{if defined(help) then "-h" else ""} \
+         ~{if (defined(help) && select_first([help])) then "-h" else ""} \
          ~{if defined(bam) then ("-I '" + bam + "'") else ""} \
          ~{if defined(intervalExclusionPadding) then ("--interval-exclusion-padding " + intervalExclusionPadding) else ''} \
          ~{if defined(imr) then ("-imr '" + imr + "'") else ""} \
          ~{if defined(ip) then ("-ip " + ip) else ''} \
          ~{if defined(isr) then ("-isr '" + isr + "'") else ""} \
          ~{if defined(intervals) then ("--intervals '" + intervals + "'") else ""} \
-         ~{if defined(invertMendelianViolation) then "--invert-mendelian-violation" else ""} \
-         ~{if defined(invertSelect) then "-invert-select" else ""} \
+         ~{if (defined(invertMendelianViolation) && select_first([invertMendelianViolation])) then "--invert-mendelian-violation" else ""} \
+         ~{if (defined(invertSelect) && select_first([invertSelect])) then "-invert-select" else ""} \
          ~{if defined(ids) then ("-ids '" + ids + "'") else ""} \
-         ~{if defined(keepOriginalAc) then "--keep-original-ac" else ""} \
-         ~{if defined(keepOriginalDp) then "--keep-original-dp" else ""} \
-         ~{if defined(le) then "-LE" else ""} \
+         ~{if (defined(keepOriginalAc) && select_first([keepOriginalAc])) then "--keep-original-ac" else ""} \
+         ~{if (defined(keepOriginalDp) && select_first([keepOriginalDp])) then "--keep-original-dp" else ""} \
+         ~{if (defined(le) && select_first([le])) then "-LE" else ""} \
          ~{if defined(maxFilteredGenotypes) then ("--max-filtered-genotypes " + maxFilteredGenotypes) else ''} \
          ~{if defined(maxFractionFilteredGenotypes) then ("--max-fraction-filtered-genotypes " + maxFractionFilteredGenotypes) else ''} \
          ~{if defined(maxIndelSize) then ("--max-indel-size " + maxIndelSize) else ''} \
          ~{if defined(maxNocallFraction) then ("--max-nocall-fraction " + maxNocallFraction) else ''} \
          ~{if defined(maxNocallNumber) then ("--max-nocall-number " + maxNocallNumber) else ''} \
-         ~{if defined(mendelianViolation) then "--mendelian-violation" else ""} \
+         ~{if (defined(mendelianViolation) && select_first([mendelianViolation])) then "--mendelian-violation" else ""} \
          ~{if defined(mendelianViolationQualThreshold) then ("--mendelian-violation-qual-threshold " + mendelianViolationQualThreshold) else ''} \
          ~{if defined(minFilteredGenotypes) then ("--min-filtered-genotypes " + minFilteredGenotypes) else ''} \
          ~{if defined(minFractionFilteredGenotypes) then ("--min-fraction-filtered-genotypes " + minFractionFilteredGenotypes) else ''} \
          ~{if defined(minIndelSize) then ("--min-indel-size " + minIndelSize) else ''} \
          ~{if defined(pedigree) then ("--pedigree '" + pedigree + "'") else ""} \
-         ~{if defined(preserveAlleles) then "--preserve-alleles" else ""} \
-         ~{if defined(quiet) then "--QUIET" else ""} \
+         ~{if (defined(preserveAlleles) && select_first([preserveAlleles])) then "--preserve-alleles" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--QUIET" else ""} \
          ~{if defined(readFilter) then ("--read-filter '" + readFilter + "'") else ""} \
          ~{if defined(readIndex) then ("-read-index '" + readIndex + "'") else ""} \
          ~{if defined(readValidationStringency) then ("--read-validation-stringency '" + readValidationStringency + "'") else ""} \
          ~{if defined(reference) then ("--reference '" + reference + "'") else ""} \
          ~{if defined(removeFractionGenotypes) then ("--remove-fraction-genotypes " + removeFractionGenotypes) else ''} \
-         ~{if defined(removeUnusedAlternates) then "--remove-unused-alternates" else ""} \
+         ~{if (defined(removeUnusedAlternates) && select_first([removeUnusedAlternates])) then "--remove-unused-alternates" else ""} \
          ~{if defined(restrictAllelesTo) then ("--restrict-alleles-to '" + restrictAllelesTo + "'") else ""} \
          ~{if defined(sampleExpressions) then ("--sample-expressions '" + sampleExpressions + "'") else ""} \
          ~{if defined(sampleName) then ("--sample-name '" + sampleName + "'") else ""} \
@@ -398,15 +398,15 @@ Workflow Description Language
          ~{if defined(selectTypeToInclude) then ("--select-type-to-include '" + selectTypeToInclude + "'") else ""} \
          ~{if defined(selectexpressions) then ("--selectExpressions '" + selectexpressions + "'") else ""} \
          ~{if defined(sequenceDictionary) then ("-sequence-dictionary '" + sequenceDictionary + "'") else ""} \
-         ~{if defined(setFilteredGtToNocall) then "--set-filtered-gt-to-nocall" else ""} \
-         ~{if defined(sitesOnlyVcfOutput) then "--sites-only-vcf-output" else ""} \
+         ~{if (defined(setFilteredGtToNocall) && select_first([setFilteredGtToNocall])) then "--set-filtered-gt-to-nocall" else ""} \
+         ~{if (defined(sitesOnlyVcfOutput) && select_first([sitesOnlyVcfOutput])) then "--sites-only-vcf-output" else ""} \
          --tmp-dir '~{select_first([tmpDir, "generated"])}' \
-         ~{if defined(jdkDeflater) then "-jdk-deflater" else ""} \
-         ~{if defined(jdkInflater) then "-jdk-inflater" else ""} \
+         ~{if (defined(jdkDeflater) && select_first([jdkDeflater])) then "-jdk-deflater" else ""} \
+         ~{if (defined(jdkInflater) && select_first([jdkInflater])) then "-jdk-inflater" else ""} \
          ~{if defined(verbosity) then ("-verbosity '" + verbosity + "'") else ""} \
-         ~{if defined(version) then "--version" else ""} \
-         ~{if defined(disableToolDefaultReadFilters) then "-disable-tool-default-read-filters" else ""} \
-         ~{if defined(showhidden) then "-showHidden" else ""} \
+         ~{if (defined(version) && select_first([version])) then "--version" else ""} \
+         ~{if (defined(disableToolDefaultReadFilters) && select_first([disableToolDefaultReadFilters])) then "-disable-tool-default-read-filters" else ""} \
+         ~{if (defined(showhidden) && select_first([showhidden])) then "-showHidden" else ""} \
          ~{if defined(ambigFilterBases) then ("--ambig-filter-bases " + ambigFilterBases) else ''} \
          ~{if defined(ambigFilterFrac) then ("--ambig-filter-frac " + ambigFilterFrac) else ''} \
          ~{if defined(maxFragmentLength) then ("--max-fragment-length " + maxFragmentLength) else ''} \
@@ -415,7 +415,7 @@ Workflow Description Language
          ~{if defined(library) then ("-library '" + library + "'") else ""} \
          ~{if defined(maximumMappingQuality) then ("--maximum-mapping-quality " + maximumMappingQuality) else ''} \
          ~{if defined(minimumMappingQuality) then ("--minimum-mapping-quality " + minimumMappingQuality) else ''} \
-         ~{if defined(dontRequireSoftClipsBothEnds) then "--dont-require-soft-clips-both-ends" else ""} \
+         ~{if (defined(dontRequireSoftClipsBothEnds) && select_first([dontRequireSoftClipsBothEnds])) then "--dont-require-soft-clips-both-ends" else ""} \
          ~{if defined(filterTooShort) then ("--filter-too-short " + filterTooShort) else ''} \
          ~{if defined(platformFilterName) then ("--platform-filter-name '" + platformFilterName + "'") else ""} \
          ~{if defined(blackListedLanes) then ("--black-listed-lanes '" + blackListedLanes + "'") else ""} \
@@ -424,9 +424,9 @@ Workflow Description Language
          ~{if defined(maxReadLength) then ("--max-read-length " + maxReadLength) else ''} \
          ~{if defined(minReadLength) then ("--min-read-length " + minReadLength) else ''} \
          ~{if defined(readName) then ("--read-name '" + readName + "'") else ""} \
-         ~{if defined(keepReverseStrandOnly) then "--keep-reverse-strand-only" else ""} \
+         ~{if (defined(keepReverseStrandOnly) && select_first([keepReverseStrandOnly])) then "--keep-reverse-strand-only" else ""} \
          ~{if defined(sample) then ("--sample '" + sample + "'") else ""} \
-         ~{if defined(invertSoftClipRatioFilter) then "--invert-soft-clip-ratio-filter" else ""} \
+         ~{if (defined(invertSoftClipRatioFilter) && select_first([invertSoftClipRatioFilter])) then "--invert-soft-clip-ratio-filter" else ""} \
          ~{if defined(softClippedLeadingTrailingRatio) then ("--soft-clipped-leading-trailing-ratio " + softClippedLeadingTrailingRatio) else ''} \
          ~{if defined(softClippedRatioThreshold) then ("--soft-clipped-ratio-threshold " + softClippedRatioThreshold) else ''}
      >>>

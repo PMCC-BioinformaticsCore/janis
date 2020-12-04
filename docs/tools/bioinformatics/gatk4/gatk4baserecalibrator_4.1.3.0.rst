@@ -167,7 +167,7 @@ Workflow Description Language
          -R '~{reference}' \
          -I '~{bam}' \
          -O '~{select_first([outputFilename, "~{basename(bam, ".bam")}.table"])}' \
-         ~{"--known-sites '" + sep("' --known-sites '", knownSites) + "'"}
+         ~{if length(knownSites) > 0 then "--known-sites '" + sep("' --known-sites '", knownSites) + "'" else ""}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])

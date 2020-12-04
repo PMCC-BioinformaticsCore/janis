@@ -27,6 +27,7 @@ Quickstart
            )
        )
        wf.output("out", source=annotatedepthofcoverage_step.out)
+       wf.output("out_sample_summary", source=annotatedepthofcoverage_step.out_sample_summary)
     
 
 *OR*
@@ -94,11 +95,12 @@ URL: *No URL to the documentation was provided*
 Outputs
 -----------
 
-======  ========  ===============
-name    type      documentation
-======  ========  ===============
-out     TextFile
-======  ========  ===============
+==================  ========  ===============
+name                type      documentation
+==================  ========  ===============
+out                 TextFile
+out_sample_summary  TextFile
+==================  ========  ===============
 
 
 Workflow
@@ -182,6 +184,7 @@ Workflow Description Language
      }
      output {
        File out = addsymtodepthofcoverage.out
+       File out_sample_summary = gatk3depthofcoverage.sampleSummary
      }
    }
 
@@ -239,6 +242,9 @@ Common Workflow Language
    - id: out
      type: File
      outputSource: addsymtodepthofcoverage/out
+   - id: out_sample_summary
+     type: File
+     outputSource: gatk3depthofcoverage/sampleSummary
 
    steps:
    - id: gatk3depthofcoverage

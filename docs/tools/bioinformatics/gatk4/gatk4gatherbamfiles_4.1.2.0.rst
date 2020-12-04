@@ -160,20 +160,20 @@ Workflow Description Language
          ~{if (defined(bams) && length(select_first([bams])) > 0) then "--INPUT '" + sep("' --INPUT '", select_first([bams])) + "'" else ""} \
          --OUTPUT '~{select_first([outputFilename, "generated.merged.bam"])}' \
          ~{if defined(arguments_file) then ("--arguments_file '" + arguments_file + "'") else ""} \
-         ~{if defined(select_first([create_index, true])) then "--CREATE_INDEX" else ""} \
-         ~{if defined(create_md5_file) then "--CREATE_MD5_FILE" else ""} \
-         ~{if defined(ga4gh_client_secrets) then "--GA4GH_CLIENT_SECRETS" else ""} \
-         ~{if defined(help) then "--help" else ""} \
+         ~{if select_first([create_index, true]) then "--CREATE_INDEX" else ""} \
+         ~{if (defined(create_md5_file) && select_first([create_md5_file])) then "--CREATE_MD5_FILE" else ""} \
+         ~{if (defined(ga4gh_client_secrets) && select_first([ga4gh_client_secrets])) then "--GA4GH_CLIENT_SECRETS" else ""} \
+         ~{if (defined(help) && select_first([help])) then "--help" else ""} \
          ~{if defined(max_records_in_ram) then ("--MAX_RECORDS_IN_RAM " + max_records_in_ram) else ''} \
-         ~{if defined(quiet) then "--QUIET" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--QUIET" else ""} \
          ~{if defined(reference_sequence) then ("--REFERENCE_SEQUENCE '" + reference_sequence + "'") else ""} \
          ~{if defined(tmp_dir) then ("--TMP_DIR '" + tmp_dir + "'") else ""} \
-         ~{if defined(use_jdk_deflater) then "--USE_JDK_DEFLATER" else ""} \
-         ~{if defined(use_jdk_inflater) then "--USE_JDK_INFLATER" else ""} \
-         ~{if defined(validation_stringency) then "--VALIDATION_STRINGENCY" else ""} \
-         ~{if defined(verbosity) then "--VERBOSITY" else ""} \
-         ~{if defined(version) then "--version" else ""} \
-         ~{if defined(showhidden) then "--showHidden" else ""}
+         ~{if (defined(use_jdk_deflater) && select_first([use_jdk_deflater])) then "--USE_JDK_DEFLATER" else ""} \
+         ~{if (defined(use_jdk_inflater) && select_first([use_jdk_inflater])) then "--USE_JDK_INFLATER" else ""} \
+         ~{if (defined(validation_stringency) && select_first([validation_stringency])) then "--VALIDATION_STRINGENCY" else ""} \
+         ~{if (defined(verbosity) && select_first([verbosity])) then "--VERBOSITY" else ""} \
+         ~{if (defined(version) && select_first([version])) then "--version" else ""} \
+         ~{if (defined(showhidden) && select_first([showhidden])) then "--showHidden" else ""}
        if [ -f $(echo '~{select_first([outputFilename, "generated.merged.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([outputFilename, "generated.merged.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([outputFilename, "generated.merged.bam"])}' ).bai; fi
      >>>
      runtime {

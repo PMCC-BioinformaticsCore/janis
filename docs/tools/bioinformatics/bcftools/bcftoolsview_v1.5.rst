@@ -194,41 +194,41 @@ Workflow Description Language
      command <<<
        set -e
        bcftools view \
-         ~{if defined(dropGenotypes) then "--drop-genotypes" else ""} \
-         ~{if defined(headerOnly) then "--header-only" else ""} \
-         ~{if defined(noHeader) then "--no-header" else ""} \
+         ~{if (defined(dropGenotypes) && select_first([dropGenotypes])) then "--drop-genotypes" else ""} \
+         ~{if (defined(headerOnly) && select_first([headerOnly])) then "--header-only" else ""} \
+         ~{if (defined(noHeader) && select_first([noHeader])) then "--no-header" else ""} \
          ~{if defined(compressionLevel) then ("--compression-level " + compressionLevel) else ''} \
-         ~{if defined(noVersion) then "--no-version" else ""} \
+         ~{if (defined(noVersion) && select_first([noVersion])) then "--no-version" else ""} \
          ~{if defined(regions) then ("--regions '" + regions + "'") else ""} \
          ~{if defined(regionsFile) then ("--regions-file '" + regionsFile + "'") else ""} \
          ~{if defined(targets) then ("--targets '" + targets + "'") else ""} \
          ~{if defined(targetsFile) then ("--targets-file '" + targetsFile + "'") else ""} \
          ~{if defined(threads) then ("--threads " + threads) else ''} \
-         ~{if defined(trimAltAlleles) then "--trim-alt-alleles" else ""} \
-         ~{if defined(noUpdate) then "--no-update" else ""} \
+         ~{if (defined(trimAltAlleles) && select_first([trimAltAlleles])) then "--trim-alt-alleles" else ""} \
+         ~{if (defined(noUpdate) && select_first([noUpdate])) then "--no-update" else ""} \
          ~{if (defined(samples) && length(select_first([samples])) > 0) then "--samples '" + sep("' '", select_first([samples])) + "'" else ""} \
          ~{if defined(samplesFile) then ("--samples-file '" + samplesFile + "'") else ""} \
-         ~{if defined(forceSamples) then "--force-samples" else ""} \
+         ~{if (defined(forceSamples) && select_first([forceSamples])) then "--force-samples" else ""} \
          ~{if defined(minAc) then ("--min-ac " + minAc) else ''} \
          ~{if defined(maxAc) then ("--max-ac " + maxAc) else ''} \
          ~{if (defined(applyFilters) && length(select_first([applyFilters])) > 0) then "--apply-filters '" + sep("' '", select_first([applyFilters])) + "'" else ""} \
          ~{if defined(genotype) then ("--genotype '" + genotype + "'") else ""} \
          ~{if defined(include) then ("--include '" + include + "'") else ""} \
          ~{if defined(exclude) then ("--exclude '" + exclude + "'") else ""} \
-         ~{if defined(known) then "--known" else ""} \
-         ~{if defined(novel) then "--novel" else ""} \
+         ~{if (defined(known) && select_first([known])) then "--known" else ""} \
+         ~{if (defined(novel) && select_first([novel])) then "--novel" else ""} \
          ~{if defined(minAlleles) then ("--min-alleles " + minAlleles) else ''} \
          ~{if defined(maxAlleles) then ("--max-alleles " + maxAlleles) else ''} \
-         ~{if defined(phased) then "--phased" else ""} \
-         ~{if defined(excludePhased) then "--exclude-phased" else ""} \
+         ~{if (defined(phased) && select_first([phased])) then "--phased" else ""} \
+         ~{if (defined(excludePhased) && select_first([excludePhased])) then "--exclude-phased" else ""} \
          ~{if defined(minAf) then ("--min-af " + minAf) else ''} \
          ~{if defined(maxAf) then ("--max-af " + maxAf) else ''} \
-         ~{if defined(uncalled) then "--uncalled" else ""} \
-         ~{if defined(excludeUncalled) then "--exclude-uncalled" else ""} \
+         ~{if (defined(uncalled) && select_first([uncalled])) then "--uncalled" else ""} \
+         ~{if (defined(excludeUncalled) && select_first([excludeUncalled])) then "--exclude-uncalled" else ""} \
          ~{if (defined(types) && length(select_first([types])) > 0) then "--types '" + sep("' '", select_first([types])) + "'" else ""} \
          ~{if (defined(excludeTypes) && length(select_first([excludeTypes])) > 0) then "--exclude-types '" + sep("' '", select_first([excludeTypes])) + "'" else ""} \
-         ~{if defined(private) then "--private" else ""} \
-         ~{if defined(excludePrivate) then "--exclude-private" else ""} \
+         ~{if (defined(private) && select_first([private])) then "--private" else ""} \
+         ~{if (defined(excludePrivate) && select_first([excludePrivate])) then "--exclude-private" else ""} \
          --output-type 'z' \
          '~{file}'
      >>>

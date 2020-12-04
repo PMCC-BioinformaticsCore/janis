@@ -69,7 +69,7 @@ Automatically generated index page for Dawson Labs:
        <p style="margin-bottom: 5px"><b>Call Somatic Variants from freebayes</b> <span style="margin-left: 10px; color: darkgray">callSomaticFreeBayes</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="callsomaticfreebayes.html" style="margin-bottom: 10px">
-       v<b>0.1.7</b>
+       v<b>0.1.8</b>
      </a></p>
      </a>
      <hr />
@@ -78,7 +78,7 @@ Automatically generated index page for Dawson Labs:
        <p style="margin-bottom: 5px"><b>Refilter Strelka2 Variant Calls</b> <span style="margin-left: 10px; color: darkgray">refilterStrelka2Calls</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="refilterstrelka2calls.html" style="margin-bottom: 10px">
-       v<b>0.1.7</b>
+       v<b>0.1.8</b>
      </a></p>
      </a>
      <hr />

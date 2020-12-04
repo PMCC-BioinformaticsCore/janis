@@ -213,23 +213,23 @@ Workflow Description Language
        gatk MergeBamAlignment \
          --java-options '-Xmx~{((select_first([runtime_memory, 4, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
          --UNMAPPED_BAM '~{ubam}' \
-         ~{"--ALIGNED_BAM '" + sep("' --ALIGNED_BAM '", bam) + "'"} \
+         ~{if length(bam) > 0 then "--ALIGNED_BAM '" + sep("' --ALIGNED_BAM '", bam) + "'" else ""} \
          ~{if defined(reference) then ("--REFERENCE_SEQUENCE '" + reference + "'") else ""} \
          --OUTPUT '~{select_first([outputFilename, "generated.bam"])}' \
          ~{if defined(sortOrder) then ("-SO '" + sortOrder + "'") else ""} \
-         ~{if defined(addMateCigar) then "--ADD_MATE_CIGAR" else ""} \
-         ~{if defined(alignedReadsOnly) then "--ALIGNED_READS_ONLY" else ""} \
-         ~{if defined(alignerProperPairFlags) then "--ALIGNER_PROPER_PAIR_FLAGS" else ""} \
+         ~{if (defined(addMateCigar) && select_first([addMateCigar])) then "--ADD_MATE_CIGAR" else ""} \
+         ~{if (defined(alignedReadsOnly) && select_first([alignedReadsOnly])) then "--ALIGNED_READS_ONLY" else ""} \
+         ~{if (defined(alignerProperPairFlags) && select_first([alignerProperPairFlags])) then "--ALIGNER_PROPER_PAIR_FLAGS" else ""} \
          ~{if (defined(argumentsFile) && length(select_first([argumentsFile])) > 0) then "--arguments_file '" + sep("' '", select_first([argumentsFile])) + "'" else ""} \
          ~{if (defined(attributesToRemove) && length(select_first([attributesToRemove])) > 0) then "--ATTRIBUTES_TO_REMOVE '" + sep("' '", select_first([attributesToRemove])) + "'" else ""} \
          ~{if (defined(attributesToRetain) && length(select_first([attributesToRetain])) > 0) then "--ATTRIBUTES_TO_RETAIN '" + sep("' '", select_first([attributesToRetain])) + "'" else ""} \
          ~{if (defined(attributesToReverse) && length(select_first([attributesToReverse])) > 0) then "--ATTRIBUTES_TO_REVERSE '" + sep("' '", select_first([attributesToReverse])) + "'" else ""} \
          ~{if (defined(attributesToReverseComplement) && length(select_first([attributesToReverseComplement])) > 0) then "--ATTRIBUTES_TO_REVERSE_COMPLEMENT '" + sep("' '", select_first([attributesToReverseComplement])) + "'" else ""} \
-         ~{if defined(clipAdapter) then "--CLIP_ADAPTERS" else ""} \
-         ~{if defined(clipOverlappingReads) then "--CLIP_OVERLAPPING_READS" else ""} \
+         ~{if (defined(clipAdapter) && select_first([clipAdapter])) then "--CLIP_ADAPTERS" else ""} \
+         ~{if (defined(clipOverlappingReads) && select_first([clipOverlappingReads])) then "--CLIP_OVERLAPPING_READS" else ""} \
          ~{if (defined(expectedOrientations) && length(select_first([expectedOrientations])) > 0) then "--EXPECTED_ORIENTATIONS '" + sep("' '", select_first([expectedOrientations])) + "'" else ""} \
-         ~{if defined(includeSecondaryAlginments) then "--INCLUDE_SECONDARY_ALIGNMENTS" else ""} \
-         ~{if defined(isBisulfiteSequencing) then "--IS_BISULFITE_SEQUENCE" else ""} \
+         ~{if (defined(includeSecondaryAlginments) && select_first([includeSecondaryAlginments])) then "--INCLUDE_SECONDARY_ALIGNMENTS" else ""} \
+         ~{if (defined(isBisulfiteSequencing) && select_first([isBisulfiteSequencing])) then "--IS_BISULFITE_SEQUENCE" else ""} \
          ~{if (defined(matchingDictionaryTags) && length(select_first([matchingDictionaryTags])) > 0) then "--MATCHING_DICTIONARY_TAGS '" + sep("' '", select_first([matchingDictionaryTags])) + "'" else ""} \
          ~{if defined(maxInsertionsOrDeletions) then ("--MAX_INSERTIONS_OR_DELETIONS " + maxInsertionsOrDeletions) else ''} \
          ~{if defined(minUnclippedBases) then ("--MIN_UNCLIPPED_BASES " + minUnclippedBases) else ''} \
@@ -238,17 +238,17 @@ Workflow Description Language
          ~{if defined(programGroupName) then ("--PROGRAM_GROUP_NAME '" + programGroupName + "'") else ""} \
          ~{if defined(programGroupVersion) then ("--PROGRAM_GROUP_VERSION '" + programGroupVersion + "'") else ""} \
          ~{if defined(programRecordId) then ("--PROGRAM_RECORD_ID '" + programRecordId + "'") else ""} \
-         ~{if defined(unmapContaminantReads) then "--UNMAP_CONTAMINANT_READS" else ""} \
+         ~{if (defined(unmapContaminantReads) && select_first([unmapContaminantReads])) then "--UNMAP_CONTAMINANT_READS" else ""} \
          ~{if defined(unmappedReadStrategy) then ("--UNMAPPED_READ_STRATEGY '" + unmappedReadStrategy + "'") else ""} \
-         ~{if defined(addPgTagToReads) then "--ADD_PG_TAG_TO_READS" else ""} \
+         ~{if (defined(addPgTagToReads) && select_first([addPgTagToReads])) then "--ADD_PG_TAG_TO_READS" else ""} \
          ~{if defined(compressionLevel) then ("--COMPRESSION_LEVEL " + compressionLevel) else ''} \
-         ~{if defined(select_first([createIndex, true])) then "--CREATE_INDEX" else ""} \
-         ~{if defined(createMd5File) then "--CREATE_MD5_FILE" else ""} \
+         ~{if select_first([createIndex, true]) then "--CREATE_INDEX" else ""} \
+         ~{if (defined(createMd5File) && select_first([createMd5File])) then "--CREATE_MD5_FILE" else ""} \
          ~{if defined(maxRecordsInRam) then ("--MAX_RECORDS_IN_RAM " + maxRecordsInRam) else ''} \
-         ~{if defined(quiet) then "--QUIET" else ""} \
+         ~{if (defined(quiet) && select_first([quiet])) then "--QUIET" else ""} \
          ~{if defined(select_first([tmpDir, "/tmp/"])) then ("--TMP_DIR '" + select_first([tmpDir, "/tmp/"]) + "'") else ""} \
-         ~{if defined(useJdkDeflater) then "--use_jdk_deflater" else ""} \
-         ~{if defined(useJdkInflater) then "--use_jdk_inflater" else ""} \
+         ~{if (defined(useJdkDeflater) && select_first([useJdkDeflater])) then "--use_jdk_deflater" else ""} \
+         ~{if (defined(useJdkInflater) && select_first([useJdkInflater])) then "--use_jdk_inflater" else ""} \
          ~{if defined(validationStringency) then ("--VALIDATION_STRINGENCY '" + validationStringency + "'") else ""} \
          ~{if defined(verbosity) then ("--verbosity '" + verbosity + "'") else ""}
      >>>

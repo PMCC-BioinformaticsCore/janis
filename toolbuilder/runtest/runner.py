@@ -11,7 +11,6 @@ import janis_bioinformatics
 
 
 class UpdateStatusOption:
-
     def __init__(self, url: str, token: str, method: Optional[str] = "patch"):
         self.url = url
         self.token = token
@@ -19,39 +18,48 @@ class UpdateStatusOption:
 
 
 class NotificationOption:
-
-    def __init__(self, url: str, tool_name: str, test_case: str, test_id: Optional[str] = None):
+    def __init__(
+        self, url: str, tool_name: str, test_case: str, test_id: Optional[str] = None
+    ):
         self.url = url
         self.tool_name = tool_name
         self.test_case = test_case
         self.test_id = test_id
 
 
-def run_test_case(tool_id: str, test_case: str, engine: EngineType, output: Optional[Dict] = None) -> Dict[str, Any]:
+def run_test_case(
+    tool_id: str,
+    test_case: str,
+    engine: EngineType,
+    output: Optional[Dict] = None,
+    config: str = None,
+) -> Dict[str, Any]:
     tool = test_helpers.get_one_tool(tool_id)
 
     if not tool:
         raise Exception(f"Tool {tool_id} not found")
 
-    runner = ToolTestSuiteRunner(tool)
+    runner = ToolTestSuiteRunner(tool, config=config)
     tests_to_run = [tc for tc in tool.tests() if tc.name == test_case]
 
     if not tests_to_run:
         raise Exception(f"Test case {test_case} not found")
 
     if len(tests_to_run) > 1:
-        raise Exception(f"There is more than one test case with the same name {test_case}")
+        raise Exception(
+            f"There is more than one test case with the same name {test_case}"
+        )
 
     if output is not None:
-        Logger.info("Dryrun: validating test using provided output data without running the workflow")
+        Logger.info(
+            "Dryrun: validating test using provided output data without running the workflow"
+        )
 
-    failed, succeeded, output = runner.run_one_test_case(t=tests_to_run[0], engine=engine, output=output)
+    failed, succeeded, output = runner.run_one_test_case(
+        t=tests_to_run[0], engine=engine, output=output
+    )
 
-    return {
-        "failed": list(failed),
-        "succeeded": list(succeeded),
-        "output": output
-    }
+    return {"failed": list(failed), "succeeded": list(succeeded), "output": output}
 
 
 def update_status(result: Dict, option: UpdateStatusOption):
@@ -64,7 +72,9 @@ def update_status(result: Dict, option: UpdateStatusOption):
     data = {"status": status, **result}
 
     headers = {"Authorization": f"Bearer {option.token}"}
-    resp = requests.request(method=option.method, url=option.url, json=data, headers=headers)
+    resp = requests.request(
+        method=option.method, url=option.url, json=data, headers=headers
+    )
 
     Logger.info("status updated")
     Logger.info(f"Response code {resp.status_code}")
@@ -93,8 +103,8 @@ def send_slack_notification(result: Dict, option: NotificationOption):
         "type": "section",
         "text": {
             "type": "mrkdwn",
-            "text": f"{icon} {status}{test_description}: {option.tool_name} - {option.test_case}"
-        }
+            "text": f"{icon} {status}{test_description}: {option.tool_name} - {option.test_case}",
+        },
     }
 
     blocks = [summary_block]
@@ -107,10 +117,7 @@ def send_slack_notification(result: Dict, option: NotificationOption):
 
         failed_block = {
             "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": "\n".join(failed_expected_output)
-            }
+            "text": {"type": "mrkdwn", "text": "\n".join(failed_expected_output)},
         }
 
         blocks.append(failed_block)
@@ -130,22 +137,21 @@ def send_slack_notification(result: Dict, option: NotificationOption):
 def cli_logging(result: Dict):
     Logger.info(f"Output: {result['output']}")
 
-    if len(result['succeeded']) > 0:
+    if len(result["succeeded"]) > 0:
         Logger.info(f"{len(result['succeeded'])} expected output PASSED")
 
         Logger.info("Succeeded expected output:")
         for s in result["succeeded"]:
             Logger.info(s)
 
-    if len(result['failed']) > 0:
+    if len(result["failed"]) > 0:
         Logger.info(f"{len(result['failed'])} expected output FAILED")
 
         Logger.info("Failed expected output:")
         for f in result["failed"]:
             Logger.info(f)
 
-    if len(result['failed']) == 0:
+    if len(result["failed"]) == 0:
         Logger.info("Test SUCCEEDED")
     else:
         Logger.critical("Test FAILED")
-

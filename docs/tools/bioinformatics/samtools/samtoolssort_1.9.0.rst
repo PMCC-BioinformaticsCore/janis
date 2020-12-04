@@ -184,7 +184,7 @@ Workflow Description Language
        samtools sort \
          ~{if defined(compression) then ("-l " + compression) else ''} \
          ~{if defined(maximumMemory) then ("-m '" + maximumMemory + "'") else ""} \
-         ~{if defined(sortByReadNames) then "-n" else ""} \
+         ~{if (defined(sortByReadNames) && select_first([sortByReadNames])) then "-n" else ""} \
          ~{if defined(outputType) then ("-O '" + outputType + "'") else ""} \
          ~{if defined(temporaryFilesPrefix) then ("-T '" + temporaryFilesPrefix + "'") else ""} \
          ~{if defined(threads) then ("-@ " + threads) else ''} \

@@ -9,8 +9,8 @@ digraph PerformanceSummaryGenome {
 	performancesummary [label="performancesummary (Performance Summary)"]
 	samtoolsview -> rmdupbamflagstat
 	samtoolsview -> bedtoolsgenomecoveragebed
+	bedtoolsgenomecoveragebed -> performancesummary
 	bamflagstat -> performancesummary
 	rmdupbamflagstat -> performancesummary
-	bedtoolsgenomecoveragebed -> performancesummary
 	gatk4collectinsertsizemetrics -> performancesummary
 }

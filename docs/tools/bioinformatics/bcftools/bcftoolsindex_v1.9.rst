@@ -136,13 +136,13 @@ Workflow Description Language
        set -e
        cp -f ~{vcf} .
        bcftools index \
-         ~{if defined(csi) then "--csi" else ""} \
-         ~{if defined(force) then "--force" else ""} \
+         ~{if (defined(csi) && select_first([csi])) then "--csi" else ""} \
+         ~{if (defined(force) && select_first([force])) then "--force" else ""} \
          ~{if defined(minShift) then ("--min-shift " + minShift) else ''} \
-         ~{if defined(select_first([tbi, true])) then "--tbi" else ""} \
+         ~{if select_first([tbi, true]) then "--tbi" else ""} \
          ~{if defined(select_first([threads, select_first([runtime_cpu, 1])])) then ("--threads " + select_first([threads, select_first([runtime_cpu, 1])])) else ''} \
-         ~{if defined(nrecords) then "--nrecords" else ""} \
-         ~{if defined(stats) then "--stats" else ""} \
+         ~{if (defined(nrecords) && select_first([nrecords])) then "--nrecords" else ""} \
+         ~{if (defined(stats) && select_first([stats])) then "--stats" else ""} \
          '~{basename(vcf)}'
      >>>
      runtime {

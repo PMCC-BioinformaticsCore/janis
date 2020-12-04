@@ -112,7 +112,7 @@ Embedded Tools
 =======================  =================================
 Cutadapt                 ``cutadapt/2.1``
 Bwa mem + Samtools View  ``BwaMemSamtoolsView/0.7.17|1.9``
-GATK4: SortSAM           ``Gatk4SortSam/4.1.3.0``
+GATK4: SortSAM           ``Gatk4SortSam/4.1.2.0``
 =======================  =================================
 
 
@@ -149,7 +149,7 @@ Workflow Description Language
 
    import "tools/cutadapt_2_1.wdl" as C
    import "tools/BwaMemSamtoolsView_0_7_17_1_9.wdl" as B
-   import "tools/Gatk4SortSam_4_1_3_0.wdl" as G
+   import "tools/Gatk4SortSam_4_1_2_0.wdl" as G
 
    workflow BwaAligner {
      input {
@@ -178,6 +178,7 @@ Workflow Description Language
      }
      call C.cutadapt as cutadapt {
        input:
+         outputPrefix=sample_name,
          fastq=fastq,
          adapter=cutadapt_adapter,
          front=cutadapt_front,
@@ -314,6 +315,8 @@ Common Workflow Language
    - id: cutadapt
      label: Cutadapt
      in:
+     - id: outputPrefix
+       source: sample_name
      - id: fastq
        source: fastq
      - id: adapter
@@ -360,7 +363,7 @@ Common Workflow Language
        source: sortsam_tmpDir
      - id: validationStringency
        source: sortsam_validationStringency
-     run: tools/Gatk4SortSam_4_1_3_0.cwl
+     run: tools/Gatk4SortSam_4_1_2_0.cwl
      out:
      - id: out
    id: BwaAligner

@@ -125,7 +125,7 @@ Workflow Description Language
          bcftools filter -e 'STATUS="GERMLINE"' -o - \
          ~{if defined(vcf) then ("'" + vcf + "'") else ""} \
          | bcftools filter -i 'FILTER=="PASS"' \
-         -o ~{select_first([outputFilename, "generated.filter.vcf"])}
+         -o ~{select_first([outputFilename, "~{basename(vcf, ".vcf")}.filter.vcf"])}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])
@@ -136,7 +136,7 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = select_first([outputFilename, "generated.filter.vcf"])
+       File out = select_first([outputFilename, "~{basename(vcf, ".vcf")}.filter.vcf"])
      }
    }
 
@@ -173,6 +173,8 @@ Common Workflow Language
      inputBinding:
        prefix: -o
        position: 3
+       valueFrom: |-
+         $(inputs.vcf ? inputs.vcf.basename.replace(/.vcf$/, "") : "generated").filter.vcf
        shellQuote: false
 
    outputs:
@@ -180,7 +182,8 @@ Common Workflow Language
      label: out
      type: File
      outputBinding:
-       glob: generated.filter.vcf
+       glob: |-
+         $(inputs.vcf ? inputs.vcf.basename.replace(/.vcf$/, "") : "generated").filter.vcf
        loadContents: false
    stdout: _stdout
    stderr: _stderr

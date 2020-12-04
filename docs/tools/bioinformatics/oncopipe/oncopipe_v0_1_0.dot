@@ -1,0 +1,5 @@
+// Oncopipe
+digraph oncopipe {
+	node [shape=record]
+	process [label="process (Oncopipe: sample preparation)" color=grey80 style=filled]
+}

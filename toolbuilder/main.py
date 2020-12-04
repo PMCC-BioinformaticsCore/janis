@@ -155,6 +155,8 @@ def add_runtest_args(parser):
 
     parser.add_argument("-e", "--engine", help="engine", default=EngineType.cromwell)
 
+    parser.add_argument("-c", "--config", help="Path to janis config")
+
     parser.add_argument(
         "-o",
         "--output",

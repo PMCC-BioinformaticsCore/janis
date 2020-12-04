@@ -34,8 +34,8 @@ digraph WGSGermlineMultiCallersVariantsOnly {
 	vc_vardict_compress_for_sort -> vc_vardict_sort_combined
 	vc_vardict_sort_combined -> vc_vardict_uncompress_for_combine
 	vc_strelka -> combine_variants
-	vc_vardict_uncompress_for_combine -> combine_variants
 	vc_gatk_uncompress_for_combine -> combine_variants
+	vc_vardict_uncompress_for_combine -> combine_variants
 	combine_variants -> combined_compress
 	combined_compress -> combined_sort
 	combined_sort -> combined_uncompress

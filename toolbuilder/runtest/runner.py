@@ -1,3 +1,4 @@
+import json
 import requests
 from typing import List, Dict, Any, Optional
 from janis_assistant.main import run_with_outputs
@@ -15,6 +16,15 @@ class UpdateStatusOption:
         self.url = url
         self.token = token
         self.method = method
+
+
+class NotificationOption:
+
+    def __init__(self, url: str, tool_name: str, test_case: str, test_id: Optional[str] = None):
+        self.url = url
+        self.tool_name = tool_name
+        self.test_case = test_case
+        self.test_id = test_id
 
 
 def run_test_case(tool_id: str, test_case: str, engine: EngineType, output: Optional[Dict] = None) -> Dict[str, Any]:
@@ -63,6 +73,60 @@ def update_status(result: Dict, option: UpdateStatusOption):
     return resp.status_code, resp.text
 
 
+def send_slack_notification(result: Dict, option: NotificationOption):
+    Logger.info("sending notification to Slack")
+
+    if not len(result["failed"]):
+        failed = False
+        status = "Test Succeeded"
+        icon = ":white_check_mark:"
+    else:
+        failed = True
+        status = "Test Failed"
+        icon = ":x:"
+
+    test_description = ""
+    if option.test_id:
+        test_description = f" *{option.test_id}*"
+
+    summary_block = {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": f"{icon} {status}{test_description}: {option.tool_name} - {option.test_case}"
+        }
+    }
+
+    blocks = [summary_block]
+
+    if failed:
+        failed_expected_output = []
+
+        for f in result["failed"]:
+            failed_expected_output.append(f":black_small_square: {f}")
+
+        failed_block = {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "\n".join(failed_expected_output)
+            }
+        }
+
+        blocks.append(failed_block)
+
+    request = {"blocks": blocks}
+    resp = requests.post(url=option.url, json=request)
+
+    if resp.status_code == requests.codes.ok:
+        Logger.info("Notification sent")
+    else:
+        Logger.warn("Failed to send slack notification")
+        Logger.warn(f"{resp.status_code}: {resp.text}")
+
+    return resp.status_code, resp.text
+
+
 def cli_logging(result: Dict):
     Logger.info(f"Output: {result['output']}")
 
@@ -80,5 +144,8 @@ def cli_logging(result: Dict):
         for f in result["failed"]:
             Logger.info(f)
 
-    else:
+    if len(result['failed']) == 0:
         Logger.info("Test SUCCEEDED")
+    else:
+        Logger.critical("Test FAILED")
+

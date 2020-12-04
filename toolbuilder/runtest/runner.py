@@ -10,20 +10,25 @@ import janis_bioinformatics
 
 
 class UpdateStatusOption:
-
     def __init__(self, url: str, token: str, method: Optional[str] = "patch"):
         self.url = url
         self.token = token
         self.method = method
 
 
-def run_test_case(tool_id: str, test_case: str, engine: EngineType, output: Optional[Dict] = None) -> Dict[str, Any]:
+def run_test_case(
+    tool_id: str,
+    test_case: str,
+    engine: EngineType,
+    output: Optional[Dict] = None,
+    config: str = None,
+) -> Dict[str, Any]:
     tool = test_helpers.get_one_tool(tool_id)
 
     if not tool:
         raise Exception(f"Tool {tool_id} not found")
 
-    runner = ToolTestSuiteRunner(tool)
+    runner = ToolTestSuiteRunner(tool, config=config)
     tests_to_run = [tc for tc in tool.tests() if tc.name == test_case]
 
     if not tests_to_run:

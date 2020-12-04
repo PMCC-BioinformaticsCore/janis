@@ -131,12 +131,9 @@ def add_runtest_args(parser):
     parser.add_argument("test_case", help="Name of test case as listed in tool.tests()")
     parser.add_argument("tool", help="Name of tool to test")
 
-    parser.add_argument(
-        "-e",
-        "--engine",
-        help="engine",
-        default=EngineType.cromwell
-    )
+    parser.add_argument("-e", "--engine", help="engine", default=EngineType.cromwell)
+
+    parser.add_argument("-c", "--config", help="Path to janis config")
 
     parser.add_argument(
         "-o",

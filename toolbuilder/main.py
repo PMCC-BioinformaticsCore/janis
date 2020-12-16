@@ -126,7 +126,11 @@ def do_runtest(args):
         output = ast.literal_eval(args.output)
 
     result = run_test_case(
-        tool_id=args.tool, test_case=args.test_case, engine=args.engine, output=output
+        tool_id=args.tool,
+        test_case=args.test_case,
+        engine=args.engine,
+        output=output,
+        config=args.config,
     )
     cli_logging(result)
 

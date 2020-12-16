@@ -40,7 +40,7 @@ def run_test_case(
         raise Exception(f"Tool {tool_id} not found")
 
     runner = ToolTestSuiteRunner(tool, config=config)
-    tests_to_run = [tc for tc in tool.tests() if tc.name == test_case]
+    tests_to_run = [tc for tc in tool.tests() if tc.name.lower() == test_case.lower()]
 
     if not tests_to_run:
         raise Exception(f"Test case {test_case} not found")

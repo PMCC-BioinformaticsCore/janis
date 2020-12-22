@@ -147,8 +147,7 @@ def do_runtest(args):
     # send output to test framework API
     if args.test_manager_url and args.test_manager_token:
         option = UpdateStatusOption(
-            url=args.test_manager_url,
-            token=args.test_manager_token,
+            url=args.test_manager_url, token=args.test_manager_token
         )
         update_status(result, option)
 
@@ -162,20 +161,16 @@ def add_runtest_args(parser):
     parser.add_argument("-c", "--config", help="Path to janis config")
 
     parser.add_argument(
-        "-o",
-        "--output",
-        help="Dry run test by providing a dictionary of output",
+        "-o", "--output", help="Dry run test by providing a dictionary of output"
     )
 
     # For updating test-framework API endpoint
     parser.add_argument(
-        "--test-manager-url",
-        help="API endpoint to update run status in Test Manager",
+        "--test-manager-url", help="API endpoint to update run status in Test Manager"
     )
 
     parser.add_argument(
-        "--test-manager-token",
-        help="Authentication token for Test Manager API",
+        "--test-manager-token", help="Authentication token for Test Manager API"
     )
 
     parser.add_argument(
@@ -184,8 +179,7 @@ def add_runtest_args(parser):
     )
 
     parser.add_argument(
-        "--slack-notification-url",
-        help="Slack webhook to send notifications to",
+        "--slack-notification-url", help="Slack webhook to send notifications to"
     )
 
 

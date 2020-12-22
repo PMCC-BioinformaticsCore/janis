@@ -62,6 +62,15 @@ def run_test_case(
     return {"failed": list(failed), "succeeded": list(succeeded), "output": output}
 
 
+def find_test_cases(tool_id: str):
+    tool = test_helpers.get_one_tool(tool_id)
+
+    if not tool:
+        raise Exception(f"Tool {tool_id} not found")
+
+    return [tc.name for tc in tool.tests()]
+
+
 def update_status(result: Dict, option: UpdateStatusOption):
     Logger.info(f"Updating test status via {option.method} {option.url}")
 
@@ -134,7 +143,8 @@ def send_slack_notification(result: Dict, option: NotificationOption):
     return resp.status_code, resp.text
 
 
-def cli_logging(result: Dict):
+def cli_logging(name: str, result: Dict):
+    Logger.info(f"Test Case: {name}")
     Logger.info(f"Output: {result['output']}")
 
     if len(result["succeeded"]) > 0:
@@ -152,6 +162,6 @@ def cli_logging(result: Dict):
             Logger.info(f)
 
     if len(result["failed"]) == 0:
-        Logger.info("Test SUCCEEDED")
+        Logger.info(f"Test SUCCEEDED: {name}")
     else:
-        Logger.critical("Test FAILED")
+        Logger.critical(f"Test FAILED: {name}")

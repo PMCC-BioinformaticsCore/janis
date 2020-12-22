@@ -12,7 +12,6 @@ JANIS_TEMPLATES_VERSION = "v0.9.4"
 
 
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########
-
 min_core_version = f"janis-pipelines.core>=" + JANIS_CORE_VERSION
 min_assistant_version = f"janis-pipelines.runner>=" + JANIS_ASSISTANT_VERSION
 min_unix_version = f"janis-pipelines.unix>=" + JANIS_UNIX_VERSION
@@ -53,7 +52,7 @@ setup(
         min_templs_version,
     ],
     extras_require={"bioinformatics": [min_bioinf_version, min_pipes_version]},
-    entry_points={"console_scripts": ["janisbuilder=toolbuilder.main:process_args"]},
+    entry_points={"console_scripts": ["janisdk=toolbuilder.main:process_args"]},
     zip_safe=False,
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -1,11 +1,20 @@
-import argparse, sys
+import argparse, sys, ast, requests
 
 from toolbuilder.parse_help import from_container
 from toolbuilder.templates import ToolTemplateType
+from toolbuilder.runtest.runner import (
+    run_test_case,
+    update_status,
+    UpdateStatusOption,
+    NotificationOption,
+    cli_logging,
+    send_slack_notification,
+)
+from janis_assistant.engines.enginetypes import EngineType
 
 
 def process_args():
-    cmds = {"container": do_container}
+    cmds = {"container": do_container, "run-test": do_runtest}
 
     parser = argparse.ArgumentParser(description="Execute a workflow")
     subparsers = parser.add_subparsers(help="subcommand help", dest="command")
@@ -13,6 +22,7 @@ def process_args():
 
     subparsers.add_parser("version")
     add_container_args(subparsers.add_parser("container"))
+    add_runtest_args(subparsers.add_parser("run-test"))
     # add_workflow_args(subparsers.add_parser("run-workflow"))
 
     args = parser.parse_args()
@@ -107,6 +117,75 @@ def add_container_args(parser):
     extra = parser.add_argument_group("Extra options")
     extra.add_argument(
         "--gatk4", action="store_true", help="Use the GATK4 tool template"
+    )
+
+
+def do_runtest(args):
+    output = None
+    if args.output:
+        output = ast.literal_eval(args.output)
+
+    result = run_test_case(
+        tool_id=args.tool,
+        test_case=args.test_case,
+        engine=args.engine,
+        output=output,
+        config=args.config,
+    )
+    cli_logging(result)
+
+    # Send notification to Slack
+    if args.slack_notification_url:
+        option = NotificationOption(
+            url=args.slack_notification_url,
+            tool_name=args.tool,
+            test_case=args.test_case,
+            test_id=args.test_id,
+        )
+        send_slack_notification(result=result, option=option)
+
+    # send output to test framework API
+    if args.test_manager_url and args.test_manager_token:
+        option = UpdateStatusOption(
+            url=args.test_manager_url,
+            token=args.test_manager_token,
+        )
+        update_status(result, option)
+
+
+def add_runtest_args(parser):
+    parser.add_argument("test_case", help="Name of test case as listed in tool.tests()")
+    parser.add_argument("tool", help="Name of tool to test")
+
+    parser.add_argument("-e", "--engine", help="engine", default=EngineType.cromwell)
+
+    parser.add_argument("-c", "--config", help="Path to janis config")
+
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="Dry run test by providing a dictionary of output",
+    )
+
+    # For updating test-framework API endpoint
+    parser.add_argument(
+        "--test-manager-url",
+        help="API endpoint to update run status in Test Manager",
+    )
+
+    parser.add_argument(
+        "--test-manager-token",
+        help="Authentication token for Test Manager API",
+    )
+
+    parser.add_argument(
+        "--test-id",
+        help="Test identification to be attached to the notification message",
+    )
+
+    parser.add_argument(
+        "--slack-notification-url",
+        help="Slack webhook to send notifications to",
     )
 
 

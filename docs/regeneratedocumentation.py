@@ -268,7 +268,6 @@ def prepare_all_tools():
 
 def prepare_templates():
     """
-    Templates can probably 
     :return:
     """
 

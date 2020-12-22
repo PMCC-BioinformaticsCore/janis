@@ -1,0 +1,27 @@
+// Mutect2 joint somatic variant calling workflow (CRAM)
+digraph Mutect2JointSomaticWorkflowCram {
+	node [shape=record]
+	createCallRegions [label="createCallRegions (Create genomic call regions)"]
+	mutect2 [label="mutect2 (GatkMutect2)"]
+	concat [label="concat (BCFTools: Concat)"]
+	indexUnfiltered [label="indexUnfiltered (BCFTools: Index)"]
+	learn [label="learn (GATK4: LearnReadOrientationModel)"]
+	mergeMutect2 [label="mergeMutect2 (GATK4: MergeMutectStats)"]
+	pileup [label="pileup (GATK4: GetPileupSummaries)"]
+	contamination [label="contamination (GATK4: CalculateContamination)"]
+	filtering [label="filtering (GATK4: GetFilterMutectCalls)"]
+	normalise [label="normalise (BCFTools: Normalize)"]
+	indexFiltered [label="indexFiltered (BCFTools: Index)"]
+	createCallRegions -> mutect2
+	mutect2 -> concat
+	concat -> indexUnfiltered
+	mutect2 -> learn
+	mutect2 -> mergeMutect2
+	pileup -> contamination
+	mergeMutect2 -> filtering
+	learn -> filtering
+	contamination -> filtering
+	indexUnfiltered -> filtering
+	filtering -> normalise
+	normalise -> indexFiltered
+}

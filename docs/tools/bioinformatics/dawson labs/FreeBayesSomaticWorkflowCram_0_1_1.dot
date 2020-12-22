@@ -1,0 +1,33 @@
+// Freebayes somatic workflow (CRAM)
+digraph FreeBayesSomaticWorkflowCram {
+	node [shape=record]
+	createCallRegions [label="createCallRegions (Create genomic call regions)"]
+	callVariants [label="callVariants (freebayes)"]
+	callSomatic [label="callSomatic (Call Somatic Variants from freebayes)"]
+	combineRegions [label="combineRegions (VcfLib: VcfCombine)"]
+	sortSomatic1 [label="sortSomatic1 (VcfLib: VcfStreamSort)"]
+	normalizeSomatic1 [label="normalizeSomatic1 (BCFTools: Normalize)"]
+	allelicPrimitves [label="allelicPrimitves (VcfLib: VcfAllelicPrimitives)"]
+	fixSplitLines [label="fixSplitLines (VcfLib: VcfFixUp)"]
+	sortSomatic2 [label="sortSomatic2 (VcfLib: VcfStreamSort)"]
+	normalizeSomatic2 [label="normalizeSomatic2 (BCFTools: Normalize)"]
+	uniqueAlleles [label="uniqueAlleles (VcfLib: VcfUniqAlleles)"]
+	sortFinal [label="sortFinal (VcfLib: VcfStreamSort)"]
+	uniqVcf [label="uniqVcf (VcfLib: VcfUniq)"]
+	compressFinal [label="compressFinal (BGZip)"]
+	indexFinal [label="indexFinal (Tabix)"]
+	createCallRegions -> callVariants
+	callVariants -> callSomatic
+	callSomatic -> combineRegions
+	combineRegions -> sortSomatic1
+	sortSomatic1 -> normalizeSomatic1
+	normalizeSomatic1 -> allelicPrimitves
+	allelicPrimitves -> fixSplitLines
+	fixSplitLines -> sortSomatic2
+	sortSomatic2 -> normalizeSomatic2
+	normalizeSomatic2 -> uniqueAlleles
+	uniqueAlleles -> sortFinal
+	sortFinal -> uniqVcf
+	uniqVcf -> compressFinal
+	compressFinal -> indexFinal
+}

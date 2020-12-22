@@ -3,7 +3,7 @@
 Strelka (Somatic)
 ===================================
 
-``strelka_somatic`` · *0 contributors · 2 versions*
+``strelka_somatic`` · *1 contributor · 2 versions*
 
 Usage: configureStrelkaSomaticWorkflow.py [options]
 Version: 2.9.10
@@ -90,7 +90,7 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 2.9.10, 2.9.9
 :Container: michaelfranklin/strelka:2.9.10
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
 :Created: 2019-05-27
 :Updated: 2019-10-14
@@ -99,48 +99,48 @@ Information
 Outputs
 -----------
 
-============  ====================  ===========================================================================================================================================================================================================================================
-name          type                  documentation
-============  ====================  ===========================================================================================================================================================================================================================================
+============  ============  ===========================================================================================================================================================================================================================================
+name          type          documentation
+============  ============  ===========================================================================================================================================================================================================================================
 configPickle  File
 script        File
-stats         tsv                   A tab-delimited report of various internal statistics from the variant calling process: Runtime information accumulated for each genome segment, excluding auxiliary steps such as BAM indexing and vcf merging. Indel candidacy statistics
-indels        CompressedIndexedVCF
-snvs          CompressedIndexedVCF
-============  ====================  ===========================================================================================================================================================================================================================================
+stats         tsv           A tab-delimited report of various internal statistics from the variant calling process: Runtime information accumulated for each genome segment, excluding auxiliary steps such as BAM indexing and vcf merging. Indel candidacy statistics
+indels        Gzipped<VCF>
+snvs          Gzipped<VCF>
+============  ============  ===========================================================================================================================================================================================================================================
 
 
 Additional configuration (inputs)
 ---------------------------------
 
-=====================  =====================================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-name                   type                                   prefix                      position  documentation
-=====================  =====================================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-normalBam              IndexedBam                             --normalBam=                       1  Normal sample BAM or CRAM file. (no default)
-tumorBam               IndexedBam                             --tumourBam=                       1  (--tumorBam)  Tumor sample BAM or CRAM file. [required] (no default)
-reference              FastaFai                               --referenceFasta=                  1  samtools-indexed reference fasta file [required]
-rundir                 Optional<Filename>                     --runDir=                          1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory. (default: StrelkaSomaticWorkflow)
-region                 Optional<Array<String>>                --region                           1  Limit the analysis to one or more genome region(s) for debugging purposes. If this argument is provided multiple times the union of all specified regions will be analyzed. All regions must be non-overlapping to get a meaningful result. Examples: '--region chr20' (whole chromosome), '--region chr2:100-2000 --region chr3:2500-3000' (two regions)'. If this option is specified (one or more times) together with the 'callRegions' BED file,then all region arguments will be intersected with the callRegions BED track.
-config                 Optional<File>                         --config=                          1  provide a configuration file to override defaults in global config file (/opt/strelka/bin/configureStrelkaSomaticWorkflow.py.ini)
-outputcallableregions  Optional<Boolean>                      --outputCallableRegions            1  Output a bed file describing somatic callable regions of the genome
-indelCandidates        Optional<Array<CompressedIndexedVCF>>  --indelCandidates=                 1  Specify a VCF of candidate indel alleles. These alleles are always evaluated but only reported in the output when they are inferred to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left-shifted/normalized, any unnormalized alleles will be ignored. This option may be specified more than once, multiple input VCFs will be merged. (default: None)
-forcedgt               Optional<Array<CompressedIndexedVCF>>  --forcedGT=                        1  Specify a VCF of candidate alleles. These alleles are always evaluated and reported even if they are unlikely to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left- shifted/normalized, any unnormalized allele will trigger a runtime error. This option may be specified more than once, multiple input VCFs will be merged. Note that for any SNVs provided in the VCF, the SNV site will be reported (and for gVCF, excluded from block compression), but the specific SNV alleles are ignored. (default: None)
-targeted               Optional<Boolean>                      --targeted                         1  Set options for other targeted input: note in particular that this flag turns off high-depth filters
-exome                  Optional<Boolean>                      --exome                            1  Set options for exome: note in particular that this flag turns off high-depth filters
-callRegions            Optional<BedTABIX>                     --callRegions=                     1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
-noisevcf               Optional<CompressedIndexedVCF>         --noiseVcf=                        1  Noise vcf file (submit argument multiple times for more than one file)
-scansizemb             Optional<Integer>                      --scanSizeMb=                      1  Maximum sequence region size (in megabases) scanned by each task during genome variant calling. (default: 12)
-callmemmb              Optional<Integer>                      --callMemMb=                       1  Set variant calling task memory limit (in megabytes). It is not recommended to change the default in most cases, but this might be required for a sample of unusual depth.
-retaintempfiles        Optional<Boolean>                      --retainTempFiles                  1  Keep all temporary files (for workflow debugging)
-disableevs             Optional<Boolean>                      --disableEVS                       1  Disable empirical variant scoring (EVS).
-reportevsfeatures      Optional<Boolean>                      --reportEVSFeatures                1  Report all empirical variant scoring features in VCF output.
-snvscoringmodelfile    Optional<File>                         --snvScoringModelFile=             1  Provide a custom empirical scoring model file for SNVs (default: /opt/strelka/share/config/somaticSNVScoringM odels.json)
-indelscoringmodelfile  Optional<File>                         --indelScoringModelFile=           1  Provide a custom empirical scoring model file for indels (default: /opt/strelka/share/config/somaticInde lScoringModels.json)
-mode                   Optional<String>                       --mode                             3  (-m MODE)  select run mode (local|sge)
-queue                  Optional<String>                       --queue                            3  (-q QUEUE) specify scheduler queue name
-memGb                  Optional<String>                       --memGb                            3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
-quiet                  Optional<Boolean>                      --quiet                            3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
-=====================  =====================================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+=====================  =============================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+name                   type                           prefix                      position  documentation
+=====================  =============================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+normalBam              IndexedBam                     --normalBam=                       1  Normal sample BAM or CRAM file. (no default)
+tumorBam               IndexedBam                     --tumourBam=                       1  (--tumorBam)  Tumor sample BAM or CRAM file. [required] (no default)
+reference              FastaFai                       --referenceFasta=                  1  samtools-indexed reference fasta file [required]
+rundir                 Optional<Filename>             --runDir=                          1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory. (default: StrelkaSomaticWorkflow)
+region                 Optional<Array<String>>        --region                           1  Limit the analysis to one or more genome region(s) for debugging purposes. If this argument is provided multiple times the union of all specified regions will be analyzed. All regions must be non-overlapping to get a meaningful result. Examples: '--region chr20' (whole chromosome), '--region chr2:100-2000 --region chr3:2500-3000' (two regions)'. If this option is specified (one or more times) together with the 'callRegions' BED file,then all region arguments will be intersected with the callRegions BED track.
+config                 Optional<File>                 --config=                          1  provide a configuration file to override defaults in global config file (/opt/strelka/bin/configureStrelkaSomaticWorkflow.py.ini)
+outputcallableregions  Optional<Boolean>              --outputCallableRegions            1  Output a bed file describing somatic callable regions of the genome
+indelCandidates        Optional<Array<Gzipped<VCF>>>  --indelCandidates=                 1  Specify a VCF of candidate indel alleles. These alleles are always evaluated but only reported in the output when they are inferred to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left-shifted/normalized, any unnormalized alleles will be ignored. This option may be specified more than once, multiple input VCFs will be merged. (default: None)
+forcedgt               Optional<Array<Gzipped<VCF>>>  --forcedGT=                        1  Specify a VCF of candidate alleles. These alleles are always evaluated and reported even if they are unlikely to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left- shifted/normalized, any unnormalized allele will trigger a runtime error. This option may be specified more than once, multiple input VCFs will be merged. Note that for any SNVs provided in the VCF, the SNV site will be reported (and for gVCF, excluded from block compression), but the specific SNV alleles are ignored. (default: None)
+targeted               Optional<Boolean>              --targeted                         1  Set options for other targeted input: note in particular that this flag turns off high-depth filters
+exome                  Optional<Boolean>              --exome                            1  Set options for exome: note in particular that this flag turns off high-depth filters
+callRegions            Optional<Gzipped<bed>>         --callRegions=                     1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
+noisevcf               Optional<Gzipped<VCF>>         --noiseVcf=                        1  Noise vcf file (submit argument multiple times for more than one file)
+scansizemb             Optional<Integer>              --scanSizeMb=                      1  Maximum sequence region size (in megabases) scanned by each task during genome variant calling. (default: 12)
+callmemmb              Optional<Integer>              --callMemMb=                       1  Set variant calling task memory limit (in megabytes). It is not recommended to change the default in most cases, but this might be required for a sample of unusual depth.
+retaintempfiles        Optional<Boolean>              --retainTempFiles                  1  Keep all temporary files (for workflow debugging)
+disableevs             Optional<Boolean>              --disableEVS                       1  Disable empirical variant scoring (EVS).
+reportevsfeatures      Optional<Boolean>              --reportEVSFeatures                1  Report all empirical variant scoring features in VCF output.
+snvscoringmodelfile    Optional<File>                 --snvScoringModelFile=             1  Provide a custom empirical scoring model file for SNVs (default: /opt/strelka/share/config/somaticSNVScoringM odels.json)
+indelscoringmodelfile  Optional<File>                 --indelScoringModelFile=           1  Provide a custom empirical scoring model file for indels (default: /opt/strelka/share/config/somaticInde lScoringModels.json)
+mode                   Optional<String>               --mode                             3  (-m MODE)  select run mode (local|sge)
+queue                  Optional<String>               --queue                            3  (-q QUEUE) specify scheduler queue name
+memGb                  Optional<String>               --memGb                            3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
+quiet                  Optional<Boolean>              --quiet                            3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
+=====================  =============================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -216,7 +216,7 @@ Workflow Description Language
          ~{if defined(queue) then ("--queue " + queue) else ''} \
          ~{if defined(memGb) then ("--memGb " + memGb) else ''} \
          ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
-         --jobs ~{select_first([runtime_cpu, 4, 1])}
+         --jobs ~{select_first([runtime_cpu, 4])}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
@@ -244,7 +244,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Strelka (Somatic)
    doc: |-
      Usage: configureStrelkaSomaticWorkflow.py [options]
@@ -266,7 +266,7 @@ Common Workflow Language
      doc: Normal sample BAM or CRAM file. (no default)
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        prefix: --normalBam=
        position: 1
@@ -276,7 +276,7 @@ Common Workflow Language
      doc: (--tumorBam)  Tumor sample BAM or CRAM file. [required] (no default)
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        prefix: --tumourBam=
        position: 1
@@ -286,7 +286,7 @@ Common Workflow Language
      doc: ' samtools-indexed reference fasta file [required]'
      type: File
      secondaryFiles:
-     - .fai
+     - pattern: .fai
      inputBinding:
        prefix: --referenceFasta=
        position: 1
@@ -392,7 +392,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      inputBinding:
        prefix: --callRegions=
        position: 1
@@ -404,7 +404,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      inputBinding:
        prefix: --noiseVcf=
        position: 1
@@ -530,14 +530,14 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.rundir + "/runWorkflow.py.config.pickle"))
-       outputEval: $((inputs.rundir + "/runWorkflow.py.config.pickle"))
+       outputEval: $((inputs.rundir.basename + "/runWorkflow.py.config.pickle"))
        loadContents: false
    - id: script
      label: script
      type: File
      outputBinding:
        glob: $((inputs.rundir + "/runWorkflow.py"))
-       outputEval: $((inputs.rundir + "/runWorkflow.py"))
+       outputEval: $((inputs.rundir.basename + "/runWorkflow.py"))
        loadContents: false
    - id: stats
      label: stats
@@ -546,27 +546,27 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.rundir + "/results/stats/runStats.tsv"))
-       outputEval: $((inputs.rundir + "/results/stats/runStats.tsv"))
+       outputEval: $((inputs.rundir.basename + "/results/stats/runStats.tsv"))
        loadContents: false
    - id: indels
      label: indels
      doc: ''
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: $((inputs.rundir + "/results/variants/somatic.indels.vcf.gz"))
-       outputEval: $((inputs.rundir + "/results/variants/somatic.indels.vcf.gz"))
+       outputEval: $((inputs.rundir.basename + "/results/variants/somatic.indels.vcf.gz"))
        loadContents: false
    - id: snvs
      label: snvs
      doc: ''
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: $((inputs.rundir + "/results/variants/somatic.snvs.vcf.gz"))
-       outputEval: $((inputs.rundir + "/results/variants/somatic.snvs.vcf.gz"))
+       outputEval: $((inputs.rundir.basename + "/results/variants/somatic.snvs.vcf.gz"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -578,9 +578,14 @@ Common Workflow Language
      shellQuote: false
    - prefix: --jobs
      position: 3
-     valueFrom: |-
-       $([inputs.runtime_cpu, 4, 1].filter(function (inner) { return inner != null })[0])
+     valueFrom: $([inputs.runtime_cpu, 4].filter(function (inner) { return inner != null
+       })[0])
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: strelka_somatic
 
 

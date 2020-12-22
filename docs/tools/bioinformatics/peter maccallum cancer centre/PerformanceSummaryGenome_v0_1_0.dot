@@ -10,7 +10,7 @@ digraph PerformanceSummaryGenome {
 	samtoolsview -> rmdupbamflagstat
 	samtoolsview -> bedtoolsgenomecoveragebed
 	bedtoolsgenomecoveragebed -> performancesummary
-	bamflagstat -> performancesummary
 	rmdupbamflagstat -> performancesummary
 	gatk4collectinsertsizemetrics -> performancesummary
+	bamflagstat -> performancesummary
 }

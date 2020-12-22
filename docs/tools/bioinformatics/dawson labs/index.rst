@@ -24,7 +24,16 @@ Automatically generated index page for Dawson Labs:
        <p style="margin-bottom: 5px"><b>Freebayes somatic workflow</b> <span style="margin-left: 10px; color: darkgray">FreeBayesSomaticWorkflow</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="freebayessomaticworkflow.html" style="margin-bottom: 10px">
-       v<b>0.1</b>
+       v<b>0.1.1</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="freebayessomaticworkflowcram.html">
+       <p style="margin-bottom: 5px"><b>Freebayes somatic workflow (CRAM)</b> <span style="margin-left: 10px; color: darkgray">FreeBayesSomaticWorkflowCram</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="freebayessomaticworkflowcram.html" style="margin-bottom: 10px">
+       v<b>0.1.1</b>
      </a></p>
      </a>
      <hr />
@@ -33,7 +42,16 @@ Automatically generated index page for Dawson Labs:
        <p style="margin-bottom: 5px"><b>Mutect2 joint somatic variant calling workflow</b> <span style="margin-left: 10px; color: darkgray">Mutect2JointSomaticWorkflow</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="mutect2jointsomaticworkflow.html" style="margin-bottom: 10px">
-       v<b>0.1</b>
+       v<b>0.1.1</b>
+     </a></p>
+     </a>
+     <hr />
+         
+     <a href="mutect2jointsomaticworkflowcram.html">
+       <p style="margin-bottom: 5px"><b>Mutect2 joint somatic variant calling workflow (CRAM)</b> <span style="margin-left: 10px; color: darkgray">Mutect2JointSomaticWorkflowCram</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="mutect2jointsomaticworkflowcram.html" style="margin-bottom: 10px">
+       v<b>0.1.1</b>
      </a></p>
      </a>
      <hr />
@@ -42,25 +60,16 @@ Automatically generated index page for Dawson Labs:
        <p style="margin-bottom: 5px"><b>Strelka 2Pass analysis</b> <span style="margin-left: 10px; color: darkgray">Strelka2PassWorkflow</span></p>
        
        <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="strelka2passworkflow.html" style="margin-bottom: 10px">
-       v<b>0.1</b>
+       v<b>0.2</b>
      </a></p>
      </a>
      <hr />
          
-     <a href="strelka2passworkflowstep1.html">
-       <p style="margin-bottom: 5px"><b>Strelka 2Pass analysis step1</b> <span style="margin-left: 10px; color: darkgray">Strelka2PassWorkflowStep1</span></p>
+     <a href="strelka2passworkflowcram.html">
+       <p style="margin-bottom: 5px"><b>Strelka 2Pass analysis (CRAM)</b> <span style="margin-left: 10px; color: darkgray">Strelka2PassWorkflowCram</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="strelka2passworkflowstep1.html" style="margin-bottom: 10px">
-       v<b>0.1</b>
-     </a></p>
-     </a>
-     <hr />
-         
-     <a href="strelka2passworkflowstep2.html">
-       <p style="margin-bottom: 5px"><b>Strelka 2Pass analysis step 2</b> <span style="margin-left: 10px; color: darkgray">Strelka2PassWorkflowStep2</span></p>
-       
-       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="strelka2passworkflowstep2.html" style="margin-bottom: 10px">
-       v<b>0.1</b>
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="strelka2passworkflowcram.html" style="margin-bottom: 10px">
+       v<b>0.2</b>
      </a></p>
      </a>
      <hr />

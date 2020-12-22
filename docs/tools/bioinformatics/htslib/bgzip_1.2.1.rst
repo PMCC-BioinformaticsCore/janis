@@ -64,7 +64,7 @@ Quickstart
 
 .. code-block:: yaml
 
-       file: file.vcf
+       file: file
 
 
 
@@ -100,7 +100,7 @@ Outputs
 ======  =============  ===============
 name    type           documentation
 ======  =============  ===============
-out     CompressedVCF
+out     Gzipped<File>
 ======  =============  ===============
 
 
@@ -110,7 +110,7 @@ Additional configuration (inputs)
 ==============  ==================  ============  ==========  ========================================================================================================================================================================================================================================================
 name            type                prefix          position  documentation
 ==============  ==================  ============  ==========  ========================================================================================================================================================================================================================================================
-file            VCF                                      100  File to bgzip compress
+file            File                                     100  File to bgzip compress
 outputFilename  Optional<Filename>                       102
 offset          Optional<Integer>   --offset                  b: Decompress to standard output from virtual file position (0-based uncompressed offset). Implies -c and -d.
 stdout          Optional<Boolean>   --stdout                  c: Write to standard output, keep original files unchanged.
@@ -171,7 +171,7 @@ Workflow Description Language
          ~{if defined(threads) then ("--threads " + threads) else ''} \
          '~{file}' \
          > \
-         ~{select_first([outputFilename, "generated.vcf.gz"])}
+         '~{select_first([outputFilename, "~{basename(file)}.gz"])}'
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 1])
@@ -182,7 +182,7 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = select_first([outputFilename, "generated.vcf.gz"])
+       File out = select_first([outputFilename, "~{basename(file)}.gz"])
      }
    }
 
@@ -193,7 +193,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: BGZip
    doc: |-
      bgzip – Block compression/decompression utility
@@ -227,10 +227,10 @@ Common Workflow Language
      type:
      - string
      - 'null'
-     default: generated.vcf.gz
+     default: generated.gz
      inputBinding:
        position: 102
-       shellQuote: false
+       valueFrom: $(inputs.file.basename.basename).gz
    - id: offset
      label: offset
      doc: |-
@@ -336,7 +336,7 @@ Common Workflow Language
      label: out
      type: File
      outputBinding:
-       glob: generated.vcf.gz
+       glob: $(inputs.file.basename.basename).gz
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -346,6 +346,11 @@ Common Workflow Language
    - position: 101
      valueFrom: '>'
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bgzip
 
 

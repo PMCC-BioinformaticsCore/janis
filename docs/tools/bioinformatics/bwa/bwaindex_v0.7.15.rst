@@ -100,13 +100,15 @@ out     FastaBwa
 Additional configuration (inputs)
 ---------------------------------
 
-=========  =================  ========  ==========  =======================================================================
+=========  =================  ========  ==========  ================================================================================================================================================================================================================================================================================================================================================
 name       type               prefix      position  documentation
-=========  =================  ========  ==========  =======================================================================
+=========  =================  ========  ==========  ================================================================================================================================================================================================================================================================================================================================================
 reference  Fasta                                 1
 blockSize  Optional<Integer>  -b                    block size for the bwtsw algorithm (effective with -a bwtsw) [10000000]
 algorithm  Optional<String>   -a                    BWT construction algorithm: bwtsw, is or rb2 [auto]
-=========  =================  ========  ==========  =======================================================================
+                                                        - is	IS linear-time algorithm for constructing suffix array. It requires 5.37N memory where N is the size of the database. IS is moderately fast, but does not work with database larger than 2GB. IS is the default algorithm due to its simplicity. The current codes for IS algorithm are reimplemented by Yuta Mori.
+                                                        - bwtsw	Algorithm implemented in BWT-SW. This method works with the whole human genome.
+=========  =================  ========  ==========  ================================================================================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -127,7 +129,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{reference} .
+       cp -f '~{reference}' '.'
        bwa index \
          ~{if defined(blockSize) then ("-b " + blockSize) else ''} \
          ~{if defined(algorithm) then ("-a '" + algorithm + "'") else ""} \
@@ -138,7 +140,7 @@ Workflow Description Language
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
        docker: "biocontainers/bwa:v0.7.15_cv3"
        duration: select_first([runtime_seconds, 86400])
-       memory: "~{select_first([runtime_memory, 2, 4])}G"
+       memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
      output {
@@ -158,7 +160,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: BWA-Index
    doc: |-
      bwa - Burrows-Wheeler Alignment Tool
@@ -192,7 +194,10 @@ Common Workflow Language
        prefix: -b
    - id: algorithm
      label: algorithm
-     doc: 'BWT construction algorithm: bwtsw, is or rb2 [auto]'
+     doc: |
+       BWT construction algorithm: bwtsw, is or rb2 [auto]
+           - is	IS linear-time algorithm for constructing suffix array. It requires 5.37N memory where N is the size of the database. IS is moderately fast, but does not work with database larger than 2GB. IS is the default algorithm due to its simplicity. The current codes for IS algorithm are reimplemented by Yuta Mori.
+           - bwtsw	Algorithm implemented in BWT-SW. This method works with the whole human genome.
      type:
      - string
      - 'null'
@@ -204,13 +209,13 @@ Common Workflow Language
      label: out
      type: File
      secondaryFiles:
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
      outputBinding:
-       glob: $(inputs.reference)
+       glob: $(inputs.reference.basename)
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -219,6 +224,11 @@ Common Workflow Language
    - bwa
    - index
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bwaIndex
 
 

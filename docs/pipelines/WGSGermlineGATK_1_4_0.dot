@@ -18,8 +18,8 @@ digraph WGSGermlineGATK {
 	fastqc -> getfastqc_adapters
 	getfastqc_adapters -> align_and_sort
 	align_and_sort -> merge_and_mark
-	merge_and_mark -> performance_summary
 	calculate_performancesummary_genomefile -> performance_summary
+	merge_and_mark -> performance_summary
 	merge_and_mark -> vc_gridss
 	merge_and_mark -> bqsr
 	bqsr -> vc_gatk
@@ -27,6 +27,6 @@ digraph WGSGermlineGATK {
 	vc_gatk_merge -> vc_gatk_compressvcf
 	vc_gatk_compressvcf -> vc_gatk_sort_combined
 	vc_gatk_sort_combined -> vc_gatk_uncompress_for_bamstats
-	merge_and_mark -> vc_gatk_addbamstats
 	vc_gatk_uncompress_for_bamstats -> vc_gatk_addbamstats
+	merge_and_mark -> vc_gatk_addbamstats
 }

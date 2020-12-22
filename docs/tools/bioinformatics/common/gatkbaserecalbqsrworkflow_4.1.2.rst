@@ -3,7 +3,7 @@
 GATK Base Recalibration on Bam
 ==========================================================
 
-``GATKBaseRecalBQSRWorkflow`` · *0 contributors · 2 versions*
+``GATKBaseRecalBQSRWorkflow`` · *1 contributor · 2 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -88,10 +88,10 @@ URL: *No URL to the documentation was provided*
 :ID: ``GATKBaseRecalBQSRWorkflow``
 :URL: *No URL to the documentation was provided*
 :Versions: 4.1.2, 4.1.3
-:Authors: 
+:Authors: Jiaan Yu
 :Citations: 
-:Created: None
-:Updated: None
+:Created: 2020-06-26
+:Updated: 2020-06-26
 
 
 
@@ -123,17 +123,17 @@ GATK4: Apply base quality score recalibration  ``Gatk4ApplyBQSR/4.1.2.0``
 Additional configuration (inputs)
 ---------------------------------
 
-============  ====================  ===================================================================================================================================================
-name          type                  documentation
-============  ====================  ===================================================================================================================================================
+============  ================  ===================================================================================================================================================
+name          type              documentation
+============  ================  ===================================================================================================================================================
 bam           IndexedBam
 reference     FastaWithIndexes
-snps_dbsnp    CompressedIndexedVCF
-snps_1000gp   CompressedIndexedVCF
-known_indels  CompressedIndexedVCF
-mills_indels  CompressedIndexedVCF
-intervals     Optional<bed>         This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
-============  ====================  ===================================================================================================================================================
+snps_dbsnp    Gzipped<VCF>
+snps_1000gp   Gzipped<VCF>
+known_indels  Gzipped<VCF>
+mills_indels  Gzipped<VCF>
+intervals     Optional<bed>     This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
+============  ================  ===================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -211,8 +211,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: GATK Base Recalibration on Bam
+   doc: ''
 
    requirements:
    - class: InlineJavascriptRequirement
@@ -223,7 +224,7 @@ Common Workflow Language
    - id: bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: intervals
      doc: |-
        This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
@@ -233,35 +234,35 @@ Common Workflow Language
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: snps_dbsnp
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: snps_1000gp
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: known_indels
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: mills_indels
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
 
    outputs:
    - id: out
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: apply_bqsr/out
 
    steps:

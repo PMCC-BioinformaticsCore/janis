@@ -47,6 +47,15 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
      </a>
      <hr />
          
+     <a href="generateintervalsbychromosome.html">
+       <p style="margin-bottom: 5px"><b>Generating genomic intervals by chromosome</b> <span style="margin-left: 10px; color: darkgray">GenerateIntervalsByChromosome</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="generateintervalsbychromosome.html" style="margin-bottom: 10px">
+       v<b>0.1.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
      <a href="generatevardictheaderlines.html">
        <p style="margin-bottom: 5px"><b>GenerateVardictHeaderLines</b> <span style="margin-left: 10px; color: darkgray">GenerateVardictHeaderLines</span></p>
        
@@ -122,8 +131,8 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
      <a href="addbamstats.html">
        <p style="margin-bottom: 5px"><b>Add Bam Statistics to Vcf</b> <span style="margin-left: 10px; color: darkgray">addBamStats</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="addbamstats.html" style="margin-bottom: 10px">
-       v<b>dev</b>
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="addbamstats.html" style="margin-bottom: 10px">
+       v<b>0.0.7</b>
      </a></p>
      </a>
      <hr />
@@ -131,8 +140,8 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
      <a href="addsymtodepthofcoverage.html">
        <p style="margin-bottom: 5px"><b>Add Sym to DepthOfCoverage</b> <span style="margin-left: 10px; color: darkgray">addSymToDepthOfCoverage</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="addsymtodepthofcoverage.html" style="margin-bottom: 10px">
-       v<b>dev</b>
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="addsymtodepthofcoverage.html" style="margin-bottom: 10px">
+       v<b>0.0.7</b>
      </a></p>
      </a>
      <hr />
@@ -149,8 +158,8 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
      <a href="extractstrelkasomaticaddp.html">
        <p style="margin-bottom: 5px"><b>Extract Strelka Somatic AD DP</b> <span style="margin-left: 10px; color: darkgray">extractStrelkaSomaticADDP</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="extractstrelkasomaticaddp.html" style="margin-bottom: 10px">
-       v<b>dev</b>
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="extractstrelkasomaticaddp.html" style="margin-bottom: 10px">
+       v<b>0.1.1</b>
      </a></p>
      </a>
      <hr />
@@ -158,8 +167,8 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
      <a href="genecoveragepersample.html">
        <p style="margin-bottom: 5px"><b>Gene Coverage Per Sample</b> <span style="margin-left: 10px; color: darkgray">geneCoveragePerSample</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(3 versions)</span><a class="version-button" href="genecoveragepersample.html" style="margin-bottom: 10px">
-       v<b>dev</b>
+       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="genecoveragepersample.html" style="margin-bottom: 10px">
+       v<b>0.0.8</b>
      </a></p>
      </a>
      <hr />
@@ -167,8 +176,8 @@ Automatically generated index page for Peter MacCallum Cancer Centre:
      <a href="performancesummary.html">
        <p style="margin-bottom: 5px"><b>Performance Summary</b> <span style="margin-left: 10px; color: darkgray">performanceSummary</span></p>
        
-       <p><span style="margin-right: 10px; color: darkgray">(2 versions)</span><a class="version-button" href="performancesummary.html" style="margin-bottom: 10px">
-       v<b>dev</b>
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="performancesummary.html" style="margin-bottom: 10px">
+       v<b>0.0.7</b>
      </a></p>
      </a>
      <hr />

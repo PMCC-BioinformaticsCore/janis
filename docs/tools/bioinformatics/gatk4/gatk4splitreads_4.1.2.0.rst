@@ -3,7 +3,7 @@
 GATK4: SplitReads
 ===================================
 
-``Gatk4SplitReads`` · *0 contributors · 3 versions*
+``Gatk4SplitReads`` · *1 contributor · 3 versions*
 
 USAGE: SplitReads [arguments]
 Outputs reads from a SAM/BAM/CRAM by read group, sample and library name
@@ -80,7 +80,7 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
 :Container: broadinstitute/gatk:4.1.2.0
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
 :Created: 2019-09-16
 :Updated: 2019-09-16
@@ -256,7 +256,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{bam_bai} $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
+       cp -f '~{bam_bai}' $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
        gatk SplitReads \
          --java-options '-Xmx~{((select_first([runtime_memory, 4, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
          --output '~{select_first([outputFilename, "."])}' \
@@ -344,7 +344,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: SplitReads'
    doc: |-
      USAGE: SplitReads [arguments]
@@ -647,13 +647,13 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: --reference
    - id: secondsBetweenProgressUpdates
@@ -970,7 +970,7 @@ Common Workflow Language
        }
      outputBinding:
        glob: $(inputs.bam.basename)
-       outputEval: $(inputs.bam.basename)
+       outputEval: $(inputs.bam.basename.basename)
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -983,6 +983,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 4, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk4SplitReads
 
 

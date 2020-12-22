@@ -159,7 +159,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Whisper-Index
    doc: Builds a whisper index
 
@@ -190,18 +190,18 @@ Common Workflow Language
      label: out
      type: File
      secondaryFiles:
-     - .whisper_idx.lut_long_dir
-     - .whisper_idx.lut_long_rc
-     - .whisper_idx.lut_short_dir
-     - .whisper_idx.lut_short_rc
-     - .whisper_idx.ref_seq_desc
-     - .whisper_idx.ref_seq_dir_pck
-     - .whisper_idx.ref_seq_rc_pck
-     - .whisper_idx.sa_dir
-     - .whisper_idx.sa_rc
+     - pattern: .whisper_idx.lut_long_dir
+     - pattern: .whisper_idx.lut_long_rc
+     - pattern: .whisper_idx.lut_short_dir
+     - pattern: .whisper_idx.lut_short_rc
+     - pattern: .whisper_idx.ref_seq_desc
+     - pattern: .whisper_idx.ref_seq_dir_pck
+     - pattern: .whisper_idx.ref_seq_rc_pck
+     - pattern: .whisper_idx.sa_dir
+     - pattern: .whisper_idx.sa_rc
      outputBinding:
        glob: $(("whisper-index/" + inputs.index_name))
-       outputEval: $(("whisper-index/" + inputs.index_name))
+       outputEval: $(("whisper-index/" + inputs.index_name.basename))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -210,6 +210,11 @@ Common Workflow Language
    - whindex
    - whisper-index
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: WhisperIndex
 
 

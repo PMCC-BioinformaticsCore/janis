@@ -3,7 +3,7 @@
 Gridss
 ===============
 
-``gridss`` · *1 contributor · 4 versions*
+``gridss`` · *1 contributor · 5 versions*
 
 GRIDSS: the Genomic Rearrangement IDentification Software Suite
 
@@ -94,7 +94,7 @@ Information
 
 :ID: ``gridss``
 :URL: `https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation <https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation>`_
-:Versions: v2.6.2, v2.5.1-dev, v2.4.0, v2.2.3
+:Versions: v2.9.4, v2.6.2, v2.5.1-dev, v2.4.0, v2.2.3
 :Container: gridss/gridss:2.4.0
 :Authors: Michael Franklin
 :Citations: Daniel L. Cameron, Jan Schröder, Jocelyn Sietsma Penington, Hongdo Do, Ramyar Molania, Alexander Dobrovic, Terence P. Speed and Anthony T. Papenfuss. GRIDSS: sensitive and specific genomic rearrangement detection using positional de Bruijn graph assembly. Genome Research, 2017 doi: 10.1101/gr.222109.117
@@ -210,7 +210,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Gridss
    doc: |
      GRIDSS: the Genomic Rearrangement IDentification Software Suite
@@ -249,13 +249,13 @@ Common Workflow Language
      label: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: REFERENCE_SEQUENCE=
        separate: false
@@ -422,6 +422,11 @@ Common Workflow Language
    - /data/gridss/gridss-2.4.0-gridss-jar-with-dependencies.jar
    - gridss.CallVariants
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: gridss
 
 

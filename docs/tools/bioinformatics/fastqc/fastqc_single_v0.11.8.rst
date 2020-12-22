@@ -186,10 +186,10 @@ Workflow Description Language
        preemptible: 2
      }
      output {
-       File out = glob("*.zip")[0]
-       File out_datafile = glob("*/fastqc_data.txt")[0]
-       File out_html = glob("*.html")[0]
-       Directory out_directory = (basename(read, ".fastq.gz") + "_fastqc")
+       File out = (basename(basename(read, ".fq.gz"), ".fastq.gz") + "_fastqc.zip")
+       File out_datafile = (basename(basename(read, ".fq.gz"), ".fastq.gz") + "_fastqc/fastqc_data.txt")
+       File out_html = (basename(basename(read, ".fq.gz"), ".fastq.gz") + "_fastqc.html")
+       Directory out_directory = (basename(basename(read, ".fq.gz"), ".fastq.gz") + "_fastqc")
      }
    }
 
@@ -200,7 +200,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: FastQC (single read)
    doc: |-
      FastQC is a program designed to spot potential problems in high througput sequencing datasets. It runs a set of analyses on one or more raw sequence files in fastq or bam format and produces a report which summarises the results.
@@ -367,32 +367,40 @@ Common Workflow Language
      label: out
      type: File
      outputBinding:
-       glob: '*.zip'
+       glob: $((inputs.read.basename + "_fastqc.zip"))
+       outputEval: $((inputs.read.basename + "_fastqc.zip"))
        loadContents: false
    - id: out_datafile
      label: out_datafile
      type: File
      outputBinding:
-       glob: '*/fastqc_data.txt'
+       glob: $((inputs.read.basename + "_fastqc/fastqc_data.txt"))
+       outputEval: $((inputs.read.basename + "_fastqc/fastqc_data.txt"))
        loadContents: false
    - id: out_html
      label: out_html
      type: File
      outputBinding:
-       glob: '*.html'
+       glob: $((inputs.read.basename + "_fastqc.html"))
+       outputEval: $((inputs.read.basename + "_fastqc.html"))
        loadContents: false
    - id: out_directory
      label: out_directory
      type: Directory
      outputBinding:
        glob: $((inputs.read.basename + "_fastqc"))
-       outputEval: $((inputs.read + "_fastqc"))
+       outputEval: $((inputs.read.basename + "_fastqc"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
 
    baseCommand: fastqc
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: fastqc_single
 
 

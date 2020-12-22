@@ -102,11 +102,11 @@ Information
 Outputs
 -----------
 
-======  ====================  =================
-name    type                  documentation
-======  ====================  =================
-out     CompressedIndexedVCF  To determine type
-======  ====================  =================
+======  ============  =================
+name    type          documentation
+======  ============  =================
+out     Gzipped<VCF>  To determine type
+======  ============  =================
 
 
 Additional configuration (inputs)
@@ -202,7 +202,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: MuTect2'
    doc: |-
      Call somatic short variants via local assembly of haplotypes. Short variants include single nucleotide (SNV)
@@ -240,7 +240,7 @@ Common Workflow Language
      doc: BAM/SAM/CRAM file containing reads
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        prefix: -I
        position: 6
@@ -257,7 +257,7 @@ Common Workflow Language
      doc: BAM/SAM/CRAM file containing reads
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        prefix: -I
        position: 5
@@ -283,13 +283,13 @@ Common Workflow Language
      doc: Reference sequence file
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: -R
        position: 8
@@ -308,7 +308,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .idx
+     - pattern: .idx
      inputBinding:
        prefix: --germline-resource
        position: 10
@@ -330,7 +330,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .idx
+     - pattern: .idx
      inputBinding:
        prefix: --panel-of-normals
        position: 10
@@ -341,7 +341,7 @@ Common Workflow Language
      doc: To determine type
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: generated.vcf.gz
        loadContents: false
@@ -356,6 +356,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 8, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk4Mutect2
 
 

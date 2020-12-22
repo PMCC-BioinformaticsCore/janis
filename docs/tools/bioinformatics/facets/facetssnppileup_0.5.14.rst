@@ -182,7 +182,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'Facets: snp-pileup'
    doc: ''
 
@@ -289,14 +289,14 @@ Common Workflow Language
      label: normal
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        position: 20
    - id: tumour
      label: tumour
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        position: 21
 
@@ -313,6 +313,11 @@ Common Workflow Language
    baseCommand:
    - LD_LIBRARY_PATH=/opt/conda/lib /snp-pileup
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: FacetsSnpPileup
 
 

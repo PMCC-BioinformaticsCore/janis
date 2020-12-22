@@ -3,9 +3,16 @@
 GATK4: SetNmMdAndUqTags
 ===============================================
 
-``Gatk4SetNmMdAndUqTags`` · *0 contributors · 2 versions*
+``Gatk4SetNmMdAndUqTags`` · *1 contributor · 2 versions*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+USAGE: SetNmMdAndUqTags [arguments] This tool takes in a coordinate-sorted SAM or BAM and calculatesthe NM, MD, and UQ tags by comparing with the reference.<br />This may be needed when MergeBamAlignment was run with SORT_ORDER other than 'coordinate' and thus could not fix these tags then. The input must be coordinate sorted in order to run. If specified,the MD and NM tags can be
+ignored and only the UQ tag be set.
+<h4>Usage example:</h4><pre>java -jar picard.jar SetNmMdAndUqTags
+	R=reference_sequence.fasta 
+	I=sorted.bam 
+	O=fixed.bam <br /></pre>
+
+Version:4.1.3.0
 
 
 Quickstart
@@ -79,10 +86,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 4.1.4.0, 4.1.3.0
 :Container: broadinstitute/gatk:4.1.4.0
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-05-18
+:Updated: 2020-05-18
 
 
 Outputs
@@ -212,8 +219,17 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: SetNmMdAndUqTags'
+   doc: |-
+     USAGE: SetNmMdAndUqTags [arguments] This tool takes in a coordinate-sorted SAM or BAM and calculatesthe NM, MD, and UQ tags by comparing with the reference.<br />This may be needed when MergeBamAlignment was run with SORT_ORDER other than 'coordinate' and thus could not fix these tags then. The input must be coordinate sorted in order to run. If specified,the MD and NM tags can be
+     ignored and only the UQ tag be set.
+     <h4>Usage example:</h4><pre>java -jar picard.jar SetNmMdAndUqTags
+     	R=reference_sequence.fasta 
+     	I=sorted.bam 
+     	O=fixed.bam <br /></pre>
+
+     Version:4.1.3.0
 
    requirements:
    - class: ShellCommandRequirement
@@ -258,13 +274,13 @@ Common Workflow Language
      doc: (-R) Reference sequence file. Required.
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: --REFERENCE_SEQUENCE
        separate: true
@@ -468,6 +484,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk4SetNmMdAndUqTags
 
 

@@ -3,7 +3,7 @@
     Parse FastQC Adaptors
     ===========================================
 
-    ``ParseFastqcAdaptors`` · *0 contributors · 1 version*
+    ``ParseFastqcAdaptors`` · *1 contributor · 1 version*
 
     Parse overrepresented region and lookup in Cutadapt table
 
@@ -80,10 +80,10 @@
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Container: python:3.8.1
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: 2020-01-07
-:Updated: None
+:Created: 2020-01-07 00:00:00
+:Updated: 2020-02-14 00:00:00
 
 
 

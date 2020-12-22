@@ -83,5 +83,13 @@ Automatically generated index page for bioinformatics:
 
      <li><a href="whisper/index.html">whisper</a></li>
    </ul>
-
+     <a href="join_indexed_fastas.html">
+       <p style="margin-bottom: 5px"><b>None</b> <span style="margin-left: 10px; color: darkgray">join_indexed_fastas</span></p>
+       
+       <p><span style="margin-right: 10px; color: darkgray">(1 versions)</span><a class="version-button" href="join_indexed_fastas.html" style="margin-bottom: 10px">
+       v<b>0.1.0</b>
+     </a></p>
+     </a>
+     <hr />
+         
 

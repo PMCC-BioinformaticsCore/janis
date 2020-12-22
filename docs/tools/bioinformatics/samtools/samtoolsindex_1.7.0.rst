@@ -53,7 +53,7 @@ Quickstart
 
 .. code-block:: yaml
 
-       bam: bam.bam
+       bam: null
 
 
 
@@ -96,12 +96,12 @@ out     IndexedBam
 Additional configuration (inputs)
 ---------------------------------
 
-=======  =================  ========  ==========  ===============
-name     type               prefix      position  documentation
-=======  =================  ========  ==========  ===============
-bam      BAM                                  10
-threads  Optional<Integer>  -@                10
-=======  =================  ========  ==========  ===============
+=======  =====================  ========  ==========  ===============
+name     type                   prefix      position  documentation
+=======  =====================  ========  ==========  ===============
+bam      Union<BAM, SAM, CRAM>                    10
+threads  Optional<Integer>      -@                10
+=======  =====================  ========  ==========  ===============
 
 Workflow Description Language
 ------------------------------
@@ -121,10 +121,9 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{bam} .
        samtools index \
          '-b' \
-         '~{basename(bam)}' \
+         ~{basename(bam)} \
          ~{if defined(select_first([threads, select_first([runtime_cpu, 1])])) then ("-@ " + select_first([threads, select_first([runtime_cpu, 1])])) else ''}
      >>>
      runtime {
@@ -148,16 +147,13 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'SamTools: Index'
    doc: ''
 
    requirements:
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
-   - class: InitialWorkDirRequirement
-     listing:
-     - entry: $(inputs.bam)
    - class: DockerRequirement
      dockerPull: biocontainers/samtools:v1.7.0_cv3
 
@@ -183,7 +179,7 @@ Common Workflow Language
      label: out
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputBinding:
        glob: $(inputs.bam)
        loadContents: false
@@ -196,6 +192,11 @@ Common Workflow Language
    arguments:
    - position: 4
      valueFrom: -b
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: SamToolsIndex
 
 

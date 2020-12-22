@@ -722,7 +722,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: STAR Aligner
    doc: |
      Spliced Transcripts Alignment to a Reference © Alexander Dobin, 2009-2019 
@@ -2355,7 +2355,7 @@ Common Workflow Language
      - 'null'
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "Aligned.out.bam"))
-       outputEval: $((inputs.outFileNamePrefix + "Aligned.out.bam"))
+       outputEval: $((inputs.outFileNamePrefix.basename + "Aligned.out.bam"))
        loadContents: false
    - id: out_sorted_bam
      label: out_sorted_bam
@@ -2364,7 +2364,7 @@ Common Workflow Language
      - 'null'
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "Aligned.sortedByCoord.out.bam"))
-       outputEval: $((inputs.outFileNamePrefix + "Aligned.sortedByCoord.out.bam"))
+       outputEval: $((inputs.outFileNamePrefix.basename + "Aligned.sortedByCoord.out.bam"))
        loadContents: false
    - id: SJ_out_tab
      label: SJ_out_tab
@@ -2373,7 +2373,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "SJ.out.tab"))
-       outputEval: $((inputs.outFileNamePrefix + "SJ.out.tab"))
+       outputEval: $((inputs.outFileNamePrefix.basename + "SJ.out.tab"))
        loadContents: false
    - id: Log_out
      label: Log_out
@@ -2382,7 +2382,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "Log.out"))
-       outputEval: $((inputs.outFileNamePrefix + "Log.out"))
+       outputEval: $((inputs.outFileNamePrefix.basename + "Log.out"))
        loadContents: false
    - id: Log_progress_out
      label: Log_progress_out
@@ -2391,7 +2391,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "Log.progress.out"))
-       outputEval: $((inputs.outFileNamePrefix + "Log.progress.out"))
+       outputEval: $((inputs.outFileNamePrefix.basename + "Log.progress.out"))
        loadContents: false
    - id: Log_final_out
      label: Log_final_out
@@ -2400,7 +2400,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "Log.final.out"))
-       outputEval: $((inputs.outFileNamePrefix + "Log.final.out"))
+       outputEval: $((inputs.outFileNamePrefix.basename + "Log.final.out"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -2410,6 +2410,11 @@ Common Workflow Language
    - prefix: --runMode
      position: 0
      valueFrom: alignReads
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: star_alignReads
 
 

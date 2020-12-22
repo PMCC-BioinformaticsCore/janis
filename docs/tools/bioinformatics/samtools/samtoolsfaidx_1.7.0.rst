@@ -119,7 +119,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{reference} .
+       cp -f '~{reference}' '.'
        samtools faidx \
          '~{basename(reference)}'
      >>>
@@ -144,7 +144,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'SamTools: faidx'
    doc: ''
 
@@ -169,9 +169,9 @@ Common Workflow Language
      label: out
      type: File
      secondaryFiles:
-     - .fai
+     - pattern: .fai
      outputBinding:
-       glob: $(inputs.reference)
+       glob: $(inputs.reference.basename)
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -180,6 +180,11 @@ Common Workflow Language
    - samtools
    - faidx
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: SamToolsFaidx
 
 

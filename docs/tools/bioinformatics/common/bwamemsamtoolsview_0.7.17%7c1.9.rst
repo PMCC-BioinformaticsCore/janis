@@ -3,7 +3,7 @@
 Bwa mem + Samtools View
 ============================================
 
-``BwaMemSamtoolsView`` · *0 contributors · 1 version*
+``BwaMemSamtoolsView`` · *1 contributor · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -83,10 +83,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 0.7.17|1.9
 :Container: michaelfranklin/bwasamtools:0.7.17-1.9
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2019-05-10
+:Updated: 2020-07-14
 
 
 Outputs
@@ -287,7 +287,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Bwa mem + Samtools View
 
    requirements:
@@ -301,13 +301,13 @@ Common Workflow Language
      label: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        position: 2
        shellQuote: false
@@ -789,6 +789,11 @@ Common Workflow Language
      valueFrom: |-
        $([inputs.runtime_cpu, 16, 1].filter(function (inner) { return inner != null })[0])
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: BwaMemSamtoolsView
 
 

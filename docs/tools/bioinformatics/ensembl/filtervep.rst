@@ -3,9 +3,13 @@
 FilterVep
 =========
 
-``FilterVep`` · *0 contributors · 1 version*
+``FilterVep`` · *1 contributor · 1 version*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+#------------#
+# filter_vep #
+#------------#
+http://www.ensembl.org/info/docs/tools/vep/script/vep_filter.html
+
 
 
 Quickstart
@@ -77,10 +81,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 98.3
 :Container: quay.io/biocontainers/ensembl-vep:98.3--pl526hecc5488_0
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-05-26
+:Updated: 2020-05-26
 
 
 Outputs
@@ -172,8 +176,13 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: FilterVep
+   doc: |
+     #------------#
+     # filter_vep #
+     #------------#
+     http://www.ensembl.org/info/docs/tools/vep/script/vep_filter.html
 
    requirements:
    - class: ShellCommandRequirement
@@ -306,6 +315,11 @@ Common Workflow Language
    baseCommand:
    - filter_vep
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: FilterVep
 
 

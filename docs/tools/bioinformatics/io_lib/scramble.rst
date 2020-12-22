@@ -202,7 +202,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: scramble
    doc: 'scramble: streaming bam to cram compression'
 
@@ -223,7 +223,7 @@ Common Workflow Language
      doc: Reference sequence file.
      type: File
      secondaryFiles:
-     - .fai
+     - pattern: .fai
      inputBinding:
        prefix: -r
    - id: outputFilename
@@ -381,6 +381,11 @@ Common Workflow Language
    - prefix: -V
      position: 0
      valueFrom: '3.0'
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: scramble
 
 

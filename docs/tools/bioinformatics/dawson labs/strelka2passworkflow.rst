@@ -21,7 +21,7 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.dawson.workflows.strelka2passworkflow import Strelka2PassWorkflow
+       from janis_bioinformatics.tools.dawson.workflows.variantcalling.multisample.strelka2.strelka2passworkflow import Strelka2PassWorkflow
 
        wf = WorkflowBuilder("myworkflow")
 
@@ -65,11 +65,11 @@ Quickstart
 
 .. code-block:: yaml
 
-       normalBam: normalBam.cram
+       normalBam: normalBam.bam
        reference: reference.fasta
        tumorBams:
-       - tumorBams_0.cram
-       - tumorBams_1.cram
+       - tumorBams_0.bam
+       - tumorBams_1.bam
 
 
 
@@ -93,59 +93,59 @@ URL: *No URL to the documentation was provided*
 
 :ID: ``Strelka2PassWorkflow``
 :URL: *No URL to the documentation was provided*
-:Versions: 0.1
+:Versions: 0.2
 :Authors: Sebastian Hollizeck
 :Citations: 
 :Created: 2019-10-11
-:Updated: 2020-08-04
+:Updated: 2020-12-10
 
 
 
 Outputs
 -----------
 
-======  =====================================  ===============
-name    type                                   documentation
-======  =====================================  ===============
-snvs    Array<CompressedIndexedVCF>
-indels  Array<CompressedIndexedVCF>
-svs     Array<Optional<CompressedIndexedVCF>>
-======  =====================================  ===============
+======  =============================  ===============
+name    type                           documentation
+======  =============================  ===============
+snvs    Array<Gzipped<VCF>>
+indels  Array<Gzipped<VCF>>
+svs     Array<Optional<Gzipped<VCF>>>
+======  =============================  ===============
 
 
 Workflow
 --------
 
-.. image:: Strelka2PassWorkflow_0_1.dot.png
+.. image:: Strelka2PassWorkflow_0_2.dot.png
 
 Embedded Tools
 ***************
 
-===============================  =================================
-Strelka 2Pass analysis step1     ``Strelka2PassWorkflowStep1/0.1``
-Strelka 2Pass analysis step 2    ``Strelka2PassWorkflowStep2/0.1``
+===============================  ===================================
+Strelka 2Pass analysis step1     ``Strelka2PassWorkflowStep1/0.1.1``
+Strelka 2Pass analysis step 2    ``Strelka2PassWorkflowStep2/0.1.1``
 Refilter Strelka2 Variant Calls  ``refilterStrelka2Calls/0.1.8``
 BGZip                            ``bgzip/1.2.1``
 Tabix                            ``tabix/1.2.1``
-===============================  =================================
+===============================  ===================================
 
 
 
 Additional configuration (inputs)
 ---------------------------------
 
-=============  =======================  ===============
+=============  =======================  =====================================================================================================================================================================
 name           type                     documentation
-=============  =======================  ===============
-normalBam      CramPair
-tumorBams      Array<CramPair>
-reference      FastaFai
-configStrelka  Optional<File>
-callRegions    Optional<BedTABIX>
-exome          Optional<Boolean>
-sampleNames    Optional<Array<String>>
-minAD          Optional<Integer>
-=============  =======================  ===============
+=============  =======================  =====================================================================================================================================================================
+normalBam      IndexedBam               The bam of the normal sample. Strelka will assign any read in this bam to the normal sample, even if this bam contains multiple samples
+tumorBams      Array<IndexedBam>        The bam of the tumour sample. Strelka will assign any read in this bam to the normal sample, even if this bam contains multiple samples
+reference      FastaFai                 The fai indexed fasta reference, the bams were aligned to.
+configStrelka  Optional<File>           The possibly changed ini to use for Strelka2. This can be used to skip regions with extreme depth, like in heterochromatin regions, which lead to very long runtimes.
+callRegions    Optional<Gzipped<bed>>   The tabix indexed bed file of regions to restict the analysis on. If this is unset, every site in the genome will be analysed.
+exome          Optional<Boolean>        Sets the flag to analyse everything in exome mode. This will adjust the parameter for a non uniform coverage profile.
+sampleNames    Optional<Array<String>>  The names of the tumour samples. This will only be used to rename output files. if unset, the output will be numbered in the same order as the input files.
+minAD          Optional<Integer>        Minimum read support for a variant to be considered a true variant.
+=============  =======================  =====================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -154,8 +154,8 @@ Workflow Description Language
 
    version development
 
-   import "tools/Strelka2PassWorkflowStep1_0_1.wdl" as S
-   import "tools/Strelka2PassWorkflowStep2_0_1.wdl" as S2
+   import "tools/Strelka2PassWorkflowStep1_0_1_1.wdl" as S
+   import "tools/Strelka2PassWorkflowStep2_0_1_1.wdl" as S2
    import "tools/refilterStrelka2Calls_0_1_8.wdl" as R
    import "tools/bgzip_1_2_1.wdl" as B
    import "tools/tabix_1_2_1.wdl" as T
@@ -163,9 +163,9 @@ Workflow Description Language
    workflow Strelka2PassWorkflow {
      input {
        File normalBam
-       File normalBam_crai
+       File normalBam_bai
        Array[File] tumorBams
-       Array[File] tumorBams_crai
+       Array[File] tumorBams_bai
        File reference
        File reference_fai
        File? configStrelka
@@ -175,13 +175,13 @@ Workflow Description Language
        Array[String]? sampleNames
        Int? minAD = 2
      }
-     scatter (t in transpose([tumorBams, tumorBams_crai])) {
+     scatter (t in transpose([tumorBams, tumorBams_bai])) {
         call S.Strelka2PassWorkflowStep1 as step1 {
          input:
            normalBam=normalBam,
-           normalBam_crai=normalBam_crai,
+           normalBam_bai=normalBam_bai,
            tumorBam=t[0],
-           tumorBam_crai=t[1],
+           tumorBam_bai=t[1],
            reference=reference,
            reference_fai=reference_fai,
            callRegions=callRegions,
@@ -190,13 +190,13 @@ Workflow Description Language
            configStrelka=configStrelka
        }
      }
-     scatter (t in transpose([tumorBams, tumorBams_crai])) {
+     scatter (t in transpose([tumorBams, tumorBams_bai])) {
         call S2.Strelka2PassWorkflowStep2 as step2 {
          input:
            normalBam=normalBam,
-           normalBam_crai=normalBam_crai,
+           normalBam_bai=normalBam_bai,
            tumorBam=t[0],
-           tumorBam_crai=t[1],
+           tumorBam_bai=t[1],
            reference=reference,
            reference_fai=reference_fai,
            callRegions=callRegions,
@@ -264,7 +264,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Strelka 2Pass analysis
    doc: |-
      This is the full 2pass analysis workflow to do joint somatic variant calling with strelka2.
@@ -285,38 +285,52 @@ Common Workflow Language
 
    inputs:
    - id: normalBam
+     doc: |-
+       The bam of the normal sample. Strelka will assign any read in this bam to the normal sample, even if this bam contains multiple samples
      type: File
      secondaryFiles:
-     - .crai
+     - pattern: .bai
    - id: tumorBams
+     doc: |-
+       The bam of the tumour sample. Strelka will assign any read in this bam to the normal sample, even if this bam contains multiple samples
      type:
        type: array
        items: File
      secondaryFiles:
-     - .crai
+     - pattern: .bai
    - id: reference
+     doc: The fai indexed fasta reference, the bams were aligned to.
      type: File
      secondaryFiles:
-     - .fai
+     - pattern: .fai
    - id: configStrelka
+     doc: |-
+       The possibly changed ini to use for Strelka2. This can be used to skip regions with extreme depth, like in heterochromatin regions, which lead to very long runtimes.
      type:
      - File
      - 'null'
    - id: callRegions
+     doc: |-
+       The tabix indexed bed file of regions to restict the analysis on. If this is unset, every site in the genome will be analysed.
      type:
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: exome
+     doc: |-
+       Sets the flag to analyse everything in exome mode. This will adjust the parameter for a non uniform coverage profile.
      type: boolean
      default: false
    - id: sampleNames
+     doc: |-
+       The names of the tumour samples. This will only be used to rename output files. if unset, the output will be numbered in the same order as the input files.
      type:
      - type: array
        items: string
      - 'null'
    - id: minAD
+     doc: Minimum read support for a variant to be considered a true variant.
      type: int
      default: 2
 
@@ -357,7 +371,7 @@ Common Workflow Language
        source: configStrelka
      scatter:
      - tumorBam
-     run: tools/Strelka2PassWorkflowStep1_0_1.cwl
+     run: tools/Strelka2PassWorkflowStep1_0_1_1.cwl
      out:
      - id: diploid
      - id: candIndels
@@ -385,7 +399,7 @@ Common Workflow Language
        source: step1/snvs
      scatter:
      - tumorBam
-     run: tools/Strelka2PassWorkflowStep2_0_1.cwl
+     run: tools/Strelka2PassWorkflowStep2_0_1_1.cwl
      out:
      - id: indels
      - id: snvs

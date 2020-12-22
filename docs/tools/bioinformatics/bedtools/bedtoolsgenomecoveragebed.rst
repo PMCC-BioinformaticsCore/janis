@@ -3,7 +3,7 @@
 BEDTools: genomeCoverageBed
 =======================================================
 
-``bedtoolsgenomeCoverageBed`` · *0 contributors · 1 version*
+``bedtoolsgenomeCoverageBed`` · *1 contributor · 1 version*
 
 bedtools genomecov computes histograms (default), per-base reports (-d) and BEDGRAPH (-bg) summaries of feature coverage (e.g., aligned sequences) for a given genome. Note: 1. If using BED/GFF/VCF, the input (-i) file must be grouped by chromosome. A simple sort -k 1,1 in.bed > in.sorted.bed will suffice. Also, if using BED/GFF/VCF, one must provide a genome file via the -g argument. 2. If the input is in BAM (-ibam) format, the BAM file must be sorted by position. Using samtools sort aln.bam aln.sorted will suffice.
 
@@ -77,7 +77,7 @@ Information
 :URL: `https://bedtools.readthedocs.io/en/latest/content/tools/genomecov.html <https://bedtools.readthedocs.io/en/latest/content/tools/genomecov.html>`_
 :Versions: v2.29.2
 :Container: quay.io/biocontainers/bedtools:2.29.2--hc088bd4_0
-:Authors: 
+:Authors: Jiaan Yu
 :Citations: None
 :Created: 2020-04-01
 :Updated: 2020-04-01
@@ -196,7 +196,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'BEDTools: genomeCoverageBed'
    doc: |-
      bedtools genomecov computes histograms (default), per-base reports (-d) and BEDGRAPH (-bg) summaries of feature coverage (e.g., aligned sequences) for a given genome. Note: 1. If using BED/GFF/VCF, the input (-i) file must be grouped by chromosome. A simple sort -k 1,1 in.bed > in.sorted.bed will suffice. Also, if using BED/GFF/VCF, one must provide a genome file via the -g argument. 2. If the input is in BAM (-ibam) format, the BAM file must be sorted by position. Using samtools sort aln.bam aln.sorted will suffice.
@@ -386,6 +386,11 @@ Common Workflow Language
    baseCommand:
    - genomeCoverageBed
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bedtoolsgenomeCoverageBed
 
 

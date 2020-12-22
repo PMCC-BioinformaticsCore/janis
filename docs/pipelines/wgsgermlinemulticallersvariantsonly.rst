@@ -34,34 +34,25 @@ Quickstart
 
    More information about these inputs are available `below <#additional-configuration-inputs>`_.
 
-=================  ====================  =========================================================================================================================================================================================  ======================================================================================================================================================================================================================================================================================================
-Name               Type                  Example                                                                                                                                                                                    Description
-=================  ====================  =========================================================================================================================================================================================  ======================================================================================================================================================================================================================================================================================================
-reference          FastaWithIndexes      HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            The reference genome from which to align the reads. This requires a number indexes (can be generated     with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
+=================  ================  =====================================================================================================  ==========================================================================================================================================================================================================================================
+Name               Type              Source                                                                                                 Description
+=================  ================  =====================================================================================================  ==========================================================================================================================================================================================================================================
+reference          FastaWithIndexes  * hg38: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta                     The reference genome from which to align the reads. This requires a number indexes (can be generated     with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
 
-                                         File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta                                                                                                               This pipeline expects the assembly references to be as they appear in the GCP example:
+                                                                                                                                                This pipeline expects the assembly references to be as they appear in the GCP example. For example:
+                                                                                                                                                    - HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/
 
-                                                                                                                                                                                                                                        - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
-snps_dbsnp         CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-
-                                         (WARNING: The file available from the genomics-public-data resource on Google Cloud Storage is NOT compressed and indexed. This will need to be completed prior to starting the pipeline.
-
-                                         File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz
-snps_1000gp        CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-
-                                         File: gs://genomics-public-data/references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz
-known_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-
-                                         File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz
-mills_indels       CompressedIndexedVCF  HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-
-                                         File: gs://genomics-public-data/references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
-cutadapt_adapters  Optional<File>        https://github.com/csf-ngs/fastqc/blob/master/Contaminants/contaminant_list.txt                                                                                                            Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
-gridss_blacklist   bed                   https://github.com/PapenfussLab/gridss#blacklist                                                                                                                                           BED file containing regions to ignore.
-gatk_intervals     Array<bed>            BRCA1.bed                                                                                                                                                                                  List of intervals over which to split the GATK variant calling
-vardict_intervals  Array<bed>            BRCA1.bed                                                                                                                                                                                  List of intervals over which to split the VarDict variant calling
-strelka_intervals  BedTABIX              BRCA1.bed.gz                                                                                                                                                                               An interval for which to restrict the analysis to.
-=================  ====================  =========================================================================================================================================================================================  ======================================================================================================================================================================================================================================================================================================
+                                                                                                                                                - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
+snps_dbsnp         Gzipped<VCF>      * hg38: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf              From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+snps_1000gp        Gzipped<VCF>      * hg38: gs://genomics-public-data/references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz     From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``. Accessible from the HG38 genomics-public-data google cloud bucket: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/
+known_indels       Gzipped<VCF>      * hg38: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz       From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+mills_indels       Gzipped<VCF>      * hg38: gs://genomics-public-data/references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz  From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+gridss_blacklist   bed               * hg19: https://www.encodeproject.org/files/ENCFF001TDO/@@download/ENCFF001TDO.bed.gz                  BED file containing regions to ignore. For more information, visit: https://github.com/PapenfussLab/gridss#blacklist
+                                     * GRCh38: https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz
+gatk_intervals     Array<bed>        None                                                                                                   List of intervals over which to split the GATK variant calling
+vardict_intervals  Array<bed>        None                                                                                                   List of intervals over which to split the VarDict variant calling
+strelka_intervals  Gzipped<bed>      None                                                                                                   An interval for which to restrict the analysis to.
+=================  ================  =====================================================================================================  ==========================================================================================================================================================================================================================================
 
 4. Generate user and static input files for WGSGermlineMultiCallersVariantsOnly:
 
@@ -77,27 +68,23 @@ strelka_intervals  BedTABIX              BRCA1.bed.gz                           
 
 .. code-block:: yaml
 
-       bam: bam.bam
-       sample_name: <value>
+       bam: NA12878.bam
+       sample_name: NA12878
 
 
 **static.yaml**
 
 .. code-block:: yaml
 
-       gatk_intervals:
-       - gatk_intervals_0.bed
-       - gatk_intervals_1.bed
+       gatk_intervals: BRCA1.bed
        gridss_blacklist: gridss_blacklist.bed
-       known_indels: known_indels.vcf.gz
-       mills_indels: mills_indels.vcf.gz
-       reference: reference.fasta
-       snps_1000gp: snps_1000gp.vcf.gz
-       snps_dbsnp: snps_dbsnp.vcf.gz
-       strelka_intervals: strelka_intervals.bed.gz
-       vardict_intervals:
-       - vardict_intervals_0.bed
-       - vardict_intervals_1.bed
+       known_indels: Homo_sapiens_assembly38.known_indels.vcf.gz
+       mills_indels: Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+       reference: Homo_sapiens_assembly38.fasta
+       snps_1000gp: 1000G_phase1.snps.high_confidence.hg38.vcf.gz
+       snps_dbsnp: Homo_sapiens_assembly38.dbsnp138.vcf.gz
+       strelka_intervals: BRCA1.bed.gz
+       vardict_intervals: BRCA1.bed
 
 
 5. Run WGSGermlineMultiCallersVariantsOnly with:
@@ -114,19 +101,19 @@ strelka_intervals  BedTABIX              BRCA1.bed.gz                           
 Outputs
 -----------
 
-==========================  =============  =======================================================
-name                        type           documentation
-==========================  =============  =======================================================
-out_performance_summary     csv            A text file of performance summary of bam
-out_gridss_assembly         BAM            Assembly returned by GRIDSS
-out_variants_gridss         VCF            Variants from the GRIDSS variant caller
-out_variants_gatk           CompressedVCF  Merged variants from the GATK caller
-out_variants_gatk_split     Array<VCF>     Unmerged variants from the GATK caller (by interval)
-out_variants_strelka        VCF            Variants from the Strelka variant caller
-out_variants_vardict        CompressedVCF  Merged variants from the VarDict caller
-out_variants_vardict_split  Array<VCF>     Unmerged variants from the VarDict caller (by interval)
-out_variants                VCF            Combined variants from all 3 callers
-==========================  =============  =======================================================
+==========================  ============  =======================================================
+name                        type          documentation
+==========================  ============  =======================================================
+out_performance_summary     csv           A text file of performance summary of bam
+out_gridss_assembly         BAM           Assembly returned by GRIDSS
+out_variants_gridss         VCF           Variants from the GRIDSS variant caller
+out_variants_gatk           Gzipped<VCF>  Merged variants from the GATK caller
+out_variants_gatk_split     Array<VCF>    Unmerged variants from the GATK caller (by interval)
+out_variants_strelka        VCF           Variants from the Strelka variant caller
+out_variants_vardict        Gzipped<VCF>  Merged variants from the VarDict caller
+out_variants_vardict_split  Array<VCF>    Unmerged variants from the VarDict caller (by interval)
+out_variants                VCF           Combined variants from all 3 callers
+==========================  ============  =======================================================
 
 Workflow
 --------
@@ -169,29 +156,29 @@ Annotate Bam Stats to Germline Vcf Workflow  ``AddBamStatsGermline/v0.1.0``
 Additional configuration (inputs)
 ---------------------------------
 
-================================  =======================  ======================================================================================================================================================================================================================================================================================================
+================================  =======================  ==========================================================================================================================================================================================================================================
 name                              type                     documentation
-================================  =======================  ======================================================================================================================================================================================================================================================================================================
+================================  =======================  ==========================================================================================================================================================================================================================================
 sample_name                       String                   Sample name from which to generate the readGroupHeaderLine for BwaMem
-bam                               IndexedBam               Input indexed bam (+ .bam.bai) to process
+bam                               IndexedBam               Input indexed bam (+ .bam.bai) to process. You only specify the primary sample.bam, and the index (eg: NA12878.bam.bai) will be picked up automatically.
 reference                         FastaWithIndexes         The reference genome from which to align the reads. This requires a number indexes (can be generated     with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
 
-                                                               This pipeline expects the assembly references to be as they appear in the GCP example:
+                                                               This pipeline expects the assembly references to be as they appear in the GCP example. For example:
+                                                                   - HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/
 
                                                                - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
-snps_dbsnp                        CompressedIndexedVCF     From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-snps_1000gp                       CompressedIndexedVCF     From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-known_indels                      CompressedIndexedVCF     From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-mills_indels                      CompressedIndexedVCF     From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-gridss_blacklist                  bed                      BED file containing regions to ignore.
+snps_dbsnp                        Gzipped<VCF>             From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+snps_1000gp                       Gzipped<VCF>             From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``. Accessible from the HG38 genomics-public-data google cloud bucket: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/
+known_indels                      Gzipped<VCF>             From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+mills_indels                      Gzipped<VCF>             From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+gridss_blacklist                  bed                      BED file containing regions to ignore. For more information, visit: https://github.com/PapenfussLab/gridss#blacklist
 gatk_intervals                    Array<bed>               List of intervals over which to split the GATK variant calling
 vardict_intervals                 Array<bed>               List of intervals over which to split the VarDict variant calling
-strelka_intervals                 BedTABIX                 An interval for which to restrict the analysis to.
-cutadapt_adapters                 Optional<File>           Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
+strelka_intervals                 Gzipped<bed>             An interval for which to restrict the analysis to.
 vc_vardict_allele_freq_threshold  Optional<Float>
 combine_variants_type             Optional<String>         germline | somatic
 combine_variants_columns          Optional<Array<String>>  Columns to keep, seperated by space output vcf (unsorted)
-================================  =======================  ======================================================================================================================================================================================================================================================================================================
+================================  =======================  ==========================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -236,7 +223,6 @@ Workflow Description Language
        File known_indels_tbi
        File mills_indels
        File mills_indels_tbi
-       File? cutadapt_adapters
        File gridss_blacklist
        Array[File] gatk_intervals
        Array[File] vardict_intervals
@@ -437,7 +423,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: WGS Germline (Multi callers) [VARIANTS only]
    doc: |
      This workflow is a reference pipeline using the Janis Python framework (pipelines assistant).
@@ -467,54 +453,52 @@ Common Workflow Language
      doc: Sample name from which to generate the readGroupHeaderLine for BwaMem
      type: string
    - id: bam
-     doc: Input indexed bam (+ .bam.bai) to process
+     doc: |-
+       Input indexed bam (+ .bam.bai) to process. You only specify the primary sample.bam, and the index (eg: NA12878.bam.bai) will be picked up automatically.
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: reference
      doc: |2-
            The reference genome from which to align the reads. This requires a number indexes (can be generated     with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
 
-           This pipeline expects the assembly references to be as they appear in the GCP example:
+           This pipeline expects the assembly references to be as they appear in the GCP example. For example:
+               - HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/
 
            - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: snps_dbsnp
      doc: From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: snps_1000gp
-     doc: From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+     doc: |-
+       From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``. Accessible from the HG38 genomics-public-data google cloud bucket: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/ 
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: known_indels
      doc: From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: mills_indels
      doc: From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
      type: File
      secondaryFiles:
-     - .tbi
-   - id: cutadapt_adapters
-     doc: |-
-       Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
-     type:
-     - File
-     - 'null'
+     - pattern: .tbi
    - id: gridss_blacklist
-     doc: BED file containing regions to ignore.
+     doc: |-
+       BED file containing regions to ignore. For more information, visit: https://github.com/PapenfussLab/gridss#blacklist
      type: File
    - id: gatk_intervals
      doc: List of intervals over which to split the GATK variant calling
@@ -530,7 +514,7 @@ Common Workflow Language
      doc: An interval for which to restrict the analysis to.
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: vc_vardict_allele_freq_threshold
      type: float
      default: 0.05

@@ -108,7 +108,7 @@ Additional configuration (inputs)
 =======  ================  ========  ==========  ==================================================
 name     type              prefix      position  documentation
 =======  ================  ========  ==========  ==================================================
-vcf      CompressedVCF                        3
+vcf      Gzipped<VCF>                         3
 rate     Float             -t                    base sampling probability per locus
 seed     Integer           -p                    use this random seed
 scaleBy  Optional<String>  -s                    scale sampling likelihood by this Float info field
@@ -160,7 +160,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'VcfLib: Vcf Random Sampling'
    doc: |-
      usage: vcfrandomsample [options] [<vcf file>]
@@ -213,6 +213,11 @@ Common Workflow Language
 
    baseCommand: vcfrandomsample
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: vcfrandomsample
 
 

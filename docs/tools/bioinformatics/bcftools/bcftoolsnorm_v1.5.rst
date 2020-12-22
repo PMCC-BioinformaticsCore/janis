@@ -3,7 +3,7 @@
 BCFTools: Normalize
 ==================================
 
-``bcftoolsNorm`` · *0 contributors · 2 versions*
+``bcftoolsNorm`` · *1 contributor · 2 versions*
 
 Left-align and normalize indels, check if REF alleles match the reference,
 split multiallelic sites into multiple rows; recover multiallelics from
@@ -81,21 +81,21 @@ Information
 :URL: `https://samtools.github.io/bcftools/bcftools.html#norm <https://samtools.github.io/bcftools/bcftools.html#norm>`_
 :Versions: v1.9, v1.5
 :Container: biocontainers/bcftools:v1.5_cv2
-:Authors: 
+:Authors: Michael Franklin
 :Citations: Li H, Handsaker B, Wysoker A, Fennell T, Ruan J, Homer N, Marth G, Abecasis G, Durbin R, and 1000 Genome Project Data Processing Subgroup, The Sequence alignment/map (SAM) format and SAMtools, Bioinformatics (2009) 25(16) 2078-9
 :DOI: http://www.ncbi.nlm.nih.gov/pubmed/19505943
-:Created: None
+:Created: 2019-01-24
 :Updated: 2019-01-24
 
 
 Outputs
 -----------
 
-======  =============  ===============
-name    type           documentation
-======  =============  ===============
-out     CompressedVCF
-======  =============  ===============
+======  ============  ===============
+name    type          documentation
+======  ============  ===============
+out     Gzipped<VCF>
+======  ============  ===============
 
 
 Additional configuration (inputs)
@@ -104,7 +104,7 @@ Additional configuration (inputs)
 =====================  =====================  ============  ==========  ============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 name                   type                   prefix          position  documentation
 =====================  =====================  ============  ==========  ============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-vcf                    CompressedVCF                                10
+vcf                    Gzipped<VCF>                                 10
 outputFilename         Optional<Filename>     -o                        --output: When output consists of a single stream, write it to FILE rather than to standard output, where it is written by default.
 checkRef               Optional<String>       -c                        --check-ref e|w|x|s: what to do when incorrect or missing REF allele is encountered: exit (e), warn (w), exclude (x), or set/fix (s) bad sites. The w option can be combined with x and s. Note that s can swap alleles and will update genotypes (GT) and AC counts, but will not attempt to fix PL or other fields. Also note, and this cannot be stressed enough, that s will NOT fix strand issues in your VCF, do NOT use it for that purpose!!! (Instead see http://samtools.github.io/bcftools/howtos/plugin.af-dist.html and http://samtools.github.io/bcftools/howtos/plugin.fixref.html.)
 removeDups             Optional<String>       -d                        --rm-dup: snps|indels|both|all|none. If a record is present multiple times, output only the first instance, see --collapse in Common Options.
@@ -196,7 +196,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'BCFTools: Normalize'
    doc: |
      Left-align and normalize indels, check if REF alleles match the reference,
@@ -261,7 +261,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .fai
+     - pattern: .fai
      inputBinding:
        prefix: -f
    - id: multiallelics
@@ -376,6 +376,11 @@ Common Workflow Language
    - bcftools
    - norm
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bcftoolsNorm
 
 

@@ -211,7 +211,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'SamTools: Sort'
    doc: |-
      Ensure SAMTOOLS.SORT is inheriting from parent metadata
@@ -355,6 +355,11 @@ Common Workflow Language
    - samtools
    - sort
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: SamToolsSort
 
 

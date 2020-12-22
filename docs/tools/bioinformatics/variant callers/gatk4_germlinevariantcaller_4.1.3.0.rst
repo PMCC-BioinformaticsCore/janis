@@ -100,13 +100,13 @@ URL: *No URL to the documentation was provided*
 Outputs
 -----------
 
-========  ====================  ===============
-name      type                  documentation
-========  ====================  ===============
-variants  CompressedIndexedVCF
+========  ============  ===============
+name      type          documentation
+========  ============  ===============
+variants  Gzipped<VCF>
 out_bam   IndexedBam
 out       VCF
-========  ====================  ===============
+========  ============  ===============
 
 
 Workflow
@@ -129,15 +129,15 @@ Split Multiple Alleles   ``SplitMultiAllele/v0.5772``
 Additional configuration (inputs)
 ---------------------------------
 
-======================================  ====================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
-name                                    type                  documentation
-======================================  ====================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
+======================================  ================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
+name                                    type              documentation
+======================================  ================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
 bam                                     IndexedBam
 reference                               FastaWithIndexes
-snps_dbsnp                              CompressedIndexedVCF
-intervals                               Optional<bed>         This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
-haplotype_caller_pairHmmImplementation  Optional<String>      The PairHMM implementation to use for genotype likelihood calculations. The various implementations balance a tradeoff of accuracy and runtime. The --pair-hmm-implementation argument is an enumerated type (Implementation), which can have one of the following values: EXACT;ORIGINAL;LOGLESS_CACHING;AVX_LOGLESS_CACHING;AVX_LOGLESS_CACHING_OMP;EXPERIMENTAL_FPGA_LOGLESS_CACHING;FASTEST_AVAILABLE. Implementation:  FASTEST_AVAILABLE
-======================================  ====================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
+snps_dbsnp                              Gzipped<VCF>
+intervals                               Optional<bed>     This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
+haplotype_caller_pairHmmImplementation  Optional<String>  The PairHMM implementation to use for genotype likelihood calculations. The various implementations balance a tradeoff of accuracy and runtime. The --pair-hmm-implementation argument is an enumerated type (Implementation), which can have one of the following values: EXACT;ORIGINAL;LOGLESS_CACHING;AVX_LOGLESS_CACHING;AVX_LOGLESS_CACHING_OMP;EXPERIMENTAL_FPGA_LOGLESS_CACHING;FASTEST_AVAILABLE. Implementation:  FASTEST_AVAILABLE
+======================================  ================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -223,7 +223,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: GATK4 Germline Variant Caller
    doc: |-
      This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.1.3.
@@ -242,7 +242,7 @@ Common Workflow Language
    - id: bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: intervals
      doc: |-
        This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
@@ -252,17 +252,17 @@ Common Workflow Language
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: snps_dbsnp
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: haplotype_caller_pairHmmImplementation
      doc: |-
        The PairHMM implementation to use for genotype likelihood calculations. The various implementations balance a tradeoff of accuracy and runtime. The --pair-hmm-implementation argument is an enumerated type (Implementation), which can have one of the following values: EXACT;ORIGINAL;LOGLESS_CACHING;AVX_LOGLESS_CACHING;AVX_LOGLESS_CACHING_OMP;EXPERIMENTAL_FPGA_LOGLESS_CACHING;FASTEST_AVAILABLE. Implementation:  FASTEST_AVAILABLE
@@ -273,12 +273,12 @@ Common Workflow Language
    - id: variants
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputSource: haplotype_caller/out
    - id: out_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: haplotype_caller/bam
    - id: out
      type: File
@@ -324,7 +324,6 @@ Common Workflow Language
      label: Split Multiple Alleles
      in:
      - id: vcf
-       source: uncompressvcf/out
      - id: reference
        source: reference
      run: tools/SplitMultiAllele_v0_5772.cwl

@@ -3,7 +3,7 @@
 Vardict Germline Variant Caller
 ==============================================================
 
-``vardictGermlineVariantCaller`` · *0 contributors · 1 version*
+``vardictGermlineVariantCaller`` · *2 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -87,22 +87,22 @@ URL: *No URL to the documentation was provided*
 :ID: ``vardictGermlineVariantCaller``
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.1
-:Authors: 
+:Authors: Michael Franklin, Jiaan Yu
 :Citations: 
-:Created: None
-:Updated: None
+:Created: 2019-03-28
+:Updated: 2020-07-14
 
 
 
 Outputs
 -----------
 
-========  ====================  ===============
-name      type                  documentation
-========  ====================  ===============
-variants  CompressedIndexedVCF
+========  =============  ===============
+name      type           documentation
+========  =============  ===============
+variants  Gzipped<File>
 out       VCF
-========  ====================  ===============
+========  =============  ===============
 
 
 Workflow
@@ -257,8 +257,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Vardict Germline Variant Caller
+   doc: ''
 
    requirements:
    - class: InlineJavascriptRequirement
@@ -268,7 +269,7 @@ Common Workflow Language
    - id: bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: intervals
      type: File
    - id: sample_name
@@ -281,13 +282,13 @@ Common Workflow Language
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: vardict_chromNamesAreNumbers
      doc: Indicate the chromosome names are just numbers, such as 1, 2, not chr1, chr2
      type: boolean
@@ -330,7 +331,7 @@ Common Workflow Language
    - id: variants
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputSource: tabixvcf/out
    - id: out
      type: File

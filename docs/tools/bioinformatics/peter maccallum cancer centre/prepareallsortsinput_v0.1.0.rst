@@ -3,7 +3,7 @@
     Prepare ALLSorts Input
     =============================================
 
-    ``prepareALLSortsInput`` · *0 contributors · 1 version*
+    ``prepareALLSortsInput`` · *1 contributor · 1 version*
 
     No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -20,7 +20,7 @@
        wf.step(
            "prepareallsortsinput_step",
            PrepareALLSortsInput_0_1_0(
-               inputs=None,
+               inps=None,
            )
        )
        wf.output("out", source=prepareallsortsinput_step.out)
@@ -53,9 +53,9 @@
 
 .. code-block:: yaml
 
-       inputs:
-       - inputs_0
-       - inputs_1
+       inps:
+       - inps_0
+       - inps_1
 
 
 
@@ -80,10 +80,10 @@
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Container: python:3.8.1
-:Authors: 
+:Authors: Jiaan Yu
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-09-21
+:Updated: 2020-09-21
 
 
 
@@ -104,7 +104,7 @@ out     csv
     ===============  =======================  ===============
 name             type                     documentation
 ===============  =======================  ===============
-inputs           Array<File>
+inps             Array<File>
 labels           Optional<Array<String>>
 output_filename  Optional<String>
 fusion_caller    Optional<String>

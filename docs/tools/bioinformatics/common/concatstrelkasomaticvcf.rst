@@ -3,7 +3,7 @@
 Concat Strelka Somatic Vcf
 ====================================================
 
-``ConcatStrelkaSomaticVcf`` · *0 contributors · 1 version*
+``ConcatStrelkaSomaticVcf`` · *1 contributor · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -83,10 +83,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 0.1.16
 :Container: biocontainers/vcftools:v0.1.16-1-deb_cv1
-:Authors: 
+:Authors: Jiaan Yu
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-06-04
+:Updated: 2020-07-29
 
 
 Outputs
@@ -102,13 +102,13 @@ out     VCF
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ===========================  ========  ==========  ===============
-name            type                         prefix      position  documentation
-==============  ===========================  ========  ==========  ===============
-headerVcfs      Array<CompressedIndexedVCF>                     1
-contentVcfs     Array<CompressedIndexedVCF>                     4
-outputFilename  Optional<Filename>           >                  6
-==============  ===========================  ========  ==========  ===============
+==============  ===================  ========  ==========  ===============
+name            type                 prefix      position  documentation
+==============  ===================  ========  ==========  ===============
+headerVcfs      Array<Gzipped<VCF>>                     1
+contentVcfs     Array<Gzipped<VCF>>                     4
+outputFilename  Optional<Filename>   >                  6
+==============  ===================  ========  ==========  ===============
 
 Workflow Description Language
 ------------------------------
@@ -160,8 +160,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Concat Strelka Somatic Vcf
+   doc: ''
 
    requirements:
    - class: ShellCommandRequirement
@@ -217,6 +218,11 @@ Common Workflow Language
    - position: 5
      valueFrom: "| grep -v '^##' > content.vcf; cat header.vcf content.vcf"
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: ConcatStrelkaSomaticVcf
 
 

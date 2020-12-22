@@ -3,7 +3,7 @@
 GATK4: VariantFiltration
 =================================================
 
-``Gatk4Variantfiltration`` · *0 contributors · 4 versions*
+``Gatk4Variantfiltration`` · *1 contributor · 4 versions*
 
 USAGE: VariantFiltration [arguments]
 Filter variant calls based on INFO and/or FORMAT annotations.
@@ -84,7 +84,7 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.0.12.0
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
 :Created: 2020-05-18
 :Updated: 2020-05-18
@@ -93,11 +93,11 @@ Information
 Outputs
 -----------
 
-======  ====================  ===============
-name    type                  documentation
-======  ====================  ===============
-out     CompressedIndexedVCF
-======  ====================  ===============
+======  ============  ===============
+name    type          documentation
+======  ============  ===============
+out     Gzipped<VCF>
+======  ============  ===============
 
 
 Additional configuration (inputs)
@@ -106,7 +106,7 @@ Additional configuration (inputs)
 ===================================  ==========================  ========================================  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 name                                 type                        prefix                                    position    documentation
 ===================================  ==========================  ========================================  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-variant                              CompressedIndexedVCF        --variant                                             (-V) A VCF file containing variants Required.
+variant                              Gzipped<VCF>                --variant                                             (-V) A VCF file containing variants Required.
 filterName                           Array<Optional<String>>     --filter-name                                         Names to use for the list of filters This argument may be specified 0 or more times. Default value: null.
 javaOptions                          Optional<Array<String>>
 compression_level                    Optional<Integer>                                                                 Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
@@ -394,7 +394,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: VariantFiltration'
    doc: |
      USAGE: VariantFiltration [arguments]
@@ -437,7 +437,7 @@ Common Workflow Language
      doc: (-V) A VCF file containing variants Required.
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      inputBinding:
        prefix: --variant
        separate: true
@@ -869,13 +869,13 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: --reference
        separate: true
@@ -1204,7 +1204,7 @@ Common Workflow Language
      label: out
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: $(inputs.variant.basename.replace(/.vcf.gz$/, "")).filtered.vcf
        loadContents: false
@@ -1219,6 +1219,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk4Variantfiltration
 
 

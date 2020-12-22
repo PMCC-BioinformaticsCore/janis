@@ -109,22 +109,22 @@ out     stdout<VCF>  Filtered VCF
 Additional configuration (inputs)
 ---------------------------------
 
-===============  =========================  =================  ==========  ===================================================================================================================================================================
-name             type                       prefix               position  documentation
-===============  =========================  =================  ==========  ===================================================================================================================================================================
-vcf              VCF                                                    1  VCF to filter
-info_filter      Optional<String>           --info-filter                  (-f) specifies a filter to apply to the info fields of records, removes alleles which do not pass the filter
-genotype_filter  Optional<String>           --genotype-filter              (-g) specifies a filter to apply to the genotype fields of records
-keep_info        Optional<Boolean>          --keep-info                    (-k) used in conjunction with '-g', keeps variant info, but removes genotype
-filter_sites     Optional<Boolean>          --filter-sites                 (-s) filter entire records, not just alleles
-tag_pass         Optional<String>           --tag-pass                     (-t) tag vcf records as positively filtered with this tag, print all records
-tag_fail         Optional<String>           --tag-fail                     (-F) tag vcf records as negatively filtered with this tag, print all records
-append_filter    Optional<Boolean>          --append-filter                (-A) append the existing filter tag, don't just replace it
-allele_tag       Optional<String>           --allele-tag                   (-a) apply -t on a per-allele basis. adds or sets the corresponding INFO field tag
-invert           Optional<Boolean>          --invert                       (-v) inverts the filter, e.g. grep -v
-use_logical_or   Optional<Boolean>          --or                           (-o) use logical OR instead of AND to combine filters
-region           Optional<Array<BedTABIX>>  --region                       (-r) specify a region on which to target the filtering, requires a BGZF compressed file which has been indexed with tabix.  any number of regions may be specified.
-===============  =========================  =================  ==========  ===================================================================================================================================================================
+===============  =============================  =================  ==========  ===================================================================================================================================================================
+name             type                           prefix               position  documentation
+===============  =============================  =================  ==========  ===================================================================================================================================================================
+vcf              VCF                                                        1  VCF to filter
+info_filter      Optional<String>               --info-filter                  (-f) specifies a filter to apply to the info fields of records, removes alleles which do not pass the filter
+genotype_filter  Optional<String>               --genotype-filter              (-g) specifies a filter to apply to the genotype fields of records
+keep_info        Optional<Boolean>              --keep-info                    (-k) used in conjunction with '-g', keeps variant info, but removes genotype
+filter_sites     Optional<Boolean>              --filter-sites                 (-s) filter entire records, not just alleles
+tag_pass         Optional<String>               --tag-pass                     (-t) tag vcf records as positively filtered with this tag, print all records
+tag_fail         Optional<String>               --tag-fail                     (-F) tag vcf records as negatively filtered with this tag, print all records
+append_filter    Optional<Boolean>              --append-filter                (-A) append the existing filter tag, don't just replace it
+allele_tag       Optional<String>               --allele-tag                   (-a) apply -t on a per-allele basis. adds or sets the corresponding INFO field tag
+invert           Optional<Boolean>              --invert                       (-v) inverts the filter, e.g. grep -v
+use_logical_or   Optional<Boolean>              --or                           (-o) use logical OR instead of AND to combine filters
+region           Optional<Array<Gzipped<bed>>>  --region                       (-r) specify a region on which to target the filtering, requires a BGZF compressed file which has been indexed with tabix.  any number of regions may be specified.
+===============  =============================  =================  ==========  ===================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -189,7 +189,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'VcfLib: Vcf Filter'
    doc: |-
      Filter the specified vcf file using the set of filters.
@@ -334,6 +334,11 @@ Common Workflow Language
 
    baseCommand: vcffilter
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: vcffilter
 
 

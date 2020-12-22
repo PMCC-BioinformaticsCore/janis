@@ -3,7 +3,7 @@
 Align and sort reads
 =================================
 
-``BwaAligner`` · *0 contributors · 1 version*
+``BwaAligner`` · *1 contributor · 1 version*
 
 Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam
 
@@ -84,7 +84,7 @@ URL: *No URL to the documentation was provided*
 :ID: ``BwaAligner``
 :URL: *No URL to the documentation was provided*
 :Versions: 1.0.0
-:Authors: 
+:Authors: Michael Franklin
 :Citations: 
 :Created: 2018-12-24
 :Updated: None
@@ -128,8 +128,8 @@ reference                      FastaWithIndexes
 fastq                          FastqGzPair
 cutadapt_adapter               Optional<Array<String>>
 cutadapt_removeMiddle3Adapter  Optional<Array<String>>
-cutadapt_front                 Optional<String>
-cutadapt_removeMiddle5Adapter  Optional<String>
+cutadapt_front                 Optional<String>         (-g)  Sequence of an adapter ligated to the 5' end (paired data: of the first read). The adapter and any preceding bases are trimmed. Partial matches at the 5' end are allowed. If a '^' character is prepended ('anchoring'), the adapter is only found if it is a prefix of the read.
+cutadapt_removeMiddle5Adapter  Optional<String>         5' adapter to be removed from second read in a pair.
 cutadapt_qualityCutoff         Optional<Integer>        (]3'CUTOFF, ]3'CUTOFF, -q)  Trim low-quality bases from 5' and/or 3' ends of each read before adapter removal. Applied to both reads if data is paired. If one value is given, only the 3' end is trimmed. If two comma-separated cutoffs are given, the 5' end is trimmed with the first cutoff, the 3' end with the second.
 cutadapt_minimumLength         Optional<Integer>        (-m)  Discard reads shorter than LEN. Default: 0
 bwamem_markShorterSplits       Optional<Boolean>        Mark shorter split hits as secondary (for Picard compatibility).
@@ -223,7 +223,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Align and sort reads
    doc: |-
      Align sorted bam with this subworkflow consisting of BWA Mem + SamTools + Gatk4SortSam
@@ -238,13 +238,13 @@ Common Workflow Language
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: fastq
      type:
        type: array
@@ -260,10 +260,13 @@ Common Workflow Language
        items: string
      - 'null'
    - id: cutadapt_front
+     doc: |-
+       (-g)  Sequence of an adapter ligated to the 5' end (paired data: of the first read). The adapter and any preceding bases are trimmed. Partial matches at the 5' end are allowed. If a '^' character is prepended ('anchoring'), the adapter is only found if it is a prefix of the read.
      type:
      - string
      - 'null'
    - id: cutadapt_removeMiddle5Adapter
+     doc: 5' adapter to be removed from second read in a pair.
      type:
      - string
      - 'null'
@@ -308,7 +311,7 @@ Common Workflow Language
    - id: out
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: sortsam/out
 
    steps:

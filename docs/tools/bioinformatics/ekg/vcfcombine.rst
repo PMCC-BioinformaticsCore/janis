@@ -153,7 +153,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'VcfLib: VcfCombine'
    doc: |-
      usage: vcfcombine [vcf file] [vcf file] ...
@@ -198,6 +198,11 @@ Common Workflow Language
 
    baseCommand: vcfcombine
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: vcfcombine
 
 

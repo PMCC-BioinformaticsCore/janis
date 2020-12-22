@@ -3,7 +3,7 @@
 BCFTools: Index
 ===============================
 
-``bcftoolsIndex`` · *0 contributors · 1 version*
+``bcftoolsIndex`` · *1 contributor · 1 version*
 
 Index bgzip compressed VCF/BCF files for random access.
 
@@ -77,21 +77,21 @@ Information
 :URL: `https://samtools.github.io/bcftools/bcftools.html#norm <https://samtools.github.io/bcftools/bcftools.html#norm>`_
 :Versions: v1.9
 :Container: biocontainers/bcftools:v1.9-1-deb_cv1
-:Authors: 
+:Authors: Michael Franklin
 :Citations: Li H, Handsaker B, Wysoker A, Fennell T, Ruan J, Homer N, Marth G, Abecasis G, Durbin R, and 1000 Genome Project Data Processing Subgroup, The Sequence alignment/map (SAM) format and SAMtools, Bioinformatics (2009) 25(16) 2078-9
 :DOI: http://www.ncbi.nlm.nih.gov/pubmed/19505943
 :Created: 2019-01-24
-:Updated: None
+:Updated: 2019-01-24
 
 
 Outputs
 -----------
 
-======  ====================  ===============
-name    type                  documentation
-======  ====================  ===============
-out     CompressedIndexedVCF
-======  ====================  ===============
+======  ============  ===============
+name    type          documentation
+======  ============  ===============
+out     Gzipped<VCF>
+======  ============  ===============
 
 
 Additional configuration (inputs)
@@ -100,7 +100,7 @@ Additional configuration (inputs)
 ========  =================  ===========  ==========  ============================================================
 name      type               prefix         position  documentation
 ========  =================  ===========  ==========  ============================================================
-vcf       CompressedVCF                            1
+vcf       Gzipped<VCF>                             1
 csi       Optional<Boolean>  --csi                    (-c) generate CSI-format index for VCF/BCF files [default]
 force     Optional<Boolean>  --force                  (-f) overwrite index if it already exists
 minShift  Optional<Integer>  --min-shift              (-m) set minimal interval size for CSI indices to 2^INT [14]
@@ -134,7 +134,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{vcf} .
+       cp -f '~{vcf}' '.'
        bcftools index \
          ~{if (defined(csi) && select_first([csi])) then "--csi" else ""} \
          ~{if (defined(force) && select_first([force])) then "--force" else ""} \
@@ -166,7 +166,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'BCFTools: Index'
    doc: Index bgzip compressed VCF/BCF files for random access.
 
@@ -248,9 +248,9 @@ Common Workflow Language
      label: out
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
-       glob: $(inputs.vcf)
+       glob: $(inputs.vcf.basename)
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -259,6 +259,11 @@ Common Workflow Language
    - bcftools
    - index
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bcftoolsIndex
 
 

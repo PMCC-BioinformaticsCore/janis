@@ -63,7 +63,7 @@ Quickstart
 
 .. code-block:: yaml
 
-       inp: inp.vcf.gz
+       inp: inp.gz
 
 
 
@@ -96,11 +96,11 @@ Information
 Outputs
 -----------
 
-======  ====================  ===============
-name    type                  documentation
-======  ====================  ===============
-out     CompressedIndexedVCF
-======  ====================  ===============
+======  =============  ===============
+name    type           documentation
+======  =============  ===============
+out     Gzipped<File>
+======  =============  ===============
 
 
 Additional configuration (inputs)
@@ -109,7 +109,7 @@ Additional configuration (inputs)
 ===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
 name         type               prefix            position  documentation
 ===========  =================  ==============  ==========  ==============================================================================================================================================================================================================================================================================================================
-inp          CompressedVCF                               8  File from which to create the index. The input data file must be position sorted and compressed by bgzip which has a gzip(1) like interface.
+inp          Gzipped<File>                               8  File from which to create the index. The input data file must be position sorted and compressed by bgzip which has a gzip(1) like interface.
 preset       Optional<String>   --preset                 2  -p: Input format for indexing. Valid values are: gff, bed, sam, vcf. This option should not be applied together with any of -s, -b, -e, -c and -0; it is not used for data retrieval because this setting is stored in the index file. [gff]
 zeroBased    Optional<Boolean>  --zero-based             1  -0: Specify that the position in the data file is 0-based (e.g. UCSC files) rather than 1-based.
 begin        Optional<Integer>  --begin                  4  -b: Column of start chromosomal position. [4]
@@ -161,7 +161,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{inp} .
+       cp -f '~{inp}' '.'
        tabix \
          ~{if (defined(zeroBased) && select_first([zeroBased])) then "--zero-based" else ""} \
          ~{if (defined(csi) && select_first([csi])) then "--csi" else ""} \
@@ -202,7 +202,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Tabix
    doc: |-
      tabix – Generic indexer for TAB-delimited genome position files
@@ -389,15 +389,20 @@ Common Workflow Language
      label: out
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
-       glob: $(inputs.inp)
+       glob: $(inputs.inp.basename)
        loadContents: false
    stdout: _stdout
    stderr: _stderr
 
    baseCommand: tabix
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: tabix
 
 

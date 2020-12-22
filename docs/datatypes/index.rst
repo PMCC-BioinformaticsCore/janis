@@ -11,6 +11,7 @@ Automatically generated index page for Data Types:
    bai
    bam
    bed
+   bedgz
    bedtabix
    boolean
    compressedindexedvcf
@@ -45,7 +46,6 @@ Automatically generated index page for Data Types:
    jsonfile
    kallistoidx
    sam
-   stderr
    stdout
    string
    tarfile
@@ -55,4 +55,4 @@ Automatically generated index page for Data Types:
    whisperidx
    zip
 
-*This page was auto-generated on 10/11/2020. Please do not directly alter the contents of this page.*
+*This page was auto-generated on 22/12/2020. Please do not directly alter the contents of this page.*

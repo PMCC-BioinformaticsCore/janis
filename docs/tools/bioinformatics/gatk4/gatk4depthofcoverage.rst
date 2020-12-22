@@ -176,7 +176,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{bam_bai} $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
+       cp -f '~{bam_bai}' $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
        gatk DepthOfCoverage \
          --java-options '-Xmx~{((select_first([runtime_memory, 8, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
          -I '~{bam}' \
@@ -217,7 +217,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: Generate coverage summary information for reads data'
    doc: |-
      Generate coverage summary information for reads data
@@ -280,13 +280,13 @@ Common Workflow Language
      doc: Reference sequence
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: -R
    - id: outputPrefix
@@ -381,7 +381,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_cumulative_coverage_counts"))
-       outputEval: $((inputs.outputPrefix + ".sample_cumulative_coverage_counts"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_cumulative_coverage_counts"))
        loadContents: false
    - id: out_sampleCumulativeCoverageProportions
      label: out_sampleCumulativeCoverageProportions
@@ -389,7 +389,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_cumulative_coverage_proportions"))
-       outputEval: $((inputs.outputPrefix + ".sample_cumulative_coverage_proportions"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_cumulative_coverage_proportions"))
        loadContents: false
    - id: out_sampleIntervalStatistics
      label: out_sampleIntervalStatistics
@@ -398,7 +398,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_interval_statistics"))
-       outputEval: $((inputs.outputPrefix + ".sample_interval_statistics"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_interval_statistics"))
        loadContents: false
    - id: out_sampleIntervalSummary
      label: out_sampleIntervalSummary
@@ -406,7 +406,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_interval_summary"))
-       outputEval: $((inputs.outputPrefix + ".sample_interval_summary"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_interval_summary"))
        loadContents: false
    - id: out_sampleStatistics
      label: out_sampleStatistics
@@ -414,7 +414,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_statistics"))
-       outputEval: $((inputs.outputPrefix + ".sample_statistics"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_statistics"))
        loadContents: false
    - id: out_sampleSummary
      label: out_sampleSummary
@@ -423,7 +423,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_summary"))
-       outputEval: $((inputs.outputPrefix + ".sample_summary"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_summary"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -436,6 +436,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 8, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk4DepthOfCoverage
 
 

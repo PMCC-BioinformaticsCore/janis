@@ -3,7 +3,7 @@
 Trim IUPAC Bases
 ============================
 
-``trimIUPAC`` · *0 contributors · 2 versions*
+``trimIUPAC`` · *1 contributor · 2 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -77,10 +77,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 0.0.5, 0.0.4
 :Container: michaelfranklin/pmacutil:0.0.4
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2019-05-30
+:Updated: 2019-12-08
 
 
 Outputs
@@ -145,8 +145,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Trim IUPAC Bases
+   doc: ''
 
    requirements:
    - class: ShellCommandRequirement
@@ -182,6 +183,11 @@ Common Workflow Language
 
    baseCommand: trimIUPAC.py
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: trimIUPAC
 
 

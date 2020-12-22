@@ -109,7 +109,7 @@ Outputs
 ========  ====================  ===============
 name      type                  documentation
 ========  ====================  ===============
-variants  CompressedIndexedVCF
+variants  Gzipped<VCF>
 out_bam   Optional<IndexedBam>
 out       VCF
 ========  ====================  ===============
@@ -126,10 +126,10 @@ Embedded Tools
 ================================  ==========================================
                                   ``split_bam_subpipeline/None``
 GatkMutect2                       ``Gatk4Mutect2/4.1.3.0``
-GATK4: LearnReadOrientationModel  ``Gatk4LearnReadOrientationModel/4.1.4.0``
-GATK4: GetPileupSummaries         ``Gatk4GetPileupSummaries/4.1.6.0``
-GATK4: CalculateContamination     ``Gatk4CalculateContamination/4.1.4.0``
-GATK4: GetFilterMutectCalls       ``Gatk4FilterMutectCalls/4.1.3.0``
+GATK4: LearnReadOrientationModel  ``Gatk4LearnReadOrientationModel/4.1.8.1``
+GATK4: GetPileupSummaries         ``Gatk4GetPileupSummaries/4.1.8.1``
+GATK4: CalculateContamination     ``Gatk4CalculateContamination/4.1.8.1``
+GATK4: GetFilterMutectCalls       ``Gatk4FilterMutectCalls/4.1.8.1``
 UncompressArchive                 ``UncompressArchive/v1.0.0``
 Split Multiple Alleles            ``SplitMultiAllele/v0.5772``
 VcfTools                          ``VcfTools/0.1.16``
@@ -140,20 +140,20 @@ VcfTools                          ``VcfTools/0.1.16``
 Additional configuration (inputs)
 ---------------------------------
 
-=============================  ==============================  =================================================================================================================================================================================================================================================================
-name                           type                            documentation
-=============================  ==============================  =================================================================================================================================================================================================================================================================
+=============================  ======================  =================================================================================================================================================================================================================================================================
+name                           type                    documentation
+=============================  ======================  =================================================================================================================================================================================================================================================================
 normal_bam                     IndexedBam
 tumor_bam                      IndexedBam
 reference                      FastaWithIndexes
-gnomad                         CompressedIndexedVCF
+gnomad                         Gzipped<VCF>
 normal_name                    Optional<String>
-intervals                      Optional<bed>                   This optional intervals file supports processing by regions. If this file resolves to null, then GATK will process the whole genome per each tool's spec
-panel_of_normals               Optional<CompressedIndexedVCF>
-filterpass_removeFileteredAll  Optional<Boolean>               Removes all sites with a FILTER flag other than PASS.
+intervals                      Optional<bed>           This optional intervals file supports processing by regions. If this file resolves to null, then GATK will process the whole genome per each tool's spec
+panel_of_normals               Optional<Gzipped<VCF>>
+filterpass_removeFileteredAll  Optional<Boolean>       Removes all sites with a FILTER flag other than PASS.
 filterpass_recode              Optional<Boolean>
-filterpass_recodeINFOAll       Optional<Boolean>               These options can be used with the above recode options to define an INFO key name to keep in the output  file.  This  option can be used multiple times to keep more of the INFO fields. The second option is used to keep all INFO values in the original file.
-=============================  ==============================  =================================================================================================================================================================================================================================================================
+filterpass_recodeINFOAll       Optional<Boolean>       These options can be used with the above recode options to define an INFO key name to keep in the output  file.  This  option can be used multiple times to keep more of the INFO fields. The second option is used to keep all INFO values in the original file.
+=============================  ======================  =================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -164,10 +164,10 @@ Workflow Description Language
 
    import "tools/split_bam_subpipeline.wdl" as S
    import "tools/Gatk4Mutect2_4_1_3_0.wdl" as G
-   import "tools/Gatk4LearnReadOrientationModel_4_1_4_0.wdl" as G2
-   import "tools/Gatk4GetPileupSummaries_4_1_6_0.wdl" as G3
-   import "tools/Gatk4CalculateContamination_4_1_4_0.wdl" as G4
-   import "tools/Gatk4FilterMutectCalls_4_1_3_0.wdl" as G5
+   import "tools/Gatk4LearnReadOrientationModel_4_1_8_1.wdl" as G2
+   import "tools/Gatk4GetPileupSummaries_4_1_8_1.wdl" as G3
+   import "tools/Gatk4CalculateContamination_4_1_8_1.wdl" as G4
+   import "tools/Gatk4FilterMutectCalls_4_1_8_1.wdl" as G5
    import "tools/UncompressArchive_v1_0_0.wdl" as U
    import "tools/SplitMultiAllele_v0_5772.wdl" as S2
    import "tools/VcfTools_0_1_16.wdl" as V
@@ -302,7 +302,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: GATK4 Somatic Variant Caller
    doc: |-
      This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.0.12.0. Takes GATK Base Recalibrated Bam as input
@@ -327,11 +327,11 @@ Common Workflow Language
    - id: normal_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: tumor_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: normal_name
      type:
      - string
@@ -345,23 +345,23 @@ Common Workflow Language
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: gnomad
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: panel_of_normals
      type:
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: filterpass_removeFileteredAll
      doc: Removes all sites with a FILTER flag other than PASS.
      type: boolean
@@ -380,14 +380,14 @@ Common Workflow Language
    - id: variants
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputSource: filtermutect2calls/out
    - id: out_bam
      type:
      - File
      - 'null'
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: mutect2/bam
    - id: out
      type: File
@@ -448,7 +448,7 @@ Common Workflow Language
        source:
        - mutect2/f1f2r_out
        linkMerge: merge_nested
-     run: tools/Gatk4LearnReadOrientationModel_4_1_4_0.cwl
+     run: tools/Gatk4LearnReadOrientationModel_4_1_8_1.cwl
      out:
      - id: out
    - id: getpileupsummaries
@@ -462,7 +462,7 @@ Common Workflow Language
        source: gnomad
      - id: intervals
        source: intervals
-     run: tools/Gatk4GetPileupSummaries_4_1_6_0.cwl
+     run: tools/Gatk4GetPileupSummaries_4_1_8_1.cwl
      out:
      - id: out
    - id: calculatecontamination
@@ -470,7 +470,7 @@ Common Workflow Language
      in:
      - id: pileupTable
        source: getpileupsummaries/out
-     run: tools/Gatk4CalculateContamination_4_1_4_0.cwl
+     run: tools/Gatk4CalculateContamination_4_1_8_1.cwl
      out:
      - id: contOut
      - id: segOut
@@ -489,7 +489,7 @@ Common Workflow Language
        source: mutect2/out
      - id: reference
        source: reference
-     run: tools/Gatk4FilterMutectCalls_4_1_3_0.cwl
+     run: tools/Gatk4FilterMutectCalls_4_1_8_1.cwl
      out:
      - id: out
    - id: uncompressvcf

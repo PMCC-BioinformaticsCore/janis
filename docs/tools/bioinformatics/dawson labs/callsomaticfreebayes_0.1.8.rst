@@ -149,7 +149,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Call Somatic Variants from freebayes
    doc: "Usage: callSomaticFreeBayes.R [options]\n"
 
@@ -197,6 +197,11 @@ Common Workflow Language
 
    baseCommand: callSomaticFreeBayes.R
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: callSomaticFreeBayes
 
 

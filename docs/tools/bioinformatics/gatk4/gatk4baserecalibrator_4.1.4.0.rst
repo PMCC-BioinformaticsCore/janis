@@ -110,19 +110,19 @@ out     tsv
 Additional configuration (inputs)
 ---------------------------------
 
-=================  ===========================  =============  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-name               type                         prefix           position  documentation
-=================  ===========================  =============  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-bam                IndexedBam                   -I                      6  BAM/SAM/CRAM file containing reads
-knownSites         Array<CompressedIndexedVCF>  --known-sites          28  **One or more databases of known polymorphic sites used to exclude regions around known polymorphisms from analysis.** This algorithm treats every reference mismatch as an indication of error. However, real genetic variation is expected to mismatch the reference, so it is critical that a database of known polymorphic sites is given to the tool in order to skip over those sites. This tool accepts any number of Feature-containing files (VCF, BCF, BED, etc.) for use as this database. For users wishing to exclude an interval list of known variation simply use -XL my.interval.list to skip over processing those sites. Please note however that the statistics reported by the tool will not accurately reflected those sites skipped by the -XL argument.
-reference          FastaWithIndexes             -R                      5  Reference sequence file
+=================  =======================  =============  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+name               type                     prefix           position  documentation
+=================  =======================  =============  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+bam                IndexedBam               -I                      6  BAM/SAM/CRAM file containing reads
+knownSites         Array<Gzipped<VCF>>      --known-sites          28  **One or more databases of known polymorphic sites used to exclude regions around known polymorphisms from analysis.** This algorithm treats every reference mismatch as an indication of error. However, real genetic variation is expected to mismatch the reference, so it is critical that a database of known polymorphic sites is given to the tool in order to skip over those sites. This tool accepts any number of Feature-containing files (VCF, BCF, BED, etc.) for use as this database. For users wishing to exclude an interval list of known variation simply use -XL my.interval.list to skip over processing those sites. Please note however that the statistics reported by the tool will not accurately reflected those sites skipped by the -XL argument.
+reference          FastaWithIndexes         -R                      5  Reference sequence file
 javaOptions        Optional<Array<String>>
-compression_level  Optional<Integer>                                       Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
-tmpDir             Optional<String>             --tmp-dir                  Temp directory to use.
-outputFilename     Optional<Filename>           -O                      8  **The output recalibration table filename to create.** After the header, data records occur one per line until the end of the file. The first several items on a line are the values of the individual covariates and will change depending on which covariates were specified at runtime. The last three items are the data- that is, number of observations for this combination of covariates, number of reference mismatches, and the raw empirical quality score calculated by phred-scaling the mismatch rate. Use '/dev/stdout' to print to standard out.
-intervals          Optional<bed>                --intervals                -L (BASE) One or more genomic intervals over which to operate
-intervalStrings    Optional<Array<String>>      --intervals                -L (BASE) One or more genomic intervals over which to operate
-=================  ===========================  =============  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+compression_level  Optional<Integer>                                   Compression level for all compressed files created (e.g. BAM and VCF). Default value: 2.
+tmpDir             Optional<String>         --tmp-dir                  Temp directory to use.
+outputFilename     Optional<Filename>       -O                      8  **The output recalibration table filename to create.** After the header, data records occur one per line until the end of the file. The first several items on a line are the values of the individual covariates and will change depending on which covariates were specified at runtime. The last three items are the data- that is, number of observations for this combination of covariates, number of reference mismatches, and the raw empirical quality score calculated by phred-scaling the mismatch rate. Use '/dev/stdout' to print to standard out.
+intervals          Optional<bed>            --intervals                -L (BASE) One or more genomic intervals over which to operate
+intervalStrings    Optional<Array<String>>  --intervals                -L (BASE) One or more genomic intervals over which to operate
+=================  =======================  =============  ==========  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -158,7 +158,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{bam_bai} $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
+       cp -f '~{bam_bai}' $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
        gatk BaseRecalibrator \
          --java-options '-Xmx~{((select_first([runtime_memory, 16, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
          ~{if defined(select_first([tmpDir, "/tmp/"])) then ("--tmp-dir '" + select_first([tmpDir, "/tmp/"]) + "'") else ""} \
@@ -189,7 +189,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: Base Recalibrator'
    doc: |-
      First pass of the base quality score recalibration. Generates a recalibration table based on various covariates. 
@@ -274,13 +274,13 @@ Common Workflow Language
      doc: Reference sequence file
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: -R
        position: 5
@@ -333,6 +333,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 16, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk4BaseRecalibrator
 
 

@@ -132,20 +132,20 @@ Information
 Outputs
 -----------
 
-==================  ====================  ===============
-name                type                  documentation
-==================  ====================  ===============
+==================  ============  ===============
+name                type          documentation
+==================  ============  ===============
 extended            csv
 summary             csv
 metrics             File
-vcf                 CompressedIndexedVCF
+vcf                 Gzipped<VCF>
 runinfo             jsonFile
 rocOut              File
 indelLocations      File
 indelPassLocations  File
 snpLocations        File
 snpPassLocations    File
-==================  ====================  ===============
+==================  ============  ===============
 
 
 Additional configuration (inputs)
@@ -370,7 +370,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Hap.py validation
    doc: |-
      usage: Haplotype Comparison 
@@ -439,13 +439,13 @@ Common Workflow Language
      doc: (-r)  Specify a reference file.
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: --reference
    - id: intervals
@@ -871,78 +871,83 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".extended.csv"))
-       outputEval: $((inputs.reportPrefix + ".extended.csv"))
+       outputEval: $((inputs.reportPrefix.basename + ".extended.csv"))
        loadContents: false
    - id: summary
      label: summary
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".summary.csv"))
-       outputEval: $((inputs.reportPrefix + ".summary.csv"))
+       outputEval: $((inputs.reportPrefix.basename + ".summary.csv"))
        loadContents: false
    - id: metrics
      label: metrics
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".metrics.json.gz"))
-       outputEval: $((inputs.reportPrefix + ".metrics.json.gz"))
+       outputEval: $((inputs.reportPrefix.basename + ".metrics.json.gz"))
        loadContents: false
    - id: vcf
      label: vcf
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: $((inputs.reportPrefix + ".vcf.gz"))
-       outputEval: $((inputs.reportPrefix + ".vcf.gz"))
+       outputEval: $((inputs.reportPrefix.basename + ".vcf.gz"))
        loadContents: false
    - id: runinfo
      label: runinfo
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".runinfo.json"))
-       outputEval: $((inputs.reportPrefix + ".runinfo.json"))
+       outputEval: $((inputs.reportPrefix.basename + ".runinfo.json"))
        loadContents: false
    - id: rocOut
      label: rocOut
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".roc.all.csv.gz"))
-       outputEval: $((inputs.reportPrefix + ".roc.all.csv.gz"))
+       outputEval: $((inputs.reportPrefix.basename + ".roc.all.csv.gz"))
        loadContents: false
    - id: indelLocations
      label: indelLocations
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".roc.Locations.INDEL.csv.gz"))
-       outputEval: $((inputs.reportPrefix + ".roc.Locations.INDEL.csv.gz"))
+       outputEval: $((inputs.reportPrefix.basename + ".roc.Locations.INDEL.csv.gz"))
        loadContents: false
    - id: indelPassLocations
      label: indelPassLocations
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".roc.Locations.INDEL.PASS.csv.gz"))
-       outputEval: $((inputs.reportPrefix + ".roc.Locations.INDEL.PASS.csv.gz"))
+       outputEval: $((inputs.reportPrefix.basename + ".roc.Locations.INDEL.PASS.csv.gz"))
        loadContents: false
    - id: snpLocations
      label: snpLocations
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".roc.Locations.SNP.csv.gz"))
-       outputEval: $((inputs.reportPrefix + ".roc.Locations.SNP.csv.gz"))
+       outputEval: $((inputs.reportPrefix.basename + ".roc.Locations.SNP.csv.gz"))
        loadContents: false
    - id: snpPassLocations
      label: snpPassLocations
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".roc.Locations.SNP.PASS.csv.gz"))
-       outputEval: $((inputs.reportPrefix + ".roc.Locations.SNP.PASS.csv.gz"))
+       outputEval: $((inputs.reportPrefix.basename + ".roc.Locations.SNP.PASS.csv.gz"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
 
    baseCommand: /opt/hap.py/bin/hap.py
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: happy_validator
 
 

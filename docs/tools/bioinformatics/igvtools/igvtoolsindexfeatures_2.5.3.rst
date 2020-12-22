@@ -3,7 +3,7 @@
 IGVTools: Index Features
 ================================================
 
-``IgvToolsIndexFeatures`` · *0 contributors · 1 version*
+``IgvToolsIndexFeatures`` · *1 contributor · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -77,10 +77,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 2.5.3
 :Container: quay.io/biocontainers/igvtools:2.5.3--0
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-06-04
+:Updated: 2020-06-15
 
 
 Outputs
@@ -119,7 +119,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{inp} sample.vcf
+       cp -f '~{inp}' 'sample.vcf'
        igvtools index \
          sample.vcf
      >>>
@@ -144,8 +144,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'IGVTools: Index Features'
+   doc: ''
 
    requirements:
    - class: ShellCommandRequirement
@@ -169,9 +170,9 @@ Common Workflow Language
      label: out
      type: File
      secondaryFiles:
-     - .idx
+     - pattern: .idx
      outputBinding:
-       glob: $(inputs.inp)
+       glob: $(inputs.inp.basename)
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -180,6 +181,11 @@ Common Workflow Language
    - igvtools
    - index
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: IgvToolsIndexFeatures
 
 

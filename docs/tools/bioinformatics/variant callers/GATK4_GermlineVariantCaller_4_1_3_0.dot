@@ -7,5 +7,4 @@ digraph GATK4_GermlineVariantCaller {
 	splitnormalisevcf [label="splitnormalisevcf (Split Multiple Alleles)"]
 	split_bam -> haplotype_caller
 	haplotype_caller -> uncompressvcf
-	uncompressvcf -> splitnormalisevcf
 }

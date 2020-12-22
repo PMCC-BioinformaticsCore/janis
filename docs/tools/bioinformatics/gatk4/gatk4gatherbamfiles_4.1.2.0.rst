@@ -3,9 +3,22 @@
 GATK4: GatherBamFiles
 ===========================================
 
-``Gatk4GatherBamFiles`` · *0 contributors · 3 versions*
+``Gatk4GatherBamFiles`` · *1 contributor · 3 versions*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+b'USAGE: GatherBamFiles [arguments]
+<p>Concatenate efficiently BAM files that resulted from a scattered parallel analysis.</p><p>This tool performs a rapid
+'gather' or concatenation on BAM files. This is often needed in operations that have been run in parallel across
+genomics regions by scattering their execution across computing nodes and cores thus resulting in smaller BAM
+files.</p><p>This tool does not support SAM files</p><h3>Inputs</h3><p>A list of BAM files to combine using the INPUT
+argument. These files must be provided in the order that they should be concatenated.</p><h3>Output</h3><p>A single BAM
+file. The header is copied from the first input file.</p><h3>Usage example:</h3><pre>java -jar picard.jar GatherBamFiles
+\
+I=input1.bam \
+I=input2.bam \
+O=gathered_files.bam</pre><h3>Notes</h3><p>Operates via copying of the gzip blocks directly for speed but also supports
+generation of an MD5 on the output and indexing of the output BAM file.</p><hr/>
+Version:4.1.3.0
+
 
 
 Quickstart
@@ -77,10 +90,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
 :Container: broadinstitute/gatk:4.1.2.0
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-05-18
+:Updated: 2020-05-18
 
 
 Outputs
@@ -197,8 +210,22 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: GatherBamFiles'
+   doc: |
+     b'USAGE: GatherBamFiles [arguments]
+     <p>Concatenate efficiently BAM files that resulted from a scattered parallel analysis.</p><p>This tool performs a rapid
+     'gather' or concatenation on BAM files. This is often needed in operations that have been run in parallel across
+     genomics regions by scattering their execution across computing nodes and cores thus resulting in smaller BAM
+     files.</p><p>This tool does not support SAM files</p><h3>Inputs</h3><p>A list of BAM files to combine using the INPUT
+     argument. These files must be provided in the order that they should be concatenated.</p><h3>Output</h3><p>A single BAM
+     file. The header is copied from the first input file.</p><h3>Usage example:</h3><pre>java -jar picard.jar GatherBamFiles
+     \
+     I=input1.bam \
+     I=input2.bam \
+     O=gathered_files.bam</pre><h3>Notes</h3><p>Operates via copying of the gzip blocks directly for speed but also supports
+     generation of an MD5 on the output and indexing of the output BAM file.</p><hr/>
+     Version:4.1.3.0
 
    requirements:
    - class: ShellCommandRequirement
@@ -429,6 +456,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk4GatherBamFiles
 
 

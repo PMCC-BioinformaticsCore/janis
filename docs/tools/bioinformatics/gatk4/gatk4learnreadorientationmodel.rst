@@ -3,7 +3,7 @@
 GATK4: LearnReadOrientationModel
 =================================================================
 
-``Gatk4LearnReadOrientationModel`` · *1 contributor · 3 versions*
+``Gatk4LearnReadOrientationModel`` · *1 contributor · 6 versions*
 
 TBD
 
@@ -13,13 +13,13 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.gatk4.learnreadorientationmodel.versions import Gatk4LearnReadOrientationModel_4_1_4
+       from janis_bioinformatics.tools.gatk4.learnreadorientationmodel.versions import Gatk4LearnReadOrientationModel_4_1_8
 
        wf = WorkflowBuilder("myworkflow")
 
        wf.step(
            "gatk4learnreadorientationmodel_step",
-           Gatk4LearnReadOrientationModel_4_1_4(
+           Gatk4LearnReadOrientationModel_4_1_8(
                f1r2CountsFiles=None,
            )
        )
@@ -77,8 +77,8 @@ Information
 
 :ID: ``Gatk4LearnReadOrientationModel``
 :URL: `TBD <TBD>`_
-:Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0
-:Container: broadinstitute/gatk:4.1.4.0
+:Versions: 4.1.8.1, 4.1.7.0, 4.1.6.0, 4.1.4.0, 4.1.3.0, 4.1.2.0
+:Container: broadinstitute/gatk:4.1.8.1
 :Authors: Hollizeck Sebastian
 :Citations: TBD
 :Created: 2019-09-09
@@ -138,7 +138,7 @@ Workflow Description Language
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "broadinstitute/gatk:4.1.4.0"
+       docker: "broadinstitute/gatk:4.1.8.1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 32, 4])}G"
        preemptible: 2
@@ -155,7 +155,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: LearnReadOrientationModel'
    doc: TBD
 
@@ -163,7 +163,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: broadinstitute/gatk:4.1.4.0
+     dockerPull: broadinstitute/gatk:4.1.8.1
 
    inputs:
    - id: javaOptions
@@ -226,6 +226,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 32, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk4LearnReadOrientationModel
 
 

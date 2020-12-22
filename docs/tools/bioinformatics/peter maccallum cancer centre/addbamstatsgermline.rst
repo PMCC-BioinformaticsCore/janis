@@ -84,8 +84,8 @@ URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Authors: Jiaan Yu
 :Citations: 
-:Created: None
-:Updated: None
+:Created: 2020-06-04
+:Updated: 2020-08-10
 
 
 
@@ -188,7 +188,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Annotate Bam Stats to Germline Vcf Workflow
 
    requirements:
@@ -199,19 +199,19 @@ Common Workflow Language
    - id: bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: vcf
      type: File
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: samtoolsmpileup_countOrphans
      doc: do not discard anomalous read pairs
      type: boolean

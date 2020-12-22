@@ -3,7 +3,7 @@
 Gridss
 ===============
 
-``gridss`` · *1 contributor · 4 versions*
+``gridss`` · *1 contributor · 5 versions*
 
 GRIDSS: the Genomic Rearrangement IDentification Software Suite
 
@@ -27,13 +27,13 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.papenfuss.gridss.gridss import Gridss_2_6_2
+       from janis_bioinformatics.tools.papenfuss.gridss.gridss import Gridss_2_9_4
 
        wf = WorkflowBuilder("myworkflow")
 
        wf.step(
            "gridss_step",
-           Gridss_2_6_2(
+           Gridss_2_9_4(
                bams=None,
                reference=None,
            )
@@ -94,8 +94,8 @@ Information
 
 :ID: ``gridss``
 :URL: `https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation <https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation>`_
-:Versions: v2.6.2, v2.5.1-dev, v2.4.0, v2.2.3
-:Container: gridss/gridss:2.6.2
+:Versions: v2.9.4, v2.6.2, v2.5.1-dev, v2.4.0, v2.2.3
+:Container: gridss/gridss:2.9.4
 :Authors: Michael Franklin
 :Citations: Daniel L. Cameron, Jan Schröder, Jocelyn Sietsma Penington, Hongdo Do, Ramyar Molania, Alexander Dobrovic, Terence P. Speed and Anthony T. Papenfuss. GRIDSS: sensitive and specific genomic rearrangement detection using positional de Bruijn graph assembly. Genome Research, 2017 doi: 10.1101/gr.222109.117
 :DOI: 10.1101/gr.222109.117
@@ -172,7 +172,7 @@ Workflow Description Language
      runtime {
        cpu: select_first([runtime_cpu, 8, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "gridss/gridss:2.6.2"
+       docker: "gridss/gridss:2.9.4"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 31, 4])}G"
        preemptible: 2
@@ -190,7 +190,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Gridss
    doc: |
      GRIDSS: the Genomic Rearrangement IDentification Software Suite
@@ -212,7 +212,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: gridss/gridss:2.6.2
+     dockerPull: gridss/gridss:2.9.4
 
    inputs:
    - id: bams
@@ -226,13 +226,13 @@ Common Workflow Language
      label: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: --reference
        position: 1
@@ -296,6 +296,11 @@ Common Workflow Language
 
    baseCommand: /opt/gridss/gridss.sh
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: gridss
 
 

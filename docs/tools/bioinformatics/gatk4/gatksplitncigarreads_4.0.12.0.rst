@@ -3,7 +3,7 @@
 GATK4: SplitNCigarReads
 ==============================================
 
-``GatkSplitNCigarReads`` · *0 contributors · 4 versions*
+``GatkSplitNCigarReads`` · *1 contributor · 4 versions*
 
 USAGE: SplitNCigarReads [arguments]
 Splits reads that contain Ns in their cigar string (e.g. spanning splicing events).
@@ -80,7 +80,7 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.0.12.0
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
 :Created: 2020-05-15
 :Updated: 2020-05-15
@@ -363,7 +363,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: SplitNCigarReads'
    doc: |
      USAGE: SplitNCigarReads [arguments]
@@ -419,13 +419,13 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: --reference
        separate: true
@@ -1110,6 +1110,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: GatkSplitNCigarReads
 
 

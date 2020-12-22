@@ -36,34 +36,27 @@ Quickstart
 
    More information about these inputs are available `below <#additional-configuration-inputs>`_.
 
-=================  ==============================  =========================================================================================================================================================================================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
-Name               Type                            Example                                                                                                                                                                                    Description
-=================  ==============================  =========================================================================================================================================================================================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
-cutadapt_adapters  Optional<File>                  https://github.com/csf-ngs/fastqc/blob/master/Contaminants/contaminant_list.txt                                                                                                            Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
-gnomad             CompressedIndexedVCF            https://storage.cloud.google.com/gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz                                                                                               The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
-panel_of_normals   Optional<CompressedIndexedVCF>  gs://gatk-best-practices/somatic-b37/Mutect2-exome-panel.vcf or gs://gatk-best-practices/somatic-b37/Mutect2-WGS-panel-b37.vcf for hg19/b37                                                VCF file of sites observed in normal.
-reference          FastaWithIndexes                HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            The reference genome from which to align the reads. This requires a number indexes (can be generated with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
+================  ======================  =====================================================================================================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
+Name              Type                    Source                                                                                                 Description
+================  ======================  =====================================================================================================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
+gnomad            Gzipped<VCF>            * hg38: https://storage.cloud.google.com/gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz   The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
+                                          * b37: https://storage.cloud.google.com/gatk-best-practices/somatic-b37/af-only-gnomad.raw.sites.vcf
+panel_of_normals  Optional<Gzipped<VCF>>  * b37: gs://gatk-best-practices/somatic-b37/Mutect2-WGS-panel-b37.vcf                                  VCF file of sites observed in normal.
+                                          * b37-exome: gs://gatk-best-practices/somatic-b37/Mutect2-exome-panel.vcf
+reference         FastaWithIndexes        * hg38: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta                     The reference genome from which to align the reads. This requires a number indexes (can be generated     with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
 
-                                                   File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta                                                                                                           This pipeline expects the assembly references to be as they appear in the GCP example:
+                                                                                                                                                     This pipeline expects the assembly references to be as they appear in the GCP example. For example:
+                                                                                                                                                         - HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/
 
-                                                                                                                                                                                                                                              - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
-snps_dbsnp         CompressedIndexedVCF            HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-
-                                                   (WARNING: The file available from the genomics-public-data resource on Google Cloud Storage is NOT compressed and indexed. This will need to be completed prior to starting the pipeline.
-
-                                                   File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz
-snps_1000gp        CompressedIndexedVCF            HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-
-                                                   File: gs://genomics-public-data/references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz
-known_indels       CompressedIndexedVCF            HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-
-                                                   File: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz
-mills_indels       CompressedIndexedVCF            HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/                                                                                            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-
-                                                   File: gs://genomics-public-data/references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
-gatk_intervals     Array<bed>                      BRCA1.bed                                                                                                                                                                                  List of intervals over which to split the GATK variant calling
-gridss_blacklist   bed                             https://github.com/PapenfussLab/gridss#blacklist                                                                                                                                           BED file containing regions to ignore.
-=================  ==============================  =========================================================================================================================================================================================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
+                                                                                                                                                     - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
+snps_dbsnp        Gzipped<VCF>            * hg38: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf              From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+snps_1000gp       Gzipped<VCF>            * hg38: gs://genomics-public-data/references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz     From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``. Accessible from the HG38 genomics-public-data google cloud bucket: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/
+known_indels      Gzipped<VCF>            * hg38: gs://genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz       From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+mills_indels      Gzipped<VCF>            * hg38: gs://genomics-public-data/references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz  From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+gatk_intervals    Array<bed>              None                                                                                                   List of intervals over which to split the GATK variant calling
+gridss_blacklist  bed                     * hg19: https://www.encodeproject.org/files/ENCFF001TDO/@@download/ENCFF001TDO.bed.gz                  BED file containing regions to ignore. For more information, visit: https://github.com/PapenfussLab/gridss#blacklist
+                                          * GRCh38: https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz
+================  ======================  =====================================================================================================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
 
 4. Generate user and static input files for WGSSomaticGATKVariantsOnly:
 
@@ -79,19 +72,17 @@ gridss_blacklist   bed                             https://github.com/PapenfussL
 
 .. code-block:: yaml
 
-       normal_bam: normal_bam.bam
-       normal_name: <value>
-       tumor_bam: tumor_bam.bam
-       tumor_name: <value>
+       normal_bam: NA12878-normal.bam
+       normal_name: NA12878_normal
+       tumor_bam: NA12878-normal.bam
+       tumor_name: NA12878_tumor
 
 
 **static.yaml**
 
 .. code-block:: yaml
 
-       gatk_intervals:
-       - gatk_intervals_0.bed
-       - gatk_intervals_1.bed
+       gatk_intervals: BRCA1.bed
        gnomad: af-only-gnomad.hg38.vcf.gz
        gridss_blacklist: gridss_blacklist.bed
        known_indels: Homo_sapiens_assembly38.known_indels.vcf.gz
@@ -115,15 +106,15 @@ gridss_blacklist   bed                             https://github.com/PapenfussL
 Outputs
 -----------
 
-===================  =============  ====================================================
-name                 type           documentation
-===================  =============  ====================================================
-out_gridss_assembly  BAM            Assembly returned by GRIDSS
-out_variants_gridss  VCF            Variants from the GRIDSS variant caller
-out_variants_gatk    CompressedVCF  Merged variants from the GATK caller
-out_variants_split   Array<VCF>     Unmerged variants from the GATK caller (by interval)
-out_variants         VCF            Final vcf
-===================  =============  ====================================================
+===================  ============  ====================================================
+name                 type          documentation
+===================  ============  ====================================================
+out_gridss_assembly  BAM           Assembly returned by GRIDSS
+out_variants_gridss  VCF           Variants from the GRIDSS variant caller
+out_variants_gatk    Gzipped<VCF>  Merged variants from the GATK caller
+out_variants_split   Array<VCF>    Unmerged variants from the GATK caller (by interval)
+out_variants         VCF           Final vcf
+===================  ============  ====================================================
 
 Workflow
 --------
@@ -160,28 +151,28 @@ Annotate Bam Stats to Somatic Vcf Workflow  ``AddBamStatsSomatic/v0.1.0``
 Additional configuration (inputs)
 ---------------------------------
 
-=================  ==============================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
-name               type                            documentation
-=================  ==============================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
-normal_bam         IndexedBam                      Indexed NORMAL bam to call somatic variants against
-tumor_bam          IndexedBam                      Indexed TUMOR bam to call somatic variants against
-normal_name        String                          Sample name for the NORMAL sample from which to generate the readGroupHeaderLine for BwaMem
-tumor_name         String                          Sample name for the TUMOR sample from which to generate the readGroupHeaderLine for BwaMem
-gnomad             CompressedIndexedVCF            The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
-reference          FastaWithIndexes                The reference genome from which to align the reads. This requires a number indexes (can be generated with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
+================  ======================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
+name              type                    documentation
+================  ======================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
+normal_bam        IndexedBam              Indexed NORMAL bam to call somatic variants against
+tumor_bam         IndexedBam              Indexed TUMOR bam to call somatic variants against
+normal_name       String                  Sample name for the NORMAL sample from which to generate the readGroupHeaderLine for BwaMem
+tumor_name        String                  Sample name for the TUMOR sample from which to generate the readGroupHeaderLine for BwaMem
+gnomad            Gzipped<VCF>            The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
+reference         FastaWithIndexes        The reference genome from which to align the reads. This requires a number indexes (can be generated     with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
 
-                                                   This pipeline expects the assembly references to be as they appear in the GCP example:
+                                              This pipeline expects the assembly references to be as they appear in the GCP example. For example:
+                                                  - HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/
 
-                                                   - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
-snps_dbsnp         CompressedIndexedVCF            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-snps_1000gp        CompressedIndexedVCF            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-known_indels       CompressedIndexedVCF            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-mills_indels       CompressedIndexedVCF            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
-gatk_intervals     Array<bed>                      List of intervals over which to split the GATK variant calling
-gridss_blacklist   bed                             BED file containing regions to ignore.
-cutadapt_adapters  Optional<File>                  Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
-panel_of_normals   Optional<CompressedIndexedVCF>  VCF file of sites observed in normal.
-=================  ==============================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
+                                              - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
+snps_dbsnp        Gzipped<VCF>            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+snps_1000gp       Gzipped<VCF>            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``. Accessible from the HG38 genomics-public-data google cloud bucket: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/
+known_indels      Gzipped<VCF>            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+mills_indels      Gzipped<VCF>            From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+gatk_intervals    Array<bed>              List of intervals over which to split the GATK variant calling
+gridss_blacklist  bed                     BED file containing regions to ignore. For more information, visit: https://github.com/PapenfussLab/gridss#blacklist
+panel_of_normals  Optional<Gzipped<VCF>>  VCF file of sites observed in normal.
+================  ======================  =======================================================================================================================================================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -207,7 +198,6 @@ Workflow Description Language
        File tumor_bam_bai
        String normal_name
        String tumor_name
-       File? cutadapt_adapters
        File gnomad
        File gnomad_tbi
        File? panel_of_normals
@@ -366,7 +356,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: WGS Somatic (GATK only) [VARIANTS only]
    doc: |
      This is a genomics pipeline to align sequencing data (Fastq pairs) into BAMs:
@@ -398,12 +388,12 @@ Common Workflow Language
      doc: Indexed NORMAL bam to call somatic variants against
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: tumor_bam
      doc: Indexed TUMOR bam to call somatic variants against
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: normal_name
      doc: |-
        Sample name for the NORMAL sample from which to generate the readGroupHeaderLine for BwaMem
@@ -412,68 +402,65 @@ Common Workflow Language
      doc: |-
        Sample name for the TUMOR sample from which to generate the readGroupHeaderLine for BwaMem
      type: string
-   - id: cutadapt_adapters
-     doc: |-
-       Specifies a containment list for cutadapt, which contains a list of sequences to determine valid overrepresented sequences from the FastQC report to trim with Cuatadapt. The file must contain sets of named adapters in the form: ``name[tab]sequence``. Lines prefixed with a hash will be ignored.
-     type:
-     - File
-     - 'null'
    - id: gnomad
      doc: |-
        The genome Aggregation Database (gnomAD). This VCF must be compressed and tabix indexed. This is specific for your genome (eg: hg38 / br37) and can usually be found with your reference. For example for HG38, the Broad institute provide the following af-only-gnomad compressed and tabix indexed VCF: https://console.cloud.google.com/storage/browser/gatk-best-practices/somatic-hg38;tab=objects?prefix=af-only
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: panel_of_normals
      doc: VCF file of sites observed in normal.
      type:
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: reference
-     doc: |-
-       The reference genome from which to align the reads. This requires a number indexes (can be generated with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
+     doc: |2-
+           The reference genome from which to align the reads. This requires a number indexes (can be generated     with the 'IndexFasta' pipeline This pipeline has been tested using the HG38 reference set.
 
-       This pipeline expects the assembly references to be as they appear in the GCP example:
+           This pipeline expects the assembly references to be as they appear in the GCP example. For example:
+               - HG38: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/
 
-       - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
+           - (".fai", ".amb", ".ann", ".bwt", ".pac", ".sa", "^.dict").
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: snps_dbsnp
      doc: From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: snps_1000gp
-     doc: From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
+     doc: |-
+       From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``. Accessible from the HG38 genomics-public-data google cloud bucket: https://console.cloud.google.com/storage/browser/genomics-public-data/references/hg38/v0/ 
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: known_indels
      doc: From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: mills_indels
      doc: From the GATK resource bundle, passed to BaseRecalibrator as ``known_sites``
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: gatk_intervals
      doc: List of intervals over which to split the GATK variant calling
      type:
        type: array
        items: File
    - id: gridss_blacklist
-     doc: BED file containing regions to ignore.
+     doc: |-
+       BED file containing regions to ignore. For more information, visit: https://github.com/PapenfussLab/gridss#blacklist
      type: File
 
    outputs:

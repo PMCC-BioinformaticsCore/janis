@@ -3,7 +3,7 @@
 BEDTools: coverageBed
 ===========================================
 
-``bedtoolsCoverageBed`` · *0 contributors · 1 version*
+``bedtoolsCoverageBed`` · *1 contributor · 1 version*
 
 The bedtools coverage tool computes both the depth and breadth of coverage of features in file B on the features in file A. For example, bedtools coverage can compute the coverage of sequence alignments (file B) across 1 kilobase (arbitrary) windows (file A) tiling a genome of interest. One advantage that bedtools coverage offers is that it not only counts the number of features that overlap an interval in file A, it also computes the fraction of bases in the interval in A that were overlapped by one or more features. Thus, bedtools coverage also computes the breadth of coverage observed for each interval in A.
 
@@ -79,7 +79,7 @@ Information
 :URL: `https://bedtools.readthedocs.io/en/latest/content/tools/coverage.html <https://bedtools.readthedocs.io/en/latest/content/tools/coverage.html>`_
 :Versions: v2.29.2
 :Container: quay.io/biocontainers/bedtools:2.29.2--hc088bd4_0
-:Authors: 
+:Authors: Jiaan Yu
 :Citations: None
 :Created: 2020-02-20
 :Updated: 2020-02-26
@@ -198,7 +198,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'BEDTools: coverageBed'
    doc: |-
      The bedtools coverage tool computes both the depth and breadth of coverage of features in file B on the features in file A. For example, bedtools coverage can compute the coverage of sequence alignments (file B) across 1 kilobase (arbitrary) windows (file A) tiling a genome of interest. One advantage that bedtools coverage offers is that it not only counts the number of features that overlap an interval in file A, it also computes the fraction of bases in the interval in A that were overlapped by one or more features. Thus, bedtools coverage also computes the breadth of coverage observed for each interval in A.
@@ -382,6 +382,11 @@ Common Workflow Language
    baseCommand:
    - coverageBed
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bedtoolsCoverageBed
 
 

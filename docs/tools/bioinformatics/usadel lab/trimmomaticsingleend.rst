@@ -200,7 +200,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'Trimmomatic: Single End (SE)'
    doc: |-
      Trimmomatic is a fast, multithreaded command line tool that can be used to trim and crop
@@ -323,6 +323,11 @@ Common Workflow Language
    arguments:
    - position: 0
      valueFrom: SE
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: trimmomaticSingleEnd
 
 

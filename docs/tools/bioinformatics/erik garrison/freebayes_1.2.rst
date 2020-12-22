@@ -385,7 +385,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: freebayes
    doc: |
      usage: freebayes [OPTION] ... [BAM FILE] ...
@@ -422,7 +422,7 @@ Common Workflow Language
         Use FILE as the reference sequence for analysis. An index file (FILE.fai) will be created if none exists. If neither --targets nor --region are specified, FreeBayes will analyze every position in this reference.
      type: File
      secondaryFiles:
-     - .fai
+     - pattern: .fai
      inputBinding:
        prefix: -f
    - id: targetsFile
@@ -1012,6 +1012,11 @@ Common Workflow Language
 
    baseCommand: freebayes
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: freebayes
 
 

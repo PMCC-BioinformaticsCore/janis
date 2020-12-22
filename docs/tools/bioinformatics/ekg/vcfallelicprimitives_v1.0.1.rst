@@ -103,7 +103,7 @@ Additional configuration (inputs)
 ============  =================  ========  ==========  =======================================================================================================================================================================================================================================
 name          type               prefix      position  documentation
 ============  =================  ========  ==========  =======================================================================================================================================================================================================================================
-vcf           CompressedVCF                         3
+vcf           Gzipped<VCF>                          3
 useMnpsFlag   Optional<Boolean>  -m                    Retain MNPs as separate events (default: false)
 tagParsed     Optional<String>   -t                    Tag records which are split apart of a complex allele with this flag
 keepInfoFlag  Optional<Boolean>  -k                    Maintain site and allele-level annotations when decomposing. Note that in many cases, such as multisample VCFs, these won't be valid post-decomposition.  For biallelic loci in single-sample VCFs, they should be usable with caution.
@@ -161,7 +161,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'VcfLib: VcfAllelicPrimitives'
    doc: |-
      usage: vcfallelicprimitives [options] [file]
@@ -235,6 +235,11 @@ Common Workflow Language
 
    baseCommand: vcfallelicprimitives
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: vcfallelicprimitives
 
 

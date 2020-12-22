@@ -3,7 +3,7 @@
 Strelka Somatic Variant Caller
 ============================================================
 
-``strelkaSomaticVariantCaller`` · *0 contributors · 1 version*
+``strelkaSomaticVariantCaller`` · *2 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -84,23 +84,23 @@ URL: *No URL to the documentation was provided*
 :ID: ``strelkaSomaticVariantCaller``
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.1
-:Authors: 
+:Authors: Jiaan Yu, Michael Franklin
 :Citations: 
-:Created: None
-:Updated: None
+:Created: 2020-06-12
+:Updated: 2020-08-25
 
 
 
 Outputs
 -----------
 
-========  ====================  ===============
-name      type                  documentation
-========  ====================  ===============
-sv        CompressedIndexedVCF
-variants  CompressedVCF
+========  ============  ===============
+name      type          documentation
+========  ============  ===============
+sv        Gzipped<VCF>
+variants  Gzipped<VCF>
 out       VCF
-========  ====================  ===============
+========  ============  ===============
 
 
 Workflow
@@ -126,18 +126,18 @@ VcfTools                       ``VcfTools/0.1.16``
 Additional configuration (inputs)
 ---------------------------------
 
-=============================  ==================  =================================================================================================================================================================================================================================================================
-name                           type                documentation
-=============================  ==================  =================================================================================================================================================================================================================================================================
+=============================  ======================  =================================================================================================================================================================================================================================================================
+name                           type                    documentation
+=============================  ======================  =================================================================================================================================================================================================================================================================
 normal_bam                     IndexedBam
 tumor_bam                      IndexedBam
 reference                      FastaWithIndexes
-intervals                      Optional<BedTABIX>
+intervals                      Optional<Gzipped<bed>>
 is_exome                       Optional<Boolean>
-filterpass_removeFileteredAll  Optional<Boolean>   Removes all sites with a FILTER flag other than PASS.
+filterpass_removeFileteredAll  Optional<Boolean>       Removes all sites with a FILTER flag other than PASS.
 filterpass_recode              Optional<Boolean>
-filterpass_recodeINFOAll       Optional<Boolean>   These options can be used with the above recode options to define an INFO key name to keep in the output  file.  This  option can be used multiple times to keep more of the INFO fields. The second option is used to keep all INFO values in the original file.
-=============================  ==================  =================================================================================================================================================================================================================================================================
+filterpass_recodeINFOAll       Optional<Boolean>       These options can be used with the above recode options to define an INFO key name to keep in the output  file.  This  option can be used multiple times to keep more of the INFO fields. The second option is used to keep all INFO values in the original file.
+=============================  ======================  =================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -250,8 +250,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Strelka Somatic Variant Caller
+   doc: ''
 
    requirements:
    - class: InlineJavascriptRequirement
@@ -262,27 +263,27 @@ Common Workflow Language
    - id: normal_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: tumor_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: intervals
      type:
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: is_exome
      type:
      - boolean
@@ -305,7 +306,7 @@ Common Workflow Language
    - id: sv
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputSource: manta/diploidSV
    - id: variants
      type: File

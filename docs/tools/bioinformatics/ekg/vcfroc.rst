@@ -108,8 +108,8 @@ Additional configuration (inputs)
 ==========  =================  ========  ==========  ====================================================
 name        type               prefix      position  documentation
 ==========  =================  ========  ==========  ====================================================
-vcf         CompressedVCF                         3
-truth       CompressedVCF      -t                    use this VCF as ground truth for ROC generation
+vcf         Gzipped<VCF>                          3
+truth       Gzipped<VCF>       -t                    use this VCF as ground truth for ROC generation
 reference   FastaWithIndexes   -r                    FASTA reference file
 windowSize  Optional<Integer>  -w                    compare records up to this many bp away (default 30)
 ==========  =================  ========  ==========  ====================================================
@@ -167,7 +167,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'VcfLib: Vcf ROC generator'
    doc: |-
      usage: vcfroc [options] [<vcf file>]
@@ -207,13 +207,13 @@ Common Workflow Language
      doc: FASTA reference file
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: -r
 
@@ -227,6 +227,11 @@ Common Workflow Language
 
    baseCommand: vcfroc
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: vcfroc
 
 

@@ -106,21 +106,21 @@ out     Array<VCF>  To determine type
 Additional configuration (inputs)
 ---------------------------------
 
-============  ===========================  =============  ==========  ========================================================================
-name          type                         prefix         position    documentation
-============  ===========================  =============  ==========  ========================================================================
-inputFiles    Array<CompressedIndexedVCF>  -i                         comma seperated list of vcfs
-MQ            Integer                      --mq                       minimum mapping quality for a variant to be accepted (default: 15)
-DP            Integer                      --dp                       minimum depth of coverage for a variant to be accepted (default: 10)
-EVS           Integer                      --evs                      minimum phred scaled evidence for a variant to be accepted (default: 20)
-RPRS          Integer                      --rprs                     minimum phred scaled evidence for a variant to be accepted (default: 20)
-minAD         Integer                      --minAD                    minimum allelic depth for a variant to be accepted (default: 2)
-threads       Integer                      -t                         amount of threads to use for parallelization (default: 5)
-outputFolder  String                       -o                         Name of the normal sample (default: infered from all sample names)
-interval      Optional<String>             -L                         interval to call on (default: everything)
-normalName    Optional<String>             -n                         Name of the normal sample (default: infered from all sample names)
-sampleNames   Optional<Array<String>>      --sampleNames              Name of the normal sample (default: infered from all sample names)
-============  ===========================  =============  ==========  ========================================================================
+============  =======================  =============  ==========  ========================================================================
+name          type                     prefix         position    documentation
+============  =======================  =============  ==========  ========================================================================
+inputFiles    Array<Gzipped<VCF>>      -i                         comma seperated list of vcfs
+MQ            Integer                  --mq                       minimum mapping quality for a variant to be accepted (default: 15)
+DP            Integer                  --dp                       minimum depth of coverage for a variant to be accepted (default: 10)
+EVS           Integer                  --evs                      minimum phred scaled evidence for a variant to be accepted (default: 20)
+RPRS          Integer                  --rprs                     minimum phred scaled evidence for a variant to be accepted (default: 20)
+minAD         Integer                  --minAD                    minimum allelic depth for a variant to be accepted (default: 2)
+threads       Integer                  -t                         amount of threads to use for parallelization (default: 5)
+outputFolder  String                   -o                         Name of the normal sample (default: infered from all sample names)
+interval      Optional<String>         -L                         interval to call on (default: everything)
+normalName    Optional<String>         -n                         Name of the normal sample (default: infered from all sample names)
+sampleNames   Optional<Array<String>>  --sampleNames              Name of the normal sample (default: infered from all sample names)
+============  =======================  =============  ==========  ========================================================================
 
 Workflow Description Language
 ------------------------------
@@ -183,7 +183,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Refilter Strelka2 Variant Calls
    doc: "Usage: filterStrelkaCalls.R [options]\n"
 
@@ -295,6 +295,11 @@ Common Workflow Language
 
    baseCommand: filterStrelkaCalls.R
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: refilterStrelka2Calls
 
 

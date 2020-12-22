@@ -3,7 +3,7 @@
 Gene Coverage Per Sample
 ================================================
 
-``geneCoveragePerSample`` · *1 contributor · 3 versions*
+``geneCoveragePerSample`` · *1 contributor · 2 versions*
 
 usage: gene_coverage_per_sample.py [-h] [-l LIST] [-n NAME] [-p PATH] [-b BED]
                                    [-g GENE] [-r REGION] [-f FOLDS] [-d]
@@ -100,11 +100,11 @@ Information
 
 :ID: ``geneCoveragePerSample``
 :URL: `https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/performance <https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/performance>`_
-:Versions: dev, 0.0.8, 0.0.7
+:Versions: 0.0.8, 0.0.7
 :Container: michaelfranklin/pmacutil:0.0.7
 :Authors: Jiaan Yu
 :Citations: None
-:Created: None
+:Created: 2020-04-03 00:00:00
 :Updated: 2020-04-03 00:00:00
 
 
@@ -187,7 +187,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Gene Coverage Per Sample
    doc: |-
      usage: gene_coverage_per_sample.py [-h] [-l LIST] [-n NAME] [-p PATH] [-b BED]
@@ -300,6 +300,11 @@ Common Workflow Language
 
    baseCommand: gene_coverage_per_sample.py
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: geneCoveragePerSample
 
 

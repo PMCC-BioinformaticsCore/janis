@@ -3,7 +3,7 @@
 CNVKit
 ======
 
-``CNVKit`` · *0 contributors · 1 version*
+``CNVKit`` · *1 contributor · 1 version*
 
 
         A command-line toolkit and Python library for detecting copy number variants 
@@ -79,7 +79,7 @@ Information
 :URL: `https://github.com/etal/cnvkit <https://github.com/etal/cnvkit>`_
 :Versions: 0.9.6
 :Container: etal/cnvkit:0.9.6
-:Authors: 
+:Authors: Michael Franklin
 :Citations: Talevich, E., Shain, A.H., Botton, T., & Bastian, B.C. (2014). CNVkit: Genome-wide copy number detection and visualization from targeted sequencing. PLOS Computational Biology 12(4):e1004873
 :DOI: 10.1371/journal.pcbi.1004873
 :Created: 2019-07-03 00:00:00
@@ -162,7 +162,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: CNVKit
    doc: |2-
 
@@ -254,6 +254,11 @@ Common Workflow Language
    - cnvkit.py
    - batch
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: CNVKit
 
 

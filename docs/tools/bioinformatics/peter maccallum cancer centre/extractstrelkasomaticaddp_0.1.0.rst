@@ -3,7 +3,7 @@
 Extract Strelka Somatic AD DP
 =========================================================
 
-``extractStrelkaSomaticADDP`` · *1 contributor · 3 versions*
+``extractStrelkaSomaticADDP`` · *1 contributor · 2 versions*
 
 
  - Extract and calculate AD and AF value for each variant (both SNVs and INDELs)
@@ -78,11 +78,11 @@ Information
 
 :ID: ``extractStrelkaSomaticADDP``
 :URL: `https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils <https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils>`_
-:Versions: dev, 0.1.1, 0.1.0
+:Versions: 0.1.1, 0.1.0
 :Container: michaelfranklin/pmacutil:0.1.0
 :Authors: Jiaan Yu
 :Citations: None
-:Created: None
+:Created: 2020-07-27 00:00:00
 :Updated: 2020-07-27 00:00:00
 
 
@@ -148,7 +148,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Extract Strelka Somatic AD DP
    doc: |2-
 
@@ -191,6 +191,11 @@ Common Workflow Language
 
    baseCommand: extract_strelka_somatic_DP_AF.py
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: extractStrelkaSomaticADDP
 
 

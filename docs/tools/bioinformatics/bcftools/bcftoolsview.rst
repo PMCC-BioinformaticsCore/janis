@@ -3,7 +3,7 @@
 BCFTools: View
 =============================
 
-``bcftoolsview`` · *0 contributors · 2 versions*
+``bcftoolsview`` · *1 contributor · 2 versions*
 
 ________________________________
  
@@ -80,21 +80,21 @@ Information
 :URL: `https://samtools.github.io/bcftools/bcftools.html#view <https://samtools.github.io/bcftools/bcftools.html#view>`_
 :Versions: v1.9, v1.5
 :Container: biocontainers/bcftools:v1.9-1-deb_cv1
-:Authors: 
+:Authors: Michael Franklin
 :Citations: Li H, Handsaker B, Wysoker A, Fennell T, Ruan J, Homer N, Marth G, Abecasis G, Durbin R, and 1000 Genome Project Data Processing Subgroup, The Sequence alignment/map (SAM) format and SAMtools, Bioinformatics (2009) 25(16) 2078-9
 :DOI: http://www.ncbi.nlm.nih.gov/pubmed/19505943
-:Created: None
+:Created: 2019-01-24
 :Updated: 2019-01-24
 
 
 Outputs
 -----------
 
-======  =====================  ===============
-name    type                   documentation
-======  =====================  ===============
-out     stdout<CompressedVCF>
-======  =====================  ===============
+======  ====================  ===============
+name    type                  documentation
+======  ====================  ===============
+out     stdout<Gzipped<VCF>>
+======  ====================  ===============
 
 
 Additional configuration (inputs)
@@ -103,7 +103,7 @@ Additional configuration (inputs)
 ================  =======================  ===================  ==========  ==============================================================================================================================================================================
 name              type                     prefix                 position  documentation
 ================  =======================  ===================  ==========  ==============================================================================================================================================================================
-file              CompressedVCF                                          2
+file              Gzipped<VCF>                                           2
 dropGenotypes     Optional<Boolean>        --drop-genotypes              1  (-G) drop individual genotype information (after subsetting if -s option set)
 headerOnly        Optional<Boolean>        --header-only                 1  (-h) print the header only
 noHeader          Optional<Boolean>        --no-header                   1  (-H) suppress the header in VCF output
@@ -252,7 +252,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'BCFTools: View'
    doc: |-
      ________________________________
@@ -620,6 +620,11 @@ Common Workflow Language
    - prefix: --output-type
      position: 1
      valueFrom: z
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bcftoolsview
 
 

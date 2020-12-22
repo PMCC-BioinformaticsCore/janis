@@ -133,7 +133,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{reference} .
+       cp -f '~{reference}' '.'
        gatk CreateSequenceDictionary \
          --java-options '-Xmx~{((select_first([runtime_memory, 2, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
          --REFERENCE '~{basename(reference)}'
@@ -148,7 +148,7 @@ Workflow Description Language
      }
      output {
        File out = basename(reference)
-       File out_dict = sub(basename(reference), "\\.fasta$", ".dict")
+       File out_dict = sub(sub(sub(basename(reference), "\\.fasta$", ".dict"), "\\.fna$", ".dict"), "\\.fa$", ".dict")
      }
    }
 
@@ -159,7 +159,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: CreateSequenceDictionary'
    doc: |-
      Creates a sequence dictionary for a reference sequence.  This tool creates a sequence dictionary file (with ".dict"
@@ -210,9 +210,9 @@ Common Workflow Language
      doc: Output reference with ^.dict reference
      type: File
      secondaryFiles:
-     - ^.dict
+     - pattern: ^.dict
      outputBinding:
-       glob: $(inputs.reference)
+       glob: $(inputs.reference.basename)
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -225,6 +225,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 2, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk4CreateSequenceDictionary
 
 

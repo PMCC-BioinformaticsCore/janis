@@ -3,7 +3,7 @@
 Split Multiple Alleles and Normalise Vcf
 =======================================================================
 
-``SplitMultiAlleleNormaliseVcf`` · *0 contributors · 1 version*
+``SplitMultiAlleleNormaliseVcf`` · *1 contributor · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -77,10 +77,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: v0.5772
 :Container: heuermh/vt
-:Authors: 
+:Authors: Jiaan Yu
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-06-04
+:Updated: 2020-06-04
 
 
 Outputs
@@ -96,15 +96,15 @@ out     VCF
 Additional configuration (inputs)
 ---------------------------------
 
-==================  ==============================  ========  ==========  ===============
-name                type                            prefix      position  documentation
-==================  ==============================  ========  ==========  ===============
-reference           FastaWithIndexes                -r                 4
-vcf                 Optional<VCF>                                      1
-compressedTabixVcf  Optional<CompressedIndexedVCF>                     1
-compressedVcf       Optional<CompressedVCF>                            1
-outputFilename      Optional<Filename>              -o                 6
-==================  ==============================  ========  ==========  ===============
+==================  ======================  ========  ==========  ===============
+name                type                    prefix      position  documentation
+==================  ======================  ========  ==========  ===============
+reference           FastaWithIndexes        -r                 4
+vcf                 Optional<VCF>                              1
+compressedTabixVcf  Optional<Gzipped<VCF>>                     1
+compressedVcf       Optional<Gzipped<VCF>>                     1
+outputFilename      Optional<Filename>      -o                 6
+==================  ======================  ========  ==========  ===============
 
 Workflow Description Language
 ------------------------------
@@ -164,8 +164,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Split Multiple Alleles and Normalise Vcf
+   doc: ''
 
    requirements:
    - class: ShellCommandRequirement
@@ -188,7 +189,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      inputBinding:
        position: 1
        shellQuote: false
@@ -204,13 +205,13 @@ Common Workflow Language
      label: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: -r
        position: 4
@@ -242,6 +243,11 @@ Common Workflow Language
    - position: 2
      valueFrom: '| vt normalize -n -q - '
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: SplitMultiAlleleNormaliseVcf
 
 

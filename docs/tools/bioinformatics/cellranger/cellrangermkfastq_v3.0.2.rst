@@ -174,7 +174,7 @@ Workflow Description Language
          ~{if (defined(deleteUndetermined) && select_first([deleteUndetermined])) then "--delete-undetermined" else ""} \
          ~{if defined(project) then ("--project='" + project + "'") else ""} \
          ~{if defined(select_first([localcores, select_first([runtime_cpu, 1])])) then ("--localcores=" + select_first([localcores, select_first([runtime_cpu, 1])])) else ''} \
-         ~{if defined(localmem) then ("--localmem=" + localmem) else ''} \
+         ~{if defined(select_first([localmem, select_first([runtime_memory, 4])])) then ("--localmem=" + select_first([localmem, select_first([runtime_memory, 4])])) else ''} \
          ~{if (defined(nopreflight) && select_first([nopreflight])) then "--nopreflight" else ""}
      >>>
      runtime {
@@ -197,7 +197,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: CellRanger mkfastq
    doc: |
      /opt/cellranger-3.0.2/cellranger-cs/3.0.2/bin
@@ -381,6 +381,11 @@ Common Workflow Language
    - cellranger
    - mkfastq
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: CellRangerMkfastq
 
 

@@ -134,8 +134,8 @@ URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
 :Authors: Jiaan Yu
 :Citations: 
-:Created: None
-:Updated: None
+:Created: 2020-06-12
+:Updated: 2020-08-10
 
 
 
@@ -153,10 +153,10 @@ gene_summary          TextFile
 region_summary        TextFile
 gridss_vcf            VCF
 gridss_bam            BAM
-haplotypecaller_vcf   CompressedIndexedVCF
+haplotypecaller_vcf   Gzipped<VCF>
 haplotypecaller_bam   IndexedBam
 haplotypecaller_norm  VCF
-mutect2_vcf           CompressedIndexedVCF
+mutect2_vcf           Gzipped<VCF>
 mutect2_bam           Optional<IndexedBam>
 mutect2_norm          VCF
 addbamstats_vcf       VCF
@@ -198,12 +198,12 @@ VcfLib: Vcf Filter                                                      ``vcffil
 Additional configuration (inputs)
 ---------------------------------
 
-======================================  ==============================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
-name                                    type                            documentation
-======================================  ==============================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
+======================================  =======================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
+name                                    type                     documentation
+======================================  =======================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
 sample_name                             String
 fastqs                                  Array<FastqGzPair>
-seqrun                                  String                          SeqRun Name (for Vcf2Tsv)
+seqrun                                  String                   SeqRun Name (for Vcf2Tsv)
 reference                               FastaWithIndexes
 region_bed                              bed
 region_bed_extended                     bed
@@ -212,25 +212,25 @@ genecoverage_bed                        bed
 genome_file                             TextFile
 panel_name                              String
 vcfcols                                 TextFile
-snps_dbsnp                              CompressedIndexedVCF
-snps_1000gp                             CompressedIndexedVCF
-known_indels                            CompressedIndexedVCF
-mills_indels                            CompressedIndexedVCF
+snps_dbsnp                              Gzipped<VCF>
+snps_1000gp                             Gzipped<VCF>
+known_indels                            Gzipped<VCF>
+mills_indels                            Gzipped<VCF>
 mutalyzer_server                        String
 pathos_db                               String
 maxRecordsInRam                         Integer
-gnomad                                  CompressedIndexedVCF
+gnomad                                  Gzipped<VCF>
 black_list                              Optional<bed>
-panel_of_normals                        Optional<CompressedIndexedVCF>
-fastqc_threads                          Optional<Integer>               (-t) Specifies the number of files which can be processed simultaneously. Each thread will be allocated 250MB of memory so you shouldn't run more threads than your available memory will cope with, and not more than 6 threads on a 32 bit machine
-align_and_sort_sortsam_tmpDir           Optional<String>                Undocumented option
+panel_of_normals                        Optional<Gzipped<VCF>>
+fastqc_threads                          Optional<Integer>        (-t) Specifies the number of files which can be processed simultaneously. Each thread will be allocated 250MB of memory so you shouldn't run more threads than your available memory will cope with, and not more than 6 threads on a 32 bit machine
+align_and_sort_sortsam_tmpDir           Optional<String>         Undocumented option
 gridss_tmpdir                           Optional<String>
-haplotype_caller_pairHmmImplementation  Optional<String>                The PairHMM implementation to use for genotype likelihood calculations. The various implementations balance a tradeoff of accuracy and runtime. The --pair-hmm-implementation argument is an enumerated type (Implementation), which can have one of the following values: EXACT;ORIGINAL;LOGLESS_CACHING;AVX_LOGLESS_CACHING;AVX_LOGLESS_CACHING_OMP;EXPERIMENTAL_FPGA_LOGLESS_CACHING;FASTEST_AVAILABLE. Implementation:  FASTEST_AVAILABLE
-combinevariants_type                    Optional<String>                germline | somatic
-combinevariants_columns                 Optional<Array<String>>         Columns to keep, seperated by space output vcf (unsorted)
+haplotype_caller_pairHmmImplementation  Optional<String>         The PairHMM implementation to use for genotype likelihood calculations. The various implementations balance a tradeoff of accuracy and runtime. The --pair-hmm-implementation argument is an enumerated type (Implementation), which can have one of the following values: EXACT;ORIGINAL;LOGLESS_CACHING;AVX_LOGLESS_CACHING;AVX_LOGLESS_CACHING_OMP;EXPERIMENTAL_FPGA_LOGLESS_CACHING;FASTEST_AVAILABLE. Implementation:  FASTEST_AVAILABLE
+combinevariants_type                    Optional<String>         germline | somatic
+combinevariants_columns                 Optional<Array<String>>  Columns to keep, seperated by space output vcf (unsorted)
 filter_for_vcfs                         Optional<String>
-filter_variants_1_invert                Optional<Boolean>               (-v) inverts the filter, e.g. grep -v
-======================================  ==============================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
+filter_variants_1_invert                Optional<Boolean>        (-v) inverts the filter, e.g. grep -v
+======================================  =======================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -536,7 +536,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Molpath Tumor Only Workflow
 
    requirements:
@@ -561,13 +561,13 @@ Common Workflow Language
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: region_bed
      type: File
    - id: region_bed_extended
@@ -589,19 +589,19 @@ Common Workflow Language
    - id: snps_dbsnp
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: snps_1000gp
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: known_indels
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: mills_indels
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: mutalyzer_server
      type: string
    - id: pathos_db
@@ -611,13 +611,13 @@ Common Workflow Language
    - id: gnomad
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: panel_of_normals
      type:
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: fastqc_threads
      doc: |-
        (-t) Specifies the number of files which can be processed simultaneously. Each thread will be allocated 250MB of memory so you shouldn't run more threads than your available memory will cope with, and not more than 6 threads on a 32 bit machine
@@ -668,7 +668,7 @@ Common Workflow Language
    - id: markdups_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: merge_and_mark/out
    - id: doc_out
      type: File
@@ -691,12 +691,12 @@ Common Workflow Language
    - id: haplotypecaller_vcf
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputSource: haplotype_caller/out
    - id: haplotypecaller_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: haplotype_caller/bam
    - id: haplotypecaller_norm
      type: File
@@ -704,14 +704,14 @@ Common Workflow Language
    - id: mutect2_vcf
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputSource: mutect2/variants
    - id: mutect2_bam
      type:
      - File
      - 'null'
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: mutect2/out_bam
    - id: mutect2_norm
      type: File

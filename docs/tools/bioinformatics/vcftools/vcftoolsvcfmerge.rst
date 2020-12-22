@@ -103,19 +103,19 @@ out     stdout<VCF>
 Additional configuration (inputs)
 ---------------------------------
 
-================  ===========================  ===================  ==========  ===================================================================================================================================================================
-name              type                         prefix                 position  documentation
-================  ===========================  ===================  ==========  ===================================================================================================================================================================
-vcfTabix          Array<CompressedIndexedVCF>                               10
-collapse          Optional<String>             -c                               treat as identical sites with differing alleles [any] <snps|indels|both|any|none>
-removeDuplicates  Optional<Boolean>            --remove-duplicates              If there should be two consecutive rows with the same chr:pos, print only the first one.
-vcfHeader         Optional<File>               --vcf-header                     Use the provided VCF header
-regionsList       Optional<Array<String>>      --regions                        Do only the given regions (comma-separated list).
-regionsFile       Optional<File>               --regions                        Do only the given regions (one region per line in a file).
-refForMissing     Optional<String>             --ref-for-missing                Use the REF allele instead of the default missing genotype. Because it is not obvious what ploidy should be used, a user-defined string is used instead (e.g. 0/0).
-silent            Optional<Boolean>            --silent                         Try to be a bit more silent, no warnings about duplicate lines.
-trimALTs          Optional<Boolean>            --trim-ALTs                      If set, redundant ALTs will be removed
-================  ===========================  ===================  ==========  ===================================================================================================================================================================
+================  =======================  ===================  ==========  ===================================================================================================================================================================
+name              type                     prefix                 position  documentation
+================  =======================  ===================  ==========  ===================================================================================================================================================================
+vcfTabix          Array<Gzipped<VCF>>                                   10
+collapse          Optional<String>         -c                               treat as identical sites with differing alleles [any] <snps|indels|both|any|none>
+removeDuplicates  Optional<Boolean>        --remove-duplicates              If there should be two consecutive rows with the same chr:pos, print only the first one.
+vcfHeader         Optional<File>           --vcf-header                     Use the provided VCF header
+regionsList       Optional<Array<String>>  --regions                        Do only the given regions (comma-separated list).
+regionsFile       Optional<File>           --regions                        Do only the given regions (one region per line in a file).
+refForMissing     Optional<String>         --ref-for-missing                Use the REF allele instead of the default missing genotype. Because it is not obvious what ploidy should be used, a user-defined string is used instead (e.g. 0/0).
+silent            Optional<Boolean>        --silent                         Try to be a bit more silent, no warnings about duplicate lines.
+trimALTs          Optional<Boolean>        --trim-ALTs                      If set, redundant ALTs will be removed
+================  =======================  ===================  ==========  ===================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -174,7 +174,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'VcfTools: VcfMerge'
    doc: |-
      Merges two or more VCF files into one so that, for example, if two source files had one column each, on output will be printed a file with two columns. See also vcf-concat for concatenating VCFs split by chromosome.
@@ -279,6 +279,11 @@ Common Workflow Language
    - ''
    - vcf-merge
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: VcfToolsVcfMerge
 
 

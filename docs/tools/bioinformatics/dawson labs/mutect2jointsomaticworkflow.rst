@@ -3,7 +3,7 @@
 Mutect2 joint somatic variant calling workflow
 ============================================================================
 
-``Mutect2JointSomaticWorkflow`` · *0 contributors · 1 version*
+``Mutect2JointSomaticWorkflow`` · *1 contributor · 1 version*
 
 This workflow uses the capability of mutect2 to call several samples at the same time and improve recall and accuracy through a joint model.
         Most of these tools are still in a beta state and not intended for main production (as of 4.1.4.0)
@@ -15,7 +15,7 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.dawson.workflows.mutectjointsomaticworkflow import Mutect2JointSomaticWorkflow
+       from janis_bioinformatics.tools.dawson.workflows.variantcalling.multisample.mutect2.mutect2jointsomaticworkflow import Mutect2JointSomaticWorkflow
 
        wf = WorkflowBuilder("myworkflow")
 
@@ -64,14 +64,14 @@ Quickstart
        biallelicSites: biallelicSites.vcf.gz
        germlineResource: germlineResource.vcf.gz
        normalBams:
-       - normalBams_0.cram
-       - normalBams_1.cram
+       - normalBams_0.bam
+       - normalBams_1.bam
        normalName: <value>
        panelOfNormals: panelOfNormals.vcf.gz
        reference: reference.fasta
        tumorBams:
-       - tumorBams_0.cram
-       - tumorBams_1.cram
+       - tumorBams_0.bam
+       - tumorBams_1.bam
 
 
 
@@ -95,42 +95,42 @@ URL: *No URL to the documentation was provided*
 
 :ID: ``Mutect2JointSomaticWorkflow``
 :URL: *No URL to the documentation was provided*
-:Versions: 0.1
-:Authors: 
+:Versions: 0.1.1
+:Authors: Sebastian Hollizeck
 :Citations: 
 :Created: 2019-10-30
-:Updated: 2019-10-30
+:Updated: 2020-12-10
 
 
 
 Outputs
 -----------
 
-======  ====================  ===============
-name    type                  documentation
-======  ====================  ===============
-out     CompressedIndexedVCF
-======  ====================  ===============
+======  ============  ===============
+name    type          documentation
+======  ============  ===============
+out     Gzipped<VCF>
+======  ============  ===============
 
 
 Workflow
 --------
 
-.. image:: Mutect2JointSomaticWorkflow_0_1.dot.png
+.. image:: Mutect2JointSomaticWorkflow_0_1_1.dot.png
 
 Embedded Tools
 ***************
 
 ================================  ==========================================
 Create genomic call regions       ``CreateCallRegions/v0.1.0``
-GatkMutect2                       ``Gatk4Mutect2_cram/4.1.6.0``
+GatkMutect2                       ``Gatk4Mutect2/4.1.8.1``
 BCFTools: Concat                  ``bcftoolsConcat/v1.9``
 BCFTools: Index                   ``bcftoolsIndex/v1.9``
-GATK4: LearnReadOrientationModel  ``Gatk4LearnReadOrientationModel/4.1.4.0``
-GATK4: MergeMutectStats           ``Gatk4MergeMutectStats/4.1.4.0``
-GATK4: GetPileupSummaries         ``Gatk4GetPileupSummaries_cram/4.1.6.0``
-GATK4: CalculateContamination     ``Gatk4CalculateContamination/4.1.4.0``
-GATK4: GetFilterMutectCalls       ``Gatk4FilterMutectCalls/4.1.3.0``
+GATK4: LearnReadOrientationModel  ``Gatk4LearnReadOrientationModel/4.1.8.1``
+GATK4: MergeMutectStats           ``Gatk4MergeMutectStats/4.1.8.1``
+GATK4: GetPileupSummaries         ``Gatk4GetPileupSummaries/4.1.8.1``
+GATK4: CalculateContamination     ``Gatk4CalculateContamination/4.1.8.1``
+GATK4: GetFilterMutectCalls       ``Gatk4FilterMutectCalls/4.1.8.1``
 BCFTools: Normalize               ``bcftoolsNorm/v1.9``
 ================================  ==========================================
 
@@ -139,19 +139,19 @@ BCFTools: Normalize               ``bcftoolsNorm/v1.9``
 Additional configuration (inputs)
 ---------------------------------
 
-==========================  ====================  ===============
-name                        type                  documentation
-==========================  ====================  ===============
-normalBams                  Array<CramPair>
-tumorBams                   Array<CramPair>
-normalName                  String
-biallelicSites              CompressedIndexedVCF
-reference                   FastaWithIndexes
-panelOfNormals              CompressedIndexedVCF
-germlineResource            CompressedIndexedVCF
-regionSize                  Optional<Integer>
+==========================  =================  ==============================================================================================================================================================================================================================
+name                        type               documentation
+==========================  =================  ==============================================================================================================================================================================================================================
+normalBams                  Array<IndexedBam>  The bams that make up the normal sample. Generally Mutect will expect one bam per sample, but as long as the sample ids in the bam header are set appropriatly, multiple bams per sample will work
+tumorBams                   Array<IndexedBam>  The bams that contain the tumour samples. Generally Mutect will expect one bam per sample, but as long as the sample ids in the bam header are set appropriatly, multiple bams per sample will work
+normalName                  String             The sample id of the normal sample. This id will be used to distingiush reads from this sample from all other samples. This id needs to tbe the one set in the bam header
+biallelicSites              Gzipped<VCF>       A vcf of common biallalic sites from a population. This will be used to estimate sample contamination.
+reference                   FastaWithIndexes   A fasta and dict indexed reference, which needs to be the reference, the bams were aligned to.
+panelOfNormals              Gzipped<VCF>       The panel of normals, which summarises the technical and biological sites of errors. Its usually a good idea to generate this for your own cohort, but GATK suggests around 30 normals, so their panel is usually a good idea.
+germlineResource            Gzipped<VCF>       Vcf of germline variants. GATK provides this as well, but it can easily substituted with the newst gnomad etc vcf.
+regionSize                  Optional<Integer>  The size of the regions over which to parallelise the analysis. This should be adjusted, if there are lots of samples or a very high sequencing depth. default: 10M bp
 createCallRegions_equalize  Optional<Boolean>
-==========================  ====================  ===============
+==========================  =================  ==============================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -161,22 +161,22 @@ Workflow Description Language
    version development
 
    import "tools/CreateCallRegions_v0_1_0.wdl" as C
-   import "tools/Gatk4Mutect2_cram_4_1_6_0.wdl" as G
+   import "tools/Gatk4Mutect2_4_1_8_1.wdl" as G
    import "tools/bcftoolsConcat_v1_9.wdl" as B
    import "tools/bcftoolsIndex_v1_9.wdl" as B2
-   import "tools/Gatk4LearnReadOrientationModel_4_1_4_0.wdl" as G2
-   import "tools/Gatk4MergeMutectStats_4_1_4_0.wdl" as G3
-   import "tools/Gatk4GetPileupSummaries_cram_4_1_6_0.wdl" as G4
-   import "tools/Gatk4CalculateContamination_4_1_4_0.wdl" as G5
-   import "tools/Gatk4FilterMutectCalls_4_1_3_0.wdl" as G6
+   import "tools/Gatk4LearnReadOrientationModel_4_1_8_1.wdl" as G2
+   import "tools/Gatk4MergeMutectStats_4_1_8_1.wdl" as G3
+   import "tools/Gatk4GetPileupSummaries_4_1_8_1.wdl" as G4
+   import "tools/Gatk4CalculateContamination_4_1_8_1.wdl" as G5
+   import "tools/Gatk4FilterMutectCalls_4_1_8_1.wdl" as G6
    import "tools/bcftoolsNorm_v1_9.wdl" as B3
 
    workflow Mutect2JointSomaticWorkflow {
      input {
        Array[File] normalBams
-       Array[File] normalBams_crai
+       Array[File] normalBams_bai
        Array[File] tumorBams
-       Array[File] tumorBams_crai
+       Array[File] tumorBams_bai
        String normalName
        File biallelicSites
        File biallelicSites_tbi
@@ -203,12 +203,12 @@ Workflow Description Language
          equalize=select_first([createCallRegions_equalize, true])
      }
      scatter (c in createCallRegions.regions) {
-        call G.Gatk4Mutect2_cram as mutect2 {
+        call G.Gatk4Mutect2 as mutect2 {
          input:
            tumorBams=tumorBams,
-           tumorBams_crai=tumorBams_crai,
+           tumorBams_bai=tumorBams_bai,
            normalBams=normalBams,
-           normalBams_crai=normalBams_crai,
+           normalBams_bai=normalBams_bai,
            normalSample=normalName,
            reference=reference,
            reference_fai=reference_fai,
@@ -241,10 +241,10 @@ Workflow Description Language
        input:
          statsFiles=mutect2.stats
      }
-     call G4.Gatk4GetPileupSummaries_cram as pileup {
+     call G4.Gatk4GetPileupSummaries as pileup {
        input:
          bam=tumorBams,
-         bam_crai=tumorBams_crai,
+         bam_bai=tumorBams_bai,
          sites=biallelicSites,
          sites_tbi=biallelicSites_tbi,
          intervals=biallelicSites,
@@ -301,7 +301,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Mutect2 joint somatic variant calling workflow
    doc: |-
      This workflow uses the capability of mutect2 to call several samples at the same time and improve recall and accuracy through a joint model.
@@ -315,44 +315,60 @@ Common Workflow Language
 
    inputs:
    - id: normalBams
+     doc: |-
+       The bams that make up the normal sample. Generally Mutect will expect one bam per sample, but as long as the sample ids in the bam header are set appropriatly, multiple bams per sample will work
      type:
        type: array
        items: File
      secondaryFiles:
-     - .crai
+     - pattern: .bai
    - id: tumorBams
+     doc: |-
+       The bams that contain the tumour samples. Generally Mutect will expect one bam per sample, but as long as the sample ids in the bam header are set appropriatly, multiple bams per sample will work
      type:
        type: array
        items: File
      secondaryFiles:
-     - .crai
+     - pattern: .bai
    - id: normalName
+     doc: |-
+       The sample id of the normal sample. This id will be used to distingiush reads from this sample from all other samples. This id needs to tbe the one set in the bam header
      type: string
    - id: biallelicSites
+     doc: |-
+       A vcf of common biallalic sites from a population. This will be used to estimate sample contamination.
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: reference
+     doc: |-
+       A fasta and dict indexed reference, which needs to be the reference, the bams were aligned to.
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: regionSize
+     doc: |-
+       The size of the regions over which to parallelise the analysis. This should be adjusted, if there are lots of samples or a very high sequencing depth. default: 10M bp
      type: int
      default: 10000000
    - id: panelOfNormals
+     doc: |-
+       The panel of normals, which summarises the technical and biological sites of errors. Its usually a good idea to generate this for your own cohort, but GATK suggests around 30 normals, so their panel is usually a good idea.
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: germlineResource
+     doc: |-
+       Vcf of germline variants. GATK provides this as well, but it can easily substituted with the newst gnomad etc vcf.
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: createCallRegions_equalize
      type: boolean
      default: true
@@ -361,7 +377,7 @@ Common Workflow Language
    - id: out
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputSource: indexFiltered/out
 
    steps:
@@ -396,7 +412,7 @@ Common Workflow Language
        source: panelOfNormals
      scatter:
      - intervals
-     run: tools/Gatk4Mutect2_cram_4_1_6_0.cwl
+     run: tools/Gatk4Mutect2_4_1_8_1.cwl
      out:
      - id: out
      - id: stats
@@ -423,7 +439,7 @@ Common Workflow Language
      in:
      - id: f1r2CountsFiles
        source: mutect2/f1f2r_out
-     run: tools/Gatk4LearnReadOrientationModel_4_1_4_0.cwl
+     run: tools/Gatk4LearnReadOrientationModel_4_1_8_1.cwl
      out:
      - id: out
    - id: mergeMutect2
@@ -431,7 +447,7 @@ Common Workflow Language
      in:
      - id: statsFiles
        source: mutect2/stats
-     run: tools/Gatk4MergeMutectStats_4_1_4_0.cwl
+     run: tools/Gatk4MergeMutectStats_4_1_8_1.cwl
      out:
      - id: out
    - id: pileup
@@ -445,7 +461,7 @@ Common Workflow Language
        source: biallelicSites
      - id: reference
        source: reference
-     run: tools/Gatk4GetPileupSummaries_cram_4_1_6_0.cwl
+     run: tools/Gatk4GetPileupSummaries_4_1_8_1.cwl
      out:
      - id: out
    - id: contamination
@@ -453,7 +469,7 @@ Common Workflow Language
      in:
      - id: pileupTable
        source: pileup/out
-     run: tools/Gatk4CalculateContamination_4_1_4_0.cwl
+     run: tools/Gatk4CalculateContamination_4_1_8_1.cwl
      out:
      - id: contOut
      - id: segOut
@@ -472,7 +488,7 @@ Common Workflow Language
        source: indexUnfiltered/out
      - id: reference
        source: reference
-     run: tools/Gatk4FilterMutectCalls_4_1_3_0.cwl
+     run: tools/Gatk4FilterMutectCalls_4_1_8_1.cwl
      out:
      - id: out
    - id: normalise

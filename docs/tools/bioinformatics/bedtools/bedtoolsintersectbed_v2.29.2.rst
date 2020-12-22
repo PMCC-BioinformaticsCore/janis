@@ -3,7 +3,7 @@
 BEDTools: intersectBed
 =============================================
 
-``bedtoolsintersectBed`` · *0 contributors · 1 version*
+``bedtoolsintersectBed`` · *1 contributor · 1 version*
 
 By far, the most common question asked of two sets of genomic features is whether or not any of the features in the two sets “overlap” with one another. This is known as feature intersection. bedtools intersect allows one to screen for overlaps between two sets of genomic features. Moreover, it allows one to have fine control as to how the intersections are reported. bedtools intersect works with both BED/GFF/VCF and BAM files as input.
 
@@ -81,7 +81,7 @@ Information
 :URL: `https://bedtools.readthedocs.io/en/latest/content/tools/intersect.html <https://bedtools.readthedocs.io/en/latest/content/tools/intersect.html>`_
 :Versions: v2.29.2
 :Container: quay.io/biocontainers/bedtools:2.29.2--hc088bd4_0
-:Authors: 
+:Authors: Jiaan Yu
 :Citations: None
 :Created: 2020-02-20
 :Updated: 2020-02-26
@@ -218,7 +218,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'BEDTools: intersectBed'
    doc: |-
      By far, the most common question asked of two sets of genomic features is whether or not any of the features in the two sets “overlap” with one another. This is known as feature intersection. bedtools intersect allows one to screen for overlaps between two sets of genomic features. Moreover, it allows one to have fine control as to how the intersections are reported. bedtools intersect works with both BED/GFF/VCF and BAM files as input.
@@ -458,6 +458,11 @@ Common Workflow Language
    baseCommand:
    - intersectBed
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bedtoolsintersectBed
 
 

@@ -3,7 +3,7 @@
 Oncopipe: sample preparation
 ========================================================
 
-``OncopipeSamplePreparation`` · *0 contributors · 1 version*
+``OncopipeSamplePreparation`` · *1 contributor · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -97,10 +97,10 @@ URL: *No URL to the documentation was provided*
 :ID: ``OncopipeSamplePreparation``
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
-:Authors: 
+:Authors: Michael Franklin
 :Citations: 
-:Created: None
-:Updated: None
+:Created: 2020-09-24
+:Updated: 2020-10-07
 
 
 
@@ -294,7 +294,7 @@ Workflow Description Language
      }
      call P.prepareALLSortsInput as prepareAllsortsInput {
        input:
-         inputs=[featureCounts.out],
+         inps=[featureCounts.out],
          labels=[name],
          fusion_caller=select_first([prepareAllsortsInput_fusion_caller, "featureCounts"])
      }
@@ -322,8 +322,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'Oncopipe: sample preparation'
+   doc: ''
 
    requirements:
    - class: InlineJavascriptRequirement
@@ -502,7 +503,7 @@ Common Workflow Language
    - id: out_arriba_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: sortsam/out
    - id: out_arriba_fusion
      type: File
@@ -596,7 +597,7 @@ Common Workflow Language
      - id: _arriba_aligned_inp_staroutunsortedbam
        source: star/out_unsorted_bam
      - id: aligned_inp
-       valueFrom: $(_arriba_aligned_inp_staroutunsortedbam)
+       valueFrom: $(inputs._arriba_aligned_inp_staroutunsortedbam)
      - id: gtf_file
        source: gtf
      - id: reference
@@ -619,7 +620,7 @@ Common Workflow Language
      - id: _sortsam_bam_staroutunsortedbam
        source: star/out_unsorted_bam
      - id: bam
-       valueFrom: $(_sortsam_bam_staroutunsortedbam)
+       valueFrom: $(inputs._sortsam_bam_staroutunsortedbam)
      - id: sortOrder
        source: sortsam_sortOrder
      - id: createIndex
@@ -635,7 +636,7 @@ Common Workflow Language
      - id: _featureCounts_bam_staroutunsortedbam
        source: star/out_unsorted_bam
      - id: bam
-       valueFrom: $([_featureCounts_bam_staroutunsortedbam])
+       valueFrom: $([inputs._featureCounts_bam_staroutunsortedbam])
      - id: annotationFile
        source: gtf
      run: tools/featureCounts_2_0_1.cwl
@@ -644,7 +645,7 @@ Common Workflow Language
    - id: prepareAllsortsInput
      label: Prepare ALLSorts Input
      in:
-     - id: inputs
+     - id: inps
        source:
        - featureCounts/out
        linkMerge: merge_nested

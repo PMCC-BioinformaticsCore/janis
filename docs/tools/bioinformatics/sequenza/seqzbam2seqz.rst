@@ -163,7 +163,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'Sequenza: bam2seqz'
    doc: ''
 
@@ -179,7 +179,7 @@ Common Workflow Language
      doc: Name of the BAM/pileup file from the reference/normal sample
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        prefix: --normal
        position: 2
@@ -188,7 +188,7 @@ Common Workflow Language
      doc: Name of the BAM/pileup file from the reference/normal sample
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        prefix: --tumor
        position: 4
@@ -205,7 +205,7 @@ Common Workflow Language
        The reference FASTA file used to generate the intermediate pileup. Required when input are BAM
      type: File
      secondaryFiles:
-     - .fai
+     - pattern: .fai
      inputBinding:
        prefix: --fasta
        position: 8
@@ -235,6 +235,11 @@ Common Workflow Language
    - sequenza-utils
    - bam2seqz
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: SeqzBam2Seqz
 
 

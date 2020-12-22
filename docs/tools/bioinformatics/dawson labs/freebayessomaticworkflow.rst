@@ -3,7 +3,7 @@
 Freebayes somatic workflow
 =====================================================
 
-``FreeBayesSomaticWorkflow`` · *0 contributors · 1 version*
+``FreeBayesSomaticWorkflow`` · *1 contributor · 1 version*
 
 This workflow uses the capabilities of freebayes to output all variants independent of the
         diploid model which then in turn allows us to create a likelihood based difference between
@@ -16,7 +16,7 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.dawson.workflows.freebayessomaticworkflow import FreeBayesSomaticWorkflow
+       from janis_bioinformatics.tools.dawson.workflows.variantcalling.multisample.freebayes.freebayessomaticworkflow import FreeBayesSomaticWorkflow
 
        wf = WorkflowBuilder("myworkflow")
 
@@ -59,8 +59,8 @@ Quickstart
 .. code-block:: yaml
 
        bams:
-       - bams_0.cram
-       - bams_1.cram
+       - bams_0.bam
+       - bams_1.bam
        normalSample: <value>
        reference: reference.fasta
 
@@ -86,35 +86,35 @@ URL: *No URL to the documentation was provided*
 
 :ID: ``FreeBayesSomaticWorkflow``
 :URL: *No URL to the documentation was provided*
-:Versions: 0.1
-:Authors: 
+:Versions: 0.1.1
+:Authors: Sebastian Hollizeck
 :Citations: 
 :Created: 2019-10-18
-:Updated: 2019-10-25
+:Updated: 2020-12-10
 
 
 
 Outputs
 -----------
 
-=============  ====================  ===============
-name           type                  documentation
-=============  ====================  ===============
-somaticOutVcf  CompressedIndexedVCF
-=============  ====================  ===============
+=============  =============  ===============
+name           type           documentation
+=============  =============  ===============
+somaticOutVcf  Gzipped<File>
+=============  =============  ===============
 
 
 Workflow
 --------
 
-.. image:: FreeBayesSomaticWorkflow_0_1.dot.png
+.. image:: FreeBayesSomaticWorkflow_0_1_1.dot.png
 
 Embedded Tools
 ***************
 
 ====================================  ===============================
 Create genomic call regions           ``CreateCallRegions/v0.1.0``
-freebayes                             ``freebayes_cram/1.3.1``
+freebayes                             ``freebayes/1.3.1``
 Call Somatic Variants from freebayes  ``callSomaticFreeBayes/0.1.8``
 VcfLib: VcfCombine                    ``vcfcombine/v1.0.1``
 VcfLib: VcfStreamSort                 ``vcfstreamsort/v1.0.1``
@@ -135,12 +135,12 @@ Additional configuration (inputs)
 ================================  ==================  ================================================================================================================================================================================================================================================================================
 name                              type                documentation
 ================================  ==================  ================================================================================================================================================================================================================================================================================
-bams                              Array<CramPair>
-reference                         FastaFai
-normalSample                      String
-regionSize                        Optional<Integer>
-skipCov                           Optional<Integer>
-minCov                            Optional<Integer>
+bams                              Array<IndexedBam>   All bams to be analysed. Samples can be split over multiple bams as well as multiple samples can be contained in one bam as long as the sample ids are set properly.
+reference                         FastaFai            The reference the bams were aligned to, with a fai index.
+normalSample                      String              The sample id of the normal sample, as it is specified in the bam header.
+regionSize                        Optional<Integer>   the size of the regions, to parallelise the analysis over. This needs to be adjusted if there are lots of samples or very high depth sequencing in the analysis.
+skipCov                           Optional<Integer>   The depth per sample, at which the variant calling process will skip a region. This is used to ignore regions with mapping issues, like the centromeres as well as heterochromatin. A good value is 3 times the maximum expected coverage.
+minCov                            Optional<Integer>   Minimum coverage over all samples, to still call variants.
 createCallRegions_equalize        Optional<Boolean>
 callVariants_pooledDiscreteFlag   Optional<Boolean>   Assume that samples result from pooled sequencing. Model pooled samples using discrete genotypes across pools. When using this flag, set --ploidy to the number of alleles in each sample or use the --cnv-map to define per-sample ploidy.
 callVariants_gtQuals              Optional<Boolean>   -= --genotype-qualities Calculate the marginal probability of genotypes and report as GQ in each sample field in the VCF output.
@@ -176,7 +176,7 @@ Workflow Description Language
    version development
 
    import "tools/CreateCallRegions_v0_1_0.wdl" as C
-   import "tools/freebayes_cram_1_3_1.wdl" as F
+   import "tools/freebayes_1_3_1.wdl" as F
    import "tools/callSomaticFreeBayes_0_1_8.wdl" as C2
    import "tools/vcfcombine_v1_0_1.wdl" as V
    import "tools/vcfstreamsort_v1_0_1.wdl" as V2
@@ -191,7 +191,7 @@ Workflow Description Language
    workflow FreeBayesSomaticWorkflow {
      input {
        Array[File] bams
-       Array[File] bams_crai
+       Array[File] bams_bai
        File reference
        File reference_fai
        Int? regionSize = 10000000
@@ -232,10 +232,10 @@ Workflow Description Language
          equalize=select_first([createCallRegions_equalize, true])
      }
      scatter (c in createCallRegions.regions) {
-        call F.freebayes_cram as callVariants {
+        call F.freebayes as callVariants {
          input:
            bams=bams,
-           bams_crai=bams_crai,
+           bams_bai=bams_bai,
            reference=reference,
            reference_fai=reference_fai,
            region=c,
@@ -339,7 +339,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Freebayes somatic workflow
    doc: |-
      This workflow uses the capabilities of freebayes to output all variants independent of the
@@ -354,24 +354,33 @@ Common Workflow Language
 
    inputs:
    - id: bams
+     doc: |-
+       All bams to be analysed. Samples can be split over multiple bams as well as multiple samples can be contained in one bam as long as the sample ids are set properly.
      type:
        type: array
        items: File
      secondaryFiles:
-     - .crai
+     - pattern: .bai
    - id: reference
+     doc: The reference the bams were aligned to, with a fai index.
      type: File
      secondaryFiles:
-     - .fai
+     - pattern: .fai
    - id: regionSize
+     doc: |-
+       the size of the regions, to parallelise the analysis over. This needs to be adjusted if there are lots of samples or very high depth sequencing in the analysis.
      type: int
      default: 10000000
    - id: normalSample
+     doc: The sample id of the normal sample, as it is specified in the bam header.
      type: string
    - id: skipCov
+     doc: |-
+       The depth per sample, at which the variant calling process will skip a region. This is used to ignore regions with mapping issues, like the centromeres as well as heterochromatin. A good value is 3 times the maximum expected coverage.
      type: int
      default: 500
    - id: minCov
+     doc: Minimum coverage over all samples, to still call variants.
      type: int
      default: 10
    - id: createCallRegions_equalize
@@ -501,7 +510,7 @@ Common Workflow Language
    - id: somaticOutVcf
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputSource: indexFinal/out
 
    steps:
@@ -567,7 +576,7 @@ Common Workflow Language
          $((inputs._callVariants_skipCov_skipCov * inputs._callVariants_skipCov_bams.length))
      scatter:
      - region
-     run: tools/freebayes_cram_1_3_1.cwl
+     run: tools/freebayes_1_3_1.cwl
      out:
      - id: out
    - id: callSomatic

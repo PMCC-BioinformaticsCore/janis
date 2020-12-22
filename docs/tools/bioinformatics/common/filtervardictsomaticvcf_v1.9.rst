@@ -3,7 +3,7 @@
 Filter Vardict Somatic Vcf
 ====================================================
 
-``FilterVardictSomaticVcf`` · *0 contributors · 1 version*
+``FilterVardictSomaticVcf`` · *2 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -77,10 +77,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: v1.9
 :Container: biocontainers/bcftools:v1.9-1-deb_cv1
-:Authors: 
+:Authors: Jiaan Yu, Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-06-04
+:Updated: 2020-11-09
 
 
 Outputs
@@ -147,8 +147,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Filter Vardict Somatic Vcf
+   doc: ''
 
    requirements:
    - class: ShellCommandRequirement
@@ -194,6 +195,11 @@ Common Workflow Language
    - position: 2
      valueFrom: "| bcftools filter -i 'FILTER==\"PASS\"'"
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: FilterVardictSomaticVcf
 
 

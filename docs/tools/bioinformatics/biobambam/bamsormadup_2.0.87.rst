@@ -165,7 +165,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: BamSorMaDup
    doc: 'bamsormadup: parallel sorting and duplicate marking'
 
@@ -262,6 +262,11 @@ Common Workflow Language
      position: 0
      valueFrom: bam
      separate: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bamsormadup
 
 

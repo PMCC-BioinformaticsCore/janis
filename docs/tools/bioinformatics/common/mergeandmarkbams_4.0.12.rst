@@ -3,7 +3,7 @@
 Merge and Mark Duplicates
 ============================================
 
-``mergeAndMarkBams`` · *0 contributors · 3 versions*
+``mergeAndMarkBams`` · *1 contributor · 3 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -80,10 +80,10 @@ URL: *No URL to the documentation was provided*
 :ID: ``mergeAndMarkBams``
 :URL: *No URL to the documentation was provided*
 :Versions: 4.0.12, 4.1.2, 4.1.3
-:Authors: 
+:Authors: Michael Franklin
 :Citations: 
-:Created: None
-:Updated: None
+:Created: 2019-02-19
+:Updated: 2019-12-08
 
 
 
@@ -172,8 +172,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Merge and Mark Duplicates
+   doc: ''
 
    requirements:
    - class: InlineJavascriptRequirement
@@ -186,7 +187,7 @@ Common Workflow Language
        type: array
        items: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: createIndex
      type: boolean
      default: true
@@ -208,7 +209,7 @@ Common Workflow Language
    - id: out
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: markDuplicates/out
 
    steps:

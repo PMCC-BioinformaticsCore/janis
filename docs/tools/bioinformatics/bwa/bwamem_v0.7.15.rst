@@ -241,7 +241,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: BWA-MEM
    doc: |-
      bwa - Burrows-Wheeler Alignment Tool
@@ -276,11 +276,11 @@ Common Workflow Language
      label: reference
      type: File
      secondaryFiles:
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
      inputBinding:
        position: 9
    - id: reads
@@ -502,6 +502,11 @@ Common Workflow Language
    - bwa
    - mem
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bwamem
 
 

@@ -3,9 +3,14 @@
 Allsorts
 ========
 
-``Allsorts`` · *0 contributors · 1 version*
+``Allsorts`` · *2 contributors · 1 version*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+usage: ALLSorts [-h] -samples SAMPLES [-labels LABELS]
+                [-destination DESTINATION] [-test] [-train]
+                [-model_dir MODEL_DIR] [-njobs NJOBS] [-cv CV] [-verbose]
+                [-comparison] [-force] [-parents]
+ALLSorts CLI
+
 
 
 Quickstart
@@ -80,10 +85,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Container: breons/allsorts:0.1.0
-:Authors: 
+:Authors: Michael Franklin, Jiaan Yu
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-09-02
+:Updated: 2020-09-11
 
 
 Outputs
@@ -169,8 +174,14 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Allsorts
+   doc: |
+     usage: ALLSorts [-h] -samples SAMPLES [-labels LABELS]
+                     [-destination DESTINATION] [-test] [-train]
+                     [-model_dir MODEL_DIR] [-njobs NJOBS] [-cv CV] [-verbose]
+                     [-comparison] [-force] [-parents]
+     ALLSorts CLI
 
    requirements:
    - class: ShellCommandRequirement
@@ -274,6 +285,11 @@ Common Workflow Language
    baseCommand:
    - ALLSorts
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Allsorts
 
 

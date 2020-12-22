@@ -115,41 +115,41 @@ Information
 Outputs
 -----------
 
-============  ====================  ===========================================================================================================================================================================================================================================
-name          type                  documentation
-============  ====================  ===========================================================================================================================================================================================================================================
+============  ============  ===========================================================================================================================================================================================================================================
+name          type          documentation
+============  ============  ===========================================================================================================================================================================================================================================
 configPickle  File
 script        File
-stats         tsv                   A tab-delimited report of various internal statistics from the variant calling process: Runtime information accumulated for each genome segment, excluding auxiliary steps such as BAM indexing and vcf merging. Indel candidacy statistics
-variants      CompressedIndexedVCF  Primary variant inferences are provided as a series of VCF 4.1 files
-genome        CompressedIndexedVCF
-============  ====================  ===========================================================================================================================================================================================================================================
+stats         tsv           A tab-delimited report of various internal statistics from the variant calling process: Runtime information accumulated for each genome segment, excluding auxiliary steps such as BAM indexing and vcf merging. Indel candidacy statistics
+variants      Gzipped<VCF>  Primary variant inferences are provided as a series of VCF 4.1 files
+genome        Gzipped<VCF>
+============  ============  ===========================================================================================================================================================================================================================================
 
 
 Additional configuration (inputs)
 ---------------------------------
 
-========================  ==============================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-name                      type                            prefix                position  documentation
-========================  ==============================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
-bam                       IndexedBam                      --bam                        1  Sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [required] (no default)
-reference                 FastaWithIndexes                --referenceFasta             1  samtools-indexed reference fasta file [required]
-relativeStrelkaDirectory  Optional<String>                --runDir                     1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory.
-ploidy                    Optional<CompressedIndexedVCF>  --ploidy                     1  Provide ploidy file in VCF. The VCF should include one sample column per input sample labeled with the same sample names found in the input BAM/CRAM RG header sections. Ploidy should be provided in records using the FORMAT/CN field, which are interpreted to span the range [POS+1, INFO/END]. Any CN value besides 1 or 0 will be treated as 2. File must be tabix indexed. (no default)
-noCompress                Optional<CompressedIndexedVCF>  --noCompress                 1  Provide BED file of regions where gVCF block compression is not allowed. File must be bgzip- compressed/tabix-indexed. (no default)
-callContinuousVf          Optional<String>                --callContinuousVf              Call variants on CHROM without a ploidy prior assumption, issuing calls with continuous variant frequencies (no default)
-rna                       Optional<Boolean>               --rna                        1  Set options for RNA-Seq input.
-indelCandidates           Optional<CompressedIndexedVCF>  --indelCandidates            1  Specify a VCF of candidate indel alleles. These alleles are always evaluated but only reported in the output when they are inferred to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left-shifted/normalized, any unnormalized alleles will be ignored. This option may be specified more than once, multiple input VCFs will be merged. (default: None)
-forcedGT                  Optional<CompressedIndexedVCF>  --forcedGT                   1  Specify a VCF of candidate alleles. These alleles are always evaluated and reported even if they are unlikely to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left- shifted/normalized, any unnormalized allele will trigger a runtime error. This option may be specified more than once, multiple input VCFs will be merged. Note that for any SNVs provided in the VCF, the SNV site will be reported (and for gVCF, excluded from block compression), but the specific SNV alleles are ignored. (default: None)
-exome                     Optional<Boolean>               --exome                      1  Set options for exome note in particular that this flag turns off high-depth filters
-targeted                  Optional<Boolean>               --exome                      1  Set options for other targeted input: note in particular that this flag turns off high-depth filters
-callRegions               Optional<BedTABIX>              --callRegions=               1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
-mode                      Optional<String>                --mode                       3  (-m MODE)  select run mode (local|sge)
-queue                     Optional<String>                --queue                      3  (-q QUEUE) specify scheduler queue name
-memGb                     Optional<String>                --memGb                      3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
-quiet                     Optional<Boolean>               --quiet                      3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
-mailTo                    Optional<String>                --mailTo                     3  (-e) send email notification of job completion status to this address (may be provided multiple times for more than one email address)
-========================  ==============================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+========================  ======================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+name                      type                    prefix                position  documentation
+========================  ======================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+bam                       IndexedBam              --bam                        1  Sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [required] (no default)
+reference                 FastaWithIndexes        --referenceFasta             1  samtools-indexed reference fasta file [required]
+relativeStrelkaDirectory  Optional<String>        --runDir                     1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory.
+ploidy                    Optional<Gzipped<VCF>>  --ploidy                     1  Provide ploidy file in VCF. The VCF should include one sample column per input sample labeled with the same sample names found in the input BAM/CRAM RG header sections. Ploidy should be provided in records using the FORMAT/CN field, which are interpreted to span the range [POS+1, INFO/END]. Any CN value besides 1 or 0 will be treated as 2. File must be tabix indexed. (no default)
+noCompress                Optional<Gzipped<VCF>>  --noCompress                 1  Provide BED file of regions where gVCF block compression is not allowed. File must be bgzip- compressed/tabix-indexed. (no default)
+callContinuousVf          Optional<String>        --callContinuousVf              Call variants on CHROM without a ploidy prior assumption, issuing calls with continuous variant frequencies (no default)
+rna                       Optional<Boolean>       --rna                        1  Set options for RNA-Seq input.
+indelCandidates           Optional<Gzipped<VCF>>  --indelCandidates            1  Specify a VCF of candidate indel alleles. These alleles are always evaluated but only reported in the output when they are inferred to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left-shifted/normalized, any unnormalized alleles will be ignored. This option may be specified more than once, multiple input VCFs will be merged. (default: None)
+forcedGT                  Optional<Gzipped<VCF>>  --forcedGT                   1  Specify a VCF of candidate alleles. These alleles are always evaluated and reported even if they are unlikely to exist in the sample. The VCF must be tabix indexed. All indel alleles must be left- shifted/normalized, any unnormalized allele will trigger a runtime error. This option may be specified more than once, multiple input VCFs will be merged. Note that for any SNVs provided in the VCF, the SNV site will be reported (and for gVCF, excluded from block compression), but the specific SNV alleles are ignored. (default: None)
+exome                     Optional<Boolean>       --exome                      1  Set options for exome note in particular that this flag turns off high-depth filters
+targeted                  Optional<Boolean>       --exome                      1  Set options for other targeted input: note in particular that this flag turns off high-depth filters
+callRegions               Optional<Gzipped<bed>>  --callRegions=               1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
+mode                      Optional<String>        --mode                       3  (-m MODE)  select run mode (local|sge)
+queue                     Optional<String>        --queue                      3  (-q QUEUE) specify scheduler queue name
+memGb                     Optional<String>        --memGb                      3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
+quiet                     Optional<Boolean>       --quiet                      3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
+mailTo                    Optional<String>        --mailTo                     3  (-e) send email notification of job completion status to this address (may be provided multiple times for more than one email address)
+========================  ======================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -217,7 +217,7 @@ Workflow Description Language
          ~{if defined(memGb) then ("--memGb " + memGb) else ''} \
          ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          ~{if defined(mailTo) then ("--mailTo " + mailTo) else ''} \
-         --jobs ~{select_first([runtime_cpu, 4, 1])}
+         --jobs ~{select_first([runtime_cpu, 4])}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
@@ -245,7 +245,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Strelka (Germline)
    doc: |-
      Strelka2 is a fast and accurate small variant caller optimized for analysis of germline variation 
@@ -286,7 +286,7 @@ Common Workflow Language
        Sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [required] (no default)
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        prefix: --bam
        position: 1
@@ -296,13 +296,13 @@ Common Workflow Language
      doc: samtools-indexed reference fasta file [required]
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: --referenceFasta
        position: 1
@@ -325,7 +325,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      inputBinding:
        prefix: --ploidy
        position: 1
@@ -338,7 +338,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      inputBinding:
        prefix: --noCompress
        position: 1
@@ -370,7 +370,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      inputBinding:
        prefix: --indelCandidates
        position: 1
@@ -383,7 +383,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      inputBinding:
        prefix: --forcedGT
        position: 1
@@ -418,7 +418,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      inputBinding:
        prefix: --callRegions=
        position: 1
@@ -482,14 +482,14 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.relativeStrelkaDirectory + "/runWorkflow.py.config.pickle"))
-       outputEval: $((inputs.relativeStrelkaDirectory + "/runWorkflow.py.config.pickle"))
+       outputEval: $((inputs.relativeStrelkaDirectory.basename + "/runWorkflow.py.config.pickle"))
        loadContents: false
    - id: script
      label: script
      type: File
      outputBinding:
        glob: $((inputs.relativeStrelkaDirectory + "/runWorkflow.py"))
-       outputEval: $((inputs.relativeStrelkaDirectory + "/runWorkflow.py"))
+       outputEval: $((inputs.relativeStrelkaDirectory.basename + "/runWorkflow.py"))
        loadContents: false
    - id: stats
      label: stats
@@ -498,26 +498,28 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.relativeStrelkaDirectory + "/results/stats/runStats.tsv"))
-       outputEval: $((inputs.relativeStrelkaDirectory + "/results/stats/runStats.tsv"))
+       outputEval: $((inputs.relativeStrelkaDirectory.basename + "/results/stats/runStats.tsv"))
        loadContents: false
    - id: variants
      label: variants
      doc: Primary variant inferences are provided as a series of VCF 4.1 files
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: $((inputs.relativeStrelkaDirectory + "/results/variants/variants.vcf.gz"))
-       outputEval: $((inputs.relativeStrelkaDirectory + "/results/variants/variants.vcf.gz"))
+       outputEval: |-
+         $((inputs.relativeStrelkaDirectory.basename + "/results/variants/variants.vcf.gz"))
        loadContents: false
    - id: genome
      label: genome
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: $((inputs.relativeStrelkaDirectory + "/results/variants/genome.vcf.gz"))
-       outputEval: $((inputs.relativeStrelkaDirectory + "/results/variants/genome.vcf.gz"))
+       outputEval: |-
+         $((inputs.relativeStrelkaDirectory.basename + "/results/variants/genome.vcf.gz"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -531,9 +533,14 @@ Common Workflow Language
      shellQuote: false
    - prefix: --jobs
      position: 3
-     valueFrom: |-
-       $([inputs.runtime_cpu, 4, 1].filter(function (inner) { return inner != null })[0])
+     valueFrom: $([inputs.runtime_cpu, 4].filter(function (inner) { return inner != null
+       })[0])
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: strelka_germline
 
 

@@ -116,17 +116,17 @@ URL: *No URL to the documentation was provided*
 :Versions: v1.0.0
 :Authors: Jiaan Yu
 :Citations: 
-:Created: None
-:Updated: None
+:Created: 2020-06-04
+:Updated: 2020-08-10
 
 
 
 Outputs
 -----------
 
-==============  ====================  ===============
-name            type                  documentation
-==============  ====================  ===============
+==============  =================  ===============
+name            type               documentation
+==============  =================  ===============
 fastq_qc        Array<Array<Zip>>
 markdups_bam    IndexedBam
 doc             TextFile
@@ -135,10 +135,10 @@ gene_summary    TextFile
 region_summary  TextFile
 gridss_vcf      VCF
 gridss_bam      BAM
-hap_vcf         CompressedIndexedVCF
+hap_vcf         Gzipped<VCF>
 hap_bam         IndexedBam
 normalise_vcf   VCF
-==============  ====================  ===============
+==============  =================  ===============
 
 
 Workflow
@@ -168,9 +168,9 @@ Annotate Bam Stats to Germline Vcf Workflow  ``AddBamStatsGermline/v0.1.0``
 Additional configuration (inputs)
 ---------------------------------
 
-======================================  ====================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
-name                                    type                  documentation
-======================================  ====================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
+======================================  ==================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
+name                                    type                documentation
+======================================  ==================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
 sample_name                             String
 fastqs                                  Array<FastqGzPair>
 reference                               FastaWithIndexes
@@ -179,16 +179,16 @@ region_bed_extended                     bed
 region_bed_annotated                    bed
 genecoverage_bed                        bed
 genome_file                             TextFile
-snps_dbsnp                              CompressedIndexedVCF
-snps_1000gp                             CompressedIndexedVCF
-known_indels                            CompressedIndexedVCF
-mills_indels                            CompressedIndexedVCF
+snps_dbsnp                              Gzipped<VCF>
+snps_1000gp                             Gzipped<VCF>
+known_indels                            Gzipped<VCF>
+mills_indels                            Gzipped<VCF>
 black_list                              Optional<bed>
-fastqc_threads                          Optional<Integer>     (-t) Specifies the number of files which can be processed simultaneously. Each thread will be allocated 250MB of memory so you shouldn't run more threads than your available memory will cope with, and not more than 6 threads on a 32 bit machine
-align_and_sort_sortsam_tmpDir           Optional<String>      Undocumented option
+fastqc_threads                          Optional<Integer>   (-t) Specifies the number of files which can be processed simultaneously. Each thread will be allocated 250MB of memory so you shouldn't run more threads than your available memory will cope with, and not more than 6 threads on a 32 bit machine
+align_and_sort_sortsam_tmpDir           Optional<String>    Undocumented option
 gridss_tmpdir                           Optional<String>
-haplotype_caller_pairHmmImplementation  Optional<String>      The PairHMM implementation to use for genotype likelihood calculations. The various implementations balance a tradeoff of accuracy and runtime. The --pair-hmm-implementation argument is an enumerated type (Implementation), which can have one of the following values: EXACT;ORIGINAL;LOGLESS_CACHING;AVX_LOGLESS_CACHING;AVX_LOGLESS_CACHING_OMP;EXPERIMENTAL_FPGA_LOGLESS_CACHING;FASTEST_AVAILABLE. Implementation:  FASTEST_AVAILABLE
-======================================  ====================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
+haplotype_caller_pairHmmImplementation  Optional<String>    The PairHMM implementation to use for genotype likelihood calculations. The various implementations balance a tradeoff of accuracy and runtime. The --pair-hmm-implementation argument is an enumerated type (Implementation), which can have one of the following values: EXACT;ORIGINAL;LOGLESS_CACHING;AVX_LOGLESS_CACHING;AVX_LOGLESS_CACHING_OMP;EXPERIMENTAL_FPGA_LOGLESS_CACHING;FASTEST_AVAILABLE. Implementation:  FASTEST_AVAILABLE
+======================================  ==================  =============================================================================================================================================================================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -406,7 +406,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Molpath Germline Workflow
 
    requirements:
@@ -428,13 +428,13 @@ Common Workflow Language
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: region_bed
      type: File
    - id: region_bed_extended
@@ -452,19 +452,19 @@ Common Workflow Language
    - id: snps_dbsnp
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: snps_1000gp
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: known_indels
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: mills_indels
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: fastqc_threads
      doc: |-
        (-t) Specifies the number of files which can be processed simultaneously. Each thread will be allocated 250MB of memory so you shouldn't run more threads than your available memory will cope with, and not more than 6 threads on a 32 bit machine
@@ -494,7 +494,7 @@ Common Workflow Language
    - id: markdups_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: merge_and_mark/out
    - id: doc
      type: File
@@ -517,12 +517,12 @@ Common Workflow Language
    - id: hap_vcf
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputSource: haplotype_caller/out
    - id: hap_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: haplotype_caller/bam
    - id: normalise_vcf
      type: File

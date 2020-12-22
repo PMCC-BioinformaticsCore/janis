@@ -153,7 +153,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Hello, World!
    doc: |
      This is the 'Hello, world' equivalent workflow that uses the Echo unix

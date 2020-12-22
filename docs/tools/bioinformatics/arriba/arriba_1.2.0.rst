@@ -3,9 +3,24 @@
 Arriba
 ======
 
-``Arriba`` · *0 contributors · 2 versions*
+``Arriba`` · *1 contributor · 2 versions*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+
+Arriba gene fusion detector
+--------------------------- 
+Version: 1.2.0 
+Arriba is a fast tool to search for aberrant transcripts such as gene fusions.  
+It is based on chimeric alignments found by the STAR RNA-Seq aligner. 
+
+Arriba is a command-line tool for the detection of gene fusions from RNA-Seq data. It was developed for the use in a 
+clinical research setting. Therefore, short runtimes and high sensitivity were important design criteria. It is based 
+on the ultrafast STAR aligner and the post-alignment runtime is typically just ~2 minutes. In contrast to many other 
+fusion detection tools which build on STAR, Arriba does not require to reduce the alignIntronMax parameter of STAR 
+to detect fusions arising from focal deletions.
+
+Apart from gene fusions, Arriba can detect other structural rearrangements with potential clinical relevance, such 
+as exon duplications or truncations of genes (i.e., breakpoints in introns and intergenic regions).
+
 
 
 Quickstart
@@ -78,10 +93,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 1.2.0, 1.1.0
 :Container: quay.io/biocontainers/arriba:1.2.0--hd2e4403_2
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-09-02
+:Updated: 2020-09-02
 
 
 Outputs
@@ -235,8 +250,24 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Arriba
+   doc: |2
+
+     Arriba gene fusion detector
+     --------------------------- 
+     Version: 1.2.0 
+     Arriba is a fast tool to search for aberrant transcripts such as gene fusions.  
+     It is based on chimeric alignments found by the STAR RNA-Seq aligner. 
+
+     Arriba is a command-line tool for the detection of gene fusions from RNA-Seq data. It was developed for the use in a 
+     clinical research setting. Therefore, short runtimes and high sensitivity were important design criteria. It is based 
+     on the ultrafast STAR aligner and the post-alignment runtime is typically just ~2 minutes. In contrast to many other 
+     fusion detection tools which build on STAR, Arriba does not require to reduce the alignIntronMax parameter of STAR 
+     to detect fusions arising from focal deletions.
+
+     Apart from gene fusions, Arriba can detect other structural rearrangements with potential clinical relevance, such 
+     as exon duplications or truncations of genes (i.e., breakpoints in introns and intergenic regions).
 
    requirements:
    - class: ShellCommandRequirement
@@ -573,6 +604,11 @@ Common Workflow Language
    baseCommand:
    - arriba
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Arriba
 
 

@@ -137,20 +137,20 @@ Split Multiple Alleles                         ``SplitMultiAllele/v0.5772``
 Additional configuration (inputs)
 ---------------------------------
 
-============  ====================  ===================================================================================================================================================
-name          type                  documentation
-============  ====================  ===================================================================================================================================================
+============  ================  ===================================================================================================================================================
+name          type              documentation
+============  ================  ===================================================================================================================================================
 normal_bam    IndexedBam
 tumor_bam     IndexedBam
 normal_name   String
 tumor_name    String
 reference     FastaWithIndexes
-snps_dbsnp    CompressedIndexedVCF
-snps_1000gp   CompressedIndexedVCF
-known_indels  CompressedIndexedVCF
-mills_indels  CompressedIndexedVCF
-intervals     Optional<bed>         This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
-============  ====================  ===================================================================================================================================================
+snps_dbsnp    Gzipped<VCF>
+snps_1000gp   Gzipped<VCF>
+known_indels  Gzipped<VCF>
+mills_indels  Gzipped<VCF>
+intervals     Optional<bed>     This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
+============  ================  ===================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -294,7 +294,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: GATK4 Somatic Variant Caller
    doc: |-
      This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.0.12.0.
@@ -313,11 +313,11 @@ Common Workflow Language
    - id: normal_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: tumor_bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: normal_name
      type: string
    - id: tumor_name
@@ -331,29 +331,29 @@ Common Workflow Language
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: snps_dbsnp
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: snps_1000gp
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: known_indels
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: mills_indels
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
 
    outputs:
    - id: out

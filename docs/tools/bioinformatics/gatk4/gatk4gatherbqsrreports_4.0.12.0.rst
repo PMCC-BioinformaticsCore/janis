@@ -3,9 +3,12 @@
 GATK4: GatherBQSRReports
 =================================================
 
-``Gatk4GatherBQSRReports`` · *0 contributors · 4 versions*
+``Gatk4GatherBQSRReports`` · *1 contributor · 4 versions*
 
-No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+USAGE: GatherBQSRReports [arguments]
+Gathers scattered BQSR recalibration reports into a single file
+Version:4.1.3.0
+
 
 
 Quickstart
@@ -77,10 +80,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 4.1.4.0, 4.1.3.0, 4.1.2.0, 4.0.12.0
 :Container: broadinstitute/gatk:4.0.12.0
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-05-18
+:Updated: 2020-05-18
 
 
 Outputs
@@ -186,8 +189,12 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'GATK4: GatherBQSRReports'
+   doc: |
+     USAGE: GatherBQSRReports [arguments]
+     Gathers scattered BQSR recalibration reports into a single file
+     Version:4.1.3.0
 
    requirements:
    - class: ShellCommandRequirement
@@ -368,6 +375,11 @@ Common Workflow Language
      position: -1
      valueFrom: |-
        $("-Xmx{memory}G {compression} {otherargs}".replace(/\{memory\}/g, (([inputs.runtime_memory, 4].filter(function (inner) { return inner != null })[0] * 3) / 4)).replace(/\{compression\}/g, (inputs.compression_level != null) ? ("-Dsamjdk.compress_level=" + inputs.compression_level) : "").replace(/\{otherargs\}/g, [inputs.javaOptions, []].filter(function (inner) { return inner != null })[0].join(" ")))
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk4GatherBQSRReports
 
 

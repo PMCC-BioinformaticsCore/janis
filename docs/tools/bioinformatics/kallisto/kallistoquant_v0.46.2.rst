@@ -180,7 +180,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Kallisto-Quant
    doc: Builds a kallisto index
 
@@ -288,14 +288,14 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outdir + "/abundance.tsv"))
-       outputEval: $((inputs.outdir + "/abundance.tsv"))
+       outputEval: $((inputs.outdir.basename + "/abundance.tsv"))
        loadContents: false
    - id: stats
      label: stats
      type: File
      outputBinding:
        glob: $((inputs.outdir + "/run_info.json"))
-       outputEval: $((inputs.outdir + "/run_info.json"))
+       outputEval: $((inputs.outdir.basename + "/run_info.json"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -304,6 +304,11 @@ Common Workflow Language
    - kallisto
    - quant
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: kallistoQuant
 
 

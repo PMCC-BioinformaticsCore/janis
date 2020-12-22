@@ -148,7 +148,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Echo
    doc: |-
      The echo utility writes any specified operands, separated by single blank (` ') characters and followed by a newline (`
@@ -187,6 +187,11 @@ Common Workflow Language
 
    baseCommand: echo
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 60, 86400].filter(function (inner) { return inner != null })[0])
    id: echo
 
 

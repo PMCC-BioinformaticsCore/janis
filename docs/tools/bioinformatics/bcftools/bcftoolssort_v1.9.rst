@@ -3,7 +3,7 @@
 BCFTools: Sort
 =============================
 
-``bcftoolssort`` · *0 contributors · 1 version*
+``bcftoolssort`` · *1 contributor · 1 version*
 
 About:   Sort VCF/BCF file.
 Usage:   bcftools sort [OPTIONS] <FILE.vcf>
@@ -78,7 +78,7 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: v1.9
 :Container: biocontainers/bcftools:v1.9-1-deb_cv1
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
 :Created: 2019-05-09
 :Updated: 2019-07-11
@@ -87,24 +87,24 @@ Information
 Outputs
 -----------
 
-======  =============  ===============
-name    type           documentation
-======  =============  ===============
-out     CompressedVCF
-======  =============  ===============
+======  ============  ===============
+name    type          documentation
+======  ============  ===============
+out     Gzipped<VCF>
+======  ============  ===============
 
 
 Additional configuration (inputs)
 ---------------------------------
 
-==============  =========================  =============  ==========  =======================================================================================
-name            type                       prefix           position  documentation
-==============  =========================  =============  ==========  =======================================================================================
-vcf             Union<VCF, CompressedVCF>                          1  The VCF file to sort
-outputFilename  Optional<Filename>         --output-file              (-o) output file name [stdout]
-outputType      Optional<String>           --output-type              (-O) b: compressed BCF, u: uncompressed BCF, z: compressed VCF, v: uncompressed VCF [v]
-tempDir         Optional<String>           --temp-dir                 (-T) temporary files [/tmp/bcftools-sort.XXXXXX/]
-==============  =========================  =============  ==========  =======================================================================================
+==============  ========================  =============  ==========  =======================================================================================
+name            type                      prefix           position  documentation
+==============  ========================  =============  ==========  =======================================================================================
+vcf             Union<VCF, Gzipped<VCF>>                          1  The VCF file to sort
+outputFilename  Optional<Filename>        --output-file              (-o) output file name [stdout]
+outputType      Optional<String>          --output-type              (-O) b: compressed BCF, u: uncompressed BCF, z: compressed VCF, v: uncompressed VCF [v]
+tempDir         Optional<String>          --temp-dir                 (-T) temporary files [/tmp/bcftools-sort.XXXXXX/]
+==============  ========================  =============  ==========  =======================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -152,7 +152,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'BCFTools: Sort'
    doc: "About:   Sort VCF/BCF file.\nUsage:   bcftools sort [OPTIONS] <FILE.vcf>"
 
@@ -209,6 +209,11 @@ Common Workflow Language
    - bcftools
    - sort
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: bcftoolssort
 
 

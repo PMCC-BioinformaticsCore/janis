@@ -90,8 +90,8 @@ URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Authors: Jiaan Yu
 :Citations: 
-:Created: None
-:Updated: None
+:Created: 2020-04-28
+:Updated: 2020-10-05
 
 
 
@@ -262,7 +262,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Performance summary workflow (targeted bed)
 
    requirements:
@@ -274,7 +274,7 @@ Common Workflow Language
    - id: bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: genecoverage_bed
      type: File
    - id: region_bed

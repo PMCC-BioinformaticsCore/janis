@@ -100,14 +100,14 @@ out     stdout<VCF>
 Additional configuration (inputs)
 ---------------------------------
 
-============  ===========================  ============  ==========  =============================================================================
-name          type                         prefix          position  documentation
-============  ===========================  ============  ==========  =============================================================================
-vcfTabix      Array<CompressedIndexedVCF>                        10
-checkColumns  Optional<Boolean>            -c                        Do not concatenate, only check if the columns agree.
-padMissing    Optional<Boolean>            -p                        Write '.' in place of missing columns. Useful for joining chrY with the rest.
-mergeSort     Optional<Integer>            --merge-sort              Allow small overlaps in N consecutive files.
-============  ===========================  ============  ==========  =============================================================================
+============  ===================  ============  ==========  =============================================================================
+name          type                 prefix          position  documentation
+============  ===================  ============  ==========  =============================================================================
+vcfTabix      Array<Gzipped<VCF>>                        10
+checkColumns  Optional<Boolean>    -c                        Do not concatenate, only check if the columns agree.
+padMissing    Optional<Boolean>    -p                        Write '.' in place of missing columns. Useful for joining chrY with the rest.
+mergeSort     Optional<Integer>    --merge-sort              Allow small overlaps in N consecutive files.
+============  ===================  ============  ==========  =============================================================================
 
 Workflow Description Language
 ------------------------------
@@ -156,7 +156,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'VcfTools: VcfConcat'
    doc: |-
      Concatenates VCF files (for example split by chromosome). Note that the input and output VCFs will have the same number of columns, the script does not merge VCFs by position (see also vcf-merge).
@@ -213,6 +213,11 @@ Common Workflow Language
    - ''
    - vcf-concat
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: VcfToolsVcfConcat
 
 

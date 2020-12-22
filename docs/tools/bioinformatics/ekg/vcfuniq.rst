@@ -97,11 +97,11 @@ out     stdout<VCF>  VCF output
 Additional configuration (inputs)
 ---------------------------------
 
-======  =============  ========  ==========  ===============
-name    type           prefix      position  documentation
-======  =============  ========  ==========  ===============
-vcf     CompressedVCF                     3
-======  =============  ========  ==========  ===============
+======  ============  ========  ==========  ===============
+name    type          prefix      position  documentation
+======  ============  ========  ==========  ===============
+vcf     Gzipped<VCF>                     3
+======  ============  ========  ==========  ===============
 
 Workflow Description Language
 ------------------------------
@@ -143,7 +143,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'VcfLib: VcfUniq'
    doc: |-
      usage: vcffuniq [file]
@@ -172,6 +172,11 @@ Common Workflow Language
 
    baseCommand: vcfuniq
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: vcfuniq
 
 

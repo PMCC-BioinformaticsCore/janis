@@ -3,7 +3,7 @@
 Add Bam Statistics to Vcf
 =======================================
 
-``addBamStats`` · *1 contributor · 2 versions*
+``addBamStats`` · *1 contributor · 1 version*
 
 usage: add_bam_stats.py [-h] -i I -o O --type {germline,somatic}
                         [--mpileup MPILEUP] [--normal_mpileup NORMAL_MPILEUP]
@@ -38,13 +38,13 @@ Quickstart
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.pmac.addbamstats.versions import AddBamStats_dev
+       from janis_bioinformatics.tools.pmac.addbamstats.versions import AddBamStats_0_0_7
 
        wf = WorkflowBuilder("myworkflow")
 
        wf.step(
            "addbamstats_step",
-           AddBamStats_dev(
+           AddBamStats_0_0_7(
                inputVcf=None,
                type=None,
            )
@@ -102,11 +102,11 @@ Information
 
 :ID: ``addBamStats``
 :URL: `https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils <https://github.com/PMCC-BioinformaticsCore/scripts/tree/master/vcf_utils>`_
-:Versions: dev, 0.0.7
-:Container: jyu/pmacutil:dev
+:Versions: 0.0.7
+:Container: michaelfranklin/pmacutil:0.0.7
 :Authors: Jiaan Yu
 :Citations: None
-:Created: None
+:Created: 2020-05-20 00:00:00
 :Updated: 2020-05-20 00:00:00
 
 
@@ -173,7 +173,7 @@ Workflow Description Language
      runtime {
        cpu: select_first([runtime_cpu, 1])
        disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
-       docker: "jyu/pmacutil:dev"
+       docker: "michaelfranklin/pmacutil:0.0.7"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
@@ -190,7 +190,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Add Bam Statistics to Vcf
    doc: |-
      usage: add_bam_stats.py [-h] -i I -o O --type {germline,somatic}
@@ -224,7 +224,7 @@ Common Workflow Language
    - class: ShellCommandRequirement
    - class: InlineJavascriptRequirement
    - class: DockerRequirement
-     dockerPull: jyu/pmacutil:dev
+     dockerPull: michaelfranklin/pmacutil:0.0.7
 
    inputs:
    - id: mpileup
@@ -303,6 +303,11 @@ Common Workflow Language
 
    baseCommand: add_bam_stats.py
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: addBamStats
 
 

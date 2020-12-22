@@ -142,7 +142,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'VcfLib: Vcf Length'
    doc: |-
      Adds the length of the variant record (in [-/+]) relative to the reference allele to each VCF record.
@@ -171,6 +171,11 @@ Common Workflow Language
 
    baseCommand: vcflength
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: vcflength
 
 

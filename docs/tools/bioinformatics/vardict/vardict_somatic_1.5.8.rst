@@ -3,7 +3,7 @@
 Vardict (Somatic)
 ===================================
 
-``vardict_somatic`` · *0 contributors · 5 versions*
+``vardict_somatic`` · *1 contributor · 5 versions*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -87,10 +87,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: 1.7.0, 1.6.0, 1.5.8, 1.5.7, 1.5.6
 :Container: michaelfranklin/vardict:1.5.8
-:Authors: 
+:Authors: Michael Franklin
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2019-06-12
+:Updated: 2020-07-22
 
 
 Outputs
@@ -295,8 +295,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Vardict (Somatic)
+   doc: ''
 
    requirements:
    - class: ShellCommandRequirement
@@ -310,13 +311,13 @@ Common Workflow Language
      doc: The indexed BAM file
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: normalBam
      label: normalBam
      doc: The indexed BAM file
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: intervals
      label: intervals
      type: File
@@ -329,7 +330,7 @@ Common Workflow Language
        The reference fasta. Should be indexed (.fai). Defaults to: /ngs/reference_data/genomes/Hsapiens/hg19/seq/hg19.fa
      type: File
      secondaryFiles:
-     - .fai
+     - pattern: .fai
      inputBinding:
        prefix: -G
        position: 1
@@ -807,6 +808,11 @@ Common Workflow Language
      position: 1
      valueFrom: $(inputs.alleleFreqThreshold)
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: vardict_somatic
 
 

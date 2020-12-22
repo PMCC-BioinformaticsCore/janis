@@ -143,7 +143,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: MD5 Sum
    doc: Compute the MD5 message digest of the given file.
 
@@ -172,6 +172,11 @@ Common Workflow Language
    - position: 2
      valueFrom: "| awk '{print $1}'"
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: md5sum
 
 

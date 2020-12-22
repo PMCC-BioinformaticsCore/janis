@@ -106,7 +106,7 @@ Outputs
 ========  ====================  ===============
 name      type                  documentation
 ========  ====================  ===============
-variants  CompressedIndexedVCF
+variants  Gzipped<VCF>
 out_bam   Optional<IndexedBam>
 out       VCF
 ========  ====================  ===============
@@ -134,15 +134,15 @@ Split Multiple Alleles and Normalise Vcf  ``SplitMultiAlleleNormaliseVcf/v0.5772
 Additional configuration (inputs)
 ---------------------------------
 
-================  ==============================  ===================================================================================================================================================
-name              type                            documentation
-================  ==============================  ===================================================================================================================================================
+================  ======================  ===================================================================================================================================================
+name              type                    documentation
+================  ======================  ===================================================================================================================================================
 bam               IndexedBam
 reference         FastaWithIndexes
-gnomad            CompressedIndexedVCF
-intervals         Optional<bed>                   This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
-panel_of_normals  Optional<CompressedIndexedVCF>
-================  ==============================  ===================================================================================================================================================
+gnomad            Gzipped<VCF>
+intervals         Optional<bed>           This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
+panel_of_normals  Optional<Gzipped<VCF>>
+================  ======================  ===================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -256,7 +256,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: Workflow
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: GATK4 Somatic Variant Caller for Tumour Only Samples with Targeted BED
    doc: |-
      This is a VariantCaller based on the GATK Best Practice pipelines. It uses the GATK4 toolkit, specifically 4.1.2.
@@ -279,7 +279,7 @@ Common Workflow Language
    - id: bam
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
    - id: intervals
      doc: |-
        This optional interval supports processing by regions. If this input resolves to null, then GATK will process the whole genome per each tool's spec
@@ -289,36 +289,36 @@ Common Workflow Language
    - id: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
    - id: gnomad
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
    - id: panel_of_normals
      type:
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
 
    outputs:
    - id: variants
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputSource: mutect2/out
    - id: out_bam
      type:
      - File
      - 'null'
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      outputSource: mutect2/bam
    - id: out
      type: File

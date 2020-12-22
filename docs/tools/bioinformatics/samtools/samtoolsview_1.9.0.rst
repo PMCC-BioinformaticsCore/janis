@@ -233,7 +233,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: 'SamTools: View'
    doc: |-
      Ensure SAMTOOLS.SORT is inheriting from parent metadata
@@ -468,13 +468,13 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: -T
        position: 6
@@ -520,6 +520,11 @@ Common Workflow Language
      valueFrom: -h
    - position: 4
      valueFrom: -b
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: SamToolsView
 
 

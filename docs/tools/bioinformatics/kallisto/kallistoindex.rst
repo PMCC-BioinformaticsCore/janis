@@ -124,7 +124,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{reference} .
+       cp -f '~{reference}' '.'
        kallisto index \
          ~{if defined(kmer_size) then ("-k " + kmer_size) else ''} \
          -i '~{select_first([index, "generated.kidx"])}' \
@@ -150,7 +150,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Kallisto-Index
    doc: Builds a kallisto index
 
@@ -204,6 +204,11 @@ Common Workflow Language
    - kallisto
    - index
    arguments: []
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: kallistoIndex
 
 

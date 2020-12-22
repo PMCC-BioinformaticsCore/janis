@@ -111,43 +111,43 @@ Information
 Outputs
 -----------
 
-==========================  ==============================  ===============
-name                        type                            documentation
-==========================  ==============================  ===============
+==========================  ======================  ===============
+name                        type                    documentation
+==========================  ======================  ===============
 python                      File
 pickle                      File
-candidateSV                 CompressedIndexedVCF
-candidateSmallIndels        CompressedIndexedVCF
-diploidSV                   CompressedIndexedVCF
+candidateSV                 Gzipped<VCF>
+candidateSmallIndels        Gzipped<VCF>
+diploidSV                   Gzipped<VCF>
 alignmentStatsSummary       File
 svCandidateGenerationStats  tsv
 svLocusGraphStats           tsv
-somaticSVs                  Optional<CompressedIndexedVCF>
-==========================  ==============================  ===============
+somaticSVs                  Optional<Gzipped<VCF>>
+==========================  ======================  ===============
 
 
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ====================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
-name            type                  prefix              position  documentation
-==============  ====================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
-bam             IndexedBam            --bam                      1  FILE Normal sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [optional] (no default)
-reference       FastaFai              --referenceFasta           1  samtools-indexed reference fasta file [required]
-config          Optional<File>        --config                   1  provide a configuration file to override defaults in global config file (/opt/conda/share/manta-1.2.1-0/bin/configManta.py.ini)
-runDir          Optional<Filename>    --runDir                   1  Run script and run output will be written to this directory [required] (default: MantaWorkflow)
-tumorBam        Optional<IndexedBam>  --tumorBam                 1  Tumor sample BAM or CRAM file. Only up to one tumor bam file accepted. [optional=null]
-exome           Optional<Boolean>     --exome                    1  Set options for WES input: turn off depth filters
-rna             Optional<Boolean>     --rna                      1  Set options for RNA-Seq input. Must specify exactly one bam input file
-unstrandedRNA   Optional<Boolean>     --unstrandedRNA            1  Set if RNA-Seq input is unstranded: Allows splice-junctions on either strand
-outputContig    Optional<Boolean>     --outputContig             1  Output assembled contig sequences in VCF file
-callRegions     Optional<BedTABIX>    --callRegions              1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
-mode            Optional<String>      --mode                     3  (-m) select run mode (local|sge)
-quiet           Optional<Boolean>     --quiet                    3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
-queue           Optional<String>      --queue                    3  (-q) specify scheduler queue name
-memgb           Optional<Integer>     --memGb                    3  (-g) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local  mode, 'unlimited' for sge mode)
-maxTaskRuntime  Optional<String>      --maxTaskRuntime           3  (format: hh:mm:ss) Specify scheduler max runtime per task, argument is provided to the 'h_rt' resource limit if using SGE (no default)
-==============  ====================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
+==============  ======================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
+name            type                    prefix              position  documentation
+==============  ======================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
+bam             IndexedBam              --bam                      1  FILE Normal sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [optional] (no default)
+reference       FastaFai                --referenceFasta           1  samtools-indexed reference fasta file [required]
+config          Optional<File>          --config                   1  provide a configuration file to override defaults in global config file (/opt/conda/share/manta-1.2.1-0/bin/configManta.py.ini)
+runDir          Optional<Filename>      --runDir                   1  Run script and run output will be written to this directory [required] (default: MantaWorkflow)
+tumorBam        Optional<IndexedBam>    --tumorBam                 1  Tumor sample BAM or CRAM file. Only up to one tumor bam file accepted. [optional=null]
+exome           Optional<Boolean>       --exome                    1  Set options for WES input: turn off depth filters
+rna             Optional<Boolean>       --rna                      1  Set options for RNA-Seq input. Must specify exactly one bam input file
+unstrandedRNA   Optional<Boolean>       --unstrandedRNA            1  Set if RNA-Seq input is unstranded: Allows splice-junctions on either strand
+outputContig    Optional<Boolean>       --outputContig             1  Output assembled contig sequences in VCF file
+callRegions     Optional<Gzipped<bed>>  --callRegions              1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
+mode            Optional<String>        --mode                     3  (-m) select run mode (local|sge)
+quiet           Optional<Boolean>       --quiet                    3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
+queue           Optional<String>        --queue                    3  (-q) specify scheduler queue name
+memgb           Optional<Integer>       --memGb                    3  (-g) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local  mode, 'unlimited' for sge mode)
+maxTaskRuntime  Optional<String>        --maxTaskRuntime           3  (format: hh:mm:ss) Specify scheduler max runtime per task, argument is provided to the 'h_rt' resource limit if using SGE (no default)
+==============  ======================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -202,7 +202,7 @@ Workflow Description Language
          ~{if defined(queue) then ("--queue " + queue) else ''} \
          ~{if defined(memgb) then ("--memGb " + memgb) else ''} \
          ~{if defined(maxTaskRuntime) then ("--maxTaskRuntime " + maxTaskRuntime) else ''} \
-         -j ~{select_first([runtime_cpu, 4, 1])}
+         -j ~{select_first([runtime_cpu, 4])}
      >>>
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
@@ -236,7 +236,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Manta
    doc: |-
      Manta calls structural variants (SVs) and indels from mapped paired-end sequencing reads.
@@ -279,7 +279,7 @@ Common Workflow Language
        FILE Normal sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [optional] (no default)
      type: File
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        prefix: --bam
        position: 1
@@ -301,7 +301,7 @@ Common Workflow Language
      doc: samtools-indexed reference fasta file [required]
      type: File
      secondaryFiles:
-     - .fai
+     - pattern: .fai
      inputBinding:
        prefix: --referenceFasta
        position: 1
@@ -314,7 +314,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .bai
+     - pattern: .bai
      inputBinding:
        prefix: --tumorBam
        position: 1
@@ -367,7 +367,7 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      inputBinding:
        prefix: --callRegions
        position: 1
@@ -431,62 +431,62 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.runDir + "/runWorkflow.py"))
-       outputEval: $((inputs.runDir + "/runWorkflow.py"))
+       outputEval: $((inputs.runDir.basename + "/runWorkflow.py"))
        loadContents: false
    - id: pickle
      label: pickle
      type: File
      outputBinding:
        glob: $((inputs.runDir + "/runWorkflow.py.config.pickle"))
-       outputEval: $((inputs.runDir + "/runWorkflow.py.config.pickle"))
+       outputEval: $((inputs.runDir.basename + "/runWorkflow.py.config.pickle"))
        loadContents: false
    - id: candidateSV
      label: candidateSV
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: $((inputs.runDir + "/results/variants/candidateSV.vcf.gz"))
-       outputEval: $((inputs.runDir + "/results/variants/candidateSV.vcf.gz"))
+       outputEval: $((inputs.runDir.basename + "/results/variants/candidateSV.vcf.gz"))
        loadContents: false
    - id: candidateSmallIndels
      label: candidateSmallIndels
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: $((inputs.runDir + "/results/variants/candidateSmallIndels.vcf.gz"))
-       outputEval: $((inputs.runDir + "/results/variants/candidateSmallIndels.vcf.gz"))
+       outputEval: $((inputs.runDir.basename + "/results/variants/candidateSmallIndels.vcf.gz"))
        loadContents: false
    - id: diploidSV
      label: diploidSV
      type: File
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: $((inputs.runDir + "/results/variants/diploidSV.vcf.gz"))
-       outputEval: $((inputs.runDir + "/results/variants/diploidSV.vcf.gz"))
+       outputEval: $((inputs.runDir.basename + "/results/variants/diploidSV.vcf.gz"))
        loadContents: false
    - id: alignmentStatsSummary
      label: alignmentStatsSummary
      type: File
      outputBinding:
        glob: $((inputs.runDir + "/results/stats/alignmentStatsSummary.txt"))
-       outputEval: $((inputs.runDir + "/results/stats/alignmentStatsSummary.txt"))
+       outputEval: $((inputs.runDir.basename + "/results/stats/alignmentStatsSummary.txt"))
        loadContents: false
    - id: svCandidateGenerationStats
      label: svCandidateGenerationStats
      type: File
      outputBinding:
        glob: $((inputs.runDir + "/results/stats/svCandidateGenerationStats.tsv"))
-       outputEval: $((inputs.runDir + "/results/stats/svCandidateGenerationStats.tsv"))
+       outputEval: $((inputs.runDir.basename + "/results/stats/svCandidateGenerationStats.tsv"))
        loadContents: false
    - id: svLocusGraphStats
      label: svLocusGraphStats
      type: File
      outputBinding:
        glob: $((inputs.runDir + "/results/stats/svLocusGraphStats.tsv"))
-       outputEval: $((inputs.runDir + "/results/stats/svLocusGraphStats.tsv"))
+       outputEval: $((inputs.runDir.basename + "/results/stats/svLocusGraphStats.tsv"))
        loadContents: false
    - id: somaticSVs
      label: somaticSVs
@@ -494,10 +494,10 @@ Common Workflow Language
      - File
      - 'null'
      secondaryFiles:
-     - .tbi
+     - pattern: .tbi
      outputBinding:
        glob: $((inputs.runDir + "/results/variants/somaticSV.vcf.gz"))
-       outputEval: $((inputs.runDir + "/results/variants/somaticSV.vcf.gz"))
+       outputEval: $((inputs.runDir.basename + "/results/variants/somaticSV.vcf.gz"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -510,9 +510,14 @@ Common Workflow Language
      shellQuote: false
    - prefix: -j
      position: 3
-     valueFrom: |-
-       $([inputs.runtime_cpu, 4, 1].filter(function (inner) { return inner != null })[0])
+     valueFrom: $([inputs.runtime_cpu, 4].filter(function (inner) { return inner != null
+       })[0])
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: manta
 
 

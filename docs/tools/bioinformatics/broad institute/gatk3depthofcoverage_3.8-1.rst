@@ -218,7 +218,7 @@ Workflow Description Language
      }
      command <<<
        set -e
-       cp -f ~{bam_bai} $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
+       cp -f '~{bam_bai}' $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
        java \
          -Xmx~{((select_first([runtime_memory, 4]) * 3) / 4)}G \
          -jar /usr/GenomeAnalysisTK.jar \
@@ -280,7 +280,7 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: |-
      GATK3 DepthOfCoverage: Determine coverage at different levels of partitioning and aggregation.
    doc: |-
@@ -344,13 +344,13 @@ Common Workflow Language
      doc: Reference sequence file
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: -R
    - id: outputPrefix
@@ -598,7 +598,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_cumulative_coverage_counts"))
-       outputEval: $((inputs.outputPrefix + ".sample_cumulative_coverage_counts"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_cumulative_coverage_counts"))
        loadContents: false
    - id: sampleCumulativeCoverageProportions
      label: sampleCumulativeCoverageProportions
@@ -606,7 +606,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_cumulative_coverage_proportions"))
-       outputEval: $((inputs.outputPrefix + ".sample_cumulative_coverage_proportions"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_cumulative_coverage_proportions"))
        loadContents: false
    - id: sampleIntervalStatistics
      label: sampleIntervalStatistics
@@ -614,7 +614,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_interval_statistics"))
-       outputEval: $((inputs.outputPrefix + ".sample_interval_statistics"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_interval_statistics"))
        loadContents: false
    - id: sampleIntervalSummary
      label: sampleIntervalSummary
@@ -622,7 +622,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_interval_summary"))
-       outputEval: $((inputs.outputPrefix + ".sample_interval_summary"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_interval_summary"))
        loadContents: false
    - id: sampleStatistics
      label: sampleStatistics
@@ -630,7 +630,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_statistics"))
-       outputEval: $((inputs.outputPrefix + ".sample_statistics"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_statistics"))
        loadContents: false
    - id: sampleSummary
      label: sampleSummary
@@ -638,7 +638,7 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_summary"))
-       outputEval: $((inputs.outputPrefix + ".sample_summary"))
+       outputEval: $((inputs.outputPrefix.basename + ".sample_summary"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -656,6 +656,11 @@ Common Workflow Language
    - position: -1
      valueFrom: -T DepthOfCoverage
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: Gatk3DepthOfCoverage
 
 

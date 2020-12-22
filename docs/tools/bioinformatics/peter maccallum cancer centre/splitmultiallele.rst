@@ -3,7 +3,7 @@
 Split Multiple Alleles
 =========================================
 
-``SplitMultiAllele`` · *0 contributors · 1 version*
+``SplitMultiAllele`` · *2 contributors · 1 version*
 
 No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -79,10 +79,10 @@ Information
 :URL: *No URL to the documentation was provided*
 :Versions: v0.5772
 :Container: heuermh/vt
-:Authors: 
+:Authors: Michael Franklin, Jiaan Yu
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2019-01-18
+:Updated: 2020-11-06
 
 
 Outputs
@@ -159,8 +159,9 @@ Common Workflow Language
 
    #!/usr/bin/env cwl-runner
    class: CommandLineTool
-   cwlVersion: v1.0
+   cwlVersion: v1.2
    label: Split Multiple Alleles
+   doc: ''
 
    requirements:
    - class: ShellCommandRequirement
@@ -179,13 +180,13 @@ Common Workflow Language
      label: reference
      type: File
      secondaryFiles:
-     - .fai
-     - .amb
-     - .ann
-     - .bwt
-     - .pac
-     - .sa
-     - ^.dict
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: -r
        position: 4
@@ -218,6 +219,11 @@ Common Workflow Language
    - position: 2
      valueFrom: '| vt normalize -n -q - '
      shellQuote: false
+
+   hints:
+   - class: ToolTimeLimit
+     timelimit: |-
+       $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
    id: SplitMultiAllele
 
 

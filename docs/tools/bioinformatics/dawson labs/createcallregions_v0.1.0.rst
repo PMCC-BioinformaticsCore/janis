@@ -3,7 +3,7 @@
     Create genomic call regions
     ===============================================
 
-    ``CreateCallRegions`` · *0 contributors · 1 version*
+    ``CreateCallRegions`` · *1 contributor · 1 version*
 
     No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
@@ -80,10 +80,10 @@
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Container: python:3.8.1
-:Authors: 
+:Authors: Sebastian Hollizeck
 :Citations: None
-:Created: None
-:Updated: None
+:Created: 2020-06-17
+:Updated: 2020-07-16
 
 
 

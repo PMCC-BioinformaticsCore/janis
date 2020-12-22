@@ -51,7 +51,15 @@ setup(
         min_pipes_version,
         min_templs_version,
     ],
-    extras_require={"bioinformatics": [min_bioinf_version, min_pipes_version]},
+    extras_require={
+        "bioinformatics": [min_bioinf_version, min_pipes_version],
+        "doc": [
+            "docutils",
+            "sphinx",
+            "sphinx_rtd_theme",
+            "recommonmark",
+        ],
+    },
     entry_points={"console_scripts": ["janisdk=toolbuilder.main:process_args"]},
     zip_safe=False,
     long_description=long_description,

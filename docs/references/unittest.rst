@@ -65,13 +65,17 @@ Run the tests
 -------------
 .. code-block:: console
 
-    janisdk run-test [TEST CASE NAME] [TOOL ID]
+    # Run a specific test case
+    janisdk run-test --test-case [TEST CASE NAME] [TOOL ID]
+
+    # Run ALL test cases of one tool
+    janisdk run-test [TOOL ID]
 
 To run the example test case shown above:
 
 .. code-block:: console
 
-    janisdk run-test basic BwaAligner
+    janisdk run-test --test-case=basic BwaAligner
 
 Preprocessors and Comparison Operators
 **************************************

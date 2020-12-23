@@ -139,8 +139,9 @@ def do_runtest(args):
     precommands = []
     if config and config.template.id == "spartan":
         precommands = ["sbatch", "-p", "snowy", "--wrap"]
-
-    commands = precommands + run_test_commands
+        commands = precommands + [" ".join(run_test_commands)]
+    else:
+        commands = run_test_commands
 
     subprocess.run(commands)
 

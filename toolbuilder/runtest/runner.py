@@ -1,13 +1,10 @@
-import json
+import ast
 import requests
 from typing import List, Dict, Any, Optional
-from janis_assistant.main import run_with_outputs
 from janis_core.tool.test_suite_runner import ToolTestSuiteRunner
 from janis_core.tool import test_helpers
 from janis_core import Logger
-from janis_core import JanisShed
 from janis_assistant.engines.enginetypes import EngineType
-import janis_bioinformatics
 
 
 class UpdateStatusOption:
@@ -165,3 +162,87 @@ def cli_logging(name: str, result: Dict):
         Logger.info(f"Test SUCCEEDED: {name}")
     else:
         Logger.critical(f"Test FAILED: {name}")
+
+
+def add_runtest_args(parser):
+    parser.add_argument("tool", help="Name of tool to test")
+
+    parser.add_argument(
+        "--test-case", help="Name of test case as listed in tool.tests()"
+    )
+
+    parser.add_argument("-e", "--engine", help="engine", default=EngineType.cromwell)
+
+    parser.add_argument("-c", "--config", help="Path to janis config")
+
+    parser.add_argument(
+        "-o", "--output", help="Dry run test by providing a dictionary of output"
+    )
+
+    # For updating test-framework API endpoint
+    parser.add_argument(
+        "--test-manager-url", help="API endpoint to update run status in Test Manager"
+    )
+
+    parser.add_argument(
+        "--test-manager-token", help="Authentication token for Test Manager API"
+    )
+
+    parser.add_argument(
+        "--test-id",
+        help="Test identification to be attached to the notification message",
+    )
+
+    parser.add_argument(
+        "--slack-notification-url", help="Slack webhook to send notifications to"
+    )
+
+
+def execute(args):
+    output = None
+    if args.output:
+        output = ast.literal_eval(args.output)
+
+    if args.test_case:
+        test_cases = [args.test_case]
+    else:
+        test_cases = find_test_cases(args.tool)
+
+    for tc_name in test_cases:
+        result = run_test_case(
+            tool_id=args.tool,
+            test_case=tc_name,
+            engine=args.engine,
+            output=output,
+            config=args.config,
+        )
+        cli_logging(tc_name, result)
+
+    # Send notification to Slack
+    if args.slack_notification_url:
+        option = NotificationOption(
+            url=args.slack_notification_url,
+            tool_name=args.tool,
+            test_case=args.test_case,
+            test_id=args.test_id,
+        )
+        send_slack_notification(result=result, option=option)
+
+    # send output to test framework API
+    if args.test_manager_url and args.test_manager_token:
+        option = UpdateStatusOption(
+            url=args.test_manager_url, token=args.test_manager_token
+        )
+        update_status(result, option)
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    add_runtest_args(parser)
+
+    args = parser.parse_args()
+    print(args)
+
+    execute(args)

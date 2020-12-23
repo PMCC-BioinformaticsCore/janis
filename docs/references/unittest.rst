@@ -22,6 +22,7 @@ You can define multiple test cases per tool.
 For each test case, you can declare multiple expected outputs.
 Mostly, you really only need to define more test cases if they require different input data.
 
+The classes we use here :class:`janis_core.tool.test_classes.TTestCase`, :class:`janis_core.tool.test_classes.TTestExpectedOutput` and :class:`janis_core.tool.test_classes.TTestPreprocessor` are declared at the bottom of this document.
 
 .. code-block:: python
 
@@ -75,7 +76,35 @@ To run the example test case shown above:
 
 .. code-block:: console
 
+    # Run a specific test case
     janisdk run-test --test-case=basic BwaAligner
+
+    # Run all test cases
+    janisdk run-test BwaAligner
+
+Test Files
+**********
+
+There are two different ways to store your test files (input and expected output files):
+
+Remote HTTP files:
+------------------
+
+you can use a publicly accessible http link ``https://some-public-container/directory/small.bam``.
+
+* Input files will be downloaded to a cache folder in ``~/.janis/remote_file_cache`` folder. This is the same directory where files will be cached when you run ``janis run``.
+* Expected output files however will be cached in the test directory ``[WORKING DIRECTORY WHERE janisdk run-test is run]/tests_output/cached_test_files/``.
+
+If the same url is found in the cache directory, we will not re-download the files unless the ``Last-Modified`` http header has changed. If you want to force the files to be re-downloaded, you will need to remove the files from the cache directories.
+
+Local test files:
+----------------
+
+you can store your files in local directory named ``test_data``. There are a few different examples of where you can place this directory.
+Example from ``janis-bioinformatics`` project:
+
+* A ``test_data`` folder that contain files to be shared by multiple tools can be located at ``janis_bioinformatics/tools/test_data``. To access files in this directory, you can call ``os.path.join(BioinformaticsTool.test_data_path(), "small.bam")``.
+* A ``test_data`` folder that contain files to be used by ``flagstat`` can be located at ``janis_bioinformatics/tools/samtools/flagstat/test_data``. To access files in this directory from within the ``SamToolsFlagstatBase`` class, you can call ``os.path.join(self.test_data_path(), "small.bam")``.
 
 Preprocessors and Comparison Operators
 **************************************

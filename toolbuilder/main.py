@@ -4,6 +4,7 @@ from toolbuilder.parse_help import from_container
 from toolbuilder.templates import ToolTemplateType
 from toolbuilder.runtest.runner import (
     run_test_case,
+    find_test_cases,
     update_status,
     UpdateStatusOption,
     NotificationOption,
@@ -125,14 +126,20 @@ def do_runtest(args):
     if args.output:
         output = ast.literal_eval(args.output)
 
-    result = run_test_case(
-        tool_id=args.tool,
-        test_case=args.test_case,
-        engine=args.engine,
-        output=output,
-        config=args.config,
-    )
-    cli_logging(result)
+    if args.test_case:
+        test_cases = [args.test_case]
+    else:
+        test_cases = find_test_cases(args.tool)
+
+    for tc_name in test_cases:
+        result = run_test_case(
+            tool_id=args.tool,
+            test_case=tc_name,
+            engine=args.engine,
+            output=output,
+            config=args.config,
+        )
+        cli_logging(tc_name, result)
 
     # Send notification to Slack
     if args.slack_notification_url:
@@ -153,8 +160,11 @@ def do_runtest(args):
 
 
 def add_runtest_args(parser):
-    parser.add_argument("test_case", help="Name of test case as listed in tool.tests()")
     parser.add_argument("tool", help="Name of tool to test")
+
+    parser.add_argument(
+        "--test-case", help="Name of test case as listed in tool.tests()"
+    )
 
     parser.add_argument("-e", "--engine", help="engine", default=EngineType.cromwell)
 

@@ -200,6 +200,7 @@ Contents
    references/expressions
    references/scattering
    references/secondaryfiles
+   references/unittest
 
 .. toctree::
    :hidden:

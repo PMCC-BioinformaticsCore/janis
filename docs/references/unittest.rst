@@ -117,6 +117,7 @@ Predefined Preprocessors
 
 * **Value**: No preprocessing, value as output by Janis e.g. an integer, string, or a file path for a File type output.
 * **FileDiff**: The differences between two files as output by ``difflib.unified_diff``. This can only be applied on File type output. If this preprocessor is used, ``TTestExpectedOutput.file_diff_source`` must be provided. ``file_diff_source`` must contain the file path to compare the output file with.
+* **LinesDiff** Number of different lines between two files as a tuple ``(additions, deletions)``, as diff'd by the ``FileDiff`` preprocessor. If this preprocessor is used, ``TTestExpectedOutput.file_diff_source`` must be provided. ``file_diff_source`` must contain the file path to compare the output file with.
 * **FileContent**: Extract the file content. This can only be applied to File type output.
 * **FileExists**: Check if a file exists. It returns a True/False value. This can only be applied to File type output.
 * **FileSize**: File size is bytes. This can only be applied on File type output.

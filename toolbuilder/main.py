@@ -2,17 +2,7 @@ import argparse, sys, os, subprocess
 
 from toolbuilder.parse_help import from_container
 from toolbuilder.templates import ToolTemplateType
-from toolbuilder.runtest.runner import (
-    run_test_case,
-    find_test_cases,
-    update_status,
-    UpdateStatusOption,
-    NotificationOption,
-    cli_logging,
-    send_slack_notification,
-    execute,
-    add_runtest_args,
-)
+from toolbuilder.runtest import runner as test_runner
 
 from janis_assistant.management.configuration import JanisConfiguration
 
@@ -26,7 +16,7 @@ def process_args():
 
     subparsers.add_parser("version")
     add_container_args(subparsers.add_parser("container"))
-    add_runtest_args(subparsers.add_parser("run-test"))
+    test_runner.add_runtest_args(subparsers.add_parser("run-test"))
     # add_workflow_args(subparsers.add_parser("run-workflow"))
 
     args = parser.parse_args()
@@ -129,19 +119,21 @@ def do_runtest(args):
     if args.config:
         config = JanisConfiguration.initial_configuration(path=args.config)
 
-    from toolbuilder.runtest import runner
-
-    runner_path = runner.__file__
+    runner_path = test_runner.__file__
 
     cli_args = sys.argv[2:]
     run_test_commands = ["python", runner_path] + cli_args
 
-    precommands = []
-    if config and config.template.id == "spartan":
-        precommands = ["sbatch", "-p", "snowy", "--wrap"]
+    # TODO: generalise this
+    # if config and config.template.id == "spartan":
+    #     precommands = ["sbatch", "-p", "snowy", "--wrap"]
+    if config:
+        precommands = config.template.template.run_test_command_prefix() or []
         commands = precommands + [" ".join(run_test_commands)]
     else:
         commands = run_test_commands
+
+    print(commands)
 
     subprocess.run(commands)
 

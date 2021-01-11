@@ -124,16 +124,12 @@ def do_runtest(args):
     cli_args = sys.argv[2:]
     run_test_commands = ["python", runner_path] + cli_args
 
-    # TODO: generalise this
-    # if config and config.template.id == "spartan":
-    #     precommands = ["sbatch", "-p", "snowy", "--wrap"]
+    # Depending on the env where we run the test, we may need some wrapper command
     if config:
         precommands = config.template.template.run_test_command_prefix() or []
         commands = precommands + [" ".join(run_test_commands)]
     else:
         commands = run_test_commands
-
-    print(commands)
 
     subprocess.run(commands)
 

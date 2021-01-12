@@ -243,6 +243,5 @@ if __name__ == "__main__":
     add_runtest_args(parser)
 
     args = parser.parse_args()
-    print(args)
 
     execute(args)

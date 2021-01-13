@@ -1,5 +1,7 @@
 import argparse, sys, os, subprocess
 
+from janis_core import Logger
+
 from toolbuilder.parse_help import from_container
 from toolbuilder.templates import ToolTemplateType
 from toolbuilder.runtest import runner as test_runner
@@ -129,6 +131,8 @@ def do_runtest(args):
     else:
         commands = run_test_commands
 
+    joined_command = "' '".join(commands)
+    Logger.info(f"Deploying test with command: '{joined_command}'")
     subprocess.run(commands)
 
 

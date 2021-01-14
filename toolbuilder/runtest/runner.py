@@ -52,11 +52,25 @@ def run_test_case(
             "Dryrun: validating test using provided output data without running the workflow"
         )
 
-    failed, succeeded, output = runner.run_one_test_case(
-        t=tests_to_run[0], engine=engine, output=output
-    )
+    failed = set()
+    succeeded = set()
+    execution_error = ""
 
-    return {"failed": list(failed), "succeeded": list(succeeded), "output": output}
+    try:
+        failed, succeeded, output = runner.run_one_test_case(
+            t=tests_to_run[0], engine=engine, output=output
+        )
+    except Exception as e:
+        execution_error = str(e)
+    except SystemExit as e:
+        execution_error = f"Workflow execution failed (exit code: {e.code})"
+
+    return {
+        "failed": list(failed),
+        "succeeded": list(succeeded),
+        "output": output,
+        "execution_error": execution_error,
+    }
 
 
 def find_test_cases(tool_id: str):
@@ -144,6 +158,9 @@ def cli_logging(name: str, result: Dict):
     Logger.info(f"Test Case: {name}")
     Logger.info(f"Output: {result['output']}")
 
+    if result["execution_error"]:
+        Logger.critical(result["execution_error"])
+
     if len(result["succeeded"]) > 0:
         Logger.info(f"{len(result['succeeded'])} expected output PASSED")
 
@@ -158,7 +175,7 @@ def cli_logging(name: str, result: Dict):
         for f in result["failed"]:
             Logger.info(f)
 
-    if len(result["failed"]) == 0:
+    if len(result["failed"]) == 0 and not result["execution_error"]:
         Logger.info(f"Test SUCCEEDED: {name}")
     else:
         Logger.critical(f"Test FAILED: {name}")

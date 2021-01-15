@@ -55,7 +55,7 @@ setup(
         "bioinformatics": [min_bioinf_version, min_pipes_version],
         "doc": ["docutils", "sphinx", "sphinx_rtd_theme", "recommonmark"],
     },
-    entry_points={"console_scripts": ["janisdk=toolbuilder.main:process_args"]},
+    entry_points={"console_scripts": ["janisdk=janisdk.main:process_args"]},
     zip_safe=False,
     long_description=long_description,
     long_description_content_type="text/markdown",

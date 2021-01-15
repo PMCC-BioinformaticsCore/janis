@@ -40,9 +40,9 @@ setup(
     author_email="michael.franklin@petermac.org",
     license="GNU",
     keywords=["pipelines", "bioinformatics"],
-    packages=["janis", "toolbuilder"]
+    packages=["janis", "janisdk"]
     + ["janis." + p for p in sorted(find_packages("./janis"))]
-    + ["toolbuilder." + p for p in sorted(find_packages("./toolbuilder"))],
+    + ["janisdk." + p for p in sorted(find_packages("./janisdk"))],
     install_requires=[
         min_core_version,
         min_assistant_version,

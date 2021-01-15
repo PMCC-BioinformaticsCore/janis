@@ -3,13 +3,14 @@ import argparse, sys, os, subprocess
 from janis_core import Logger
 
 from janisdk.container import do_container, add_container_args
+from janisdk.fromcwl import do_fromcwl, add_fromcwl_args
 from janisdk.runtest import runner as test_runner
 
 from janis_assistant.management.configuration import JanisConfiguration
 
 
 def process_args():
-    cmds = {"container": do_container, "run-test": do_runtest}
+    cmds = {"container": do_container, "run-test": do_runtest, "fromcwl": do_fromcwl}
 
     parser = argparse.ArgumentParser(description="Execute a workflow")
     subparsers = parser.add_subparsers(help="subcommand help", dest="command")
@@ -18,7 +19,7 @@ def process_args():
     subparsers.add_parser("version")
     add_container_args(subparsers.add_parser("container"))
     test_runner.add_runtest_args(subparsers.add_parser("run-test"))
-    # add_workflow_args(subparsers.add_parser("run-workflow"))
+    add_fromcwl_args(subparsers.add_parser("fromcwl"))
 
     args = parser.parse_args()
     return cmds[args.command](args)

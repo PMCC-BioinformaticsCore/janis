@@ -14,6 +14,11 @@ To provide greater context to your tools and workflows, you can create a custom 
 
 Often you can just use the uninstantiated type for annotation. All types can be made optional by instantiating the type wth ``(optional=True)``. By default types are required (non-optional) and inputs that have a default are made optional.
 
+Patterns
+**********
+
+The janis-patterns repository has an example of how python types relate to Janis types: https://github.com/PMCC-BioinformaticsCore/janis-patterns/blob/master/types/pythontypes.py
+
 File
 ********
 

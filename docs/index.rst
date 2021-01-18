@@ -197,6 +197,7 @@ Contents
    references/workflow
    references/commandtool
    references/tools/pythontool
+   references/prepare
    references/expressions
    references/scattering
    references/secondaryfiles

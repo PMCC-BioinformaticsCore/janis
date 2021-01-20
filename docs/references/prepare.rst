@@ -18,7 +18,37 @@ Janis Prepare
 Quickstart
 ************
 
-Quickstart,
+The ``janis prepare`` command line is almost exactly the same as the ``janis run``. You should supply it with  inputs (either through an inputs yaml or on the command line) and any other configuration options. You must supply an output directory (or declare an ``output_dir`` in your janis config), the job file and a run script is written to this directory. The job file is also always written to stdout.
+
+For example:
+
+.. code-block:: bash
+
+   # Write inputs file
+   cat <<EOT >> inputs.yaml
+   sampleName: NA12878
+   fastqs:
+   - - /<fastqdata>/WGS_30X_R1.fastq.gz
+     - /<fastqdata>//WGS_30X_R2.fastq.gz
+   EOT
+
+   # run janis prepare
+   janis prepare \
+       -o "$HOME/janis/WGSGermlineGATK-run/" \
+       --inputs inputs.yaml \
+       --source-hint hg38 \
+       WGSGermlineGATK
+
+This will:
+- Write an inputs file to disk,
+- download all the hg38 reference files
+- transform any data types that might need to be transformed, eg:
+    - ``gridss blacklist`` requires a bed, but the source hint gives a gzipped bed (``ENCFF001TDO.bed.gz``)
+    - ``snps_dbsnp`` wants a compressed and tabix indexed VCF, but the source hint gives a regular VCF.
+    - ``reference`` build the appropriate indexes for the hg38 assembly (as these aren't downloaded by default)
+- Perform some sanity checks on the data you've provided, eg:
+    - the contigs in the gridss_blacklist will be checked against those found in the assembly's reference.
+- Write a job file and run script into the output directory.
 
 Downloading reference datasets
 *******************************

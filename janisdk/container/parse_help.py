@@ -11,6 +11,7 @@ from janis_core import (
     DataType,
     Boolean,
     Filename,
+    CommandToolBuilder,
 )
 from janis_core.tool.commandtool import ToolInput
 
@@ -291,18 +292,36 @@ def from_container(
             containersoftware=containersoftware,
         )
 
-    return (
-        convert_command_tool_fragments(
-            type=type,
-            toolid=name or basecommand,
-            basecommand=basecommand,
-            friendly_name="".join(basecommand),
-            toolprov="TOOLPROVIDER",
-            ins=args,
-            outs=[],
-            metadata=ToolMetadata(documentation=tooldoc),
-            container=container,
-            version=version,
-        ),
-        helpstr,
+    tool_id = name or basecommand
+    if isinstance(tool_id, list):
+        tool_id = "".join(s.title() for s in tool_id)
+    else:
+        tool_id = tool_id[0].upper() + tool_id[1:]
+
+    t = CommandToolBuilder(
+        tool=tool_id,
+        base_command=basecommand,
+        inputs=args,
+        outputs=[],
+        metadata=ToolMetadata(documentation=tooldoc) if tooldoc else None,
+        version=version,
+        container=container,
     )
+
+    return t.translate("janis", to_console=False), helpstr
+
+    # return (
+    #     convert_command_tool_fragments(
+    #         type=type,
+    #         toolid=name or basecommand,
+    #         basecommand=basecommand,
+    #         friendly_name="".join(basecommand),
+    #         toolprov="TOOLPROVIDER",
+    #         ins=args,
+    #         outs=[],
+    #         metadata=ToolMetadata(documentation=tooldoc),
+    #         container=container,
+    #         version=version,
+    #     ),
+    #     helpstr,
+    # )

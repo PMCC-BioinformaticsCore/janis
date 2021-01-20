@@ -40,9 +40,9 @@ setup(
     author_email="michael.franklin@petermac.org",
     license="GNU",
     keywords=["pipelines", "bioinformatics"],
-    packages=["janis", "toolbuilder"]
+    packages=["janis", "janisdk"]
     + ["janis." + p for p in sorted(find_packages("./janis"))]
-    + ["toolbuilder." + p for p in sorted(find_packages("./toolbuilder"))],
+    + ["janisdk." + p for p in sorted(find_packages("./janisdk"))],
     install_requires=[
         min_core_version,
         min_assistant_version,
@@ -55,7 +55,7 @@ setup(
         "bioinformatics": [min_bioinf_version, min_pipes_version],
         "doc": ["docutils", "sphinx", "sphinx_rtd_theme", "recommonmark"],
     },
-    entry_points={"console_scripts": ["janisdk=toolbuilder.main:process_args"]},
+    entry_points={"console_scripts": ["janisdk=janisdk.main:process_args"]},
     zip_safe=False,
     long_description=long_description,
     long_description_content_type="text/markdown",

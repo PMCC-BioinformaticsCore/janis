@@ -1,6 +1,6 @@
 import unittest
 
-from toolbuilder.cltconvert import get_string_repr, convert_commandtool
+from janisdk.cltconvert import get_string_repr, convert_commandtool
 from janis_core import InputSelector, ToolOutput, String, File
 from janis_unix.data_types.csv import Csv
 from janis_unix.tools.echo import Echo

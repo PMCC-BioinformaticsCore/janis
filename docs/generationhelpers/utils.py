@@ -1,3 +1,5 @@
+from textwrap import indent
+
 from janis_core.workflow.workflow import InputNode
 from tabulate import tabulate
 from typing import List, Dict
@@ -335,15 +337,15 @@ def prepare_run_instructions(tool: Tool):
     )
 
     static_input_tuples = [
-        [i.id(), i.intype.id(), prepare_source(i.doc.source), i.doc.doc]
+        [i.id(), i.intype.id(), prepare_source(i.doc.source)]
         for i in tool.tool_inputs()
-        if i.doc.quality == InputQualityType.static
+        if i.doc.quality == InputQualityType.static and i.doc.source is not None
     ]
 
     reference_information = ""
 
     if len(static_input_tuples) > 0:
-        static_input_headers = ["Name", "Type", "Source", "Description"]
+        static_input_headers = ["Name", "Type", "Source"]
         reference_information = tabulate(
             static_input_tuples, headers=static_input_headers, tablefmt="rst"
         )
@@ -406,6 +408,20 @@ def prepare_run_instructions_input_file(
     indented_user = "".join(" " * 7 + s for s in yaml_user_inps.splitlines(True))
     indented_other = "".join(" " * 7 + s for s in yaml_other_inps.splitlines(True))
 
+    not_localising_secondary_warning = ""
+    if isinstance(tool, WorkflowBase):
+        inputs_that_arent_localising_secondary_files = [
+            t.id() for t in tool.tool_inputs() if t.doc.skip_sourcing_secondary_files
+        ]
+        if len(inputs_that_arent_localising_secondary_files) > 0:
+            not_localising_secondary_warning = f"""\
+.. warning::
+
+   The secondary files for the inputs '{"', '".join(inputs_that_arent_localising_secondary_files)}' will not automatically \
+   localise using janis prepare and are built just after download. Please note this can take a few hours to build \
+   before the pipeline runs. 
+"""
+
     has_static = len(other_inps) > 0
 
     tb = " " * 4
@@ -439,18 +455,17 @@ def prepare_run_instructions_input_file(
     run_args.append(tb + tool.id())
     run_statement = " \\\n".join(" " * 3 + el for el in run_args)
 
+    if reference_information:
+        reference_information = f"The following inputs have a suggested source. Using janis prepare with the relevant \
+        ``--source-hint`` will automatically download these files. See `below <#additional-configuration-inputs>`_ for \
+        more information about inputs for {tool.id()}.\n{reference_information}"
+
     return f"""\
 1. `Install Janis </tutorials/tutorial0.html>`_
 
 2. Ensure Janis is configured to work with Docker or Singularity.
 
 3. Ensure all reference files are available:
-
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-{reference_information}
 
 4. Generate user {'and static ' if has_static else ''}input files for {tool.id()}:
 
@@ -474,6 +489,27 @@ def prepare_run_instructions_input_file(
 .. code-block:: bash
 
 {run_statement}
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this {tool.type()}. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \\
+          --inputs inputs.yaml \\
+          --output-dir $OUTPUT_DIR \\
+          {tool.id()}
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+{indent(not_localising_secondary_warning, "   ")}
+
+
+{indent(reference_information, '   ')}
+
 
 """
 

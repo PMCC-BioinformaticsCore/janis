@@ -213,6 +213,7 @@ Contents
    references/callcaching
    references/cwl
    references/wdl
+   tutorials/hpcconfiguration
    references/engines
    references/updating
    references/faq

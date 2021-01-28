@@ -219,6 +219,7 @@ Contents
    references/updating
    references/faq
    references/errors
+   casestudy/parsingcwl
 
 .. toctree::
    :hidden:

@@ -21,7 +21,7 @@ nosetests -w janis
 
 Alternatively if you use Pycharm, you can right-click the `janis/tests/` folder, and click `Run 'Unittests in tests'`.
 
-![Run unit tests](resources/run-unit-tests)
+![Run unit tests](../resources/run-unit-tests)
 
 ## Code Coverage
 

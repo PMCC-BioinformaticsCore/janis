@@ -99,5 +99,12 @@ Errors:
     
     To allow a tool to be translated correctly, there are two mechanisms for doing so:
     
-    - CLI: Include the `--allow-empty-container` flag, eg: `janis [translate|run] --allow-empty-container mytool`
-    - API: Include `allow_empty_container=True` in the `tool.translate` method, eg: `mytool.translate("cwl", allow_emmpty_container=True).
+    - Translate without a container
+    
+        - CLI: Include the `--allow-empty-container` flag, eg: `janis [translate|run] --allow-empty-container mytool`
+        - API: Include `allow_empty_container=True`, `mytool.translate("cwl", allow_empty_container=True)`.
+        
+    - Override the container
+    
+        - CLI with the syntax: `janis [translate|run] --container-override 'MyTool=myorganisation/mytool:0.10.0' mytool`
+        - API: include container override dictionary: `mytool.translate("wdl", container_override={"mytool": "myorganisation/mytool:0.10.0"})`, the dictionary has structure: `{toolId: container}`. The toolId can be an asterisk `*` to override all tools' containers. 

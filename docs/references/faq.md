@@ -142,3 +142,12 @@ If you're still having trouble, use `janis spider --trace mytool` to give you an
     ```
   
     It looks like `yourworkflow_embeddedtool_runtime_memory: 8`. More information:  [Configuring resources (CPU / Memory)](https://janis.readthedocs.io/en/latest/references/resources.html).
+    
+## Containers
+
+- **How do I override the container being used?**
+
+    You can override the container being used by specifying a `container-override`, there are two ways to do this:
+    
+    - CLI with the syntax: `janis [translate|run] --container-override 'MyTool=myorganisation/mytool:0.10.0' mytool`
+    - API: include container override dictionary: `mytool.translate("wdl", container_override={"mytool": "myorganisation/mytool:0.10.0"})`, the dictionary has structure: `{toolId: container}`. The toolId can be an asterisk `*` to override all tools' containers.

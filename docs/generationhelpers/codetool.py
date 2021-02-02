@@ -99,36 +99,36 @@ def prepare_code_tool_page(tool: CodeTool, versions: List[str]):
     nl = "\n"
 
     return f"""\
-    :orphan:
+:orphan:
 
-    {fn}
-    {"=" * len(tn)}
+{fn}
+{"=" * len(tn)}
 
-    {onelinedescription}
+{onelinedescription}
 
-    {metadata.documentation if metadata.documentation else "No documentation was provided: " + format_rst_link(
-        "contribute one", f"https://github.com/PMCC-BioinformaticsCore/janis-{tool.tool_module()}")}
+{metadata.documentation if metadata.documentation else "No documentation was provided: " + format_rst_link(
+    "contribute one", f"https://github.com/PMCC-BioinformaticsCore/janis-{tool.tool_module()}")}
 
-    {prepare_container_warning_for_commandtool(tool)}
-    {prepare_quickstart(tool)}
+{prepare_container_warning_for_commandtool(tool)}
+{prepare_quickstart(tool)}
 
-    Information
-    ------------
-
-
-    {nl.join(f":{key}: {value}" for key, value in toolmetadata)}
+Information
+------------
 
 
-
-    Outputs
-    -----------
-
-    {formatted_outputs}
+{nl.join(f":{key}: {value}" for key, value in toolmetadata)}
 
 
 
-    Additional configuration (inputs)
-    ---------------------------------
+Outputs
+-----------
 
-    {formatted_inputs}
+{formatted_outputs}
+
+
+
+Additional configuration (inputs)
+---------------------------------
+
+{formatted_inputs}
     """

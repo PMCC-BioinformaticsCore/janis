@@ -197,6 +197,7 @@ Contents
    references/workflow
    references/commandtool
    references/tools/pythontool
+   references/prepare
    references/expressions
    references/scattering
    references/secondaryfiles
@@ -212,10 +213,13 @@ Contents
    references/callcaching
    references/cwl
    references/wdl
+   tutorials/collectingoutputs
+   tutorials/hpcconfiguration
    references/engines
    references/updating
    references/faq
    references/errors
+   casestudy/parsingcwl
 
 .. toctree::
    :hidden:

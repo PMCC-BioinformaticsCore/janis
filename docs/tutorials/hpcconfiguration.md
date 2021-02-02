@@ -12,20 +12,24 @@ See a list of templates [here](https://janis.readthedocs.io/en/latest/templates/
 - Documentation: `https://janis.readthedocs.io/en/latest/templates/slurm_singularity.html`
 - CLI help: `janis init slurm_singularity --help`.
 
-Minimum configuration:
-
-- `executionDir`: Where should the execution take place
-- `containerDir`: Where should singularity containers be stored.
-
 Example to configure this:
 ```bash
-janis init slurm_singularity --executionDir /path/to/executionDir --containerDir /path/to/containerDir
+# This will write a janis.conf to your $HOME/.janis/janis.conf
+$ janis init slurm_singularity
+
+$ cat ~/.janis/janis.conf
+# engine: cromwell
+# notifications:
+#   email: null
+# template:
+#   catch_slurm_errors: true
+#   id: slurm_singularity
+#   max_workflow_time: 20100
+#   sbatch: sbatch
+#   send_job_emails: false
 ```
 
-More configuration:
 
-- `queues`: A queue or list of queues to submit to
-- `max_cores`: The maximum amount of acores 
-- `mail_program`: Mail program for which an email is piped to (eg: `sendmail -t`)
-- `buildInstructions`: How to build a singularity container, default: `singularity pull $image docker://${docker}`. Don't change this unless you absolutely have it.
+### Background mode
 
+The slurm_singularity template constructs 

@@ -3,21 +3,21 @@ from setuptools import setup, find_packages
 # Version information is found in the __init__ file of `janis/`
 DESCRIPTION = "Contains classes and helpers to build a workflow, and provide options to convert to CWL / WDL"
 
-JANIS_CORE_VERSION = "v0.11.1"
-JANIS_ASSISTANT_VERSION = "v0.11.1"
+JANIS_CORE_VERSION = "v0.11.2"
+JANIS_ASSISTANT_VERSION = "v0.11.4"
 JANIS_UNIX_VERSION = "v0.11.0"
-JANIS_BIOINFORMATICS_VERSION = "v0.1.0"
+JANIS_BIOINFORMATICS_VERSION = "v0.11.0"
 JANIS_PIPELINES_VERSION = "v0.11.0"
-JANIS_TEMPLATES_VERSION = "v0.10.3"
+JANIS_TEMPLATES_VERSION = "v0.11.2"
 
 
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########
-min_core_version = f"janis-pipelines.core>=" + JANIS_CORE_VERSION
-min_assistant_version = f"janis-pipelines.runner>=" + JANIS_ASSISTANT_VERSION
-min_unix_version = f"janis-pipelines.unix>=" + JANIS_UNIX_VERSION
-min_bioinf_version = f"janis-pipelines.bioinformatics>=" + JANIS_BIOINFORMATICS_VERSION
-min_pipes_version = f"janis-pipelines.pipelines>=" + JANIS_PIPELINES_VERSION
-min_templs_version = f"janis-pipelines.templates>=" + JANIS_TEMPLATES_VERSION
+min_core_version = f"janis-pipelines.core==" + JANIS_CORE_VERSION
+min_assistant_version = f"janis-pipelines.runner==" + JANIS_ASSISTANT_VERSION
+min_unix_version = f"janis-pipelines.unix==" + JANIS_UNIX_VERSION
+min_bioinf_version = f"janis-pipelines.bioinformatics==" + JANIS_BIOINFORMATICS_VERSION
+min_pipes_version = f"janis-pipelines.pipelines==" + JANIS_PIPELINES_VERSION
+min_templs_version = f"janis-pipelines.templates==" + JANIS_TEMPLATES_VERSION
 
 with open("./README.md") as readme:
     long_description = readme.read()

@@ -12,12 +12,14 @@ JANIS_TEMPLATES_VERSION = "v0.11.2"
 
 
 ######## SHOULDN'T NEED EDITS BELOW THIS LINE ########
-min_core_version = f"janis-pipelines.core==" + JANIS_CORE_VERSION
-min_assistant_version = f"janis-pipelines.runner==" + JANIS_ASSISTANT_VERSION
-min_unix_version = f"janis-pipelines.unix==" + JANIS_UNIX_VERSION
-min_bioinf_version = f"janis-pipelines.bioinformatics==" + JANIS_BIOINFORMATICS_VERSION
-min_pipes_version = f"janis-pipelines.pipelines==" + JANIS_PIPELINES_VERSION
-min_templs_version = f"janis-pipelines.templates==" + JANIS_TEMPLATES_VERSION
+fixed_core_version = f"janis-pipelines.core==" + JANIS_CORE_VERSION
+fixed_assistant_version = f"janis-pipelines.runner==" + JANIS_ASSISTANT_VERSION
+fixed_unix_version = f"janis-pipelines.unix==" + JANIS_UNIX_VERSION
+fixed_bioinf_version = (
+    f"janis-pipelines.bioinformatics==" + JANIS_BIOINFORMATICS_VERSION
+)
+fixed_pipes_version = f"janis-pipelines.pipelines==" + JANIS_PIPELINES_VERSION
+fixed_templs_version = f"janis-pipelines.templates==" + JANIS_TEMPLATES_VERSION
 
 with open("./README.md") as readme:
     long_description = readme.read()
@@ -31,6 +33,7 @@ githuburl = vsn["GITHUB_URL"]
 modules = ["janis_assistant." + p for p in sorted(find_packages("./janis_assistant"))]
 
 
+fixed_unix_version = f"janis-pipelines.unix==" + JANIS_UNIX_VERSION
 setup(
     name="janis pipelines",
     version=__version__,
@@ -44,16 +47,23 @@ setup(
     + ["janis." + p for p in sorted(find_packages("./janis"))]
     + ["janisdk." + p for p in sorted(find_packages("./janisdk"))],
     install_requires=[
-        min_core_version,
-        min_assistant_version,
-        min_unix_version,
-        min_bioinf_version,
-        min_pipes_version,
-        min_templs_version,
+        fixed_core_version,
+        fixed_assistant_version,
+        fixed_unix_version,
+        fixed_bioinf_version,
+        fixed_pipes_version,
+        fixed_templs_version,
     ],
     extras_require={
-        "bioinformatics": [min_bioinf_version, min_pipes_version],
+        "bioinformatics": [fixed_bioinf_version, fixed_pipes_version],
         "doc": ["docutils", "sphinx", "sphinx_rtd_theme", "recommonmark"],
+        "dev": [
+            f"janis-pipelines.core>={JANIS_CORE_VERSION}",
+            f"janis-pipelines.runner>={JANIS_ASSISTANT_VERSION}",
+            f"janis-pipelines.bioinformatics>={JANIS_BIOINFORMATICS_VERSION}",
+            f"janis-pipelines.pipelines>={JANIS_PIPELINES_VERSION}",
+            f"janis-pipelines.templates>={JANIS_TEMPLATES_VERSION}",
+        ],
     },
     entry_points={"console_scripts": ["janisdk=janisdk.main:process_args"]},
     zip_safe=False,

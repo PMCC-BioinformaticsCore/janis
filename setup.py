@@ -19,7 +19,7 @@ fixed_bioinf_version = (
     f"janis-pipelines.bioinformatics==" + JANIS_BIOINFORMATICS_VERSION
 )
 fixed_pipes_version = f"janis-pipelines.pipelines==" + JANIS_PIPELINES_VERSION
-fixed_templs_version = f"janis-pipelines.templates==" + "v0.11.1"
+fixed_templs_version = f"janis-pipelines.templates==" + JANIS_TEMPLATES_VERSION
 
 with open("./README.md") as readme:
     long_description = readme.read()

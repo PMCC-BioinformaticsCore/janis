@@ -24,6 +24,10 @@ class NotificationOption:
         self.test_id = test_id
 
 
+class TestCasesNotFound(Exception):
+    pass
+
+
 def run_test_case(
     tool_id: str,
     test_case: str,
@@ -78,6 +82,10 @@ def find_test_cases(tool_id: str):
 
     if not tool:
         raise Exception(f"Tool {tool_id} not found")
+
+    if tool.tests() is None:
+        raise TestCasesNotFound(f"No test cases found for Tool {tool_id}. "
+                                f"You must implement the tests() function for this tool.")
 
     return [tc.name for tc in tool.tests()]
 
@@ -169,11 +177,11 @@ def cli_logging(name: str, result: Dict):
             Logger.info(s)
 
     if len(result["failed"]) > 0:
-        Logger.info(f"{len(result['failed'])} expected output FAILED")
+        Logger.critical(f"{len(result['failed'])} expected output FAILED")
 
-        Logger.info("Failed expected output:")
+        Logger.critical("Failed expected output:")
         for f in result["failed"]:
-            Logger.info(f)
+            Logger.critical(f)
 
     if len(result["failed"]) == 0 and not result["execution_error"]:
         Logger.info(f"Test SUCCEEDED: {name}")
@@ -220,10 +228,18 @@ def execute(args):
     if args.output:
         output = ast.literal_eval(args.output)
 
-    if args.test_case:
-        test_cases = [args.test_case]
-    else:
-        test_cases = find_test_cases(args.tool)
+    try:
+        available_test_cases = find_test_cases(args.tool)
+        if args.test_case:
+            if args.test_case not in available_test_cases:
+                raise TestCasesNotFound(f"Test case with name `{args.test_case}` NOT found.")
+            test_cases = [args.test_case]
+        else:
+            test_cases = available_test_cases
+
+    except TestCasesNotFound as e:
+        Logger.critical(str(e))
+        exit()
 
     for tc_name in test_cases:
         result = run_test_case(

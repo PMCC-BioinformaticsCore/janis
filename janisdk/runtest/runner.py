@@ -84,8 +84,10 @@ def find_test_cases(tool_id: str):
         raise Exception(f"Tool {tool_id} not found")
 
     if tool.tests() is None:
-        raise TestCasesNotFound(f"No test cases found for Tool {tool_id}. "
-                                f"You must implement the tests() function for this tool.")
+        raise TestCasesNotFound(
+            f"No test cases found for Tool {tool_id}. "
+            f"You must implement the tests() function for this tool."
+        )
 
     return [tc.name for tc in tool.tests()]
 
@@ -94,7 +96,7 @@ def update_status(result: Dict, option: UpdateStatusOption):
     Logger.info(f"Updating test status via {option.method} {option.url}")
 
     status = "test-failed"
-    if not len(result["failed"]):
+    if not len(result["failed"]) and not result["execution_error"]:
         status = "test-succeeded"
 
     data = {"status": status, **result}
@@ -232,7 +234,9 @@ def execute(args):
         available_test_cases = find_test_cases(args.tool)
         if args.test_case:
             if args.test_case not in available_test_cases:
-                raise TestCasesNotFound(f"Test case with name `{args.test_case}` NOT found.")
+                raise TestCasesNotFound(
+                    f"Test case with name `{args.test_case}` NOT found."
+                )
             test_cases = [args.test_case]
         else:
             test_cases = available_test_cases

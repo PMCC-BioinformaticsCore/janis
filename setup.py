@@ -57,6 +57,12 @@ setup(
     extras_require={
         "bioinformatics": [fixed_bioinf_version, fixed_pipes_version],
         "doc": ["docutils", "sphinx", "sphinx_rtd_theme", "recommonmark"],
+        "ci": [
+            "keyring==21.4.0",
+            "setuptools",
+            "wheel",
+            "twine",
+        ],
     },
     entry_points={"console_scripts": ["janisdk=janisdk.main:process_args"]},
     zip_safe=False,

@@ -7,7 +7,7 @@ JANIS_CORE_VERSION = "v0.11.3"
 JANIS_ASSISTANT_VERSION = "v0.11.5"
 JANIS_UNIX_VERSION = "v0.11.0"
 JANIS_BIOINFORMATICS_VERSION = "v0.11.0"
-JANIS_PIPELINES_VERSION = "v0.11.0"
+JANIS_PIPELINES_VERSION = "v0.11.2"
 JANIS_TEMPLATES_VERSION = "v0.11.2"
 
 
@@ -57,6 +57,12 @@ setup(
     extras_require={
         "bioinformatics": [fixed_bioinf_version, fixed_pipes_version],
         "doc": ["docutils", "sphinx", "sphinx_rtd_theme", "recommonmark"],
+        "ci": [
+            "keyring==21.4.0",
+            "setuptools",
+            "wheel",
+            "twine",
+        ],
     },
     entry_points={"console_scripts": ["janisdk=janisdk.main:process_args"]},
     zip_safe=False,

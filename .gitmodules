@@ -1,6 +1,0 @@
-[submodule "janis-core"]
-	path = janis-core
-	url = https://github.com/PMCC-BioinformaticsCore/janis-core.git
-[submodule "janis-assistant"]
-	path = janis-assistant
-	url = https://github.com/PMCC-BioinformaticsCore/janis-assistant.git

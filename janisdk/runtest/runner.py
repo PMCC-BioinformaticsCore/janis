@@ -164,7 +164,8 @@ def send_slack_notification(result: Dict, option: NotificationOption):
     return resp.status_code, resp.text
 
 
-def cli_logging(name: str, result: Dict):
+def cli_logging(result: Dict):
+    name = result["test_case"]
     Logger.info(f"Test Case: {name}")
     Logger.info(f"Output: {result['output']}")
 
@@ -253,24 +254,25 @@ def execute(args):
             output=output,
             config=args.config,
         )
-        cli_logging(tc_name, result)
+        result["test_case"] = tc_name
+        cli_logging(result)
 
-    # Send notification to Slack
-    if args.slack_notification_url:
-        option = NotificationOption(
-            url=args.slack_notification_url,
-            tool_name=args.tool,
-            test_case=args.test_case,
-            test_id=args.test_id,
-        )
-        send_slack_notification(result=result, option=option)
+        # send output to test framework API
+        if args.test_manager_url and args.test_manager_token:
+            option = UpdateStatusOption(
+                url=args.test_manager_url, token=args.test_manager_token
+            )
+            update_status(result, option)
 
-    # send output to test framework API
-    if args.test_manager_url and args.test_manager_token:
-        option = UpdateStatusOption(
-            url=args.test_manager_url, token=args.test_manager_token
-        )
-        update_status(result, option)
+    # # Send notification to Slack
+    # if args.slack_notification_url:
+    #     option = NotificationOption(
+    #         url=args.slack_notification_url,
+    #         tool_name=args.tool,
+    #         test_case=args.test_case,
+    #         test_id=args.test_id,
+    #     )
+    #     send_slack_notification(result=result, option=option)
 
 
 if __name__ == "__main__":

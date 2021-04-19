@@ -276,7 +276,7 @@ def execute(args):
                 )
                 update_status(result, option)
         except Exception as e:
-            Logger.critical(f"Failed to update test status to {args.test_manager_url}")
+            Logger.warn(f"Failed to update test status to {args.test_manager_url}")
 
         try:
             # Send notification to Slack
@@ -289,7 +289,7 @@ def execute(args):
                 )
                 send_slack_notification(result=result, option=option)
         except Exception as e:
-            Logger.critical(
+            Logger.warn(
                 f"Failed to send notifications to Slack {args.slack_notification_url}"
             )
 

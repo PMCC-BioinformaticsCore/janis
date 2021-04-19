@@ -116,7 +116,7 @@ def update_status(result: Dict, option: UpdateStatusOption):
 def send_slack_notification(result: Dict, option: NotificationOption):
     Logger.info("sending notification to Slack")
 
-    if not len(result["failed"]):
+    if len(result["failed"]) == 0 and not result["execution_error"]:
         failed = False
         status = "Test Succeeded"
         icon = ":white_check_mark:"
@@ -139,7 +139,7 @@ def send_slack_notification(result: Dict, option: NotificationOption):
 
     blocks = [summary_block]
 
-    if failed:
+    if failed and result["failed"]:
         failed_expected_output = []
 
         for f in result["failed"]:
@@ -151,6 +151,15 @@ def send_slack_notification(result: Dict, option: NotificationOption):
         }
 
         blocks.append(failed_block)
+
+    if result["execution_error"]:
+        text = result["execution_error"].replace("\n", "<br />")
+        execution_error_block = {
+            "type": "section",
+            "text": {"type": "mrkdwn", "text": f"{result['execution_error']}"},
+        }
+
+        blocks.append(execution_error_block)
 
     request = {"blocks": blocks}
     resp = requests.post(url=option.url, json=request)
@@ -164,7 +173,8 @@ def send_slack_notification(result: Dict, option: NotificationOption):
     return resp.status_code, resp.text
 
 
-def cli_logging(name: str, result: Dict):
+def cli_logging(result: Dict):
+    name = result["test_case"]
     Logger.info(f"Test Case: {name}")
     Logger.info(f"Output: {result['output']}")
 
@@ -241,11 +251,13 @@ def execute(args):
         else:
             test_cases = available_test_cases
 
-    except TestCasesNotFound as e:
+    except Exception as e:
+        Logger.critical("Unexpected error occurred when searching for test cases")
         Logger.critical(str(e))
         exit()
 
     for tc_name in test_cases:
+
         result = run_test_case(
             tool_id=args.tool,
             test_case=tc_name,
@@ -253,24 +265,33 @@ def execute(args):
             output=output,
             config=args.config,
         )
-        cli_logging(tc_name, result)
+        result["test_case"] = tc_name
+        cli_logging(result)
 
-    # Send notification to Slack
-    if args.slack_notification_url:
-        option = NotificationOption(
-            url=args.slack_notification_url,
-            tool_name=args.tool,
-            test_case=args.test_case,
-            test_id=args.test_id,
-        )
-        send_slack_notification(result=result, option=option)
+        try:
+            # send output to test framework API
+            if args.test_manager_url and args.test_manager_token:
+                option = UpdateStatusOption(
+                    url=args.test_manager_url, token=args.test_manager_token
+                )
+                update_status(result, option)
+        except Exception as e:
+            Logger.warn(f"Failed to update test status to {args.test_manager_url}")
 
-    # send output to test framework API
-    if args.test_manager_url and args.test_manager_token:
-        option = UpdateStatusOption(
-            url=args.test_manager_url, token=args.test_manager_token
-        )
-        update_status(result, option)
+        try:
+            # Send notification to Slack
+            if args.slack_notification_url:
+                option = NotificationOption(
+                    url=args.slack_notification_url,
+                    tool_name=args.tool,
+                    test_case=tc_name,
+                    test_id=args.test_id,
+                )
+                send_slack_notification(result=result, option=option)
+        except Exception as e:
+            Logger.warn(
+                f"Failed to send notifications to Slack {args.slack_notification_url}"
+            )
 
 
 if __name__ == "__main__":

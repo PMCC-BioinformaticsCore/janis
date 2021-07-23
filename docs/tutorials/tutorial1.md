@@ -21,10 +21,10 @@ To prepare for this tutorial, we're going to create a folder and download some d
 mkdir janis-tutorials && cd janis-tutorials
 
 # If WGET is installed
-wget -q -O- "https://github.com/PMCC-BioinformaticsCore/janis-workshops/raw/master/janis-data.tar" | tar -xz
+wget -q -O- "https://github.com/PMCC-BioinformaticsCore/janis-workshops/raw/master/janis-data.tar" | tar -x
 
 # If CURL is installed
-curl -Ls "https://github.com/PMCC-BioinformaticsCore/janis-workshops/raw/master/janis-data.tar" | tar -xz
+curl -Ls "https://github.com/PMCC-BioinformaticsCore/janis-workshops/raw/master/janis-data.tar" | tar -x
 ```
 
 

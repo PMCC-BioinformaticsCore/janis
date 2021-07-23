@@ -6,7 +6,7 @@ Janis was designed with a few points in mind:
 
 - Workflows should be easy to build,
 - Workflows and tools must be easily shared (portable),
-- Workflows should be able to execute on HPCs and cloud environments.
+- Workflows should be able to execute on HPCs and cloud environments,
 - Workflows should be reproducible and re-runnable.
 
 Janis uses an *abstracted execution environment*, which removes the shared file system in favour of you specifiying all the files you need up front and passing them around as a File object. This allows the same workflow to be executable on your local machine, HPCs and cloud, and we let the `execution engine` handle moving our files. This also means that we can use file systems like ``S3``, ``GCS``, ``FTP`` and more without any changes to our workflow.
@@ -63,7 +63,7 @@ We'll install Janis in a virtual environment as it preserves versioning of Janis
 pip install cwltool
 ```
 
-Test that CWLTool has installed correctly with:
+Test that CWLTool has been installed correctly with:
 
 ```bash
 cwltool --version
@@ -152,7 +152,7 @@ janis run --engine cwltool -o tutorial0-override hello --inp "Hello, $(whoami)"
 
 ### Running Janis in the background
 
-You may want to run Janis in the background as it's own process. You could do this with `nohup [command] &`, however we can also run Janis with the `--background` flag and capture the workflow ID to watch, eg:
+You may want to run Janis in the background as its own process. You could do this with `nohup [command] &`, however we can also run Janis with the `--background` flag and capture the workflow ID to watch, eg:
 
 ```bash
 wid=$(janis run \
@@ -165,7 +165,7 @@ janis watch $wid
 
 ## Summary
 
-- Setup a virtualenv
+- Set up a virtualenv
 - Installed Janis and CWLTool
 - Ran a small workflow with custom inputs
 

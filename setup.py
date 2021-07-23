@@ -33,7 +33,6 @@ githuburl = vsn["GITHUB_URL"]
 modules = ["janis_assistant." + p for p in sorted(find_packages("./janis_assistant"))]
 
 
-fixed_unix_version = f"janis-pipelines.unix==" + JANIS_UNIX_VERSION
 setup(
     name="janis pipelines",
     version=__version__,

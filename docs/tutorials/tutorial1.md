@@ -1,5 +1,7 @@
 # Tutorial 1 - Building a Workflow
 
+> This tutorial uses directories created in [Tutorial 0](https://janis.readthedocs.io/en/latest/tutorials/tutorial0.html).
+
 In this stage, we're going to build a simple workflow to align short reads of DNA.
 
 1. Start with a pair of compressed `FASTQ` files,
@@ -15,10 +17,10 @@ These tools already exist within the Janis Tool Registry, you can see their docu
 
 ## Preparation
 
-To prepare for this tutorial, we're going to create a folder and download some data:
+To prepare for this tutorial, we're going to need to download some data first:
 
 ```bash
-mkdir janis-tutorials && cd janis-tutorials
+cd ~/janis/janis-tutorials
 
 # If WGET is installed
 wget -q -O- "https://github.com/PMCC-BioinformaticsCore/janis-workshops/raw/master/janis-data.tar" | tar -x
@@ -280,17 +282,14 @@ janis run -o tutorial1 --engine cwltool \
     --read_group "@RG\tID:NA12878\tSM:NA12878\tLB:NA12878\tPL:ILLUMINA"
 ```
 
-After the workflow has run, you'll see the outputs in the current directory:
+After the workflow has run, you'll see the outputs in the tutorial1 directory:
 
 ```bash
-ls
+ls ~/janis/janis-tutorials/tutorial1
 
-# drwxr-xr-x  mfranklin  1677682026   160B  data
 # drwxr-xr-x  mfranklin  1677682026   256B  janis
 # -rw-r--r--  mfranklin  wheel        2.7M  out.bam
 # -rw-r--r--  mfranklin  wheel        296B  out.bam.bai
-# drwxr-xr-x  mfranklin  1677682026   320B  reference
-# drwxr-xr-x  mfranklin  1677682026   128B  tools
 ```
 
 ### OPTIONAL: Run with Cromwell
@@ -298,7 +297,7 @@ ls
 If you have `java` installed, Janis can run the workflow in the Crowmell execution engine by using the `--engine cromwell` parameter:
 
 ```bash
-janis run -o run-with-cromwell --engine cromwell \
+janis run -o tutorial1-run-with-cromwell --engine cromwell \
     tools/alignment.py \
     --fastq data/BRCA1_R*.fastq.gz \
     --reference reference/hg38-brca1.fasta \

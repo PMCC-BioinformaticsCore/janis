@@ -80,6 +80,13 @@ mkdir ~/janis
 cd ~/janis
 ```
 
+Let's also create a directory to store the files for the tutorials.
+
+```bash
+mkdir janis-tutorials
+cd janis-tutorials
+```
+
 You can test run an example workflow with Janis and CWLTool with the following command:
 
 ```bash
@@ -112,7 +119,7 @@ janis watch d909df
 # Name:       hello
 # Engine:     cwltool
 # 
-# Task Dir:   $HOME/janis/tutorial0
+# Task Dir:   $HOME/janis/janis-tutorials/tutorial0
 # Exec Dir:   None
 # 
 # Status:     Completed
@@ -125,13 +132,13 @@ janis watch d909df
 #     [✓] hello (1s)       
 # 
 # Outputs:
-#     - out: $HOME/janis/tutorial0/out
+#     - out: $HOME/janis/janis-tutorials/tutorial0/out
 ```
 
 There is a single output `out` from the workflow, cat-ing this result we get:
 
 ```bash
-cat $HOME/janis/tutorial0/out
+cat $HOME/janis/janis-tutorials/tutorial0/out
 # Hello, World
 ```
 

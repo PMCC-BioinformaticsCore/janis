@@ -60,7 +60,7 @@ from janis_bioinformatics.data_types import FastqGzPairedEnd, FastaWithDict
 
 ### Tools
 
-We've discussed the tools we're going to use. The documentation for each tool has a row in the tbale caled "Python" that gives you the import statement. This is how we'll import how tools:
+We've discussed the tools we're going to use. The documentation for each tool has a row in the table caled "Python" that gives you the import statement. This is how we'll import these tools:
 
 
 ```python
@@ -129,7 +129,7 @@ Workflow.step(
 )
 ```
 
-We provide a identifier for the step (unique amongst the other nodes in the workflow), and intialise our tool, passing our inputs of the step as parameters.
+We provide an identifier for the step (unique amongst the other nodes in the workflow), and intialise our tool, passing our inputs of the step as parameters.
 
 We can refer to an input (or previous result) using the dot notation. For example, to refer to the `fastq` input, we can use `w.fastq`.
 
@@ -212,7 +212,7 @@ w.output("out", source=w.sortsam.out)
 
 ## Workflow + Translation
 
-Hopefully you have a workflow that looks like the following!
+Hopefully now you have a workflow that looks like the following!
 
 ```python
 from janis_core import WorkflowBuilder, String

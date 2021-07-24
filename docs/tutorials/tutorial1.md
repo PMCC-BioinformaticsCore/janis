@@ -272,7 +272,7 @@ janis translate tools/alignment.py wdl
 We'll run the workflow against the current directory.
 
 ```bash
-janis run -o . --engine cwltool \
+janis run -o tutorial1 --engine cwltool \
     tools/alignment.py \
     --fastq data/BRCA1_R*.fastq.gz \
     --reference reference/hg38-brca1.fasta \

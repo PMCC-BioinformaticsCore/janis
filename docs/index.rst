@@ -54,8 +54,8 @@ Janis requires a Python installation > 3.6, and can be installed through PIP
 
 There are two ways to use Janis:
 
-- Build workflows (and translate to CWL / WDL)
-- Run tools or workflows with CWLTool or Cromwell
+- Build workflows (and translate to CWL (v1.2) / WDL (version development) / Nextflow (in-progress))
+- Run tools or workflows with CWLTool, Cromwell, or Nextflow (in progress)
 
 
 Example Workflow

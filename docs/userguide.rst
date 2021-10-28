@@ -83,6 +83,7 @@ Inputs and Outputs
 We'll split the inputs / outputs in two ways:
 
 1. Step based:
+
     - The inputs to a *step* is the data that specific tool needs to process.
     - The outputs to a *step* is what the *tool* produces.
 

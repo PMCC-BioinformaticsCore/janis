@@ -12,7 +12,7 @@ def add_fromwdl_args(parser):
     parser.add_argument("wdlfile", help="The path to the WDL file")
 
     parser.add_argument(
-        "translation", default="janis", choices=["wdl", "wdl", "janis"], nargs="?"
+        "translation", default="janis", choices=["cwl", "wdl", "janis"], nargs="?"
     )
 
     return parser

@@ -3,11 +3,11 @@ from setuptools import setup, find_packages
 # Version information is found in the __init__ file of `janis/`
 DESCRIPTION = "Contains classes and helpers to build a workflow, and provide options to convert to CWL / WDL"
 
-JANIS_CORE_VERSION = "v0.11.4"
-JANIS_ASSISTANT_VERSION = "v0.11.7"
-JANIS_UNIX_VERSION = "v0.11.0"
-JANIS_BIOINFORMATICS_VERSION = "v0.11.1"
-JANIS_PIPELINES_VERSION = "v0.11.3"
+JANIS_CORE_VERSION = "v0.12.1"
+JANIS_ASSISTANT_VERSION = "v0.12.1"
+JANIS_UNIX_VERSION = "v0.12.0"
+JANIS_BIOINFORMATICS_VERSION = "v0.12.1"
+JANIS_PIPELINES_VERSION = "v0.12.0"
 JANIS_TEMPLATES_VERSION = "v0.12.0"
 
 

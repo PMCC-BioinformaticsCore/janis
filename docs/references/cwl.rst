@@ -14,7 +14,7 @@ By wrapping the data_type by an Array, for example: ``String -> Array(String)``.
 
 - **What's the equivalent for ``InitialWorkDirRequirement``?**
 
-You can add ``localise_file=True`` to your ``ToolInput``. This is well defined for individual files in CWL and WDL. here is no equivalent for ``writable``, though suggestions are welcome. Although the ``localise_file`` attribute is allowed for Array data types, the WDL translation will become disabled as this behaviour is not well defined.
+You can add ``localise_file=True`` to your ``ToolInput``. This is well defined for individual files in CWL and WDL. There is no equivalent for ``writable``, though suggestions are welcome. Although the ``localise_file`` attribute is allowed for Array data types, the WDL translation will become disabled as this behaviour is not well defined.
 
 From `v1.1/CommandLineTool <https://www.commonwl.org/v1.1/CommandLineTool.html#InitialWorkDirRequirement>`_:
 

@@ -15,8 +15,8 @@ Documentation is available here: https://janis.readthedocs.io/
 
 
 Janis gives you an API to build computational workflows and will generate
-a workflow description in CWL and WDL. By using Janis, you get type-safety,
-portability and reproducibility across all of your execution environments.
+a workflow description in CWL (v1.2) and WDL (version development). By using Janis, 
+you get type-safety, portability and reproducibility across all of your execution environments.
 
 
 Janis requires a Python installation > 3.6, and can be installed through PIP 

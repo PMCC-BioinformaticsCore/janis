@@ -34,7 +34,7 @@ modules = ["janis_assistant." + p for p in sorted(find_packages("./janis_assista
 
 fixed_unix_version = f"janis-pipelines.unix==" + JANIS_UNIX_VERSION
 setup(
-    name="janis pipelines",
+    name="janis-pipelines",
     version=__version__,
     description=DESCRIPTION,
     url=githuburl,

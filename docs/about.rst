@@ -11,18 +11,34 @@ This project was produced as part of the Portable Pipelines Project in partnersh
 Motivations
 ===========
   
-Given the `awesome list of <https://github.com/pditommaso/awesome-pipeline/>`_ pipeline frameworks, languages and engines, why create another framework to generate workflow languages?
+Given the `awesome list of <https://github.com/pditommaso/awesome-pipeline/>`_ pipeline frameworks, languages and engines, Janis was created to facilitate better interop and accessibility within the workflow space. 
+
+Janis' translate ability is designed as a productivity tool which assists in migrating tools / workflows from one specification to another. 
+
+The intended use-cases include:
+
+- Research groups migrating their pipelines to a new specification
+- Migrating a published workflow to a specification you are more familiar with
+- Migrating a workflow to another specification for execution on a specific compute infrastructure
   
-That's a great question, and it's a little complicated. Our project goals are to have a portable workflow specification, that is reproducible across many different compute platforms. And instead of backing one technology, we thought it  would be more powerful to create a technology that can utilise the community's work.  
-  
-Some additional benefits we get by writing a generic framework is we sanity check connections and also add types that  exist within certain domains. For example within the bioinformatics tools, there's a `BamBai` type that represents an  indexed `.bam` (+ `.bai`) file. With this framework, we don't need to worry about pesky secondary files, or the complications that come when passing them around in WDL either, this framework can take care of that.  
 
+Components
+==========
 
-Assistant
-=========
+Janis consists of multiple modules which can be used independently or together.
 
-As part of the Portable Pipelines Project, we produced an execution assistant called ``janis-assistant``. Its purpose is
-to run workflows written in Janis, track the progress and report the results back in a robust way.
+| - **Janis Core**
+|   The core python API and translate functionality of Janis. Contains the core datatypes, tool, and workflow model definitions. 
+|
+| - **Janis Bioinformatics**
+|   Datatypes, as well as implemented Tools & Workflows for bioinformatics pipelines.
+| 
+| - **Janis Unix**
+|   Datatypes, as well as implemented Tools & Workflows for generic unix software pipelines. 
+|
+| - **Janis Assistant**
+|   As part of the Portable Pipelines Project, we produced an execution assistant called ``janis-assistant``. 
+|   Its purpose is to run workflows written in Janis, track the progress and report the results back in a robust way.
 
 
   

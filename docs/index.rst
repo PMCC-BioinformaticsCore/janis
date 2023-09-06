@@ -29,8 +29,8 @@ Welcome to Janis!
 	This project is *work-in-progress* and is provided as-is without warranty of any kind. There may be breaking changes
 	committed to this repository without notice.
 
-Janis is a framework creating specialised, simple workflow definitions that are then transpiled to
-Common Workflow Language or Workflow Definition Language.
+| Janis is a productivity tool which can translate bioinformatics tools and workflows between specifications. 
+| It can read-in from CWL, WDL, and Galaxy, and can write-out to CWL, WDL, and Nextflow.
 
 It was developed as part of the Portable Pipelines Project, a collaboration between:
 
@@ -38,24 +38,62 @@ It was developed as part of the Portable Pipelines Project, a collaboration betw
 - `Peter MacCallum Cancer Centre <https://www.petermac.org/>`_ 
 - `Walter and Eliza Hall Institute of Medical Research (WEHI) <https://www.wehi.edu.au/>`_.
 
+Janis has two major functionalities:
 
-Introduction
-============
+- **Translation** between workflow languages, and
+- **Modelling** tools and workflows using a Python API.
 
-Janis is a framework creating specialised, simple workflow definitions that are then transpiled to
-Common Workflow Language or Workflow Definition Language.
-
-Janis requires a Python installation > 3.6, and can be installed through PIP
+Janis requires a Python installation > 3.10, and can be installed through PIP
 `project page <https://pypi.org/project/janis-pipelines/>`__ by running:
 
 .. code-block:: bash
 
-   pip3 install janis-pipelines
+   pip install janis-pipelines
 
-There are two ways to use Janis:
+|
 
-- Build workflows (and translate to CWL (v1.2) / WDL (version development) / Nextflow (in-progress))
-- Run tools or workflows with CWLTool, Cromwell, or Nextflow (in progress)
+--- Translation ---
+===================
+
+Overview
+--------
+
+Janis can read-in from CWL, WDL, and Galaxy, and can write-out to CWL, WDL, and Nextflow.
+
+To facilitate translation, Janis includes an internal API to model tools and workflows in a way that encompasses the design features of each supported language. 
+When performing a translation, Janis will **ingest** the source files into the internal API, then will **translate** out to the target language. 
+
+Janis produces translations as close to the original as possible, but in some situations it may be necessary to make manual adjustments before the output is runnable. This is due to language-specific features of supported languages, and their inclusion of freeform Javascript (CWL), Java / Groovy (Nextflow), and Python / Cheetah (Galaxy). 
+
+Tutorials
+--------
+
+Janis currently has full tutorials for translations of CWL -> Nextflow, and Galaxy -> Nextflow.
+
+CWL to Nextflow
+
+- `Tool: Samtools Flagstat <tutorials/cwl_to_nextflow/tutorial1>`_
+- `Tool: GATK HaplotypeCaller <tutorials/cwl_to_nextflow/tutorial3>`_
+- `Workflow: Align Sort Markdup <tutorials/cwl_to_nextflow/tutorial2>`_
+
+Galaxy to Nextflow
+
+- `Tool: Samtools Flagstat <tutorials/galaxy_to_nextflow/tutorial4>`_
+- `Workflow: RNAseq Reads to Counts <tutorials/galaxy_to_nextflow/tutorial5>`_
+
+|
+
+--- Python API ---
+==================
+
+Overview
+--------
+
+The internal API used by Janis can be directly used to model bioinformatics tools and workflows using Python. To date, dozens of bioinformatics pipelines are written purely using the Janis API. 
+
+To execute these pipelines researchers use Janis' translate ability to produce CWL / WDL which is then run on the target platform used by their institution. 
+
+These pipelines are available in the `janis-pipelines` repository.
 
 
 Example Workflow
@@ -88,8 +126,8 @@ Example Workflow
 
 
 
-How to use Janis
------------------
+Tutorials 
+---------
 
 - `Tutorial 0 - Introduction to Janis <https://janis.readthedocs.io/en/latest/tutorials/tutorial0.html>`_
 - `Tutorial 1 - Building a workflow <https://janis.readthedocs.io/en/latest/tutorials/tutorial1.html>`_
@@ -115,7 +153,7 @@ Sometimes it's easier to learn by examples, here are a few hand picked examples:
 
 
 Toolbox
-=========
+-------
 
 There are two toolboxes currently available on Janis:
 
@@ -123,8 +161,13 @@ There are two toolboxes currently available on Janis:
 - `Bioinformatics <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`__(`list of tools <https://janis.readthedocs.io/en/latest/tools/unix/index.html>`__)
 
 
+|
+
+--- Additional ---
+==================
+
 References
-------------
+----------
 
 Through conference or talks, this project has been referenced by the following titles:
 
@@ -134,9 +177,8 @@ Through conference or talks, this project has been referenced by the following t
 - GIW / ABACBS 2019: *Janis: A Python framework for Portable Pipelines*
 - Australian BioCommons, December 2019: *Portable pipelines: build once and run everywhere with Janis*
 
-
 Support
-=======
+-------
 
 To get help with Janis, please ask a question on `Gitter <https://gitter.im/janis-pipelines/community>`__ or 
 `raise an issue <https://github.com/PMCC-BioinformaticsCore/janis/issues>`__ on GitHub.
@@ -151,9 +193,8 @@ due to the immature state of this project we recommend raising issues through th
 
 Information about the project structure and more on contributing can be found within the documentation.
 
+|
 
-Contents
-========
 
 .. toctree::
    :maxdepth: 1

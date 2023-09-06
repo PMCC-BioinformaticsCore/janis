@@ -37,12 +37,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for bcftoolsview:
 
 .. code-block:: bash
@@ -69,6 +63,27 @@ Quickstart
        --inputs inputs.yaml \
        bcftoolsview
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          bcftoolsview
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
+
 
 
 
@@ -90,11 +105,11 @@ Information
 Outputs
 -----------
 
-======  ====================  ===============
-name    type                  documentation
-======  ====================  ===============
-out     stdout<Gzipped<VCF>>
-======  ====================  ===============
+======  ============  ===============
+name    type          documentation
+======  ============  ===============
+out     Gzipped<VCF>
+======  ============  ===============
 
 
 Additional configuration (inputs)
@@ -104,6 +119,7 @@ Additional configuration (inputs)
 name              type                     prefix                 position  documentation
 ================  =======================  ===================  ==========  ==============================================================================================================================================================================
 file              Gzipped<VCF>                                           2
+outputFilename    Optional<Filename>       >                             5
 dropGenotypes     Optional<Boolean>        --drop-genotypes              1  (-G) drop individual genotype information (after subsetting if -s option set)
 headerOnly        Optional<Boolean>        --header-only                 1  (-h) print the header only
 noHeader          Optional<Boolean>        --no-header                   1  (-H) suppress the header in VCF output
@@ -153,8 +169,9 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File file
+       String? outputFilename
        Boolean? dropGenotypes
        Boolean? headerOnly
        Boolean? noHeader
@@ -191,6 +208,7 @@ Workflow Description Language
        Boolean? private
        Boolean? excludePrivate
      }
+
      command <<<
        set -e
        bcftools view \
@@ -230,19 +248,23 @@ Workflow Description Language
          ~{if (defined(private) && select_first([private])) then "--private" else ""} \
          ~{if (defined(excludePrivate) && select_first([excludePrivate])) then "--exclude-private" else ""} \
          --output-type 'z' \
-         '~{file}'
+         '~{file}' \
+         > '~{select_first([outputFilename, "generated"])}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "biocontainers/bcftools:v1.9-1-deb_cv1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
-       File out = stdout()
+       File out = select_first([outputFilename, "generated"])
      }
+
    }
 
 Common Workflow Language
@@ -254,11 +276,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'BCFTools: View'
-   doc: |-
-     ________________________________
-   
-             View, subset and filter VCF or BCF files by position and filtering expression
-             Convert between VCF and BCF. Former bcftools subset.
 
    requirements:
    - class: ShellCommandRequirement
@@ -272,6 +289,15 @@ Common Workflow Language
      type: File
      inputBinding:
        position: 2
+   - id: outputFilename
+     label: outputFilename
+     type:
+     - string
+     - 'null'
+     default: generated
+     inputBinding:
+       prefix: '>'
+       position: 5
    - id: dropGenotypes
      label: dropGenotypes
      doc: (-G) drop individual genotype information (after subsetting if -s option set)
@@ -609,7 +635,10 @@ Common Workflow Language
    outputs:
    - id: out
      label: out
-     type: stdout
+     type: File
+     outputBinding:
+       glob: generated
+       loadContents: false
    stdout: _stdout
    stderr: _stderr
 

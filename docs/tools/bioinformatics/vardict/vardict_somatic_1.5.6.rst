@@ -39,12 +39,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for vardict_somatic:
 
 .. code-block:: bash
@@ -75,6 +69,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        vardict_somatic
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          vardict_somatic
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -170,7 +185,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File tumorBam
        File tumorBam_bai
        File normalBam
@@ -222,6 +237,7 @@ Workflow Description Language
        Int? downsamplingFraction
        Int? zeroBasedCoords
      }
+
      command <<<
        set -e
        VarDict \
@@ -275,17 +291,20 @@ Workflow Description Language
          -f ~{alleleFreqThreshold} \
          > ~{select_first([outputFilename, "generated.vardict.vcf"])}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "michaelfranklin/vardict:1.5.6"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated.vardict.vcf"])
      }
+
    }
 
 Common Workflow Language
@@ -297,7 +316,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Vardict (Somatic)
-   doc: ''
 
    requirements:
    - class: ShellCommandRequirement
@@ -790,7 +808,7 @@ Common Workflow Language
      shellQuote: false
    - prefix: -b
      position: 1
-     valueFrom: $([inputs.tumorBam, inputs.normalBam].join("|"))
+     valueFrom: $([inputs.tumorBam.path, inputs.normalBam.path].join("|"))
      shellQuote: true
    - prefix: -N
      position: 1

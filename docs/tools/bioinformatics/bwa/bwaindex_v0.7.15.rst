@@ -38,12 +38,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for bwaIndex:
 
 .. code-block:: bash
@@ -69,6 +63,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        bwaIndex
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          bwaIndex
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -100,15 +115,15 @@ out     FastaBwa
 Additional configuration (inputs)
 ---------------------------------
 
-=========  =================  ========  ==========  ================================================================================================================================================================================================================================================================================================================================================
+=========  =================  ========  ==========  =======================================================================
 name       type               prefix      position  documentation
-=========  =================  ========  ==========  ================================================================================================================================================================================================================================================================================================================================================
+=========  =================  ========  ==========  =======================================================================
 reference  Fasta                                 1
 blockSize  Optional<Integer>  -b                    block size for the bwtsw algorithm (effective with -a bwtsw) [10000000]
 algorithm  Optional<String>   -a                    BWT construction algorithm: bwtsw, is or rb2 [auto]
                                                         - is	IS linear-time algorithm for constructing suffix array. It requires 5.37N memory where N is the size of the database. IS is moderately fast, but does not work with database larger than 2GB. IS is the default algorithm due to its simplicity. The current codes for IS algorithm are reimplemented by Yuta Mori.
                                                         - bwtsw	Algorithm implemented in BWT-SW. This method works with the whole human genome.
-=========  =================  ========  ==========  ================================================================================================================================================================================================================================================================================================================================================
+=========  =================  ========  ==========  =======================================================================
 
 Workflow Description Language
 ------------------------------
@@ -122,11 +137,12 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File reference
        Int? blockSize
        String? algorithm
      }
+
      command <<<
        set -e
        cp -f '~{reference}' '.'
@@ -135,14 +151,16 @@ Workflow Description Language
          ~{if defined(algorithm) then ("-a '" + algorithm + "'") else ""} \
          '~{basename(reference)}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "biocontainers/bwa:v0.7.15_cv3"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = basename(reference)
        File out_amb = basename(reference) + ".amb"
@@ -151,6 +169,7 @@ Workflow Description Language
        File out_pac = basename(reference) + ".pac"
        File out_sa = basename(reference) + ".sa"
      }
+
    }
 
 Common Workflow Language
@@ -162,12 +181,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: BWA-Index
-   doc: |-
-     bwa - Burrows-Wheeler Alignment Tool
-     Index database sequences in the FASTA format.
-
-     Warning: `-a bwtsw' does not work for short genomes, while `-a is' and
-              `-a div' do not work not for long genomes.
 
    requirements:
    - class: ShellCommandRequirement

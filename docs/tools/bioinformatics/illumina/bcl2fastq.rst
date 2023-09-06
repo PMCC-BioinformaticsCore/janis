@@ -48,12 +48,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for bcl2fastq:
 
 .. code-block:: bash
@@ -81,6 +75,27 @@ Quickstart
        --inputs inputs.yaml \
        --container-override 'bcl2fastq=<organisation/container:version>' \
        bcl2fastq
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          bcl2fastq
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -150,7 +165,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Directory runFolderDir
        File sampleSheet
        Int? loadingThreads
@@ -171,6 +186,7 @@ Workflow Description Language
        Int? barcodeMismatches
        Boolean? noLaneSplitting
      }
+
      command <<<
        set -e
        bcl2fastq \
@@ -195,18 +211,21 @@ Workflow Description Language
          ~{if (defined(noLaneSplitting) && select_first([noLaneSplitting])) then " --no-lane-splitting" else ""} \
          --output-dir '.'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4, 4])}G"
        preemptible: 2
      }
+
      output {
        Array[File] unalignedReads = glob("*/*.fastq.gz")
        Array[File] stats = glob("Stats/*")
        Array[File] interop = glob("InterOp/*")
      }
+
    }
 
 Common Workflow Language
@@ -218,7 +237,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Bcl2Fastq
-   doc: BCL to FASTQ file converter
 
    requirements:
    - class: ShellCommandRequirement

@@ -1,19 +1,19 @@
-    :orphan:
+:orphan:
 
-    Generating genomic intervals by chromosome
-    ==========================================================================
+Generating genomic intervals by chromosome
+==========================================================================
 
-    ``GenerateIntervalsByChromosome`` · *1 contributor · 1 version*
+``GenerateIntervalsByChromosome`` · *1 contributor · 1 version*
 
-    No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
-    
-    Quickstart
+
+Quickstart
 -----------
 
     .. code-block:: python
 
-       from janis_bioinformatics.tools.pmac.generatintervalsbychromosome.generateintervalsbychromosome import GenerateIntervalsByChromosome
+       from janis_bioinformatics.tools.pmac.generateintervalsbychromosome.generateintervalsbychromosome import GenerateIntervalsByChromosome
 
        wf = WorkflowBuilder("myworkflow")
 
@@ -33,12 +33,6 @@
 2. Ensure Janis is configured to work with Docker or Singularity.
 
 3. Ensure all reference files are available:
-
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
 
 4. Generate user input files for GenerateIntervalsByChromosome:
 
@@ -66,15 +60,36 @@
        --inputs inputs.yaml \
        GenerateIntervalsByChromosome
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CodeTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          GenerateIntervalsByChromosome
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
 
 
 
 
-    Information
-    ------------
 
 
-    :ID: ``GenerateIntervalsByChromosome``
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``GenerateIntervalsByChromosome``
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Container: python:3.8.1
@@ -85,10 +100,10 @@
 
 
 
-    Outputs
-    -----------
+Outputs
+-----------
 
-    ===========  ==========  ===============
+===========  ==========  ===============
 name         type        documentation
 ===========  ==========  ===============
 out_regions  Array<bed>
@@ -96,10 +111,10 @@ out_regions  Array<bed>
 
 
 
-    Additional configuration (inputs)
-    ---------------------------------
+Additional configuration (inputs)
+---------------------------------
 
-    ===============  =======================  =========================================================================
+===============  =======================  =========================================================================
 name             type                     documentation
 ===============  =======================  =========================================================================
 reference        FastDict                 FASTA reference with ^.dict reference

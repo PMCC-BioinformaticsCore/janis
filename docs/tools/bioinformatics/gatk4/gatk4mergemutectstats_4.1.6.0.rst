@@ -34,12 +34,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4MergeMutectStats:
 
 .. code-block:: bash
@@ -67,6 +61,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4MergeMutectStats
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4MergeMutectStats
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -119,12 +134,13 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        Array[File] statsFiles
        String? mergedStatsOut
      }
+
      command <<<
        set -e
        gatk MergeMutectStats \
@@ -132,17 +148,20 @@ Workflow Description Language
          ~{if length(statsFiles) > 0 then "--stats '" + sep("' --stats '", statsFiles) + "'" else ""} \
          -O '~{select_first([mergedStatsOut, "generated.txt"])}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.6.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([mergedStatsOut, "generated.txt"])
      }
+
    }
 
 Common Workflow Language
@@ -154,7 +173,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: MergeMutectStats'
-   doc: TBD
 
    requirements:
    - class: ShellCommandRequirement

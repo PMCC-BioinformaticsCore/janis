@@ -70,12 +70,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for SamToolsFlagstat:
 
 .. code-block:: bash
@@ -102,6 +96,27 @@ Quickstart
        --inputs inputs.yaml \
        SamToolsFlagstat
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          SamToolsFlagstat
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
+
 
 
 
@@ -122,22 +137,23 @@ Information
 Outputs
 -----------
 
-======  ================  ===============
-name    type              documentation
-======  ================  ===============
-out     stdout<TextFile>
-======  ================  ===============
+======  ========  ===============
+name    type      documentation
+======  ========  ===============
+out     TextFile
+======  ========  ===============
 
 
 Additional configuration (inputs)
 ---------------------------------
 
-=======  =================  ========  ==========  ========================================================================
-name     type               prefix      position  documentation
-=======  =================  ========  ==========  ========================================================================
-bam      BAM                                  10
-threads  Optional<Integer>  -@                 5  Number of BAM compression threads to use in addition to main thread [0].
-=======  =================  ========  ==========  ========================================================================
+==============  ==================  ========  ==========  ========================================================================
+name            type                prefix      position  documentation
+==============  ==================  ========  ==========  ========================================================================
+bam             BAM                                   10
+threads         Optional<Integer>   -@                 5  Number of BAM compression threads to use in addition to main thread [0].
+outputFilename  Optional<Filename>  >                 11
+==============  ==================  ========  ==========  ========================================================================
 
 Workflow Description Language
 ------------------------------
@@ -151,27 +167,33 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File bam
        Int? threads
+       String? outputFilename
      }
+
      command <<<
        set -e
        samtools flagstat \
          ~{if defined(threads) then ("-@ " + threads) else ''} \
-         '~{bam}'
+         '~{bam}' \
+         > '~{select_first([outputFilename, "generated"])}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "biocontainers/samtools:v1.7.0_cv3"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
-       File out = stdout()
+       File out = select_first([outputFilename, "generated"])
      }
+
    }
 
 Common Workflow Language
@@ -183,44 +205,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'SamTools: Flagstat'
-   doc: |-
-     Does a full pass through the input file to calculate and print statistics to stdout.
-
-     Provides counts for each of 13 categories based primarily on bit flags in the FLAG field. Each category in the output is broken down into QC pass and QC fail. In the default output format, these are presented as "#PASS + #FAIL" followed by a description of the category.
-
-     The first row of output gives the total number of reads that are QC pass and fail (according to flag bit 0x200). For example:
-
-     122 + 28 in total (QC-passed reads + QC-failed reads)
-
-     Which would indicate that there are a total of 150 reads in the input file, 122 of which are marked as QC pass and 28 of which are marked as "not passing quality controls"
-
-     Following this, additional categories are given for reads which are:
-
-     secondary     0x100 bit set
-
-     supplementary     0x800 bit set
-
-     duplicates     0x400 bit set
-
-     mapped     0x4 bit not set
-
-     paired in sequencing     0x1 bit set
-
-     read1     both 0x1 and 0x40 bits set
-
-     read2     both 0x1 and 0x80 bits set
-
-     properly paired     both 0x1 and 0x2 bits set and 0x4 bit not set
-
-     with itself and mate mapped     0x1 bit set and neither 0x4 nor 0x8 bits set
-
-     singletons     both 0x1 and 0x8 bits set and bit 0x4 not set
-
-     And finally, two rows are given that additionally filter on the reference name (RNAME), mate reference name (MRNM), and mapping quality (MAPQ) fields:
-
-     with mate mapped to a different chr     0x1 bit set and neither 0x4 nor 0x8 bits set and MRNM not equal to RNAME
-
-     with mate mapped to a different chr (mapQ>=5)     0x1 bit set and neither 0x4 nor 0x8 bits set and MRNM not equal to RNAME and MAPQ >= 5)
 
    requirements:
    - class: ShellCommandRequirement
@@ -243,11 +227,23 @@ Common Workflow Language
      inputBinding:
        prefix: -@
        position: 5
+   - id: outputFilename
+     label: outputFilename
+     type:
+     - string
+     - 'null'
+     default: generated
+     inputBinding:
+       prefix: '>'
+       position: 11
 
    outputs:
    - id: out
      label: out
-     type: stdout
+     type: File
+     outputBinding:
+       glob: generated
+       loadContents: false
    stdout: _stdout
    stderr: _stderr
 

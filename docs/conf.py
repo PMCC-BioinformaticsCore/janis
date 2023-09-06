@@ -83,6 +83,9 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
+# -- Offline formats to build -------------------------------------------------
+formats = []
+
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -124,27 +127,27 @@ htmlhelp_basename = "janis"
 
 # -- Options for LaTeX output ------------------------------------------------
 
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    #
-    # 'papersize': 'letterpaper',
-    # The font size ('10pt', '11pt' or '12pt').
-    #
-    # 'pointsize': '10pt',
-    # Additional stuff for the LaTeX preamble.
-    #
-    # 'preamble': '',
-    # Latex figure (float) alignment
-    #
-    # 'figure_align': 'htbp',
-}
+# latex_elements = {
+#     # The paper size ('letterpaper' or 'a4paper').
+#     #
+#     # 'papersize': 'letterpaper',
+#     # The font size ('10pt', '11pt' or '12pt').
+#     #
+#     # 'pointsize': '10pt',
+#     # Additional stuff for the LaTeX preamble.
+#     #
+#     # 'preamble': '',
+#     # Latex figure (float) alignment
+#     #
+#     # 'figure_align': 'htbp',
+# }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, "janis.tex", "Janis", "Michael Franklin, Richard Lupat", "manual")
-]
+# latex_documents = [
+#     (master_doc, "janis.tex", "Janis", "Michael Franklin, Richard Lupat", "manual")
+# ]
 
 
 # -- Options for manual page output ------------------------------------------
@@ -175,7 +178,7 @@ texinfo_documents = [
 # -- Options for Epub output -------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = project
+# epub_title = project
 
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.
@@ -187,7 +190,7 @@ epub_title = project
 # epub_uid = ''
 
 # A list of files that should not be packed into the epub file.
-epub_exclude_files = ["search.html"]
+# epub_exclude_files = ["search.html"]
 
 
 # -- Extension configuration -------------------------------------------------

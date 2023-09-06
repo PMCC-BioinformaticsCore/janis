@@ -37,12 +37,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4GatherVcfs:
 
 .. code-block:: bash
@@ -70,6 +64,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4GatherVcfs
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4GatherVcfs
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -135,7 +150,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        Array[File] vcfs
@@ -154,6 +169,7 @@ Workflow Description Language
        String? validationStringency
        Boolean? verbosity
      }
+
      command <<<
        set -e
        gatk GatherVcfs \
@@ -174,17 +190,20 @@ Workflow Description Language
          ~{if defined(validationStringency) then ("--VALIDATION_STRINGENCY '" + validationStringency + "'") else ""} \
          ~{if (defined(verbosity) && select_first([verbosity])) then "--VERBOSITY" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.4.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated.gathered.vcf"])
      }
+
    }
 
 Common Workflow Language
@@ -196,11 +215,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: Gather VCFs'
-   doc: |-
-     GatherVcfs (Picard)
-              
-     Gathers multiple VCF files from a scatter operation into a single VCF file. 
-     Input files must be supplied in genomic order and must not have events at overlapping positions.
 
    requirements:
    - class: ShellCommandRequirement

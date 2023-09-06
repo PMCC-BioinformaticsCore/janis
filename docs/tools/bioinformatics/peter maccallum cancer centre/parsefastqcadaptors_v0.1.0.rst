@@ -1,14 +1,14 @@
-    :orphan:
+:orphan:
 
-    Parse FastQC Adaptors
-    ===========================================
+Parse FastQC Adaptors
+===========================================
 
-    ``ParseFastqcAdaptors`` · *1 contributor · 1 version*
+``ParseFastqcAdaptors`` · *1 contributor · 1 version*
 
-    Parse overrepresented region and lookup in Cutadapt table
+Parse overrepresented region and lookup in Cutadapt table
 
-    
-    Quickstart
+
+Quickstart
 -----------
 
     .. code-block:: python
@@ -33,12 +33,6 @@
 2. Ensure Janis is configured to work with Docker or Singularity.
 
 3. Ensure all reference files are available:
-
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
 
 4. Generate user input files for ParseFastqcAdaptors:
 
@@ -68,15 +62,36 @@
        --inputs inputs.yaml \
        ParseFastqcAdaptors
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CodeTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          ParseFastqcAdaptors
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
 
 
 
 
-    Information
-    ------------
 
 
-    :ID: ``ParseFastqcAdaptors``
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``ParseFastqcAdaptors``
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Container: python:3.8.1
@@ -87,10 +102,10 @@
 
 
 
-    Outputs
-    -----------
+Outputs
+-----------
 
-    =================  =============  ===============
+=================  =============  ===============
 name               type           documentation
 =================  =============  ===============
 adaptor_sequences  Array<String>
@@ -98,10 +113,10 @@ adaptor_sequences  Array<String>
 
 
 
-    Additional configuration (inputs)
-    ---------------------------------
+Additional configuration (inputs)
+---------------------------------
 
-    ========================  ==============  ==========================================================================================
+========================  ==============  ==========================================================================================
 name                      type            documentation
 ========================  ==============  ==========================================================================================
 fastqc_datafiles          Array<File>

@@ -46,7 +46,8 @@ Quickstart
        wf.output("alignmentStatsSummary", source=manta_cram_step.alignmentStatsSummary)
        wf.output("svCandidateGenerationStats", source=manta_cram_step.svCandidateGenerationStats)
        wf.output("svLocusGraphStats", source=manta_cram_step.svLocusGraphStats)
-       wf.output("somaticSVs", source=manta_cram_step.somaticSVs)
+       wf.output("somaticSV", source=manta_cram_step.somaticSV)
+       wf.output("tumorSV", source=manta_cram_step.tumorSV)
     
 
 *OR*
@@ -56,12 +57,6 @@ Quickstart
 2. Ensure Janis is configured to work with Docker or Singularity.
 
 3. Ensure all reference files are available:
-
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
 
 4. Generate user input files for manta_cram:
 
@@ -89,6 +84,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        manta_cram
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          manta_cram
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -122,7 +138,8 @@ diploidSV                   Gzipped<VCF>
 alignmentStatsSummary       File
 svCandidateGenerationStats  tsv
 svLocusGraphStats           tsv
-somaticSVs                  Optional<Gzipped<VCF>>
+somaticSV                   Optional<Gzipped<VCF>>
+tumorSV                     Optional<Gzipped<VCF>>
 ==========================  ======================  ===============
 
 
@@ -145,7 +162,6 @@ callRegions     Optional<Gzipped<bed>>  --callRegions              1  Optionally
 mode            Optional<String>        --mode                     3  (-m) select run mode (local|sge)
 quiet           Optional<Boolean>       --quiet                    3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
 queue           Optional<String>        --queue                    3  (-q) specify scheduler queue name
-memgb           Optional<Integer>       --memGb                    3  (-g) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local  mode, 'unlimited' for sge mode)
 maxTaskRuntime  Optional<String>        --maxTaskRuntime           3  (format: hh:mm:ss) Specify scheduler max runtime per task, argument is provided to the 'h_rt' resource limit if using SGE (no default)
 ==============  ======================  ================  ==========  ====================================================================================================================================================================================================================================================================================================================================================
 
@@ -156,12 +172,12 @@ Workflow Description Language
 
    version development
 
-   task manta_cram {
+   task manta {
      input {
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File? config
        File bam
        File bam_crai
@@ -179,9 +195,9 @@ Workflow Description Language
        String? mode
        Boolean? quiet
        String? queue
-       Int? memgb
        String? maxTaskRuntime
      }
+
      command <<<
        set -e
         \
@@ -200,18 +216,20 @@ Workflow Description Language
          ~{if defined(select_first([mode, "local"])) then ("--mode " + select_first([mode, "local"])) else ''} \
          ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          ~{if defined(queue) then ("--queue " + queue) else ''} \
-         ~{if defined(memgb) then ("--memGb " + memgb) else ''} \
          ~{if defined(maxTaskRuntime) then ("--maxTaskRuntime " + maxTaskRuntime) else ''} \
-         -j ~{select_first([runtime_cpu, 4])}
+         -j ~{select_first([runtime_cpu, 4])} \
+         --memGb ~{select_first([runtime_memory, 4, 4])}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "michaelfranklin/manta:1.4.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4, 4])}G"
        preemptible: 2
      }
+
      output {
        File python = (select_first([runDir, "generated"]) + "/runWorkflow.py")
        File pickle = (select_first([runDir, "generated"]) + "/runWorkflow.py.config.pickle")
@@ -224,9 +242,12 @@ Workflow Description Language
        File alignmentStatsSummary = (select_first([runDir, "generated"]) + "/results/stats/alignmentStatsSummary.txt")
        File svCandidateGenerationStats = (select_first([runDir, "generated"]) + "/results/stats/svCandidateGenerationStats.tsv")
        File svLocusGraphStats = (select_first([runDir, "generated"]) + "/results/stats/svLocusGraphStats.tsv")
-       File? somaticSVs = (select_first([runDir, "generated"]) + "/results/variants/somaticSV.vcf.gz")
-       File? somaticSVs_tbi = if defined((select_first([runDir, "generated"]) + "/results/variants/somaticSV.vcf.gz")) then ((select_first([runDir, "generated"]) + "/results/variants/somaticSV.vcf.gz") + ".tbi") else None
+       File? somaticSV = (select_first([runDir, "generated"]) + "/results/variants/somaticSV.vcf.gz")
+       File? somaticSV_tbi = if defined((select_first([runDir, "generated"]) + "/results/variants/somaticSV.vcf.gz")) then ((select_first([runDir, "generated"]) + "/results/variants/somaticSV.vcf.gz") + ".tbi") else None
+       File? tumorSV = (select_first([runDir, "generated"]) + "/results/variants/tumorSV.vcf.gz")
+       File? tumorSV_tbi = if defined((select_first([runDir, "generated"]) + "/results/variants/tumorSV.vcf.gz")) then ((select_first([runDir, "generated"]) + "/results/variants/tumorSV.vcf.gz") + ".tbi") else None
      }
+
    }
 
 Common Workflow Language
@@ -238,22 +259,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Manta
-   doc: |-
-     Manta calls structural variants (SVs) and indels from mapped paired-end sequencing reads.
-     It is optimized for analysis of germline variation in small sets of individuals and somatic
-     variation in tumor/normal sample pairs. Manta discovers, assembles and scores large-scale SVs,
-     medium-sized indels and large insertions within a single efficient workflow. The method is
-     designed for rapid analysis on standard compute hardware: NA12878 at 50x genomic coverage is
-     analyzed in less than 20 minutes on a 20 core server, and most WGS tumor/normal analyses
-     can be completed within 2 hours. Manta combines paired and split-read evidence during SV
-     discovery and scoring to improve accuracy, but does not require split-reads or successful
-     breakpoint assemblies to report a variant in cases where there is strong evidence otherwise.
-
-     It provides scoring models for germline variants in small sets of diploid samples and somatic
-     variants in matched tumor/normal sample pairs. There is experimental support for analysis of
-     unmatched tumor samples as well. Manta accepts input read mappings from BAM or CRAM files and
-     reports all SV and indel inferences in VCF 4.1 format. See the user guide for a full description
-     of capabilities and limitations.
 
    requirements:
    - class: ShellCommandRequirement
@@ -402,17 +407,6 @@ Common Workflow Language
        prefix: --queue
        position: 3
        shellQuote: false
-   - id: memgb
-     label: memgb
-     doc: |-
-       (-g) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local  mode, 'unlimited' for sge mode)
-     type:
-     - int
-     - 'null'
-     inputBinding:
-       prefix: --memGb
-       position: 3
-       shellQuote: false
    - id: maxTaskRuntime
      label: maxTaskRuntime
      doc: |-
@@ -431,14 +425,12 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.runDir + "/runWorkflow.py"))
-       outputEval: $((inputs.runDir.basename + "/runWorkflow.py"))
        loadContents: false
    - id: pickle
      label: pickle
      type: File
      outputBinding:
        glob: $((inputs.runDir + "/runWorkflow.py.config.pickle"))
-       outputEval: $((inputs.runDir.basename + "/runWorkflow.py.config.pickle"))
        loadContents: false
    - id: candidateSV
      label: candidateSV
@@ -447,7 +439,6 @@ Common Workflow Language
      - pattern: .tbi
      outputBinding:
        glob: $((inputs.runDir + "/results/variants/candidateSV.vcf.gz"))
-       outputEval: $((inputs.runDir.basename + "/results/variants/candidateSV.vcf.gz"))
        loadContents: false
    - id: candidateSmallIndels
      label: candidateSmallIndels
@@ -456,7 +447,6 @@ Common Workflow Language
      - pattern: .tbi
      outputBinding:
        glob: $((inputs.runDir + "/results/variants/candidateSmallIndels.vcf.gz"))
-       outputEval: $((inputs.runDir.basename + "/results/variants/candidateSmallIndels.vcf.gz"))
        loadContents: false
    - id: diploidSV
      label: diploidSV
@@ -465,31 +455,27 @@ Common Workflow Language
      - pattern: .tbi
      outputBinding:
        glob: $((inputs.runDir + "/results/variants/diploidSV.vcf.gz"))
-       outputEval: $((inputs.runDir.basename + "/results/variants/diploidSV.vcf.gz"))
        loadContents: false
    - id: alignmentStatsSummary
      label: alignmentStatsSummary
      type: File
      outputBinding:
        glob: $((inputs.runDir + "/results/stats/alignmentStatsSummary.txt"))
-       outputEval: $((inputs.runDir.basename + "/results/stats/alignmentStatsSummary.txt"))
        loadContents: false
    - id: svCandidateGenerationStats
      label: svCandidateGenerationStats
      type: File
      outputBinding:
        glob: $((inputs.runDir + "/results/stats/svCandidateGenerationStats.tsv"))
-       outputEval: $((inputs.runDir.basename + "/results/stats/svCandidateGenerationStats.tsv"))
        loadContents: false
    - id: svLocusGraphStats
      label: svLocusGraphStats
      type: File
      outputBinding:
        glob: $((inputs.runDir + "/results/stats/svLocusGraphStats.tsv"))
-       outputEval: $((inputs.runDir.basename + "/results/stats/svLocusGraphStats.tsv"))
        loadContents: false
-   - id: somaticSVs
-     label: somaticSVs
+   - id: somaticSV
+     label: somaticSV
      type:
      - File
      - 'null'
@@ -497,7 +483,16 @@ Common Workflow Language
      - pattern: .tbi
      outputBinding:
        glob: $((inputs.runDir + "/results/variants/somaticSV.vcf.gz"))
-       outputEval: $((inputs.runDir.basename + "/results/variants/somaticSV.vcf.gz"))
+       loadContents: false
+   - id: tumorSV
+     label: tumorSV
+     type:
+     - File
+     - 'null'
+     secondaryFiles:
+     - pattern: .tbi
+     outputBinding:
+       glob: $((inputs.runDir + "/results/variants/tumorSV.vcf.gz"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -513,11 +508,16 @@ Common Workflow Language
      valueFrom: $([inputs.runtime_cpu, 4].filter(function (inner) { return inner != null
        })[0])
      shellQuote: false
+   - prefix: --memGb
+     position: 3
+     valueFrom: |-
+       $([inputs.runtime_memory, 4, 4].filter(function (inner) { return inner != null })[0])
+     shellQuote: false
 
    hints:
    - class: ToolTimeLimit
      timelimit: |-
        $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
-   id: manta_cram
+   id: manta
 
 

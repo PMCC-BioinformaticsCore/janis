@@ -1,15 +1,15 @@
-    :orphan:
+:orphan:
 
-    Generate genome for BedtoolsCoverage
-    ============================================================================
+Generate genome for BedtoolsCoverage
+============================================================================
 
-    ``GenerateGenomeFileForBedtoolsCoverage`` · *2 contributors · 1 version*
+``GenerateGenomeFileForBedtoolsCoverage`` · *2 contributors · 1 version*
 
-    Generate --genome FILE for BedToolsCoverage      
+Generate --genome FILE for BedToolsCoverage      
         
 
-    
-    Quickstart
+
+Quickstart
 -----------
 
     .. code-block:: python
@@ -34,12 +34,6 @@
 2. Ensure Janis is configured to work with Docker or Singularity.
 
 3. Ensure all reference files are available:
-
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
 
 4. Generate user input files for GenerateGenomeFileForBedtoolsCoverage:
 
@@ -67,15 +61,36 @@
        --inputs inputs.yaml \
        GenerateGenomeFileForBedtoolsCoverage
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CodeTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          GenerateGenomeFileForBedtoolsCoverage
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
 
 
 
 
-    Information
-    ------------
 
 
-    :ID: ``GenerateGenomeFileForBedtoolsCoverage``
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``GenerateGenomeFileForBedtoolsCoverage``
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Container: python:3.8.1
@@ -86,10 +101,10 @@
 
 
 
-    Outputs
-    -----------
+Outputs
+-----------
 
-    ======  ========  ================================
+======  ========  ================================
 name    type      documentation
 ======  ========  ================================
 out     TextFile  Genome file for BedToolsCoverage
@@ -97,10 +112,10 @@ out     TextFile  Genome file for BedToolsCoverage
 
 
 
-    Additional configuration (inputs)
-    ---------------------------------
+Additional configuration (inputs)
+---------------------------------
 
-    ===============  ================  =====================
+===============  ================  =====================
 name             type              documentation
 ===============  ================  =====================
 reference        FastDict

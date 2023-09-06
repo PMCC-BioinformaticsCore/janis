@@ -35,12 +35,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for bcftoolssort:
 
 .. code-block:: bash
@@ -66,6 +60,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        bcftoolssort
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          bcftoolssort
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -118,12 +133,13 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File vcf
        String? outputFilename
        String? outputType
        String? tempDir
      }
+
      command <<<
        set -e
        bcftools sort \
@@ -132,17 +148,20 @@ Workflow Description Language
          ~{if defined(tempDir) then ("--temp-dir '" + tempDir + "'") else ""} \
          ~{vcf}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "biocontainers/bcftools:v1.9-1-deb_cv1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated.sorted.vcf.gz"])
      }
+
    }
 
 Common Workflow Language
@@ -154,7 +173,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'BCFTools: Sort'
-   doc: "About:   Sort VCF/BCF file.\nUsage:   bcftools sort [OPTIONS] <FILE.vcf>"
 
    requirements:
    - class: ShellCommandRequirement

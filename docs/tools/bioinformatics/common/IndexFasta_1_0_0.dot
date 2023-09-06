@@ -5,7 +5,7 @@ digraph IndexFasta {
 	create_samtools [label="create_samtools (SamTools: faidx)"]
 	create_dict [label="create_dict (GATK4: CreateSequenceDictionary)"]
 	merge [label=merge]
-	create_bwa -> merge
-	create_dict -> merge
 	create_samtools -> merge
+	create_dict -> merge
+	create_bwa -> merge
 }

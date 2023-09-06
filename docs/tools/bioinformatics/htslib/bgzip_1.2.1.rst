@@ -45,12 +45,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for bgzip:
 
 .. code-block:: bash
@@ -76,6 +70,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        bgzip
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          bgzip
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -138,7 +153,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File file
        String? outputFilename
        Int? offset
@@ -154,6 +169,7 @@ Workflow Description Language
        Int? size
        Int? threads
      }
+
      command <<<
        set -e
        bgzip \
@@ -173,17 +189,20 @@ Workflow Description Language
          > \
          '~{select_first([outputFilename, "~{basename(file)}.gz"])}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "biodckrdev/htslib:1.2.1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "~{basename(file)}.gz"])
      }
+
    }
 
 Common Workflow Language
@@ -195,19 +214,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: BGZip
-   doc: |-
-     bgzip – Block compression/decompression utility
-
-     Bgzip compresses files in a similar manner to, and compatible with, gzip(1). The file is compressed 
-     into a series of small (less than 64K) 'BGZF' blocks. This allows indexes to be built against the 
-     compressed file and used to retrieve portions of the data without having to decompress the entire file.
-
-     If no files are specified on the command line, bgzip will compress (or decompress if the -d option is used) 
-     standard input to standard output. If a file is specified, it will be compressed (or decompressed with -d). 
-     If the -c option is used, the result will be written to standard output, otherwise when compressing bgzip 
-     will write to a new file with a .gz suffix and remove the original. When decompressing the input file must 
-     have a .gz suffix, which will be removed to make the output name. 
-     Again after decompression completes the input file will be removed.
 
    requirements:
    - class: ShellCommandRequirement
@@ -230,7 +236,7 @@ Common Workflow Language
      default: generated.gz
      inputBinding:
        position: 102
-       valueFrom: $(inputs.file.basename.basename).gz
+       valueFrom: $(inputs.file.basename).gz
    - id: offset
      label: offset
      doc: |-
@@ -336,7 +342,7 @@ Common Workflow Language
      label: out
      type: File
      outputBinding:
-       glob: $(inputs.file.basename.basename).gz
+       glob: $(inputs.file.basename).gz
        loadContents: false
    stdout: _stdout
    stderr: _stderr

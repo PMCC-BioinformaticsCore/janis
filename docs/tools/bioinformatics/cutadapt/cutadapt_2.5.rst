@@ -3,7 +3,7 @@
 Cutadapt
 ===================
 
-``cutadapt`` · *1 contributor · 5 versions*
+``cutadapt`` · *2 contributors · 5 versions*
 
 cutadapt version 2.4
 Copyright (C) 2010-2019 Marcel Martin <marcel.martin@scilifelab.se>
@@ -57,12 +57,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for cutadapt:
 
 .. code-block:: bash
@@ -92,6 +86,27 @@ Quickstart
        --inputs inputs.yaml \
        cutadapt
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          cutadapt
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
+
 
 
 
@@ -103,11 +118,11 @@ Information
 :URL: `https://cutadapt.readthedocs.io/en/stable/ <https://cutadapt.readthedocs.io/en/stable/>`_
 :Versions: 2.6, 2.5, 2.4, 2.1, 1.18
 :Container: quay.io/biocontainers/cutadapt:2.5--py37h516909a_0
-:Authors: Michael Franklin
+:Authors: Michael Franklin, Jiaan Yu
 :Citations: Martin, Marcel. “Cutadapt Removes Adapter Sequences from High-Throughput Sequencing Reads.” EMBnet.journal, vol. 17, no. 1, EMBnet Stichting, May 2011, p. 10. Crossref, doi:10.14806/ej.17.1.200.
 :DOI: DOI:10.14806/ej.17.1.200
 :Created: 2019-03-21
-:Updated: 2019-07-23
+:Updated: 2021-11-03
 
 
 Outputs
@@ -132,8 +147,8 @@ adapter                     Optional<Array<String>>  -a                         
 outputFilename              Optional<Filename>       -o                                        Write trimmed reads to FILE. FASTQ or FASTA format is chosen depending on input. The summary report is sent to standard output. Use '{name}' in FILE to demultiplex reads into multiple files. Default: write to standard output
 secondReadFile              Optional<Filename>       -p                                        Write second read in a pair to FILE.
 cores                       Optional<Integer>        --cores                                   (-j)  Number of CPU cores to use. Use 0 to auto-detect. Default: 1
-front                       Optional<String>         --front                                   (-g)  Sequence of an adapter ligated to the 5' end (paired data: of the first read). The adapter and any preceding bases are trimmed. Partial matches at the 5' end are allowed. If a '^' character is prepended ('anchoring'), the adapter is only found if it is a prefix of the read.
-anywhere                    Optional<String>         --anywhere                                (-b)  Sequence of an adapter that may be ligated to the 5' or 3' end (paired data: of the first read). Both types of matches as described under -a und -g are allowed. If the first base of the read is part of the match, the behavior is as with -g, otherwise as with -a. This option is mostly for rescuing failed library preparations - do not use if you know which end your adapter was ligated to!
+front                       Optional<Array<String>>  --front                                   (-g)  Sequence of an adapter ligated to the 5' end (paired data: of the first read). The adapter and any preceding bases are trimmed. Partial matches at the 5' end are allowed. If a '^' character is prepended ('anchoring'), the adapter is only found if it is a prefix of the read.
+anywhere                    Optional<Array<String>>  --anywhere                                (-b)  Sequence of an adapter that may be ligated to the 5' or 3' end (paired data: of the first read). Both types of matches as described under -a und -g are allowed. If the first base of the read is part of the match, the behavior is as with -g, otherwise as with -a. This option is mostly for rescuing failed library preparations - do not use if you know which end your adapter was ligated to!
 errorRate                   Optional<Float>          --error-rate                              (-e)  Maximum allowed error rate as value between 0 and 1 (no. of errors divided by length of matching region). Default: 0.1 (=10%)
 noIndels                    Optional<Boolean>        --no-indels                               Allow only mismatches in alignments. Default: allow both mismatches and indels
 times                       Optional<Integer>        --times                                   (-n)  Remove up to COUNT adapters from each read. Default: 1
@@ -166,11 +181,11 @@ wildcardFile                Optional<String>         --wildcard-file            
 tooShortOutput              Optional<String>         --too-short-output                        Write reads that are too short (according to length specified by -m) to FILE. Default: discard reads
 tooLongOutput               Optional<String>         --too-long-output                         Write reads that are too long (according to length specified by -M) to FILE. Default: discard reads
 untrimmedOutput             Optional<String>         --untrimmed-output                        Write reads that do not contain any adapter to FILE. Default: output to same file as trimmed reads
-removeMiddle3Adapter        Optional<Array<String>>  -A                                        3' adapter to be removed from second read in a pair.
-removeMiddle5Adapter        Optional<String>         -G                                        5' adapter to be removed from second read in a pair.
-removeMiddleBothAdapter     Optional<String>         -B                                        5'/3 adapter to be removed from second read in a pair.
+adapterSecondRead           Optional<Array<String>>  -A                                        3' adapter to be removed from second read in a pair.
+frontAdapterSecondRead      Optional<Array<String>>  -G                                        5' adapter to be removed from second read in a pair.
+anywhereAdapterSecondRead   Optional<Array<String>>  -B                                        5'/3 adapter to be removed from second read in a pair.
 removeNBasesFromSecondRead  Optional<String>         -U                                        Remove LENGTH bases from second read in a pair.
-pairAdapters                Optional<String>         --pair-adapters                           Treat adapters given with -a/-A etc. as pairs. Either both or none are removed from each read pair.
+pairAdapters                Optional<Boolean>        --pair-adapters                           Treat adapters given with -a/-A etc. as pairs. Either both or none are removed from each read pair.
 pairFilter                  Optional<String>         --pair-filter                             {any,both,first} Which of the reads in a paired-end read have to match the filtering criterion in order for the pair to be filtered. Default: any
 interleaved                 Optional<Boolean>        --interleaved                             Read and write interleaved paired-end reads.
 untrimmedPairedOutput       Optional<String>         --untrimmed-paired-output                 Write second read in a pair to this FILE when no adapter was found. Use with --untrimmed-output. Default: output to same file as trimmed reads
@@ -190,15 +205,15 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        String outputPrefix
        Array[File] fastq
        Array[String]? adapter
        String? outputFilename
        String? secondReadFile
        Int? cores
-       String? front
-       String? anywhere
+       Array[String]? front
+       Array[String]? anywhere
        Float? errorRate
        Boolean? noIndels
        Int? times
@@ -231,17 +246,18 @@ Workflow Description Language
        String? tooShortOutput
        String? tooLongOutput
        String? untrimmedOutput
-       Array[String]? removeMiddle3Adapter
-       String? removeMiddle5Adapter
-       String? removeMiddleBothAdapter
+       Array[String]? adapterSecondRead
+       Array[String]? frontAdapterSecondRead
+       Array[String]? anywhereAdapterSecondRead
        String? removeNBasesFromSecondRead
-       String? pairAdapters
+       Boolean? pairAdapters
        String? pairFilter
        Boolean? interleaved
        String? untrimmedPairedOutput
        String? tooShortPairedOutput
        String? tooLongPairedOutput
      }
+
      command <<<
        set -e
        cutadapt \
@@ -249,8 +265,8 @@ Workflow Description Language
          -o '~{select_first([outputFilename, "~{outputPrefix}-R1.fastq.gz"])}' \
          -p '~{select_first([secondReadFile, "~{outputPrefix}-R2.fastq.gz"])}' \
          ~{if defined(cores) then ("--cores " + cores) else ''} \
-         ~{if defined(front) then ("--front '" + front + "'") else ""} \
-         ~{if defined(anywhere) then ("--anywhere '" + anywhere + "'") else ""} \
+         ~{if (defined(front) && length(select_first([front])) > 0) then "--front '" + sep("' '", select_first([front])) + "'" else ""} \
+         ~{if (defined(anywhere) && length(select_first([anywhere])) > 0) then "--anywhere '" + sep("' '", select_first([anywhere])) + "'" else ""} \
          ~{if defined(errorRate) then ("--error-rate " + errorRate) else ''} \
          ~{if (defined(noIndels) && select_first([noIndels])) then "--no-indels" else ""} \
          ~{if defined(times) then ("--times " + times) else ''} \
@@ -283,11 +299,11 @@ Workflow Description Language
          ~{if defined(tooShortOutput) then ("--too-short-output '" + tooShortOutput + "'") else ""} \
          ~{if defined(tooLongOutput) then ("--too-long-output '" + tooLongOutput + "'") else ""} \
          ~{if defined(untrimmedOutput) then ("--untrimmed-output '" + untrimmedOutput + "'") else ""} \
-         ~{if (defined(removeMiddle3Adapter) && length(select_first([removeMiddle3Adapter])) > 0) then "-A '" + sep("' -A '", select_first([removeMiddle3Adapter])) + "'" else ""} \
-         ~{if defined(removeMiddle5Adapter) then ("-G '" + removeMiddle5Adapter + "'") else ""} \
-         ~{if defined(removeMiddleBothAdapter) then ("-B '" + removeMiddleBothAdapter + "'") else ""} \
+         ~{if (defined(adapterSecondRead) && length(select_first([adapterSecondRead])) > 0) then "-A '" + sep("' -A '", select_first([adapterSecondRead])) + "'" else ""} \
+         ~{if (defined(frontAdapterSecondRead) && length(select_first([frontAdapterSecondRead])) > 0) then "-G '" + sep("' '", select_first([frontAdapterSecondRead])) + "'" else ""} \
+         ~{if (defined(anywhereAdapterSecondRead) && length(select_first([anywhereAdapterSecondRead])) > 0) then "-B '" + sep("' '", select_first([anywhereAdapterSecondRead])) + "'" else ""} \
          ~{if defined(removeNBasesFromSecondRead) then ("-U '" + removeNBasesFromSecondRead + "'") else ""} \
-         ~{if defined(pairAdapters) then ("--pair-adapters '" + pairAdapters + "'") else ""} \
+         ~{if (defined(pairAdapters) && select_first([pairAdapters])) then "--pair-adapters" else ""} \
          ~{if defined(pairFilter) then ("--pair-filter '" + pairFilter + "'") else ""} \
          ~{if (defined(interleaved) && select_first([interleaved])) then "--interleaved" else ""} \
          ~{if defined(untrimmedPairedOutput) then ("--untrimmed-paired-output '" + untrimmedPairedOutput + "'") else ""} \
@@ -295,17 +311,20 @@ Workflow Description Language
          ~{if defined(tooLongPairedOutput) then ("--too-long-paired-output '" + tooLongPairedOutput + "'") else ""} \
          ~{if length(fastq) > 0 then "'" + sep("' '", fastq) + "'" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 5, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/cutadapt:2.5--py37h516909a_0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4, 4])}G"
        preemptible: 2
      }
+
      output {
        Array[File] out = [(outputPrefix + "-R1.fastq.gz"), (outputPrefix + "-R2.fastq.gz")]
      }
+
    }
 
 Common Workflow Language
@@ -317,29 +336,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Cutadapt
-   doc: |
-     cutadapt version 2.4
-     Copyright (C) 2010-2019 Marcel Martin <marcel.martin@scilifelab.se>
-     cutadapt removes adapter sequences from high-throughput sequencing reads.
-     Usage:
-         cutadapt -a ADAPTER [options] [-o output.fastq] input.fastq
-     For paired-end reads:
-         cutadapt -a ADAPT1 -A ADAPT2 [options] -o out1.fastq -p out2.fastq in1.fastq in2.fastq
-     Replace "ADAPTER" with the actual sequence of your 3' adapter. IUPAC wildcard
-     characters are supported. The reverse complement is *not* automatically
-     searched. All reads from input.fastq will be written to output.fastq with the
-     adapter sequence removed. Adapter matching is error-tolerant. Multiple adapter
-     sequences can be given (use further -a options), but only the best-matching
-     adapter will be removed.
-     Input may also be in FASTA format. Compressed input and output is supported and
-     auto-detected from the file name (.gz, .xz, .bz2). Use the file name '-' for
-     standard input/output. Without the -o option, output is sent to standard output.
-     Citation:
-     Marcel Martin. Cutadapt removes adapter sequences from high-throughput
-     sequencing reads. EMBnet.Journal, 17(1):10-12, May 2011.
-     http://dx.doi.org/10.14806/ej.17.1.200
-     Run "cutadapt - -help" to see all command-line options.
-     See https://cutadapt.readthedocs.io/ for full documentation.
 
    requirements:
    - class: ShellCommandRequirement
@@ -405,7 +401,8 @@ Common Workflow Language
      doc: |-
        (-g)  Sequence of an adapter ligated to the 5' end (paired data: of the first read). The adapter and any preceding bases are trimmed. Partial matches at the 5' end are allowed. If a '^' character is prepended ('anchoring'), the adapter is only found if it is a prefix of the read.
      type:
-     - string
+     - type: array
+       items: string
      - 'null'
      inputBinding:
        prefix: --front
@@ -415,7 +412,8 @@ Common Workflow Language
      doc: |-
        (-b)  Sequence of an adapter that may be ligated to the 5' or 3' end (paired data: of the first read). Both types of matches as described under -a und -g are allowed. If the first base of the read is part of the match, the behavior is as with -g, otherwise as with -a. This option is mostly for rescuing failed library preparations - do not use if you know which end your adapter was ligated to!
      type:
-     - string
+     - type: array
+       items: string
      - 'null'
      inputBinding:
        prefix: --anywhere
@@ -727,8 +725,8 @@ Common Workflow Language
      inputBinding:
        prefix: --untrimmed-output
        separate: true
-   - id: removeMiddle3Adapter
-     label: removeMiddle3Adapter
+   - id: adapterSecondRead
+     label: adapterSecondRead
      doc: 3' adapter to be removed from second read in a pair.
      type:
      - type: array
@@ -738,20 +736,22 @@ Common Workflow Language
        items: string
      - 'null'
      inputBinding: {}
-   - id: removeMiddle5Adapter
-     label: removeMiddle5Adapter
+   - id: frontAdapterSecondRead
+     label: frontAdapterSecondRead
      doc: 5' adapter to be removed from second read in a pair.
      type:
-     - string
+     - type: array
+       items: string
      - 'null'
      inputBinding:
        prefix: -G
        separate: true
-   - id: removeMiddleBothAdapter
-     label: removeMiddleBothAdapter
+   - id: anywhereAdapterSecondRead
+     label: anywhereAdapterSecondRead
      doc: 5'/3 adapter to be removed from second read in a pair.
      type:
-     - string
+     - type: array
+       items: string
      - 'null'
      inputBinding:
        prefix: -B
@@ -770,7 +770,7 @@ Common Workflow Language
      doc: |-
        Treat adapters given with -a/-A etc. as pairs. Either both or none are removed from each read pair.
      type:
-     - string
+     - boolean
      - 'null'
      inputBinding:
        prefix: --pair-adapters

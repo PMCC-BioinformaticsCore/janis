@@ -3,7 +3,7 @@
 Gridss
 ===============
 
-``gridss`` · *1 contributor · 5 versions*
+``gridss`` · *1 contributor · 7 versions*
 
 GRIDSS: the Genomic Rearrangement IDentification Software Suite
 
@@ -50,12 +50,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for gridss:
 
 .. code-block:: bash
@@ -85,6 +79,27 @@ Quickstart
        --inputs inputs.yaml \
        gridss
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          gridss
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
+
 
 
 
@@ -94,7 +109,7 @@ Information
 
 :ID: ``gridss``
 :URL: `https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation <https://github.com/PapenfussLab/gridss/wiki/GRIDSS-Documentation>`_
-:Versions: v2.9.4, v2.6.2, v2.5.1-dev, v2.4.0, v2.2.3
+:Versions: v2.9.4, v2.8.3, v2.6.2, v2.5.1-dev, v2.4.0, v2.2.3, v2.10.2
 :Container: gridss/gridss:2.4.0
 :Authors: Michael Franklin
 :Citations: Daniel L. Cameron, Jan Schröder, Jocelyn Sietsma Penington, Hongdo Do, Ramyar Molania, Alexander Dobrovic, Terence P. Speed and Anthony T. Papenfuss. GRIDSS: sensitive and specific genomic rearrangement detection using positional de Bruijn graph assembly. Genome Research, 2017 doi: 10.1101/gr.222109.117
@@ -147,7 +162,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        String? outputFilename
        File reference
        File reference_fai
@@ -170,6 +185,7 @@ Workflow Description Language
        String? workingDir
        Boolean? ignoreDuplicates
      }
+
      command <<<
        set -e
        java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -XshowSettings:vm -Dsamjdk.create_index=true -Dsamjdk.use_async_io_read_samtools=true -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=true -Dgridss.gridss.output_to_temp_file=true -Dsamjdk.buffer_size=4194304 -cp /data/gridss/gridss-2.4.0-gridss-jar-with-dependencies.jar gridss.CallVariants \
@@ -188,19 +204,22 @@ Workflow Description Language
          ~{if (defined(ignoreDuplicates) && select_first([ignoreDuplicates])) then "IGNORE_DUPLICATES=" else ""}
        if [ -f $(echo '~{select_first([assemblyFilename, "generated.assembled.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([assemblyFilename, "generated.assembled.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([assemblyFilename, "generated.assembled.bam"])}' ).bai; fi
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 8, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "gridss/gridss:2.4.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 31, 4])}G"
        preemptible: 2
      }
+
      output {
        File vcf = select_first([outputFilename, "generated.vcf"])
        File assembly = select_first([assemblyFilename, "generated.assembled.bam"])
        File assembly_bai = select_first([assemblyFilename, "generated.assembled.bam"]) + ".bai"
      }
+
    }
 
 Common Workflow Language
@@ -212,21 +231,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Gridss
-   doc: |
-     GRIDSS: the Genomic Rearrangement IDentification Software Suite
-
-     GRIDSS is a module software suite containing tools useful for the detection of genomic rearrangements. 
-     GRIDSS includes a genome-wide break-end assembler, as well as a structural variation caller for Illumina 
-     sequencing data. GRIDSS calls variants based on alignment-guided positional de Bruijn graph genome-wide 
-     break-end assembly, split read, and read pair evidence.
-
-     GRIDSS makes extensive use of the standard tags defined by SAM specifications. Due to the modular design, 
-     any step (such as split read identification) can be replaced by another implementation that also outputs 
-     using the standard tags. It is hoped that GRIDSS can serve as an exemplar modular structural variant 
-     pipeline designed for interoperability with other tools.
-
-     If you have any trouble running GRIDSS, please raise an issue using the Issues tab above. Based on feedback 
-     from users, a user guide will be produced outlining common workflows, pitfalls, and use cases.
 
    requirements:
    - class: ShellCommandRequirement

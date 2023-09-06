@@ -43,12 +43,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for SamToolsView:
 
 .. code-block:: bash
@@ -74,6 +68,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        SamToolsView
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          SamToolsView
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -147,7 +162,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Boolean? cramOutput
        Boolean? compressedBam
        Boolean? uncompressedBam
@@ -181,6 +196,7 @@ Workflow Description Language
        String? outputFilename
        Array[String]? regions
      }
+
      command <<<
        set -e
        samtools view \
@@ -213,17 +229,20 @@ Workflow Description Language
          ~{sam} \
          ~{if (defined(regions) && length(select_first([regions])) > 0) then "'" + sep("' '", select_first([regions])) + "'" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "biocontainers/samtools:v1.7.0_cv3"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "~{basename(sam)}.bam"])
      }
+
    }
 
 Common Workflow Language
@@ -235,17 +254,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'SamTools: View'
-   doc: |-
-     Ensure SAMTOOLS.SORT is inheriting from parent metadata
-          
-     ---------------------------------------------------------------------------------------------------
-      
-     With no options or regions specified, prints all alignments in the specified input alignment file 
-     (in SAM, BAM, or CRAM format) to standard output in SAM format (with no header).
-
-     You may specify one or more space-separated region specifications after the input filename to 
-     restrict output to only those alignments which overlap the specified region(s). 
-     Use of region specifications requires a coordinate-sorted and indexed input file (in BAM or CRAM format).
 
    requirements:
    - class: ShellCommandRequirement
@@ -488,7 +496,8 @@ Common Workflow Language
      inputBinding:
        prefix: -o
        position: 5
-       valueFrom: $(inputs.sam).bam
+       valueFrom: |-
+         $(inputs.sam.basename.replace(/.sam$/, "").replace(/.bam$/, "").replace(/.cram$/, "")).bam
    - id: regions
      label: regions
      doc: |-
@@ -505,7 +514,8 @@ Common Workflow Language
      label: out
      type: File
      outputBinding:
-       glob: $(inputs.sam).bam
+       glob: |-
+         $(inputs.sam.basename.replace(/.sam$/, "").replace(/.bam$/, "").replace(/.cram$/, "")).bam
        loadContents: false
    stdout: _stdout
    stderr: _stderr

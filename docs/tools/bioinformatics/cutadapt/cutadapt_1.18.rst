@@ -48,12 +48,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for cutadapt:
 
 .. code-block:: bash
@@ -81,6 +75,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        cutadapt
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          cutadapt
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -186,7 +201,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[File] fastq
        String? adapter
        String? outputFilename
@@ -244,6 +259,7 @@ Workflow Description Language
        Boolean? trimPrimer
        Boolean? zeroCap
      }
+
      command <<<
        set -e
        cutadapt \
@@ -304,17 +320,20 @@ Workflow Description Language
          ~{if (defined(zeroCap) && select_first([zeroCap])) then "-z" else ""} \
          ~{if length(fastq) > 0 then "'" + sep("' '", fastq) + "'" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 5, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/cutadapt:1.18--py37h14c3975_1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4, 4])}G"
        preemptible: 2
      }
+
      output {
        Array[File] out = glob("*.fastq.gz")
      }
+
    }
 
 Common Workflow Language
@@ -326,22 +345,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Cutadapt
-   doc: |2-
-
-     Cutadapt finds and removes adapter sequences, primers, poly-A tails and other types of unwanted sequence 
-     from your high-throughput sequencing reads.
-
-     Cleaning your data in this way is often required: Reads from small-RNA sequencing 
-     contain the 3’ sequencing adapter because the read is longer than the molecule that is sequenced. 
-     Amplicon reads start with a primer sequence. Poly-A tails are useful for pulling out RNA from your sample, 
-     but often you don’t want them to be in your reads.
-     Cutadapt helps with these trimming tasks by finding the adapter or primer sequences in an error-tolerant way. 
-     It can also modify and filter reads in various ways. Adapter sequences can contain IUPAC wildcard characters. 
-     Also, paired-end reads and even colorspace data is supported. If you want, you can also just demultiplex your 
-     input data, without removing adapter sequences at all.
-
-     Cutadapt comes with an extensive suite of automated tests and is available under the terms of the MIT license.
-     If you use Cutadapt, please cite DOI:10.14806/ej.17.1.200 .
 
    requirements:
    - class: ShellCommandRequirement

@@ -78,12 +78,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for happy_validator:
 
 .. code-block:: bash
@@ -111,6 +105,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        happy_validator
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          happy_validator
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -221,7 +236,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File truthVCF
        File compareVCF
        String? reportPrefix
@@ -283,6 +298,7 @@ Workflow Description Language
        Boolean? verbose
        Boolean? quiet
      }
+
      command <<<
        set -e
        /opt/hap.py/bin/hap.py \
@@ -340,14 +356,16 @@ Workflow Description Language
          '~{truthVCF}' \
          '~{compareVCF}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 2, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "pkrusche/hap.py:v0.3.9"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File extended = (select_first([reportPrefix, "generated"]) + ".extended.csv")
        File summary = (select_first([reportPrefix, "generated"]) + ".summary.csv")
@@ -361,6 +379,7 @@ Workflow Description Language
        File snpLocations = (select_first([reportPrefix, "generated"]) + ".roc.Locations.SNP.csv.gz")
        File snpPassLocations = (select_first([reportPrefix, "generated"]) + ".roc.Locations.SNP.PASS.csv.gz")
      }
+
    }
 
 Common Workflow Language
@@ -372,41 +391,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Hap.py validation
-   doc: |-
-     usage: Haplotype Comparison 
-         [-h] [-v] [-r REF] [-o REPORTS_PREFIX]
-         [--scratch-prefix SCRATCH_PREFIX] [--keep-scratch]
-         [-t {xcmp,ga4gh}] [-f FP_BEDFILE]
-         [--stratification STRAT_TSV]
-         [--stratification-region STRAT_REGIONS]
-         [--stratification-fixchr] [-V] [-X]
-         [--no-write-counts] [--output-vtc]
-         [--preserve-info] [--roc ROC] [--no-roc]
-         [--roc-regions ROC_REGIONS]
-         [--roc-filter ROC_FILTER] [--roc-delta ROC_DELTA]
-         [--ci-alpha CI_ALPHA] [--no-json]
-         [--location LOCATIONS] [--pass-only]
-         [--filters-only FILTERS_ONLY] [-R REGIONS_BEDFILE]
-         [-T TARGETS_BEDFILE] [-L] [--no-leftshift]
-         [--decompose] [-D] [--bcftools-norm] [--fixchr]
-         [--no-fixchr] [--bcf] [--somatic]
-         [--set-gt {half,hemi,het,hom,first}]
-         [--gender {male,female,auto,none}]
-         [--preprocess-truth] [--usefiltered-truth]
-         [--preprocessing-window-size PREPROCESS_WINDOW]
-         [--adjust-conf-regions] [--no-adjust-conf-regions]
-         [--unhappy] [-w WINDOW]
-         [--xcmp-enumeration-threshold MAX_ENUM]
-         [--xcmp-expand-hapblocks HB_EXPAND]
-         [--threads THREADS]
-         [--engine {xcmp,vcfeval,scmp-somatic,scmp-distance}]
-         [--engine-vcfeval-path ENGINE_VCFEVAL]
-         [--engine-vcfeval-template ENGINE_VCFEVAL_TEMPLATE]
-         [--scmp-distance ENGINE_SCMP_DISTANCE]
-         [--logfile LOGFILE] [--verbose | --quiet]
-         [_vcfs [_vcfs ...]]
-     positional arguments:
-       _vcfs                 Two VCF files.
 
    requirements:
    - class: ShellCommandRequirement
@@ -871,21 +855,18 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".extended.csv"))
-       outputEval: $((inputs.reportPrefix.basename + ".extended.csv"))
        loadContents: false
    - id: summary
      label: summary
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".summary.csv"))
-       outputEval: $((inputs.reportPrefix.basename + ".summary.csv"))
        loadContents: false
    - id: metrics
      label: metrics
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".metrics.json.gz"))
-       outputEval: $((inputs.reportPrefix.basename + ".metrics.json.gz"))
        loadContents: false
    - id: vcf
      label: vcf
@@ -894,49 +875,42 @@ Common Workflow Language
      - pattern: .tbi
      outputBinding:
        glob: $((inputs.reportPrefix + ".vcf.gz"))
-       outputEval: $((inputs.reportPrefix.basename + ".vcf.gz"))
        loadContents: false
    - id: runinfo
      label: runinfo
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".runinfo.json"))
-       outputEval: $((inputs.reportPrefix.basename + ".runinfo.json"))
        loadContents: false
    - id: rocOut
      label: rocOut
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".roc.all.csv.gz"))
-       outputEval: $((inputs.reportPrefix.basename + ".roc.all.csv.gz"))
        loadContents: false
    - id: indelLocations
      label: indelLocations
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".roc.Locations.INDEL.csv.gz"))
-       outputEval: $((inputs.reportPrefix.basename + ".roc.Locations.INDEL.csv.gz"))
        loadContents: false
    - id: indelPassLocations
      label: indelPassLocations
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".roc.Locations.INDEL.PASS.csv.gz"))
-       outputEval: $((inputs.reportPrefix.basename + ".roc.Locations.INDEL.PASS.csv.gz"))
        loadContents: false
    - id: snpLocations
      label: snpLocations
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".roc.Locations.SNP.csv.gz"))
-       outputEval: $((inputs.reportPrefix.basename + ".roc.Locations.SNP.csv.gz"))
        loadContents: false
    - id: snpPassLocations
      label: snpPassLocations
      type: File
      outputBinding:
        glob: $((inputs.reportPrefix + ".roc.Locations.SNP.PASS.csv.gz"))
-       outputEval: $((inputs.reportPrefix.basename + ".roc.Locations.SNP.PASS.csv.gz"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr

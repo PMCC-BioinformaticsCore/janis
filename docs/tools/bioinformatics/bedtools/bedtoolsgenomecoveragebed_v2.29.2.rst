@@ -34,12 +34,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for bedtoolsgenomeCoverageBed:
 
 .. code-block:: bash
@@ -66,6 +60,27 @@ Quickstart
        --inputs inputs.yaml \
        bedtoolsgenomeCoverageBed
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          bedtoolsgenomeCoverageBed
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
+
 
 
 
@@ -86,39 +101,40 @@ Information
 Outputs
 -----------
 
-======  ================  ===============
-name    type              documentation
-======  ================  ===============
-out     stdout<TextFile>
-======  ================  ===============
+======  ========  ===============
+name    type      documentation
+======  ========  ===============
+out     TextFile
+======  ========  ===============
 
 
 Additional configuration (inputs)
 ---------------------------------
 
-===============  =================  ==========  ==========  ==========================================================================================================================================================================================================================================================================================================================================================================================================
-name             type               prefix      position    documentation
-===============  =================  ==========  ==========  ==========================================================================================================================================================================================================================================================================================================================================================================================================
-depth            Optional<Boolean>  -d                      Report the depth at each genome position (with one-based coordinates). Default behavior is to report a histogram.
-depthZero        Optional<Boolean>  -dz                     Report the depth at each genome position (with zero-based coordinates). Reports only non-zero positions. Default behavior is to report a histogram.
-BedGraphFormat   Optional<Boolean>  -bg                     Report depth in BedGraph format. For details, see: genome.ucsc.edu/goldenPath/help/bedgraph.html
-BedGraphFormata  Optional<Boolean>  -bga                    Report depth in BedGraph format, as above (-bg). However with this option, regions with zero coverage are also reported. This allows one to quickly extract all regions of a genome with 0  coverage by applying: 'grep -w 0$' to the output.
-split            Optional<Boolean>  -split                  Treat 'split' BAM or BED12 entries as distinct BED intervals when computing coverage. For BAM files, this uses the CIGAR 'N' and 'D' operations to infer the blocks for computing coverage. For BED12 files, this uses the BlockCount, BlockStarts, and BlockEnds fields (i.e., columns 10,11,12).
-strand           Optional<String>   -strand                 (STRING): can be + or -. Calculate coverage of intervals from a specific strand. With BED files, requires at least 6 columns (strand is column 6).
-pairEnd          Optional<Boolean>  -pc                     Calculate coverage of pair-end fragments. Works for BAM files only
-fragmentSize     Optional<Boolean>  -fs                     Force to use provided fragment size instead of read length. Works for BAM files only
-du               Optional<Boolean>  -du                     Change strand af the mate read (so both reads from the same strand) useful for strand specific. Works for BAM files only
-fivePos          Optional<Boolean>  -5                      Calculate coverage of 5' positions (instead of entire interval).
-threePos         Optional<Boolean>  -3                      Calculate coverage of 3' positions (instead of entire interval).
-max              Optional<Integer>  -max                    Combine all positions with a depth >= max into a single bin in the histogram. Irrelevant for -d and -bedGraph
-scale            Optional<Float>    -scale                  Scale the coverage by a constant factor. Each coverage value is multiplied by this factor before being reported. Useful for normalizing coverage by, e.g., reads per million (RPM). Default is 1.0; i.e., unscaled.
-trackline        Optional<Boolean>  -trackline              Adds a UCSC/Genome-Browser track line definition in the first line of the output. - See here for more details about track line definition: http://genome.ucsc.edu/goldenPath/help/bedgraph.html - NOTE: When adding a trackline definition, the output BedGraph can be easily uploaded to the Genome Browser as a custom track, BUT CAN NOT be converted into a BigWig file (w/o removing the first line).
-trackopts        Optional<String>   -trackopts              Writes additional track line definition parameters in the first line. - Example: -trackopts 'name="My Track" visibility=2 color=255,30,30' Note the use of single-quotes if you have spaces in your parameters.
-inputBam         Optional<BAM>      -ibam                   Input bam file. Note: BAM _must_ be sorted by position. A 'samtools sort <BAM>' should suffice.
-inputBed         Optional<File>     -iBed                   Input bed file. Must be grouped by chromosome. A simple 'sort -k 1,1 <BED> > <BED>.sorted' will suffice.
-inputFile        Optional<File>     -i                      Input file, can be gff/vcf.
-genome           Optional<File>     -g                      Genome file. The genome file should tab delimited and structured as follows: <chromName><TAB><chromSize>.
-===============  =================  ==========  ==========  ==========================================================================================================================================================================================================================================================================================================================================================================================================
+===============  ==================  ==========  ==========  ==========================================================================================================================================================================================================================================================================================================================================================================================================
+name             type                prefix        position  documentation
+===============  ==================  ==========  ==========  ==========================================================================================================================================================================================================================================================================================================================================================================================================
+depth            Optional<Boolean>   -d                      Report the depth at each genome position (with one-based coordinates). Default behavior is to report a histogram.
+depthZero        Optional<Boolean>   -dz                     Report the depth at each genome position (with zero-based coordinates). Reports only non-zero positions. Default behavior is to report a histogram.
+BedGraphFormat   Optional<Boolean>   -bg                     Report depth in BedGraph format. For details, see: genome.ucsc.edu/goldenPath/help/bedgraph.html
+BedGraphFormata  Optional<Boolean>   -bga                    Report depth in BedGraph format, as above (-bg). However with this option, regions with zero coverage are also reported. This allows one to quickly extract all regions of a genome with 0  coverage by applying: 'grep -w 0$' to the output.
+split            Optional<Boolean>   -split                  Treat 'split' BAM or BED12 entries as distinct BED intervals when computing coverage. For BAM files, this uses the CIGAR 'N' and 'D' operations to infer the blocks for computing coverage. For BED12 files, this uses the BlockCount, BlockStarts, and BlockEnds fields (i.e., columns 10,11,12).
+strand           Optional<String>    -strand                 (STRING): can be + or -. Calculate coverage of intervals from a specific strand. With BED files, requires at least 6 columns (strand is column 6).
+pairEnd          Optional<Boolean>   -pc                     Calculate coverage of pair-end fragments. Works for BAM files only
+fragmentSize     Optional<Boolean>   -fs                     Force to use provided fragment size instead of read length. Works for BAM files only
+du               Optional<Boolean>   -du                     Change strand af the mate read (so both reads from the same strand) useful for strand specific. Works for BAM files only
+fivePos          Optional<Boolean>   -5                      Calculate coverage of 5' positions (instead of entire interval).
+threePos         Optional<Boolean>   -3                      Calculate coverage of 3' positions (instead of entire interval).
+max              Optional<Integer>   -max                    Combine all positions with a depth >= max into a single bin in the histogram. Irrelevant for -d and -bedGraph
+scale            Optional<Float>     -scale                  Scale the coverage by a constant factor. Each coverage value is multiplied by this factor before being reported. Useful for normalizing coverage by, e.g., reads per million (RPM). Default is 1.0; i.e., unscaled.
+trackline        Optional<Boolean>   -trackline              Adds a UCSC/Genome-Browser track line definition in the first line of the output. - See here for more details about track line definition: http://genome.ucsc.edu/goldenPath/help/bedgraph.html - NOTE: When adding a trackline definition, the output BedGraph can be easily uploaded to the Genome Browser as a custom track, BUT CAN NOT be converted into a BigWig file (w/o removing the first line).
+trackopts        Optional<String>    -trackopts              Writes additional track line definition parameters in the first line. - Example: -trackopts 'name="My Track" visibility=2 color=255,30,30' Note the use of single-quotes if you have spaces in your parameters.
+inputBam         Optional<BAM>       -ibam                   Input bam file. Note: BAM _must_ be sorted by position. A 'samtools sort <BAM>' should suffice.
+inputBed         Optional<File>      -iBed                   Input bed file. Must be grouped by chromosome. A simple 'sort -k 1,1 <BED> > <BED>.sorted' will suffice.
+inputFile        Optional<File>      -i                      Input file, can be gff/vcf.
+genome           Optional<File>      -g                      Genome file. The genome file should tab delimited and structured as follows: <chromName><TAB><chromSize>.
+outputFilename   Optional<Filename>  >                   10
+===============  ==================  ==========  ==========  ==========================================================================================================================================================================================================================================================================================================================================================================================================
 
 Workflow Description Language
 ------------------------------
@@ -132,7 +148,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Boolean? depth
        Boolean? depthZero
        Boolean? BedGraphFormat
@@ -152,7 +168,9 @@ Workflow Description Language
        File? inputBed
        File? inputFile
        File? genome
+       String? outputFilename
      }
+
      command <<<
        set -e
        genomeCoverageBed \
@@ -174,19 +192,23 @@ Workflow Description Language
          ~{if defined(inputBam) then ("-ibam '" + inputBam + "'") else ""} \
          ~{if defined(inputBed) then ("-iBed '" + inputBed + "'") else ""} \
          ~{if defined(inputFile) then ("-i '" + inputFile + "'") else ""} \
-         ~{if defined(genome) then ("-g '" + genome + "'") else ""}
+         ~{if defined(genome) then ("-g '" + genome + "'") else ""} \
+         > '~{select_first([outputFilename, "generated"])}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/bedtools:2.29.2--hc088bd4_0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
-       File out = stdout()
+       File out = select_first([outputFilename, "generated"])
      }
+
    }
 
 Common Workflow Language
@@ -198,8 +220,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'BEDTools: genomeCoverageBed'
-   doc: |-
-     bedtools genomecov computes histograms (default), per-base reports (-d) and BEDGRAPH (-bg) summaries of feature coverage (e.g., aligned sequences) for a given genome. Note: 1. If using BED/GFF/VCF, the input (-i) file must be grouped by chromosome. A simple sort -k 1,1 in.bed > in.sorted.bed will suffice. Also, if using BED/GFF/VCF, one must provide a genome file via the -g argument. 2. If the input is in BAM (-ibam) format, the BAM file must be sorted by position. Using samtools sort aln.bam aln.sorted will suffice.
 
    requirements:
    - class: ShellCommandRequirement
@@ -375,11 +395,23 @@ Common Workflow Language
      - 'null'
      inputBinding:
        prefix: -g
+   - id: outputFilename
+     label: outputFilename
+     type:
+     - string
+     - 'null'
+     default: generated
+     inputBinding:
+       prefix: '>'
+       position: 10
 
    outputs:
    - id: out
      label: out
-     type: stdout
+     type: File
+     outputBinding:
+       glob: generated
+       loadContents: false
    stdout: _stdout
    stderr: _stderr
 

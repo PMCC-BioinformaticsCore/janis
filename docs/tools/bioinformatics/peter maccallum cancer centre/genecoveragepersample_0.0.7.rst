@@ -59,12 +59,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for geneCoveragePerSample:
 
 .. code-block:: bash
@@ -90,6 +84,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        geneCoveragePerSample
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          geneCoveragePerSample
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -146,7 +161,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File? listFile
        String? sampleName
        File? bedtoolsOutputPath
@@ -155,6 +170,7 @@ Workflow Description Language
        String? fold
        Int? threads
      }
+
      command <<<
        set -e
        gene_coverage_per_sample.py \
@@ -166,18 +182,21 @@ Workflow Description Language
          ~{if defined(fold) then ("--fold '" + fold + "'") else ""} \
          ~{if defined(threads) then ("--threads " + threads) else ''}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "michaelfranklin/pmacutil:0.0.7"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File geneFileOut = select_first([outputGeneFile, "generated.gene.txt"])
        File regionFileOut = select_first([outputRegionFile, "generated.region.txt"])
      }
+
    }
 
 Common Workflow Language
@@ -189,32 +208,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Gene Coverage Per Sample
-   doc: |-
-     usage: gene_coverage_per_sample.py [-h] [-l LIST] [-n NAME] [-p PATH] [-b BED]
-                                        [-g GENE] [-r REGION] [-f FOLDS] [-d]
-                                        [-t THREADS]
-
-     Gene or region coverage of bam
-
-     optional arguments:
-       -h, --help            show this help message and exit
-       -l LIST, --list LIST  List file: A tsv file contains SampleName
-                             PathToBedtoolsOutput on each line
-       -n NAME, --name NAME  Sample name if list not used
-       -p PATH, --path PATH  Path to bedtools output if list not used
-       -b BED, --bed BED     (Deprecated option) Bed file
-       -g GENE, --gene GENE  Output gene file
-       -r REGION, --region REGION
-                             Output region file
-       -f FOLDS, --folds FOLDS
-                             Folds, quoted and commna sepparated, default
-                             1,10,20,100
-       -d, --remove_duplicates
-                             (Deprecated option) Remove marked duplicates in
-                             analysis, default:false
-       -t THREADS, --threads THREADS
-                             number of threads, default:32
-          
 
    requirements:
    - class: ShellCommandRequirement

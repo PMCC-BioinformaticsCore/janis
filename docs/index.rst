@@ -205,6 +205,7 @@ Information about the project structure and more on contributing can be found wi
 
 .. toctree::
    :hidden:
+   :maxdepth: 1
    :caption: Tutorials: translation
 
    CWL to Nextflow <tutorials/translation/cwl_to_nextflow/main.rst>

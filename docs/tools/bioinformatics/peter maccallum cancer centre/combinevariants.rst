@@ -62,12 +62,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for combinevariants:
 
 .. code-block:: bash
@@ -96,6 +90,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        combinevariants
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          combinevariants
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -151,7 +166,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        String? outputFilename
        Array[File] vcfs
        String type
@@ -160,6 +175,7 @@ Workflow Description Language
        String? tumor
        Int? priority
      }
+
      command <<<
        set -e
        combine_vcf.py \
@@ -171,17 +187,20 @@ Workflow Description Language
          ~{if defined(tumor) then ("--tumor '" + tumor + "'") else ""} \
          ~{if defined(priority) then ("--priority " + priority) else ''}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "michaelfranklin/pmacutil:0.0.8"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated.combined.vcf"])
      }
+
    }
 
 Common Workflow Language
@@ -193,34 +212,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Combine Variants
-   doc: |2
-
-     usage: combine_vcf.py [-h] -i I --columns COLUMNS -o O --type
-                           {germline,somatic} [--regions REGIONS] [--normal NORMAL]
-                           [--tumor TUMOR] [--priority PRIORITY [PRIORITY ...]]
-
-     Extracts and combines the information from germline / somatic vcfs into one
-
-     required arguments:
-       -i I                  input vcfs, the priority of the vcfs will be based on
-                             the order of the input. This parameter can be
-                             specified more than once
-       --columns COLUMNS     Columns to keep. This parameter can be specified more
-                             than once
-       -o O                  output vcf (unsorted)
-       --type {germline,somatic}
-                             must be either germline or somatic
-       --regions REGIONS     Region file containing all the variants, used as
-                             samtools mpileup
-       --normal NORMAL       Sample id of germline vcf, or normal sample id of
-                             somatic vcf
-       --tumor TUMOR         tumor sample ID, required if inputs are somatic vcfs
-       --priority PRIORITY [PRIORITY ...]
-                             The priority of the callers, must match with the
-                             callers in the source header
-
-     optional arguments:
-       -h, --help            show this help message and exit
 
    requirements:
    - class: ShellCommandRequirement

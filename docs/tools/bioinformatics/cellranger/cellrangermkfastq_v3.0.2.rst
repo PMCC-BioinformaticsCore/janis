@@ -50,12 +50,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for CellRangerMkfastq:
 
 .. code-block:: bash
@@ -81,6 +75,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        CellRangerMkfastq
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          CellRangerMkfastq
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -143,7 +158,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Directory run
        String? id
        String? outputFoldername
@@ -159,6 +174,7 @@ Workflow Description Language
        Float? localmem
        Boolean? nopreflight
      }
+
      command <<<
        set -e
        cellranger mkfastq \
@@ -177,17 +193,20 @@ Workflow Description Language
          ~{if defined(select_first([localmem, select_first([runtime_memory, 4])])) then ("--localmem=" + select_first([localmem, select_first([runtime_memory, 4])])) else ''} \
          ~{if (defined(nopreflight) && select_first([nopreflight])) then "--nopreflight" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "fbrundu/cellranger:v3.0.2"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        Directory out = select_first([outputFoldername, "generated"])
      }
+
    }
 
 Common Workflow Language
@@ -199,23 +218,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: CellRanger mkfastq
-   doc: |
-     /opt/cellranger-3.0.2/cellranger-cs/3.0.2/bin
-     cellranger mkfastq (3.0.2)
-     Copyright (c) 2019 10x Genomics, Inc.  All rights reserved.
-     -------------------------------------------------------------------------------
-     Run Illumina demultiplexer on sample sheets that contain 10x-specific sample 
-     index sets, and generate 10x-specific quality metrics after the demultiplex.  
-     Any bcl2fastq argument will work (except a few that are set by the pipeline 
-     to ensure proper trimming and sample indexing). The FASTQ output generated 
-     will be the same as when running bcl2fastq directly.
-     These bcl2fastq arguments are overridden by this pipeline:
-         --fastq-cluster-count
-         --minimum-trimmed-read-length
-         --mask-short-adapter-reads
-     Usage:
-         cellranger mkfastq --run=PATH [options]
-         cellranger mkfastq -h | --help | --version
 
    requirements:
    - class: ShellCommandRequirement

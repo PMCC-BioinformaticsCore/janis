@@ -40,12 +40,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for vcfcombine:
 
 .. code-block:: bash
@@ -73,6 +67,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        vcfcombine
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          vcfcombine
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -123,27 +138,31 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[File] vcf
        String? region
      }
+
      command <<<
        set -e
        vcfcombine \
          ~{if defined(region) then ("-r '" + region + "'") else ""} \
          ~{if length(vcf) > 0 then "'" + sep("' '", vcf) + "'" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "shollizeck/vcflib:1.0.1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = stdout()
      }
+
    }
 
 Common Workflow Language
@@ -155,14 +174,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'VcfLib: VcfCombine'
-   doc: |-
-     usage: vcfcombine [vcf file] [vcf file] ...
-
-      options:
-     -h --help	This text.
-     -r --region REGION	A region specifier of the form chrN:x-y to bound the merge
-
-     Combines VCF files positionally, combining samples when sites and alleles are identical. Any number of VCF files may be combined. The INFO field and other columns are taken from one of the files which are combined when records in multiple files match. Alleles must have identical ordering to be combined into one record. If they do not, multiple records will be emitted
 
    requirements:
    - class: ShellCommandRequirement

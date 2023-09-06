@@ -45,12 +45,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for strelka_somatic_cram:
 
 .. code-block:: bash
@@ -78,6 +72,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        strelka_somatic_cram
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          strelka_somatic_cram
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -138,7 +153,6 @@ snvscoringmodelfile    Optional<File>                 --snvScoringModelFile=    
 indelscoringmodelfile  Optional<File>                 --indelScoringModelFile=           1  Provide a custom empirical scoring model file for indels (default: /opt/strelka/share/config/somaticInde lScoringModels.json)
 mode                   Optional<String>               --mode                             3  (-m MODE)  select run mode (local|sge)
 queue                  Optional<String>               --queue                            3  (-q QUEUE) specify scheduler queue name
-memGb                  Optional<String>               --memGb                            3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
 quiet                  Optional<Boolean>              --quiet                            3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
 =====================  =============================  ========================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 
@@ -149,12 +163,12 @@ Workflow Description Language
 
    version development
 
-   task strelka_somatic_cram {
+   task strelka_somatic {
      input {
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File normalBam
        File normalBam_crai
        File tumorBam
@@ -184,9 +198,9 @@ Workflow Description Language
        File? indelscoringmodelfile
        String? mode
        String? queue
-       String? memGb
        Boolean? quiet
      }
+
      command <<<
        set -e
         \
@@ -214,18 +228,20 @@ Workflow Description Language
          ;~{select_first([rundir, "generated"])}/runWorkflow.py \
          ~{if defined(select_first([mode, "local"])) then ("--mode " + select_first([mode, "local"])) else ''} \
          ~{if defined(queue) then ("--queue " + queue) else ''} \
-         ~{if defined(memGb) then ("--memGb " + memGb) else ''} \
          ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
-         --jobs ~{select_first([runtime_cpu, 4])}
+         --jobs ~{select_first([runtime_cpu, 4])} \
+         --memGb ~{select_first([runtime_memory, 4, 4])}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "michaelfranklin/strelka:2.9.10"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4, 4])}G"
        preemptible: 2
      }
+
      output {
        File configPickle = (select_first([rundir, "generated"]) + "/runWorkflow.py.config.pickle")
        File script = (select_first([rundir, "generated"]) + "/runWorkflow.py")
@@ -235,6 +251,7 @@ Workflow Description Language
        File snvs = (select_first([rundir, "generated"]) + "/results/variants/somatic.snvs.vcf.gz")
        File snvs_tbi = (select_first([rundir, "generated"]) + "/results/variants/somatic.snvs.vcf.gz") + ".tbi"
      }
+
    }
 
 Common Workflow Language
@@ -246,13 +263,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Strelka (Somatic)
-   doc: |-
-     Usage: configureStrelkaSomaticWorkflow.py [options]
-     Version: 2.9.10
-     This script configures Strelka somatic small variant calling.
-     You must specify an alignment file (BAM or CRAM) for each sample of a matched tumor-normal pair.
-     Configuration will produce a workflow run script which can execute the workflow on a single node or through
-     sge and resume any interrupted execution.
 
    requirements:
    - class: ShellCommandRequirement
@@ -501,17 +511,6 @@ Common Workflow Language
        prefix: --queue
        position: 3
        shellQuote: false
-   - id: memGb
-     label: memGb
-     doc: |2-
-        (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
-     type:
-     - string
-     - 'null'
-     inputBinding:
-       prefix: --memGb
-       position: 3
-       shellQuote: false
    - id: quiet
      label: quiet
      doc: |-
@@ -530,14 +529,12 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.rundir + "/runWorkflow.py.config.pickle"))
-       outputEval: $((inputs.rundir.basename + "/runWorkflow.py.config.pickle"))
        loadContents: false
    - id: script
      label: script
      type: File
      outputBinding:
        glob: $((inputs.rundir + "/runWorkflow.py"))
-       outputEval: $((inputs.rundir.basename + "/runWorkflow.py"))
        loadContents: false
    - id: stats
      label: stats
@@ -546,7 +543,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.rundir + "/results/stats/runStats.tsv"))
-       outputEval: $((inputs.rundir.basename + "/results/stats/runStats.tsv"))
        loadContents: false
    - id: indels
      label: indels
@@ -556,7 +552,6 @@ Common Workflow Language
      - pattern: .tbi
      outputBinding:
        glob: $((inputs.rundir + "/results/variants/somatic.indels.vcf.gz"))
-       outputEval: $((inputs.rundir.basename + "/results/variants/somatic.indels.vcf.gz"))
        loadContents: false
    - id: snvs
      label: snvs
@@ -566,7 +561,6 @@ Common Workflow Language
      - pattern: .tbi
      outputBinding:
        glob: $((inputs.rundir + "/results/variants/somatic.snvs.vcf.gz"))
-       outputEval: $((inputs.rundir.basename + "/results/variants/somatic.snvs.vcf.gz"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -581,11 +575,16 @@ Common Workflow Language
      valueFrom: $([inputs.runtime_cpu, 4].filter(function (inner) { return inner != null
        })[0])
      shellQuote: false
+   - prefix: --memGb
+     position: 3
+     valueFrom: |-
+       $([inputs.runtime_memory, 4, 4].filter(function (inner) { return inner != null })[0])
+     shellQuote: false
 
    hints:
    - class: ToolTimeLimit
      timelimit: |-
        $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
-   id: strelka_somatic_cram
+   id: strelka_somatic
 
 

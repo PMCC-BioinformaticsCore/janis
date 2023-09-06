@@ -54,12 +54,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for bwamem:
 
 .. code-block:: bash
@@ -88,6 +82,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        bwamem
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          bwamem
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -161,7 +176,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File reference
        File reference_amb
        File reference_ann
@@ -193,6 +208,7 @@ Workflow Description Language
        Boolean? markShorterSplits
        Int? verboseLevel
      }
+
      command <<<
        set -e
        bwa mem \
@@ -221,17 +237,20 @@ Workflow Description Language
          ~{if length(reads) > 0 then "'" + sep("' '", reads) + "'" else ""} \
          ~{if (defined(mates) && length(select_first([mates])) > 0) then "'" + sep("' '", select_first([mates])) + "'" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 16, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "biocontainers/bwa:v0.7.15_cv3"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 16, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = stdout()
      }
+
    }
 
 Common Workflow Language
@@ -243,27 +262,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: BWA-MEM
-   doc: |-
-     bwa - Burrows-Wheeler Alignment Tool
-     BWA is a software package for mapping low-divergent sequences against a large reference genome, such as the human 
-     genome. It consists of three algorithms: BWA-backtrack, BWA-SW and BWA-MEM. The first algorithm is designed for 
-     Illumina sequence reads up to 100bp, while the rest two for longer sequences ranged from 70bp to 1Mbp. 
-     BWA-MEM and BWA-SW share similar features such as long-read support and split alignment, but BWA-MEM, which is 
-     the latest, is generally recommended for high-quality queries as it is faster and more accurate. 
-     BWA-MEM also has better performance than BWA-backtrack for 70-100bp Illumina reads.
-
-     Align 70bp-1Mbp query sequences with the BWA-MEM algorithm. Briefly, the algorithm works by seeding alignments 
-     with maximal exact matches (MEMs) and then extending seeds with the affine-gap Smith-Waterman algorithm (SW).
-
-     If mates.fq file is absent and option -p is not set, this command regards input reads are single-end. If 'mates.fq' 
-     is present, this command assumes the i-th read in reads.fq and the i-th read in mates.fq constitute a read pair. 
-     If -p is used, the command assumes the 2i-th and the (2i+1)-th read in reads.fq constitute a read pair (such input 
-     file is said to be interleaved). In this case, mates.fq is ignored. In the paired-end mode, the mem command will 
-     infer the read orientation and the insert size distribution from a batch of reads.
-
-     The BWA-MEM algorithm performs local alignment. It may produce multiple primary alignments for different part of a 
-     query sequence. This is a crucial feature for long sequences. However, some tools such as Picard’s markDuplicates 
-     does not work with split alignments. One may consider to use option -M to flag shorter split hits as secondary.
 
    requirements:
    - class: ShellCommandRequirement

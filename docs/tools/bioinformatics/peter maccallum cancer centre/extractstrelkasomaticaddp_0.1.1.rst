@@ -37,12 +37,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for extractStrelkaSomaticADDP:
 
 .. code-block:: bash
@@ -68,6 +62,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        extractStrelkaSomaticADDP
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          extractStrelkaSomaticADDP
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -118,27 +133,31 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File vcf
        String? outputFilename
      }
+
      command <<<
        set -e
        extract_strelka_somatic_DP_AF.py \
          -i '~{vcf}' \
          -o '~{select_first([outputFilename, "generated.vcf"])}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "michaelfranklin/pmacutil:0.1.1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated.vcf"])
      }
+
    }
 
 Common Workflow Language
@@ -150,11 +169,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Extract Strelka Somatic AD DP
-   doc: |2-
-
-      - Extract and calculate AD and AF value for each variant (both SNVs and INDELs)
-     Based on https://github.com/Illumina/strelka/blob/v2.9.x/docs/userGuide/README.md#somatic
-          
 
    requirements:
    - class: ShellCommandRequirement

@@ -57,12 +57,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4HaplotypeCaller:
 
 .. code-block:: bash
@@ -89,6 +83,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4HaplotypeCaller
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4HaplotypeCaller
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -183,7 +198,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        String? pairHmmImplementation
@@ -239,6 +254,7 @@ Workflow Description Language
        File? intervals
        String? outputBamName
      }
+
      command <<<
        set -e
        cp -f '~{inputRead_bai}' $(echo '~{inputRead}' | sed 's/\.[^.]*$//').bai
@@ -289,20 +305,23 @@ Workflow Description Language
          -bamout '~{select_first([outputBamName, "~{basename(inputRead, ".bam")}.bam"])}'
        if [ -f $(echo '~{select_first([outputBamName, "~{basename(inputRead, ".bam")}.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([outputBamName, "~{basename(inputRead, ".bam")}.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([outputBamName, "~{basename(inputRead, ".bam")}.bam"])}' ).bai; fi
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.2.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "~{basename(inputRead, ".bam")}.vcf.gz"])
        File out_tbi = select_first([outputFilename, "~{basename(inputRead, ".bam")}.vcf.gz"]) + ".tbi"
        File bam = select_first([outputBamName, "~{basename(inputRead, ".bam")}.bam"])
        File bam_bai = select_first([outputBamName, "~{basename(inputRead, ".bam")}.bam"]) + ".bai"
      }
+
    }
 
 Common Workflow Language
@@ -314,29 +333,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: Haplotype Caller'
-   doc: |-
-     Call germline SNPs and indels via local re-assembly of haplotypes
-      
-     The HaplotypeCaller is capable of calling SNPs and indels simultaneously via local de-novo assembly of haplotypes 
-     in an active region. In other words, whenever the program encounters a region showing signs of variation, it 
-     discards the existing mapping information and completely reassembles the reads in that region. This allows the 
-     HaplotypeCaller to be more accurate when calling regions that are traditionally difficult to call, for example when 
-     they contain different types of variants close to each other. It also makes the HaplotypeCaller much better at 
-     calling indels than position-based callers like UnifiedGenotyper.
-
-     In the GVCF workflow used for scalable variant calling in DNA sequence data, HaplotypeCaller runs per-sample to 
-     generate an intermediate GVCF (not to be used in final analysis), which can then be used in GenotypeGVCFs for joint 
-     genotyping of multiple samples in a very efficient way. The GVCF workflow enables rapid incremental processing of 
-     samples as they roll off the sequencer, as well as scaling to very large cohort sizes (e.g. the 92K exomes of ExAC).
-
-     In addition, HaplotypeCaller is able to handle non-diploid organisms as well as pooled experiment data. 
-     Note however that the algorithms used to calculate variant likelihoods is not well suited to extreme allele 
-     frequencies (relative to ploidy) so its use is not recommended for somatic (cancer) variant discovery. 
-     For that purpose, use Mutect2 instead.
-
-     Finally, HaplotypeCaller is also able to correctly handle the splice junctions that make RNAseq a challenge 
-     for most variant callers, on the condition that the input read data has previously been processed according 
-     to our recommendations as documented (https://software.broadinstitute.org/gatk/documentation/article?id=4067).
 
    requirements:
    - class: ShellCommandRequirement

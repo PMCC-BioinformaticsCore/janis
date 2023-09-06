@@ -3,7 +3,7 @@
 FastQC
 ===============
 
-``fastqc`` · *1 contributor · 2 versions*
+``fastqc`` · *2 contributors · 2 versions*
 
 FastQC is a program designed to spot potential problems in high througput sequencing datasets. It runs a set of analyses on one or more raw sequence files in fastq or bam format and produces a report which summarises the results.
 FastQC will highlight any areas where this library looks unusual and where you should take a closer look. The program is not tied to any specific type of sequencing technique and can be used to look at libraries coming from a large number of different experiment types (Genomic Sequencing, ChIP-Seq, RNA-Seq, BS-Seq etc etc).
@@ -24,8 +24,14 @@ Quickstart
                reads=None,
            )
        )
-       wf.output("out", source=fastqc_step.out)
-       wf.output("datafile", source=fastqc_step.datafile)
+       wf.output("out_R1", source=fastqc_step.out_R1)
+       wf.output("out_R1_datafile", source=fastqc_step.out_R1_datafile)
+       wf.output("out_R1_html", source=fastqc_step.out_R1_html)
+       wf.output("out_R1_directory", source=fastqc_step.out_R1_directory)
+       wf.output("out_R2", source=fastqc_step.out_R2)
+       wf.output("out_R2_datafile", source=fastqc_step.out_R2_datafile)
+       wf.output("out_R2_html", source=fastqc_step.out_R2_html)
+       wf.output("out_R2_directory", source=fastqc_step.out_R2_directory)
     
 
 *OR*
@@ -35,12 +41,6 @@ Quickstart
 2. Ensure Janis is configured to work with Docker or Singularity.
 
 3. Ensure all reference files are available:
-
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
 
 4. Generate user input files for fastqc:
 
@@ -70,6 +70,27 @@ Quickstart
        --inputs inputs.yaml \
        fastqc
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          fastqc
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
+
 
 
 
@@ -81,21 +102,27 @@ Information
 :URL: `http://www.bioinformatics.babraham.ac.uk/projects/fastqc/ <http://www.bioinformatics.babraham.ac.uk/projects/fastqc/>`_
 :Versions: v0.11.8, v0.11.5
 :Container: quay.io/biocontainers/fastqc:0.11.5--4
-:Authors: Michael Franklin
+:Authors: Michael Franklin, Jiaan Yu
 :Citations: None
 :Created: 2019-03-25
-:Updated: 2019-03-25
+:Updated: 2021-11-10
 
 
 Outputs
 -----------
 
-========  ===========  ===============
-name      type         documentation
-========  ===========  ===============
-out       Array<Zip>
-datafile  Array<File>
-========  ===========  ===============
+================  =========  ===============
+name              type       documentation
+================  =========  ===============
+out_R1            Zip
+out_R1_datafile   TextFile
+out_R1_html       HtmlFile
+out_R1_directory  Directory
+out_R2            Zip
+out_R2_datafile   TextFile
+out_R2_html       HtmlFile
+out_R2_directory  Directory
+================  =========  ===============
 
 
 Additional configuration (inputs)
@@ -104,7 +131,9 @@ Additional configuration (inputs)
 ============  =================  ==============  ==========  ========================================================================================================================================================================================================================================================================================================================================================================================================
 name          type               prefix            position  documentation
 ============  =================  ==============  ==========  ========================================================================================================================================================================================================================================================================================================================================================================================================
-reads         Array<FastqGz>                              5
+reads         FastqGzPair
+read1         Optional<FastqGz>                           5
+read2         Optional<FastqGz>                           6
 outdir        Optional<String>   --outdir                    (-o) Create all output files in the specified output directory. Please note that this directory must exist as the program will not create it.  If this option is not set then the output file for each sequence file is created in the same directory as the sequence file which was processed.
 casava        Optional<Boolean>  --casava                    Files come from raw casava output. Files in the same sample group (differing only by the group number) will be analysed as a set rather than individually. Sequences with the filter flag set in the header will be excluded from the analysis. Files must have the same names given to them by casava (including being gzipped and ending with .gz) otherwise they won't be grouped together correctly.
 nano          Optional<Boolean>  --nano                      Files come from naopore sequences and are in fast5 format. In this mode you can pass in directories to process and the program will take in all fast5 files within those directories and produce a single output file from the sequences found in all files.
@@ -135,8 +164,10 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[File] reads
+       File? read1
+       File? read2
        String? outdir
        Boolean? casava
        Boolean? nano
@@ -154,6 +185,7 @@ Workflow Description Language
        Boolean? quiet
        String? dir
      }
+
      command <<<
        set -e
        fastqc \
@@ -173,20 +205,30 @@ Workflow Description Language
          ~{if defined(kmers) then ("--kmers " + kmers) else ''} \
          ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          ~{if defined(dir) then ("--dir '" + dir + "'") else ""} \
-         ~{if length(reads) > 0 then "'" + sep("' '", reads) + "'" else ""}
+         ~{if defined(select_first([read1, reads[0]])) then ("'" + select_first([read1, reads[0]]) + "'") else ""} \
+         ~{if defined(select_first([read2, reads[1]])) then ("'" + select_first([read2, reads[1]]) + "'") else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/fastqc:0.11.5--4"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
-       Array[File] out = glob("*.zip")
-       Array[File] datafile = glob("*/fastqc_data.txt")
+       File out_R1 = (basename(basename(select_first([read1, reads[0]]), ".fastq.gz"), ".fq.gz") + "_fastqc.zip")
+       File out_R1_datafile = (basename(basename(select_first([read1, reads[0]]), ".fastq.gz"), ".fq.gz") + "_fastqc/fastqc_data.txt")
+       File out_R1_html = (basename(basename(select_first([read1, reads[0]]), ".fastq.gz"), ".fq.gz") + "_fastqc.html")
+       Directory out_R1_directory = (basename(basename(select_first([read1, reads[0]]), ".fastq.gz"), ".fq.gz") + "_fastqc")
+       File out_R2 = (basename(basename(select_first([read2, reads[1]]), ".fastq.gz"), ".fq.gz") + "_fastqc.zip")
+       File out_R2_datafile = (basename(basename(select_first([read2, reads[1]]), ".fastq.gz"), ".fq.gz") + "_fastqc/fastqc_data.txt")
+       File out_R2_html = (basename(basename(select_first([read2, reads[1]]), ".fastq.gz"), ".fq.gz") + "_fastqc.html")
+       Directory out_R2_directory = (basename(basename(select_first([read2, reads[1]]), ".fastq.gz"), ".fq.gz") + "_fastqc")
      }
+
    }
 
 Common Workflow Language
@@ -198,9 +240,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: FastQC
-   doc: |-
-     FastQC is a program designed to spot potential problems in high througput sequencing datasets. It runs a set of analyses on one or more raw sequence files in fastq or bam format and produces a report which summarises the results.
-     FastQC will highlight any areas where this library looks unusual and where you should take a closer look. The program is not tied to any specific type of sequencing technique and can be used to look at libraries coming from a large number of different experiment types (Genomic Sequencing, ChIP-Seq, RNA-Seq, BS-Seq etc etc).
 
    requirements:
    - class: ShellCommandRequirement
@@ -214,8 +253,22 @@ Common Workflow Language
      type:
        type: array
        items: File
+   - id: read1
+     label: read1
+     type:
+     - File
+     - 'null'
      inputBinding:
        position: 5
+       valueFrom: $(inputs.reads.map(function(el) { return el.path; })[0])
+   - id: read2
+     label: read2
+     type:
+     - File
+     - 'null'
+     inputBinding:
+       position: 6
+       valueFrom: $(inputs.reads.map(function(el) { return el.path; })[1])
    - id: outdir
      label: outdir
      doc: |-
@@ -361,21 +414,61 @@ Common Workflow Language
        prefix: --dir
 
    outputs:
-   - id: out
-     label: out
-     type:
-       type: array
-       items: File
+   - id: out_R1
+     label: out_R1
+     type: File
      outputBinding:
-       glob: '*.zip'
+       glob: |-
+         $((inputs.read1.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc.zip"))
        loadContents: false
-   - id: datafile
-     label: datafile
-     type:
-       type: array
-       items: File
+   - id: out_R1_datafile
+     label: out_R1_datafile
+     type: File
      outputBinding:
-       glob: '*/fastqc_data.txt'
+       glob: |-
+         $((inputs.read1.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc/fastqc_data.txt"))
+       loadContents: false
+   - id: out_R1_html
+     label: out_R1_html
+     type: File
+     outputBinding:
+       glob: |-
+         $((inputs.read1.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc.html"))
+       loadContents: false
+   - id: out_R1_directory
+     label: out_R1_directory
+     type: Directory
+     outputBinding:
+       glob: |-
+         $((inputs.read1.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc"))
+       loadContents: false
+   - id: out_R2
+     label: out_R2
+     type: File
+     outputBinding:
+       glob: |-
+         $((inputs.read2.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc.zip"))
+       loadContents: false
+   - id: out_R2_datafile
+     label: out_R2_datafile
+     type: File
+     outputBinding:
+       glob: |-
+         $((inputs.read2.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc/fastqc_data.txt"))
+       loadContents: false
+   - id: out_R2_html
+     label: out_R2_html
+     type: File
+     outputBinding:
+       glob: |-
+         $((inputs.read2.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc.html"))
+       loadContents: false
+   - id: out_R2_directory
+     label: out_R2_directory
+     type: Directory
+     outputBinding:
+       glob: |-
+         $((inputs.read2.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr

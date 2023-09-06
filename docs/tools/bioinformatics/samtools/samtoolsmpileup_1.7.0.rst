@@ -38,12 +38,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for SamToolsMpileup:
 
 .. code-block:: bash
@@ -70,6 +64,27 @@ Quickstart
        --inputs inputs.yaml \
        SamToolsMpileup
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          SamToolsMpileup
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
+
 
 
 
@@ -90,43 +105,44 @@ Information
 Outputs
 -----------
 
-======  ================  ===============
-name    type              documentation
-======  ================  ===============
-out     stdout<TextFile>
-======  ================  ===============
+======  ========  ===============
+name    type      documentation
+======  ========  ===============
+out     TextFile
+======  ========  ===============
 
 
 Additional configuration (inputs)
 ---------------------------------
 
-======================  =================  =================  ==========  ========================================================================
-name                    type               prefix               position  documentation
-======================  =================  =================  ==========  ========================================================================
-bam                     IndexedBam                                    10
-illuminaEncoding        Optional<Boolean>  --illumina1.3+                 Assume the quality is in the Illumina 1.3+ encoding.
-countOrphans            Optional<Boolean>  --count-orphans                do not discard anomalous read pairs
-noBAQ                   Optional<Boolean>  --no-BAQ                       disable BAQ (per-Base Alignment Quality)
-adjustMQ                Optional<Integer>  --adjust-MQ                    adjust mapping quality; recommended:50, disable:0 [0]
-maxDepth                Optional<Integer>  --max-depth                    max per-file depth; avoids excessive memory usage [8000]
-redoBAQ                 Optional<Boolean>  --redo-BAQ                     recalculate BAQ on the fly, ignore existing BQs
-fastaRef                Optional<File>     --fasta-ref                    skip unlisted positions (chr pos) or regions (BED)
-excludeRG               Optional<File>     --exclude-RG                   exclude read groups listed in FILE
-positions               Optional<File>     --positions                    skip unlisted positions (chr pos) or regions (BED)
-minBQ                   Optional<Integer>  --min-BQ                       Minimum base quality for a base to be considered [13]
-minMQ                   Optional<Integer>  --min-MQ                       skip alignments with mapQ smaller than INT [0]
-region                  Optional<String>   --region                       region in which pileup is generated
-ignoreRG                Optional<Boolean>  --ignore-RG                    ignore RG tags (one BAM = one sample)
-inclFlags               Optional<String>   --incl-flags                   required flags: skip reads with mask bits unset []
-exclFlags               Optional<String>   --excl-flags                   filter flags: skip reads with mask bits set [UNMAP,SECONDARY,QCFAIL,DUP]
-ignoreOverlaps          Optional<Boolean>  --ignore-overlaps              disable read-pair overlap detection
-outputBP                Optional<Boolean>  --output-BP                    output base positions on reads
-outputMQ                Optional<Boolean>  --output-MQ                    output mapping quality
-outputQNAME             Optional<Boolean>  --output-QNAME                 output read names
-allPositions            Optional<Boolean>  -a                             output all positions (including zero depth)
-absolutelyAllPositions  Optional<Boolean>                                 output absolutely all positions, including unused ref. sequences
-reference               Optional<File>     --reference                    Reference sequence FASTA FILE [null]
-======================  =================  =================  ==========  ========================================================================
+======================  ==========================  =================  ==========  ========================================================================
+name                    type                        prefix               position  documentation
+======================  ==========================  =================  ==========  ========================================================================
+bam                     IndexedBam                                             10
+illuminaEncoding        Optional<Boolean>           --illumina1.3+                 Assume the quality is in the Illumina 1.3+ encoding.
+countOrphans            Optional<Boolean>           --count-orphans                do not discard anomalous read pairs
+noBAQ                   Optional<Boolean>           --no-BAQ                       disable BAQ (per-Base Alignment Quality)
+adjustMQ                Optional<Integer>           --adjust-MQ                    adjust mapping quality; recommended:50, disable:0 [0]
+maxDepth                Optional<Integer>           --max-depth                    max per-file depth; avoids excessive memory usage [8000]
+redoBAQ                 Optional<Boolean>           --redo-BAQ                     recalculate BAQ on the fly, ignore existing BQs
+fastaRef                Optional<File>              --fasta-ref                    skip unlisted positions (chr pos) or regions (BED)
+excludeRG               Optional<File>              --exclude-RG                   exclude read groups listed in FILE
+positions               Optional<File>              --positions                    skip unlisted positions (chr pos) or regions (BED)
+minBQ                   Optional<Integer>           --min-BQ                       Minimum base quality for a base to be considered [13]
+minMQ                   Optional<Integer>           --min-MQ                       skip alignments with mapQ smaller than INT [0]
+region                  Optional<String>            --region                       region in which pileup is generated
+ignoreRG                Optional<Boolean>           --ignore-RG                    ignore RG tags (one BAM = one sample)
+inclFlags               Optional<String>            --incl-flags                   required flags: skip reads with mask bits unset []
+exclFlags               Optional<String>            --excl-flags                   filter flags: skip reads with mask bits set [UNMAP,SECONDARY,QCFAIL,DUP]
+outputFilename          Optional<Filename>          --output                       write output to FILE [standard output]
+ignoreOverlaps          Optional<Boolean>           --ignore-overlaps              disable read-pair overlap detection
+outputBP                Optional<Boolean>           --output-BP                    output base positions on reads
+outputMQ                Optional<Boolean>           --output-MQ                    output mapping quality
+outputQNAME             Optional<Boolean>           --output-QNAME                 output read names
+allPositions            Optional<Boolean>           -a                             output all positions (including zero depth)
+absolutelyAllPositions  Optional<Boolean>                                          output absolutely all positions, including unused ref. sequences
+reference               Optional<FastaWithIndexes>  --reference                    Reference sequence FASTA FILE [null]
+======================  ==========================  =================  ==========  ========================================================================
 
 Workflow Description Language
 ------------------------------
@@ -140,7 +156,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Boolean? illuminaEncoding
        Boolean? countOrphans
        Boolean? noBAQ
@@ -156,6 +172,7 @@ Workflow Description Language
        Boolean? ignoreRG
        String? inclFlags
        String? exclFlags
+       String? outputFilename
        Boolean? ignoreOverlaps
        Boolean? outputBP
        Boolean? outputMQ
@@ -163,9 +180,17 @@ Workflow Description Language
        Boolean? allPositions
        Boolean? absolutelyAllPositions
        File? reference
+       File? reference_fai
+       File? reference_amb
+       File? reference_ann
+       File? reference_bwt
+       File? reference_pac
+       File? reference_sa
+       File? reference_dict
        File bam
        File bam_bai
      }
+
      command <<<
        set -e
        samtools mpileup \
@@ -184,6 +209,7 @@ Workflow Description Language
          ~{if (defined(ignoreRG) && select_first([ignoreRG])) then "--ignore-RG" else ""} \
          ~{if defined(inclFlags) then ("--incl-flags '" + inclFlags + "'") else ""} \
          ~{if defined(exclFlags) then ("--excl-flags '" + exclFlags + "'") else ""} \
+         --output '~{select_first([outputFilename, "generated.txt"])}' \
          ~{if (defined(ignoreOverlaps) && select_first([ignoreOverlaps])) then "--ignore-overlaps" else ""} \
          ~{if (defined(outputBP) && select_first([outputBP])) then "--output-BP" else ""} \
          ~{if (defined(outputMQ) && select_first([outputMQ])) then "--output-MQ" else ""} \
@@ -192,17 +218,20 @@ Workflow Description Language
          ~{if defined(reference) then ("--reference '" + reference + "'") else ""} \
          '~{bam}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "biocontainers/samtools:v1.7.0_cv3"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
-       File out = stdout()
+       File out = select_first([outputFilename, "generated.txt"])
      }
+
    }
 
 Common Workflow Language
@@ -214,12 +243,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'SamTools: Mpileup'
-   doc: |-
-     Generate text pileup output for one or multiple BAM files. Each input file produces a separate group of pileup columns in the output.
-
-     Samtools mpileup can still produce VCF and BCF output (with -g or -u), but this feature is deprecated and will be removed in a future release. Please use bcftools mpileup for this instead. (Documentation on the deprecated options has been removed from this manual page, but older versions are available online at <http://www.htslib.org/doc/>.)
-
-     Note that there are two orthogonal ways to specify locations in the input file; via -r region and -l file. The former uses (and requires) an index to do random access while the latter streams through the file contents filtering out the specified regions, requiring no index. The two may be used in conjunction. For example a BED file containing locations of genes in chromosome 20 could be specified using -r 20 -l chr20.bed, meaning that the index is used to find chromosome 20 and then it is filtered for the regions listed in the bed file.
 
    requirements:
    - class: ShellCommandRequirement
@@ -348,6 +371,15 @@ Common Workflow Language
      - 'null'
      inputBinding:
        prefix: --excl-flags
+   - id: outputFilename
+     label: outputFilename
+     doc: write output to FILE [standard output]
+     type:
+     - string
+     - 'null'
+     default: generated.txt
+     inputBinding:
+       prefix: --output
    - id: ignoreOverlaps
      label: ignoreOverlaps
      doc: disable read-pair overlap detection
@@ -400,6 +432,14 @@ Common Workflow Language
      type:
      - File
      - 'null'
+     secondaryFiles:
+     - pattern: .fai
+     - pattern: .amb
+     - pattern: .ann
+     - pattern: .bwt
+     - pattern: .pac
+     - pattern: .sa
+     - pattern: ^.dict
      inputBinding:
        prefix: --reference
    - id: bam
@@ -413,7 +453,10 @@ Common Workflow Language
    outputs:
    - id: out
      label: out
-     type: stdout
+     type: File
+     outputBinding:
+       glob: generated.txt
+       loadContents: false
    stdout: _stdout
    stderr: _stderr
 

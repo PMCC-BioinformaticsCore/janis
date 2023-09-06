@@ -41,12 +41,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for VcfTools:
 
 .. code-block:: bash
@@ -72,6 +66,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        VcfTools
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          VcfTools
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -125,13 +140,14 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File vcf
        String? outputFilename
        Boolean? removeFileteredAll
        Boolean? recode
        Boolean? recodeINFOAll
      }
+
      command <<<
        set -e
         vcftools \
@@ -141,17 +157,20 @@ Workflow Description Language
          ~{if (defined(recode) && select_first([recode])) then "--recode" else ""} \
          ~{if (defined(recodeINFOAll) && select_first([recodeINFOAll])) then "--recode-INFO-all" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "biocontainers/vcftools:v0.1.16-1-deb_cv1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = (select_first([outputFilename, "~{basename(vcf, ".vcf")}"]) + ".recode.vcf")
      }
+
    }
 
 Common Workflow Language
@@ -163,15 +182,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: VcfTools
-   doc: |-
-     NAME
-     vcftools v0.1.16 − Utilities for the variant call format (VCF) and binary variant call format (BCF)
-
-     SYNOPSIS
-     vcftools [ --vcf FILE | --gzvcf FILE | --bcf FILE] [ --out OUTPUT PREFIX ] [ FILTERING OPTIONS ] [ OUTPUT OPTIONS ]
-
-     DESCRIPTION
-     vcftools is a suite of functions for use on genetic variation data in the form of VCF and BCF files. The tools provided will be used mainly to summarize data, run calculations on data, filter out data, and convert data into other useful file formats.
 
    requirements:
    - class: ShellCommandRequirement
@@ -236,7 +246,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputFilename + ".recode.vcf"))
-       outputEval: $((inputs.outputFilename.basename + ".recode.vcf"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr

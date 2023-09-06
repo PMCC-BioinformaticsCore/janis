@@ -72,12 +72,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for GatkAddOrReplaceReadGroups:
 
 .. code-block:: bash
@@ -107,6 +101,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        GatkAddOrReplaceReadGroups
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          GatkAddOrReplaceReadGroups
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -188,7 +203,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File inp
@@ -223,6 +238,7 @@ Workflow Description Language
        Boolean? version
        Boolean? showhidden
      }
+
      command <<<
        set -e
        gatk AddOrReplaceReadGroups \
@@ -260,18 +276,21 @@ Workflow Description Language
          ~{if (defined(showhidden) && select_first([showhidden])) then "--showHidden" else ""}
        if [ -f $(echo '~{select_first([outputFilename, "~{basename(inp, ".bam")}.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([outputFilename, "~{basename(inp, ".bam")}.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([outputFilename, "~{basename(inp, ".bam")}.bam"])}' ).bai; fi
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.2.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "~{basename(inp, ".bam")}.bam"])
        File out_bai = select_first([outputFilename, "~{basename(inp, ".bam")}.bam"]) + ".bai"
      }
+
    }
 
 Common Workflow Language
@@ -283,42 +302,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'Gatk4: AddOrReplaceReadGroups'
-   doc: |-
-     USAGE: AddOrReplaceReadGroups [arguments]"
-     Assigns all the reads in a file to a single new read-group.
-     This tool accepts INPUT BAM and SAM files or URLs from the <a href='http://ga4gh.org/#/documentation'>Global Alliance
-     for Genomics and Health (GA4GH)</a>.
-
-     Usage example:
-     ++++++++++++++++
-
-     .. code-tool: none
-     
-        java -jar picard.jar AddOrReplaceReadGroups \
-           I=input.bam \
-           O=output.bam \
-           RGID=4 \
-           RGLB=lib1 \
-           RGPL=ILLUMINA \
-           RGPU=unit1 \
-           RGSM=20
-        
-     Caveats
-     +++++++++
-
-     The value of the tags must adhere (according to the 
-     <ahref='https://samtools.github.io/hts-specs/SAMv1.pdf'>SAM-spec</a>) with the regex 
-     <code>'^[ -~]+$'</code> (one or more
-     characters from the ASCII range 32 through 126). 
-     In particular &lt;Space&gt; is the only non-printing character allowed.
-     The program enables only the wholesale assignment of all the reads in the INPUT to a 
-     single read-group. If your file
-     already has reads assigned to multiple read-groups, 
-     the original RG value will be lost. 
-     For more information about read-groups, see the 
-     <a href='https://www.broadinstitute.org/gatk/guide/article?id=6472'>GATK Dictionary entry.</a>
-
-     Version:4.1.3.0
 
    requirements:
    - class: ShellCommandRequirement

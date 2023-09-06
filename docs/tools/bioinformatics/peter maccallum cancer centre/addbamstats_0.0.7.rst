@@ -60,12 +60,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for addBamStats:
 
 .. code-block:: bash
@@ -92,6 +86,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        addBamStats
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          addBamStats
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -148,7 +163,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File? mpileup
        File? normalMpileup
        File? tumorMpileup
@@ -158,6 +173,7 @@ Workflow Description Language
        String? outputFilename
        String type
      }
+
      command <<<
        set -e
        add_bam_stats.py \
@@ -170,17 +186,20 @@ Workflow Description Language
          -o '~{select_first([outputFilename, "generated.addbamstats.vcf"])}' \
          --type '~{type}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "michaelfranklin/pmacutil:0.0.7"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated.addbamstats.vcf"])
      }
+
    }
 
 Common Workflow Language
@@ -192,33 +211,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Add Bam Statistics to Vcf
-   doc: |-
-     usage: add_bam_stats.py [-h] -i I -o O --type {germline,somatic}
-                             [--mpileup MPILEUP] [--normal_mpileup NORMAL_MPILEUP]
-                             [--tumor_mpileup TUMOR_MPILEUP]
-                             [--normal_id NORMAL_ID] [--tumor_id TUMOR_ID]
-
-     Get stats from bam file and write to vcf
-
-     required arguments:
-       -i I                  input vcf
-       -o O                  output vcf
-       --type {germline,somatic}
-                             must be either germline or somatic
-       --mpileup MPILEUP     mpileup file extracted from bam file
-       --normal_mpileup NORMAL_MPILEUP
-                             mpileup file extracted from the normal sample bam,
-                             required if input is somatic vcf
-       --tumor_mpileup TUMOR_MPILEUP
-                             mpileup file extracted from the tumor sample, required
-                             if input is somatic vcf
-       --normal_id NORMAL_ID
-                             Normal sample id, required if input is somatic vcf
-       --tumor_id TUMOR_ID   Tumor sample id, required if input is somatic vcf
-
-     optional arguments:
-       -h, --help            show this help message and exit
-          
 
    requirements:
    - class: ShellCommandRequirement

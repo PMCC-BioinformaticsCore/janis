@@ -42,12 +42,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4SetNmMdAndUqTags:
 
 .. code-block:: bash
@@ -74,6 +68,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4SetNmMdAndUqTags
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4SetNmMdAndUqTags
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -143,7 +158,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File bam
@@ -173,6 +188,7 @@ Workflow Description Language
        Boolean? version
        Boolean? showhidden
      }
+
      command <<<
        set -e
        gatk SetNmMdAndUqTags \
@@ -198,18 +214,21 @@ Workflow Description Language
          ~{if (defined(showhidden) && select_first([showhidden])) then "--showHidden" else ""}
        if [ -f $(echo '~{select_first([outputFilename, "~{basename(bam, ".bam")}.sorted.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([outputFilename, "~{basename(bam, ".bam")}.sorted.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([outputFilename, "~{basename(bam, ".bam")}.sorted.bam"])}' ).bai; fi
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.3.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "~{basename(bam, ".bam")}.sorted.bam"])
        File out_bai = select_first([outputFilename, "~{basename(bam, ".bam")}.sorted.bam"]) + ".bai"
      }
+
    }
 
 Common Workflow Language
@@ -221,15 +240,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: SetNmMdAndUqTags'
-   doc: |-
-     USAGE: SetNmMdAndUqTags [arguments] This tool takes in a coordinate-sorted SAM or BAM and calculatesthe NM, MD, and UQ tags by comparing with the reference.<br />This may be needed when MergeBamAlignment was run with SORT_ORDER other than 'coordinate' and thus could not fix these tags then. The input must be coordinate sorted in order to run. If specified,the MD and NM tags can be
-     ignored and only the UQ tag be set.
-     <h4>Usage example:</h4><pre>java -jar picard.jar SetNmMdAndUqTags
-     	R=reference_sequence.fasta 
-     	I=sorted.bam 
-     	O=fixed.bam <br /></pre>
-
-     Version:4.1.3.0
 
    requirements:
    - class: ShellCommandRequirement

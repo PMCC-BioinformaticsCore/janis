@@ -44,12 +44,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for addSymToDepthOfCoverage:
 
 .. code-block:: bash
@@ -76,6 +70,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        addSymToDepthOfCoverage
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          addSymToDepthOfCoverage
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -127,11 +142,12 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File inputFile
        String? outputFilename
        File bed
      }
+
      command <<<
        set -e
        add_sym_to_DepthOfCoverage.py \
@@ -139,17 +155,20 @@ Workflow Description Language
          -o '~{select_first([outputFilename, "generated.txt"])}' \
          -bed '~{bed}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "michaelfranklin/pmacutil:0.0.7"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated.txt"])
      }
+
    }
 
 Common Workflow Language
@@ -161,17 +180,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Add Sym to DepthOfCoverage
-   doc: |-
-     usage: add_sym_to_DepthOfCoverage.py [-h] -i INPUT -o OUTPUT -bed BED
-
-     Performance summary of bam
-
-     optional arguments:
-       -h, --help  show this help message and exit
-       -i INPUT    Gatk3 DepthOfCoverage interval_summary output
-       -o OUTPUT   Output file name
-       -bed BED    Annotated bed file
-          
 
    requirements:
    - class: ShellCommandRequirement

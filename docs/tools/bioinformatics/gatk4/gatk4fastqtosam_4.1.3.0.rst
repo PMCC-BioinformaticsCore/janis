@@ -34,12 +34,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4FastqToSam:
 
 .. code-block:: bash
@@ -65,6 +59,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4FastqToSam
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4FastqToSam
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -147,7 +162,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File fastqR1
@@ -190,6 +205,7 @@ Workflow Description Language
        String? validationStringency
        String? verbosity
      }
+
      command <<<
        set -e
        gatk FastqToSam \
@@ -227,17 +243,20 @@ Workflow Description Language
          ~{if defined(validationStringency) then ("--VALIDATION_STRINGENCY '" + validationStringency + "'") else ""} \
          ~{if defined(verbosity) then ("--verbosity '" + verbosity + "'") else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.3.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated.bam"])
      }
+
    }
 
 Common Workflow Language
@@ -249,7 +268,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: Convert a FASTQ file to an unaligned BAM or SAM file.'
-   doc: Converts a FASTQ file to an unaligned BAM or SAM file.
 
    requirements:
    - class: ShellCommandRequirement

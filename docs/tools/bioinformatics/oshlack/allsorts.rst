@@ -42,12 +42,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Allsorts:
 
 .. code-block:: bash
@@ -73,6 +67,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Allsorts
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Allsorts
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -131,7 +146,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File samples
        File? labels
        String? destination
@@ -140,6 +155,7 @@ Workflow Description Language
        Boolean? force
        Boolean? parents
      }
+
      command <<<
        set -e
        ALLSorts \
@@ -151,20 +167,23 @@ Workflow Description Language
          ~{if (defined(force) && select_first([force])) then "-force" else ""} \
          ~{if (defined(parents) && select_first([parents])) then "-parents" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "breons/allsorts:0.1.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out_predictions = glob("predictions.csv")[0]
        File out_probabilities = glob("probabilities.csv")[0]
        File out_distributions = glob("distributions.png")[0]
        File out_waterfalls = glob("waterfalls.png")[0]
      }
+
    }
 
 Common Workflow Language
@@ -176,12 +195,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Allsorts
-   doc: |
-     usage: ALLSorts [-h] -samples SAMPLES [-labels LABELS]
-                     [-destination DESTINATION] [-test] [-train]
-                     [-model_dir MODEL_DIR] [-njobs NJOBS] [-cv CV] [-verbose]
-                     [-comparison] [-force] [-parents]
-     ALLSorts CLI
 
    requirements:
    - class: ShellCommandRequirement

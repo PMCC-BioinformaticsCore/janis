@@ -41,12 +41,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4Mutect2_cram:
 
 .. code-block:: bash
@@ -75,6 +69,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4Mutect2_cram
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4Mutect2_cram
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -256,12 +271,12 @@ Workflow Description Language
 
    version development
 
-   task Gatk4Mutect2_cram {
+   task Gatk4Mutect2 {
      input {
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        Array[File] tumorBams
@@ -409,6 +424,7 @@ Workflow Description Language
        Boolean? keepReverseStrandOnly
        String? sample
      }
+
      command <<<
        set -e
        gatk Mutect2 \
@@ -547,14 +563,16 @@ Workflow Description Language
          -O '~{select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.vcf.gz"])}'
        if [ -f $(echo '~{outputBamName}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{outputBamName}' | sed 's/\.[^.]*$//').bai $(echo '~{outputBamName}' ).bai; fi
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.4.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 16, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.vcf.gz"])
        File out_tbi = select_first([outputFilename, "~{select_first([outputPrefix, "generated"])}.vcf.gz"]) + ".tbi"
@@ -563,6 +581,7 @@ Workflow Description Language
        File? bam = outputBamName
        File? bam_bai = if defined(outputBamName) then (outputBamName + ".bai") else None
      }
+
    }
 
 Common Workflow Language
@@ -574,10 +593,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: GatkMutect2
-   doc: |
-     USAGE: Mutect2 [arguments]
-     Call somatic SNVs and indels via local assembly of haplotypes
-     Version:4.1.2.0
 
    requirements:
    - class: ShellCommandRequirement
@@ -1793,7 +1808,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputFilename + ".stats"))
-       outputEval: $((inputs.outputFilename.basename + ".stats"))
        loadContents: false
    - id: f1f2r_out
      label: f1f2r_out
@@ -1848,6 +1862,6 @@ Common Workflow Language
    - class: ToolTimeLimit
      timelimit: |-
        $([inputs.runtime_seconds, 86400].filter(function (inner) { return inner != null })[0])
-   id: Gatk4Mutect2_cram
+   id: Gatk4Mutect2
 
 

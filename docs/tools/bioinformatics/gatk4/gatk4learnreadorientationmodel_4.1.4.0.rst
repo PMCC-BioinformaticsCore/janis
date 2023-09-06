@@ -34,12 +34,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4LearnReadOrientationModel:
 
 .. code-block:: bash
@@ -67,6 +61,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4LearnReadOrientationModel
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4LearnReadOrientationModel
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -120,13 +135,14 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        Array[File] f1r2CountsFiles
        Int? numEmIterations
        String? modelFileOut
      }
+
      command <<<
        set -e
        gatk LearnReadOrientationModel \
@@ -135,17 +151,20 @@ Workflow Description Language
          ~{if defined(select_first([numEmIterations, 30])) then ("--num-em-iterations " + select_first([numEmIterations, 30])) else ''} \
          -O '~{select_first([modelFileOut, "generated.tar.gz"])}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.4.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 32, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([modelFileOut, "generated.tar.gz"])
      }
+
    }
 
 Common Workflow Language
@@ -157,7 +176,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: LearnReadOrientationModel'
-   doc: TBD
 
    requirements:
    - class: ShellCommandRequirement

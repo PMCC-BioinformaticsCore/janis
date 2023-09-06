@@ -48,12 +48,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for trimmomaticPairedEnd:
 
 .. code-block:: bash
@@ -85,6 +79,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        trimmomaticPairedEnd
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          trimmomaticPairedEnd
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -165,7 +180,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String] steps
        String sampleName
        Int? threads
@@ -178,6 +193,7 @@ Workflow Description Language
        String? outputFilename_R2
        String? outputFilenameUnpaired_R2
      }
+
      command <<<
        set -e
        trimmomatic \
@@ -193,18 +209,21 @@ Workflow Description Language
          '~{select_first([outputFilenameUnpaired_R2, "~{sampleName}-_R2.unpaired.fastq.gz"])}' \
          ~{if length(steps) > 0 then "'" + sep("' '", steps) + "'" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/trimmomatic:0.35--6"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        Array[File] pairedOut = glob("*trimmed.fastq.gz")
        Array[File] unpairedOut = glob("*unpaired.fastq.gz")
      }
+
    }
 
 Common Workflow Language
@@ -216,19 +235,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'Trimmomatic: Paired End (PE)'
-   doc: |-
-     Trimmomatic is a fast, multithreaded command line tool that can be used to trim and crop
-     Illumina (FASTQ) data as well as to remove adapters. These adapters can pose a real problem
-     depending on the library preparation and downstream application.
-
-     There are two major modes of the program: Paired end mode and Single end mode. The
-     paired end mode will maintain correspondence of read pairs and also use the additional
-     information contained in paired reads to better find adapter or PCR primer fragments
-     introduced by the library preparation process.
-
-     Trimmomatic works with FASTQ files (using phred + 33 or phred + 64 quality scores,
-     depending on the Illumina pipeline used). Files compressed using either "gzip" or "bzip2" are
-     supported, and are identified by use of ".gz" or ".bz2" file extensions. 
 
    requirements:
    - class: ShellCommandRequirement

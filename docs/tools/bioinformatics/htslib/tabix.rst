@@ -44,12 +44,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for tabix:
 
 .. code-block:: bash
@@ -75,6 +69,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        tabix
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          tabix
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -140,7 +155,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File inp
        String? preset
        Boolean? zeroBased
@@ -159,6 +174,7 @@ Workflow Description Language
        File? regions
        File? targets
      }
+
      command <<<
        set -e
        cp -f '~{inp}' '.'
@@ -181,18 +197,21 @@ Workflow Description Language
          ~{if defined(regions) then ("--regions '" + regions + "'") else ""} \
          ~{if defined(targets) then ("--targets '" + targets + "'") else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/htslib:1.9--ha228f0b_7"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = basename(inp)
        File out_tbi = basename(inp) + ".tbi"
      }
+
    }
 
 Common Workflow Language
@@ -204,18 +223,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Tabix
-   doc: |-
-     tabix – Generic indexer for TAB-delimited genome position files
-
-     Tabix indexes a TAB-delimited genome position file in.tab.bgz and creates an index file (in.tab.bgz.tbi or 
-     in.tab.bgz.csi) when region is absent from the command-line. The input data file must be position sorted 
-     and compressed by bgzip which has a gzip(1) like interface.
-
-     After indexing, tabix is able to quickly retrieve data lines overlapping regions specified in the format 
-     "chr:beginPos-endPos". (Coordinates specified in this region format are 1-based and inclusive.)
-
-     Fast data retrieval also works over network if URI is given as a file name and in this case the 
-     index file will be downloaded if it is not present locally.
 
    requirements:
    - class: ShellCommandRequirement

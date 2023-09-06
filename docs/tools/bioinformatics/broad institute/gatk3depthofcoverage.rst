@@ -59,12 +59,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk3DepthOfCoverage:
 
 .. code-block:: bash
@@ -92,6 +86,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk3DepthOfCoverage
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk3DepthOfCoverage
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -176,7 +191,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File bam
        File bam_bai
        File reference
@@ -216,6 +231,7 @@ Workflow Description Language
        String? countType
        Array[Int]? summaryCoverageThreshold
      }
+
      command <<<
        set -e
        cp -f '~{bam_bai}' $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
@@ -254,14 +270,16 @@ Workflow Description Language
          ~{if (defined(summaryCoverageThreshold) && length(select_first([summaryCoverageThreshold])) > 0) then sep(" ", prefix("-ct ", select_first([summaryCoverageThreshold]))) else ""} \
          -I '~{bam}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk3:3.8-1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File sample = outputPrefix
        File sampleCumulativeCoverageCounts = (outputPrefix + ".sample_cumulative_coverage_counts")
@@ -271,6 +289,7 @@ Workflow Description Language
        File sampleStatistics = (outputPrefix + ".sample_statistics")
        File sampleSummary = (outputPrefix + ".sample_summary")
      }
+
    }
 
 Common Workflow Language
@@ -283,25 +302,6 @@ Common Workflow Language
    cwlVersion: v1.2
    label: |-
      GATK3 DepthOfCoverage: Determine coverage at different levels of partitioning and aggregation.
-   doc: |-
-     Overview
-     This tool processes a set of bam files to determine coverage at different levels of partitioning and aggregation. Coverage can be analyzed per locus, per interval, per gene, or in total; can be partitioned by sample, by read group, by technology, by center, or by library; and can be summarized by mean, median, quartiles, and/or percentage of bases covered to or beyond a threshold. Additionally, reads and bases can be filtered by mapping or base quality score.
-
-     Input
-     One or more bam files (with proper headers) to be analyzed for coverage statistics
-     (Optional) A REFSEQ file to aggregate coverage to the gene level (for information about creating the REFSEQ Rod, please consult the online documentation)
-     Output
-     Tables pertaining to different coverage summaries. Suffix on the table files declares the contents:
-
-     no suffix: per locus coverage
-     _summary: total, mean, median, quartiles, and threshold proportions, aggregated over all bases
-     _statistics: coverage histograms (# locus with X coverage), aggregated over all bases
-     _interval_summary: total, mean, median, quartiles, and threshold proportions, aggregated per interval
-     _interval_statistics: 2x2 table of # of intervals covered to >= X depth in >=Y samples
-     _gene_summary: total, mean, median, quartiles, and threshold proportions, aggregated per gene
-     _gene_statistics: 2x2 table of # of genes covered to >= X depth in >= Y samples
-     _cumulative_coverage_counts: coverage histograms (# locus with >= X coverage), aggregated over all bases
-     _cumulative_coverage_proportions: proprotions of loci with >= X coverage, aggregated over all bases
 
    requirements:
    - class: ShellCommandRequirement
@@ -598,7 +598,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_cumulative_coverage_counts"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_cumulative_coverage_counts"))
        loadContents: false
    - id: sampleCumulativeCoverageProportions
      label: sampleCumulativeCoverageProportions
@@ -606,7 +605,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_cumulative_coverage_proportions"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_cumulative_coverage_proportions"))
        loadContents: false
    - id: sampleIntervalStatistics
      label: sampleIntervalStatistics
@@ -614,7 +612,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_interval_statistics"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_interval_statistics"))
        loadContents: false
    - id: sampleIntervalSummary
      label: sampleIntervalSummary
@@ -622,7 +619,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_interval_summary"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_interval_summary"))
        loadContents: false
    - id: sampleStatistics
      label: sampleStatistics
@@ -630,7 +626,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_statistics"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_statistics"))
        loadContents: false
    - id: sampleSummary
      label: sampleSummary
@@ -638,7 +633,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_summary"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_summary"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr

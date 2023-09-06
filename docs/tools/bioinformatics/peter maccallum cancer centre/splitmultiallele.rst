@@ -35,12 +35,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for SplitMultiAllele:
 
 .. code-block:: bash
@@ -55,7 +49,7 @@ Quickstart
 .. code-block:: yaml
 
        reference: reference.fasta
-       vcf: vcf.vcf
+       vcf: null
 
 
 
@@ -67,6 +61,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        SplitMultiAllele
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          SplitMultiAllele
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -98,13 +113,13 @@ out     VCF
 Additional configuration (inputs)
 ---------------------------------
 
-==============  ==================  ========  ==========  ===============
-name            type                prefix      position  documentation
-==============  ==================  ========  ==========  ===============
-vcf             VCF                                    1
-reference       FastaWithIndexes    -r                 4
-outputFilename  Optional<Filename>  -o                 6
-==============  ==================  ========  ==========  ===============
+==============  ========================  ========  ==========  ===============
+name            type                      prefix      position  documentation
+==============  ========================  ========  ==========  ===============
+vcf             Union<VCF, Gzipped<VCF>>                     1
+reference       FastaWithIndexes          -r                 4
+outputFilename  Optional<Filename>        -o                 6
+==============  ========================  ========  ==========  ===============
 
 Workflow Description Language
 ------------------------------
@@ -118,7 +133,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File vcf
        File reference
        File reference_fai
@@ -130,6 +145,7 @@ Workflow Description Language
        File reference_dict
        String? outputFilename
      }
+
      command <<<
        set -e
         \
@@ -137,19 +153,22 @@ Workflow Description Language
          ~{vcf} \
          | vt normalize -n -q - \
          -r ~{reference} \
-         -o ~{select_first([outputFilename, "~{basename(vcf, ".vcf")}.norm.vcf"])}
+         -o ~{select_first([outputFilename, "~{basename(vcf)}.norm.vcf"])}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "heuermh/vt"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
-       File out = select_first([outputFilename, "~{basename(vcf, ".vcf")}.norm.vcf"])
+       File out = select_first([outputFilename, "~{basename(vcf)}.norm.vcf"])
      }
+
    }
 
 Common Workflow Language
@@ -161,7 +180,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Split Multiple Alleles
-   doc: ''
 
    requirements:
    - class: ShellCommandRequirement
@@ -200,7 +218,7 @@ Common Workflow Language
      inputBinding:
        prefix: -o
        position: 6
-       valueFrom: $(inputs.vcf.basename.replace(/.vcf$/, "")).norm.vcf
+       valueFrom: $(inputs.vcf.basename.replace(/.vcf$/, "").replace(/.vcf.gz$/, "")).norm.vcf
        shellQuote: false
 
    outputs:
@@ -208,7 +226,7 @@ Common Workflow Language
      label: out
      type: File
      outputBinding:
-       glob: $(inputs.vcf.basename.replace(/.vcf$/, "")).norm.vcf
+       glob: $(inputs.vcf.basename.replace(/.vcf$/, "").replace(/.vcf.gz$/, "")).norm.vcf
        loadContents: false
    stdout: _stdout
    stderr: _stderr

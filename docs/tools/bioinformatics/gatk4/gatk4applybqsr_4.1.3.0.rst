@@ -52,12 +52,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4ApplyBQSR:
 
 .. code-block:: bash
@@ -84,6 +78,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4ApplyBQSR
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4ApplyBQSR
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -141,7 +156,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File bam
@@ -160,6 +175,7 @@ Workflow Description Language
        Array[String]? intervalStrings
        String? tmpDir
      }
+
      command <<<
        set -e
        cp -f '~{bam_bai}' $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
@@ -174,18 +190,21 @@ Workflow Description Language
          ~{if defined(select_first([tmpDir, "/tmp/"])) then ("--tmp-dir '" + select_first([tmpDir, "/tmp/"]) + "'") else ""}
        if [ -f $(echo '~{select_first([outputFilename, "~{basename(bam, ".bam")}.recalibrated.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([outputFilename, "~{basename(bam, ".bam")}.recalibrated.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([outputFilename, "~{basename(bam, ".bam")}.recalibrated.bam"])}' ).bai; fi
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.3.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "~{basename(bam, ".bam")}.recalibrated.bam"])
        File out_bai = select_first([outputFilename, "~{basename(bam, ".bam")}.recalibrated.bam"]) + ".bai"
      }
+
    }
 
 Common Workflow Language
@@ -197,25 +216,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: Apply base quality score recalibration'
-   doc: |-
-     Apply base quality score recalibration: This tool performs the second pass in a two-stage 
-     process called Base Quality Score Recalibration (BQSR). Specifically, it recalibrates the 
-     base qualities of the input reads based on the recalibration table produced by the 
-     BaseRecalibrator tool, and outputs a recalibrated BAM or CRAM file.
-
-     Summary of the BQSR procedure: The goal of this procedure is to correct for systematic bias 
-     that affect the assignment of base quality scores by the sequencer. The first pass consists 
-     of calculating error empirically and finding patterns in how error varies with basecall 
-     features over all bases. The relevant observations are written to a recalibration table. 
-     The second pass consists of applying numerical corrections to each individual basecall 
-     based on the patterns identified in the first step (recorded in the recalibration table) 
-     and write out the recalibrated data to a new BAM or CRAM file.
-
-     - This tool replaces the use of PrintReads for the application of base quality score 
-         recalibration as practiced in earlier versions of GATK (2.x and 3.x).
-     - You should only run ApplyBQSR with the covariates table created from the input BAM or CRAM file(s).
-     - Original qualities can be retained in the output file under the "OQ" tag if desired. 
-         See the `--emit-original-quals` argument for details.
 
    requirements:
    - class: ShellCommandRequirement

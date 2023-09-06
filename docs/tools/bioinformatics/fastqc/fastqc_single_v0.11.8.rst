@@ -38,12 +38,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for fastqc_single:
 
 .. code-block:: bash
@@ -69,6 +63,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        fastqc_single
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          fastqc_single
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -137,7 +152,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File read
        String? outdir
        Boolean? casava
@@ -156,6 +171,7 @@ Workflow Description Language
        Boolean? quiet
        String? dir
      }
+
      command <<<
        set -e
        fastqc \
@@ -177,20 +193,23 @@ Workflow Description Language
          ~{if defined(dir) then ("--dir '" + dir + "'") else ""} \
          '~{read}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/fastqc:0.11.8--2"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
-       File out = (basename(basename(read, ".fq.gz"), ".fastq.gz") + "_fastqc.zip")
-       File out_datafile = (basename(basename(read, ".fq.gz"), ".fastq.gz") + "_fastqc/fastqc_data.txt")
-       File out_html = (basename(basename(read, ".fq.gz"), ".fastq.gz") + "_fastqc.html")
-       Directory out_directory = (basename(basename(read, ".fq.gz"), ".fastq.gz") + "_fastqc")
+       File out = (basename(basename(read, ".fastq.gz"), ".fq.gz") + "_fastqc.zip")
+       File out_datafile = (basename(basename(read, ".fastq.gz"), ".fq.gz") + "_fastqc/fastqc_data.txt")
+       File out_html = (basename(basename(read, ".fastq.gz"), ".fq.gz") + "_fastqc.html")
+       Directory out_directory = (basename(basename(read, ".fastq.gz"), ".fq.gz") + "_fastqc")
      }
+
    }
 
 Common Workflow Language
@@ -202,9 +221,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: FastQC (single read)
-   doc: |-
-     FastQC is a program designed to spot potential problems in high througput sequencing datasets. It runs a set of analyses on one or more raw sequence files in fastq or bam format and produces a report which summarises the results.
-     FastQC will highlight any areas where this library looks unusual and where you should take a closer look. The program is not tied to any specific type of sequencing technique and can be used to look at libraries coming from a large number of different experiment types (Genomic Sequencing, ChIP-Seq, RNA-Seq, BS-Seq etc etc).
 
    requirements:
    - class: ShellCommandRequirement
@@ -367,29 +383,29 @@ Common Workflow Language
      label: out
      type: File
      outputBinding:
-       glob: $((inputs.read.basename + "_fastqc.zip"))
-       outputEval: $((inputs.read.basename + "_fastqc.zip"))
+       glob: |-
+         $((inputs.read.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc.zip"))
        loadContents: false
    - id: out_datafile
      label: out_datafile
      type: File
      outputBinding:
-       glob: $((inputs.read.basename + "_fastqc/fastqc_data.txt"))
-       outputEval: $((inputs.read.basename + "_fastqc/fastqc_data.txt"))
+       glob: |-
+         $((inputs.read.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc/fastqc_data.txt"))
        loadContents: false
    - id: out_html
      label: out_html
      type: File
      outputBinding:
-       glob: $((inputs.read.basename + "_fastqc.html"))
-       outputEval: $((inputs.read.basename + "_fastqc.html"))
+       glob: |-
+         $((inputs.read.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc.html"))
        loadContents: false
    - id: out_directory
      label: out_directory
      type: Directory
      outputBinding:
-       glob: $((inputs.read.basename + "_fastqc"))
-       outputEval: $((inputs.read.basename + "_fastqc"))
+       glob: |-
+         $((inputs.read.basename.replace(/.fastq.gz$/, "").replace(/.fq.gz$/, "") + "_fastqc"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr

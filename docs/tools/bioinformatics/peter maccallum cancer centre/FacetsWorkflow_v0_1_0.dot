@@ -1,0 +1,7 @@
+// Facets workflow
+digraph FacetsWorkflow {
+	node [shape=record]
+	snp_pileup [label="snp_pileup (Facets: snp-pileup)"]
+	run_facets [label="run_facets (Facets: Make plot)"]
+	snp_pileup -> run_facets
+}

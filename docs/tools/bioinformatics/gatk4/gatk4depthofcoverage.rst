@@ -48,12 +48,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4DepthOfCoverage:
 
 .. code-block:: bash
@@ -84,6 +78,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4DepthOfCoverage
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4DepthOfCoverage
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -151,7 +166,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File bam
@@ -174,6 +189,7 @@ Workflow Description Language
        Boolean? omitLocusTable
        Boolean? omitPerSampleStatistics
      }
+
      command <<<
        set -e
        cp -f '~{bam_bai}' $(echo '~{bam}' | sed 's/\.[^.]*$//').bai
@@ -191,14 +207,16 @@ Workflow Description Language
          ~{if (defined(omitLocusTable) && select_first([omitLocusTable])) then "--omit-locus-table" else ""} \
          ~{if (defined(omitPerSampleStatistics) && select_first([omitPerSampleStatistics])) then "--omit-per-sample-statistics" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.6.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File? out_sample = outputPrefix
        File out_sampleCumulativeCoverageCounts = (outputPrefix + ".sample_cumulative_coverage_counts")
@@ -208,6 +226,7 @@ Workflow Description Language
        File out_sampleStatistics = (outputPrefix + ".sample_statistics")
        File out_sampleSummary = (outputPrefix + ".sample_summary")
      }
+
    }
 
 Common Workflow Language
@@ -219,13 +238,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: Generate coverage summary information for reads data'
-   doc: |-
-     Generate coverage summary information for reads data
-
-     Category Coverage Analysis
-     Overview
-     Assess sequence coverage by a wide array of metrics, partitioned by sample, read group, or library
-     This tool processes a set of bam files to determine coverage at different levels of partitioning and aggregation. Coverage can be analyzed per locus, per interval, per gene, or in total; can be partitioned by sample, by read group, by technology, by center, or by library; and can be summarized by mean, median, quartiles, and/or percentage of bases covered to or beyond a threshold. Additionally, reads and bases can be filtered by mapping or base quality score.
 
    requirements:
    - class: ShellCommandRequirement
@@ -381,7 +393,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_cumulative_coverage_counts"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_cumulative_coverage_counts"))
        loadContents: false
    - id: out_sampleCumulativeCoverageProportions
      label: out_sampleCumulativeCoverageProportions
@@ -389,7 +400,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_cumulative_coverage_proportions"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_cumulative_coverage_proportions"))
        loadContents: false
    - id: out_sampleIntervalStatistics
      label: out_sampleIntervalStatistics
@@ -398,7 +408,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_interval_statistics"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_interval_statistics"))
        loadContents: false
    - id: out_sampleIntervalSummary
      label: out_sampleIntervalSummary
@@ -406,7 +415,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_interval_summary"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_interval_summary"))
        loadContents: false
    - id: out_sampleStatistics
      label: out_sampleStatistics
@@ -414,7 +422,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_statistics"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_statistics"))
        loadContents: false
    - id: out_sampleSummary
      label: out_sampleSummary
@@ -423,7 +430,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".sample_summary"))
-       outputEval: $((inputs.outputPrefix.basename + ".sample_summary"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr

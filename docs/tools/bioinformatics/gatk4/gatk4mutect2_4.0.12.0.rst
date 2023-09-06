@@ -46,12 +46,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4Mutect2:
 
 .. code-block:: bash
@@ -81,6 +75,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4Mutect2
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4Mutect2
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -141,7 +156,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File tumor
@@ -166,6 +181,7 @@ Workflow Description Language
        File? panelOfNormals
        File? panelOfNormals_idx
      }
+
      command <<<
        set -e
        gatk Mutect2 \
@@ -181,18 +197,21 @@ Workflow Description Language
          ~{if defined(afOfAllelesNotInResource) then ("--af-of-alleles-not-in-resource " + afOfAllelesNotInResource) else ''} \
          -O '~{select_first([outputFilename, "generated.vcf.gz"])}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.0.12.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated.vcf.gz"])
        File out_tbi = select_first([outputFilename, "generated.vcf.gz"]) + ".tbi"
      }
+
    }
 
 Common Workflow Language
@@ -204,16 +223,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: MuTect2'
-   doc: |-
-     Call somatic short variants via local assembly of haplotypes. Short variants include single nucleotide (SNV)
-     and insertion and deletion (indel) variants. The caller combines the DREAM challenge-winning somatic
-     genotyping engine of the original MuTect (Cibulskis et al., 2013) with the assembly-based machinery of HaplotypeCaller.
-
-     This tool is featured in the Somatic Short Mutation calling Best Practice Workflow. See Tutorial#11136
-     for a step-by-step description of the workflow and Article#11127 for an overview of what traditional
-     somatic calling entails. For the latest pipeline scripts, see the Mutect2 WDL scripts directory.
-     Although we present the tool for somatic calling, it may apply to other contexts,
-     such as mitochondrial variant calling.
 
    requirements:
    - class: ShellCommandRequirement

@@ -55,12 +55,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for GatkReorderSam:
 
 .. code-block:: bash
@@ -87,6 +81,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        GatkReorderSam
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          GatkReorderSam
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -156,7 +171,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File inp
@@ -179,6 +194,7 @@ Workflow Description Language
        Boolean? version
        Boolean? showhidden
      }
+
      command <<<
        set -e
        gatk ReorderSam \
@@ -204,18 +220,21 @@ Workflow Description Language
          ~{if (defined(showhidden) && select_first([showhidden])) then "--showHidden" else ""}
        if [ -f $(echo '~{select_first([outputFilename, "~{basename(inp, ".bam")}.bam"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([outputFilename, "~{basename(inp, ".bam")}.bam"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([outputFilename, "~{basename(inp, ".bam")}.bam"])}' ).bai; fi
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.4.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "~{basename(inp, ".bam")}.bam"])
        File out_bai = select_first([outputFilename, "~{basename(inp, ".bam")}.bam"]) + ".bai"
      }
+
    }
 
 Common Workflow Language
@@ -227,28 +246,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'Gatk4: ReorderSam'
-   doc: |2-
-
-     USAGE: ReorderSam [arguments]
-
-     Not to be confused with SortSam which sorts a SAM or BAM file with a valid sequence dictionary, 
-     ReorderSam reorders
-     reads in a SAM/BAM file to match the contig ordering in a provided reference file, 
-     as determined by exact name matching
-     of contigs.  Reads mapped to contigs absent in the new reference 
-     are dropped. Runs substantially faster if the input is
-     an indexed BAM file.
-
-     Example:
-
-     .. code-tool: none
-
-        java -jar picard.jar ReorderSam \
-            INPUT=sample.bam \
-            OUTPUT=reordered.bam \
-            REFERENCE=reference_with_different_order.fasta
-         
-     Version:4.1.3.0
 
    requirements:
    - class: ShellCommandRequirement

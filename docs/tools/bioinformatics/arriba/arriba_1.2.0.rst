@@ -50,12 +50,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Arriba:
 
 .. code-block:: bash
@@ -81,6 +75,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Arriba
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Arriba
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -161,7 +176,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File aligned_inp
        File? inp_chimeric
        File? gtf_file
@@ -194,6 +209,7 @@ Workflow Description Language
        Boolean? peptide_sequence
        Boolean? read_identifiers
      }
+
      command <<<
        set -e
        arriba \
@@ -229,18 +245,21 @@ Workflow Description Language
          ~{if (defined(peptide_sequence) && select_first([peptide_sequence])) then "-P" else ""} \
          ~{if (defined(read_identifiers) && select_first([read_identifiers])) then "-I" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/arriba:1.2.0--hd2e4403_2"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([output_filename, "generated.tsv"])
        File out_discarded = select_first([discarded_output_filename, "generated.discarded.tsv"])
      }
+
    }
 
 Common Workflow Language
@@ -252,22 +271,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Arriba
-   doc: |2
-
-     Arriba gene fusion detector
-     --------------------------- 
-     Version: 1.2.0 
-     Arriba is a fast tool to search for aberrant transcripts such as gene fusions.  
-     It is based on chimeric alignments found by the STAR RNA-Seq aligner. 
-
-     Arriba is a command-line tool for the detection of gene fusions from RNA-Seq data. It was developed for the use in a 
-     clinical research setting. Therefore, short runtimes and high sensitivity were important design criteria. It is based 
-     on the ultrafast STAR aligner and the post-alignment runtime is typically just ~2 minutes. In contrast to many other 
-     fusion detection tools which build on STAR, Arriba does not require to reduce the alignIntronMax parameter of STAR 
-     to detect fusions arising from focal deletions.
-
-     Apart from gene fusions, Arriba can detect other structural rearrangements with potential clinical relevance, such 
-     as exon duplications or truncations of genes (i.e., breakpoints in introns and intergenic regions).
 
    requirements:
    - class: ShellCommandRequirement

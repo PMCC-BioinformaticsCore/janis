@@ -1,14 +1,14 @@
-    :orphan:
+:orphan:
 
-    Create genomic call regions
-    ===============================================
+Create genomic call regions
+===============================================
 
-    ``CreateCallRegions`` · *1 contributor · 1 version*
+``CreateCallRegions`` · *1 contributor · 1 version*
 
-    No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
+No documentation was provided: `contribute one <https://github.com/PMCC-BioinformaticsCore/janis-bioinformatics>`_
 
-    
-    Quickstart
+
+Quickstart
 -----------
 
     .. code-block:: python
@@ -34,12 +34,6 @@
 2. Ensure Janis is configured to work with Docker or Singularity.
 
 3. Ensure all reference files are available:
-
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
 
 4. Generate user input files for CreateCallRegions:
 
@@ -68,15 +62,36 @@
        --inputs inputs.yaml \
        CreateCallRegions
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CodeTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          CreateCallRegions
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
 
 
 
 
-    Information
-    ------------
 
 
-    :ID: ``CreateCallRegions``
+
+
+
+
+
+Information
+------------
+
+
+:ID: ``CreateCallRegions``
 :URL: *No URL to the documentation was provided*
 :Versions: v0.1.0
 :Container: python:3.8.1
@@ -87,10 +102,10 @@
 
 
 
-    Outputs
-    -----------
+Outputs
+-----------
 
-    =======  =============  ===============
+=======  =============  ===============
 name     type           documentation
 =======  =============  ===============
 regions  Array<String>
@@ -98,10 +113,10 @@ regions  Array<String>
 
 
 
-    Additional configuration (inputs)
-    ---------------------------------
+Additional configuration (inputs)
+---------------------------------
 
-    ==========  =================  ===============
+==========  =================  ===============
 name        type               documentation
 ==========  =================  ===============
 reference   FastaFai

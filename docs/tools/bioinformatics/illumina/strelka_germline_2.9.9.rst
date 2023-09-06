@@ -70,12 +70,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for strelka_germline:
 
 .. code-block:: bash
@@ -103,6 +97,27 @@ Quickstart
        --inputs inputs.yaml \
        --container-override 'strelka_germline=<organisation/container:version>' \
        strelka_germline
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          strelka_germline
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -143,6 +158,7 @@ name                      type                    prefix                position
 ========================  ======================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
 bam                       IndexedBam              --bam                        1  Sample BAM or CRAM file. May be specified more than once, multiple inputs will be treated as each BAM file representing a different sample. [required] (no default)
 reference                 FastaWithIndexes        --referenceFasta             1  samtools-indexed reference fasta file [required]
+config                    Optional<File>          --config                     1  provide a configuration file to override defaults in                 global config file                 (/opt/strelka/bin/configureStrelkaGermlineWorkflow.py.ini)
 relativeStrelkaDirectory  Optional<String>        --runDir                     1  Name of directory to be created where all workflow scripts and output will be written. Each analysis requires a separate directory.
 ploidy                    Optional<Gzipped<VCF>>  --ploidy                     1  Provide ploidy file in VCF. The VCF should include one sample column per input sample labeled with the same sample names found in the input BAM/CRAM RG header sections. Ploidy should be provided in records using the FORMAT/CN field, which are interpreted to span the range [POS+1, INFO/END]. Any CN value besides 1 or 0 will be treated as 2. File must be tabix indexed. (no default)
 noCompress                Optional<Gzipped<VCF>>  --noCompress                 1  Provide BED file of regions where gVCF block compression is not allowed. File must be bgzip- compressed/tabix-indexed. (no default)
@@ -155,7 +171,6 @@ targeted                  Optional<Boolean>       --exome                      1
 callRegions               Optional<Gzipped<bed>>  --callRegions=               1  Optionally provide a bgzip-compressed/tabix-indexed BED file containing the set of regions to call. No VCF output will be provided outside of these regions. The full genome will still be used to estimate statistics from the input (such as expected depth per chromosome). Only one BED file may be specified. (default: call the entire genome)
 mode                      Optional<String>        --mode                       3  (-m MODE)  select run mode (local|sge)
 queue                     Optional<String>        --queue                      3  (-q QUEUE) specify scheduler queue name
-memGb                     Optional<String>        --memGb                      3  (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
 quiet                     Optional<Boolean>       --quiet                      3  Don't write any log output to stderr (but still write to workspace/pyflow.data/logs/pyflow_log.txt)
 mailTo                    Optional<String>        --mailTo                     3  (-e) send email notification of job completion status to this address (may be provided multiple times for more than one email address)
 ========================  ======================  ==================  ==========  ====================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
@@ -172,7 +187,8 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
+       File? config
        File bam
        File bam_bai
        File reference
@@ -200,15 +216,16 @@ Workflow Description Language
        File? callRegions_tbi
        String? mode
        String? queue
-       String? memGb
        Boolean? quiet
        String? mailTo
      }
+
      command <<<
        set -e
         \
          ~{if defined(callContinuousVf) then ("--callContinuousVf '" + callContinuousVf + "'") else ""} \
          configureStrelkaGermlineWorkflow.py \
+         ~{if defined(config) then ("--config " + config) else ''} \
          --bam ~{bam} \
          --referenceFasta ~{reference} \
          ~{if defined(select_first([relativeStrelkaDirectory, "strelka_dir"])) then ("--runDir " + select_first([relativeStrelkaDirectory, "strelka_dir"])) else ''} \
@@ -223,19 +240,21 @@ Workflow Description Language
          ;~{select_first([relativeStrelkaDirectory, "strelka_dir"])}/runWorkflow.py \
          ~{if defined(select_first([mode, "local"])) then ("--mode " + select_first([mode, "local"])) else ''} \
          ~{if defined(queue) then ("--queue " + queue) else ''} \
-         ~{if defined(memGb) then ("--memGb " + memGb) else ''} \
          ~{if (defined(quiet) && select_first([quiet])) then "--quiet" else ""} \
          ~{if defined(mailTo) then ("--mailTo " + mailTo) else ''} \
-         --jobs ~{select_first([runtime_cpu, 4])}
+         --jobs ~{select_first([runtime_cpu, 4])} \
+         --memGb ~{select_first([runtime_memory, 4, 4])}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: ""
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4, 4])}G"
        preemptible: 2
      }
+
      output {
        File configPickle = (select_first([relativeStrelkaDirectory, "strelka_dir"]) + "/runWorkflow.py.config.pickle")
        File script = (select_first([relativeStrelkaDirectory, "strelka_dir"]) + "/runWorkflow.py")
@@ -245,6 +264,7 @@ Workflow Description Language
        File genome = (select_first([relativeStrelkaDirectory, "strelka_dir"]) + "/results/variants/genome.vcf.gz")
        File genome_tbi = (select_first([relativeStrelkaDirectory, "strelka_dir"]) + "/results/variants/genome.vcf.gz") + ".tbi"
      }
+
    }
 
 Common Workflow Language
@@ -256,31 +276,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Strelka (Germline)
-   doc: |-
-     Strelka2 is a fast and accurate small variant caller optimized for analysis of germline variation 
-     in small cohorts and somatic variation in tumor/normal sample pairs. The germline caller employs 
-     an efficient tiered haplotype model to improve accuracy and provide read-backed phasing, adaptively 
-     selecting between assembly and a faster alignment-based haplotyping approach at each variant locus. 
-     The germline caller also analyzes input sequencing data using a mixture-model indel error estimation 
-     method to improve robustness to indel noise. The somatic calling model improves on the original 
-     Strelka method for liquid and late-stage tumor analysis by accounting for possible tumor cell 
-     contamination in the normal sample. A final empirical variant re-scoring step using random forest 
-     models trained on various call quality features has been added to both callers to further improve precision.
-
-     Compared with submissions to the recent PrecisonFDA Consistency and Truth challenges, the average 
-     indel F-score for Strelka2 running in its default configuration is 3.1% and 0.08% higher, respectively, 
-     than the best challenge submissions. Runtime on a 28-core server is ~40 minutes for 40x WGS germline 
-     analysis and ~3 hours for a 110x/40x WGS tumor-normal somatic analysis
-
-     Strelka accepts input read mappings from BAM or CRAM files, and optionally candidate and/or forced-call 
-     alleles from VCF. It reports all small variant predictions in VCF 4.1 format. Germline variant 
-     reporting uses the gVCF conventions to represent both variant and reference call confidence. 
-     For best somatic indel performance, Strelka is designed to be run with the Manta structural variant 
-     and indel caller, which provides additional indel candidates up to a given maxiumum indel size 
-     (49 by default). By design, Manta and Strelka run together with default settings provide complete 
-     coverage over all indel sizes (in additional to SVs and SNVs). 
-
-     See the user guide for a full description of capabilities and limitations
 
    requirements:
    - class: ShellCommandRequirement
@@ -289,6 +284,17 @@ Common Workflow Language
      dockerPull: ''
 
    inputs:
+   - id: config
+     label: config
+     doc: |-
+       provide a configuration file to override defaults in                 global config file                 (/opt/strelka/bin/configureStrelkaGermlineWorkflow.py.ini)
+     type:
+     - File
+     - 'null'
+     inputBinding:
+       prefix: --config
+       position: 1
+       shellQuote: false
    - id: bam
      label: bam
      doc: |-
@@ -451,17 +457,6 @@ Common Workflow Language
        prefix: --queue
        position: 3
        shellQuote: false
-   - id: memGb
-     label: memGb
-     doc: |2-
-        (-g MEMGB) gigabytes of memory available to run workflow -- only meaningful in local mode, must be an integer (default: Estimate the total memory for this node for local mode, 'unlimited' for sge mode)
-     type:
-     - string
-     - 'null'
-     inputBinding:
-       prefix: --memGb
-       position: 3
-       shellQuote: false
    - id: quiet
      label: quiet
      doc: |-
@@ -491,14 +486,12 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.relativeStrelkaDirectory + "/runWorkflow.py.config.pickle"))
-       outputEval: $((inputs.relativeStrelkaDirectory.basename + "/runWorkflow.py.config.pickle"))
        loadContents: false
    - id: script
      label: script
      type: File
      outputBinding:
        glob: $((inputs.relativeStrelkaDirectory + "/runWorkflow.py"))
-       outputEval: $((inputs.relativeStrelkaDirectory.basename + "/runWorkflow.py"))
        loadContents: false
    - id: stats
      label: stats
@@ -507,7 +500,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.relativeStrelkaDirectory + "/results/stats/runStats.tsv"))
-       outputEval: $((inputs.relativeStrelkaDirectory.basename + "/results/stats/runStats.tsv"))
        loadContents: false
    - id: variants
      label: variants
@@ -517,8 +509,6 @@ Common Workflow Language
      - pattern: .tbi
      outputBinding:
        glob: $((inputs.relativeStrelkaDirectory + "/results/variants/variants.vcf.gz"))
-       outputEval: |-
-         $((inputs.relativeStrelkaDirectory.basename + "/results/variants/variants.vcf.gz"))
        loadContents: false
    - id: genome
      label: genome
@@ -527,8 +517,6 @@ Common Workflow Language
      - pattern: .tbi
      outputBinding:
        glob: $((inputs.relativeStrelkaDirectory + "/results/variants/genome.vcf.gz"))
-       outputEval: |-
-         $((inputs.relativeStrelkaDirectory.basename + "/results/variants/genome.vcf.gz"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr
@@ -544,6 +532,11 @@ Common Workflow Language
      position: 3
      valueFrom: $([inputs.runtime_cpu, 4].filter(function (inner) { return inner != null
        })[0])
+     shellQuote: false
+   - prefix: --memGb
+     position: 3
+     valueFrom: |-
+       $([inputs.runtime_memory, 4, 4].filter(function (inner) { return inner != null })[0])
      shellQuote: false
 
    hints:

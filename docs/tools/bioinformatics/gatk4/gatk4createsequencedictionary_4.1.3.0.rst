@@ -44,12 +44,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4CreateSequenceDictionary:
 
 .. code-block:: bash
@@ -75,6 +69,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4CreateSequenceDictionary
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4CreateSequenceDictionary
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -126,11 +141,12 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File reference
      }
+
      command <<<
        set -e
        cp -f '~{reference}' '.'
@@ -138,18 +154,21 @@ Workflow Description Language
          --java-options '-Xmx~{((select_first([runtime_memory, 2, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}' \
          --REFERENCE '~{basename(reference)}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.3.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 2, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = basename(reference)
        File out_dict = sub(sub(sub(basename(reference), "\\.fasta$", ".dict"), "\\.fna$", ".dict"), "\\.fa$", ".dict")
      }
+
    }
 
 Common Workflow Language
@@ -161,18 +180,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: CreateSequenceDictionary'
-   doc: |-
-     Creates a sequence dictionary for a reference sequence.  This tool creates a sequence dictionary file (with ".dict"
-     extension) from a reference sequence provided in FASTA format, which is required by many processing and analysis tools.
-     The output file contains a header but no SAMRecords, and the header contains only sequence records.
-
-     The reference sequence can be gzipped (both .fasta and .fasta.gz are supported).
-
-     Usage example:
-
-         java -jar picard.jar CreateSequenceDictionary \
-             R=reference.fasta \
-             O=reference.dict
 
    requirements:
    - class: ShellCommandRequirement

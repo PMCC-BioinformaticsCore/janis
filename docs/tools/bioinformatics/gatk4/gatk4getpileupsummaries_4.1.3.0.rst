@@ -36,12 +36,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4GetPileupSummaries:
 
 .. code-block:: bash
@@ -70,6 +64,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4GetPileupSummaries
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4GetPileupSummaries
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -126,7 +141,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        Array[File] bam
@@ -145,6 +160,7 @@ Workflow Description Language
        File? reference_sa
        File? reference_dict
      }
+
      command <<<
        set -e
        gatk GetPileupSummaries \
@@ -155,17 +171,20 @@ Workflow Description Language
          ~{if defined(reference) then ("-R '" + reference + "'") else ""} \
          -O '~{select_first([pileupTableOut, "~{sep(".", select_all([select_first([sampleName, "generated"])]))}.txt"])}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.3.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 64, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([pileupTableOut, "~{sep(".", select_all([select_first([sampleName, "generated"])]))}.txt"])
      }
+
    }
 
 Common Workflow Language
@@ -177,9 +196,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: GetPileupSummaries'
-   doc: |-
-     Summarizes counts of reads that support reference, alternate and other alleles for given sites. Results can be used with CalculateContamination.
-     The tool requires a common germline variant sites VCF, e.g. the gnomAD resource, with population allele frequencies (AF) in the INFO field. This resource must contain only biallelic SNPs and can be an eight-column sites-only VCF. The tool ignores the filter status of the sites. See the GATK Resource Bundle for an example human file.
 
    requirements:
    - class: ShellCommandRequirement

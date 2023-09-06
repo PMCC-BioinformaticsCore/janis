@@ -39,12 +39,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for VcfToolsVcfMerge:
 
 .. code-block:: bash
@@ -72,6 +66,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        VcfToolsVcfMerge
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          VcfToolsVcfMerge
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -129,7 +144,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        String? collapse
        Boolean? removeDuplicates
        File? vcfHeader
@@ -141,6 +156,7 @@ Workflow Description Language
        Array[File] vcfTabix
        Array[File] vcfTabix_tbi
      }
+
      command <<<
        set -e
         vcf-merge \
@@ -154,17 +170,20 @@ Workflow Description Language
          ~{if (defined(trimALTs) && select_first([trimALTs])) then "--trim-ALTs" else ""} \
          ~{if length(vcfTabix) > 0 then "'" + sep("' '", vcfTabix) + "'" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "biocontainers/vcftools:v0.1.16-1-deb_cv1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = stdout()
      }
+
    }
 
 Common Workflow Language
@@ -176,13 +195,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'VcfTools: VcfMerge'
-   doc: |-
-     Merges two or more VCF files into one so that, for example, if two source files had one column each, on output will be printed a file with two columns. See also vcf-concat for concatenating VCFs split by chromosome.
-
-     vcf-merge A.vcf.gz B.vcf.gz C.vcf.gz | bgzip -c > out.vcf.gz
-
-     Note that this script is not intended for concatenating VCF files. For this, use vcf-concat instead.
-     Note: A fast htslib C version of this tool is now available (see bcftools merge).
 
    requirements:
    - class: ShellCommandRequirement

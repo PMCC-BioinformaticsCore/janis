@@ -3,7 +3,7 @@
 STAR Aligner
 ==============================
 
-``star_alignReads`` · *2 contributors · 3 versions*
+``star_alignReads`` · *2 contributors · 4 versions*
 
 Spliced Transcripts Alignment to a Reference © Alexander Dobin, 2009-2019 
 
@@ -32,6 +32,10 @@ Quickstart
        )
        wf.output("out_unsorted_bam", source=star_alignreads_step.out_unsorted_bam)
        wf.output("out_sorted_bam", source=star_alignreads_step.out_sorted_bam)
+       wf.output("out_transcriptome_bam", source=star_alignreads_step.out_transcriptome_bam)
+       wf.output("out_chimeric_out_junction", source=star_alignreads_step.out_chimeric_out_junction)
+       wf.output("out_chimeric_out_sam", source=star_alignreads_step.out_chimeric_out_sam)
+       wf.output("out_gene_counts", source=star_alignreads_step.out_gene_counts)
        wf.output("SJ_out_tab", source=star_alignreads_step.SJ_out_tab)
        wf.output("Log_out", source=star_alignreads_step.Log_out)
        wf.output("Log_progress_out", source=star_alignreads_step.Log_progress_out)
@@ -45,12 +49,6 @@ Quickstart
 2. Ensure Janis is configured to work with Docker or Singularity.
 
 3. Ensure all reference files are available:
-
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
 
 4. Generate user input files for star_alignReads:
 
@@ -78,6 +76,27 @@ Quickstart
        --inputs inputs.yaml \
        star_alignReads
 
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          star_alignReads
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
+
 
 
 
@@ -87,7 +106,7 @@ Information
 
 :ID: ``star_alignReads``
 :URL: `https://github.com/alexdobin/STAR <https://github.com/alexdobin/STAR>`_
-:Versions: v2.7.5c, v2.7.1a, v2.5.3a
+:Versions: v2.7.8a, v2.7.5c, v2.7.1a, v2.5.3a
 :Container: quay.io/biocontainers/star:2.7.1a--0
 :Authors: Jiaan Yu, Michael Franklin
 :Citations: Dobin A, Davis CA, Schlesinger F, et al. STAR: ultrafast universal RNA-seq aligner. Bioinformatics. 2013;29(1):15‐21. doi:10.1093/bioinformatics/bts635
@@ -99,16 +118,20 @@ Information
 Outputs
 -----------
 
-================  =============  ===========================================================================================================================
-name              type           documentation
-================  =============  ===========================================================================================================================
-out_unsorted_bam  Optional<BAM>
-out_sorted_bam    Optional<BAM>
-SJ_out_tab        File           Each splicing is counted in the numbers of splices, which would correspond to summing the counts in SJ.out.tab.
-Log_out           File           main log file with a lot of detailed information about the run. This file is most useful for troubleshooting and debugging.
-Log_progress_out  File           reports job progress statistics, such as the number of processed reads, % of mapped reads etc.
-Log_final_out     File           summary mapping statistics after mapping job is complete, very useful for quality control.
-================  =============  ===========================================================================================================================
+=========================  ==============  ===========================================================================================================================
+name                       type            documentation
+=========================  ==============  ===========================================================================================================================
+out_unsorted_bam           Optional<BAM>
+out_sorted_bam             Optional<BAM>
+out_transcriptome_bam      Optional<BAM>
+out_chimeric_out_junction  Optional<File>
+out_chimeric_out_sam       Optional<SAM>
+out_gene_counts            Optional<File>
+SJ_out_tab                 File            Each splicing is counted in the numbers of splices, which would correspond to summing the counts in SJ.out.tab.
+Log_out                    File            main log file with a lot of detailed information about the run. This file is most useful for troubleshooting and debugging.
+Log_progress_out           File            reports job progress statistics, such as the number of processed reads, % of mapped reads etc.
+Log_final_out              File            summary mapping statistics after mapping job is complete, very useful for quality control.
+=========================  ==============  ===========================================================================================================================
 
 
 Additional configuration (inputs)
@@ -190,7 +213,7 @@ outMultimapperOrder               Optional<String>          --outMultimapperOrde
 outSAMtype                        Optional<Array<String>>   --outSAMtype                                    (default: SAM) ... quasi-random order used before 2.5.0 Random ... random order of alignments for each multi-mapper. Read mates (pairs) are always adjacent, all alignment for each read stay together. This option will become default in the future releases. ... standard unsorted SortedByCoordinate ... sorted by coordinate. This option will allocate extra memory for sorting which can be specified by --limitBAMsortRAM.
 outSAMmode                        Optional<String>          --outSAMmode                                    (default: Full) mode of SAM output None ... no SAM output Full ... full SAM output NoQS ... full SAM but without quality scores ... no attributes Standard    ... NH HI AS nM All   ... NH HI AS nM NM MD jM jI MC ch vA    ... variant allele vG    ... genomic coordiante of the variant overlapped by the read vW    ... 0/1 - alignment does not pass / passes WASP filtering. Requires --waspOutputMode SAMtag STARsolo: CR CY UR UY ... sequences and quality scores of cell barcodes and UMIs for the solo* demultiplexing CB UB       ... error-corrected cell barcodes and UMIs for solo* demultiplexing. Requires --outSAMtype BAM SortedByCoordinate. sM    ... assessment of CB and UMI sS    ... sequence of the entire barcode (CB,UMI,adapter...) sQ    ... quality of the entire barcode Unsupported/undocumented: rB    ... alignment block read/genomic coordinates vR    ... read coordinate of the variant
 outSAMstrandField                 Optional<String>          --outSAMstrandField                             (default: None) Cufflinks-like strand field flag None
-outSAMattributes                  Optional<String>          --outSAMattributes                              (default: Standard) a string of desired SAM attributes, in the order desired for the output SAM NH HI AS nM NM MD jM jI XS MC ch ... any combination in any order None
+outSAMattributes                  Optional<Array<String>>   --outSAMattributes                              (default: Standard) a string of desired SAM attributes, in the order desired for the output SAM NH HI AS nM NM MD jM jI XS MC ch ... any combination in any order None
 outSAMattrIHstart                 Optional<Integer>         --outSAMattrIHstart                             (default: 1) start value for the IH attribute. 0 may be required by some downstream software, such as Cufflinks or StringTie.
 outSAMunmapped                    Optional<String>          --outSAMunmapped                                (default: None) output of unmapped reads in the SAM format 1st word: None   ... no output Within ... output unmapped reads within the main SAM file (i.e. Aligned.out.sam) 2nd word: KeepPairs ... record unmapped mate for each alignment, and, in case of unsorted output, keep it adjacent to its mapped mate. Only affects multi-mapping reads.
 outSAMorder                       Optional<String>          --outSAMorder                                   (default: Paired) type of sorting for the SAM output one mate after the other for all paired alignments one mate after the other for all paired alignments, the order is kept the same as in the input FASTQ files
@@ -199,7 +222,7 @@ outSAMreadID                      Optional<String>          --outSAMreadID      
 outSAMmapqUnique                  Optional<Integer>         --outSAMmapqUnique                              (default: 255) the MAPQ value for unique mappers
 outSAMflagOR                      Optional<Integer>         --outSAMflagOR                                  (default: 0) sam FLAG will be bitwise OR'd with this value, i.e. FLAG=FLAG | outSAMflagOR. This is applied after all flags have been set by STAR, and after outSAMflagAND. Can be used to set specific bits that are not set otherwise.
 outSAMflagAND                     Optional<Integer>         --outSAMflagAND                                 (default: 65535) sam FLAG will be bitwise AND'd with this value, i.e. FLAG=FLAG & outSAMflagOR. This is applied after all flags have been set by STAR, but before outSAMflagOR. Can be used to unset specific bits that are not set otherwise.
-outSAMattrRGline                  Optional<String>          --outSAMattrRGline                              (default: -) SAM/BAM read group line. The first word contains the read group identifier and must start with "ID:", e.g. --outSAMattrRGline ID:xxx CN:yy "DS:z z z".     xxx will be added as RG tag to each output alignment. Any spaces in the tag values have to be double quoted.     Comma separated RG lines correspons to different (comma separated) input files in --readFilesIn. Commas have to be surrounded by spaces, e.g.     --outSAMattrRGline ID:xxx , ID:zzz "DS:z z" , ID:yyy DS:yyyy
+outSAMattrRGline                  Optional<Array<String>>   --outSAMattrRGline                              (default: -) SAM/BAM read group line. The first word contains the read group identifier and must start with "ID:", e.g. --outSAMattrRGline ID:xxx CN:yy "DS:z z z".     xxx will be added as RG tag to each output alignment. Any spaces in the tag values have to be double quoted.     Comma separated RG lines correspons to different (comma separated) input files in --readFilesIn. Commas have to be surrounded by spaces, e.g.     --outSAMattrRGline ID:xxx , ID:zzz "DS:z z" , ID:yyy DS:yyyy
 outSAMheaderHD                    Optional<Array<String>>   --outSAMheaderHD                                (default: -) @HD (header) line of the SAM header
 outSAMheaderPG                    Optional<Array<String>>   --outSAMheaderPG                                (default: -) extra @PG (software) line of the SAM header (in addition to STAR)
 outSAMheaderCommentFile           Optional<String>          --outSAMheaderCommentFile                       (default: -) path to the file with @CO (comment) lines of the SAM header
@@ -288,7 +311,7 @@ chimMultimapNmax                  Optional<Integer>         --chimMultimapNmax  
 chimMultimapScoreRange            Optional<Integer>         --chimMultimapScoreRange                        (default: 1) the score range for multi-mapping chimeras below the best chimeric score. Only works with --chimMultimapNmax > 1
 chimNonchimScoreDropMin           Optional<Integer>         --chimNonchimScoreDropMin                       (default: 20) to trigger chimeric detection, the drop in the best non-chimeric alignment score with respect to the read length has to be greater than this value ... none     TranscriptomeSAM ... output SAM/BAM alignments to transcriptome into a separate file     GeneCounts       ... count reads per gene
 chimOutJunctionFormat             Optional<Integer>         --chimOutJunctionFormat                         (default: 0) formatting type for the Chimeric.out.junction file 0 ... no comment lines/headers total, unique, multi
-quantMode                         Optional<String>          --quantMode                                     (default: -) types of quantification requested     -        ... prohibit single-end alignments
+quantMode                         Optional<Array<String>>   --quantMode                                     (default: -) types of quantification requested     -        ... prohibit single-end alignments
 quantTranscriptomeBAMcompression  Optional<Integer>         --quantTranscriptomeBAMcompression              (default: 1 1) -2 to 10  transcriptome BAM compression level     -2  ... no BAM output     -1  ... default compression (6?)      0  ... no compression      10 ... maximum compression ... 1-pass mapping     Basic       ... basic 2-pass mapping, with all 1st pass junctions inserted into the genome indices on the fly
 quantTranscriptomeBan             Optional<String>          --quantTranscriptomeBan                         (default: IndelSoftclipSingleend) prohibit various alignment type     IndelSoftclipSingleend  ... prohibit indels, soft clipping and single-end alignments - compatible with RSEM     Singleend
 twopassMode                       Optional<String>          --twopassMode                                   (default: None) 2-pass mapping mode.     None
@@ -326,7 +349,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        String? parametersFiles
        String? sysShell
        Int? runThreadN
@@ -387,7 +410,7 @@ Workflow Description Language
        Array[String]? outSAMtype
        String? outSAMmode
        String? outSAMstrandField
-       String? outSAMattributes
+       Array[String]? outSAMattributes
        Int? outSAMattrIHstart
        String? outSAMunmapped
        String? outSAMorder
@@ -396,7 +419,7 @@ Workflow Description Language
        Int? outSAMmapqUnique
        Int? outSAMflagOR
        Int? outSAMflagAND
-       String? outSAMattrRGline
+       Array[String]? outSAMattrRGline
        Array[String]? outSAMheaderHD
        Array[String]? outSAMheaderPG
        String? outSAMheaderCommentFile
@@ -485,7 +508,7 @@ Workflow Description Language
        Int? chimMultimapScoreRange
        Int? chimNonchimScoreDropMin
        Int? chimOutJunctionFormat
-       String? quantMode
+       Array[String]? quantMode
        Int? quantTranscriptomeBAMcompression
        String? quantTranscriptomeBan
        String? twopassMode
@@ -510,6 +533,7 @@ Workflow Description Language
        String? soloOutFileNames
        String? soloCellFilter
      }
+
      command <<<
        set -e
        STAR \
@@ -573,7 +597,7 @@ Workflow Description Language
          ~{if (defined(outSAMtype) && length(select_first([outSAMtype])) > 0) then "--outSAMtype '" + sep("' '", select_first([outSAMtype])) + "'" else ""} \
          ~{if defined(outSAMmode) then ("--outSAMmode '" + outSAMmode + "'") else ""} \
          ~{if defined(outSAMstrandField) then ("--outSAMstrandField '" + outSAMstrandField + "'") else ""} \
-         ~{if defined(outSAMattributes) then ("--outSAMattributes '" + outSAMattributes + "'") else ""} \
+         ~{if (defined(outSAMattributes) && length(select_first([outSAMattributes])) > 0) then "--outSAMattributes '" + sep("' '", select_first([outSAMattributes])) + "'" else ""} \
          ~{if defined(outSAMattrIHstart) then ("--outSAMattrIHstart " + outSAMattrIHstart) else ''} \
          ~{if defined(outSAMunmapped) then ("--outSAMunmapped '" + outSAMunmapped + "'") else ""} \
          ~{if defined(outSAMorder) then ("--outSAMorder '" + outSAMorder + "'") else ""} \
@@ -582,7 +606,7 @@ Workflow Description Language
          ~{if defined(outSAMmapqUnique) then ("--outSAMmapqUnique " + outSAMmapqUnique) else ''} \
          ~{if defined(outSAMflagOR) then ("--outSAMflagOR " + outSAMflagOR) else ''} \
          ~{if defined(outSAMflagAND) then ("--outSAMflagAND " + outSAMflagAND) else ''} \
-         ~{if defined(outSAMattrRGline) then ("--outSAMattrRGline '" + outSAMattrRGline + "'") else ""} \
+         ~{if (defined(outSAMattrRGline) && length(select_first([outSAMattrRGline])) > 0) then "--outSAMattrRGline '" + sep("' '", select_first([outSAMattrRGline])) + "'" else ""} \
          ~{if (defined(outSAMheaderHD) && length(select_first([outSAMheaderHD])) > 0) then "--outSAMheaderHD '" + sep("' '", select_first([outSAMheaderHD])) + "'" else ""} \
          ~{if (defined(outSAMheaderPG) && length(select_first([outSAMheaderPG])) > 0) then "--outSAMheaderPG '" + sep("' '", select_first([outSAMheaderPG])) + "'" else ""} \
          ~{if defined(outSAMheaderCommentFile) then ("--outSAMheaderCommentFile '" + outSAMheaderCommentFile + "'") else ""} \
@@ -671,7 +695,7 @@ Workflow Description Language
          ~{if defined(chimMultimapScoreRange) then ("--chimMultimapScoreRange " + chimMultimapScoreRange) else ''} \
          ~{if defined(chimNonchimScoreDropMin) then ("--chimNonchimScoreDropMin " + chimNonchimScoreDropMin) else ''} \
          ~{if defined(chimOutJunctionFormat) then ("--chimOutJunctionFormat " + chimOutJunctionFormat) else ''} \
-         ~{if defined(quantMode) then ("--quantMode '" + quantMode + "'") else ""} \
+         ~{if (defined(quantMode) && length(select_first([quantMode])) > 0) then "--quantMode '" + sep("' '", select_first([quantMode])) + "'" else ""} \
          ~{if defined(quantTranscriptomeBAMcompression) then ("--quantTranscriptomeBAMcompression " + quantTranscriptomeBAMcompression) else ''} \
          ~{if defined(quantTranscriptomeBan) then ("--quantTranscriptomeBan '" + quantTranscriptomeBan + "'") else ""} \
          ~{if defined(twopassMode) then ("--twopassMode '" + twopassMode + "'") else ""} \
@@ -697,22 +721,29 @@ Workflow Description Language
          ~{if defined(soloCellFilter) then ("--soloCellFilter '" + soloCellFilter + "'") else ""} \
          --runMode 'alignReads'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 4, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/star:2.7.1a--0"
        duration: select_first([runtime_seconds, 86400])
-       memory: "~{select_first([runtime_memory, 32, 4])}G"
+       memory: "~{select_first([runtime_memory, 64, 4])}G"
        preemptible: 2
      }
+
      output {
        File? out_unsorted_bam = (select_first([outFileNamePrefix, "./"]) + "Aligned.out.bam")
        File? out_sorted_bam = (select_first([outFileNamePrefix, "./"]) + "Aligned.sortedByCoord.out.bam")
+       File? out_transcriptome_bam = (select_first([outFileNamePrefix, "./"]) + "Aligned.toTranscriptome.out.bam")
+       File? out_chimeric_out_junction = (select_first([outFileNamePrefix, "./"]) + "Chimeric.out.junction")
+       File? out_chimeric_out_sam = (select_first([outFileNamePrefix, "./"]) + "Chimeric.out.sam")
+       File? out_gene_counts = (select_first([outFileNamePrefix, "./"]) + "ReadsPerGene.out.tab")
        File SJ_out_tab = (select_first([outFileNamePrefix, "./"]) + "SJ.out.tab")
        File Log_out = (select_first([outFileNamePrefix, "./"]) + "Log.out")
        File Log_progress_out = (select_first([outFileNamePrefix, "./"]) + "Log.progress.out")
        File Log_final_out = (select_first([outFileNamePrefix, "./"]) + "Log.final.out")
      }
+
    }
 
 Common Workflow Language
@@ -724,14 +755,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: STAR Aligner
-   doc: |
-     Spliced Transcripts Alignment to a Reference © Alexander Dobin, 2009-2019 
-
-     For more details see:
-
-     - https://www.ncbi.nlm.nih.gov/pubmed/23104886
-     - https://github.com/alexdobin/STAR
-     - https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf
 
    requirements:
    - class: ShellCommandRequirement
@@ -1289,7 +1312,8 @@ Common Workflow Language
      doc: |-
        (default: Standard) a string of desired SAM attributes, in the order desired for the output SAM NH HI AS nM NM MD jM jI XS MC ch ... any combination in any order None
      type:
-     - string
+     - type: array
+       items: string
      - 'null'
      inputBinding:
        prefix: --outSAMattributes
@@ -1369,10 +1393,12 @@ Common Workflow Language
      doc: |-
        (default: -) SAM/BAM read group line. The first word contains the read group identifier and must start with "ID:", e.g. --outSAMattrRGline ID:xxx CN:yy "DS:z z z".     xxx will be added as RG tag to each output alignment. Any spaces in the tag values have to be double quoted.     Comma separated RG lines correspons to different (comma separated) input files in --readFilesIn. Commas have to be surrounded by spaces, e.g.     --outSAMattrRGline ID:xxx , ID:zzz "DS:z z" , ID:yyy DS:yyyy
      type:
-     - string
+     - type: array
+       items: string
      - 'null'
      inputBinding:
        prefix: --outSAMattrRGline
+       itemSeparator: ' '
    - id: outSAMheaderHD
      label: outSAMheaderHD
      doc: '(default: -) @HD (header) line of the SAM header'
@@ -2142,7 +2168,8 @@ Common Workflow Language
      doc: |-
        (default: -) types of quantification requested     -        ... prohibit single-end alignments
      type:
-     - string
+     - type: array
+       items: string
      - 'null'
      inputBinding:
        prefix: --quantMode
@@ -2355,7 +2382,6 @@ Common Workflow Language
      - 'null'
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "Aligned.out.bam"))
-       outputEval: $((inputs.outFileNamePrefix.basename + "Aligned.out.bam"))
        loadContents: false
    - id: out_sorted_bam
      label: out_sorted_bam
@@ -2364,7 +2390,38 @@ Common Workflow Language
      - 'null'
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "Aligned.sortedByCoord.out.bam"))
-       outputEval: $((inputs.outFileNamePrefix.basename + "Aligned.sortedByCoord.out.bam"))
+       loadContents: false
+   - id: out_transcriptome_bam
+     label: out_transcriptome_bam
+     type:
+     - File
+     - 'null'
+     outputBinding:
+       glob: $((inputs.outFileNamePrefix + "Aligned.toTranscriptome.out.bam"))
+       loadContents: false
+   - id: out_chimeric_out_junction
+     label: out_chimeric_out_junction
+     type:
+     - File
+     - 'null'
+     outputBinding:
+       glob: $((inputs.outFileNamePrefix + "Chimeric.out.junction"))
+       loadContents: false
+   - id: out_chimeric_out_sam
+     label: out_chimeric_out_sam
+     type:
+     - File
+     - 'null'
+     outputBinding:
+       glob: $((inputs.outFileNamePrefix + "Chimeric.out.sam"))
+       loadContents: false
+   - id: out_gene_counts
+     label: out_gene_counts
+     type:
+     - File
+     - 'null'
+     outputBinding:
+       glob: $((inputs.outFileNamePrefix + "ReadsPerGene.out.tab"))
        loadContents: false
    - id: SJ_out_tab
      label: SJ_out_tab
@@ -2373,7 +2430,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "SJ.out.tab"))
-       outputEval: $((inputs.outFileNamePrefix.basename + "SJ.out.tab"))
        loadContents: false
    - id: Log_out
      label: Log_out
@@ -2382,7 +2438,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "Log.out"))
-       outputEval: $((inputs.outFileNamePrefix.basename + "Log.out"))
        loadContents: false
    - id: Log_progress_out
      label: Log_progress_out
@@ -2391,7 +2446,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "Log.progress.out"))
-       outputEval: $((inputs.outFileNamePrefix.basename + "Log.progress.out"))
        loadContents: false
    - id: Log_final_out
      label: Log_final_out
@@ -2400,7 +2454,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outFileNamePrefix + "Log.final.out"))
-       outputEval: $((inputs.outFileNamePrefix.basename + "Log.final.out"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr

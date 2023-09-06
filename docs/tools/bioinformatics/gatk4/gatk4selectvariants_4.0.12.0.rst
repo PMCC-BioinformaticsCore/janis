@@ -39,12 +39,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4SelectVariants:
 
 .. code-block:: bash
@@ -70,6 +64,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4SelectVariants
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4SelectVariants
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -219,7 +234,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        String? outputFilename
@@ -331,6 +346,7 @@ Workflow Description Language
        Float? softClippedLeadingTrailingRatio
        Float? softClippedRatioThreshold
      }
+
      command <<<
        set -e
        gatk SelectVariants \
@@ -435,18 +451,21 @@ Workflow Description Language
          ~{if defined(softClippedLeadingTrailingRatio) then ("--soft-clipped-leading-trailing-ratio " + softClippedLeadingTrailingRatio) else ''} \
          ~{if defined(softClippedRatioThreshold) then ("--soft-clipped-ratio-threshold " + softClippedRatioThreshold) else ''}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.0.12.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated"])
        File out_tbi = select_first([outputFilename, "generated"]) + ".tbi"
      }
+
    }
 
 Common Workflow Language
@@ -458,12 +477,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: SelectVariants'
-   doc: |
-     USAGE: Selectvariants [arguments]
-     This tool makes it possible to select a subset of variants based on various criteria in order to facilitate certain
-     analyses. Examples include comparing and contrasting cases vs. controls, extracting variant or non-variant loci that
-     meet certain requirements, or troubleshooting some unexpected results, to name a few.
-     Version:4.1.3.0
 
    requirements:
    - class: ShellCommandRequirement

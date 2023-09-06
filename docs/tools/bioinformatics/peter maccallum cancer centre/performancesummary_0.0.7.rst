@@ -63,12 +63,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for performanceSummary:
 
 .. code-block:: bash
@@ -96,6 +90,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        performanceSummary
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          performanceSummary
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -151,7 +166,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File flagstat
        File collectInsertSizeMetrics
        File coverage
@@ -160,28 +175,32 @@ Workflow Description Language
        File? rmdupFlagstat
        Boolean? genome
      }
+
      command <<<
        set -e
        performance_summary.py \
          --flagstat '~{flagstat}' \
          --collect_insert_metrics '~{collectInsertSizeMetrics}' \
          --coverage '~{coverage}' \
-         -o '~{select_first([outputPrefix, "generated.csv"])}' \
+         -o '~{select_first([outputPrefix, "generated"])}' \
          ~{if defined(targetFlagstat) then ("--target_flagstat '" + targetFlagstat + "'") else ""} \
          ~{if defined(rmdupFlagstat) then ("--rmdup_flagstat '" + rmdupFlagstat + "'") else ""} \
          ~{if (defined(genome) && select_first([genome])) then "--genome" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "michaelfranklin/pmacutil:0.0.7"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
-       File out = (select_first([outputPrefix, "generated.csv"]) + ".csv")
+       File out = (select_first([outputPrefix, "generated"]) + ".csv")
      }
+
    }
 
 Common Workflow Language
@@ -193,35 +212,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Performance Summary
-   doc: |-
-     usage: performance_summary.py [-h] --flagstat FLAGSTAT
-                                   --collect_insert_metrics COLLECT_INSERT_METRICS
-                                   --coverage COVERAGE -o O
-                                   [--target_flagstat TARGET_FLAGSTAT]
-                                   [--rmdup_flagstat RMDUP_FLAGSTAT] [--genome]
-
-     Performance summary of bam
-
-     required arguments:
-       --flagstat FLAGSTAT   output of samtools flagstat on bam
-       --collect_insert_metrics COLLECT_INSERT_METRICS
-                             output of CollectInsertMetrics (GATK or Picard) on bam
-       --coverage COVERAGE   output of bedtools coverageBed for targeted bam;
-                             bedtools genomeCoverageBed for whole genome bam
-       -o O                  output summary csv name
-
-     optional arguments:
-       -h, --help            show this help message and exit
-       --target_flagstat TARGET_FLAGSTAT
-                             output of samtools flagstat of bam target on target
-                             bed. Only specified for targeted bam
-       --rmdup_flagstat RMDUP_FLAGSTAT
-                             output of samtools flagstat of removed duplicates bam.
-                             File to be used to extract mapping infomation if
-                             specified, instead of the --flagstat file.
-       --genome              calculate statistics for whole genome data.
-                             --target_flagstat must not be speicified
-          
 
    requirements:
    - class: ShellCommandRequirement
@@ -255,7 +245,7 @@ Common Workflow Language
      type:
      - string
      - 'null'
-     default: generated.csv
+     default: generated
      inputBinding:
        prefix: -o
    - id: targetFlagstat
@@ -292,7 +282,6 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outputPrefix + ".csv"))
-       outputEval: $((inputs.outputPrefix.basename + ".csv"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr

@@ -81,12 +81,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4GenotypeConcordance:
 
 .. code-block:: bash
@@ -113,6 +107,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4GenotypeConcordance
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4GenotypeConcordance
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -192,7 +207,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File callVCF
@@ -224,6 +239,7 @@ Workflow Description Language
        String? validationStringency
        String? verbosity
      }
+
      command <<<
        set -e
        gatk GenotypeConcordance \
@@ -255,19 +271,22 @@ Workflow Description Language
          ~{if defined(validationStringency) then ("--VALIDATION_STRINGENCY '" + validationStringency + "'") else ""} \
          ~{if defined(verbosity) then ("--verbosity '" + verbosity + "'") else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.2.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File summaryMetrics = glob("*.genotype_concordance_summary_metrics")[0]
        File detailMetrics = glob("*.genotype_concordance_detail_metrics")[0]
        File contingencyMetrics = glob("*.genotype_concordance_contingency_metrics")[0]
      }
+
    }
 
 Common Workflow Language
@@ -279,52 +298,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: Genotype Concordance'
-   doc: |-
-     GenotypeConcordance (Picard)
-              
-     Calculates the concordance between genotype data of one samples in each of two VCFs - one being 
-     considered the truth (or reference) the other being the call. The concordance is broken into 
-     separate results sections for SNPs and indels. Statistics are reported in three different files.
-
-     Summary
-         Calculates the concordance between genotype data of one samples in each of two VCFs - one being 
-         considered the truth (or reference) the other being the call. The concordance is broken into 
-         separate results sections for SNPs and indels. Summary and detailed statistics are reported.
-
-     Details
-         This tool evaluates the concordance between genotype calls for a sample in different callsets
-         where one is being considered as the "truth" (aka standard, or reference) and the other as the 
-         "call" that is being evaluated for accuracy. The Comparison can be restricted to a confidence 
-         interval which is typically used in order to enable proper assessment of False Positives and 
-         the False-Positive Rate (FPR).
-   
-     Output Metrics:
-         Output metrics consists of GenotypeConcordanceContingencyMetrics, GenotypeConcordanceSummaryMetrics, 
-         and GenotypeConcordanceDetailMetrics. For each set of metrics, the data is broken into separate 
-         sections for SNPs and INDELs. Note that only SNP and INDEL variants are considered, MNP, Symbolic, 
-         and Mixed classes of variants are not included.
-
-         GenotypeConcordanceContingencyMetrics enumerate the constituents of each contingent in a callset 
-         including true-positive (TP), true-negative (TN), false-positive (FP), and false-negative (FN) calls.
-         GenotypeConcordanceDetailMetrics include the numbers of SNPs and INDELs for each contingent genotype 
-         as well as the number of validated genotypes.
-
-         GenotypeConcordanceSummaryMetrics provide specific details for the variant caller performance 
-         on a callset including values for sensitivity, specificity, and positive predictive values.
-
-
-     Useful definitions applicable to alleles and genotypes:
-         - Truthset - A callset (typically in VCF format) containing variant calls and genotypes that have been 
-             cross-validated with multiple technologies e.g. Genome In A Bottle Consortium (GIAB) (https://sites.stanford.edu/abms/giab)
-         - TP - True-positives are variant sites that match against the truth-set
-         - FP - False-positives are reference sites miscalled as variant
-         - FN - False-negatives are variant sites miscalled as reference
-         - TN - True-negatives are correctly called as reference
-         - Validated genotypes - are TP sites where the exact genotype (HET or HOM-VAR) appears in the truth-set
-
-     VCF Output:
-         - The concordance state will be stored in the CONC_ST tag in the INFO field
-         - The truth sample name will be "truth" and call sample name will be "call"
 
    requirements:
    - class: ShellCommandRequirement

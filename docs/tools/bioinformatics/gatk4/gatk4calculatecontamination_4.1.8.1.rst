@@ -39,12 +39,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4CalculateContamination:
 
 .. code-block:: bash
@@ -70,6 +64,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4CalculateContamination
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4CalculateContamination
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -127,7 +142,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File? contaminationTable
@@ -137,6 +152,7 @@ Workflow Description Language
        String? segmentationFileOut
        String? contaminationFileOut
      }
+
      command <<<
        set -e
        gatk CalculateContamination \
@@ -148,18 +164,21 @@ Workflow Description Language
          --tumor-segmentation '~{select_first([segmentationFileOut, "~{basename(pileupTable)}.mutect2_segments"])}' \
          -O '~{select_first([contaminationFileOut, "~{basename(pileupTable)}.mutect2_contamination"])}'
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.8.1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 8, 4])}G"
        preemptible: 2
      }
+
      output {
        File contOut = select_first([contaminationFileOut, "~{basename(pileupTable)}.mutect2_contamination"])
        File segOut = select_first([segmentationFileOut, "~{basename(pileupTable)}.mutect2_segments"])
      }
+
    }
 
 Common Workflow Language
@@ -171,12 +190,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: CalculateContamination'
-   doc: |-
-     Calculates the fraction of reads coming from cross-sample contamination, given results from GetPileupSummaries. The resulting contamination table is used with FilterMutectCalls.
-
-     This tool is featured in the Somatic Short Mutation calling Best Practice Workflow. See Tutorial#11136 for a step-by-step description of the workflow and Article#11127 for an overview of what traditional somatic calling entails. For the latest pipeline scripts, see the Mutect2 WDL scripts directory.
-
-     This tool borrows from ContEst by Cibulskis et al the idea of estimating contamination from ref reads at hom alt sites. However, ContEst uses a probabilistic model that assumes a diploid genotype with no copy number variation and independent contaminating reads. That is, ContEst assumes that each contaminating read is drawn randomly and independently from a different human. This tool uses a simpler estimate of contamination that relaxes these assumptions. In particular, it works in the presence of copy number variations and with an arbitrary number of contaminating samples. In addition, this tool is designed to work well with no matched normal data. However, one can run GetPileupSummaries on a matched normal bam file and input the result to this tool.
 
    requirements:
    - class: ShellCommandRequirement
@@ -238,7 +251,7 @@ Common Workflow Language
      default: generated.mutect2_segments
      inputBinding:
        prefix: --tumor-segmentation
-       valueFrom: $(inputs.pileupTable.basename).mutect2_segments
+       valueFrom: $(inputs.pileupTable).mutect2_segments
    - id: contaminationFileOut
      label: contaminationFileOut
      type:
@@ -248,7 +261,7 @@ Common Workflow Language
      inputBinding:
        prefix: -O
        position: 2
-       valueFrom: $(inputs.pileupTable.basename).mutect2_contamination
+       valueFrom: $(inputs.pileupTable).mutect2_contamination
 
    outputs:
    - id: contOut
@@ -256,14 +269,14 @@ Common Workflow Language
      doc: contamination Table
      type: File
      outputBinding:
-       glob: $(inputs.pileupTable.basename).mutect2_contamination
+       glob: $(inputs.pileupTable).mutect2_contamination
        loadContents: false
    - id: segOut
      label: segOut
      doc: segmentation based on baf
      type: File
      outputBinding:
-       glob: $(inputs.pileupTable.basename).mutect2_segments
+       glob: $(inputs.pileupTable).mutect2_segments
        loadContents: false
    stdout: _stdout
    stderr: _stderr

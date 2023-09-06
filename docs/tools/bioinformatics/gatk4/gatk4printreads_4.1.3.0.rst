@@ -50,12 +50,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for Gatk4PrintReads:
 
 .. code-block:: bash
@@ -81,6 +75,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        Gatk4PrintReads
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          Gatk4PrintReads
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -133,30 +148,34 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        Array[String]? javaOptions
        Int? compression_level
        File bam
        String? outputFilename
      }
+
      command <<<
        set -e
        gatk PrintReads \
          --java-options '-Xmx~{((select_first([runtime_memory, 4]) * 3) / 4)}G ~{if (defined(compression_level)) then ("-Dsamjdk.compress_level=" + compression_level) else ""} ~{sep(" ", select_first([javaOptions, []]))}'
        if [ -f $(echo '~{select_first([outputFilename, "generated"])}' | sed 's/\.[^.]*$//').bai ]; then ln -f $(echo '~{select_first([outputFilename, "generated"])}' | sed 's/\.[^.]*$//').bai $(echo '~{select_first([outputFilename, "generated"])}' ).bai; fi
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "broadinstitute/gatk:4.1.3.0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = select_first([outputFilename, "generated"])
        File out_bai = select_first([outputFilename, "generated"]) + ".bai"
      }
+
    }
 
 Common Workflow Language
@@ -168,24 +187,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: 'GATK4: Print Reads'
-   doc: |2-
-
-     Write reads from SAM format file (SAM/BAM/CRAM) that pass criteria to a new file.
-     A common use case is to subset reads by genomic interval using the -L argument. 
-     Note when applying genomic intervals, the tool is literal and does not retain mates 
-     of paired-end reads outside of the interval, if any. Data with missing mates will fail 
-     ValidateSamFile validation with MATE_NOT_FOUND, but certain tools may still analyze the data. 
-     If needed, to rescue such mates, use either FilterSamReads or ExtractOriginalAlignmentRecordsByNameSpark.
-
-     By default, PrintReads applies the WellformedReadFilter at the engine level. 
-     What this means is that the tool does not print reads that fail the WellformedReadFilter filter. 
-     You can similarly apply other engine-level filters to remove specific types of reads 
-     with the --read-filter argument. See documentation category 'Read Filters' for a list of
-      available filters. To keep reads that do not pass the WellformedReadFilter, either 
-      disable the filter with --disable-read-filter or disable all default filters with 
-      ``--disable-tool-default-read-filters``.
-
-     The reference is strictly required when handling CRAM files.
 
    requirements:
    - class: ShellCommandRequirement

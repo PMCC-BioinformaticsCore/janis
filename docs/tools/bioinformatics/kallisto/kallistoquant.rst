@@ -36,12 +36,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for kallistoQuant:
 
 .. code-block:: bash
@@ -70,6 +64,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        kallistoQuant
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          kallistoQuant
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -131,7 +146,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File index
        String? outdir
        Array[File] fastq
@@ -144,6 +159,7 @@ Workflow Description Language
        Float? fragment_length
        Float? fragment_sd
      }
+
      command <<<
        set -e
        kallisto quant \
@@ -159,18 +175,21 @@ Workflow Description Language
          -o '~{select_first([outdir, "generated"])}' \
          ~{if length(fastq) > 0 then "'" + sep("' '", fastq) + "'" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/kallisto:0.46.2--h4f7b962_1"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 2, 4])}G"
        preemptible: 2
      }
+
      output {
        File out = (select_first([outdir, "generated"]) + "/abundance.tsv")
        File stats = (select_first([outdir, "generated"]) + "/run_info.json")
      }
+
    }
 
 Common Workflow Language
@@ -182,7 +201,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Kallisto-Quant
-   doc: Builds a kallisto index
 
    requirements:
    - class: ShellCommandRequirement
@@ -288,14 +306,12 @@ Common Workflow Language
      type: File
      outputBinding:
        glob: $((inputs.outdir + "/abundance.tsv"))
-       outputEval: $((inputs.outdir.basename + "/abundance.tsv"))
        loadContents: false
    - id: stats
      label: stats
      type: File
      outputBinding:
        glob: $((inputs.outdir + "/run_info.json"))
-       outputEval: $((inputs.outdir.basename + "/run_info.json"))
        loadContents: false
    stdout: _stdout
    stderr: _stderr

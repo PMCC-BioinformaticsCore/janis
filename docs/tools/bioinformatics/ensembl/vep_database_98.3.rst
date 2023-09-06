@@ -38,12 +38,6 @@ Quickstart
 
 3. Ensure all reference files are available:
 
-.. note:: 
-
-   More information about these inputs are available `below <#additional-configuration-inputs>`_.
-
-
-
 4. Generate user input files for vep_database:
 
 .. code-block:: bash
@@ -69,6 +63,27 @@ Quickstart
    janis run [...run options] \
        --inputs inputs.yaml \
        vep_database
+
+.. note::
+
+   You can use `janis prepare <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ to improve setting up your files for this CommandTool. See `this guide <https://janis.readthedocs.io/en/latest/references/prepare.html>`_ for more information about Janis Prepare.
+
+   .. code-block:: text
+
+      OUTPUT_DIR="<output-dir>"
+      janis prepare \
+          --inputs inputs.yaml \
+          --output-dir $OUTPUT_DIR \
+          vep_database
+
+      # Run script that Janis automatically generates
+      sh $OUTPUT_DIR/run.sh
+
+
+
+
+
+
 
 
 
@@ -296,7 +311,7 @@ Workflow Description Language
        Int? runtime_cpu
        Int? runtime_memory
        Int? runtime_seconds
-       Int? runtime_disks
+       Int? runtime_disk
        File inputFile
        String? outputFilename
        Boolean? vcf
@@ -431,6 +446,7 @@ Workflow Description Language
        String? dbVersion
        String? registry
      }
+
      command <<<
        set -e
        vep \
@@ -559,14 +575,16 @@ Workflow Description Language
          ~{if ((defined(custom1Reference) && defined(custom1Columns))) then "--custom ~{select_first([custom1Reference])},~{sep(",", select_first([custom1Columns]))}" else ""} \
          ~{if ((defined(custom2Reference) && defined(custom2Columns))) then "--custom ~{select_first([custom2Reference])},~{sep(",", select_first([custom2Columns]))}" else ""}
      >>>
+
      runtime {
        cpu: select_first([runtime_cpu, 1])
-       disks: "local-disk ~{select_first([runtime_disks, 20])} SSD"
+       disks: "local-disk ~{select_first([runtime_disk, 20])} SSD"
        docker: "quay.io/biocontainers/ensembl-vep:98.3--pl526hecc5488_0"
        duration: select_first([runtime_seconds, 86400])
        memory: "~{select_first([runtime_memory, 4])}G"
        preemptible: 2
      }
+
      output {
        File? out = select_first([outputFilename, "~{basename(inputFile, ".vcf.gz")}.vcf"])
        File? out_tbi = if defined(select_first([outputFilename, "~{basename(inputFile, ".vcf.gz")}.vcf"])) then (select_first([outputFilename, "~{basename(inputFile, ".vcf.gz")}.vcf"]) + ".tbi") else None
@@ -574,6 +592,7 @@ Workflow Description Language
        File? out_stats = select_first([statsFile, "variant_effect_output.txt_summary.html"])
        File? out_warnings = select_first([warningFile, "generated-warning.txt"])
      }
+
    }
 
 Common Workflow Language
@@ -585,7 +604,6 @@ Common Workflow Language
    class: CommandLineTool
    cwlVersion: v1.2
    label: Vep (Database)
-   doc: ''
 
    requirements:
    - class: ShellCommandRequirement
@@ -1791,27 +1809,27 @@ Common Workflow Language
    arguments:
    - position: 0
      valueFrom: |-
-       $((inputs.caddReference != null) ? ("--plugin CADD," + inputs.caddReference.join(",")) : "")
+       $((inputs.caddReference.map(function(el) { return el.path; }) != null) ? ("--plugin CADD," + inputs.caddReference.map(function(el) { return el.path; }).join(",")) : "")
      shellQuote: false
    - position: 0
      valueFrom: |-
-       $((inputs.condelConfig != null) ? "--plugin Condel,{condelconfig},b".replace(/\{condelconfig\}/g, inputs.condelConfig) : "")
+       $((inputs.condelConfig.path != null) ? "--plugin Condel,{condelconfig},b".replace(/\{condelconfig\}/g, inputs.condelConfig.path) : "")
      shellQuote: false
    - position: 0
      valueFrom: |-
-       $(((inputs.dbnspReference != null) && (inputs.dbsnpColumns != null)) ? "--plugin dbNSFP,{ref},{cols}".replace(/\{ref\}/g, inputs.dbnspReference).replace(/\{cols\}/g, inputs.dbsnpColumns.join(",")) : "")
+       $(((inputs.dbnspReference.path != null) && (inputs.dbsnpColumns != null)) ? "--plugin dbNSFP,{ref},{cols}".replace(/\{ref\}/g, inputs.dbnspReference.path).replace(/\{cols\}/g, inputs.dbsnpColumns.join(",")) : "")
      shellQuote: false
    - position: 0
      valueFrom: |-
-       $((inputs.revelReference != null) ? "--plugin REVEL,{ref}".replace(/\{ref\}/g, inputs.revelReference) : "")
+       $((inputs.revelReference.path != null) ? "--plugin REVEL,{ref}".replace(/\{ref\}/g, inputs.revelReference.path) : "")
      shellQuote: false
    - position: 0
      valueFrom: |-
-       $(((inputs.custom1Reference != null) && (inputs.custom1Columns != null)) ? "--custom {ref},{cols}".replace(/\{ref\}/g, inputs.custom1Reference).replace(/\{cols\}/g, inputs.custom1Columns.join(",")) : "")
+       $(((inputs.custom1Reference.path != null) && (inputs.custom1Columns != null)) ? "--custom {ref},{cols}".replace(/\{ref\}/g, inputs.custom1Reference.path).replace(/\{cols\}/g, inputs.custom1Columns.join(",")) : "")
      shellQuote: false
    - position: 0
      valueFrom: |-
-       $(((inputs.custom2Reference != null) && (inputs.custom2Columns != null)) ? "--custom {ref},{cols}".replace(/\{ref\}/g, inputs.custom2Reference).replace(/\{cols\}/g, inputs.custom2Columns.join(",")) : "")
+       $(((inputs.custom2Reference.path != null) && (inputs.custom2Columns != null)) ? "--custom {ref},{cols}".replace(/\{ref\}/g, inputs.custom2Reference.path).replace(/\{cols\}/g, inputs.custom2Columns.join(",")) : "")
      shellQuote: false
 
    hints:

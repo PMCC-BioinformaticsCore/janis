@@ -166,15 +166,23 @@ Contents
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Tutorials
+   :caption: Tutorials: translation
 
-   tutorials/tutorial0
-   tutorials/tutorial1
-   tutorials/tutorial2
-   tutorials/tutorial3
-   tutorials/toolbox
-   tutorials/running
-   tutorials/container
+   CWL to Nextflow <tutorials/translation/cwl_to_nextflow/main.rst>
+   Galaxy to Nextflow <tutorials/translation/galaxy_to_nextflow/main.rst>
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Tutorials: API
+
+   Introduction to Janis <tutorials/api/tutorial0>
+   Building a Workflow <tutorials/api/tutorial1>
+   Wrapping a new tool <tutorials/api/tutorial2>
+   Naming and organising outputs <tutorials/api/tutorial3>
+   tutorials/api/toolbox
+   tutorials/api/running
+   tutorials/api/container
 
 .. toctree::
    :hidden:

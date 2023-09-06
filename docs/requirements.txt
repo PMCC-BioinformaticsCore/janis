@@ -1,2 +1,5 @@
-janis-pipelines.core
-janis-pipelines.runner
+#janis-pipelines.core
+#janis-pipelines.runner
+sphinx
+sphinx-rtd-theme
+recommonmark

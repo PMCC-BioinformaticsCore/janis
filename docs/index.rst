@@ -72,14 +72,14 @@ Janis currently has full tutorials for translations of CWL -> Nextflow, and Gala
 
 CWL to Nextflow
 
-- `Tool: Samtools Flagstat <tutorials/cwl_to_nextflow/tutorial1>`_
-- `Tool: GATK HaplotypeCaller <tutorials/cwl_to_nextflow/tutorial3>`_
-- `Workflow: Align Sort Markdup <tutorials/cwl_to_nextflow/tutorial2>`_
+- `Tool: Samtools Flagstat <tutorials/translation/cwl_to_nextflow/tutorial1.html>`_
+- `Tool: GATK HaplotypeCaller <tutorials/translation/cwl_to_nextflow/tutorial3.html>`_
+- `Workflow: Align Sort Markdup <tutorials/translation/cwl_to_nextflow/tutorial2.html>`_
 
 Galaxy to Nextflow
 
-- `Tool: Samtools Flagstat <tutorials/galaxy_to_nextflow/tutorial4>`_
-- `Workflow: RNAseq Reads to Counts <tutorials/galaxy_to_nextflow/tutorial5>`_
+- `Tool: Samtools Flagstat <tutorials/translation/galaxy_to_nextflow/tutorial4.html>`_
+- `Workflow: RNAseq Reads to Counts <tutorials/translation/galaxy_to_nextflow/tutorial5.html>`_
 
 |
 
@@ -129,9 +129,9 @@ Example Workflow
 Tutorials 
 ---------
 
-- `Tutorial 0 - Introduction to Janis <https://janis.readthedocs.io/en/latest/tutorials/tutorial0.html>`_
-- `Tutorial 1 - Building a workflow <https://janis.readthedocs.io/en/latest/tutorials/tutorial1.html>`_
-- `Tutorial 2 - Wrapping a new tool <https://janis.readthedocs.io/en/latest/tutorials/tutorial2.html>`_
+- `Tutorial 0 - Introduction to Janis <tutorials/api/tutorial0.html>`_
+- `Tutorial 1 - Building a workflow <tutorials/api/tutorial1.html>`_
+- `Tutorial 2 - Wrapping a new tool <tutorials/api/tutorial2.html>`_
 
 
 Workshops

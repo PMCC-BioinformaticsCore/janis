@@ -7,7 +7,7 @@ Currently no walkthrough tutorials for translation of WDL to CWL.
 
 Run the following to see janis in action.
 
-Installing Janis
+Install Janis
 
 .. code-block:: bash
 
@@ -15,37 +15,21 @@ Installing Janis
    source venv/bin/activate
    pip install janis-pipelines
 
-|
-
-Sample Tool
------------
-
-Obtain source workflow files
+Obtain Sample Files
 
 .. code-block:: bash
 
-   wget https://github.com/PMCC-BioinformaticsCore/janis/raw/translate-docs/docs/data/translation_tutorials/wdl_tool
+   git clone https://github.com/GraceAHall/sample_translation_files
 
-Translate with janis
-
-.. code-block:: bash
-
-   janis translate --from wdl --to cwl wdl_tool/cutadapt.wdl
-
-|
-
-Sample Workflow
----------------
-
-Obtain source workflow files
+Sample Tool Translation
 
 .. code-block:: bash
 
-   wget https://github.com/PMCC-BioinformaticsCore/janis/raw/translate-docs/docs/data/translation_tutorials/wdl_workflow
+   janis translate --from wdl --to cwl sample_translation_files/wdl_tool/cutadapt.wdl
 
-Translate with janis
+Sample Workflow Translation
 
 .. code-block:: bash
 
-   janis translate --from wdl --to cwl wdl_workflow/linear.wdl
+   janis translate --from wdl --to cwl sample_translation_files/wdl_workflow/linear.wdl
 

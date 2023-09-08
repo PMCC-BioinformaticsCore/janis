@@ -7,7 +7,7 @@ Currently no walkthrough tutorials for translation of Galaxy to CWL.
 
 Run the following to see janis in action:
 
-Installation
+Install Janis
 
 .. code-block:: bash
 
@@ -15,37 +15,22 @@ Installation
    source venv/bin/activate
    pip install janis-pipelines
 
-|
-
-Sample Tool
------------
-
-Obtain source files
+Obtain Sample Files
 
 .. code-block:: bash
 
-   wget https://github.com/PMCC-BioinformaticsCore/janis/raw/translate-docs/docs/data/translation_tutorials/galaxy_tool
+   git clone https://github.com/GraceAHall/sample_translation_files
 
-Translate with janis
-
-.. code-block:: bash
-
-   janis translate --from galaxy --to cwl galaxy_tool/samtools_flagstat.xml
-
-|
-
-Sample Workflow
----------------
-
-Obtain source files
+Sample Tool Translation
 
 .. code-block:: bash
 
-   wget https://github.com/PMCC-BioinformaticsCore/janis/raw/translate-docs/docs/data/translation_tutorials/galaxy_workflow
+   janis translate --from galaxy --to cwl sample_translation_files/galaxy_tool/samtools_flagstat.xml
 
-Translate with janis
+Sample Workflow Translation
 
 .. code-block:: bash
 
-   janis translate --from galaxy --to cwl galaxy_workflow/rna-seq-reads-to-counts.ga
+   janis translate --from galaxy --to cwl sample_translation_files/galaxy_workflow/rna-seq-reads-to-counts.ga
+
 

@@ -68,7 +68,33 @@ Janis produces translations as close to the original as possible, but in some si
 Quickstart
 ----------
 
+To try out Janis on a sample tool and workflow, follow the steps below.
 
+Install Janis
+
+.. code-block:: bash
+
+   python -m venv venv
+   source venv/bin/activate
+   pip install janis-pipelines
+
+Obtain Sample Files
+
+.. code-block:: bash
+
+   git clone https://github.com/GraceAHall/sample_translation_files
+
+Sample Tool Translation: CWL to Nextflow
+
+.. code-block:: bash
+
+   janis translate --from cwl --to nextflow sample_translation_files/cwl_tool/samtools_flagstat.cwl
+
+Sample Workflow Translation: CWL to Nextflow
+
+.. code-block:: bash
+
+   janis translate --from cwl --to nextflow sample_translation_files/cwl_workflow/align_sort_markdup.cwl
 
 
 Tutorials

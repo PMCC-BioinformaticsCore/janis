@@ -65,6 +65,12 @@ When performing a translation, Janis will **ingest** the source files into the i
 
 Janis produces translations as close to the original as possible, but in some situations it may be necessary to make manual adjustments before the output is runnable. This is due to language-specific features of supported languages, and their inclusion of freeform Javascript (CWL), Java / Groovy (Nextflow), and Python / Cheetah (Galaxy). 
 
+Quickstart
+----------
+
+
+
+
 Tutorials
 --------
 
@@ -207,10 +213,15 @@ Information about the project structure and more on contributing can be found wi
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Tutorials: translation
+   :caption: Tutorials: Translation
 
    CWL to Nextflow <tutorials/translation/cwl_to_nextflow/main.rst>
+   CWL to WDL <tutorials/translation/cwl_to_wdl/main.rst>
+   Galaxy to CWL <tutorials/translation/galaxy_to_cwl/main.rst>
    Galaxy to Nextflow <tutorials/translation/galaxy_to_nextflow/main.rst>
+   Galaxy to WDL <tutorials/translation/galaxy_to_wdl/main.rst>
+   WDL to CWL <tutorials/translation/wdl_to_cwl/main.rst>
+   WDL to Nextflow <tutorials/translation/wdl_to_nextflow/main.rst>
 
 .. toctree::
    :hidden:

@@ -63,6 +63,11 @@ Janis can read-in from CWL, WDL, and Galaxy, and can write-out to CWL, WDL, and 
 To facilitate translation, Janis includes an internal API to model tools and workflows in a way that encompasses the design features of each supported language. 
 When performing a translation, Janis will **ingest** the source files into the internal API, then will **translate** out to the target language. 
 
+.. image:: resources/translate_diagram.png
+   :alt: translate_diagram.png
+   :align: center
+   :width: 600
+
 Janis produces translations as close to the original as possible, but in some situations it may be necessary to make manual adjustments before the output is runnable. This is due to language-specific features of supported languages, and their inclusion of freeform Javascript (CWL), Java / Groovy (Nextflow), and Python / Cheetah (Galaxy). 
 
 Quickstart
@@ -234,6 +239,7 @@ Information about the project structure and more on contributing can be found wi
 
    self
    about
+   quickstart
    userguide
 
 .. toctree::
@@ -242,12 +248,7 @@ Information about the project structure and more on contributing can be found wi
    :caption: Tutorials: Translation
 
    CWL to Nextflow <tutorials/translation/cwl_to_nextflow/main.rst>
-   CWL to WDL <tutorials/translation/cwl_to_wdl/main.rst>
-   Galaxy to CWL <tutorials/translation/galaxy_to_cwl/main.rst>
    Galaxy to Nextflow <tutorials/translation/galaxy_to_nextflow/main.rst>
-   Galaxy to WDL <tutorials/translation/galaxy_to_wdl/main.rst>
-   WDL to CWL <tutorials/translation/wdl_to_cwl/main.rst>
-   WDL to Nextflow <tutorials/translation/wdl_to_nextflow/main.rst>
 
 .. toctree::
    :hidden:

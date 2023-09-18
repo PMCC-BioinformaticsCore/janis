@@ -73,7 +73,7 @@ ToolName = CommandToolBuilder(
 Let's start by creating a file with this template inside a second output directory:
 
 ```bash
-mkdir -p tools
+cd ~/janis/janis-tutorials
 vim tools/samtoolsflagstat.py
 ```
 
@@ -280,13 +280,13 @@ Jobs:
     [✓] samtoolsflagstat (N/A)       
 
 Outputs:
-    - stats: $HOME/janis-tutorials/tutorial2/stats.txt
+    - stats: $HOME/janis-tutorials/tutorial2/stats
 ```
 
 Janis (and CWLTool) said the tool executed correctly, let's check the output file: 
 
 ```bash
-cat tutorial2/stats.txt
+cat tutorial2/stats
 ```
 
 ```

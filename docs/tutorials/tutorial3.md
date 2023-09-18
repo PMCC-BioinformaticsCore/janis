@@ -16,7 +16,7 @@ This tutorial uses the workflow build in [Tutorial 1](https://janis.readthedocs.
 
 ## Output name
 
-Simply put, `output_name` is the dervied filename of the output without the extension. By default, this is the `tag` of the output.
+Simply put, `output_name` is the derived filename of the output without the extension. By default, this is the `tag` of the output.
 
 You can specify a new output name in 2 ways:
 
@@ -30,17 +30,17 @@ You should make the following considerations:
 - The input you select should be a string, or
 
 - If the output you're naming is an array, the input you select should either be:
-    - singular
+    - singular or
     - have the same number of elements in it.
 
-    Janis will either fall back to the first element if it's a list, or default to the output tag. This may cause outputs to override each other.
+Janis will either fall back to the first element if it's a list, or default to the output tag. This may cause outputs to override each other.
 
 
 ## Output folder
 
 Similar to the output name, the `output_folder` is folder, or group of nested folders into which your output will be written. By default, this field has no value and outputs are linked directly into the output directory.
 
-If the output_folder field is an array, a nested folder is created for each element in ascending order (eg: `["parent", "child", "child_of_child"]`).
+If the `output_folder` field is an array, a nested folder is created for each element in ascending order (eg: `["parent", "child", "child_of_child"]`).
 
 There are multiple ways to specify output directories:
 
